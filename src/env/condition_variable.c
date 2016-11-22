@@ -15,7 +15,11 @@ extern NTSTATUS NtWaitForKeyedEvent(HANDLE hKeyedEvent, void *pKey, BOOLEAN bAle
 __attribute__((__dllimport__, __stdcall__))
 extern NTSTATUS NtReleaseKeyedEvent(HANDLE hKeyedEvent, void *pKey, BOOLEAN bAlertable, const LARGE_INTEGER *pliTimeout);
 
-#define MASK_THREADS_TRAPPED    ((uintptr_t)~0x0000)
+#define MASK_THREADS_SPINNING   ((uintptr_t) 0x000C)
+#define MASK_THREADS_TRAPPED    ((uintptr_t)~0x000F)
+
+#define THREAD_SPINNING_ONE     ((uintptr_t)(MASK_THREADS_SPINNING & -MASK_THREADS_SPINNING))
+#define THREAD_SPINNING_MAX     ((uintptr_t)(MASK_THREADS_SPINNING / THREAD_SPINNING_ONE))
 
 #define THREAD_TRAPPED_ONE      ((uintptr_t)(MASK_THREADS_TRAPPED & -MASK_THREADS_TRAPPED))
 #define THREAD_TRAPPED_MAX      ((uintptr_t)(MASK_THREADS_TRAPPED / THREAD_TRAPPED_ONE))
@@ -25,13 +29,50 @@ static inline bool ReallyWaitForConditionVariable(volatile uintptr_t *puControl,
 	_MCFCRT_ConditionVariableUnlockCallback pfnUnlockCallback, _MCFCRT_ConditionVariableRelockCallback pfnRelockCallback, intptr_t nContext,
 	bool bMayTimeOut, uint64_t u64UntilFastMonoClock, bool bRelockIfTimeOut)
 {
+	// XXX
+	bool bSpinnable = false;
 	{
-//		uintptr_t uOld, uNew;
-//		uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
-//		do {
-//			uNew = uOld + THREAD_TRAPPED_ONE;
-//		} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_RELAXED, __ATOMIC_RELAXED)));
-		__atomic_fetch_add(puControl, THREAD_TRAPPED_ONE, __ATOMIC_RELAXED);
+		uintptr_t uOld, uNew;
+		uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
+		do {
+			const size_t uThreadsSpinning = (uOld & MASK_THREADS_SPINNING) / THREAD_SPINNING_ONE;
+			bSpinnable = (uThreadsSpinning < THREAD_SPINNING_MAX);
+			if(!bSpinnable){
+				break;
+			}
+			uNew = uOld + THREAD_SPINNING_ONE;
+		} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)));
+	}
+	if(bSpinnable){
+		for(size_t i = 0; i < 100 /* XXX */; ++i){
+			bool bSignaled;
+			{
+				uintptr_t uOld;
+				uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
+				bSignaled = (uOld & MASK_THREADS_SPINNING) == 0;
+			}
+			if(_MCFCRT_EXPECT_NOT(bSignaled)){
+				return true;
+			}
+			__builtin_ia32_pause();
+		}
+	}
+
+	bool bSignaled;
+	{
+		uintptr_t uOld, uNew;
+		uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
+		do {
+			bSignaled = (uOld & MASK_THREADS_SPINNING) == 0;
+			if(!bSignaled){
+				uNew = uOld + THREAD_TRAPPED_ONE;
+			} else {
+				uNew = uOld;
+			}
+		} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)));
+	}
+	if(_MCFCRT_EXPECT(bSignaled)){
+		return true;
 	}
 	const intptr_t nUnlocked = (*pfnUnlockCallback)(nContext);
 	if(bMayTimeOut){
@@ -78,12 +119,10 @@ static inline size_t ReallySignalConditionVariable(volatile uintptr_t *puControl
 		uintptr_t uOld, uNew;
 		uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
 		do {
+			uNew = uOld & ~MASK_THREADS_SPINNING;
 			const size_t uThreadsTrapped = (uOld & MASK_THREADS_TRAPPED) / THREAD_TRAPPED_ONE;
 			uCountToSignal = (uThreadsTrapped <= uMaxCountToSignal) ? uThreadsTrapped : uMaxCountToSignal;
-			if(uCountToSignal == 0){
-				break;
-			}
-			uNew = uOld - uCountToSignal * THREAD_TRAPPED_ONE;
+			uNew -= uCountToSignal * THREAD_TRAPPED_ONE;
 		} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_RELAXED, __ATOMIC_RELAXED)));
 	}
 	for(size_t i = 0; i < uCountToSignal; ++i){
