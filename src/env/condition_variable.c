@@ -27,30 +27,36 @@ extern NTSTATUS NtReleaseKeyedEvent(HANDLE hKeyedEvent, void *pKey, BOOLEAN bAle
 __attribute__((__always_inline__))
 static inline bool ReallyWaitForConditionVariable(volatile uintptr_t *puControl,
 	_MCFCRT_ConditionVariableUnlockCallback pfnUnlockCallback, _MCFCRT_ConditionVariableRelockCallback pfnRelockCallback, intptr_t nContext,
-	bool bMayTimeOut, uint64_t u64UntilFastMonoClock, bool bRelockIfTimeOut)
+	size_t uMaxSpinCount, bool bMayTimeOut, uint64_t u64UntilFastMonoClock, bool bRelockIfTimeOut)
 {
-	// XXX
-	bool bSpinnable = false;
-	{
-		uintptr_t uOld, uNew;
-		uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
-		do {
-			const size_t uThreadsSpinning = (uOld & MASK_THREADS_SPINNING) / THREAD_SPINNING_ONE;
-			bSpinnable = (uThreadsSpinning < THREAD_SPINNING_MAX);
-			if(!bSpinnable){
-				break;
-			}
-			uNew = uOld + THREAD_SPINNING_ONE;
-		} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)));
+	bool bSignaled, bSpinnable = false;
+	if(uMaxSpinCount != 0){
+		{
+			uintptr_t uOld, uNew;
+			uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
+			do {
+				const size_t uThreadsSpinning = (uOld & MASK_THREADS_SPINNING) / THREAD_SPINNING_ONE;
+				bSpinnable = (uThreadsSpinning < THREAD_SPINNING_MAX);
+				if(!bSpinnable){
+					break;
+				}
+				uNew = uOld + THREAD_SPINNING_ONE;
+			} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_RELAXED, __ATOMIC_RELAXED)));
+		}
 	}
 	const intptr_t nUnlocked = (*pfnUnlockCallback)(nContext);
 	if(bSpinnable){
-		for(size_t i = 0; 1 /* XXX */; ++i){
-			bool bSignaled;
+		for(size_t i = 0; i < uMaxSpinCount; ++i){
 			{
-				uintptr_t uOld;
+				uintptr_t uOld, uNew;
 				uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
-				bSignaled = (uOld & MASK_THREADS_SPINNING) == 0;
+				do {
+					bSignaled = !(uOld & MASK_THREADS_SPINNING);
+					if(!bSignaled){
+						break;
+					}
+					uNew = uOld & ~MASK_THREADS_SPINNING;
+				} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_RELAXED, __ATOMIC_RELAXED)));
 			}
 			if(_MCFCRT_EXPECT_NOT(bSignaled)){
 				(*pfnRelockCallback)(nContext, nUnlocked);
@@ -60,20 +66,20 @@ static inline bool ReallyWaitForConditionVariable(volatile uintptr_t *puControl,
 		}
 	}
 
-	bool bSignaled;
 	{
 		uintptr_t uOld, uNew;
 		uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
 		do {
-			bSignaled = (uOld & MASK_THREADS_SPINNING) == 0;
+			bSignaled = !(uOld & MASK_THREADS_SPINNING);
 			if(!bSignaled){
 				uNew = uOld + THREAD_TRAPPED_ONE;
 			} else {
-				break;
+				uNew = uOld & ~MASK_THREADS_SPINNING;
 			}
-		} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)));
+			uNew = uOld & ~MASK_THREADS_SPINNING;
+		} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_RELAXED, __ATOMIC_RELAXED)));
 	}
-	if(_MCFCRT_EXPECT(bSignaled)){
+	if(_MCFCRT_EXPECT_NOT(bSignaled)){
 		(*pfnRelockCallback)(nContext, nUnlocked);
 		return true;
 	}
@@ -136,21 +142,27 @@ static inline size_t ReallySignalConditionVariable(volatile uintptr_t *puControl
 }
 
 bool _MCFCRT_WaitForConditionVariable(_MCFCRT_ConditionVariable *pConditionVariable,
-	_MCFCRT_ConditionVariableUnlockCallback pfnUnlockCallback, _MCFCRT_ConditionVariableRelockCallback pfnRelockCallback, intptr_t nContext, uint64_t u64UntilFastMonoClock)
+	_MCFCRT_ConditionVariableUnlockCallback pfnUnlockCallback, _MCFCRT_ConditionVariableRelockCallback pfnRelockCallback, intptr_t nContext,
+	size_t uMaxSpinCount, uint64_t u64UntilFastMonoClock)
 {
-	const bool bSignaled = ReallyWaitForConditionVariable(&(pConditionVariable->__u), pfnUnlockCallback, pfnRelockCallback, nContext, true, u64UntilFastMonoClock, true);
+	const bool bSignaled = ReallyWaitForConditionVariable(&(pConditionVariable->__u), pfnUnlockCallback, pfnRelockCallback, nContext,
+		uMaxSpinCount, true, u64UntilFastMonoClock, true);
 	return bSignaled;
 }
 bool _MCFCRT_WaitForConditionVariableOrAbandon(_MCFCRT_ConditionVariable *pConditionVariable,
-	_MCFCRT_ConditionVariableUnlockCallback pfnUnlockCallback, _MCFCRT_ConditionVariableRelockCallback pfnRelockCallback, intptr_t nContext, uint64_t u64UntilFastMonoClock)
+	_MCFCRT_ConditionVariableUnlockCallback pfnUnlockCallback, _MCFCRT_ConditionVariableRelockCallback pfnRelockCallback, intptr_t nContext,
+	size_t uMaxSpinCount, uint64_t u64UntilFastMonoClock)
 {
-	const bool bSignaled = ReallyWaitForConditionVariable(&(pConditionVariable->__u), pfnUnlockCallback, pfnRelockCallback, nContext, true, u64UntilFastMonoClock, false);
+	const bool bSignaled = ReallyWaitForConditionVariable(&(pConditionVariable->__u), pfnUnlockCallback, pfnRelockCallback, nContext,
+		uMaxSpinCount, true, u64UntilFastMonoClock, false);
 	return bSignaled;
 }
 void _MCFCRT_WaitForConditionVariableForever(_MCFCRT_ConditionVariable *pConditionVariable,
-	_MCFCRT_ConditionVariableUnlockCallback pfnUnlockCallback, _MCFCRT_ConditionVariableRelockCallback pfnRelockCallback, intptr_t nContext)
+	_MCFCRT_ConditionVariableUnlockCallback pfnUnlockCallback, _MCFCRT_ConditionVariableRelockCallback pfnRelockCallback, intptr_t nContext,
+	size_t uMaxSpinCount)
 {
-	const bool bSignaled = ReallyWaitForConditionVariable(&(pConditionVariable->__u), pfnUnlockCallback, pfnRelockCallback, nContext, false, UINT64_MAX, true);
+	const bool bSignaled = ReallyWaitForConditionVariable(&(pConditionVariable->__u), pfnUnlockCallback, pfnRelockCallback, nContext,
+		uMaxSpinCount, false, UINT64_MAX, true);
 	_MCFCRT_ASSERT(bSignaled);
 }
 size_t _MCFCRT_SignalConditionVariable(_MCFCRT_ConditionVariable *pConditionVariable, size_t uMaxCountToSignal){

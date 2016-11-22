@@ -43,8 +43,8 @@ static inline bool ReallyTryMutex(volatile uintptr_t *puControl){
 __attribute__((__always_inline__))
 static inline bool ReallyWaitForMutex(volatile uintptr_t *puControl, size_t uMaxSpinCount, bool bMayTimeOut, uint64_t u64UntilFastMonoClock){
 	for(;;){
+		bool bTaken, bSpinnable = false;
 		if(uMaxSpinCount != 0){
-			bool bTaken, bSpinnable = false;
 			{
 				uintptr_t uOld, uNew;
 				uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
@@ -58,35 +58,34 @@ static inline bool ReallyWaitForMutex(volatile uintptr_t *puControl, size_t uMax
 						}
 						uNew = uOld + THREAD_SPINNING_ONE;
 					} else {
-						uNew = uOld + MASK_LOCKED; // uOld | MASK_LOCKED;
+						uNew = (uOld & ~MASK_THREADS_SPINNING) | MASK_LOCKED;
 					}
 				} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)));
 			}
 			if(_MCFCRT_EXPECT(bTaken)){
 				return true;
 			}
-			if(bSpinnable){
-				for(size_t i = 0; i < uMaxSpinCount; ++i){
-					{
-						uintptr_t uOld, uNew;
-						uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
-						do {
-							bTaken = !(uOld & MASK_LOCKED);
-							if(!bTaken){
-								break;
-							}
-							uNew = uOld + MASK_LOCKED; // uOld | MASK_LOCKED;
-						} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)));
-					}
-					if(_MCFCRT_EXPECT_NOT(bTaken)){
-						return true;
-					}
-					__builtin_ia32_pause();
+		}
+		if(bSpinnable){
+			for(size_t i = 0; i < uMaxSpinCount; ++i){
+				{
+					uintptr_t uOld, uNew;
+					uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
+					do {
+						bTaken = !(uOld & MASK_LOCKED);
+						if(!bTaken){
+							break;
+						}
+						uNew = (uOld & ~MASK_THREADS_SPINNING) | MASK_LOCKED;
+					} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)));
 				}
+				if(_MCFCRT_EXPECT_NOT(bTaken)){
+					return true;
+				}
+				__builtin_ia32_pause();
 			}
 		}
 
-		bool bTaken;
 		{
 			uintptr_t uOld, uNew;
 			uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
@@ -95,7 +94,7 @@ static inline bool ReallyWaitForMutex(volatile uintptr_t *puControl, size_t uMax
 				if(!bTaken){
 					uNew = uOld + THREAD_TRAPPED_ONE;
 				} else {
-					uNew = uOld + MASK_LOCKED; // uOld | MASK_LOCKED;
+					uNew = (uOld & ~MASK_THREADS_SPINNING) | MASK_LOCKED;
 				}
 			} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)));
 		}

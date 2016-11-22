@@ -291,7 +291,7 @@ __MCFCRT_MopthreadErrorCode __MCFCRT_MopthreadJoin(uintptr_t uTid, void *restric
 			case kStateJoinable:
 				pControl->eState = kStateJoining;
 				do {
-					_MCFCRT_WaitForConditionVariableForever(&(pControl->vTermination), &UnlockCallbackNative, &RelockCallbackNative, (intptr_t)&g_vMopthreadMutex);
+					_MCFCRT_WaitForConditionVariableForever(&(pControl->vTermination), &UnlockCallbackNative, &RelockCallbackNative, (intptr_t)&g_vMopthreadMutex, 0);
 				} while(pControl->eState != kStateJoined);
 				eError = __MCFCRT_kMopthreadSuccess;
 				_MCFCRT_AvlDetach((_MCFCRT_AvlNodeHeader *)pControl);

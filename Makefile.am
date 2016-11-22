@@ -80,20 +80,20 @@ mcfgthread_sources = \
 	src/ext/wcpcpy.c
 
 bin_PROGRAMS = \
-	mcfgthread-9.dll
+	mcfgthread-10.dll
 
-mcfgthread_9_dll_SOURCES = \
+mcfgthread_10_dll_SOURCES = \
 	src/dll_startup.c	\
 	${mcfgthread_pre_sources}	\
 	${mcfgthread_sources}
 
-mcfgthread_9_dll_LDFLAGS = \
+mcfgthread_10_dll_LDFLAGS = \
 	-shared -static -nostdlib	\
 	-Wl,-e@__MCFCRT_DllStartup,--subsystem,windows,--disable-runtime-pseudo-reloc,--disable-auto-import	\
 	-Wl,--export-all-symbols,--exclude-symbols,@__MCFCRT_DllStartup,--exclude-libs,ALL	\
 	-Wl,--disable-stdcall-fixup,--enable-auto-image-base,--out-implib,libmcfgthread.dll.a
 
-mcfgthread_9_dll_LDADD = \
+mcfgthread_10_dll_LDADD = \
 	-lkernel32 -lntdll
 
 lib_LIBRARIES = \
@@ -101,12 +101,12 @@ lib_LIBRARIES = \
 	libmcfgthread.a
 
 libmcfgthread_dll_a_SOURCES =
-libmcfgthread.dll.a: mcfgthread-9.dll
+libmcfgthread.dll.a: mcfgthread-10.dll
 
 libmcfgthread_a_SOURCES =
 ##libmcfgthread_a_SOURCES = \
 ##	${mcfgthread_sources}
 
 ## Due to Windows limitation we can't link this library statically.
-libmcfgthread.a: mcfgthread-9.dll
+libmcfgthread.a: mcfgthread-10.dll
 	cp --no-preserve=timestamps libmcfgthread.dll.a $@
