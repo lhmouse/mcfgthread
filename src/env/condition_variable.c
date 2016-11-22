@@ -43,8 +43,9 @@ static inline bool ReallyWaitForConditionVariable(volatile uintptr_t *puControl,
 			uNew = uOld + THREAD_SPINNING_ONE;
 		} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)));
 	}
+	const intptr_t nUnlocked = (*pfnUnlockCallback)(nContext);
 	if(bSpinnable){
-		for(size_t i = 0; i < 100 /* XXX */; ++i){
+		for(size_t i = 0; 1 /* XXX */; ++i){
 			bool bSignaled;
 			{
 				uintptr_t uOld;
@@ -52,6 +53,7 @@ static inline bool ReallyWaitForConditionVariable(volatile uintptr_t *puControl,
 				bSignaled = (uOld & MASK_THREADS_SPINNING) == 0;
 			}
 			if(_MCFCRT_EXPECT_NOT(bSignaled)){
+				(*pfnRelockCallback)(nContext, nUnlocked);
 				return true;
 			}
 			__builtin_ia32_pause();
@@ -67,14 +69,14 @@ static inline bool ReallyWaitForConditionVariable(volatile uintptr_t *puControl,
 			if(!bSignaled){
 				uNew = uOld + THREAD_TRAPPED_ONE;
 			} else {
-				uNew = uOld;
+				break;
 			}
 		} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)));
 	}
 	if(_MCFCRT_EXPECT(bSignaled)){
+		(*pfnRelockCallback)(nContext, nUnlocked);
 		return true;
 	}
-	const intptr_t nUnlocked = (*pfnUnlockCallback)(nContext);
 	if(bMayTimeOut){
 		LARGE_INTEGER liTimeout;
 		__MCFCRT_InitializeNtTimeout(&liTimeout, u64UntilFastMonoClock);
