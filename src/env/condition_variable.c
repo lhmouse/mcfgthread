@@ -15,6 +15,9 @@ extern NTSTATUS NtWaitForKeyedEvent(HANDLE hKeyedEvent, void *pKey, BOOLEAN bAle
 __attribute__((__dllimport__, __stdcall__))
 extern NTSTATUS NtReleaseKeyedEvent(HANDLE hKeyedEvent, void *pKey, BOOLEAN bAlertable, const LARGE_INTEGER *pliTimeout);
 
+__attribute__((__dllimport__, __stdcall__, __const__))
+extern BOOLEAN RtlDllShutdownInProgress(void);
+
 #define MASK_WAITING            ((uintptr_t) 0x0001)
 #define MASK_THREADS_SPINNING   ((uintptr_t) 0x000C)
 #define MASK_THREADS_TRAPPED    ((uintptr_t)~0x000F)
@@ -138,10 +141,14 @@ static inline size_t ReallySignalConditionVariable(volatile uintptr_t *puControl
 			uNew -= uCountToSignal * THREADS_TRAPPED_ONE;
 		} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_RELAXED, __ATOMIC_RELAXED)));
 	}
-	for(size_t i = 0; i < uCountToSignal; ++i){
-		NTSTATUS lStatus = NtReleaseKeyedEvent(_MCFCRT_NULLPTR, (void *)puControl, false, _MCFCRT_NULLPTR);
-		_MCFCRT_ASSERT_MSG(NT_SUCCESS(lStatus), L"NtReleaseKeyedEvent() failed.");
-		_MCFCRT_ASSERT(lStatus != STATUS_TIMEOUT);
+	// If `RtlDllShutdownInProgress()` is `true`, other threads will have been terminated.
+	// Calling `NtReleaseKeyedEvent()` when no thread is waiting results in deadlocks. Don't do that.
+	if((uCountToSignal > 0) && !RtlDllShutdownInProgress()){
+		for(size_t i = 0; i < uCountToSignal; ++i){
+			NTSTATUS lStatus = NtReleaseKeyedEvent(_MCFCRT_NULLPTR, (void *)puControl, false, _MCFCRT_NULLPTR);
+			_MCFCRT_ASSERT_MSG(NT_SUCCESS(lStatus), L"NtReleaseKeyedEvent() failed.");
+			_MCFCRT_ASSERT(lStatus != STATUS_TIMEOUT);
+		}
 	}
 	return uCountToSignal;
 }

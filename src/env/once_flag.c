@@ -15,6 +15,9 @@ extern NTSTATUS NtWaitForKeyedEvent(HANDLE hKeyedEvent, void *pKey, BOOLEAN bAle
 __attribute__((__dllimport__, __stdcall__))
 extern NTSTATUS NtReleaseKeyedEvent(HANDLE hKeyedEvent, void *pKey, BOOLEAN bAlertable, const LARGE_INTEGER *pliTimeout);
 
+__attribute__((__dllimport__, __stdcall__, __const__))
+extern BOOLEAN RtlDllShutdownInProgress(void);
+
 // The first byte is reserved by Itanium ABI to indicate whether the initialization has succeeded.
 #if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
 #	define BSUSR(v_)            ((uintptr_t)((uintptr_t)(v_) << CHAR_BIT))
@@ -124,10 +127,14 @@ static inline void RealSetAndSignalOnceFlag(volatile uintptr_t *puControl, bool 
 			uNew -= uCountToSignal * THREADS_TRAPPED_ONE;
 		} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)));
 	}
-	for(size_t i = 0; i < uCountToSignal; ++i){
-		NTSTATUS lStatus = NtReleaseKeyedEvent(_MCFCRT_NULLPTR, (void *)puControl, false, _MCFCRT_NULLPTR);
-		_MCFCRT_ASSERT_MSG(NT_SUCCESS(lStatus), L"NtReleaseKeyedEvent() failed.");
-		_MCFCRT_ASSERT(lStatus != STATUS_TIMEOUT);
+	// If `RtlDllShutdownInProgress()` is `true`, other threads will have been terminated.
+	// Calling `NtReleaseKeyedEvent()` when no thread is waiting results in deadlocks. Don't do that.
+	if((uCountToSignal > 0) && !RtlDllShutdownInProgress()){
+		for(size_t i = 0; i < uCountToSignal; ++i){
+			NTSTATUS lStatus = NtReleaseKeyedEvent(_MCFCRT_NULLPTR, (void *)puControl, false, _MCFCRT_NULLPTR);
+			_MCFCRT_ASSERT_MSG(NT_SUCCESS(lStatus), L"NtReleaseKeyedEvent() failed.");
+			_MCFCRT_ASSERT(lStatus != STATUS_TIMEOUT);
+		}
 	}
 }
 
