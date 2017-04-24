@@ -19,23 +19,32 @@ __attribute__((__dllimport__, __stdcall__, __const__))
 extern BOOLEAN RtlDllShutdownInProgress(void);
 
 #define MASK_LOCKED             ((uintptr_t) 0x0001)
-#define MASK_THREADS_SPINNING   ((uintptr_t) 0x000C)
+#define MASK_THREADS_SPINNING   ((uintptr_t) 0x000E)
+#define MASK_SPIN_FAILURE_COUNT ((uintptr_t) 0x00F0)
 #define MASK_THREADS_TRAPPED    ((uintptr_t)~0x00FF)
 
 #define THREADS_SPINNING_ONE    ((uintptr_t)(MASK_THREADS_SPINNING & -MASK_THREADS_SPINNING))
 #define THREADS_SPINNING_MAX    ((uintptr_t)(MASK_THREADS_SPINNING / THREADS_SPINNING_ONE))
 
+#define SPIN_FAILURE_COUNT_ONE  ((uintptr_t)(MASK_SPIN_FAILURE_COUNT & -MASK_SPIN_FAILURE_COUNT))
+#define SPIN_FAILURE_COUNT_MAX  ((uintptr_t)(MASK_SPIN_FAILURE_COUNT / SPIN_FAILURE_COUNT_ONE))
+
 #define THREADS_TRAPPED_ONE     ((uintptr_t)(MASK_THREADS_TRAPPED & -MASK_THREADS_TRAPPED))
 #define THREADS_TRAPPED_MAX     ((uintptr_t)(MASK_THREADS_TRAPPED / THREADS_TRAPPED_ONE))
 
+#define MIN_SPIN_COUNT          ((uintptr_t)16)
+
 __attribute__((__always_inline__))
-static inline bool ReallyWaitForMutex(volatile uintptr_t *puControl, size_t uMaxSpinCount, bool bMayTimeOut, uint64_t u64UntilFastMonoClock){
+static inline bool ReallyWaitForMutex(volatile uintptr_t *puControl, size_t uMaxSpinCountInitial, bool bMayTimeOut, uint64_t u64UntilFastMonoClock){
 	for(;;){
+		size_t uMaxSpinCount;
 		bool bTaken, bSpinnable;
 		{
 			uintptr_t uOld, uNew;
 			uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
 			do {
+				const size_t uSpinFailureCount = (uOld & MASK_SPIN_FAILURE_COUNT) / SPIN_FAILURE_COUNT_ONE;
+				uMaxSpinCount = (uMaxSpinCountInitial >> uSpinFailureCount * (sizeof(uMaxSpinCountInitial) * CHAR_BIT / (SPIN_FAILURE_COUNT_MAX + 1))) | MIN_SPIN_COUNT;
 				bTaken = !(uOld & MASK_LOCKED);
 				bSpinnable = false;
 				if(!bTaken){
@@ -48,7 +57,8 @@ static inline bool ReallyWaitForMutex(volatile uintptr_t *puControl, size_t uMax
 					}
 					uNew = uOld + THREADS_SPINNING_ONE;
 				} else {
-					uNew = uOld + MASK_LOCKED;
+					const bool bSpinFailureCountDecremented = uSpinFailureCount != 0;
+					uNew = uOld + MASK_LOCKED - bSpinFailureCountDecremented * SPIN_FAILURE_COUNT_ONE;
 				}
 			} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)));
 		}
@@ -56,7 +66,11 @@ static inline bool ReallyWaitForMutex(volatile uintptr_t *puControl, size_t uMax
 			return true;
 		}
 		if(_MCFCRT_EXPECT(bSpinnable)){
-			for(size_t i = 0; i < uMaxSpinCount; ++i){
+			for(size_t i = 0; _MCFCRT_EXPECT(i < uMaxSpinCount); ++i){
+				__builtin_ia32_pause();
+#ifdef __SSE2__
+				__builtin_ia32_mfence();
+#endif
 				{
 					uintptr_t uOld, uNew;
 					uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
@@ -65,23 +79,27 @@ static inline bool ReallyWaitForMutex(volatile uintptr_t *puControl, size_t uMax
 						if(!bTaken){
 							break;
 						}
-						uNew = uOld - THREADS_SPINNING_ONE + MASK_LOCKED;
+						const size_t uSpinFailureCount = (uOld & MASK_SPIN_FAILURE_COUNT) / SPIN_FAILURE_COUNT_ONE;
+						const bool bSpinFailureCountDecremented = uSpinFailureCount != 0;
+						uNew = uOld - THREADS_SPINNING_ONE + MASK_LOCKED - bSpinFailureCountDecremented * SPIN_FAILURE_COUNT_ONE;
 					} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)));
 				}
 				if(_MCFCRT_EXPECT_NOT(bTaken)){
 					return true;
 				}
-				__builtin_ia32_pause();
 			}
 			{
 				uintptr_t uOld, uNew;
 				uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
 				do {
+					const size_t uSpinFailureCount = (uOld & MASK_SPIN_FAILURE_COUNT) / SPIN_FAILURE_COUNT_ONE;
 					bTaken = !(uOld & MASK_LOCKED);
 					if(!bTaken){
-						uNew = uOld - THREADS_SPINNING_ONE + THREADS_TRAPPED_ONE;
+						const bool bSpinFailureCountIncremented = uSpinFailureCount < SPIN_FAILURE_COUNT_MAX;
+						uNew = uOld - THREADS_SPINNING_ONE + THREADS_TRAPPED_ONE + bSpinFailureCountIncremented * SPIN_FAILURE_COUNT_ONE;
 					} else {
-						uNew = uOld - THREADS_SPINNING_ONE + MASK_LOCKED;
+						const bool bSpinFailureCountDecremented = uSpinFailureCount != 0;
+						uNew = uOld - THREADS_SPINNING_ONE + MASK_LOCKED - bSpinFailureCountDecremented * SPIN_FAILURE_COUNT_ONE;
 					}
 				} while(_MCFCRT_EXPECT_NOT(!__atomic_compare_exchange_n(puControl, &uOld, uNew, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)));
 			}
