@@ -51,7 +51,11 @@ static inline bool ReallyWaitForConditionVariable(volatile uintptr_t *puControl,
 		uOld = __atomic_load_n(puControl, __ATOMIC_RELAXED);
 		do {
 			const size_t uSpinFailureCount = (uOld & MASK_SPIN_FAILURE_COUNT) / SPIN_FAILURE_COUNT_ONE;
-			uMaxSpinCount = (uMaxSpinCountInitial >> uSpinFailureCount * (sizeof(uMaxSpinCountInitial) * CHAR_BIT / (SPIN_FAILURE_COUNT_MAX + 1))) | MIN_SPIN_COUNT;
+			if(uMaxSpinCountInitial > MIN_SPIN_COUNT){
+				uMaxSpinCount = (uMaxSpinCountInitial >> uSpinFailureCount * (sizeof(uMaxSpinCountInitial) * CHAR_BIT / (SPIN_FAILURE_COUNT_MAX + 1))) | MIN_SPIN_COUNT;
+			} else {
+				uMaxSpinCount = uMaxSpinCountInitial;
+			}
 			bSignaled = (uOld & MASK_THREADS_RELEASED) != 0;
 			bSpinnable = false;
 			if(!bSignaled){
