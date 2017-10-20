@@ -33,6 +33,7 @@ pkginclude_env_HEADERS = \
 	src/env/_seh_top.h	\
 	src/env/_nt_timeout.h	\
 	src/env/_mopthread.h	\
+	src/env/_tls_common.h	\
 	src/env/_atexit_queue.h	\
 	src/env/avl_tree.h	\
 	src/env/xassert.h	\
@@ -62,6 +63,7 @@ mcfgthread_sources = \
 	src/env/_seh_top.c	\
 	src/env/_nt_timeout.c	\
 	src/env/_mopthread.c	\
+	src/env/_tls_common.c	\
 	src/env/avl_tree.c	\
 	src/env/xassert.c	\
 	src/env/bail.c	\

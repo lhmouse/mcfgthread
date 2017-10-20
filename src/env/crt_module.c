@@ -23,7 +23,7 @@ static void Dispose_at_quick_exit_queue(void){
 }
 
 bool _MCFCRT_AtCrtModuleQuickExit(_MCFCRT_AtCrtModuleExitCallback pfnProc, intptr_t nContext){
-	__MCFCRT_AtExitElement vElement = { pfnProc, nContext };
+	const __MCFCRT_AtExitElement vElement = { pfnProc, nContext };
 	return __MCFCRT_AtExitQueuePush(&g_vAtQuickExitQueue, &vElement);
 }
 
