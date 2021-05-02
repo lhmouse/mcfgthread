@@ -16,11 +16,11 @@ __attribute__((__unused__, __always_inline__, __artificial__)) static inline voi
   {
     void *__pUnused;
     __asm__ volatile (
-      "mov %0, dword ptr fs:[0] \n"
-      "mov dword ptr[%1], %0 \n"
-      "mov dword ptr[%1 + 4], offset ___MCFCRT_SehTopDispatcher \n"
-      "mov dword ptr fs:[0], %1 \n"
-      : "=&r"(__pUnused) : "r"(__pSehNode)
+      "mov{l} {%%fs:0, %0|%0, dword ptr fs:[0]} \n"
+      "mov{l} {%0, (%1)|dword ptr[%1], %0} \n"
+      "mov{l} {%2, 4(%1)|dword ptr[%1 + 4], %2} \n"
+      "mov{l} {%1, %%fs:0|dword ptr fs:[0], %1} \n"
+      : "=&r"(__pUnused) : "r"(__pSehNode), "p"(__MCFCRT_SehTopDispatcher)
     );
   }
 
@@ -28,8 +28,8 @@ __attribute__((__unused__, __always_inline__, __artificial__)) static inline voi
   {
     void *__pUnused;
     __asm__ volatile (
-      "mov %0, dword ptr[%1] \n"
-      "mov dword ptr fs:[0], %0 \n"
+      "mov{l} {(%1), %0|%0, dword ptr[%1]} \n"
+      "mov{l} {%0, %%fs:0|dword ptr fs:[0], %0} \n"
       : "=&r"(__pUnused) : "r"(__pSehNode)
     );
   }

@@ -33,7 +33,7 @@ __attribute__((__always_inline__)) static inline void * _MCFCRT_inline_mempcpy_f
   #else
     if(__builtin_constant_p(__n) ? (__n / 4) : true) {
       __asm__ (
-        "rep movsd \n"
+        "rep movs{l|d} \n"
         : "=o"(*(char (*)[])__p1), "+D"(__p1), "+S"(__p2), "=c"(__dumb)
         : "o"(*(const char (*)[])__p2), "c"(__n / 4)
       );
@@ -79,7 +79,7 @@ __attribute__((__always_inline__)) static inline void * _MCFCRT_inline_mempset_f
       __word += __word <<  8;
       __word += __word << 16;
       __asm__ (
-        "rep stosd \n"
+        "rep stos{l|d} \n"
         : "=o"(*(char (*)[])__p), "+D"(__p), "=c"(__dumb)
         : "a"(__word), "c"(__n / 4)
       );
