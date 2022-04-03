@@ -33,17 +33,17 @@ extern "C" {
 #endif
 
 // Make some forward-declarations.
-typedef struct __MCF_thread_control __MCF_thread_control;
-typedef void __MCF_thread_procedure(__MCF_thread_control* __control);
+typedef struct _MCF_thread_control _MCF_thread_control;
+typedef void _MCF_thread_procedure(_MCF_thread_control* __control);
 
-typedef struct __MCF_mutex __MCF_mutex;
-typedef struct __MCF_cond __MCF_cond;
-typedef struct __MCF_once __MCF_once;
+typedef struct _MCF_mutex _MCF_mutex;
+typedef struct _MCF_cond _MCF_cond;
+typedef struct _MCF_once _MCF_once;
 
 // Declare static data, which are defined in 'startup.c'.
-extern void* const __MCF_crt_module;
-extern __MCF_DYNCONST uint32_t __MCF_tls_index;
-extern __MCF_DYNCONST __MCF_thread_control __MCF_main_thread;
+extern void* const _MCF_crt_module;
+extern __MCF_DYNCONST uint32_t _MCF_tls_index;
+extern __MCF_DYNCONST _MCF_thread_control _MCF_main_thread;
 
 #ifdef __cplusplus
 }

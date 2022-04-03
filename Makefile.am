@@ -2,18 +2,18 @@ ACLOCAL_AMFLAGS = -I m4
 NOTHING =
 
 ## Compiler options
-AM_CPPFLAGS = -pipe -pthread -Wall -Wextra -fPIC -DPIC -U_FORTIFY_SOURCE -DDLL_EXPORT  \
-  -D_FILE_OFFSET_BITS=64 -D_POSIX_C_SOURCE=200809 -D_GNU_SOURCE -D_WIN32_WINNT=0x0600  \
+AM_CPPFLAGS = -pipe -Wall -Wextra -U_FORTIFY_SOURCE -D_WIN32_WINNT=0x0600  \
   -f{strict-{aliasing,overflow},merge-all-constants}  \
-  -fno-{math-errno,trapping-math,devirtualize-speculatively,stack-protector}  \
+  -fno-{math-errno,trapping-math,stack-protector}  \
   -Werror={{,sign-}conversion,sign-compare,write-strings,return-type}  \
   -Werror={double-promotion,aggressive-loop-optimizations,missing-declarations}  \
-  -W{invalid-pch,switch-enum,suggest-attribute=noreturn,shadow,missing-field-initializers}  \
+  -W{switch-enum,suggest-attribute=noreturn,shadow,missing-field-initializers}  \
   -Wunused-{function,label,local-typedefs,{,but-set-}{variable,parameter}}
 
-AM_CFLAGS = -std=c99 -Wstrict-prototypes -Wno-old-style-declaration
+AM_CFLAGS = -std=c99 -Wstrict-prototypes -Wno-old-style-declaration \
+  -Werror=implicit-function-declaration
 
-AM_DEFAULT_SOURCE_EXT = .cpp
+AM_DEFAULT_SOURCE_EXT = .c
 LDADD = lib/libmcfgthread.la
 
 ## Initialization

@@ -13,9 +13,9 @@ __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
 extern char __my_image_base_from_gnu_ld
   __asm__("__image_base__");
 
-void* const __MCF_crt_module = &__my_image_base_from_gnu_ld;
-uint32_t __MCF_tls_index = 0;
-__MCF_thread_control __MCF_main_thread = { 0 };
+void* const _MCF_crt_module = &__my_image_base_from_gnu_ld;
+uint32_t _MCF_tls_index = 0;
+_MCF_thread_control _MCF_main_thread = { 0 };
 
 int __stdcall
 __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
@@ -30,21 +30,22 @@ __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
         return false;
 
       // Allocate a TLS slot for this library.
-      __MCF_tls_index = TlsAlloc();
-      if(__MCF_tls_index == TLS_OUT_OF_INDEXES)
+      _MCF_tls_index = TlsAlloc();
+      if(_MCF_tls_index == TLS_OUT_OF_INDEXES)
         DebugBreak();
 
       // Attach the main thread.
-      __MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, false, __MCF_main_thread.__tid);
-      if(__MCF_main_thread.__handle == NULL)
+      _MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, false, _MCF_main_thread.__tid);
+      if(_MCF_main_thread.__handle == NULL)
         DebugBreak();
 
-      __MCF_main_thread.__tid = GetCurrentThreadId();
-      __atomic_store_n(__MCF_main_thread.__nref, -1, __ATOMIC_RELAXED);
-      TlsSetValue(__MCF_tls_index, &__MCF_main_thread);
+      _MCF_main_thread.__tid = GetCurrentThreadId();
+      __atomic_store_n(_MCF_main_thread.__nref, -1, __ATOMIC_RELAXED);
+      TlsSetValue(_MCF_tls_index, &_MCF_main_thread);
     }
     else if(reason == DLL_THREAD_DETACH) {
       // Perform per-thread cleanup.
+      // This is not done at process detach as it is too late.
       __MCF_thread_exit_callback();
     }
     return true;
