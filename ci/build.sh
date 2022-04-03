@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
 # setup
-export CXX=${CXX:-"g++"}
-export CXXFLAGS='-O2 -g0'
+export CC=${CC:-"gcc"}
+export CCFLAGS='-O2 -g0'
 
 _fail=1
 
@@ -22,10 +22,10 @@ do
 done
 
 # build
-${CXX} --version
+${CC} --version
 mkdir -p m4
 autoreconf -ifv
-./configure --disable-silent-rules --enable-debug-checks --disable-static
+./configure --disable-silent-rules --disable-static
 make -j$(nproc)
 
 # test

@@ -7,12 +7,11 @@ AM_CPPFLAGS = -pipe -pthread -Wall -Wextra -fPIC -DPIC -U_FORTIFY_SOURCE -DDLL_E
   -f{strict-{aliasing,overflow},merge-all-constants}  \
   -fno-{math-errno,trapping-math,devirtualize-speculatively,stack-protector}  \
   -Werror={{,sign-}conversion,sign-compare,write-strings,return-type}  \
-  -Werror={double-promotion,aggressive-loop-optimizations}  \
+  -Werror={double-promotion,aggressive-loop-optimizations,missing-declarations}  \
   -W{invalid-pch,switch-enum,suggest-attribute=noreturn,shadow,missing-field-initializers}  \
-  -Wunused-{function,label,local-typedefs,{,but-set-}{variable,parameter}}  \
-   -ffreestanding
+  -Wunused-{function,label,local-typedefs,{,but-set-}{variable,parameter}}
 
-AM_CXXFLAGS = -std=c99 -Wstrict-prototypes -Wno-old-style-declaration
+AM_CFLAGS = -std=c99 -Wstrict-prototypes -Wno-old-style-declaration
 
 AM_DEFAULT_SOURCE_EXT = .cpp
 LDADD = lib/libmcfgthread.la

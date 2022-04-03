@@ -1,0 +1,22 @@
+include_HEADERS +=  \
+  %reldir%/mcfgthread.h  \
+  %reldir%/mcfwin.h  \
+  ${NOTHING}
+
+lib_LTLIBRARIES += lib/libmcfgthread.la
+lib_libmcfgthread_la_SOURCES =  \
+  %reldir%/startup.c  \
+  ${NOTHING}
+
+lib_libmcfgthread_la_CFLAGS =  \
+  ${AM_CFLAGS} -ffreestanding -nostdlib
+
+lib_libmcfgthread_la_LIBADD =  \
+  -lkernel32 -lntdll
+
+lib_libmcfgthread_la_LDFLAGS =  \
+  -Wc,-nostdlib -no-undefined -version-info 1:0  \
+  -Wl,-e__MCF_startup,--subsystem,windows:6.0  \
+  -Wl,--exclude-symbols,__MCF_startup,--export-all-symbols,--exclude-libs,ALL  \
+  -Wl,--disable-runtime-pseudo-reloc,--disable-auto-import  \
+  -Wl,--disable-stdcall-fixup,--enable-auto-image-base
