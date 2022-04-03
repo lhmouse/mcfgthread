@@ -11,6 +11,12 @@
 extern "C" {
 #endif
 
+#ifndef __MCFGTHREAD_MEMORY_C_
+#  define __MCFGTHREAD_MEMORY_INLINE  __MCF_GNU_INLINE
+#else
+#  define __MCFGTHREAD_MEMORY_INLINE
+#endif
+
 // Allocate a block of memory, like `calloc()`.
 void*
 _MCF_malloc0(size_t __size) __MCF_NOEXCEPT __attribute__((__malloc__));
@@ -35,7 +41,7 @@ _MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT;
 void
 _MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT;
 
-// Checks whether two blocks of memory compare equal, like `memcmp() == 0`.
+// Check whether two blocks of memory compare equal, like `memcmp() == 0`.
 bool
 _MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT;
 

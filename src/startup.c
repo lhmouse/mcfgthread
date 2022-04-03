@@ -2,7 +2,7 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#define __MCF_STARTUP  1
+#define __MCFGTHREAD_STARTUP_C_  1
 #include "thread.h"
 #include "win32.h"
 
@@ -21,7 +21,7 @@ int __stdcall
 __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
   {
     if(instance != &__my_image_base_from_gnu_ld)
-      DebugBreak();
+      __MCF_PANIC();
 
     if(reason == DLL_PROCESS_ATTACH) {
       // Fail if this library is loaded dynamically.
@@ -32,14 +32,14 @@ __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
       // Allocate a TLS slot for this library.
       _MCF_tls_index = TlsAlloc();
       if(_MCF_tls_index == TLS_OUT_OF_INDEXES)
-        DebugBreak();
+        __MCF_PANIC();
 
       // Attach the main thread.
+      _MCF_main_thread.__tid = GetCurrentThreadId();
       _MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, false, _MCF_main_thread.__tid);
       if(_MCF_main_thread.__handle == NULL)
-        DebugBreak();
+        __MCF_PANIC();
 
-      _MCF_main_thread.__tid = GetCurrentThreadId();
       __atomic_store_n(_MCF_main_thread.__nref, -1, __ATOMIC_RELAXED);
       TlsSetValue(_MCF_tls_index, &_MCF_main_thread);
     }

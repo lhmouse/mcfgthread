@@ -30,19 +30,20 @@ extern "C" {
 #  define __MCF_NOEXCEPT
 #endif
 
-#ifndef __MCF_STARTUP
-#  define __MCF_DYNCONST  const   // read-only but initialized dynamically
+#ifndef __MCFGTHREAD_STARTUP_C_
+#  define __MCF_DYNCONST    const   // read-only but initialized dynamically
 #else
 #  define __MCF_DYNCONST
 #endif
 
-// Make some forward-declarations.
-typedef struct _MCF_thread_control _MCF_thread_control;
-typedef void _MCF_thread_procedure(_MCF_thread_control* __control);
+#define __MCF_PANIC()       __builtin_trap()
+#define __MCF_GNU_INLINE    extern __inline__ __attribute__((__gnu_inline__))
 
-typedef struct _MCF_mutex _MCF_mutex;
-typedef struct _MCF_cond _MCF_cond;
-typedef struct _MCF_once _MCF_once;
+// Make some forward-declarations.
+typedef struct __MCF_cond _MCF_cond;
+typedef struct __MCF_mutex _MCF_mutex;
+typedef struct __MCF_once _MCF_once;
+typedef struct __MCF_thread_control _MCF_thread_control;
 
 // Declare static data, which are defined in 'startup.c'.
 extern void* const _MCF_crt_module;

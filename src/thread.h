@@ -11,8 +11,16 @@
 extern "C" {
 #endif
 
+#ifndef __MCFGTHREAD_MEMORY_C_
+#  define __MCFGTHREAD_MEMORY_INLINE  __MCF_GNU_INLINE
+#else
+#  define __MCFGTHREAD_MEMORY_INLINE
+#endif
+
 // Define the thread information struct.
-struct _MCF_thread_control
+typedef void _MCF_thread_procedure(_MCF_thread_control* __control);
+
+struct __MCF_thread_control
   {
     int __nref[1];  // atomic reference count
     uint32_t __tid;  // thread id
