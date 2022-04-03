@@ -20,6 +20,10 @@
 extern "C" {
 #endif
 
+#if (0 + __BYTE_ORDER__) != __ORDER_LITTLE_ENDIAN__
+#  error Windows platforms are assumed to be little-endian.
+#endif
+
 #ifdef __cplusplus
 #  define __MCF_NOEXCEPT    throw()
 #else
