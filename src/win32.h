@@ -2,8 +2,8 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#ifndef __MCF_PRECOMPILED_H_
-#define __MCF_PRECOMPILED_H_
+#ifndef __MCF_WIN32_H_
+#define __MCF_WIN32_H_
 
 // Request Windows Vista.
 #ifndef _WIN32_WINNT
@@ -21,4 +21,4 @@
 
 // Declare NTDLL functions that is not available here.
 
-#endif  // __MCF_PRECOMPILED_H_
+#endif  // __MCF_WIN32_H_

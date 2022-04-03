@@ -20,35 +20,32 @@
 extern "C" {
 #endif
 
+#ifdef __cplusplus
+#  define __MCF_NOEXCEPT    throw()
+#else
+#  define __MCF_NOEXCEPT
+#endif
+
 #ifndef __MCF_STARTUP
-
-// User code sees these.
-#  define __MCF_DYNCONST  const   // read-only data, but initialized dynamically
-#  define __MCF_INLINE  extern __inline__ __attribute__((__gnu_inline__))   // `inline` without a definition
-
-#else  // __MCF_STARTUP
-
-// The library itself sees these.
+#  define __MCF_DYNCONST  const   // read-only but initialized dynamically
+#  define __MCF_INLINE  extern __inline__ __attribute__((__gnu_inline__))
+#else
 #  define __MCF_DYNCONST
 #  define __MCF_INLINE  extern
+#endif
 
-#endif  // __MCF_STARTUP
+// Make some forward-declarations.
+typedef struct __MCF_thread_control __MCF_thread_control;
+typedef void __MCF_thread_procedure(__MCF_thread_control* __control);
 
-// Define the thread information struct.
-struct __MCF_mopthread
-  {
-    int __nref[1];   // atomic reference count
-    uint32_t __tid;  // thread id
-    void* __handle;  // win32 thread handle
-    void* __status;  // exit code
-    void* __param;   // startup parameter
-  }
-  typedef __MCF_mopthread_t;
+typedef struct __MCF_mutex __MCF_mutex;
+typedef struct __MCF_cond __MCF_cond;
+typedef struct __MCF_once __MCF_once;
 
 // Define static data.
 extern void* const __MCF_crt_module;
 extern __MCF_DYNCONST uint32_t __MCF_tls_index;
-extern __MCF_DYNCONST __MCF_mopthread_t __MCF_main_thread;
+extern __MCF_DYNCONST __MCF_thread_control __MCF_main_thread;
 
 #ifdef __cplusplus
 }
