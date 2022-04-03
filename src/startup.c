@@ -35,16 +35,17 @@ __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
         DebugBreak();
 
       // Attach the main thread.
-      __MCF_main_thread.__tid = GetCurrentThreadId();
       __MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, false, __MCF_main_thread.__tid);
       if(__MCF_main_thread.__handle == NULL)
         DebugBreak();
+
+      __MCF_main_thread.__tid = GetCurrentThreadId();
+      __atomic_store_n(__MCF_main_thread.__nref, -1, __ATOMIC_RELAXED);
+      TlsSetValue(__MCF_tls_index, &__MCF_main_thread);
     }
     else if(reason == DLL_THREAD_DETACH) {
       // Perform per-thread cleanup.
-      __MCF_thread_control* control = TlsGetValue(__MCF_tls_index);
-      if(control)
-        __MCF_on_thread_detach(control);
+      __MCF_thread_exit_callback();
     }
     return true;
   }

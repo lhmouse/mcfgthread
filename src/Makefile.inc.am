@@ -2,12 +2,14 @@ include_mcfgthreaddir = ${includedir}/mcfgthread
 include_mcfgthread_HEADERS =  \
   %reldir%/fwd.h  \
   %reldir%/win32.h  \
-  %reldir%/thread.c  \
+  %reldir%/memory.h  \
+  %reldir%/thread.h  \
   ${NOTHING}
 
 lib_LTLIBRARIES += lib/libmcfgthread.la
 lib_libmcfgthread_la_SOURCES =  \
   %reldir%/startup.c  \
+  %reldir%/memory.c  \
   %reldir%/thread.c  \
   ${NOTHING}
 

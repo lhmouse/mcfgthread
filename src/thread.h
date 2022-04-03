@@ -2,8 +2,8 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#ifndef __MCF_THREAD_H_
-#define __MCF_THREAD_H_
+#ifndef __MCFGTHREAD_THREAD_H_
+#define __MCFGTHREAD_THREAD_H_
 
 #include "fwd.h"
 
@@ -23,12 +23,13 @@ struct __MCF_thread_control
   };
 
 // This is the per-thread cleanup callback.
-// It is declared here for the sake of completeness. Users are not meant to call it directly.
-void __stdcall
-__MCF_on_thread_detach(__MCF_thread_control* __control) __MCF_NOEXCEPT;
+// It is declared here for the sake of completeness.
+// Users are not meant to call it directly.
+void
+__MCF_thread_exit_callback(void) __MCF_NOEXCEPT;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // __MCF_THREAD_H_
+#endif  // __MCFGTHREAD_THREAD_H_

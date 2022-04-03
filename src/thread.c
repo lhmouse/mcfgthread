@@ -5,7 +5,7 @@
 #include "thread.h"
 #include "win32.h"
 
-void __stdcall
-__MCF_on_thread_detach(__MCF_thread_control* control) __MCF_NOEXCEPT
+void
+__MCF_thread_exit_callback(void) __MCF_NOEXCEPT
   {
   }
