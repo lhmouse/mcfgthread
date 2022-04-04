@@ -48,6 +48,7 @@ typedef struct __MCF_thread_control _MCF_thread_control;
 // Declare static data, which are defined in 'startup.c'.
 extern void* const _MCF_crt_module;
 extern __MCF_DYNCONST uint32_t _MCF_tls_index;
+extern __MCF_DYNCONST double _MCF_perf_frequency_reciprocal;
 extern __MCF_DYNCONST _MCF_thread_control _MCF_main_thread;
 
 #ifdef __cplusplus
