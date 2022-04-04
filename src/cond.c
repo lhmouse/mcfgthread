@@ -120,6 +120,9 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
 static size_t
 do_signal_all_common(void* cond, size_t count)
   {
+    if(count == 0)
+      return 0;
+
     // A call to `ExitProcess()` terminates all the other threads, even if they
     // are waiting for a condition variable. Don't release the keyed event in
     // this case, as it blocks the calling thread infinitely if there is no
