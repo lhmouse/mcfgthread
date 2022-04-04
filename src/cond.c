@@ -7,7 +7,7 @@
 #include "win32.h"
 
 static void
-do_wait_cleanup(_MCF_cond_unlock_callback* unlock_opt, intptr_t unlocked,
+do_wait_cleanup_common(_MCF_cond_unlock_callback* unlock_opt, intptr_t unlocked,
         _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg)
   {
     if(unlock_opt && relock_opt)
@@ -32,7 +32,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
       if(*timeout_opt > 0) {
         // The timeout is the number of milliseconds since 1970-01-01T00:00:00Z.
         // Try converting it into the NT epoch.
-        double delta = (double) *timeout_opt * 1e4 + 116444736e9;
+        double delta = (double) *timeout_opt * 10000 + 116444736000000000;
         if(delta <= timeout_max) {
           use_timeout = true;
           timeout.QuadPart = (int64_t) delta;
@@ -40,7 +40,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
       }
       else if(*timeout_opt < 0) {
         // The timeout is the number of milliseconds to wait.
-        double delta = (double) *timeout_opt * 1e4;
+        double delta = (double) *timeout_opt * 10000;
         if(delta >= -timeout_max) {
           use_timeout = true;
           timeout.QuadPart = (int64_t) delta;
@@ -72,7 +72,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
         __MCF_PANIC();
 
       // After the wakeup, relock the associated mutex, if any.
-      do_wait_cleanup(unlock_opt, unlocked, relock_opt, lock_arg);
+      do_wait_cleanup_common(unlock_opt, unlocked, relock_opt, lock_arg);
       return true;
     }
 
@@ -98,7 +98,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
 
       if(old.__nsleep != 0) {
         // The operation has timed out.
-        do_wait_cleanup(unlock_opt, unlocked, relock_opt, lock_arg);
+        do_wait_cleanup_common(unlock_opt, unlocked, relock_opt, lock_arg);
         return false;
       }
 
@@ -116,7 +116,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
     }
 
     // After the wakeup, relock the associated mutex, if any.
-    do_wait_cleanup(unlock_opt, unlocked, relock_opt, lock_arg);
+    do_wait_cleanup_common(unlock_opt, unlocked, relock_opt, lock_arg);
     return true;
   }
 
@@ -150,9 +150,10 @@ _MCF_cond_signal_some(_MCF_cond* cond, size_t max)
     size_t nwoken;
     _MCF_cond new;
     _MCF_cond old;
-    __atomic_load(cond, &old, __ATOMIC_ACQUIRE);
 
+    __atomic_load(cond, &old, __ATOMIC_ACQUIRE);
     do {
+      new = old;
       nwoken = _MCF_minz(old.__nsleep, max);
       new.__nsleep = (old.__nsleep - nwoken) & __MCF_COND_NS_M;
     }
