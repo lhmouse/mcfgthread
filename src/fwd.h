@@ -45,6 +45,11 @@ typedef struct __MCF_mutex _MCF_mutex;
 typedef struct __MCF_once _MCF_once;
 typedef struct __MCF_thread_control _MCF_thread_control;
 
+// Define some helper functions.
+static __inline__ size_t
+_MCF_minz(size_t __x, size_t __y) __MCF_NOEXCEPT
+  { return __y < __x ? __y : __x;  }
+
 // Declare static data, which are defined in 'startup.c'.
 extern void* const _MCF_crt_module;
 extern __MCF_DYNCONST uint32_t _MCF_tls_index;
