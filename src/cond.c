@@ -95,13 +95,13 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
           return false;
         }
 
-        // ... It is possible that the second thread has already decremented
-        // the counter. If this does take place, the second thread is going to
-        // release the keyed event soon. We must wait again, otherwise we get
-        // a deadlock in the second thread. Again, a third thread could start
-        // waiting for this keyed event before us, so we set the timeout to
-        // zero. If we time out agian, the third thread will have incremented
-        // the number of sleeping threads and we can try decrementing it again.
+        // ... It is possible that a second thread has already decremented the
+        // counter. If this does take place, it is going to release the keyed
+        // event soon. We must wait again, otherwise we get a deadlock in the
+        // second thread. Again, a third thread could start waiting for this
+        // keyed event before us, so we set the timeout to zero. If we time out
+        // agian, the third thread will have incremented the number of sleeping
+        // threads and we can try decrementing it again.
         timeout.QuadPart = 0;
       }
     }
