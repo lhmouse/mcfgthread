@@ -53,7 +53,7 @@ _MCF_cond_init(_MCF_cond* __cond) __MCF_NOEXCEPT
 // callback may be provided regardless of a relock callback, but if a relock
 // callback is provided without an unlock callback, it is not invoked at all.
 //
-// If the `timeout` parameter points to a positive integer, it denotes the wait
+// If the `timeout` argument points to a positive integer, it denotes the wait
 // expiration time, in number of milliseconds since 1970-01-01T00:00:00Z. If it
 // points to a negative integer, the absolute value of it denotes the number of
 // milliseconds to wait. If it points to zero, the function returns immediately
@@ -75,7 +75,6 @@ _MCF_cond_signal_some(_MCF_cond* __cond, size_t __max) __MCF_NOEXCEPT;
 
 size_t
 _MCF_cond_signal_all(_MCF_cond* __cond) __MCF_NOEXCEPT;
-
 
 #ifdef __cplusplus
 }
