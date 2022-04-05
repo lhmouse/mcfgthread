@@ -24,7 +24,6 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
 
       new = old;
       new.__locked = 1;
-
       if(!__atomic_compare_exchange(once, &old, &new,
                       FALSE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
         return -1;
@@ -37,9 +36,9 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     LARGE_INTEGER timeout = { 0 };
     BOOLEAN use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
 
-    int64_t wait_start = 0;
+    int64_t waiting_since = 0;
     if(timeout_opt && (*timeout_opt < 0))
-      wait_start = (int64_t) GetTickCount64();
+      waiting_since = (int64_t) GetTickCount64();
 
     for(;;) {
       // If this flag has not been locked, lock it.
@@ -110,8 +109,8 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
       if(timeout.QuadPart < 0) {
         // If the timeout is relative, it has to be updated.
         int64_t now = (int64_t) GetTickCount64();
-        timeout.QuadPart += (now - wait_start) * 10000;
-        wait_start = now;
+        timeout.QuadPart += (now - waiting_since) * 10000;
+        waiting_since = now;
 
         if(timeout.QuadPart >= 0)
           return -1;
