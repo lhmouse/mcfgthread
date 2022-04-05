@@ -72,6 +72,10 @@ RtlDllShutdownInProgress(void)
   __attribute__((__dllimport__, __nothrow__));
 
 // Declare helper functions here.
+EXCEPTION_DISPOSITION __cdecl
+__MCF_SEH_top_dispatcher(EXCEPTION_RECORD* __record, void* __frame, CONTEXT* __ctx, void* __disp_ctx)
+  __attribute__((__nothrow__));
+
 BOOLEAN
 __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
   __attribute__((__nothrow__));
