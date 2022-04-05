@@ -132,7 +132,7 @@ _MCF_once_abort(_MCF_once* once)
     __atomic_load(once, &old, __ATOMIC_RELAXED);
     do {
       new = old;
-      new.__locked = FALSE;
+      new.__locked = 0;
       wake_one = _MCF_minz(old.__nsleep, 1);
       new.__nsleep = (old.__nsleep - wake_one) & __MCF_ONCE_NS_M;
     }
