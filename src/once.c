@@ -44,7 +44,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     for(;;) {
       // If this flag has not been locked, lock it.
       // Otherwise, allocate a count for the current thread.
-      __atomic_load(once, &old, __ATOMIC_ACQUIRE);
+      __atomic_load(once, &old, __ATOMIC_RELAXED);
       do {
         if(old.__ready != 0)
           return 0;
@@ -78,7 +78,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         // Tell another thread which is going to signal this flat that an old
         // waiter has left by decrementing the number of sleeping threads. But
         // see below...
-        __atomic_load(once, &old, __ATOMIC_ACQUIRE);
+        __atomic_load(once, &old, __ATOMIC_RELAXED);
         do {
           if(old.__nsleep == 0)
             break;
@@ -87,7 +87,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
           new.__nsleep = (old.__nsleep - 1) & __MCF_ONCE_NS_M;
         }
         while(!__atomic_compare_exchange(once, &old, &new,
-                     TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
+                     TRUE, __ATOMIC_RELAXED, __ATOMIC_RELAXED));
 
         if(old.__nsleep != 0) {
           // The operation has timed out.
@@ -129,7 +129,7 @@ _MCF_once_abort(_MCF_once* once)
     _MCF_once new;
     _MCF_once old;
 
-    __atomic_load(once, &old, __ATOMIC_ACQUIRE);
+    __atomic_load(once, &old, __ATOMIC_RELAXED);
     do {
       new = old;
       new.__locked = FALSE;
@@ -137,7 +137,7 @@ _MCF_once_abort(_MCF_once* once)
       new.__nsleep = (old.__nsleep - wake_one) & __MCF_ONCE_NS_M;
     }
     while(!__atomic_compare_exchange(once, &old, &new,
-                 TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
+                 TRUE, __ATOMIC_RELAXED, __ATOMIC_RELAXED));
 
     return __MCF_batch_release_common(once, wake_one);
   }
