@@ -26,7 +26,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
       new.__locked = 1;
 
       if(!__atomic_compare_exchange(once, &old, &new,
-                      false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
+                      FALSE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
         return -1;
 
       // If this flag has been changed from UNLOCKED to LOCKED, return 1 to
@@ -35,7 +35,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     }
 
     LARGE_INTEGER timeout = { 0 };
-    bool use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
+    BOOLEAN use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
 
     int64_t wait_start = 0;
     if(timeout_opt && (*timeout_opt < 0))
@@ -56,7 +56,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
           new.__locked = 1;
       }
       while(!__atomic_compare_exchange(once, &old, &new,
-                   true, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
+                   TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
 
       // If this flag has been changed from UNLOCKED to LOCKED, return 1 to
       // allow initialization of protected resources.
@@ -65,13 +65,13 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
 
       if(!use_timeout) {
         // The wait operation is infinite.
-        status = NtWaitForKeyedEvent(NULL, once, false, NULL);
+        status = NtWaitForKeyedEvent(NULL, once, FALSE, NULL);
         __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
         continue;
       }
 
       // Try waiting.
-      status = NtWaitForKeyedEvent(NULL, once, false, &timeout);
+      status = NtWaitForKeyedEvent(NULL, once, FALSE, &timeout);
       __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
 
       while(status == STATUS_TIMEOUT) {
@@ -87,7 +87,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
           new.__nsleep = (old.__nsleep - 1) & __MCF_ONCE_NS_M;
         }
         while(!__atomic_compare_exchange(once, &old, &new,
-                     true, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
+                     TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
 
         if(old.__nsleep != 0) {
           // The operation has timed out.
@@ -103,7 +103,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         // agian, the third thread will have incremented the number of sleeping
         // threads and we can try decrementing it again.
         LARGE_INTEGER zero = { 0 };
-        status = NtWaitForKeyedEvent(NULL, once, false, &zero);
+        status = NtWaitForKeyedEvent(NULL, once, FALSE, &zero);
         __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
       }
 
@@ -132,12 +132,12 @@ _MCF_once_abort(_MCF_once* once)
     __atomic_load(once, &old, __ATOMIC_ACQUIRE);
     do {
       new = old;
-      new.__locked = false;
+      new.__locked = FALSE;
       wake_one = _MCF_minz(old.__nsleep, 1);
       new.__nsleep = (old.__nsleep - wake_one) & __MCF_ONCE_NS_M;
     }
     while(!__atomic_compare_exchange(once, &old, &new,
-                 true, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
+                 TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
 
     return __MCF_batch_release_common(once, wake_one);
   }

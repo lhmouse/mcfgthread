@@ -58,9 +58,9 @@ _MCF_cond_init(_MCF_cond* __cond) __MCF_NOEXCEPT
 // milliseconds to wait. If it points to zero, the function returns immediately
 // without waiting. If it is null, the function waits indefinitely.
 //
-// Returns `true` if the condition variable has been signaled or there is a
-// spurious wakeup, or `false` if the wait operation has timed out.
-bool
+// Returns 0 if the condition variable has been signaled or there is a spurious
+// wakeup, or -1 if the wait operation has timed out.
+int
 _MCF_cond_wait(_MCF_cond* __cond, _MCF_cond_unlock_callback* __unlock_opt,
         _MCF_cond_relock_callback* __relock_opt, intptr_t __lock_arg,
         const int64_t* __timeout_opt) __MCF_NOEXCEPT;

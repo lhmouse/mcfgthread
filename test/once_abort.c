@@ -41,7 +41,7 @@ thread_proc(void* param)
       __atomic_fetch_add(&num_ready, 1, __ATOMIC_RELAXED);
     }
     else
-      assert(false);
+      assert(0);
 
     printf("thread %d quitting\n", myid);
     return 0;
@@ -50,7 +50,7 @@ thread_proc(void* param)
 int
 main(void)
   {
-    event = CreateEventW(NULL, true, false, NULL);
+    event = CreateEventW(NULL, TRUE, FALSE, NULL);
     assert(event);
 
 #define NTHREADS  64
@@ -60,7 +60,7 @@ main(void)
 
     printf("main waiting\n");
     SetEvent(event);
-    DWORD wait = WaitForMultipleObjects(NTHREADS, threads, true, INFINITE);
+    DWORD wait = WaitForMultipleObjects(NTHREADS, threads, TRUE, INFINITE);
     printf("main wait finished: %d\n", (int)wait);
     assert(wait < WAIT_OBJECT_0 + NTHREADS);
 

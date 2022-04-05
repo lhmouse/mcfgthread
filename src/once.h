@@ -71,7 +71,7 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
     _MCF_once __temp;
     __atomic_load(__once, &__temp, __ATOMIC_ACQUIRE);
-    if(__builtin_expect(__temp.__ready != 0, true))
+    if(__builtin_expect(__temp.__ready, 1))
       return 0;
 
     return _MCF_once_wait_slow(__once, __timeout_opt);

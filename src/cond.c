@@ -14,7 +14,7 @@ do_wait_cleanup_common(_MCF_cond_unlock_callback* unlock_opt, intptr_t unlocked,
       relock_opt(lock_arg, unlocked);
   }
 
-bool
+int
 _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
         _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg,
         const int64_t* timeout_opt)
@@ -24,7 +24,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
     NTSTATUS status;
 
     LARGE_INTEGER timeout = { 0 };
-    bool use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
+    BOOLEAN use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
 
     // Allocate a count for the current thread.
     __atomic_load(cond, &old, __ATOMIC_ACQUIRE);
@@ -33,7 +33,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
       new.__nsleep = (old.__nsleep + 1) & __MCF_COND_NS_M;
     }
     while(!__atomic_compare_exchange(cond, &old, &new,
-                 true, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
+                 TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
 
     // Now, invoke the unlock callback.
     // If another thread attempts to signal this one, it shall block.
@@ -43,14 +43,14 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
 
     if(!use_timeout) {
       // The wait operation is infinite.
-      status = NtWaitForKeyedEvent(NULL, cond, false, NULL);
+      status = NtWaitForKeyedEvent(NULL, cond, FALSE, NULL);
       __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
       do_wait_cleanup_common(unlock_opt, unlocked, relock_opt, lock_arg);
-      return true;
+      return 0;
     }
 
     // Try waiting.
-    status = NtWaitForKeyedEvent(NULL, cond, false, &timeout);
+    status = NtWaitForKeyedEvent(NULL, cond, FALSE, &timeout);
     __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
 
     while(status == STATUS_TIMEOUT) {
@@ -66,12 +66,12 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
         new.__nsleep = (old.__nsleep - 1) & __MCF_COND_NS_M;
       }
       while(!__atomic_compare_exchange(cond, &old, &new,
-                   true, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
+                   TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
 
       if(old.__nsleep != 0) {
         // The operation has timed out.
         do_wait_cleanup_common(unlock_opt, unlocked, relock_opt, lock_arg);
-        return false;
+        return -1;
       }
 
       // ... It is possible that a second thread has already decremented the
@@ -82,13 +82,13 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
       // agian, the third thread will have incremented the number of sleeping
       // threads and we can try decrementing it again.
       LARGE_INTEGER zero = { 0 };
-      status = NtWaitForKeyedEvent(NULL, cond, false, &zero);
+      status = NtWaitForKeyedEvent(NULL, cond, FALSE, &zero);
       __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
     }
 
     // After the wakeup, relock the associated mutex, if any.
     do_wait_cleanup_common(unlock_opt, unlocked, relock_opt, lock_arg);
-    return true;
+    return 0;
   }
 
 size_t
@@ -106,7 +106,7 @@ _MCF_cond_signal_some(_MCF_cond* cond, size_t max)
       new.__nsleep = (old.__nsleep - nwoken) & __MCF_COND_NS_M;
     }
     while(!__atomic_compare_exchange(cond, &old, &new,
-                 true, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
+                 TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
 
     return __MCF_batch_release_common(cond, old.__nsleep);
   }

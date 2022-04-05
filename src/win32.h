@@ -72,40 +72,40 @@ RtlDllShutdownInProgress(void)
   __attribute__((__dllimport__, __nothrow__));
 
 // Declare helper functions here.
-bool
+BOOLEAN
 __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
   __attribute__((__nothrow__));
 
-__MCFGTHREAD_WIN32_INLINE bool
+__MCFGTHREAD_WIN32_INLINE BOOLEAN
 __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
   {
     if(__int64_opt == NULL)
-      return false;  // wait infinitely
+      return FALSE;  // wait infinitely
 
     if(*__int64_opt > 0) {
       // `*__int64_opt` is milliseconds since 1970-01-01T00:00:00Z.
       // Convert it into the NT epoch.
       double __nt_time = 116444736000000000 + (double) *__int64_opt * 10000;
       if(__nt_time > 0x7FFFFFFFFFFFFC00)
-        return false;  // overflowed; assume infinity
+        return FALSE;  // overflowed; assume infinity
 
       __li->QuadPart = (int64_t) __nt_time;
-      return true;
+      return TRUE;
     }
 
     if(*__int64_opt < 0) {
       //  `*__int64_opt` is milliseconds to wait.
       double __nt_time = (double) *__int64_opt * 10000;
       if(__nt_time < -0x7FFFFFFFFFFFFC00)
-        return false;  // overflowed; assume infinity
+        return FALSE;  // overflowed; assume infinity
 
       __li->QuadPart = (int64_t) __nt_time;
-      return true;
+      return TRUE;
     }
 
     // The wait shall time out immediately.
     __li->QuadPart = 0;
-    return true;
+    return TRUE;
   }
 
 size_t

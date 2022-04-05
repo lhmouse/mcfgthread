@@ -9,12 +9,6 @@
 // Other standard library facilities are not available.
 #include <stddef.h>
 #include <stdint.h>
-#include <limits.h>
-#include <float.h>
-#include <string.h>
-#include <stdbool.h>
-#include <stdalign.h>
-#include <uchar.h>
 
 #ifdef __cplusplus
 extern "C" {

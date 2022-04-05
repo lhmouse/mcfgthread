@@ -27,7 +27,7 @@ __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
       // Fail if this library is loaded dynamically.
       // Also note that no cleanup is performed upon `DLL_PROCESS_DETACH`.
       if(reserved == NULL)
-        return false;
+        return FALSE;
 
       // Allocate a TLS slot for this library.
       _MCF_tls_index = TlsAlloc();
@@ -40,7 +40,7 @@ __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
 
       // Attach the main thread.
       _MCF_main_thread.__tid = GetCurrentThreadId();
-      _MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, false, _MCF_main_thread.__tid);
+      _MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, FALSE, _MCF_main_thread.__tid);
       __MCFGTHREAD_CHECK(_MCF_main_thread.__handle);
       __atomic_store_n(_MCF_main_thread.__nref, -1, __ATOMIC_RELEASE);
       TlsSetValue(_MCF_tls_index, &_MCF_main_thread);
@@ -50,5 +50,5 @@ __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
       // This is not done at process detach as it is too late.
       __MCF_thread_exit_callback();
     }
-    return true;
+    return TRUE;
   }
