@@ -3,6 +3,7 @@
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
 #include "../src/mutex.h"
+#include "../src/thread.h"
 #include <assert.h>
 #include <stdio.h>
 #include <windows.h>
@@ -11,12 +12,10 @@ static _MCF_mutex mutex;
 static HANDLE event;
 static int resource = 0;
 
-static DWORD __stdcall
-thread_proc(void* param)
+static void
+thread_proc(_MCF_thread* self)
   {
-    (void)param;
     WaitForSingleObject(event, INFINITE);
-    const int myid = (int) GetCurrentThreadId();
 
     int r = _MCF_mutex_lock(&mutex, NULL);
     assert(r == 0);
@@ -27,8 +26,7 @@ thread_proc(void* param)
     resource = old + 1;
     _MCF_mutex_unlock(&mutex);
 
-    printf("thread %d quitting\n", myid);
-    return 0;
+    printf("thread %d quitting\n", self->__tid);
   }
 
 int
@@ -38,15 +36,18 @@ main(void)
     assert(event);
 
 #define NTHREADS  64
-    HANDLE threads[NTHREADS];
-    for(size_t k = 0;  k < NTHREADS;  ++k)
-      threads[k] = CreateThread(NULL, 0, thread_proc, NULL, 0, NULL);
+    _MCF_thread* threads[NTHREADS];
+    for(size_t k = 0;  k < NTHREADS;  ++k) {
+      threads[k] = _MCF_thread_new(thread_proc, NULL, 0);
+      assert(threads[k]);
+    }
 
     printf("main waiting\n");
     SetEvent(event);
-    DWORD wait = WaitForMultipleObjects(NTHREADS, threads, TRUE, INFINITE);
-    printf("main wait finished: %d\n", (int)wait);
-    assert(wait < WAIT_OBJECT_0 + NTHREADS);
+    for(size_t k = 0;  k < NTHREADS;  ++k) {
+      WaitForSingleObject(threads[k]->__handle, INFINITE);
+      printf("main wait finished: %d\n", (int)k);
+    }
 
     assert(resource == NTHREADS);
   }

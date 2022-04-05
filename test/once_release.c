@@ -3,6 +3,7 @@
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
 #include "../src/once.h"
+#include "../src/thread.h"
 #include <assert.h>
 #include <stdio.h>
 #include <windows.h>
@@ -14,15 +15,13 @@ static int resource = 0;
 static int num_init = 0;   // threads that performed initialization
 static int num_ready = 0;  // threads that saw so but didn't do it
 
-static DWORD __stdcall
-thread_proc(void* param)
+static void
+thread_proc(_MCF_thread* self)
   {
-    (void)param;
     WaitForSingleObject(event, INFINITE);
-    const int myid = (int) GetCurrentThreadId();
 
     int r = _MCF_once_wait(&once, NULL);
-    printf("thread %d got %d\n", myid, r);
+    printf("thread %d got %d\n", self->__tid, r);
     if(r == 1) {
       // Perform initialization.
       int old = resource;
@@ -43,8 +42,7 @@ thread_proc(void* param)
     else
       assert(0);
 
-    printf("thread %d quitting\n", myid);
-    return 0;
+    printf("thread %d quitting\n", self->__tid);
   }
 
 int
@@ -54,15 +52,18 @@ main(void)
     assert(event);
 
 #define NTHREADS  64
-    HANDLE threads[NTHREADS];
-    for(size_t k = 0;  k < NTHREADS;  ++k)
-      threads[k] = CreateThread(NULL, 0, thread_proc, NULL, 0, NULL);
+    _MCF_thread* threads[NTHREADS];
+    for(size_t k = 0;  k < NTHREADS;  ++k) {
+      threads[k] = _MCF_thread_new(thread_proc, NULL, 0);
+      assert(threads[k]);
+    }
 
     printf("main waiting\n");
     SetEvent(event);
-    DWORD wait = WaitForMultipleObjects(NTHREADS, threads, TRUE, INFINITE);
-    printf("main wait finished: %d\n", (int)wait);
-    assert(wait < WAIT_OBJECT_0 + NTHREADS);
+    for(size_t k = 0;  k < NTHREADS;  ++k) {
+      WaitForSingleObject(threads[k]->__handle, INFINITE);
+      printf("main wait finished: %d\n", (int)k);
+    }
 
     assert(resource == 1);
     assert(num_init == 1);
