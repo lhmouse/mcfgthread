@@ -23,13 +23,12 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
 
       new = old;
       new.__locked = 1;
-      if(!__atomic_compare_exchange(once, &old, &new,
+      if(__atomic_compare_exchange(once, &old, &new,
                       FALSE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
-        return -1;
+        return 1;
 
-      // If this flag has been changed from UNLOCKED to LOCKED, return 1 to
-      // allow initialization of protected resources.
-      return 1;
+      // Report the operation has timed out.
+      return -1;
     }
 
     LARGE_INTEGER timeout = { 0 };
