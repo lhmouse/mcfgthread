@@ -10,7 +10,7 @@ int64_t
 _MCF_utc_now(void)
   {
     // Get the system time in NT epoch.
-    // This is the number of 10,000,000th second since 1601-01-01T00:00:00Z.
+    // This is the number of 10^-7s since 1601-01-01T00:00:00Z.
     FILETIME ft;
     GetSystemTimeAsFileTime(&ft);
 
@@ -19,7 +19,9 @@ _MCF_utc_now(void)
     ui.HighPart = ft.dwHighDateTime;
 
     // Convert it into Unix epoch in milliseconds.
-    return (int64_t) (((double)(int64_t) ui.QuadPart - 116444736e9) / 1e4);
+    double nt_time = (double)(int64_t) ui.QuadPart;
+    double unix_time = (nt_time - 116444736000000000) / 10000;
+    return (int64_t) unix_time;
   }
 
 int64_t
