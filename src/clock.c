@@ -2,8 +2,8 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#define __MCFGTHREAD_TIME_C_  1
-#include "time.h"
+#define __MCFGTHREAD_CLOCK_C_  1
+#include "clock.h"
 #include "win32.h"
 
 int64_t

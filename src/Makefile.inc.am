@@ -3,7 +3,7 @@ include_mcfgthread_HEADERS =  \
   %reldir%/fwd.h  \
   %reldir%/win32.h  \
   %reldir%/memory.h  \
-  %reldir%/time.h  \
+  %reldir%/clock.h  \
   %reldir%/mutex.h  \
   %reldir%/cond.h  \
   %reldir%/once.h  \
@@ -14,7 +14,7 @@ lib_LTLIBRARIES += lib/libmcfgthread.la
 lib_libmcfgthread_la_SOURCES =  \
   %reldir%/startup.c  \
   %reldir%/memory.c  \
-  %reldir%/time.c  \
+  %reldir%/clock.c  \
   %reldir%/mutex.c  \
   %reldir%/cond.c  \
   %reldir%/once.c  \

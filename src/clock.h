@@ -2,8 +2,8 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#ifndef __MCFGTHREAD_TIME_H_
-#define __MCFGTHREAD_TIME_H_
+#ifndef __MCFGTHREAD_CLOCK_H_
+#define __MCFGTHREAD_CLOCK_H_
 
 #include "fwd.h"
 
@@ -11,10 +11,10 @@
 extern "C" {
 #endif
 
-#ifndef __MCFGTHREAD_TIME_C_
-#  define __MCFGTHREAD_TIME_INLINE  __MCF_GNU_INLINE
+#ifndef __MCFGTHREAD_CLOCK_C_
+#  define __MCFGTHREAD_CLOCK_INLINE  __MCF_GNU_INLINE
 #else
-#  define __MCFGTHREAD_TIME_INLINE
+#  define __MCFGTHREAD_CLOCK_INLINE
 #endif
 
 // Get the number of milliseconds since 1970-01-01T00:00:00Z.
@@ -35,4 +35,4 @@ _MCF_perf_counter(void) __MCF_NOEXCEPT;
 }
 #endif
 
-#endif  // __MCFGTHREAD_MEMORY_H_
+#endif  // __MCFGTHREAD_CLOCK_H_
