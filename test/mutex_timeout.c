@@ -2,13 +2,13 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#include "../src/once.h"
+#include "../src/mutex.h"
 #include "../src/clock.h"
 #include <assert.h>
 #include <stdio.h>
 #include <windows.h>
 
-static _MCF_once once;
+static _MCF_mutex mutex;
 
 int
 main(void)
@@ -19,15 +19,15 @@ main(void)
 
     now = _MCF_perf_counter();
     timeout = _MCF_utc_now() + 1100;  // absolute
-    r = _MCF_once_wait(&once, &timeout);  // lock it
-    assert(r == 1);
+    r = _MCF_mutex_lock(&mutex, &timeout);  // lock it
+    assert(r == 0);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
     assert(delta <= 100);
 
     now = _MCF_perf_counter();
     timeout = _MCF_utc_now() + 1100;  // absolute
-    r = _MCF_once_wait(&once, &timeout);
+    r = _MCF_mutex_lock(&mutex, &timeout);
     assert(r == -1);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
@@ -36,7 +36,7 @@ main(void)
 
     now = _MCF_perf_counter();
     timeout = -1100;  // relative
-    r = _MCF_once_wait(&once, &timeout);
+    r = _MCF_mutex_lock(&mutex, &timeout);
     assert(r == -1);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);

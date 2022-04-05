@@ -3,4 +3,8 @@ check_PROGRAMS +=  \
   %reldir%/once_release.test  \
   %reldir%/once_abort.test  \
   %reldir%/once_timeout.test  \
+  %reldir%/mutex_nspin_fail.test  \
+  %reldir%/mutex_zero_timeout.test  \
+  %reldir%/mutex_timeout.test  \
+  %reldir%/mutex.test  \
   ${NOTHING}
