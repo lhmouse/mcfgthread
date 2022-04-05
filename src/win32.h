@@ -129,8 +129,7 @@ __MCF_batch_release_common(const void* __key, size_t __count)
       // Release a thread. This operation shall block until the target
       // thread has received the notification.
       NTSTATUS __status = NtReleaseKeyedEvent(NULL, __key, FALSE, NULL);
-      if(!NT_SUCCESS(__status))
-        __MCF_PANIC();
+      __MCFGTHREAD_ASSERT(NT_SUCCESS(__status));
     }
 
     // Return the number of threads that have been woken.

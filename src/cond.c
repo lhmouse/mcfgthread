@@ -44,18 +44,14 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
     if(!use_timeout) {
       // The wait operation is infinite.
       status = NtWaitForKeyedEvent(NULL, cond, false, NULL);
-      if(!NT_SUCCESS(status))
-        __MCF_PANIC();
-
-      // After the wakeup, relock the associated mutex, if any.
+      __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
       do_wait_cleanup_common(unlock_opt, unlocked, relock_opt, lock_arg);
       return true;
     }
 
     // Try waiting.
     status = NtWaitForKeyedEvent(NULL, cond, false, &timeout);
-    if(!NT_SUCCESS(status))
-      __MCF_PANIC();
+    __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
 
     while(status == STATUS_TIMEOUT) {
       // Tell another thread which is going to signal this condition variable
@@ -87,8 +83,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
       // threads and we can try decrementing it again.
       LARGE_INTEGER zero = { 0 };
       status = NtWaitForKeyedEvent(NULL, cond, false, &zero);
-      if(!NT_SUCCESS(status))
-        __MCF_PANIC();
+      __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
     }
 
     // After the wakeup, relock the associated mutex, if any.

@@ -24,6 +24,9 @@ extern "C" {
 #  error Windows platforms are assumed to be little-endian.
 #endif
 
+#define __MCF_GNU_INLINE       extern __inline__ __attribute__((__gnu_inline__))
+#define __MCFGTHREAD_CHECK(...)   ((__VA_ARGS__) ? (void) 0 : __builtin_trap())
+
 #ifdef __cplusplus
 #  define __MCF_NOEXCEPT    throw()
 #else
@@ -36,8 +39,11 @@ extern "C" {
 #  define __MCF_DYNCONST
 #endif
 
-#define __MCF_PANIC()       __builtin_trap()
-#define __MCF_GNU_INLINE    extern __inline__ __attribute__((__gnu_inline__))
+#ifdef __MCF_DEBUG
+#  define __MCFGTHREAD_ASSERT(...)  __MCFGTHREAD_CHECK(__VA_ARGS__))
+#else
+#  define __MCFGTHREAD_ASSERT(...)  ((void) (__VA_ARGS__))
+#endif
 
 // Make some forward-declarations.
 typedef struct __MCF_cond _MCF_cond;

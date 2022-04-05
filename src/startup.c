@@ -21,8 +21,7 @@ _MCF_thread_control _MCF_main_thread = { 0 };
 int __stdcall
 __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
   {
-    if(instance != &__my_image_base_from_gnu_ld)
-      __MCF_PANIC();
+    __MCFGTHREAD_ASSERT(instance == &__my_image_base_from_gnu_ld);
 
     if(reason == DLL_PROCESS_ATTACH) {
       // Fail if this library is loaded dynamically.
@@ -31,28 +30,19 @@ __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
         return false;
 
       // Allocate a TLS slot for this library.
-      DWORD tls = TlsAlloc();
-      if(tls == TLS_OUT_OF_INDEXES)
-        __MCF_PANIC();
-
-      _MCF_tls_index = tls;
+      _MCF_tls_index = TlsAlloc();
+      __MCFGTHREAD_CHECK(_MCF_tls_index != TLS_OUT_OF_INDEXES);
 
       // Get the performance counter resolution.
-      LARGE_INTEGER li;
-      if(QueryPerformanceFrequency(&li) == false)
-        __MCF_PANIC();
-
-      _MCF_perf_frequency_reciprocal = 1000 / (double) li.QuadPart;
+      LARGE_INTEGER freq;
+      __MCFGTHREAD_CHECK(QueryPerformanceFrequency(&freq));
+      _MCF_perf_frequency_reciprocal = 1000 / (double) freq.QuadPart;
 
       // Attach the main thread.
-      DWORD tid = GetCurrentThreadId();
-      HANDLE hthr = OpenThread(THREAD_ALL_ACCESS, false, tid);
-      if(hthr == NULL)
-        __MCF_PANIC();
-
-      __atomic_store_n(_MCF_main_thread.__nref, -1, __ATOMIC_RELAXED);
-      _MCF_main_thread.__tid = tid;
-      _MCF_main_thread.__handle = hthr;
+      _MCF_main_thread.__tid = GetCurrentThreadId();
+      _MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, false, _MCF_main_thread.__tid);
+      __MCFGTHREAD_CHECK(_MCF_main_thread.__handle);
+      __atomic_store_n(_MCF_main_thread.__nref, -1, __ATOMIC_RELEASE);
       TlsSetValue(_MCF_tls_index, &_MCF_main_thread);
     }
     else if(reason == DLL_THREAD_DETACH) {

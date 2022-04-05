@@ -66,17 +66,13 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
       if(!use_timeout) {
         // The wait operation is infinite.
         status = NtWaitForKeyedEvent(NULL, once, false, NULL);
-        if(!NT_SUCCESS(status))
-          __MCF_PANIC();
-
-        // Recheck now.
+        __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
         continue;
       }
 
       // Try waiting.
       status = NtWaitForKeyedEvent(NULL, once, false, &timeout);
-      if(!NT_SUCCESS(status))
-        __MCF_PANIC();
+      __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
 
       while(status == STATUS_TIMEOUT) {
         // Tell another thread which is going to signal this flat that an old
@@ -108,8 +104,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         // threads and we can try decrementing it again.
         LARGE_INTEGER zero = { 0 };
         status = NtWaitForKeyedEvent(NULL, once, false, &zero);
-        if(!NT_SUCCESS(status))
-          __MCF_PANIC();
+        __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
       }
 
       if(timeout.QuadPart < 0) {

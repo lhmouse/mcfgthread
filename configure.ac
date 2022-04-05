@@ -12,5 +12,10 @@ LT_INIT([disable-static win32-dll])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 AM_SILENT_RULES([yes])
 
+## Check for assertions
+AC_ARG_ENABLE([debug-checks], AS_HELP_STRING([--enable-debug-checks], [enable assertions]))
+AM_CONDITIONAL([enable_debug_checks], [test "${enable_debug_checks}" == "yes"])
+AM_COND_IF([enable_debug_checks], [AC_DEFINE([__MCF_DEBUG], 1, [Define to 1 to enable assertions])])
+
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
