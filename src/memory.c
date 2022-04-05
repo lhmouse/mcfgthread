@@ -42,7 +42,7 @@ _MCF_mzero(void* dst, size_t size)
     RtlZeroMemory(dst, size);
   }
 
-int
+unsigned char
 _MCF_mequal(const void* src, const void* cmp, size_t size)
   {
     return RtlCompareMemory(src, cmp, size) == size;

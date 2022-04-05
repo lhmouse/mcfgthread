@@ -43,7 +43,7 @@ _MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT;
 
 // Check whether two blocks of memory compare equal, like `memcmp() == 0`.
 // The result is a boolean value.
-int
+unsigned char
 _MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT;
 
 #ifdef __cplusplus
