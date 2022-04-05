@@ -9,8 +9,7 @@
 int
 _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
   {
-    _MCF_once new;
-    _MCF_once old;
+    _MCF_once new, old;
     NTSTATUS status;
 
     if(timeout_opt && (*timeout_opt == 0)) {
@@ -125,8 +124,7 @@ _MCF_once_abort(_MCF_once* once)
   {
     // Clear the `__locked` field and release at most one thread, if any.
     size_t wake_one;
-    _MCF_once new;
-    _MCF_once old;
+    _MCF_once new, old;
 
     __atomic_load(once, &old, __ATOMIC_RELAXED);
     do {

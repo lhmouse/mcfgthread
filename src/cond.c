@@ -19,8 +19,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
         _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg,
         const int64_t* timeout_opt)
   {
-    _MCF_cond new;
-    _MCF_cond old;
+    _MCF_cond new, old;
     NTSTATUS status;
 
     LARGE_INTEGER timeout = { 0 };
@@ -96,8 +95,7 @@ _MCF_cond_signal_some(_MCF_cond* cond, size_t max)
   {
     // Get the number of threads to wake up.
     size_t nwoken;
-    _MCF_cond new;
-    _MCF_cond old;
+    _MCF_cond new, old;
 
     __atomic_load(cond, &old, __ATOMIC_RELAXED);
     do {
