@@ -33,6 +33,8 @@ extern "C" {
 #  define __MCFGTHREAD_WIN32_INLINE
 #endif
 
+#define __MCF_SET_ERROR_AND_RETURN(r, ...)  return ((void) SetLastError(r)), __VA_ARGS__
+
 // Undefine macros that redirect to standard functions.
 // This ensures we call the ones from KERNEL32.
 #undef RtlCopyMemory

@@ -44,9 +44,9 @@ extern "C" {
 typedef struct __MCF_cond _MCF_cond;
 typedef struct __MCF_mutex _MCF_mutex;
 typedef struct __MCF_once _MCF_once;
-typedef struct __MCF_thread_control _MCF_thread_control;
+typedef struct __MCF_thread _MCF_thread;
 
-typedef void _MCF_thread_procedure(_MCF_thread_control* __control);
+typedef void _MCF_thread_procedure(_MCF_thread* __thrd);
 typedef void _MCF_tls_destructor(void* __data);
 
 // Define some helper functions.
@@ -58,7 +58,7 @@ _MCF_minz(size_t __x, size_t __y) __MCF_NOEXCEPT
 extern void* const _MCF_crt_module;
 extern __MCF_DYNCONST uint32_t _MCF_tls_index;
 extern __MCF_DYNCONST double _MCF_perf_frequency_reciprocal;
-extern __MCF_DYNCONST _MCF_thread_control _MCF_main_thread;
+extern __MCF_DYNCONST _MCF_thread _MCF_main_thread;
 
 #ifdef __cplusplus
 }
