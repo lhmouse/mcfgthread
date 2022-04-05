@@ -21,6 +21,12 @@ _MCF_msize(void* ptr)
 void
 _MCF_mfree(void* ptr)
   {
+    if(!ptr)
+      return;
+
+#ifdef __MCF_DEBUG
+    RtlFillMemory(ptr, _MCF_msize(ptr), 0xFE);
+#endif
     HeapFree(GetProcessHeap(), 0, ptr);
   }
 
