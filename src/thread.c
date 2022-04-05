@@ -7,11 +7,6 @@
 #include "memory.h"
 #include "win32.h"
 
-void
-__MCF_thread_exit_callback(void)
-  {
-  }
-
 __attribute__((__force_align_arg_pointer__))
 static DWORD __stdcall
 do_win32_thread_thunk(LPVOID param)
@@ -108,7 +103,7 @@ _MCF_thread_drop_ref(_MCF_thread* thrd)
 void
 _MCF_thread_exit(intptr_t exit_code)
   {
-    _MCF_thread* self = TlsGetValue(_MCF_tls_index);
+    _MCF_thread* const self = TlsGetValue(_MCF_tls_index);
     if(self)
       self->__exit_code = exit_code;
 
@@ -120,4 +115,16 @@ _MCF_thread*
 _MCF_thread_self(void)
   {
     return TlsGetValue(_MCF_tls_index);
+  }
+
+void
+__MCF_thread_exit_callback(void)
+  {
+    _MCF_thread* const self = TlsGetValue(_MCF_tls_index);
+    if(!self)
+      return;
+
+   // Detach the thread.
+   TlsSetValue(_MCF_tls_index, NULL);
+    _MCF_thread_drop_ref(self);
   }
