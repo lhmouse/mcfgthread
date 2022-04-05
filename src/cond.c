@@ -27,13 +27,13 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
     BOOLEAN use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
 
     // Allocate a count for the current thread.
-    __atomic_load(cond, &old, __ATOMIC_ACQUIRE);
+    __atomic_load(cond, &old, __ATOMIC_RELAXED);
     do {
       new = old;
       new.__nsleep = (old.__nsleep + 1) & __MCF_COND_NS_M;
     }
     while(!__atomic_compare_exchange(cond, &old, &new,
-                 TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
+                 TRUE, __ATOMIC_RELAXED, __ATOMIC_RELAXED));
 
     // Now, invoke the unlock callback.
     // If another thread attempts to signal this one, it shall block.
@@ -57,7 +57,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
       // Tell another thread which is going to signal this condition variable
       // that an old waiter has left by decrementing the number of sleeping
       // threads. But see below...
-      __atomic_load(cond, &old, __ATOMIC_ACQUIRE);
+      __atomic_load(cond, &old, __ATOMIC_RELAXED);
       do {
         if(old.__nsleep == 0)
           break;
@@ -66,7 +66,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
         new.__nsleep = (old.__nsleep - 1) & __MCF_COND_NS_M;
       }
       while(!__atomic_compare_exchange(cond, &old, &new,
-                   TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
+                   TRUE, __ATOMIC_RELAXED, __ATOMIC_RELAXED));
 
       if(old.__nsleep != 0) {
         // The operation has timed out.
@@ -99,14 +99,14 @@ _MCF_cond_signal_some(_MCF_cond* cond, size_t max)
     _MCF_cond new;
     _MCF_cond old;
 
-    __atomic_load(cond, &old, __ATOMIC_ACQUIRE);
+    __atomic_load(cond, &old, __ATOMIC_RELAXED);
     do {
       new = old;
       nwoken = _MCF_minz(old.__nsleep, max);
       new.__nsleep = (old.__nsleep - nwoken) & __MCF_COND_NS_M;
     }
     while(!__atomic_compare_exchange(cond, &old, &new,
-                 TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
+                 TRUE, __ATOMIC_RELAXED, __ATOMIC_RELAXED));
 
     return __MCF_batch_release_common(cond, old.__nsleep);
   }
@@ -117,7 +117,7 @@ _MCF_cond_signal_all(_MCF_cond* cond)
     // Swap out all data.
     _MCF_cond new = { 0 };
     _MCF_cond old;
-    __atomic_exchange(cond, &new, &old, __ATOMIC_ACQ_REL);
+    __atomic_exchange(cond, &new, &old, __ATOMIC_RELAXED);
 
     return __MCF_batch_release_common(cond, old.__nsleep);
   }
