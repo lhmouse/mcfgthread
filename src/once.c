@@ -104,17 +104,16 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
       }
 
-      if(timeout.QuadPart < 0) {
-        // If the timeout is relative, it has to be updated.
-        int64_t now = (int64_t) GetTickCount64();
-        timeout.QuadPart += (now - waiting_since) * 10000;
-        waiting_since = now;
-
-        if(timeout.QuadPart >= 0)
-          return -1;
-      }
-
       // We have got notified. Recheck now.
+      if(timeout.QuadPart >= 0)
+        continue;
+
+      // If the timeout is relative, it has to be updated.
+      int64_t now = (int64_t) GetTickCount64();
+      timeout.QuadPart += (now - waiting_since) * 10000;
+      waiting_since = now;
+      if(timeout.QuadPart >= 0)
+        return -1;
     }
   }
 
