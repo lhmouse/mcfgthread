@@ -174,7 +174,7 @@ do_signal_all_common(void* once, size_t count)
 size_t
 _MCF_once_abort(_MCF_once* once)
   {
-    // Clear the `__ready` field and release at most one thread, if any.
+    // Clear the `__locked` field and release at most one thread, if any.
     size_t wake_one;
     _MCF_once new;
     _MCF_once old;
