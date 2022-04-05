@@ -9,6 +9,7 @@
 // Other standard library facilities are not available.
 #include <stddef.h>
 #include <stdint.h>
+#include <stdalign.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,7 +37,7 @@ extern "C" {
 #ifdef __MCF_DEBUG
 #  define __MCFGTHREAD_ASSERT(...)  __MCFGTHREAD_CHECK(__VA_ARGS__))
 #else
-#  define __MCFGTHREAD_ASSERT(...)  ((void) (__VA_ARGS__))
+#  define __MCFGTHREAD_ASSERT(...)  ((__VA_ARGS__) ? (void) 0 : __builtin_unreachable())
 #endif
 
 // Make some forward-declarations.
@@ -44,6 +45,9 @@ typedef struct __MCF_cond _MCF_cond;
 typedef struct __MCF_mutex _MCF_mutex;
 typedef struct __MCF_once _MCF_once;
 typedef struct __MCF_thread_control _MCF_thread_control;
+
+typedef void _MCF_thread_procedure(_MCF_thread_control* __control);
+typedef void _MCF_tls_destructor(void* __data);
 
 // Define some helper functions.
 static __inline__ size_t
