@@ -48,10 +48,10 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
           return 0;
 
         new = old;
-        if(old.__locked != 0)
-          new.__nsleep = (old.__nsleep + 1) & __MCF_ONCE_NS_M;
-        else
+        if(old.__locked == 0)
           new.__locked = 1;
+        else
+          new.__nsleep = (old.__nsleep + 1) & __MCF_ONCE_NS_M;
       }
       while(!__atomic_compare_exchange(once, &old, &new,
                         TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
