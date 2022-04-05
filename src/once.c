@@ -14,7 +14,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     NTSTATUS status;
 
     if(timeout_opt && (*timeout_opt == 0)) {
-      // If the timeout is zero, check whether this flag can be locked only.
+      // If the timeout is zero, check whether it can be locked immediately.
       __atomic_load(once, &old, __ATOMIC_ACQUIRE);
       if(old.__ready != 0)
         return 0;
