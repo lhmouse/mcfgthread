@@ -51,7 +51,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         if(old.__locked == 0)
           new.__locked = 1;
         else
-          new.__nsleep = (old.__nsleep + 1) & __MCF_ONCE_NS_M;
+          new.__nsleep = (old.__nsleep + 1) & __MCF_ONCE_NSLEEP_M;
       }
       while(!__atomic_compare_exchange(once, &old, &new,
                         TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
@@ -82,7 +82,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
             break;
 
           new = old;
-          new.__nsleep = (old.__nsleep - 1) & __MCF_ONCE_NS_M;
+          new.__nsleep = (old.__nsleep - 1) & __MCF_ONCE_NSLEEP_M;
         }
         while(!__atomic_compare_exchange(once, &old, &new,
                           TRUE, __ATOMIC_RELAXED, __ATOMIC_RELAXED));
@@ -131,7 +131,7 @@ _MCF_once_abort(_MCF_once* once)
       new = old;
       new.__locked = 0;
       wake_one = _MCF_minz(old.__nsleep, 1);
-      new.__nsleep = (old.__nsleep - wake_one) & __MCF_ONCE_NS_M;
+      new.__nsleep = (old.__nsleep - wake_one) & __MCF_ONCE_NSLEEP_M;
     }
     while(!__atomic_compare_exchange(once, &old, &new,
                       TRUE, __ATOMIC_RELAXED, __ATOMIC_RELAXED));

@@ -25,7 +25,7 @@ struct __MCF_once
     uintptr_t __locked : 1;
 
     uintptr_t __nsleep : __INTPTR_WIDTH__ - 9;  // number of sleeping threads
-#define __MCF_ONCE_NS_M  (UINTPTR_MAX >> 9)
+#define __MCF_ONCE_NSLEEP_M  (UINTPTR_MAX >> 9)
   };
 
 // Initializes a once-initialization flag dynamically.

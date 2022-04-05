@@ -24,7 +24,7 @@ struct __MCF_cond
     uintptr_t __reserved : 8;
 
     uintptr_t __nsleep : __INTPTR_WIDTH__ - 8;  // number of sleeping threads
-#define __MCF_COND_NS_M  (UINTPTR_MAX >> 8)
+#define __MCF_COND_NSLEEP_M  (UINTPTR_MAX >> 8)
   };
 
 // See `_MCF_cond_wait()` for details about these callbacks.

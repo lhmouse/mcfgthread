@@ -29,7 +29,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
     __atomic_load(cond, &old, __ATOMIC_RELAXED);
     do {
       new = old;
-      new.__nsleep = (old.__nsleep + 1) & __MCF_COND_NS_M;
+      new.__nsleep = (old.__nsleep + 1) & __MCF_COND_NSLEEP_M;
     }
     while(!__atomic_compare_exchange(cond, &old, &new,
                       TRUE, __ATOMIC_RELAXED, __ATOMIC_RELAXED));
@@ -62,7 +62,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
           break;
 
         new = old;
-        new.__nsleep = (old.__nsleep - 1) & __MCF_COND_NS_M;
+        new.__nsleep = (old.__nsleep - 1) & __MCF_COND_NSLEEP_M;
       }
       while(!__atomic_compare_exchange(cond, &old, &new,
                         TRUE, __ATOMIC_RELAXED, __ATOMIC_RELAXED));
@@ -101,7 +101,7 @@ _MCF_cond_signal_some(_MCF_cond* cond, size_t max)
     do {
       new = old;
       nwoken = _MCF_minz(old.__nsleep, max);
-      new.__nsleep = (old.__nsleep - nwoken) & __MCF_COND_NS_M;
+      new.__nsleep = (old.__nsleep - nwoken) & __MCF_COND_NSLEEP_M;
     }
     while(!__atomic_compare_exchange(cond, &old, &new,
                       TRUE, __ATOMIC_RELAXED, __ATOMIC_RELAXED));
