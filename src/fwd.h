@@ -5,6 +5,10 @@
 #ifndef __MCFGTHREAD_FWD_H_
 #define __MCFGTHREAD_FWD_H_
 
+#ifdef HAVE_CONFIG_H
+#  include <config.h>
+#endif
+
 // Import types about the system ABI.
 // Other standard library facilities are not available.
 #include <stddef.h>
@@ -35,7 +39,7 @@ extern "C" {
 #endif
 
 #ifdef __MCF_DEBUG
-#  define __MCFGTHREAD_ASSERT(...)  __MCFGTHREAD_CHECK(__VA_ARGS__))
+#  define __MCFGTHREAD_ASSERT(...)  __MCFGTHREAD_CHECK(__VA_ARGS__)
 #else
 #  define __MCFGTHREAD_ASSERT(...)  ((__VA_ARGS__) ? (void) 0 : __builtin_unreachable())
 #endif
