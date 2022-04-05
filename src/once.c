@@ -9,40 +9,11 @@
 int
 _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
   {
-    const double timeout_max = 0x7FFFFFFFFFFFFC00;
-    LARGE_INTEGER timeout = { 0 };
-    int64_t wait_start = 0;
-    bool use_timeout = false;
-
     _MCF_once new;
     _MCF_once old;
     NTSTATUS status;
 
-    // Initialize the timeout value.
-    if(timeout_opt) {
-      if(*timeout_opt > 0) {
-        // The timeout is the number of milliseconds since 1970-01-01T00:00:00Z.
-        // Try converting it into the NT epoch.
-        double delta = (double) *timeout_opt * 10000 + 116444736000000000;
-        if(delta <= timeout_max) {
-          use_timeout = true;
-          timeout.QuadPart = (int64_t) delta;
-        }
-      }
-      else if(*timeout_opt < 0) {
-        // The timeout is the number of milliseconds to wait.
-        double delta = (double) *timeout_opt * 10000;
-        if(delta >= -timeout_max) {
-          use_timeout = true;
-          timeout.QuadPart = (int64_t) delta;
-          wait_start = (int64_t) GetTickCount64();
-        }
-      }
-      else
-        use_timeout = true;
-    }
-
-    if(use_timeout && (timeout.QuadPart == 0)) {
+    if(timeout_opt && (*timeout_opt == 0)) {
       // If the timeout is zero, check whether this flag can be locked only.
       __atomic_load(once, &old, __ATOMIC_ACQUIRE);
       if(old.__ready != 0)
@@ -62,6 +33,13 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
       // allow initialization of protected resources.
       return 1;
     }
+
+    LARGE_INTEGER timeout = { 0 };
+    bool use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
+
+    int64_t wait_start = 0;
+    if(timeout_opt && (*timeout_opt < 0))
+      wait_start = (int64_t) GetTickCount64();
 
     for(;;) {
       // If this flag has not been locked, lock it.
@@ -148,29 +126,6 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     }
   }
 
-static size_t
-do_signal_all_common(void* once, size_t count)
-  {
-    if(count == 0)
-      return 0;
-
-    // A call to `ExitProcess()` terminates all the other threads, even if they
-    // are waiting. Don't release the keyed event in this case, as it blocks
-    // the calling thread infinitely if there is no thread to wake up.
-    // See <https://github.com/lhmouse/mcfgthread/issues/21>.
-    if(RtlDllShutdownInProgress())
-      return 0;
-
-    for(size_t k = 0;  k != count;  ++k) {
-      // Release a thread. This operation shall block until the target thread
-      // has received the notification.
-      NTSTATUS status = NtReleaseKeyedEvent(NULL, once, false, NULL);
-      if(!NT_SUCCESS(status))
-        __MCF_PANIC();
-    }
-    return count;
-  }
-
 size_t
 _MCF_once_abort(_MCF_once* once)
   {
@@ -189,7 +144,7 @@ _MCF_once_abort(_MCF_once* once)
     while(!__atomic_compare_exchange(once, &old, &new,
                  true, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
 
-    return do_signal_all_common(once, wake_one);
+    return __MCF_batch_release_common(once, wake_one);
   }
 
 size_t
@@ -200,5 +155,5 @@ _MCF_once_release(_MCF_once* once)
     _MCF_once old;
     __atomic_exchange(once, &new, &old, __ATOMIC_ACQ_REL);
 
-    return do_signal_all_common(once, old.__nsleep);
+    return __MCF_batch_release_common(once, old.__nsleep);
   }
