@@ -6,6 +6,7 @@
 #define __MCFGTHREAD_THREAD_H_
 
 #include "fwd.h"
+#include "dtorque.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -23,8 +24,11 @@ struct __MCF_thread
     volatile int __nref[1];  // atomic reference count
     uint32_t __tid;  // thread id
     void* __handle;  // win32 thread handle
-    intptr_t __exit_code;
+
+    __MCF_dtorque __atexit_queue;  // for `__cxa_thread_atexit()`
+
     _MCF_thread_procedure* __proc;  // user-defined thread procedure
+    intptr_t __exit_code;
     alignas(16) char __data[0];  // user-defined data
   }
   typedef _MCF_thread;

@@ -8,4 +8,6 @@ check_PROGRAMS +=  \
   %reldir%/mutex_timeout.test  \
   %reldir%/mutex.test  \
   %reldir%/cond_timeout.test  \
+  %reldir%/dtorque_dso.test  \
+  %reldir%/dtorque_all.test  \
   ${NOTHING}

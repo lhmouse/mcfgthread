@@ -26,7 +26,8 @@ _MCF_mfree_nonnull(void* ptr)
 #ifdef __MCF_DEBUG
     RtlFillMemory(ptr, _MCF_msize(ptr), 0xFE);
 #endif
-    HeapFree(GetProcessHeap(), 0, ptr);
+    BOOL success = HeapFree(GetProcessHeap(), 0, ptr);
+    __MCFGTHREAD_ASSERT(success);
   }
 
 void
