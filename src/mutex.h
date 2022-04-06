@@ -70,6 +70,34 @@ _MCF_mutex_init(_MCF_mutex* __mutex) __MCF_NOEXCEPT
 int
 _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
+int
+_MCF_mutex_lock_slow(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+
+__MCFGTHREAD_MUTEX_INLINE int
+_MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT
+  {
+    _MCF_mutex __new, __old;
+    __atomic_load(__mutex, &__old, __ATOMIC_ACQUIRE);
+
+    if(__builtin_expect(__old.__locked, 0) == 0) {
+      __new = __old;
+      __new.__locked = 1;
+
+      // If the mutex can be locked immediately, the spinning failure counter
+      // should be decremented.
+      if(__old.__nspin_fail != 0)
+        __new.__nspin_fail = (__old.__nspin_fail - 1) & __MCF_MUTEX_NSPIN_M;
+
+      if(__atomic_compare_exchange(__mutex, &__old, &__new, 0, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
+        return 0;
+    }
+
+    if(__timeout_opt && (*__timeout_opt == 0))
+      return -1;
+
+    return _MCF_mutex_lock_slow(__mutex, __timeout_opt);
+  }
+
 // Releases a mutex. This function may be called by a different thread from
 // which locked the same mutex. If the mutex has not been locked, the behavior
 // is undefined.

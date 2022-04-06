@@ -7,32 +7,10 @@
 #include "win32.h"
 
 int
-_MCF_mutex_lock(_MCF_mutex* mutex, const int64_t* timeout_opt)
+_MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
   {
     _MCF_mutex new, old;
     NTSTATUS status;
-
-    if(timeout_opt && (*timeout_opt == 0)) {
-      // If the timeout is zero, check whether it can be locked immediately.
-      __atomic_load(mutex, &old, __ATOMIC_ACQUIRE);
-      if(old.__locked != 0)
-        return -1;
-
-      new = old;
-      new.__locked = 1;
-
-      // If the mutex can be locked immediately, the spinning failure counter
-      // should be decremented.
-      if(old.__nspin_fail != 0)
-        new.__nspin_fail = (old.__nspin_fail - 1) & __MCF_MUTEX_NSPIN_M;
-
-      if(__atomic_compare_exchange(mutex, &old, &new, FALSE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
-        return 0;
-
-      // Report the operation has timed out.
-      return -1;
-    }
-
     LARGE_INTEGER timeout = { 0 };
     BOOLEAN use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
 
