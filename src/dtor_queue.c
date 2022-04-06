@@ -2,17 +2,17 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#define __MCFGTHREAD_DTORQUE_C_  1
-#include "dtorque.h"
+#define __MCFGTHREAD_DTOR_QUEUE_C_  1
+#include "dtor_queue.h"
 #include "memory.h"
 #include "win32.h"
 
 int
-__MCF_dtorque_push(__MCF_dtorque* queue, const __MCF_dtorelem* elem)
+__MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtorelem* elem)
   {
     // Check whether the current block is full.
-    if(queue->__size == __MCF_DTORQUE_BLOCK_SIZE) {
-      __MCF_dtorque* prev = _MCF_malloc0(sizeof(*prev));
+    if(queue->__size == __MCF_DTOR_QUEUE_BLOCK_SIZE) {
+      __MCF_dtor_queue* prev = _MCF_malloc0(sizeof(*prev));
       if(!prev)
         return -1;
 
@@ -23,7 +23,7 @@ __MCF_dtorque_push(__MCF_dtorque* queue, const __MCF_dtorelem* elem)
     }
 
     // There is room in the current block, so append it there.
-    __MCFGTHREAD_ASSERT(queue->__size < __MCF_DTORQUE_BLOCK_SIZE);
+    __MCFGTHREAD_ASSERT(queue->__size < __MCF_DTOR_QUEUE_BLOCK_SIZE);
     __MCF_dtorelem* target = queue->__data + queue->__size;
     *target = *elem;
     queue->__size ++;
@@ -31,10 +31,10 @@ __MCF_dtorque_push(__MCF_dtorque* queue, const __MCF_dtorelem* elem)
   }
 
 int
-__MCF_dtorque_pop(__MCF_dtorelem* elem, __MCF_dtorque* queue, void* dso_opt)
+__MCF_dtor_queue_pop(__MCF_dtorelem* elem, __MCF_dtor_queue* queue, void* dso_opt)
   {
     // Search for a matching element in the newest block.
-    __MCF_dtorque* cur_q = queue;
+    __MCF_dtor_queue* cur_q = queue;
     int err = -1;
 
     do {
@@ -55,7 +55,7 @@ __MCF_dtorque_pop(__MCF_dtorelem* elem, __MCF_dtorque* queue, void* dso_opt)
       // If the current block has become empty, free it.
       // Otherwise, go to the next one.
       if((cur_q->__size == 0) && cur_q->__prev) {
-        __MCF_dtorque* prev = cur_q->__prev;
+        __MCF_dtor_queue* prev = cur_q->__prev;
         _MCF_mmove(cur_q, prev, sizeof(*prev));
         _MCF_mfree(prev);
       }
@@ -68,11 +68,11 @@ __MCF_dtorque_pop(__MCF_dtorelem* elem, __MCF_dtorque* queue, void* dso_opt)
   }
 
 void
-__MCF_dtorque_clear(__MCF_dtorque* queue)
+__MCF_dtor_queue_clear(__MCF_dtor_queue* queue)
   {
     // Free all blocks other than `queue`.
     while(queue->__prev) {
-      __MCF_dtorque* prev = queue->__prev;
+      __MCF_dtor_queue* prev = queue->__prev;
       queue->__prev = prev->__prev;
       _MCF_mfree(prev);
     }

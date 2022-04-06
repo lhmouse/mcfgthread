@@ -61,7 +61,7 @@ extern "C" {
 
 // Make some forward-declarations.
 // Note: Private types need not be declared here.
-typedef struct __MCF_dtorque __MCF_dtorque;
+typedef struct __MCF_dtor_queue __MCF_dtor_queue;
 
 typedef struct __MCF_cond _MCF_cond;
 typedef struct __MCF_mutex _MCF_mutex;
@@ -85,7 +85,7 @@ extern __MCF_DYNCONST double __MCF_perf_frequency_reciprocal;
 extern __MCF_DYNCONST _MCF_thread __MCF_main_thread;
 
 extern _MCF_mutex __MCF_cxa_atexit_mutex;
-extern __MCF_dtorque __MCF_cxa_atexit_queue;
+extern __MCF_dtor_queue __MCF_cxa_atexit_queue;
 
 extern void* const _MCF_crt_module;
 

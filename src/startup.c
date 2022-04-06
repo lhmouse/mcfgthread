@@ -5,7 +5,7 @@
 #define __MCFGTHREAD_STARTUP_C_  1
 #include "thread.h"
 #include "mutex.h"
-#include "dtorque.h"
+#include "dtor_queue.h"
 #include "win32.h"
 
 uint32_t __MCF_tls_index;
@@ -13,7 +13,7 @@ double __MCF_perf_frequency_reciprocal;
 _MCF_thread __MCF_main_thread;
 
 _MCF_mutex __MCF_cxa_atexit_mutex;
-__MCF_dtorque __MCF_cxa_atexit_queue;
+__MCF_dtor_queue __MCF_cxa_atexit_queue;
 
 int __stdcall
 __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)

@@ -6,7 +6,7 @@
 #include "cxa.h"
 #include "once.h"
 #include "mutex.h"
-#include "dtorque.h"
+#include "dtor_queue.h"
 #include "thread.h"
 #include "win32.h"
 
@@ -61,7 +61,7 @@ __MCF_cxa_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
     // Push the element to the global queue.
     _MCF_mutex_lock(&__MCF_cxa_atexit_mutex, NULL);
     __MCF_dtorelem elem = { (__MCF_dtor_generic*) dtor.__cdecl_ptr, this, dso };
-    int err = __MCF_dtorque_push(&__MCF_cxa_atexit_queue, &elem);
+    int err = __MCF_dtor_queue_push(&__MCF_cxa_atexit_queue, &elem);
     _MCF_mutex_unlock(&__MCF_cxa_atexit_mutex);
     return err;
   }
@@ -71,7 +71,7 @@ do_pop_cxa_atexit(__MCF_dtorelem* elem, void* dso)
   {
     // Try popping an element.
     _MCF_mutex_lock(&__MCF_cxa_atexit_mutex, NULL);
-    int err = __MCF_dtorque_pop(elem, &__MCF_cxa_atexit_queue, dso);
+    int err = __MCF_dtor_queue_pop(elem, &__MCF_cxa_atexit_queue, dso);
     _MCF_mutex_unlock(&__MCF_cxa_atexit_mutex);
     return err;
   }
@@ -85,7 +85,7 @@ __MCF_cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
 
     // Push the element to the thread-specific queue.
     __MCF_dtorelem elem = { (__MCF_dtor_generic*) dtor.__cdecl_ptr, this, dso };
-    int err = __MCF_dtorque_push(&(self->__atexit_queue), &elem);
+    int err = __MCF_dtor_queue_push(&(self->__atexit_queue), &elem);
     return err;
   }
 
@@ -97,7 +97,7 @@ do_pop_cxa_thread_atexit(__MCF_dtorelem* elem, void* dso)
       return -1;
 
     // Try popping an element.
-    int err = __MCF_dtorque_pop(elem, &(self->__atexit_queue), dso);
+    int err = __MCF_dtor_queue_pop(elem, &(self->__atexit_queue), dso);
     return err;
   }
 

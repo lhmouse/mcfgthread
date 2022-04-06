@@ -2,8 +2,8 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#ifndef __MCFGTHREAD_DTORQUE_H_
-#define __MCFGTHREAD_DTORQUE_H_
+#ifndef __MCFGTHREAD_DTOR_QUEUE_H_
+#define __MCFGTHREAD_DTOR_QUEUE_H_
 
 #include "fwd.h"
 
@@ -11,10 +11,10 @@
 extern "C" {
 #endif
 
-#ifndef __MCFGTHREAD_DTORQUE_C_
-#  define __MCFGTHREAD_DTORQUE_INLINE  __MCF_GNU_INLINE
+#ifndef __MCFGTHREAD_DTOR_QUEUE_C_
+#  define __MCFGTHREAD_DTOR_QUEUE_INLINE  __MCF_GNU_INLINE
 #else
-#  define __MCFGTHREAD_DTORQUE_INLINE
+#  define __MCFGTHREAD_DTOR_QUEUE_INLINE
 #endif
 
 // Define the cxa_atexit queue.
@@ -32,15 +32,15 @@ struct __MCF_dtorelem
   }
   typedef __MCF_dtorelem;
 
-struct __MCF_dtorque
+struct __MCF_dtor_queue
   {
-    __MCF_dtorque* __prev;
+    __MCF_dtor_queue* __prev;
     uint32_t __size;
 
-#define __MCF_DTORQUE_BLOCK_SIZE  63
-    __MCF_dtorelem __data[__MCF_DTORQUE_BLOCK_SIZE];
+#define __MCF_DTOR_QUEUE_BLOCK_SIZE  63
+    __MCF_dtorelem __data[__MCF_DTOR_QUEUE_BLOCK_SIZE];
   }
-  typedef __MCF_dtorque;
+  typedef __MCF_dtor_queue;
 
 // Executes a destructor.
 static __inline__ void
@@ -55,7 +55,7 @@ __MCF_dtorelem_execute(const __MCF_dtorelem* __elem) __MCF_NOEXCEPT
 //
 // Returns 0 if an element has been pushed, or -1 if out of memory.
 int
-__MCF_dtorque_push(__MCF_dtorque* __queue, const __MCF_dtorelem* __elem) __MCF_NOEXCEPT;
+__MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtorelem* __elem) __MCF_NOEXCEPT;
 
 // Pops the newest element which matches `__dso` from the queue. If `__dso` is
 // null, then any element is considered a match. This function is used to
@@ -64,14 +64,14 @@ __MCF_dtorque_push(__MCF_dtorque* __queue, const __MCF_dtorelem* __elem) __MCF_N
 //
 // Returns 0 if an element has been popped, or -1 if the queue is empty.
 int
-__MCF_dtorque_pop(__MCF_dtorelem* __elem, __MCF_dtorque* __queue, void* __dso_opt) __MCF_NOEXCEPT;
+__MCF_dtor_queue_pop(__MCF_dtorelem* __elem, __MCF_dtor_queue* __queue, void* __dso_opt) __MCF_NOEXCEPT;
 
 // Clears the queue.
 void
-__MCF_dtorque_clear(__MCF_dtorque* __queue) __MCF_NOEXCEPT;
+__MCF_dtor_queue_clear(__MCF_dtor_queue* __queue) __MCF_NOEXCEPT;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // __MCFGTHREAD_DTORQUE_H_
+#endif  // __MCFGTHREAD_DTOR_QUEUE_H_

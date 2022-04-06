@@ -6,7 +6,7 @@
 #define __MCFGTHREAD_THREAD_H_
 
 #include "fwd.h"
-#include "dtorque.h"
+#include "dtor_queue.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -25,7 +25,7 @@ struct __MCF_thread
     uint32_t __tid;  // thread id
     void* __handle;  // win32 thread handle
 
-    __MCF_dtorque __atexit_queue;  // for `__cxa_thread_atexit()`
+    __MCF_dtor_queue __atexit_queue;  // for `__cxa_thread_atexit()`
 
     _MCF_thread_procedure* __proc;  // user-defined thread procedure
     intptr_t __exit_code[1];

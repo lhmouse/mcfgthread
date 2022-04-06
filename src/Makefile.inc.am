@@ -9,7 +9,7 @@ include_mcfgthread_HEADERS =  \
   %reldir%/once.h  \
   %reldir%/thread.h  \
   %reldir%/cxa.h  \
-  %reldir%/dtorque.h  \
+  %reldir%/dtor_queue.h  \
   ${NOTHING}
 
 lib_LTLIBRARIES += lib/libmcfgthread.la
@@ -23,7 +23,7 @@ lib_libmcfgthread_la_SOURCES =  \
   %reldir%/once.c  \
   %reldir%/thread.c  \
   %reldir%/cxa.c  \
-  %reldir%/dtorque.c  \
+  %reldir%/dtor_queue.c  \
   ${NOTHING}
 
 lib_libmcfgthread_la_CFLAGS =  \
