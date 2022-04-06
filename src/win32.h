@@ -85,13 +85,15 @@ __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
 __MCFGTHREAD_WIN32_INLINE BOOLEAN
 __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
   {
+    double __nt_time;
+
     if(__int64_opt == NULL)
       return FALSE;  // wait infinitely
 
     if(*__int64_opt > 0) {
       // `*__int64_opt` is milliseconds since 1970-01-01T00:00:00Z.
       // Convert it into the NT epoch.
-      double __nt_time = 116444736000000000 + (double) *__int64_opt * 10000;
+      __nt_time = 116444736000000000 + (double) *__int64_opt * 10000;
       if(__nt_time > 0x7FFFFFFFFFFFFC00)
         return FALSE;  // overflowed; assume infinity
 
@@ -101,7 +103,7 @@ __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
 
     if(*__int64_opt < 0) {
       //  `*__int64_opt` is milliseconds to wait.
-      double __nt_time = (double) *__int64_opt * 10000;
+      __nt_time = (double) *__int64_opt * 10000;
       if(__nt_time < -0x7FFFFFFFFFFFFC00)
         return FALSE;  // overflowed; assume infinity
 
@@ -121,6 +123,8 @@ __MCF_batch_release_common(const void* __key, size_t __count)
 __MCFGTHREAD_WIN32_INLINE size_t
 __MCF_batch_release_common(const void* __key, size_t __count)
   {
+    size_t __k;
+
     if(__count == 0)
       return 0;
 
@@ -131,7 +135,7 @@ __MCF_batch_release_common(const void* __key, size_t __count)
     if(RtlDllShutdownInProgress())
       return 0;
 
-    for(size_t __k = 0;  __k != __count;  ++__k) {
+    for(__k = 0;  __k != __count;  ++__k) {
       // Release a thread. This operation shall block until the target
       // thread has received the notification.
       NTSTATUS __status = NtReleaseKeyedEvent(NULL, __key, FALSE, NULL);
