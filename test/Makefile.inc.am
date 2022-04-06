@@ -12,4 +12,5 @@ check_PROGRAMS +=  \
   %reldir%/dtorque_all.test  \
   %reldir%/cxa_atexit_dso.test  \
   %reldir%/cxa_atexit_all.test  \
+  %reldir%/cxa_thread_atexit.test  \
   ${NOTHING}
