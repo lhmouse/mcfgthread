@@ -42,6 +42,13 @@ struct __MCF_dtorque
   }
   typedef __MCF_dtorque;
 
+// Executes a destructor.
+static __inline__ void
+__MCF_dtorelem_execute(const __MCF_dtorelem* __elem) __MCF_NOEXCEPT
+  {
+    ((__MCF_dtor_generic*) __elem->__dtor)(__elem->__this, __elem->__this);
+  }
+
 // Appends an element to the queue. `__elem->__dtor` shall not be null. This
 // function is used to implement `__cxa_atexit()`. Refer to the Itanium C++
 // ABI for details about DSO handles.

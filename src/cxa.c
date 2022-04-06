@@ -47,17 +47,14 @@ __MCF_cxa_finalize(void* dso)
     __MCF_cxa_thread_finalize(dso);
 
     for(;;) {
-      // Try popping an element.
       _MCF_mutex_lock(&__MCF_cxa_atexit_mutex, NULL);
       __MCF_dtorelem elem;
       int err = __MCF_dtorque_pop(&elem, &__MCF_cxa_atexit_queue, dso);
       _MCF_mutex_unlock(&__MCF_cxa_atexit_mutex);
       if(err != 0)
         break;
-
-      // The first argument is passed via ECX and the second one is passed on
-      // the stack, so both `__cdecl` and `__thiscall` function will work.
-      ((__MCF_dtor_generic*) elem.__dtor)(elem.__this, elem.__this);
+      else
+        __MCF_dtorelem_execute(&elem);
     }
   }
 
@@ -82,14 +79,11 @@ __MCF_cxa_thread_finalize(void* dso)
       return;
 
     for(;;) {
-      // Try popping an element.
       __MCF_dtorelem elem;
       int err = __MCF_dtorque_pop(&elem, &(self->__atexit_queue), dso);
       if(err != 0)
         break;
-
-      // The first argument is passed via ECX and the second one is passed on
-      // the stack, so both `__cdecl` and `__thiscall` function will work.
-      ((__MCF_dtor_generic*) elem.__dtor)(elem.__this, elem.__this);
+      else
+        __MCF_dtorelem_execute(&elem);
     }
   }
