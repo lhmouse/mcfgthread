@@ -28,7 +28,7 @@ struct __MCF_thread
     __MCF_dtorque __atexit_queue;  // for `__cxa_thread_atexit()`
 
     _MCF_thread_procedure* __proc;  // user-defined thread procedure
-    intptr_t __exit_code;
+    intptr_t __exit_code[1];
     alignas(16) char __data[0];  // user-defined data
   }
   typedef _MCF_thread;
@@ -64,6 +64,17 @@ _MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT
 void
 _MCF_thread_drop_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 
+// Gets the ID of a thread.
+uint32_t
+_MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT
+  __attribute__((__pure__));
+
+__MCFGTHREAD_THREAD_INLINE uint32_t
+_MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT
+  {
+    return __thrd->__tid;
+  }
+
 // Gets the handle of a thread.
 void*
 _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
@@ -75,15 +86,16 @@ _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
     return __thrd->__handle;
   }
 
-// Gets the ID of a thread.
-uint32_t
-_MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT
+// Gets the exit code of a thread.
+// This may not be meaningful when the target thread is running.
+intptr_t
+_MCF_thread_get_exit_code(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCFGTHREAD_THREAD_INLINE uint32_t
-_MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT
+__MCFGTHREAD_THREAD_INLINE intptr_t
+_MCF_thread_get_exit_code(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
-    return __thrd->__tid;
+    return __atomic_load_n(__thrd->__exit_code, __ATOMIC_ACQUIRE);
   }
 
 // Exits from a thread.
