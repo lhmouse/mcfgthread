@@ -10,8 +10,8 @@ AM_CPPFLAGS = -pipe -Wall -Wextra -U_FORTIFY_SOURCE -D_WIN32_WINNT=0x0600  \
   -W{switch-enum,suggest-attribute=noreturn,shadow,missing-field-initializers}  \
   -Wunused-{function,label,local-typedefs,{,but-set-}{variable,parameter}}
 
-AM_CFLAGS = -std=c99 -Wstrict-prototypes -Wno-old-style-declaration \
-  -Werror=implicit-function-declaration
+AM_CFLAGS = -std=c99 -Wno-old-style-declaration  \
+  -Werror={implicit-{function-declaration,int},strict-prototypes}
 
 AM_DEFAULT_SOURCE_EXT = .c
 LDADD = lib/libmcfgthread.la
