@@ -48,17 +48,24 @@ _MCF_mutex_lock(_MCF_mutex* mutex, const int64_t* timeout_opt)
       __atomic_load(mutex, &old, __ATOMIC_RELAXED);
       do {
         new = old;
-        if(old.__locked == 0)
+        if(old.__locked == 0) {
           new.__locked = 1;
-        else if((old.__nspin != __MCF_MUTEX_NSPIN_M) && (old.__nspin_fail != __MCF_MUTEX_NSPIN_M))
-          new.__nspin = (old.__nspin + 1) & __MCF_MUTEX_NSPIN_M;
-        else
+
+          // If the mutex can be locked immediately, the spinning failure
+          // counter should be decremented.
+          if(old.__nspin_fail != 0)
+            new.__nspin_fail = (old.__nspin_fail - 1) & __MCF_MUTEX_NSPIN_M;
+        }
+        else if((old.__nspin == __MCF_MUTEX_NSPIN_M) || (old.__nspin_fail >= __MCF_MUTEX_SPIN_FAIL_THRESHOLD)) {
           new.__nsleep = (old.__nsleep + 1) & __MCF_MUTEX_NSLEEP_M;
 
-        // If the mutex can be locked immediately, the spinning failure counter
-        // should be decremented.
-        if((old.__locked == 0) && (old.__nspin_fail != 0))
-          new.__nspin_fail = (old.__nspin_fail - 1) & __MCF_MUTEX_NSPIN_M;
+          // The thread will not attempt to spin, but the failure counter shall
+          // be incremented anyway.
+          if(old.__nspin_fail != __MCF_MUTEX_NSPIN_M)
+            new.__nspin_fail = (old.__nspin_fail + 1) & __MCF_MUTEX_NSPIN_M;
+        }
+        else
+          new.__nspin = (old.__nspin + 1) & __MCF_MUTEX_NSPIN_M;
       }
       while(!__atomic_compare_exchange(mutex, &old, &new, TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
 
@@ -66,64 +73,64 @@ _MCF_mutex_lock(_MCF_mutex* mutex, const int64_t* timeout_opt)
       if(old.__locked == 0)
         return 0;
 
-      if(old.__nspin != __MCF_MUTEX_NSPIN_M) {
+      if(old.__nspin != new.__nspin) {
         // Calculate the spin count for this loop.
         // Note if `__nspin_fail` has reached `__MCF_MUTEX_NSPIN_M`, the spinning
         // count should be zero.
-        register int spin = (int) (__MCF_MUTEX_NSPIN_M - old.__nspin_fail);
-        if(spin != 0) {
-          spin *= _MCF_MUTEX_MAX_SPIN_COUNT / (__MCF_MUTEX_NSPIN_M + 1);
+        register int spin = (int) (__MCF_MUTEX_SPIN_FAIL_THRESHOLD - old.__nspin_fail);
+        __MCFGTHREAD_ASSERT(spin > 0);
+        spin *= __MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_NSPIN_M;
 
-          while(--spin >= 0) {
-            __builtin_ia32_pause();
-            __atomic_thread_fence(__ATOMIC_SEQ_CST);
+        while(--spin >= 0) {
+          __builtin_ia32_pause();
+          __atomic_thread_fence(__ATOMIC_SEQ_CST);
 
-            // If this mutex has not been locked, lock it and give back the
-            // spinning count. Otherwise, do nothing.
-            __atomic_load(mutex, &old, __ATOMIC_ACQUIRE);
-            if(old.__locked != 0)
-              continue;
+          // If this mutex has not been locked, lock it and give back the
+          // spinning count. Otherwise, do nothing.
+          __atomic_load(mutex, &old, __ATOMIC_ACQUIRE);
+          if(old.__locked != 0)
+            continue;
 
-            new = old;
-            new.__locked = 1;
+          new = old;
+          new.__locked = 1;
 
-            __MCFGTHREAD_ASSERT(old.__nspin != 0);
-            new.__nspin = (old.__nspin - 1) & __MCF_MUTEX_NSPIN_M;
+          __MCFGTHREAD_ASSERT(old.__nspin != 0);
+          new.__nspin = (old.__nspin - 1) & __MCF_MUTEX_NSPIN_M;
 
-            // The spinning failure counter should also be decremented.
-            if(old.__nspin_fail != 0)
-              new.__nspin_fail = (old.__nspin_fail - 1) & __MCF_MUTEX_NSPIN_M;
+          // The spinning failure counter should also be decremented.
+          if(old.__nspin_fail != 0)
+            new.__nspin_fail = (old.__nspin_fail - 1) & __MCF_MUTEX_NSPIN_M;
 
-            if(__atomic_compare_exchange(mutex, &old, &new, FALSE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
-              return 0;
-          }
-
-          // We have wasted some time. Now give back the spinning count and
-          // allocate a sleeping count.
-          // IMPORTANT! We can increment the sleeping counter ONLY IF the mutex
-          // is being locked by another thread. Otherwise, if the other thread
-          // had unlocked the mutex before we incremented the sleeping counter,
-          // we could miss a wakeup and result in deadlocks.
-          __atomic_load(mutex, &old, __ATOMIC_RELAXED);
-          do {
-            new = old;
-            if(old.__locked == 0)
-              new.__locked = 1;
-            else
-              new.__nsleep = (old.__nsleep + 1) & __MCF_MUTEX_NSLEEP_M;
-
-            __MCFGTHREAD_ASSERT(old.__nspin != 0);
-            new.__nspin = (old.__nspin - 1) & __MCF_MUTEX_NSPIN_M;
-
-            if(old.__nspin_fail != __MCF_MUTEX_NSPIN_M)
-              new.__nspin_fail = (old.__nspin_fail + 1) & __MCF_MUTEX_NSPIN_M;
-          }
-          while(!__atomic_compare_exchange(mutex, &old, &new, TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
-
-          // If this mutex has been locked by the current thread, succeed.
-          if(old.__locked == 0)
+          if(__atomic_compare_exchange(mutex, &old, &new, FALSE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
             return 0;
         }
+
+        // We have wasted some time. Now give back the spinning count and
+        // allocate a sleeping count.
+        // IMPORTANT! We can increment the sleeping counter ONLY IF the mutex
+        // is being locked by another thread. Otherwise, if the other thread
+        // had unlocked the mutex before we incremented the sleeping counter,
+        // we could miss a wakeup and result in deadlocks.
+        __atomic_load(mutex, &old, __ATOMIC_RELAXED);
+        do {
+          new = old;
+          if(old.__locked == 0)
+            new.__locked = 1;
+          else
+            new.__nsleep = (old.__nsleep + 1) & __MCF_MUTEX_NSLEEP_M;
+
+          __MCFGTHREAD_ASSERT(old.__nspin != 0);
+          new.__nspin = (old.__nspin - 1) & __MCF_MUTEX_NSPIN_M;
+
+          // Spinning timed out so the failure counter shall be incremented.
+          if(old.__nspin_fail != __MCF_MUTEX_NSPIN_M)
+            new.__nspin_fail = (old.__nspin_fail + 1) & __MCF_MUTEX_NSPIN_M;
+        }
+        while(!__atomic_compare_exchange(mutex, &old, &new, TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
+
+        // If this mutex has been locked by the current thread, succeed.
+        if(old.__locked == 0)
+          return 0;
       }
 
       if(!use_timeout) {

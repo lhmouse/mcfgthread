@@ -30,10 +30,17 @@ struct __MCF_mutex
 #define __MCF_MUTEX_NSLEEP_M  (UINTPTR_MAX >> 9)
   };
 
+// If the spinning failure counter has reached this number, newcomers will not
+// attempt to spin at all.
+// This value must not be greater than `__MCF_MUTEX_NSPIN_M`, and must not be
+// zero.
+#define __MCF_MUTEX_SPIN_FAIL_THRESHOLD  12
+
 // This is the initial number of iterations that a thread may spin before it
 // goes to sleep. As spinning starts to fail more frequently, later threads
 // spin fewer times, until the number drops to zero.
-#define _MCF_MUTEX_MAX_SPIN_COUNT   2048
+// This value had better be divisible by `__MCF_MUTEX_SPIN_FAIL_THRESHOLD`.
+#define __MCF_MUTEX_MAX_SPIN_COUNT   1536
 
 // Initializes a mutex dynamically.
 // Static ones should be initialized with `{0}`, like other structs.
