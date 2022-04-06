@@ -17,8 +17,8 @@ extern "C" {
 #  define __MCFGTHREAD_CXA_INLINE
 #endif
 
-// Declare functions in accordance with the Itanium ABI. An inline wrapper with
-// a prefixed name is also provided for each of them.
+// Declare functions in accordance with the Itanium ABI. They are aliases for
+// the ones with the `__MCF_` prefix.
 //
 // See <https://itanium-cxx-abi.github.io/cxx-abi/abi.html> for details about
 // individual functions.
@@ -40,88 +40,40 @@ union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
 int
 __cxa_guard_acquire(int64_t* __guard) __MCF_NOEXCEPT;
 
-int
-__MCF_cxa_guard_acquire(int64_t* __guard) __MCF_NOEXCEPT;
-
-__MCFGTHREAD_CXA_INLINE int
-__cxa_guard_acquire(int64_t* __guard) __MCF_NOEXCEPT
-  {
-    return __MCF_cxa_guard_acquire(__guard);
-  }
-
 void
 __cxa_guard_release(int64_t* __guard) __MCF_NOEXCEPT;
 
 void
-__MCF_cxa_guard_release(int64_t* __guard) __MCF_NOEXCEPT;
-
-__MCFGTHREAD_CXA_INLINE void
-__cxa_guard_release(int64_t* __guard) __MCF_NOEXCEPT
-  {
-    __MCF_cxa_guard_release(__guard);
-  }
-
-void
 __cxa_guard_abort(int64_t* __guard) __MCF_NOEXCEPT;
-
-void
-__MCF_cxa_guard_abort(int64_t* __guard) __MCF_NOEXCEPT;
-
-__MCFGTHREAD_CXA_INLINE void
-__cxa_guard_abort(int64_t* __guard) __MCF_NOEXCEPT
-  {
-    __MCF_cxa_guard_abort(__guard);
-  }
 
 // 3.3.6.3 Runtime API
 int
 __cxa_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT;
 
 int
-__MCF_cxa_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT;
-
-__MCFGTHREAD_CXA_INLINE int
-__cxa_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT
-  {
-    return __MCF_cxa_atexit(__dtor, __this, __dso);
-  }
+__cxa_thread_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT;
 
 void
 __cxa_finalize(void* __dso) __MCF_NOEXCEPT;
 
-void
-__MCF_cxa_finalize(void* __dso) __MCF_NOEXCEPT;
-
-__MCFGTHREAD_CXA_INLINE void
-__cxa_finalize(void* __dso) __MCF_NOEXCEPT
-  {
-    __MCF_cxa_finalize(__dso);
-  }
-
-// This seems a GNU extension?
+// Declare 'real' functions here.
 int
-__cxa_thread_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT;
+__MCF_cxa_guard_acquire(int64_t* __guard) __MCF_NOEXCEPT;
+
+void
+__MCF_cxa_guard_release(int64_t* __guard) __MCF_NOEXCEPT;
+
+void
+__MCF_cxa_guard_abort(int64_t* __guard) __MCF_NOEXCEPT;
+
+int
+__MCF_cxa_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT;
 
 int
 __MCF_cxa_thread_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT;
 
-__MCFGTHREAD_CXA_INLINE int
-__cxa_thread_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT
-  {
-    return __MCF_cxa_thread_atexit(__dtor, __this, __dso);
-  }
-
 void
-__cxa_thread_finalize(void* __dso) __MCF_NOEXCEPT;
-
-void
-__MCF_cxa_thread_finalize(void* __dso) __MCF_NOEXCEPT;
-
-__MCFGTHREAD_CXA_INLINE void
-__cxa_thread_finalize(void* __dso) __MCF_NOEXCEPT
-  {
-    __MCF_cxa_thread_finalize(__dso);
-  }
+__MCF_cxa_finalize(void* __dso) __MCF_NOEXCEPT;
 
 #ifdef __cplusplus
 }

@@ -127,14 +127,9 @@ __MCF_thread_exit_callback(void)
     if(!self)
       return;
 
-    for(;;) {
-      __MCF_dtorelem elem;
-      int err = __MCF_dtorque_pop(&elem, &(self->__atexit_queue), NULL);
-      if(err != 0)
-        break;
-      else
-        __MCF_dtorelem_execute(&elem);
-    }
+    __MCF_dtorelem elem;
+    while(__MCF_dtorque_pop(&elem, &(self->__atexit_queue), NULL) == 0)
+      __MCF_dtorelem_execute(&elem);
 
    // Detach the thread.
    (void) TlsSetValue(__MCF_tls_index, NULL);
