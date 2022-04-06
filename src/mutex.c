@@ -53,8 +53,6 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 
       if(old.__nspin != new.__nspin) {
         // Calculate the spin count for this loop.
-        // Note if `__nspin_fail` has reached `__MCF_MUTEX_NSPIN_M`, the spinning
-        // count should be zero.
         register int spin = (int) (__MCF_MUTEX_SPIN_FAIL_THRESHOLD - old.__nspin_fail);
         __MCFGTHREAD_ASSERT(spin > 0);
         spin *= __MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_NSPIN_M;
