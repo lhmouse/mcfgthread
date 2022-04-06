@@ -60,7 +60,9 @@ typedef void _MCF_tls_destructor(void* __data);
 // Define some helper functions.
 static __inline__ size_t
 _MCF_minz(size_t __x, size_t __y) __MCF_NOEXCEPT
-  { return __y < __x ? __y : __x;  }
+  {
+    return __y < __x ? __y : __x;
+  }
 
 // Declare static data, which are defined in 'startup.c'.
 extern __MCF_DYNCONST uint32_t __MCF_tls_index;
