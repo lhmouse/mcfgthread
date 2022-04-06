@@ -35,7 +35,7 @@ do_win32_thread_thunk(LPVOID param)
 
     // Attach the thread.
     _MCF_thread* const self = param;
-    TlsSetValue(__MCF_tls_index, self);
+    (void) TlsSetValue(__MCF_tls_index, self);
 
     // Execute the user-defined procedure, which should save the exit code
     // into `self->__exit_code`, which is also returned truncated.
@@ -128,6 +128,6 @@ __MCF_thread_exit_callback(void)
       return;
 
    // Detach the thread.
-   TlsSetValue(__MCF_tls_index, NULL);
+   (void) TlsSetValue(__MCF_tls_index, NULL);
     _MCF_thread_drop_ref(self);
   }
