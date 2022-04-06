@@ -11,25 +11,6 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
   {
     _MCF_once new, old;
     NTSTATUS status;
-
-    if(timeout_opt && (*timeout_opt == 0)) {
-      // If the timeout is zero, check whether it can be locked immediately.
-      __atomic_load(once, &old, __ATOMIC_ACQUIRE);
-      if(old.__ready != 0)
-        return 0;
-
-      if(old.__locked != 0)
-        return -1;
-
-      new = old;
-      new.__locked = 1;
-      if(__atomic_compare_exchange(once, &old, &new, FALSE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
-        return 1;
-
-      // Report the operation has timed out.
-      return -1;
-    }
-
     LARGE_INTEGER timeout = { 0 };
     BOOLEAN use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
 

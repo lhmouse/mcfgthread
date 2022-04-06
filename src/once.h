@@ -69,12 +69,21 @@ _MCF_once_wait_slow(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXC
 __MCFGTHREAD_ONCE_INLINE int
 _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
-    _MCF_once __temp;
-    __atomic_load(__once, &__temp, __ATOMIC_ACQUIRE);
-    if(__builtin_expect(__temp.__ready, 1))
+    _MCF_once __new, __old;
+    __atomic_load(__once, &__old, __ATOMIC_ACQUIRE);
+    if(__builtin_expect(__old.__ready, 1) != 0)
       return 0;
 
-    return _MCF_once_wait_slow(__once, __timeout_opt);
+    if(!__timeout_opt || (*__timeout_opt != 0))
+      return _MCF_once_wait_slow(__once, __timeout_opt);
+
+    if(__builtin_expect(__old.__locked, 0) == 0) {
+      __new = __old;
+      __new.__locked = 1;
+      if(__atomic_compare_exchange(__once, &__old, &__new, 0, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
+        return 1;
+    }
+    return -1;
   }
 
 // Cancels a once-initialization flag which shall be in the LOCKED state. If
