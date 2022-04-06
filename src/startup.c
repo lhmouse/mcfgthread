@@ -14,9 +14,9 @@ extern char __my_image_base_from_gnu_ld
   __asm__("__image_base__");
 
 void* const _MCF_crt_module = &__my_image_base_from_gnu_ld;
-uint32_t _MCF_tls_index = 0;
-double _MCF_perf_frequency_reciprocal = 0;
-_MCF_thread _MCF_main_thread = { 0 };
+uint32_t _MCF_tls_index;
+double _MCF_perf_frequency_reciprocal;
+_MCF_thread _MCF_main_thread;
 
 int __stdcall
 __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
