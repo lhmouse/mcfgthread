@@ -86,6 +86,19 @@ __cxa_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXC
     return __MCF_cxa_atexit(__dtor, __this, __dso);
   }
 
+void
+__cxa_finalize(void* __dso) __MCF_NOEXCEPT;
+
+void
+__MCF_cxa_finalize(void* __dso) __MCF_NOEXCEPT;
+
+__MCFGTHREAD_CXA_INLINE void
+__cxa_finalize(void* __dso) __MCF_NOEXCEPT
+  {
+    __MCF_cxa_finalize(__dso);
+  }
+
+// This seems a GNU extension?
 int
 __cxa_thread_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT;
 
@@ -99,15 +112,15 @@ __cxa_thread_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MC
   }
 
 void
-__cxa_finalize(void* __dso) __MCF_NOEXCEPT;
+__cxa_thread_finalize(void* __dso) __MCF_NOEXCEPT;
 
 void
-__MCF_cxa_finalize(void* __dso) __MCF_NOEXCEPT;
+__MCF_cxa_thread_finalize(void* __dso) __MCF_NOEXCEPT;
 
 __MCFGTHREAD_CXA_INLINE void
-__cxa_finalize(void* __dso) __MCF_NOEXCEPT
+__cxa_thread_finalize(void* __dso) __MCF_NOEXCEPT
   {
-    __MCF_cxa_finalize(__dso);
+    __MCF_cxa_thread_finalize(__dso);
   }
 
 #ifdef __cplusplus

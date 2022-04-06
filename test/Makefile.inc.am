@@ -10,4 +10,6 @@ check_PROGRAMS +=  \
   %reldir%/cond_timeout.test  \
   %reldir%/dtorque_dso.test  \
   %reldir%/dtorque_all.test  \
+  %reldir%/cxa_atexit_dso.test  \
+  %reldir%/cxa_atexit_all.test  \
   ${NOTHING}
