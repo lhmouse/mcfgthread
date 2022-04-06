@@ -17,13 +17,12 @@ extern "C" {
 #  define __MCFGTHREAD_DTOR_QUEUE_INLINE
 #endif
 
-// Define the cxa_atexit queue.
-//
 // Note: In the case of i386, the argument is passed both via the ECX register
 // and on the stack, to allow both `__cdecl` and `__thiscall` functions to work
 // properly. The function prototype is declared for compatibility with GCC.
 typedef void __thiscall __MCF_dtor_generic(void* __this, ...);
 
+// Define the structure for elements in a queue.
 struct __MCF_dtorelem
   {
     __MCF_dtor_generic* __dtor;
@@ -32,6 +31,7 @@ struct __MCF_dtorelem
   }
   typedef __MCF_dtorelem;
 
+// Define the cxa_atexit queue structure.
 struct __MCF_dtor_queue
   {
     __MCF_dtor_queue* __prev;
