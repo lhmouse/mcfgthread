@@ -12,7 +12,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     _MCF_mutex new, old;
     NTSTATUS status;
     LARGE_INTEGER timeout = { 0 };
-    BOOLEAN use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
+    LARGE_INTEGER* use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
 
     int64_t waiting_since = 0;
     if(timeout_opt && (*timeout_opt < 0))
@@ -109,16 +109,13 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
           return 0;
       }
 
+      // Try waiting.
+      status = NtWaitForKeyedEvent(NULL, mutex, FALSE, use_timeout);
+      __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
       if(!use_timeout) {
-        // The wait operation is infinite.
-        status = NtWaitForKeyedEvent(NULL, mutex, FALSE, NULL);
-        __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
+        // The wait operation was infinite.
         continue;
       }
-
-      // Try waiting.
-      status = NtWaitForKeyedEvent(NULL, mutex, FALSE, &timeout);
-      __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
 
       while(status == STATUS_TIMEOUT) {
         // Tell another thread which is going to signal this flat that an old

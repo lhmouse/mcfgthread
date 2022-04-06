@@ -22,7 +22,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
     _MCF_cond new, old;
     NTSTATUS status;
     LARGE_INTEGER timeout = { 0 };
-    BOOLEAN use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
+    LARGE_INTEGER* use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
 
     // Allocate a count for the current thread.
     __atomic_load(cond, &old, __ATOMIC_RELAXED);
@@ -38,17 +38,14 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
     if(unlock_opt)
       unlocked = unlock_opt(lock_arg);
 
+    // Try waiting.
+    status = NtWaitForKeyedEvent(NULL, cond, FALSE, use_timeout);
+    __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
     if(!use_timeout) {
-      // The wait operation is infinite.
-      status = NtWaitForKeyedEvent(NULL, cond, FALSE, NULL);
-      __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
+      // The wait operation was infinite.
       do_wait_cleanup_common(unlock_opt, unlocked, relock_opt, lock_arg);
       return 0;
     }
-
-    // Try waiting.
-    status = NtWaitForKeyedEvent(NULL, cond, FALSE, &timeout);
-    __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
 
     while(status == STATUS_TIMEOUT) {
       // Tell another thread which is going to signal this condition variable

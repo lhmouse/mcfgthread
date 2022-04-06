@@ -86,42 +86,42 @@ EXCEPTION_DISPOSITION __cdecl
 __MCF_SEH_top_dispatcher(EXCEPTION_RECORD* __record, void* __frame, CONTEXT* __ctx, void* __disp_ctx)
   __attribute__((__nothrow__));
 
-BOOLEAN
+LARGE_INTEGER*
 __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
   __attribute__((__nothrow__));
 
-__MCFGTHREAD_WIN32_INLINE BOOLEAN
+__MCFGTHREAD_WIN32_INLINE LARGE_INTEGER*
 __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
   {
     double __nt_time;
 
     if(__int64_opt == NULL)
-      return FALSE;  // wait infinitely
+      return NULL;  // wait infinitely
 
     if(*__int64_opt > 0) {
       // `*__int64_opt` is milliseconds since 1970-01-01T00:00:00Z.
       // Convert it into the NT epoch.
       __nt_time = 116444736000000000 + (double) *__int64_opt * 10000;
       if(__nt_time > 0x7FFFFFFFFFFFFC00)
-        return FALSE;  // overflowed; assume infinity
+        return NULL;  // overflowed; assume infinity
 
       __li->QuadPart = (int64_t) __nt_time;
-      return TRUE;
+      return __li;
     }
 
     if(*__int64_opt < 0) {
       //  `*__int64_opt` is milliseconds to wait.
       __nt_time = (double) *__int64_opt * 10000;
       if(__nt_time < -0x7FFFFFFFFFFFFC00)
-        return FALSE;  // overflowed; assume infinity
+        return NULL;  // overflowed; assume infinity
 
       __li->QuadPart = (int64_t) __nt_time;
-      return TRUE;
+      return __li;
     }
 
     // The wait shall time out immediately.
     __li->QuadPart = 0;
-    return TRUE;
+    return __li;
   }
 
 size_t
