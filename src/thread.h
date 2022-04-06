@@ -29,7 +29,7 @@ struct __MCF_thread
 
     _MCF_thread_procedure* __proc;  // user-defined thread procedure
     intptr_t __exit_code[1];
-    alignas(16) char __data[0];  // user-defined data
+    __attribute__((__aligned__(16))) char __data[0];  // user-defined data
   }
   typedef _MCF_thread;
 
@@ -45,6 +45,28 @@ struct __MCF_thread
 // via `GetLastError()`.
 _MCF_thread*
 _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __size) __MCF_NOEXCEPT;
+
+// Gets a pointer to user-defined data of a thread.
+__MCF_CXX(const) void*
+_MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
+  __attribute__((__pure__));
+
+__MCF_CXX11(constexpr)
+__MCFGTHREAD_THREAD_INLINE __MCF_CXX(const) void*
+_MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
+  {
+    return (char*) __thrd->__data;
+  }
+
+#ifdef __cplusplus
+extern "C++"
+__MCF_CXX11(constexpr)
+inline void*
+_MCF_thread_get_data(_MCF_thread* __thrd) __MCF_NOEXCEPT
+  {
+    return __thrd->__data;
+  }
+#endif  // __cplusplus
 
 // Adds a reference count of a thread structure. This may be useful if you
 // wish to pass a pointer to other code.
@@ -69,6 +91,7 @@ uint32_t
 _MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
+__MCF_CXX11(constexpr)
 __MCFGTHREAD_THREAD_INLINE uint32_t
 _MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
@@ -80,6 +103,7 @@ void*
 _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
+__MCF_CXX11(constexpr)
 __MCFGTHREAD_THREAD_INLINE void*
 _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
