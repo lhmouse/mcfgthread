@@ -43,7 +43,7 @@ do_win32_thread_thunk(LPVOID param)
 
     // Call `ExitThread()` so we don't have to uninstall the SEH dispatcher.
     ExitThread((DWORD) self->__exit_code);
-    __builtin_unreachable();
+    __MCF_UNREACHABLE;
   }
 
 _MCF_thread*
@@ -111,7 +111,7 @@ _MCF_thread_exit(intptr_t exit_code)
       self->__exit_code = exit_code;
 
     ExitThread((DWORD) exit_code);
-    __builtin_unreachable();
+    __MCF_UNREACHABLE;
   }
 
 _MCF_thread*
