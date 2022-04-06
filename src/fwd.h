@@ -23,12 +23,6 @@ extern "C" {
 #  error Windows platforms are assumed to be little-endian.
 #endif
 
-#ifdef __cplusplus
-#  define __MCF_NOEXCEPT    throw()
-#else
-#  define __MCF_NOEXCEPT
-#endif
-
 #ifndef __MCFGTHREAD_STARTUP_C_
 #  define __MCF_DYNCONST    const   // read-only but initialized dynamically
 #else
@@ -41,7 +35,27 @@ extern "C" {
 #  define __MCF_UNREACHABLE   __builtin_unreachable()
 #endif
 
+#if defined(__cplusplus) && (__cplusplus >= 201402L)
+#  define __MCF_CXX14(...)     __VA_ARGS__
+#else
+#  define __MCF_CXX14(...)
+#endif
+
+#if defined(__cplusplus) && (__cplusplus >= 201103L)
+#  define __MCF_CXX11(...)     __VA_ARGS__
+#else
+#  define __MCF_CXX11(...)
+#endif
+
+#if defined(__cplusplus)
+#  define __MCF_CXX(...)       __VA_ARGS__
+#else
+#  define __MCF_CXX(...)
+#endif
+
 #define __MCF_GNU_INLINE           extern __inline__ __attribute__((__gnu_inline__))
+#define __MCF_NOEXCEPT             __MCF_CXX(throw())
+
 #define __MCFGTHREAD_ASSERT(...)   ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
 #define __MCFGTHREAD_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __builtin_trap())
 
@@ -58,6 +72,7 @@ typedef void _MCF_thread_procedure(_MCF_thread* __thrd);
 typedef void _MCF_tls_destructor(void* __data);
 
 // Define some helper functions.
+__MCF_CXX11(constexpr)
 static __inline__ size_t
 _MCF_minz(size_t __x, size_t __y) __MCF_NOEXCEPT
   {
