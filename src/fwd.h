@@ -60,10 +60,11 @@ _MCF_minz(size_t __x, size_t __y) __MCF_NOEXCEPT
   { return __y < __x ? __y : __x;  }
 
 // Declare static data, which are defined in 'startup.c'.
+extern __MCF_DYNCONST uint32_t __MCF_tls_index;
+extern __MCF_DYNCONST double __MCF_perf_frequency_reciprocal;
+extern __MCF_DYNCONST _MCF_thread __MCF_main_thread;
+
 extern void* const _MCF_crt_module;
-extern __MCF_DYNCONST uint32_t _MCF_tls_index;
-extern __MCF_DYNCONST double _MCF_perf_frequency_reciprocal;
-extern __MCF_DYNCONST _MCF_thread _MCF_main_thread;
 
 #ifdef __cplusplus
 }

@@ -35,7 +35,7 @@ do_win32_thread_thunk(LPVOID param)
 
     // Attach the thread.
     _MCF_thread* const self = param;
-    TlsSetValue(_MCF_tls_index, self);
+    TlsSetValue(__MCF_tls_index, self);
 
     // Execute the user-defined procedure, which should save the exit code
     // into `self->__exit_code`, which is also returned truncated.
@@ -92,7 +92,7 @@ _MCF_thread_drop_ref(_MCF_thread* thrd)
     __MCFGTHREAD_ASSERT(old_ref > 0);
 
     // The main thread structure is allocated statically and must not be freed.
-    if(thrd == &_MCF_main_thread)
+    if(thrd == &__MCF_main_thread)
       return;
 
     if(old_ref != 1)
@@ -106,7 +106,7 @@ _MCF_thread_drop_ref(_MCF_thread* thrd)
 void
 _MCF_thread_exit(intptr_t exit_code)
   {
-    _MCF_thread* const self = TlsGetValue(_MCF_tls_index);
+    _MCF_thread* const self = TlsGetValue(__MCF_tls_index);
     if(self)
       self->__exit_code = exit_code;
 
@@ -117,17 +117,17 @@ _MCF_thread_exit(intptr_t exit_code)
 _MCF_thread*
 _MCF_thread_self(void)
   {
-    return TlsGetValue(_MCF_tls_index);
+    return TlsGetValue(__MCF_tls_index);
   }
 
 void
 __MCF_thread_exit_callback(void)
   {
-    _MCF_thread* const self = TlsGetValue(_MCF_tls_index);
+    _MCF_thread* const self = TlsGetValue(__MCF_tls_index);
     if(!self)
       return;
 
    // Detach the thread.
-   TlsSetValue(_MCF_tls_index, NULL);
+   TlsSetValue(__MCF_tls_index, NULL);
     _MCF_thread_drop_ref(self);
   }
