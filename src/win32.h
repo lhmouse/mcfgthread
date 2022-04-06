@@ -62,15 +62,19 @@ RtlCompareMemory(const void* __s1, const void* __s2, SIZE_T __size)
 
 // Declare some NTDLL functions that are not available here.
 NTSTATUS __stdcall
-NtWaitForKeyedEvent(HANDLE __event, const void* __key, BOOLEAN __alertable, const LARGE_INTEGER* __timeout)
+NtWaitForKeyedEvent(HANDLE __event, const void* __key, BOOLEAN __alertable, LARGE_INTEGER* __timeout)
   __attribute__((__dllimport__, __nothrow__));
 
 NTSTATUS __stdcall
-NtReleaseKeyedEvent(HANDLE __event, const void* __key, BOOLEAN __alertable, const LARGE_INTEGER* __timeout)
+NtReleaseKeyedEvent(HANDLE __event, const void* __key, BOOLEAN __alertable, LARGE_INTEGER* __timeout)
   __attribute__((__dllimport__, __nothrow__));
 
 NTSTATUS __stdcall
-NtDelayExecution(BOOLEAN __alertable, const LARGE_INTEGER* __timeout)
+NtDelayExecution(BOOLEAN __alertable, LARGE_INTEGER* __timeout)
+  __attribute__((__dllimport__, __nothrow__));
+
+NTSTATUS __stdcall
+NtWaitForSingleObject(HANDLE __object, BOOLEAN __alertable, LARGE_INTEGER* __timeout)
   __attribute__((__dllimport__, __nothrow__));
 
 BOOLEAN __stdcall
