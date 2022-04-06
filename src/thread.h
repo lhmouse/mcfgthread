@@ -64,6 +64,28 @@ _MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT
 void
 _MCF_thread_drop_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 
+// Gets the handle of a thread.
+void*
+_MCF_thread_get_handle(_MCF_thread* __thrd) __MCF_NOEXCEPT
+  __attribute__((__pure__));
+
+__MCFGTHREAD_THREAD_INLINE void*
+_MCF_thread_get_handle(_MCF_thread* __thrd) __MCF_NOEXCEPT
+  {
+    return __thrd->__handle;
+  }
+
+// Gets the ID of a thread.
+uint32_t
+_MCF_thread_get_tid(_MCF_thread* __thrd) __MCF_NOEXCEPT
+  __attribute__((__pure__));
+
+__MCFGTHREAD_THREAD_INLINE uint32_t
+_MCF_thread_get_tid(_MCF_thread* __thrd) __MCF_NOEXCEPT
+  {
+    return __thrd->__tid;
+  }
+
 // Exits from a thread.
 void
 _MCF_thread_exit(intptr_t __exit_code) __MCF_NOEXCEPT
