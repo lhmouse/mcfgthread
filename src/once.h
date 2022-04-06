@@ -26,7 +26,8 @@ struct __MCF_once
 
     uintptr_t __nsleep : __INTPTR_WIDTH__ - 9;  // number of sleeping threads
 #define __MCF_ONCE_NSLEEP_M  (UINTPTR_MAX >> 9)
-  };
+  }
+  typedef _MCF_once;
 
 // Initializes a once-initialization flag dynamically.
 // Static ones should be initialized with `{0}`, like other structs.

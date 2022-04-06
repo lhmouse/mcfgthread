@@ -28,7 +28,8 @@ struct __MCF_mutex
 
     uintptr_t __nsleep : __INTPTR_WIDTH__ - 9;  // number of sleeping threads
 #define __MCF_MUTEX_NSLEEP_M  (UINTPTR_MAX >> 9)
-  };
+  }
+  typedef _MCF_mutex;
 
 // If the spinning failure counter has reached this number, newcomers will not
 // attempt to spin at all.

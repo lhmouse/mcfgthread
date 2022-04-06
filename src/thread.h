@@ -26,7 +26,8 @@ struct __MCF_thread
     intptr_t __exit_code;
     _MCF_thread_procedure* __proc;  // user-defined thread procedure
     alignas(16) char __data[0];  // user-defined data
-  };
+  }
+  typedef _MCF_thread;
 
 // Creates a thread. The `__nref` member is initialized to 2.
 //
