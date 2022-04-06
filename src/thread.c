@@ -121,6 +121,15 @@ _MCF_thread_self(void)
   }
 
 void
+_MCF_sleep(const int64_t* timeout_opt)
+  {
+    LARGE_INTEGER timeout = { 0 };
+    BOOLEAN use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
+    NTSTATUS status = NtDelayExecution(FALSE, use_timeout ? &timeout : NULL);
+    __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
+  }
+
+void
 __MCF_thread_exit_callback(void)
   {
     _MCF_thread* const self = TlsGetValue(__MCF_tls_index);
