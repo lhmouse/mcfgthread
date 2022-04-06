@@ -114,6 +114,16 @@ _MCF_thread_exit(intptr_t exit_code)
     __MCF_UNREACHABLE;
   }
 
+int
+_MCF_thread_wait(const _MCF_thread* thrd, const int64_t* timeout_opt)
+  {
+    LARGE_INTEGER timeout = { 0 };
+    BOOLEAN use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
+    NTSTATUS status = NtWaitForSingleObject(thrd->__handle, FALSE, use_timeout ? &timeout : NULL);
+    __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
+    return (status == STATUS_SUCCESS) ? 0 : -1;
+  }
+
 _MCF_thread*
 _MCF_thread_self(void)
   {

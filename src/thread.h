@@ -103,6 +103,19 @@ void
 _MCF_thread_exit(intptr_t __exit_code) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
 
+// Waits for a thread to finish execution.
+//
+// If the `timeout` argument points to a positive integer, it denotes the wait
+// expiration time, in number of milliseconds since 1970-01-01T00:00:00Z. If it
+// points to a negative integer, the absolute value of it denotes the number of
+// milliseconds to wait. If it points to zero, the function returns immediately
+// without waiting. If it is null, the function waits indefinitely.
+//
+// Returns 0 if the thread has terminated, or -1 if the wait operation has
+// timed out.
+int
+_MCF_thread_wait(const _MCF_thread* __thrd, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+
 // Gets a non-owning pointer to the current thread object.
 //
 // IMPORTANT! This function is only meaningful for the main thread and threads
