@@ -24,7 +24,8 @@ __MCF_dtorque_push(__MCF_dtorque* queue, const __MCF_dtorelem* elem)
 
     // There is room in the current block, so append it there.
     __MCFGTHREAD_ASSERT(queue->__size < __MCF_DTORQUE_BLOCK_SIZE);
-    queue->__data[queue->__size] = *elem;
+    __MCF_dtorelem* target = queue->__data + queue->__size;
+    *target = *elem;
     queue->__size ++;
     return 0;
   }
@@ -39,15 +40,14 @@ __MCF_dtorque_pop(__MCF_dtorelem* elem, __MCF_dtorque* queue, void* dso_opt)
     do {
       // Search backwards for an element matching `dso_opt`.
       for(uint32_t k = cur_q->__size - 1;  k != UINT32_MAX;  --k) {
-        if((dso_opt == NULL) || (dso_opt == cur_q->__data[k].__dso)) {
-          *elem = cur_q->__data[k];
+        __MCF_dtorelem* target = cur_q->__data + k;
+        if(!dso_opt || (dso_opt == target->__dso)) {
+          *elem = *target;
           err = 0;
 
           // Remove this element.
-          for(size_t r = k;  r != cur_q->__size - 1;  ++r)
-            cur_q->__data[r] = cur_q->__data[r + 1];
-
           cur_q->__size --;
+          _MCF_mmove(target, target + 1, (cur_q->__size - k) * sizeof(*elem));
           break;
         }
       }

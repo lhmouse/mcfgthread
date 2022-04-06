@@ -25,18 +25,18 @@ main(void)
 
     }
 
-    for(intptr_t k = 99;  k >= 0;  --k) {
-      r = __MCF_dtorque_pop(&elem, &queue, (void*) 1);
-      assert(r == 0);
-      printf("pop: %td, size = %td\n", (intptr_t) elem.__this, (intptr_t) queue.__size);
+    for(intptr_t m = 1;  m <= 9; ++m) {
+      for(intptr_t k = 99;  k >= 0;  --k) {
+        r = __MCF_dtorque_pop(&elem, &queue, (void*) m);
+        assert(r == 0);
+        printf("pop: %td, size = %td\n", (intptr_t) elem.__this, (intptr_t) queue.__size);
 
-      assert(elem.__this == (void*) (k * 10 + 1));
-      assert(elem.__dso == (void*) 1);
+        assert(elem.__this == (void*) (k * 10 + m));
+        assert(elem.__dso == (void*) m);
+      }
+
+      r = __MCF_dtorque_pop(&elem, &queue, (void*) m);
+      assert(r == -1);
     }
 
-    r = __MCF_dtorque_pop(&elem, &queue, (void*) 1);
-    assert(r == -1);
-
-    r = __MCF_dtorque_pop(&elem, &queue, (void*) 2);
-    assert(r == 0);
   }
