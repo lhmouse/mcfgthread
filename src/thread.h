@@ -42,7 +42,7 @@ struct __MCF_thread
 // Returns a new thread control structure. The caller is required to call
 // `_MCF_thread_drop_ref()` when it is no longer needed. If the thread cannot
 // be created, a null pointer is returned and an error code can be obtained
-// via `GetLastError()`.
+// via `_MCF_get_win32_error()`.
 _MCF_thread*
 _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __size) __MCF_NOEXCEPT;
 

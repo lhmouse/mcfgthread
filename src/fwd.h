@@ -79,6 +79,10 @@ _MCF_minz(size_t __x, size_t __y) __MCF_NOEXCEPT
     return __y < __x ? __y : __x;
   }
 
+uint32_t
+_MCF_get_win32_error(void) __MCF_NOEXCEPT
+  __attribute__((__pure__));
+
 // Declare static data, which are defined in 'startup.c'.
 extern __MCF_DYNCONST uint32_t __MCF_tls_index;
 extern __MCF_DYNCONST double __MCF_perf_frequency_reciprocal;

@@ -24,6 +24,12 @@ extern char __my_image_base_from_gnu_ld
 
 void* const _MCF_crt_module = &__my_image_base_from_gnu_ld;
 
+uint32_t
+_MCF_get_win32_error(void)
+  {
+    return GetLastError();
+  }
+
 int __stdcall
 __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
   {
