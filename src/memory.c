@@ -15,15 +15,14 @@ _MCF_malloc0(size_t size)
 size_t
 _MCF_msize(void* ptr)
   {
+    __MCFGTHREAD_ASSERT(ptr);
     return HeapSize(GetProcessHeap(), 0, ptr);
   }
 
 void
-_MCF_mfree(void* ptr)
+_MCF_mfree_nonnull(void* ptr)
   {
-    if(!ptr)
-      return;
-
+    __MCFGTHREAD_ASSERT(ptr);
 #ifdef __MCF_DEBUG
     RtlFillMemory(ptr, _MCF_msize(ptr), 0xFE);
 #endif

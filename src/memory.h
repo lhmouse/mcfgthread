@@ -27,7 +27,17 @@ _MCF_msize(void* __ptr) __MCF_NOEXCEPT;
 
 // Free a block of memory, like `free()`.
 void
-_MCF_mfree(void* __ptr) __MCF_NOEXCEPT;
+_MCF_mfree(void* __ptr_opt) __MCF_NOEXCEPT;
+
+void
+_MCF_mfree_nonnull(void* __ptr) __MCF_NOEXCEPT;
+
+__MCFGTHREAD_MEMORY_INLINE void
+_MCF_mfree(void* __ptr_opt) __MCF_NOEXCEPT
+  {
+    if(__ptr_opt)
+      _MCF_mfree_nonnull(__ptr_opt);
+  }
 
 // Copy a block of memory, like `memmove()`.
 void
