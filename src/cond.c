@@ -21,7 +21,6 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
   {
     _MCF_cond new, old;
     NTSTATUS status;
-
     LARGE_INTEGER timeout = { 0 };
     BOOLEAN use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
 
