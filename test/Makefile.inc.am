@@ -7,4 +7,5 @@ check_PROGRAMS +=  \
   %reldir%/mutex_zero_timeout.test  \
   %reldir%/mutex_timeout.test  \
   %reldir%/mutex.test  \
+  %reldir%/cond_timeout.test  \
   ${NOTHING}
