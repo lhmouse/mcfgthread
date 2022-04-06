@@ -7,11 +7,11 @@
 #include "memory.h"
 #include "win32.h"
 
-__attribute__((__force_align_arg_pointer__))
+__attribute__((__force_align_arg_pointer__, __noreturn__))
 static DWORD __stdcall
 do_win32_thread_thunk(LPVOID param)
   {
-    // Set up the top SEH handler for uncaughe exceptions.
+    // Set up the top SEH dispatcher for uncaughe exceptions.
 #ifdef __i386__
     void* __i386_seh_node[2];
     __asm__ volatile (
@@ -40,7 +40,10 @@ do_win32_thread_thunk(LPVOID param)
     // Execute the user-defined procedure, which should save the exit code
     // into `self->__exit_code`, which is also returned truncated.
     self->__proc(self);
-    return (DWORD) self->__exit_code;
+
+    // Call `ExitThread()` so we don't have to uninstall the SEH dispatcher.
+    ExitThread((DWORD) self->__exit_code);
+    __builtin_unreachable();
   }
 
 _MCF_thread*
