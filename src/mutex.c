@@ -26,8 +26,7 @@ _MCF_mutex_lock(_MCF_mutex* mutex, const int64_t* timeout_opt)
       if(old.__nspin_fail != 0)
         new.__nspin_fail = (old.__nspin_fail - 1) & __MCF_MUTEX_NSPIN_M;
 
-      if(__atomic_compare_exchange(mutex, &old, &new,
-                      FALSE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
+      if(__atomic_compare_exchange(mutex, &old, &new, FALSE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
         return 0;
 
       // Report the operation has timed out.
@@ -61,8 +60,7 @@ _MCF_mutex_lock(_MCF_mutex* mutex, const int64_t* timeout_opt)
         if((old.__locked == 0) && (old.__nspin_fail != 0))
           new.__nspin_fail = (old.__nspin_fail - 1) & __MCF_MUTEX_NSPIN_M;
       }
-      while(!__atomic_compare_exchange(mutex, &old, &new,
-                        TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
+      while(!__atomic_compare_exchange(mutex, &old, &new, TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
 
       // If this mutex has been locked by the current thread, succeed.
       if(old.__locked == 0)
@@ -96,8 +94,7 @@ _MCF_mutex_lock(_MCF_mutex* mutex, const int64_t* timeout_opt)
             if(old.__nspin_fail != 0)
               new.__nspin_fail = (old.__nspin_fail - 1) & __MCF_MUTEX_NSPIN_M;
 
-            if(__atomic_compare_exchange(mutex, &old, &new,
-                            FALSE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
+            if(__atomic_compare_exchange(mutex, &old, &new, FALSE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
               return 0;
           }
 
@@ -121,8 +118,7 @@ _MCF_mutex_lock(_MCF_mutex* mutex, const int64_t* timeout_opt)
             if(old.__nspin_fail != __MCF_MUTEX_NSPIN_M)
               new.__nspin_fail = (old.__nspin_fail + 1) & __MCF_MUTEX_NSPIN_M;
           }
-          while(!__atomic_compare_exchange(mutex, &old, &new,
-                            TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
+          while(!__atomic_compare_exchange(mutex, &old, &new, TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
 
           // If this mutex has been locked by the current thread, succeed.
           if(old.__locked == 0)
@@ -153,8 +149,7 @@ _MCF_mutex_lock(_MCF_mutex* mutex, const int64_t* timeout_opt)
           new = old;
           new.__nsleep = (old.__nsleep - 1) & __MCF_MUTEX_NSLEEP_M;
         }
-        while(!__atomic_compare_exchange(mutex, &old, &new,
-                          TRUE, __ATOMIC_RELAXED, __ATOMIC_RELAXED));
+        while(!__atomic_compare_exchange(mutex, &old, &new, TRUE, __ATOMIC_RELAXED, __ATOMIC_RELAXED));
 
         if(old.__nsleep != 0) {
           // The operation has timed out.
@@ -200,8 +195,7 @@ _MCF_mutex_unlock(_MCF_mutex* mutex)
       wake_one = _MCF_minz(old.__nsleep, 1);
       new.__nsleep = (old.__nsleep - wake_one) & __MCF_MUTEX_NSLEEP_M;
     }
-    while(!__atomic_compare_exchange(mutex, &old, &new,
-                      TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
+    while(!__atomic_compare_exchange(mutex, &old, &new, TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
 
     __MCF_batch_release_common(mutex, wake_one);
   }

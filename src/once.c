@@ -23,8 +23,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
 
       new = old;
       new.__locked = 1;
-      if(__atomic_compare_exchange(once, &old, &new,
-                      FALSE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
+      if(__atomic_compare_exchange(once, &old, &new, FALSE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
         return 1;
 
       // Report the operation has timed out.
@@ -52,8 +51,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         else
           new.__nsleep = (old.__nsleep + 1) & __MCF_ONCE_NSLEEP_M;
       }
-      while(!__atomic_compare_exchange(once, &old, &new,
-                        TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
+      while(!__atomic_compare_exchange(once, &old, &new, TRUE, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE));
 
       // If this flag has been changed from UNLOCKED to LOCKED, return 1 to
       // allow initialization of protected resources.
@@ -83,8 +81,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
           new = old;
           new.__nsleep = (old.__nsleep - 1) & __MCF_ONCE_NSLEEP_M;
         }
-        while(!__atomic_compare_exchange(once, &old, &new,
-                          TRUE, __ATOMIC_RELAXED, __ATOMIC_RELAXED));
+        while(!__atomic_compare_exchange(once, &old, &new, TRUE, __ATOMIC_RELAXED, __ATOMIC_RELAXED));
 
         if(old.__nsleep != 0) {
           // The operation has timed out.
@@ -131,8 +128,7 @@ _MCF_once_abort(_MCF_once* once)
       wake_one = _MCF_minz(old.__nsleep, 1);
       new.__nsleep = (old.__nsleep - wake_one) & __MCF_ONCE_NSLEEP_M;
     }
-    while(!__atomic_compare_exchange(once, &old, &new,
-                      TRUE, __ATOMIC_RELAXED, __ATOMIC_RELAXED));
+    while(!__atomic_compare_exchange(once, &old, &new, TRUE, __ATOMIC_RELAXED, __ATOMIC_RELAXED));
 
     return __MCF_batch_release_common(once, wake_one);
   }
