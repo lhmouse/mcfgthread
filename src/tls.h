@@ -61,10 +61,10 @@ _MCF_tls_key_new(_MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT;
 
 // Deletes a thread-local key.
 //
-// Deleting a key prevents the destructor from running thereafter. It is the
-// application's responsibility to ensure that all resources about values that
-// are attached to this key are deallocated. Passing a deleted key to other
-// functions results in undefined behavior.
+// Deleting a key prevents the destructor from being invoked thereafter. It is
+// the application's responsibility to ensure that all resources about values
+// that are attached to this key are deallocated. Passing a deleted key to
+// other functions results in undefined behavior.
 void
 _MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT;
 
