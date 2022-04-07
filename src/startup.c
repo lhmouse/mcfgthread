@@ -63,7 +63,9 @@ __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
     }
     else if(reason == DLL_THREAD_DETACH) {
       // Perform per-thread cleanup.
-      // This is not done at process detach as it is too late.
+      // This is not done at process detach as it is too late. A thread that
+      // wishes to exit the current process shall call `__cxa_finalize(NULL)`
+      // before calling `ExitProcess()`.
       __MCF_thread_exit_callback();
     }
     return TRUE;
