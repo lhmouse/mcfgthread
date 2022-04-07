@@ -20,7 +20,7 @@ extern "C" {
 // Note: In the case of i386, the argument is passed both via the ECX register
 // and on the stack, to allow both `__cdecl` and `__thiscall` functions to work
 // properly. The function prototype is declared for compatibility with GCC.
-typedef void __thiscall __MCF_dtor_generic(void* __this, ...);
+typedef void __MCF_dtor_generic(void* __eax, void* __edx, void* __ecx, void* __esp0) __attribute__((__regparm__(3)));
 
 // Define the cxa_atexit queue structure.
 struct __MCF_dtor_element

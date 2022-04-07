@@ -92,7 +92,7 @@ __MCF_dtor_queue_finalize(__MCF_dtor_queue* queue, _MCF_mutex* mutex_opt, void* 
       // Note: In the case of i386, the argument is passed both via the ECX
       // register and on the stack, to allow both `__cdecl` and `__thiscall`
       // functions to work properly.
-      elem.__dtor(elem.__this, elem.__this);
+      elem.__dtor(0, 0, elem.__this, elem.__this);
     }
 
     __MCF_SEH_TERMINATE_FILTER_END
