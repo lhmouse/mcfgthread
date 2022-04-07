@@ -79,6 +79,13 @@ _MCF_minz(size_t __x, size_t __y) __MCF_NOEXCEPT
     return __y < __x ? __y : __x;
   }
 
+__MCF_CXX11(constexpr)
+static __inline__ size_t
+_MCF_maxz(size_t __x, size_t __y) __MCF_NOEXCEPT
+  {
+    return __x < __y ? __y : __x;
+  }
+
 uint32_t
 _MCF_get_win32_error(void) __MCF_NOEXCEPT
   __attribute__((__pure__));
