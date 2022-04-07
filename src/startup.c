@@ -11,7 +11,8 @@
 extern char __my_image_base_from_gnu_ld
   __asm__("__image_base__");
 
-void* const _MCF_crt_module = &__my_image_base_from_gnu_ld;
+const HANDLE _MCF_crt_module = &__my_image_base_from_gnu_ld;
+HANDLE __MCF_crt_heap;
 uint32_t __MCF_win32_tls_index;
 double __MCF_perf_frequency_reciprocal;
 _MCF_thread __MCF_main_thread;
@@ -39,6 +40,10 @@ __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
       // Also note that no cleanup is performed upon `DLL_PROCESS_DETACH`.
       if(reserved == NULL)
         return FALSE;
+
+      // Create the CRT heap for memory allocation.
+      __MCF_crt_heap = GetProcessHeap();
+      __MCFGTHREAD_CHECK(__MCF_crt_heap);
 
       // Allocate a TLS slot for this library.
       __MCF_win32_tls_index = TlsAlloc();

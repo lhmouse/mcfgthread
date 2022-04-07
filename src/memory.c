@@ -9,14 +9,7 @@
 void*
 _MCF_malloc0(size_t size)
   {
-    return HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size);
-  }
-
-size_t
-_MCF_msize(void* ptr)
-  {
-    __MCFGTHREAD_ASSERT(ptr);
-    return HeapSize(GetProcessHeap(), 0, ptr);
+    return HeapAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY, size);
   }
 
 void
@@ -26,8 +19,15 @@ _MCF_mfree_nonnull(void* ptr)
 #ifdef __MCF_DEBUG
     RtlFillMemory(ptr, _MCF_msize(ptr), 0xFE);
 #endif
-    BOOL success = HeapFree(GetProcessHeap(), 0, ptr);
+    BOOL success = HeapFree(__MCF_crt_heap, 0, ptr);
     __MCFGTHREAD_ASSERT(success);
+  }
+
+size_t
+_MCF_msize(void* ptr)
+  {
+    __MCFGTHREAD_ASSERT(ptr);
+    return HeapSize(__MCF_crt_heap, 0, ptr);
   }
 
 void

@@ -62,6 +62,7 @@ extern "C" {
 
 // Make some forward-declarations.
 // Note: Private types need not be declared here.
+typedef void* __MCF_HANDLE;
 typedef struct __MCF_dtor_queue __MCF_dtor_queue;
 
 typedef struct __MCF_cond _MCF_cond;
@@ -89,7 +90,8 @@ _MCF_get_win32_error(void) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
 // Declare static data, which are defined in 'startup.c'.
-extern void* const _MCF_crt_module;
+extern const __MCF_HANDLE _MCF_crt_module;
+extern __MCF_DYNCONST __MCF_HANDLE __MCF_crt_heap;
 extern __MCF_DYNCONST uint32_t __MCF_win32_tls_index;
 extern __MCF_DYNCONST double __MCF_perf_frequency_reciprocal;
 extern __MCF_DYNCONST _MCF_thread __MCF_main_thread;

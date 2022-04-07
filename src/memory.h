@@ -21,10 +21,6 @@ extern "C" {
 void*
 _MCF_malloc0(size_t __size) __MCF_NOEXCEPT __attribute__((__malloc__));
 
-// Get the size of an allocated block, like `malloc_usable_size()`.
-size_t
-_MCF_msize(void* __ptr) __MCF_NOEXCEPT;
-
 // Free a block of memory, like `free()`.
 void
 _MCF_mfree(void* __ptr_opt) __MCF_NOEXCEPT;
@@ -38,6 +34,10 @@ _MCF_mfree(void* __ptr_opt) __MCF_NOEXCEPT
     if(__ptr_opt)
       _MCF_mfree_nonnull(__ptr_opt);
   }
+
+// Get the size of an allocated block, like `malloc_usable_size()`.
+size_t
+_MCF_msize(void* __ptr) __MCF_NOEXCEPT;
 
 // Copy a block of memory, like `memmove()`.
 void

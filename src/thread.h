@@ -26,7 +26,7 @@ struct __MCF_thread
   {
     int __nref[1];  // atomic reference count
     uint32_t __tid;  // thread id
-    void* __handle;  // win32 thread handle
+    __MCF_HANDLE __handle;  // win32 thread handle
 
     __MCF_dtor_queue __atexit_queue;  // for `__cxa_thread_atexit()`
 
@@ -102,12 +102,12 @@ _MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   }
 
 // Gets the handle of a thread.
-void*
+__MCF_HANDLE
 _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
 __MCF_CXX11(constexpr)
-__MCFGTHREAD_THREAD_INLINE void*
+__MCFGTHREAD_THREAD_INLINE __MCF_HANDLE
 _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     return __thrd->__handle;
