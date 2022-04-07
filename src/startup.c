@@ -19,6 +19,7 @@ _MCF_thread __MCF_main_thread;
 
 _MCF_mutex __MCF_cxa_atexit_mutex;
 __MCF_dtor_queue __MCF_cxa_atexit_queue;
+uint32_t __MCF_tls_serial;
 
 int __stdcall
 __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
@@ -44,6 +45,9 @@ __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
       // Create the CRT heap for memory allocation.
       __MCF_crt_heap = GetProcessHeap();
       __MCFGTHREAD_CHECK(__MCF_crt_heap);
+
+      // Initialize the serial to some random value.
+      __MCF_tls_serial = GetTickCount();
 
       // Allocate a TLS slot for this library.
       __MCF_win32_tls_index = TlsAlloc();

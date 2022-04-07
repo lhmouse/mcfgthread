@@ -98,6 +98,7 @@ extern __MCF_DYNCONST _MCF_thread __MCF_main_thread;
 
 extern _MCF_mutex __MCF_cxa_atexit_mutex;
 extern __MCF_dtor_queue __MCF_cxa_atexit_queue;
+extern uint32_t __MCF_tls_serial;
 
 #ifdef __cplusplus
 }
