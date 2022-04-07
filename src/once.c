@@ -72,7 +72,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         // event soon. We must wait again, otherwise we get a deadlock in the
         // second thread. Again, a third thread could start waiting for this
         // keyed event before us, so we set the timeout to zero. If we time out
-        // agian, the third thread will have incremented the number of sleeping
+        // again, the third thread will have incremented the number of sleeping
         // threads and we can try decrementing it again.
         LARGE_INTEGER zero = { 0 };
         status = NtWaitForKeyedEvent(NULL, once, FALSE, &zero);
