@@ -66,10 +66,9 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
   }
 
 void
-_MCF_thread_drop_ref(_MCF_thread* thrd)
+_MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
   {
-    if(thrd == NULL)
-      return;
+    __MCFGTHREAD_ASSERT(thrd);
 
     int old_ref = __atomic_fetch_sub(thrd->__nref, 1, __ATOMIC_ACQ_REL);
     __MCFGTHREAD_ASSERT(old_ref > 0);

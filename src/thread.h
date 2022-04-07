@@ -87,7 +87,17 @@ _MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT
 // reference count of itself and `_MCF_thread_new()` returns another one. When
 // the reference count is reduced to zero, the structure is deallocated.
 void
-_MCF_thread_drop_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT;
+_MCF_thread_drop_ref(_MCF_thread* __thrd_opt) __MCF_NOEXCEPT;
+
+void
+_MCF_thread_drop_ref_nonnull(_MCF_thread* __thrd) __MCF_NOEXCEPT;
+
+__MCFGTHREAD_THREAD_INLINE void
+_MCF_thread_drop_ref(_MCF_thread* __thrd_opt) __MCF_NOEXCEPT
+  {
+    if(__thrd_opt)
+      _MCF_thread_drop_ref_nonnull(__thrd_opt);
+  }
 
 // Gets the ID of a thread.
 uint32_t
