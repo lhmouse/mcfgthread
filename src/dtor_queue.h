@@ -41,13 +41,6 @@ struct __MCF_dtor_queue
   }
   typedef __MCF_dtor_queue;
 
-// Executes a destructor.
-static __inline__ void
-__MCF_dtor_element_execute(const __MCF_dtor_element* __elem) __MCF_NOEXCEPT
-  {
-    __elem->__dtor(__elem->__this, __elem->__this);
-  }
-
 // Appends an element to the queue. `__elem->__dtor` shall not be null. This
 // function is used to implement `__cxa_atexit()`. Refer to the Itanium C++
 // ABI for details about DSO handles.
@@ -65,9 +58,12 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtor_element* __ele
 int
 __MCF_dtor_queue_pop(__MCF_dtor_element* __elem, __MCF_dtor_queue* __queue, void* __dso_opt) __MCF_NOEXCEPT;
 
-// Clears the queue.
+// Executes all destructors which match `__dso` in the queue. If `__dso` is
+// null, then all elements are considered matches. This function is used to
+// implement `__cxa_finalize()`. Refer to the Itanium C++ ABI for details about
+// DSO handles.
 void
-__MCF_dtor_queue_clear(__MCF_dtor_queue* __queue) __MCF_NOEXCEPT;
+__MCF_dtor_queue_finalize(__MCF_dtor_queue* __queue, _MCF_mutex* __mutex_opt, void* __dso_opt) __MCF_NOEXCEPT;
 
 #ifdef __cplusplus
 }

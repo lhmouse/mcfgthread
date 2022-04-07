@@ -35,16 +35,6 @@ __MCF_at_quick_exit(_MCF_atexit_function* at_func)
     return err;
   }
 
-static int
-do_pop_at_quick_exit(__MCF_dtor_element* elem)
-  {
-    // Try popping an element.
-    _MCF_mutex_lock(&__MCF_at_quick_exit_mutex, NULL);
-    int err = __MCF_dtor_queue_pop(elem, &__MCF_at_quick_exit_queue, NULL);
-    _MCF_mutex_unlock(&__MCF_at_quick_exit_mutex);
-    return err;
-  }
-
 void
 __MCF__Exit(int status)
   {
@@ -55,9 +45,6 @@ __MCF__Exit(int status)
 void
 __MCF_quick_exit(int status)
   {
-    __MCF_dtor_element elem;
-    while(do_pop_at_quick_exit(&elem) == 0)
-      __MCF_dtor_element_execute(&elem);
-
+    __MCF_dtor_queue_finalize(&__MCF_at_quick_exit_queue, &__MCF_at_quick_exit_mutex, NULL);
     __MCF__Exit(status);
   }

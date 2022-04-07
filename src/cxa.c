@@ -66,16 +66,6 @@ __MCF_cxa_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
     return err;
   }
 
-static int
-do_pop_cxa_atexit(__MCF_dtor_element* elem, void* dso)
-  {
-    // Try popping an element.
-    _MCF_mutex_lock(&__MCF_cxa_atexit_mutex, NULL);
-    int err = __MCF_dtor_queue_pop(elem, &__MCF_cxa_atexit_queue, dso);
-    _MCF_mutex_unlock(&__MCF_cxa_atexit_mutex);
-    return err;
-  }
-
 int
 __MCF_cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
   {
@@ -89,26 +79,15 @@ __MCF_cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
     return err;
   }
 
-static int
-do_pop_cxa_thread_atexit(__MCF_dtor_element* elem, void* dso)
-  {
-    _MCF_thread* self = _MCF_thread_self();
-    if(!self)
-      return -1;
-
-    // Try popping an element.
-    int err = __MCF_dtor_queue_pop(elem, &(self->__atexit_queue), dso);
-    return err;
-  }
-
 void
 __MCF_cxa_finalize(void* dso)
   {
-    // Destroy thread-local objects before static ones.
+    // Call destructors for thread-local objects before static ones.
     // See ISO/IEC C++ [basic.start.term]/2.
-    __MCF_dtor_element elem;
-    while(do_pop_cxa_thread_atexit(&elem, dso) == 0)
-      __MCF_dtor_element_execute(&elem);
-    while(do_pop_cxa_atexit(&elem, dso) == 0)
-      __MCF_dtor_element_execute(&elem);
+    _MCF_thread* self = _MCF_thread_self();
+    if(self)
+      __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, dso);
+
+    // Call destructors for static objects.
+    __MCF_dtor_queue_finalize(&__MCF_cxa_atexit_queue, &__MCF_cxa_atexit_mutex, dso);
   }

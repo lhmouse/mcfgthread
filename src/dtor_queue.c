@@ -5,6 +5,7 @@
 #define __MCFGTHREAD_DTOR_QUEUE_C_  1
 #include "dtor_queue.h"
 #include "memory.h"
+#include "mutex.h"
 #include "win32.h"
 
 int
@@ -68,15 +69,27 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* ds
   }
 
 void
-__MCF_dtor_queue_clear(__MCF_dtor_queue* queue)
+__MCF_dtor_queue_finalize(__MCF_dtor_queue* queue, _MCF_mutex* mutex_opt, void* dso_opt)
   {
-    // Free all blocks other than `queue`.
-    while(queue->__prev) {
-      __MCF_dtor_queue* prev = queue->__prev;
-      queue->__prev = prev->__prev;
-      _MCF_mfree(prev);
-    }
+    __MCF_dtor_element elem;
+    int err;
 
-    // Truncate `queue` as there is no longer dynamic storage.
-    queue->__size = 0;
+    do {
+      // Try popping an element.
+      if(mutex_opt) {
+        _MCF_mutex_lock(mutex_opt, NULL);
+        err = __MCF_dtor_queue_pop(&elem, queue, dso_opt);
+        _MCF_mutex_unlock(mutex_opt);
+      }
+      else
+        err = __MCF_dtor_queue_pop(&elem, queue, dso_opt);
+
+      // If an element has been popped, execute it.
+      // Note: In the case of i386, the argument is passed both via the ECX
+      // register and on the stack, to allow both `__cdecl` and `__thiscall`
+      // functions to work properly.
+      if(err == 0)
+        elem.__dtor(elem.__this, elem.__this);
+    }
+    while(err == 0);
   }
