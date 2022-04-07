@@ -107,10 +107,8 @@ __MCF_cxa_finalize(void* dso)
     // Destroy thread-local objects before static ones.
     // See ISO/IEC C++ [basic.start.term]/2.
     __MCF_dtor_element elem;
-
     while(do_pop_cxa_thread_atexit(&elem, dso) == 0)
       __MCF_dtor_element_execute(&elem);
-
     while(do_pop_cxa_atexit(&elem, dso) == 0)
       __MCF_dtor_element_execute(&elem);
   }
