@@ -24,7 +24,7 @@ struct __MCF_mutex
     uintptr_t __locked : 1;
     uintptr_t __nspin : 4;  // number of spinning threads
     uintptr_t __nspin_fail : 4;  // number of timeouts after spinning
-#define __MCF_MUTEX_NSPIN_M  15
+#define __MCF_MUTEX_NSPIN_M  15U
 
     uintptr_t __nsleep : __INTPTR_WIDTH__ - 9;  // number of sleeping threads
 #define __MCF_MUTEX_NSLEEP_M  (UINTPTR_MAX >> 9)
@@ -35,13 +35,13 @@ struct __MCF_mutex
 // attempt to spin at all.
 // This value must not be greater than `__MCF_MUTEX_NSPIN_M`, and must not be
 // zero.
-#define __MCF_MUTEX_SPIN_FAIL_THRESHOLD  12
+#define __MCF_MUTEX_SPIN_FAIL_THRESHOLD  12U
 
 // This is the initial number of iterations that a thread may spin before it
 // goes to sleep. As spinning starts to fail more frequently, later threads
 // spin fewer times, until the number drops to zero.
 // This value had better be divisible by `__MCF_MUTEX_SPIN_FAIL_THRESHOLD`.
-#define __MCF_MUTEX_MAX_SPIN_COUNT   1536
+#define __MCF_MUTEX_MAX_SPIN_COUNT   1536U
 
 // Initializes a mutex dynamically.
 // Static ones should be initialized with `{0}`, like other structs.

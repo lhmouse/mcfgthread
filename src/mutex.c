@@ -55,7 +55,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         // Calculate the spin count for this loop.
         register int spin = (int) (__MCF_MUTEX_SPIN_FAIL_THRESHOLD - old.__nspin_fail);
         __MCFGTHREAD_ASSERT(spin > 0);
-        spin *= __MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_NSPIN_M;
+        spin *= (int) (__MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_NSPIN_M);
 
         while(--spin >= 0) {
           __builtin_ia32_pause();

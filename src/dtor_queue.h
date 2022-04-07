@@ -36,7 +36,7 @@ struct __MCF_dtor_queue
     __MCF_dtor_queue* __prev;
     uint32_t __size;
 
-#define __MCF_DTOR_QUEUE_BLOCK_SIZE  63
+#define __MCF_DTOR_QUEUE_BLOCK_SIZE  63U
     __MCF_dtor_element __data[__MCF_DTOR_QUEUE_BLOCK_SIZE];
   }
   typedef __MCF_dtor_queue;
