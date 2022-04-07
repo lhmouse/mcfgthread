@@ -22,6 +22,27 @@ void*
 _MCF_malloc0(size_t __size) __MCF_NOEXCEPT
   __attribute__((__malloc__, __alloc_size__(1)));
 
+// Re-allocate a block of memory, like `realloc()`. If the existent
+// block should be extended, vacuum bytes are filled with zeroes.
+// Returns 0 upon success and -1 upon failure.
+int
+_MCF_mrealloc0(void** __pptr, size_t __size) __MCF_NOEXCEPT;
+
+void*
+_MCF_mrealloc0_ptr(void* __ptr, size_t __size) __MCF_NOEXCEPT
+  __attribute__((__alloc_size__(2)));
+
+__MCFGTHREAD_MEMORY_INLINE int
+_MCF_mrealloc0(void** __pptr, size_t __size) __MCF_NOEXCEPT
+  {
+    void* __ptr_new = _MCF_mrealloc0_ptr(*__pptr, __size);
+    if(!__ptr_new)
+      return -1;
+
+    *__pptr = __ptr_new;
+    return 0;
+  }
+
 // Free a block of memory, like `free()`.
 void
 _MCF_mfree(void* __ptr_opt) __MCF_NOEXCEPT;

@@ -12,6 +12,12 @@ _MCF_malloc0(size_t size)
     return HeapAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY, size);
   }
 
+void*
+_MCF_mrealloc0_ptr(void* ptr, size_t size)
+  {
+    return HeapReAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY, ptr, size);
+  }
+
 void
 _MCF_mfree_nonnull(void* ptr)
   {
