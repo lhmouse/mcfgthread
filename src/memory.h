@@ -17,7 +17,7 @@ extern "C" {
 #  define __MCFGTHREAD_MEMORY_INLINE
 #endif
 
-// Allocate a block of memory, like `calloc()`.
+// Allocate a block of zeroed memory, like `calloc()`.
 void*
 _MCF_malloc0(size_t __size) __MCF_NOEXCEPT __attribute__((__malloc__));
 
