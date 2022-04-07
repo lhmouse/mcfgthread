@@ -8,6 +8,10 @@
 #include "dtor_queue.h"
 #include "win32.h"
 
+extern char __my_image_base_from_gnu_ld
+  __asm__("__image_base__");
+
+void* const _MCF_crt_module = &__my_image_base_from_gnu_ld;
 uint32_t __MCF_tls_index;
 double __MCF_perf_frequency_reciprocal;
 _MCF_thread __MCF_main_thread;
@@ -18,11 +22,6 @@ __MCF_dtor_queue __MCF_cxa_atexit_queue;
 int __stdcall
 __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
   __asm__("__MCF_startup");
-
-extern char __my_image_base_from_gnu_ld
-  __asm__("__image_base__");
-
-void* const _MCF_crt_module = &__my_image_base_from_gnu_ld;
 
 uint32_t
 _MCF_get_win32_error(void)

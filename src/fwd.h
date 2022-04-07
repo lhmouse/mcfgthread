@@ -88,14 +88,13 @@ _MCF_get_win32_error(void) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
 // Declare static data, which are defined in 'startup.c'.
+extern void* const _MCF_crt_module;
 extern __MCF_DYNCONST uint32_t __MCF_tls_index;
 extern __MCF_DYNCONST double __MCF_perf_frequency_reciprocal;
 extern __MCF_DYNCONST _MCF_thread __MCF_main_thread;
 
 extern _MCF_mutex __MCF_cxa_atexit_mutex;
 extern __MCF_dtor_queue __MCF_cxa_atexit_queue;
-
-extern void* const _MCF_crt_module;
 
 #ifdef __cplusplus
 }
