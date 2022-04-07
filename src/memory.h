@@ -59,7 +59,8 @@ _MCF_mfree(void* __ptr_opt) __MCF_NOEXCEPT
 
 // Get the size of an allocated block, like `malloc_usable_size()`.
 size_t
-_MCF_msize(void* __ptr) __MCF_NOEXCEPT;
+_MCF_msize(const void* __ptr) __MCF_NOEXCEPT
+  __attribute__((__pure__));
 
 // Copy a block of memory, like `memmove()`.
 void
@@ -76,7 +77,8 @@ _MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT;
 // Check whether two blocks of memory compare equal, like `memcmp() == 0`.
 // The result is a boolean value.
 unsigned char
-_MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT;
+_MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
+  __attribute__((__pure__));
 
 #ifdef __cplusplus
 }

@@ -30,7 +30,7 @@ _MCF_mfree_nonnull(void* ptr)
   }
 
 size_t
-_MCF_msize(void* ptr)
+_MCF_msize(const void* ptr)
   {
     __MCFGTHREAD_ASSERT(ptr);
     return HeapSize(__MCF_crt_heap, 0, ptr);
