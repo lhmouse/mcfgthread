@@ -54,7 +54,7 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
     // initialized, after `CreateThread()` returns, so suspend it first.
     thrd->__handle = CreateThread(NULL, 0, do_win32_thread, thrd, CREATE_SUSPENDED, (DWORD*) &(thrd->__tid));
     if(thrd->__handle == NULL) {
-      _MCF_mfree(thrd);
+      _MCF_mfree_nonnull(thrd);
       return NULL;
     }
 
@@ -78,7 +78,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
       return;
 
     __MCFGTHREAD_CHECK(CloseHandle(thrd->__handle));
-    _MCF_mfree(thrd);
+    _MCF_mfree_nonnull(thrd);
   }
 
 void
