@@ -19,7 +19,8 @@ extern "C" {
 
 // Allocate a block of zeroed memory, like `calloc()`.
 void*
-_MCF_malloc0(size_t __size) __MCF_NOEXCEPT __attribute__((__malloc__));
+_MCF_malloc0(size_t __size) __MCF_NOEXCEPT
+  __attribute__((__malloc__, __alloc_size__(1)));
 
 // Free a block of memory, like `free()`.
 void
