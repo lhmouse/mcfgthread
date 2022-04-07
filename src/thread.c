@@ -14,7 +14,7 @@ do_win32_thread(LPVOID param)
 static DWORD __stdcall
 do_win32_thread(LPVOID param)
   {
-    __MCF_SEH_TOP_FILTER_BEGIN
+    __MCF_SEH_TERMINATE_FILTER_BEGIN
     _MCF_thread* const self = param;
     register intptr_t exit_code;
 
@@ -26,7 +26,7 @@ do_win32_thread(LPVOID param)
     self->__proc(self);
     exit_code = __atomic_load_n(self->__exit_code, __ATOMIC_RELAXED);
 
-    __MCF_SEH_TOP_FILTER_END
+    __MCF_SEH_TERMINATE_FILTER_END
     return (DWORD) exit_code;
   }
 

@@ -109,7 +109,7 @@ __MCF_seh_top(EXCEPTION_RECORD* __record, void* __frame, CONTEXT* __ctx, void* _
 
 #ifdef __i386__  // SEH is stack-based
 
-#  define __MCF_SEH_TOP_FILTER_BEGIN  \
+#  define __MCF_SEH_TERMINATE_FILTER_BEGIN  \
     void* __MCF_i386_seh_node[2];  \
     __asm__ (  \
       "movl %%fs:0, %%eax            # mov eax, fs:[0]               \n"\
@@ -119,7 +119,7 @@ __MCF_seh_top(EXCEPTION_RECORD* __record, void* __frame, CONTEXT* __ctx, void* _
       : : "r"(__MCF_i386_seh_node)  \
       : "eax", "memory");  // use EAX as it is unlikely a parameter
 
-#  define __MCF_SEH_TOP_FILTER_END  \
+#  define __MCF_SEH_TERMINATE_FILTER_END  \
     __asm__ (  \
       "movl %0, %%ecx                # mov ecx, [%0]        \n"\
       "movl %%ecx, %%fs:0            # mov fs:[0], ecx      \n"\
@@ -128,10 +128,10 @@ __MCF_seh_top(EXCEPTION_RECORD* __record, void* __frame, CONTEXT* __ctx, void* _
 
 #else  // SEH is stack-based  ^/v  SEH is table-based
 
-#  define __MCF_SEH_TOP_FILTER_BEGIN  \
+#  define __MCF_SEH_TERMINATE_FILTER_BEGIN  \
     __asm__ volatile (".seh_handler __MCF_seh_top_dispatcher, @except");
 
-#  define __MCF_SEH_TOP_FILTER_END  \
+#  define __MCF_SEH_TERMINATE_FILTER_END  \
     ((void) 0);
 
 #endif  // SEH is table-based
