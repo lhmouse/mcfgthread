@@ -118,7 +118,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       }
 
       while(status == STATUS_TIMEOUT) {
-        // Tell another thread which is going to signal this flat that an old
+        // Tell another thread which is going to signal this mutex that an old
         // waiter has left by decrementing the number of sleeping threads. But
         // see below...
         __atomic_load(mutex, &old, __ATOMIC_RELAXED);
