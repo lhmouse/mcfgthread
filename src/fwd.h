@@ -55,6 +55,7 @@ extern "C" {
 
 #define __MCF_GNU_INLINE       extern __inline__ __attribute__((__gnu_inline__))
 #define __MCF_NOEXCEPT         __MCF_CXX(throw())
+#define __MCF_ALIGNED(...)     __attribute__((__aligned__(__VA_ARGS__)))
 
 #define __MCFGTHREAD_ASSERT(...)   ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
 #define __MCFGTHREAD_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __builtin_trap())

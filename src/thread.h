@@ -32,7 +32,7 @@ struct __MCF_thread
 
     _MCF_thread_procedure* __proc;  // user-defined thread procedure
     intptr_t __exit_code[1];
-    __attribute__((__aligned__(16))) char __data[0];  // user-defined data
+    char __data[0] __MCF_ALIGNED(16);  // user-defined data
   }
   typedef _MCF_thread;
 
