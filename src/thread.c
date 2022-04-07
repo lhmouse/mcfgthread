@@ -7,43 +7,27 @@
 #include "memory.h"
 #include "win32.h"
 
-__attribute__((__force_align_arg_pointer__, __noreturn__))
 static DWORD __stdcall
-do_win32_thread_thunk(LPVOID param)
+do_win32_thread(LPVOID param)
+  __attribute__((__force_align_arg_pointer__));
+
+static DWORD __stdcall
+do_win32_thread(LPVOID param)
   {
-    // Set up the top SEH dispatcher for uncaughe exceptions.
-#ifdef __i386__
-    void* __i386_seh_node[2];
-    __asm__ volatile (
-      "movl %%fs:0, %%eax  \n"  // mov eax, dword fs:[0]
-      "movl %%eax, (%0)    \n"  // mov dword [%0], eax
-      "movl $___MCF_SEH_top_dispatcher, 4(%0)  \n"
-                                // mov dword [%0+8], offset dispatcher
-      "movl %0, %%fs:0     \n"  // mov %0, dword fs:[0]
-      :  // output
-      : "r"(__i386_seh_node)  // input
-      : "eax", "memory"  // clobber
-    );
-#else
-    __asm__ volatile (
-      ".seh_handler __MCF_SEH_top_dispatcher, @except  \n"
-      :  // output
-      :  // input
-      : "memory"  // clobber
-    );
-#endif
+    __MCF_SEH_TOP_FILTER_BEGIN
+    _MCF_thread* const self = param;
+    register intptr_t exit_code;
 
     // Attach the thread.
-    _MCF_thread* const self = param;
     (void) TlsSetValue(__MCF_win32_tls_index, self);
 
     // Execute the user-defined procedure, which should save the exit code
     // into `self->__exit_code`, which is also returned truncated.
     self->__proc(self);
+    exit_code = __atomic_load_n(self->__exit_code, __ATOMIC_RELAXED);
 
-    // Call `ExitThread()` so we don't have to uninstall the SEH dispatcher.
-    ExitThread((DWORD) __atomic_load_n(self->__exit_code, __ATOMIC_RELAXED));
-    __MCF_UNREACHABLE;
+    __MCF_SEH_TOP_FILTER_END
+    return (DWORD) exit_code;
   }
 
 _MCF_thread*
@@ -65,8 +49,7 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
     // Create the thread.
     // The new thread must not begin execution before the `__handle` field is
     // initialized, after `CreateThread()` returns, so suspend it first.
-    thrd->__handle = CreateThread(NULL, 0, do_win32_thread_thunk, thrd,
-                                    CREATE_SUSPENDED, (DWORD*) &(thrd->__tid));
+    thrd->__handle = CreateThread(NULL, 0, do_win32_thread, thrd, CREATE_SUSPENDED, (DWORD*) &(thrd->__tid));
     if(thrd->__handle == NULL) {
       _MCF_mfree(thrd);
       return NULL;

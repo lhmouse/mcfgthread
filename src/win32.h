@@ -83,8 +83,37 @@ RtlDllShutdownInProgress(void)
 
 // Declare helper functions here.
 EXCEPTION_DISPOSITION __cdecl
-__MCF_SEH_top_dispatcher(EXCEPTION_RECORD* __record, void* __frame, CONTEXT* __ctx, void* __disp_ctx)
+__MCF_seh_top(EXCEPTION_RECORD* __record, void* __frame, CONTEXT* __ctx, void* __disp_ctx)
   __attribute__((__nothrow__));
+
+#ifdef __i386__  // SEH is stack-based
+
+#  define __MCF_SEH_TOP_FILTER_BEGIN  \
+    void* __MCF_i386_seh_node[2];  \
+    __asm__ (  \
+      "movl %%fs:0, %%eax            # mov eax, fs:[0]               \n"\
+      "movl %%eax, (%0)              # mov [%0], eax                 \n"\
+      "movl $___MCF_seh_top, 4(%0)   # mov [%0 + 4], offset FILTER   \n"\
+      "movl %0, %%fs:0               # mov fs:[0], %0                \n"\
+      : : "r"(__MCF_i386_seh_node)  \
+      : "eax", "memory");  // use EAX as it is unlikely a parameter
+
+#  define __MCF_SEH_TOP_FILTER_END  \
+    __asm__ (  \
+      "movl %0, %%ecx                # mov ecx, [%0]        \n"\
+      "movl %%ecx, %%fs:0            # mov fs:[0], ecx      \n"\
+      : : "m"(__MCF_i386_seh_node)  \
+      : "ecx", "memory");  // use ECX as it is unlikely the return value
+
+#else  // SEH is stack-based  ^/v  SEH is table-based
+
+#  define __MCF_SEH_TOP_FILTER_BEGIN  \
+    __asm__ volatile (".seh_handler __MCF_seh_top_dispatcher, @except");
+
+#  define __MCF_SEH_TOP_FILTER_END  \
+    ((void) 0);
+
+#endif  // SEH is table-based
 
 LARGE_INTEGER*
 __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
