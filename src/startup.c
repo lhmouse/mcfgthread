@@ -19,6 +19,8 @@ _MCF_thread __MCF_main_thread;
 
 _MCF_mutex __MCF_cxa_atexit_mutex;
 __MCF_dtor_queue __MCF_cxa_atexit_queue;
+_MCF_mutex __MCF_at_quick_exit_mutex;
+__MCF_dtor_queue __MCF_at_quick_exit_queue;
 uint32_t __MCF_tls_serial;
 
 int __stdcall

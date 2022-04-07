@@ -10,6 +10,7 @@ include_mcfgthread_HEADERS =  \
   %reldir%/thread.h  \
   %reldir%/cxa.h  \
   %reldir%/dtor_queue.h  \
+  %reldir%/exit.h  \
   ${NOTHING}
 
 lib_LTLIBRARIES += lib/libmcfgthread.la
@@ -24,6 +25,7 @@ lib_libmcfgthread_la_SOURCES =  \
   %reldir%/thread.c  \
   %reldir%/cxa.c  \
   %reldir%/dtor_queue.c  \
+  %reldir%/exit.c  \
   ${NOTHING}
 
 lib_libmcfgthread_la_CFLAGS =  \
