@@ -46,6 +46,9 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
     if(!thrd)
       return NULL;
 
+    if(data_opt)
+      _MCF_mmove(thrd->__data, data_opt, size);
+
     // Create the thread.
     // The new thread must not begin execution before the `__handle` field is
     // initialized, after `CreateThread()` returns, so suspend it first.
@@ -56,11 +59,8 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
     }
 
     // Initialize the thread control structure.
-    if(data_opt)
-      _MCF_mmove(thrd->__data, data_opt, size);
-
-    __atomic_store_n(thrd->__nref, 2, __ATOMIC_RELAXED);
     thrd->__proc = proc;
+    __atomic_store_n(thrd->__nref, 2, __ATOMIC_RELAXED);
     __MCFGTHREAD_CHECK(ResumeThread(thrd->__handle));
     return thrd;
   }
@@ -68,19 +68,15 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
 void
 _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
   {
-    __MCFGTHREAD_ASSERT(thrd);
-
     int old_ref = __atomic_fetch_sub(thrd->__nref, 1, __ATOMIC_ACQ_REL);
     __MCFGTHREAD_ASSERT(old_ref > 0);
+    if(old_ref != 1)
+      return;
 
     // The main thread structure is allocated statically and must not be freed.
     if(thrd == &__MCF_main_thread)
       return;
 
-    if(old_ref != 1)
-      return;
-
-    // Free the thread now.
     __MCFGTHREAD_CHECK(CloseHandle(thrd->__handle));
     _MCF_mfree(thrd);
   }
@@ -134,5 +130,5 @@ __MCF_thread_exit_callback(void)
 
    // Detach the thread.
    (void) TlsSetValue(__MCF_win32_tls_index, NULL);
-    _MCF_thread_drop_ref(self);
+    _MCF_thread_drop_ref_nonnull(self);
   }
