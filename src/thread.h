@@ -18,6 +18,9 @@ extern "C" {
 #  define __MCFGTHREAD_THREAD_INLINE
 #endif
 
+// Define the prototype for thread procedures.
+typedef void _MCF_thread_procedure(_MCF_thread* __thrd);
+
 // Define the thread control struct.
 struct __MCF_thread
   {

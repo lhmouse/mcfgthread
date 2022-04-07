@@ -68,9 +68,6 @@ typedef struct __MCF_mutex _MCF_mutex;
 typedef struct __MCF_once _MCF_once;
 typedef struct __MCF_thread _MCF_thread;
 
-typedef void _MCF_thread_procedure(_MCF_thread* __thrd);
-typedef void _MCF_tls_destructor(void* __data);
-
 // Define some helper functions.
 __MCF_CXX11(constexpr)
 static __inline__ size_t
