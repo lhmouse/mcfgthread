@@ -1,0 +1,21 @@
+image:
+  - Visual Studio 2019
+
+environment:
+  PATH: C:\msys64\mingw32\bin
+  CXX: g++
+
+install:
+  - cmd: pacman -S --noconfirm autoconf automake libtool gcc make mingw-w64-i686-gcc
+
+build:
+  parallel: true
+
+build_script:
+  - cmd: bash -e ./ci/build.sh
+
+on_success:
+  - python3 ci/appveyor_irc-notify.py mcfproj "* lh_mouse {repo_name}#{short_commit} passed on {branch} ({build_url})"
+
+on_failure:
+  - python3 ci/appveyor_irc-notify.py mcfproj "* lh_mouse {repo_name}#{short_commit} errored on {branch} ({build_url})"
