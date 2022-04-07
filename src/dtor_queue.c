@@ -8,7 +8,7 @@
 #include "win32.h"
 
 int
-__MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtorelem* elem)
+__MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
   {
     // Check whether the current block is full.
     if(queue->__size == __MCF_DTOR_QUEUE_BLOCK_SIZE) {
@@ -24,14 +24,14 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtorelem* elem)
 
     // There is room in the current block, so append it there.
     __MCFGTHREAD_ASSERT(queue->__size < __MCF_DTOR_QUEUE_BLOCK_SIZE);
-    __MCF_dtorelem* target = queue->__data + queue->__size;
+    __MCF_dtor_element* target = queue->__data + queue->__size;
     *target = *elem;
     queue->__size ++;
     return 0;
   }
 
 int
-__MCF_dtor_queue_pop(__MCF_dtorelem* elem, __MCF_dtor_queue* queue, void* dso_opt)
+__MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* dso_opt)
   {
     // Search for a matching element in the newest block.
     __MCF_dtor_queue* cur_q = queue;
@@ -40,7 +40,7 @@ __MCF_dtor_queue_pop(__MCF_dtorelem* elem, __MCF_dtor_queue* queue, void* dso_op
     do {
       // Search backwards for an element matching `dso_opt`.
       for(uint32_t k = cur_q->__size - 1;  k != UINT32_MAX;  --k) {
-        __MCF_dtorelem* target = cur_q->__data + k;
+        __MCF_dtor_element* target = cur_q->__data + k;
         if(!dso_opt || (dso_opt == target->__dso)) {
           *elem = *target;
           err = 0;

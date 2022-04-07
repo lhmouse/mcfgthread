@@ -12,7 +12,7 @@ static __MCF_dtor_queue queue;
 int
 main(void)
   {
-    __MCF_dtorelem elem = { 0 };
+    __MCF_dtor_element elem = { 0 };
     int r;
 
     for(intptr_t k = 1;  k <= 1000;  ++k) {

@@ -60,14 +60,14 @@ __MCF_cxa_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
   {
     // Push the element to the global queue.
     _MCF_mutex_lock(&__MCF_cxa_atexit_mutex, NULL);
-    __MCF_dtorelem elem = { (__MCF_dtor_generic*) dtor.__cdecl_ptr, this, dso };
+    __MCF_dtor_element elem = { (__MCF_dtor_generic*) dtor.__cdecl_ptr, this, dso };
     int err = __MCF_dtor_queue_push(&__MCF_cxa_atexit_queue, &elem);
     _MCF_mutex_unlock(&__MCF_cxa_atexit_mutex);
     return err;
   }
 
 static int
-do_pop_cxa_atexit(__MCF_dtorelem* elem, void* dso)
+do_pop_cxa_atexit(__MCF_dtor_element* elem, void* dso)
   {
     // Try popping an element.
     _MCF_mutex_lock(&__MCF_cxa_atexit_mutex, NULL);
@@ -84,13 +84,13 @@ __MCF_cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
       return -1;
 
     // Push the element to the thread-specific queue.
-    __MCF_dtorelem elem = { (__MCF_dtor_generic*) dtor.__cdecl_ptr, this, dso };
+    __MCF_dtor_element elem = { (__MCF_dtor_generic*) dtor.__cdecl_ptr, this, dso };
     int err = __MCF_dtor_queue_push(&(self->__atexit_queue), &elem);
     return err;
   }
 
 static int
-do_pop_cxa_thread_atexit(__MCF_dtorelem* elem, void* dso)
+do_pop_cxa_thread_atexit(__MCF_dtor_element* elem, void* dso)
   {
     _MCF_thread* self = _MCF_thread_self();
     if(!self)
@@ -106,11 +106,11 @@ __MCF_cxa_finalize(void* dso)
   {
     // Destroy thread-local objects before static ones.
     // See ISO/IEC C++ [basic.start.term]/2.
-    __MCF_dtorelem elem;
+    __MCF_dtor_element elem;
 
     while(do_pop_cxa_thread_atexit(&elem, dso) == 0)
-      __MCF_dtorelem_execute(&elem);
+      __MCF_dtor_element_execute(&elem);
 
     while(do_pop_cxa_atexit(&elem, dso) == 0)
-      __MCF_dtorelem_execute(&elem);
+      __MCF_dtor_element_execute(&elem);
   }

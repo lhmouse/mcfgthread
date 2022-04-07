@@ -128,9 +128,9 @@ __MCF_thread_exit_callback(void)
     if(!self)
       return;
 
-    __MCF_dtorelem elem;
+    __MCF_dtor_element elem;
     while(__MCF_dtor_queue_pop(&elem, &(self->__atexit_queue), NULL) == 0)
-      __MCF_dtorelem_execute(&elem);
+      __MCF_dtor_element_execute(&elem);
 
    // Detach the thread.
    (void) TlsSetValue(__MCF_win32_tls_index, NULL);

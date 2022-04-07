@@ -23,13 +23,13 @@ extern "C" {
 typedef void __thiscall __MCF_dtor_generic(void* __this, ...);
 
 // Define the cxa_atexit queue structure.
-struct __MCF_dtorelem
+struct __MCF_dtor_element
   {
     __MCF_dtor_generic* __dtor;
     void* __this;
     void* __dso;
   }
-  typedef __MCF_dtorelem;
+  typedef __MCF_dtor_element;
 
 struct __MCF_dtor_queue
   {
@@ -37,13 +37,13 @@ struct __MCF_dtor_queue
     uint32_t __size;
 
 #define __MCF_DTOR_QUEUE_BLOCK_SIZE  63
-    __MCF_dtorelem __data[__MCF_DTOR_QUEUE_BLOCK_SIZE];
+    __MCF_dtor_element __data[__MCF_DTOR_QUEUE_BLOCK_SIZE];
   }
   typedef __MCF_dtor_queue;
 
 // Executes a destructor.
 static __inline__ void
-__MCF_dtorelem_execute(const __MCF_dtorelem* __elem) __MCF_NOEXCEPT
+__MCF_dtor_element_execute(const __MCF_dtor_element* __elem) __MCF_NOEXCEPT
   {
     __elem->__dtor(__elem->__this, __elem->__this);
   }
@@ -54,7 +54,7 @@ __MCF_dtorelem_execute(const __MCF_dtorelem* __elem) __MCF_NOEXCEPT
 //
 // Returns 0 if an element has been pushed, or -1 if out of memory.
 int
-__MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtorelem* __elem) __MCF_NOEXCEPT;
+__MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtor_element* __elem) __MCF_NOEXCEPT;
 
 // Pops the newest element which matches `__dso` from the queue. If `__dso` is
 // null, then any element is considered a match. This function is used to
@@ -63,7 +63,7 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtorelem* __elem) _
 //
 // Returns 0 if an element has been popped, or -1 if the queue is empty.
 int
-__MCF_dtor_queue_pop(__MCF_dtorelem* __elem, __MCF_dtor_queue* __queue, void* __dso_opt) __MCF_NOEXCEPT;
+__MCF_dtor_queue_pop(__MCF_dtor_element* __elem, __MCF_dtor_queue* __queue, void* __dso_opt) __MCF_NOEXCEPT;
 
 // Clears the queue.
 void
