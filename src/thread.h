@@ -24,7 +24,7 @@ typedef void _MCF_thread_procedure(_MCF_thread* __thrd);
 // Define the thread control struct.
 struct __MCF_thread
   {
-    volatile int __nref[1];  // atomic reference count
+    int __nref[1];  // atomic reference count
     uint32_t __tid;  // thread id
     void* __handle;  // win32 thread handle
 
