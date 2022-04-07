@@ -35,6 +35,27 @@ extern "C" {
 
 #define __MCF_SET_ERROR_AND_RETURN(r, ...)  return ((void) SetLastError(r)), __VA_ARGS__
 
+// Add some attributes to existent functions.
+DWORD __stdcall
+GetCurrentThreadId(void)
+  __attribute__((__dllimport__, __nothrow__, __const__));
+
+HANDLE __stdcall
+GetCurrentThread(void)
+  __attribute__((__dllimport__, __nothrow__, __const__));
+
+DWORD __stdcall
+GetCurrentProcessId(void)
+  __attribute__((__dllimport__, __nothrow__, __const__));
+
+HANDLE __stdcall
+GetCurrentProcess(void)
+  __attribute__((__dllimport__, __nothrow__, __const__));
+
+DWORD __stdcall
+GetLastError(void)
+  __attribute__((__dllimport__, __nothrow__, __pure__));
+
 // Undefine macros that redirect to standard functions.
 // This ensures we call the ones from KERNEL32.
 #undef RtlCopyMemory
