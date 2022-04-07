@@ -8,7 +8,6 @@
 #include "mutex.h"
 #include "dtor_queue.h"
 #include "thread.h"
-#include "win32.h"
 
 int
 __cxa_guard_acquire(int64_t* guard)
