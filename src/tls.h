@@ -17,7 +17,7 @@ extern "C" {
 #  define __MCFGTHREAD_TLS_INLINE
 #endif
 
-// Define the prototype for destructors for `_MCF_tls_new()`.
+// Define the prototype for destructors for `_MCF_tls_key_new()`.
 typedef void _MCF_tls_dtor(void* __ptr);
 
 // Define the table structure that manages all thread-local objects.
@@ -53,11 +53,11 @@ struct __MCF_tls_key
 // of multiple destructors during a thread's exit is unspecified.
 //
 // Returns a new thread-local key. The caller is responsible for calling
-// `_MCF_tls_delete()` when it is no longer needed. If the thread-local key
+// `_MCF_tls_key_delete()` when it is no longer needed. If the thread-local key
 // cannot be created, a null pointer is returned and an error code can be
 // obtained via `_MCF_get_win32_error()`.
 _MCF_tls_key*
-_MCF_tls_new(_MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT;
+_MCF_tls_key_new(_MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT;
 
 // Deletes a thread-local key.
 //
@@ -66,16 +66,16 @@ _MCF_tls_new(_MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT;
 // are attached to this key are deallocated. Passing a deleted key to other
 // functions results in undefined behavior.
 void
-_MCF_tls_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT;
+_MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT;
 
 void
-_MCF_tls_delete_nonnull(_MCF_tls_key* __key) __MCF_NOEXCEPT;
+_MCF_tls_key_delete_nonnull(_MCF_tls_key* __key) __MCF_NOEXCEPT;
 
 __MCFGTHREAD_TLS_INLINE void
-_MCF_tls_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT
+_MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT
   {
     if(__key_opt)
-      _MCF_tls_delete_nonnull(__key_opt);
+      _MCF_tls_key_delete_nonnull(__key_opt);
   }
 
 // Gets a value from the table.
@@ -90,7 +90,7 @@ __MCF_tls_table_get(const __MCF_tls_table* __table, const _MCF_tls_key* __key) _
 //
 // Returns 0 upon success and -1 upon failure.
 int
-__MCF_tls_table_set(const __MCF_tls_table* __table, const _MCF_tls_key* __key, void* __value_opt) __MCF_NOEXCEPT;
+__MCF_tls_table_set(__MCF_tls_table* __table, _MCF_tls_key* __key, void* __value) __MCF_NOEXCEPT;
 
 // Executes all destructors in the table, and frees dynamic storage if any. It
 // is declared here for the sake of completeness, and is not meant to be call

@@ -187,7 +187,7 @@ _MCF_tls_get(const _MCF_tls_key* __key) __MCF_NOEXCEPT
 //
 // Returns 0 upon success and -1 upon failure.
 int
-_MCF_tls_set(const _MCF_tls_key* __key, void* __value_opt) __MCF_NOEXCEPT;
+_MCF_tls_set(_MCF_tls_key* __key, void* __value_opt) __MCF_NOEXCEPT;
 
 // This is the per-thread cleanup callback. It is declared here for the sake
 // of completeness, and is not meant to be call directly.

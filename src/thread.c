@@ -130,7 +130,7 @@ _MCF_tls_get(const _MCF_tls_key* key)
   }
 
 int
-_MCF_tls_set(const _MCF_tls_key* key, void* value_opt)
+_MCF_tls_set(_MCF_tls_key* key, void* value_opt)
   {
     _MCF_thread* const self = TlsGetValue(__MCF_win32_tls_index);
     if(!self)
