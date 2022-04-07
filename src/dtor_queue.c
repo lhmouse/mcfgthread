@@ -72,14 +72,15 @@ void
 __MCF_dtor_queue_finalize(__MCF_dtor_queue* queue, _MCF_mutex* mutex_opt, void* dso_opt)
   {
     __MCF_SEH_TERMINATE_FILTER_BEGIN
+    __MCF_dtor_element elem;
+    int err;
 
     for(;;) {
       // Try popping an element.
       if(mutex_opt)
         _MCF_mutex_lock(mutex_opt, NULL);
 
-      __MCF_dtor_element elem;
-      int err = __MCF_dtor_queue_pop(&elem, queue, dso_opt);
+      err = __MCF_dtor_queue_pop(&elem, queue, dso_opt);
 
       if(mutex_opt)
         _MCF_mutex_unlock(mutex_opt);
