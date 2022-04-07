@@ -2,7 +2,7 @@ image:
   - Visual Studio 2019
 
 environment:
-  PATH: C:\msys64\mingw32\bin
+  PATH: C:\msys64\mingw32\bin;C:\msys64\usr\bin
   CXX: g++
 
 install:
