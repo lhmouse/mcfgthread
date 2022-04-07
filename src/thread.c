@@ -97,6 +97,7 @@ _MCF_thread_wait(const _MCF_thread* thrd, const int64_t* timeout_opt)
   {
     LARGE_INTEGER timeout = { 0 };
     LARGE_INTEGER* use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
+
     NTSTATUS status = NtWaitForSingleObject(thrd->__handle, FALSE, use_timeout);
     __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
     return (status == STATUS_SUCCESS) ? 0 : -1;
@@ -113,8 +114,29 @@ _MCF_sleep(const int64_t* timeout_opt)
   {
     LARGE_INTEGER timeout = { 0 };
     LARGE_INTEGER* use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
+
     NTSTATUS status = NtDelayExecution(FALSE, use_timeout);
     __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
+  }
+
+void*
+_MCF_tls_get(const _MCF_tls_key* key)
+  {
+    _MCF_thread* const self = TlsGetValue(__MCF_win32_tls_index);
+    if(!self)
+      return NULL;
+
+    return __MCF_tls_table_get(&(self->__tls_table), key);
+  }
+
+int
+_MCF_tls_set(const _MCF_tls_key* key, void* value_opt)
+  {
+    _MCF_thread* const self = TlsGetValue(__MCF_win32_tls_index);
+    if(!self)
+      return -1;
+
+    return __MCF_tls_table_set(&(self->__tls_table), key, value_opt);
   }
 
 void
@@ -126,6 +148,7 @@ __MCF_thread_exit_callback(void)
 
     // Call destructors for thread-local objects.
     __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
+    __MCF_tls_table_finalize(&(self->__tls_table));
 
    // Detach the thread.
    (void) TlsSetValue(__MCF_win32_tls_index, NULL);

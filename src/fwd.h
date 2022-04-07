@@ -64,11 +64,13 @@ extern "C" {
 // Note: Private types need not be declared here.
 typedef void* __MCF_HANDLE;
 typedef struct __MCF_dtor_queue __MCF_dtor_queue;
+typedef struct __MCF_tls_table __MCF_tls_table;
 
 typedef struct __MCF_cond _MCF_cond;
 typedef struct __MCF_mutex _MCF_mutex;
 typedef struct __MCF_once _MCF_once;
 typedef struct __MCF_thread _MCF_thread;
+typedef struct __MCF_tls_key _MCF_tls_key;
 
 // Define some helper functions.
 __MCF_CXX11(constexpr)

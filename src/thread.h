@@ -7,6 +7,7 @@
 
 #include "fwd.h"
 #include "dtor_queue.h"
+#include "tls.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,6 +30,7 @@ struct __MCF_thread
     __MCF_HANDLE __handle;  // win32 thread handle
 
     __MCF_dtor_queue __atexit_queue;  // for `__cxa_thread_atexit()`
+    __MCF_tls_table __tls_table;  // for `_MCF_tls_get()` and `_MCF_tls_set()`
 
     _MCF_thread_procedure* __proc;  // user-defined thread procedure
     intptr_t __exit_code[1];
@@ -170,6 +172,22 @@ _MCF_thread_self(void) __MCF_NOEXCEPT
 // immediately. If it is null, the function sleeps indefinitely.
 void
 _MCF_sleep(const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+
+// Gets a thread-local value. The calling thread shall have been created by
+// `_MCF_thread_new()`, or shall be the main thread.
+//
+// Returns the thread-local value if one has been set by the calling thread, or
+// a null pointer otherwise. No return value is reserved to indicate errors.
+void*
+_MCF_tls_get(const _MCF_tls_key* __key) __MCF_NOEXCEPT
+  __attribute__((__pure__));
+
+// Sets a thread-local value. The calling thread shall have been created by
+// `_MCF_thread_new()`, or shall be the main thread.
+//
+// Returns 0 upon success and -1 upon failure.
+int
+_MCF_tls_set(const _MCF_tls_key* __key, void* __value_opt) __MCF_NOEXCEPT;
 
 // This is the per-thread cleanup callback. It is declared here for the sake
 // of completeness, and is not meant to be call directly.
