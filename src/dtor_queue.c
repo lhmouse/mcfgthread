@@ -88,11 +88,20 @@ __MCF_dtor_queue_finalize(__MCF_dtor_queue* queue, _MCF_mutex* mutex_opt, void* 
       if(err != 0)
         break;
 
+#ifdef __i386__
       // If an element has been popped, execute it.
       // Note: In the case of i386, the argument is passed both via the ECX
       // register and on the stack, to allow both `__cdecl` and `__thiscall`
       // functions to work properly.
-      elem.__dtor(0, 0, elem.__this, elem.__this);
+      typedef void
+      i386_dtor_wrapper(void* eax, void* edx, void* ecx, void* esp_0)
+        __attribute__((__regparm__(3)));
+
+      (*(i386_dtor_wrapper*) elem.__dtor)(0, 0, elem.__this, elem.__this);
+#else
+      // This works on x86_64, and should work on ARM (FIXME: untested).
+      elem.__dtor(elem.__this);
+#endif
     }
 
     __MCF_SEH_TERMINATE_FILTER_END

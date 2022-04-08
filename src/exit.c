@@ -29,7 +29,7 @@ __MCF_at_quick_exit(_MCF_atexit_function* at_func)
   {
     // Push the element to the global queue.
     _MCF_mutex_lock(&__MCF_at_quick_exit_mutex, NULL);
-    __MCF_dtor_element elem = { (__MCF_dtor_generic*) at_func, NULL, NULL };
+    __MCF_dtor_element elem = { (__MCF_cxa_dtor_cdecl*)(intptr_t) at_func, NULL, NULL };
     int err = __MCF_dtor_queue_push(&__MCF_at_quick_exit_queue, &elem);
     _MCF_mutex_unlock(&__MCF_at_quick_exit_mutex);
     return err;
