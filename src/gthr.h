@@ -40,7 +40,7 @@ typedef _MCF_once __gthread_once_t;
 typedef _MCF_cond __gthread_cond_t;
 typedef _MCF_mutex __gthread_mutex_t;
 
-struct __MCF_gthread_recursive_mutex_t
+struct __MCF_gthr_recursive_mutex_t
   {
     uint32_t __owner;  // owner thread ID
     int32_t __depth;  // recursion depth
