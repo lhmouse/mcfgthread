@@ -104,6 +104,58 @@ __MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void))
     return 0;
   }
 
+// Allocates a thread-specific key, like `pthread_key_create()`.
+int
+__MCF_gthr_key_create(__gthread_key_t* __keyp, void __dtor(void*)) __MCF_NOEXCEPT;
+
+#define __gthread_key_create  __MCF_gthr_key_create
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_key_create(__gthread_key_t* __keyp, void __dtor(void*)) __MCF_NOEXCEPT
+  {
+    _MCF_tls_key* __key = _MCF_tls_key_new(__dtor);
+    *__keyp = __key;
+    return !__key ? ENOMEM : 0;
+  }
+
+// Destroys a thread-specific key, like `pthread_key_delete()`.
+int
+__MCF_gthr_key_delete(__gthread_key_t __key) __MCF_NOEXCEPT;
+
+#define __gthread_key_delete  __MCF_gthr_key_delete
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_key_delete(__gthread_key_t __key) __MCF_NOEXCEPT
+  {
+    _MCF_tls_key_delete(__key);
+    return 0;
+  }
+
+// Gets a thread-specific value, like `pthread_getspecific()`.
+void*
+__MCF_gthr_getspecific(__gthread_key_t __key) __MCF_NOEXCEPT;
+
+#define __gthread_getspecific  __MCF_gthr_getspecific
+
+__MCFGTHREAD_GTHR_INLINE void*
+__MCF_gthr_getspecific(__gthread_key_t __key) __MCF_NOEXCEPT
+  {
+    return _MCF_tls_get(__key);
+  }
+
+// Sets a thread-specific value, like `pthread_setspecific()`.
+int
+__MCF_gthr_setspecific(__gthread_key_t __key, const void* __ptr) __MCF_NOEXCEPT;
+
+#define __gthread_setspecific  __MCF_gthr_setspecific
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_setspecific(__gthread_key_t __key, const void* __ptr) __MCF_NOEXCEPT
+  {
+    int __err = _MCF_tls_set(__key, __ptr);
+    return (__err != 0) ? ENOMEM : 0;
+  }
+
 #ifdef __cplusplus
 }
 #endif
