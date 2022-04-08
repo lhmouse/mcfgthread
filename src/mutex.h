@@ -87,7 +87,7 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEP
       // If the mutex can be locked immediately, the spinning failure counter
       // should be decremented.
       if(__old.__nspin_fail != 0)
-        __new.__nspin_fail = (__old.__nspin_fail - 1) & __MCF_MUTEX_NSPIN_M;
+        __new.__nspin_fail = (__old.__nspin_fail - 1U) & __MCF_MUTEX_NSPIN_M;
 
       if(__atomic_compare_exchange(__mutex, &__old, &__new, 0, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
         return 0;
