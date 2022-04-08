@@ -16,4 +16,5 @@ check_PROGRAMS +=  \
   %reldir%/tls_dtor.test  \
   %reldir%/tls_set.test  \
   %reldir%/tls_deleted_key.test  \
+  %reldir%/tls_many.test  \
   ${NOTHING}

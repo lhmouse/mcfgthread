@@ -105,8 +105,8 @@ int
 __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value)
   {
     __MCFGTHREAD_ASSERT(key);
-    size_t capacity = (size_t) (table->__end - table->__begin) * 2 + 17;
-    if(table->__size <= capacity / 2) {
+    size_t capacity = (size_t) (table->__end - table->__begin);
+    if(table->__size >= capacity / 2) {
       // Allocate a larger table. The number of elements is not changed.
       capacity = capacity + capacity / 2 + 17;
       __MCF_tls_element* elem = _MCF_malloc0(capacity * sizeof(__MCF_tls_element));
@@ -141,7 +141,9 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
     if(!elem->__key_opt) {
       int old_ref = __atomic_fetch_add(key->__nref, 1, __ATOMIC_ACQ_REL);
       __MCFGTHREAD_ASSERT(old_ref > 0);
+
       elem->__key_opt = key;
+      table->__size ++;
     }
 
     __MCFGTHREAD_ASSERT(elem->__key_opt == key);
