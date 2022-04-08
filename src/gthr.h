@@ -83,6 +83,27 @@ __MCF_gthr_unonce(__gthread_once_t** __oncep) __MCF_NOEXCEPT
       _MCF_once_abort(*__oncep);
   }
 
+// This is an auxiliary function for converting a `struct timespec` to the
+// number of milliseconds since the Unix epoch, with boundary checking.
+int64_t
+__MCF_gthr_timeout_from_timespec(const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
+  __attribute__((__pure__));
+
+__MCFGTHREAD_GTHR_INLINE int64_t
+__MCF_gthr_timeout_from_timespec(const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
+  {
+    double __time_ms = 0.000999;
+    __time_ms += (double) __abs_time->tv_sec * 1000;
+    __time_ms += (double) __abs_time->tv_nsec * 0.000001;
+
+    if(__time_ms < 0)
+      return 0;
+    else if(__time_ms > 0x7FFFFFFFFFFFFC00)
+      return INT64_MAX;
+    else
+      return (int64_t) __time_ms;
+  }
+
 // Performs one-time initialization, like `pthread_once()`.
 int
 __MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void));
@@ -154,6 +175,88 @@ __MCF_gthr_setspecific(__gthread_key_t __key, const void* __ptr) __MCF_NOEXCEPT
   {
     int __err = _MCF_tls_set(__key, __ptr);
     return (__err != 0) ? ENOMEM : 0;
+  }
+
+// Initializes a mutex, like `pthread_mutex_init()`.
+int
+__MCF_gthr_mutex_init(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
+
+#define __gthread_mutex_init  __MCF_gthr_mutex_init
+#define __GTHREAD_MUTEX_INIT_FUNCTION  __MCF_gthr_mutex_init
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_mutex_init(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
+  {
+    _MCF_mutex_init(__mtx);
+    return 0;
+  }
+
+// Destroys a mutex. This function does nothing.
+int
+__MCF_gthr_mutex_destroy(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
+
+#define __gthread_mutex_destroy  __MCF_gthr_mutex_destroy
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_mutex_destroy(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
+  {
+    (void) __mtx;
+    return 0;
+  }
+
+// Locks a mutex, like `pthread_mutex_lock()`.
+int
+__MCF_gthr_mutex_lock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
+
+#define __gthread_mutex_lock  __MCF_gthr_mutex_lock
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_mutex_lock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
+  {
+    int __err = _MCF_mutex_lock(__mtx, NULL);
+    __MCFGTHREAD_ASSERT(__err == 0);
+    return 0;
+  }
+
+// Tries locking a mutex without blocking, like `pthread_mutex_trylock()`.
+int
+__MCF_gthr_mutex_trylock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
+
+#define __gthread_mutex_trylock  __MCF_gthr_mutex_trylock
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_mutex_trylock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
+  {
+    int64_t __timeout = 0;
+    int __err = _MCF_mutex_lock(__mtx, &__timeout);
+    return (__err != 0) ? EBUSY : 0;
+  }
+
+// Tries locking a mutex until a time point, like `pthread_mutex_timedlock()`.
+int
+__MCF_gthr_mutex_timedlock(__gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT;
+
+#define __gthread_mutex_timedlock  __MCF_gthr_mutex_timedlock
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_mutex_timedlock(__gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
+  {
+    int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
+    int __err = _MCF_mutex_lock(__mtx, &__timeout);
+    return (__err != 0) ? ETIMEDOUT : 0;
+  }
+
+// Unlocks a mutex, like `pthread_mutex_unlock()`.
+int
+__MCF_gthr_mutex_unlock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
+
+#define __gthread_mutex_unlock  __MCF_gthr_mutex_unlock
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_mutex_unlock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
+  {
+    _MCF_mutex_unlock(__mtx);
+    return 0;
   }
 
 #ifdef __cplusplus
