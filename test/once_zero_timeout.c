@@ -57,7 +57,7 @@ main(void)
     event = CreateEventW(NULL, TRUE, FALSE, NULL);
     assert(event);
 
-#define NTHREADS  64
+#define NTHREADS  64U
     _MCF_thread* threads[NTHREADS];
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       threads[k] = _MCF_thread_new(thread_proc, NULL, 0);
