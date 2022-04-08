@@ -32,6 +32,7 @@ struct __MCF_tls_table
   {
     __MCF_tls_element* __begin;  // beginning of hash table
     __MCF_tls_element* __end;  // end of hash table
+    size_t __size;  // number of non-empty elements
   }
   typedef __MCF_tls_table;
 

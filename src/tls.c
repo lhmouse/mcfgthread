@@ -15,8 +15,8 @@ _MCF_tls_key_new(_MCF_tls_dtor* dtor_opt)
       return NULL;
 
     // Get the next serial number. Ensure it is non-zero.
-    uint32_t serial = __atomic_fetch_add(&__MCF_tls_key_serial, 1, __ATOMIC_RELAXED);
-    serial = serial * 2 + 1;
+    uint32_t serial = UINT32_C(1) << 31;
+    serial |= __atomic_fetch_add(&__MCF_tls_key_serial, 1, __ATOMIC_RELAXED);
 
     // Initialize the key structure. The returned pointer is assumed to be
     // unique, so its reference count should be initialized to one.
@@ -55,11 +55,12 @@ _MCF_tls_key_delete_nonnull(_MCF_tls_key* key)
   }
 
 static __MCF_tls_element*
-do_probe_table(const __MCF_tls_table* table, const _MCF_tls_key* key)
+do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
   {
+    // Keep the load factor no more than 0.5.
     uint64_t dist = (uintptr_t) (table->__end - table->__begin);
-    if(dist == 0)
-      return NULL;
+    __MCFGTHREAD_ASSERT(dist != 0);
+    __MCFGTHREAD_ASSERT(table->__size <= dist / 2);
 
     // Make a fixed-point value in the interval [0,1), and then multiply
     // `dist` by it to get an index in the middle.
@@ -67,32 +68,33 @@ do_probe_table(const __MCF_tls_table* table, const _MCF_tls_key* key)
     __MCFGTHREAD_ASSERT(serial != 0);
     dist = dist * (uint32_t) (serial * 0x9E3779B9) >> 32;
 
-    __MCF_tls_element* origin = table->__begin + (uintptr_t) dist;
+    __MCF_tls_element* origin = table->__begin + (ptrdiff_t) dist;
     __MCFGTHREAD_ASSERT(origin < table->__end);
 
     // Find an element using linear probing.
     // Note this function may return the pointer to an empty element.
     for(__MCF_tls_element* cur = origin;  cur != table->__end;  ++cur)
-      if((cur->__key_opt == NULL) || (do_get_key_serial(cur->__key_opt) == serial))
+      if(!cur->__key_opt || (do_get_key_serial(cur->__key_opt) == serial))
         return cur;
 
     for(__MCF_tls_element* cur = table->__begin;  cur != origin;  ++cur)
-      if((cur->__key_opt == NULL) || (do_get_key_serial(cur->__key_opt) == serial))
+      if(!cur->__key_opt || (do_get_key_serial(cur->__key_opt) == serial))
         return cur;
 
-    // The table is full and no desired element has been found so far.
-    return NULL;
+    __MCF_UNREACHABLE;
   }
 
 void*
 __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
   {
-    __MCF_tls_element* elem = do_probe_table(table, key);
-    if(!elem)
+    __MCFGTHREAD_ASSERT(key);
+    if(!table->__begin)
       return NULL;
 
-    // Note `do_probe_table()` may return an empty element.
-    if(elem->__key_opt == NULL)
+    // Search for the given key.
+    // Note `do_linear_probe_nonempty()` may return an empty element.
+    __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
+    if(!elem->__key_opt)
       return NULL;
 
     __MCFGTHREAD_ASSERT(elem->__key_opt == key);
@@ -102,46 +104,41 @@ __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
 int
 __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, void* value)
   {
-    __MCF_tls_element* elem = do_probe_table(table, key);
-    if(!elem) {
-      // The table is full, so let's allocate a larger one.
-      // We extend the table by a half.
-      size_t new_capacity = (size_t) (table->__end - table->__begin) * 2 + 17;
-      new_capacity = new_capacity + new_capacity / 2 + 17;
-      elem = _MCF_malloc0(new_capacity * sizeof(__MCF_tls_element));
+    __MCFGTHREAD_ASSERT(key);
+    size_t capacity = (size_t) (table->__end - table->__begin) * 2 + 17;
+    if(table->__size <= capacity / 2) {
+      // Allocate a larger table. The number of elements is not changed.
+      capacity = capacity + capacity / 2 + 17;
+      __MCF_tls_element* elem = _MCF_malloc0(capacity * sizeof(__MCF_tls_element));
       if(!elem)
         return -1;
 
-      // Replace the table.
       __MCF_tls_table temp = *table;
       table->__begin = elem;
-      table->__end = elem + new_capacity;
+      table->__end = elem + capacity;
 
       while(temp.__begin != temp.__end) {
         temp.__end --;
 
-        // Skip 'holes'.
-        if(temp.__end->__key_opt == NULL)
+        // Skip empty elements.
+        if(!temp.__end->__key_opt)
           continue;
 
-        // Relocate this element into the new table.
-        elem = do_probe_table(table, temp.__end->__key_opt);
-        __MCFGTHREAD_ASSERT(elem);
-        __MCFGTHREAD_ASSERT(elem->__key_opt == NULL);
+        // Relocate this element into the new storage.
+        elem = do_linear_probe_nonempty(table, temp.__end->__key_opt);
+        __MCFGTHREAD_ASSERT(!elem->__key_opt);
         *elem = *(temp.__end);
       }
 
       // Deallocate the old storage, if amy.
-      _MCF_mfree(temp.__begin);
-
-      // Search for an empty slot again. This will not fail.
-      elem = do_probe_table(table, key);
-      __MCFGTHREAD_ASSERT(elem);
-      __MCFGTHREAD_ASSERT(elem->__key_opt == NULL);
+      if(temp.__begin)
+        _MCF_mfree_nonnull(temp.__begin);
     }
 
-    if(elem->__key_opt == NULL) {
-      // Initialize this element.
+    // Search for the given key.
+    // Note `do_linear_probe_nonempty()` may return an empty element.
+    __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
+    if(!elem->__key_opt) {
       int old_ref = __atomic_fetch_add(key->__nref, 1, __ATOMIC_ACQ_REL);
       __MCFGTHREAD_ASSERT(old_ref > 0);
       elem->__key_opt = key;
@@ -159,7 +156,7 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
     __MCF_tls_table temp;
 
     for(;;) {
-      // The table may be modified while we are iterating so swap it out first.
+      // The table may be modified while being scanned so swap it out first.
       temp = *table;
       *table = (__MCF_tls_table) { 0 };
 
@@ -169,7 +166,7 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
       while(temp.__begin != temp.__end) {
         temp.__end --;
 
-        // Skip 'holes'.
+        // Skip empty elements.
         if(temp.__end->__key_opt == NULL)
           continue;
 
