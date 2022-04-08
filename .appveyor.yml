@@ -2,11 +2,14 @@ image:
   - Visual Studio 2019
 
 environment:
-  PATH: C:\msys64\mingw32\bin;C:\msys64\usr\bin
-  CXX: g++
+  matrix:
+    - PATH: C:\msys64\mingw64\bin;C:\msys64\usr\bin
+      CXX: x86_64-w64-mingw32-g++
+    - PATH: C:\msys64\mingw32\bin;C:\msys64\usr\bin
+      CXX: i686-w64-mingw32-g++
 
 install:
-  - cmd: pacman -S --noconfirm autoconf automake libtool gcc make mingw-w64-i686-gcc
+  - cmd: pacman -S --noconfirm autoconf automake libtool gcc make mingw-w64-{x86_64,i686}-gcc
 
 build:
   parallel: true
