@@ -16,8 +16,8 @@ do_wait_cleanup_common(_MCF_cond_unlock_callback* unlock_opt, intptr_t unlocked,
 
 int
 _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
-        _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg,
-        const int64_t* timeout_opt)
+               _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg,
+               const int64_t* timeout_opt)
   {
     _MCF_cond new, old;
     NTSTATUS status;
