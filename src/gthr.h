@@ -70,6 +70,40 @@ __MCF_gthr_active_p(void) __MCF_NOEXCEPT
     return 1;
   }
 
+// This is an auxiliary function for exception handling in `__gthread_once()`.
+// Ideally, if the target function throws exception we would like to allow
+// attempts to retry. Sadly this is not possible in standard C.
+void
+__MCF_gthr_unonce(__gthread_once_t** __oncep) __MCF_NOEXCEPT;
+
+__MCFGTHREAD_GTHR_INLINE void
+__MCF_gthr_unonce(__gthread_once_t** __oncep) __MCF_NOEXCEPT
+  {
+    if(*__oncep)
+      _MCF_once_abort(*__oncep);
+  }
+
+// Performs one-time initialization, like `pthread_once()`.
+int
+__MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void));
+
+#define __gthread_once  __MCF_gthr_once
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void))
+  {
+    int __do_init = _MCF_once_wait(__once, NULL);
+    if(__do_init == 0)
+      return 0;
+
+    _MCF_once* __cl __attribute__((__cleanup__(__MCF_gthr_unonce)));
+    __cl = __once;
+    __init_proc();
+    __cl = NULL;
+    _MCF_once_release(__once);
+    return 0;
+  }
+
 #ifdef __cplusplus
 }
 #endif
