@@ -54,6 +54,22 @@ struct __MCF_gthr_recursive_mutex_t
 #define __GTHREAD_MUTEX_INIT  {0}
 #define __GTHREAD_RECURSIVE_MUTEX_INIT  {0}
 
+// Informs the runtime that threading support is active.
+// Windows creates new threads for console control handlers, so threading
+// cannot be disabled.
+int
+__MCF_gthr_active_p(void) __MCF_NOEXCEPT
+  __attribute__((__const__));
+
+#define __gthread_active_p  __MCF_gthr_active_p
+
+__MCF_CXX11(constexpr)
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_active_p(void) __MCF_NOEXCEPT
+  {
+    return 1;
+  }
+
 #ifdef __cplusplus
 }
 #endif
