@@ -129,7 +129,7 @@ __MCF_seh_top(EXCEPTION_RECORD* __record, void* __frame, CONTEXT* __ctx, void* _
 #else  // SEH is stack-based  ^/v  SEH is table-based
 
 #  define __MCF_SEH_TERMINATE_FILTER_BEGIN  \
-    __asm__ volatile (".seh_handler __MCF_seh_top_dispatcher, @except");
+    __asm__ volatile (".seh_handler __MCF_seh_top, @except");
 
 #  define __MCF_SEH_TERMINATE_FILTER_END  \
     ((void) 0);
