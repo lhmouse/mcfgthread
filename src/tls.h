@@ -54,8 +54,7 @@ struct __MCF_tls_key
 //
 // Returns a new thread-local key. The caller is responsible for calling
 // `_MCF_tls_key_delete()` when it is no longer needed. If the thread-local key
-// cannot be created, a null pointer is returned and an error code can be
-// obtained via `_MCF_get_win32_error()`.
+// cannot be created, a null pointer is returned.
 _MCF_tls_key*
 _MCF_tls_key_new(_MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT;
 
