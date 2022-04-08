@@ -25,7 +25,34 @@ extern "C" {
 #  define __MCFGTHREAD_GTHR_INLINE
 #endif
 
+// Enable full C++11 threading support.
+#define __GTHREADS  1
+#define __GTHREADS_CXX0X  1
+#define __GTHREAD_HAS_COND  1
 
+// Define gthread types. These usually map to our APIs directly, except
+// the recursive mutex.
+typedef struct timespec __gthread_time_t;
+typedef _MCF_thread* __gthread_t;
+typedef _MCF_tls_key* __gthread_key_t;
+
+typedef _MCF_once __gthread_once_t;
+typedef _MCF_cond __gthread_cond_t;
+typedef _MCF_mutex __gthread_mutex_t;
+
+struct __MCF_gthread_recursive_mutex_t
+  {
+    uint32_t __owner;  // owner thread ID
+    int32_t __depth;  // recursion depth
+    _MCF_mutex __mutex;
+  }
+  typedef __gthread_recursive_mutex_t;
+
+// Define macros for static and dynamic initialization.
+#define __GTHREAD_ONCE_INIT  {0}
+#define __GTHREAD_COND_INIT  {0}
+#define __GTHREAD_MUTEX_INIT  {0}
+#define __GTHREAD_RECURSIVE_MUTEX_INIT  {0}
 
 #ifdef __cplusplus
 }
