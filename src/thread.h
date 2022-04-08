@@ -167,6 +167,10 @@ uint32_t
 _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   __attribute__((__const__));
 
+// Gives up the current time slice.
+void
+_MCF_yield(void) __MCF_NOEXCEPT;
+
 // Suspends the calling thread for a given amount of time.
 //
 // If the `timeout` argument points to a positive integer, it denotes the sleep

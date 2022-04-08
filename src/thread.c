@@ -116,6 +116,12 @@ _MCF_thread_self_tid(void)
   }
 
 void
+_MCF_yield(void)
+  {
+    SwitchToThread();
+  }
+
+void
 _MCF_sleep(const int64_t* timeout_opt)
   {
     LARGE_INTEGER timeout = { 0 };
