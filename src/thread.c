@@ -109,6 +109,12 @@ _MCF_thread_self(void)
     return TlsGetValue(__MCF_win32_tls_index);
   }
 
+uint32_t
+_MCF_thread_self_tid(void)
+  {
+    return GetCurrentThreadId();
+  }
+
 void
 _MCF_sleep(const int64_t* timeout_opt)
   {
