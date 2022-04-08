@@ -11,8 +11,8 @@ AM_CPPFLAGS = -pipe -Wall -Wextra -U_FORTIFY_SOURCE -D_WIN32_WINNT=0x0600  \
   -Wunused-{function,label,local-typedefs,{,but-set-}{variable,parameter}}
 
 AM_CFLAGS = -std=c99 -Wno-old-style-declaration  \
-  -Werror={discarded-qualifiers,int-conversion,strict-prototypes}  \
-  -Werror=implicit-{function-declaration,int}
+  -Werror={discarded-qualifiers,int-conversion,incompatible-pointer-types}  \
+  -Werror={strict-prototypes,implicit-{function-declaration,int}}
 
 AM_DEFAULT_SOURCE_EXT = .c
 LDADD = lib/libmcfgthread.la
