@@ -102,7 +102,7 @@ __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
   }
 
 int
-__MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, void* value)
+__MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value)
   {
     __MCFGTHREAD_ASSERT(key);
     size_t capacity = (size_t) (table->__end - table->__begin) * 2 + 17;
@@ -145,7 +145,7 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, void* value)
     }
 
     __MCFGTHREAD_ASSERT(elem->__key_opt == key);
-    elem->__value = value;
+    elem->__value = (void*) value;
     return 0;
   }
 

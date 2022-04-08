@@ -90,7 +90,7 @@ __MCF_tls_table_get(const __MCF_tls_table* __table, const _MCF_tls_key* __key) _
 //
 // Returns 0 upon success and -1 upon failure.
 int
-__MCF_tls_table_set(__MCF_tls_table* __table, _MCF_tls_key* __key, void* __value) __MCF_NOEXCEPT;
+__MCF_tls_table_set(__MCF_tls_table* __table, _MCF_tls_key* __key, const void* __value) __MCF_NOEXCEPT;
 
 // Executes all destructors in the table, and frees dynamic storage if any. It
 // is declared here for the sake of completeness, and is not meant to be call
