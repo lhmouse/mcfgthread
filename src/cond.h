@@ -62,9 +62,7 @@ _MCF_cond_init(_MCF_cond* __cond) __MCF_NOEXCEPT
 // Returns 0 if the condition variable has been signaled or there is a spurious
 // wakeup, or -1 if the wait operation has timed out.
 int
-_MCF_cond_wait(_MCF_cond* __cond, _MCF_cond_unlock_callback* __unlock_opt,
-               _MCF_cond_relock_callback* __relock_opt, intptr_t __lock_arg,
-               const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+_MCF_cond_wait(_MCF_cond* __cond, _MCF_cond_unlock_callback* __unlock_opt, _MCF_cond_relock_callback* __relock_opt, intptr_t __lock_arg, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
 // Wakes up some or all threads that have been put to sleep on this condition
 // variable.

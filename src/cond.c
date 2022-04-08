@@ -7,17 +7,14 @@
 #include "win32.h"
 
 static void
-do_wait_cleanup_common(_MCF_cond_unlock_callback* unlock_opt, intptr_t unlocked,
-        _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg)
+do_wait_cleanup_common(_MCF_cond_unlock_callback* unlock_opt, intptr_t unlocked, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg)
   {
     if(unlock_opt && relock_opt)
       relock_opt(lock_arg, unlocked);
   }
 
 int
-_MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
-               _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg,
-               const int64_t* timeout_opt)
+_MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, const int64_t* timeout_opt)
   {
     _MCF_cond new, old;
     NTSTATUS status;
