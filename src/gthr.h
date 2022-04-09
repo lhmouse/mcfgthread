@@ -43,7 +43,7 @@ typedef _MCF_mutex __gthread_mutex_t;
 struct __MCF_gthr_recursive_mutex_t
   {
     uint32_t __owner;  // owner thread ID
-    int32_t __depth;  // recursion depth
+    int __depth;  // recursion depth
     _MCF_mutex __mutex;
   }
   typedef __gthread_recursive_mutex_t;
@@ -98,7 +98,7 @@ __MCF_gthr_timeout_from_timespec(const __gthread_time_t* __abs_time) __MCF_NOEXC
     if(__time_ms < 0)
       return 0;
     else if(__time_ms > 0x7FFFFFFFFFFFFC00)
-      return INT64_MAX;
+      return 0x7FFFFFFFFFFFFFFF;
     else
       return (int64_t) __time_ms;
   }
@@ -335,7 +335,7 @@ __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXC
     }
 
     // Increment the recursion counter.
-    __MCFGTHREAD_ASSERT(__rmtx->__depth < INT32_MAX);
+    __MCFGTHREAD_ASSERT(__rmtx->__depth < INT_MAX);
     __rmtx->__depth ++;
     __MCFGTHREAD_ASSERT(__rmtx->__depth != 0);
     return 0;
@@ -365,7 +365,7 @@ __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NO
     }
 
     // Increment the recursion counter.
-    __MCFGTHREAD_ASSERT(__rmtx->__depth < INT32_MAX);
+    __MCFGTHREAD_ASSERT(__rmtx->__depth < INT_MAX);
     __rmtx->__depth ++;
     __MCFGTHREAD_ASSERT(__rmtx->__depth != 0);
     return 0;
@@ -395,7 +395,7 @@ __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const 
     }
 
     // Increment the recursion counter.
-    __MCFGTHREAD_ASSERT(__rmtx->__depth < INT32_MAX);
+    __MCFGTHREAD_ASSERT(__rmtx->__depth < INT_MAX);
     __rmtx->__depth ++;
     __MCFGTHREAD_ASSERT(__rmtx->__depth > 0);
     return 0;

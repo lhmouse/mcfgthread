@@ -14,6 +14,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdalign.h>
+#include <limits.h>
 
 #ifdef __cplusplus
 extern "C" {
