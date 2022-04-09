@@ -26,6 +26,10 @@ __cxa_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
   __attribute__((__alias__("__MCF_cxa_atexit")));
 
 int
+__cxa_at_quick_exit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
+  __attribute__((__alias__("__MCF_cxa_at_quick_exit")));
+
+int
 __cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
   __attribute__((__alias__("__MCF_cxa_thread_atexit")));
 
@@ -62,6 +66,17 @@ __MCF_cxa_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
     __MCF_dtor_element elem = { dtor.__cdecl_ptr, this, dso };
     int err = __MCF_dtor_queue_push(&__MCF_cxa_atexit_queue, &elem);
     _MCF_mutex_unlock(&__MCF_cxa_atexit_mutex);
+    return err;
+  }
+
+int
+__MCF_cxa_at_quick_exit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
+  {
+    // Push the element to the global queue.
+    _MCF_mutex_lock(&__MCF_cxa_at_quick_exit_mutex, NULL);
+    __MCF_dtor_element elem = { dtor.__cdecl_ptr, this, dso };
+    int err = __MCF_dtor_queue_push(&__MCF_cxa_at_quick_exit_queue, &elem);
+    _MCF_mutex_unlock(&__MCF_cxa_at_quick_exit_mutex);
     return err;
   }
 
