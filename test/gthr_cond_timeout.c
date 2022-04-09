@@ -22,11 +22,11 @@ main(void)
     assert(r == 0);
 
     // Round the time up.
-    int64_t sleep_until = int64_t() time(NULL) * 1000 + 2000;
+    int64_t sleep_until = (int64_t) time(NULL) * 1000 + 2000;
     _MCF_sleep(&sleep_until);
 
     now = _MCF_perf_counter();
-    timeout.tv_sec = int64_t() time(NULL) + 1;
+    timeout.tv_sec = (int64_t) time(NULL) + 1;
     timeout.tv_nsec = 100000000;
     r = __gthread_cond_timedwait(&cond, &mutex, &timeout);
     assert(r == ETIMEDOUT);
