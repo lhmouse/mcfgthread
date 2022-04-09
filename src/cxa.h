@@ -49,26 +49,6 @@ union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
   }
   typedef __MCF_cxa_dtor_union;
 
-// 3.3.3 One-time Construction API
-int
-__cxa_guard_acquire(int64_t* __guard) __MCF_NOEXCEPT;
-
-void
-__cxa_guard_release(int64_t* __guard) __MCF_NOEXCEPT;
-
-void
-__cxa_guard_abort(int64_t* __guard) __MCF_NOEXCEPT;
-
-// 3.3.6.3 Runtime API
-int
-__cxa_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT;
-
-int
-__cxa_thread_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT;
-
-void
-__cxa_finalize(void* __dso) __MCF_NOEXCEPT;
-
 // Declare 'real' functions here.
 int
 __MCF_cxa_guard_acquire(int64_t* __guard) __MCF_NOEXCEPT;

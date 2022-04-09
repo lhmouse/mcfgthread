@@ -18,7 +18,7 @@ thread_atexit_proc(void* arg)
 static void
 thread_proc(_MCF_thread* self)
   {
-    __cxa_thread_atexit(thread_atexit_proc, self->__data, NULL);
+    __MCF_cxa_thread_atexit(thread_atexit_proc, self->__data, NULL);
     Sleep(1000);
     printf("thread %d quitting\n", self->__tid);
   }
