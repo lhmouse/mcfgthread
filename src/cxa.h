@@ -26,26 +26,26 @@ extern "C" {
 // Note: In the case of i386, the argument is passed both via the ECX register
 // and on the stack, to allow both `__cdecl` and `__thiscall` functions to work
 // properly. The function prototype is declared for compatibility with GCC.
-typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __this);
 typedef void __cdecl __MCF_cxa_dtor_cdecl(void* __this);
+typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __this);
 
 union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
   {
-    __MCF_cxa_dtor_thiscall* __thiscall_ptr;
     __MCF_cxa_dtor_cdecl* __cdecl_ptr;
+    __MCF_cxa_dtor_thiscall* __thiscall_ptr;
 
-#if defined(__cplusplus) && (__cplusplus >= 201103L)
+#ifdef __cplusplus
     // GCC ignores `__transparent_union__` attribute so mimic it.
-    __MCF_cxa_dtor_union() = default;
-
-    constexpr
-    __MCF_cxa_dtor_union(__MCF_cxa_dtor_thiscall* __arg) noexcept
-      : __thiscall_ptr(__arg)  { }
-
-    constexpr
-    __MCF_cxa_dtor_union(__MCF_cxa_dtor_cdecl* __arg) noexcept
+    __MCF_CXX11(constexpr)
+    __MCF_cxa_dtor_union(__MCF_cxa_dtor_cdecl* __arg) __MCF_NOEXCEPT
       : __cdecl_ptr(__arg)  { }
-#endif
+
+#  ifdef __i386__
+    __MCF_CXX11(constexpr)
+    __MCF_cxa_dtor_union(__MCF_cxa_dtor_thiscall* __arg) __MCF_NOEXCEPT
+      : __thiscall_ptr(__arg)  { }
+#  endif
+#endif  // __cplusplus
   }
   typedef __MCF_cxa_dtor_union;
 
