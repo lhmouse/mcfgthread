@@ -5,10 +5,6 @@
 #ifndef __MCFGTHREAD_FWD_H_
 #define __MCFGTHREAD_FWD_H_
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
 // Import types about the system ABI.
 // Other standard library facilities are not available.
 #include <stddef.h>

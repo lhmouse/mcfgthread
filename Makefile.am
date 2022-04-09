@@ -2,8 +2,9 @@ ACLOCAL_AMFLAGS = -I m4
 NOTHING =
 
 ## Compiler options
-AM_CPPFLAGS = -pipe -Wall -Wextra -U_FORTIFY_SOURCE -D_WIN32_WINNT=0x0600  \
-  -D__USE_MINGW_ANSI_STDIO -f{strict-{aliasing,overflow},merge-all-constants}  \
+AM_CPPFLAGS = -pipe -Wall -Wextra -include config.h -U_FORTIFY_SOURCE  \
+  -D_WIN32_WINNT=0x0600 -D__USE_MINGW_ANSI_STDIO  \
+  -f{strict-{aliasing,overflow},merge-all-constants}  \
   -fno-{math-errno,trapping-math,stack-protector}  \
   -Werror={{,sign-}conversion,sign-compare,write-strings,return-type}  \
   -Werror={double-promotion,aggressive-loop-optimizations,missing-declarations}  \
