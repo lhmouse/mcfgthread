@@ -8,11 +8,11 @@
 #include "win32.h"
 
 static DWORD __stdcall
-do_win32_thread(LPVOID param)
+do_win32_thread_thunk(LPVOID param)
   __attribute__((__force_align_arg_pointer__));
 
 static DWORD __stdcall
-do_win32_thread(LPVOID param)
+do_win32_thread_thunk(LPVOID param)
   {
     __MCF_SEH_TERMINATE_FILTER_BEGIN
     _MCF_thread* const self = param;
@@ -30,18 +30,22 @@ do_win32_thread(LPVOID param)
 _MCF_thread*
 _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
   {
-    if(!proc)
-      __MCF_SET_ERROR_AND_RETURN(ERROR_INVALID_PARAMETER, NULL);
-
-    // Allocate the thread control structure.
-    size_t thrd_size = sizeof(_MCF_thread);
-    if(size > PTRDIFF_MAX - thrd_size)
-      __MCF_SET_ERROR_AND_RETURN(ERROR_NOT_ENOUGH_MEMORY, NULL);
-
-    thrd_size += size;
-    _MCF_thread* thrd = _MCF_malloc0(thrd_size);
-    if(!thrd)
+    // Validate arguments.
+    if(!proc) {
+      SetLastError(ERROR_INVALID_PARAMETER);
       return NULL;
+    }
+
+    if(size > SIZE_MAX / 4 - sizeof(_MCF_thread)) {
+      SetLastError(ERROR_NOT_ENOUGH_MEMORY);
+      return NULL;
+    }
+
+    _MCF_thread* thrd = _MCF_malloc0(sizeof(_MCF_thread) + size);
+    if(!thrd) {
+      SetLastError(ERROR_NOT_ENOUGH_MEMORY);
+      return NULL;
+    }
 
     if(data_opt)
       _MCF_mmove(thrd->__data, data_opt, size);
@@ -49,7 +53,7 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
     // Create the thread.
     // The new thread must not begin execution before the `__handle` field is
     // initialized, after `CreateThread()` returns, so suspend it first.
-    thrd->__handle = CreateThread(NULL, 0, do_win32_thread, thrd, CREATE_SUSPENDED, (DWORD*) &(thrd->__tid));
+    thrd->__handle = CreateThread(NULL, 0, do_win32_thread_thunk, thrd, CREATE_SUSPENDED, (DWORD*) &(thrd->__tid));
     if(thrd->__handle == NULL) {
       _MCF_mfree_nonnull(thrd);
       return NULL;
