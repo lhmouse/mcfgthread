@@ -20,7 +20,7 @@ _MCF_utc_now(void)
 
     // Convert it into Unix epoch in milliseconds.
     double nt_time = (double)(int64_t) ui.QuadPart;
-    double unix_time = (nt_time - 116444736000000000) / 10000;
+    double unix_time = (nt_time - 116444736000000000) * 0.0001;
     return (int64_t) unix_time;
   }
 
