@@ -104,6 +104,19 @@ __MCF_gthr_timeout_from_timespec(const __gthread_time_t* __abs_time) __MCF_NOEXC
       return (int64_t) __time_ms;
   }
 
+// These are auxiliary functions for condition variables.
+intptr_t
+__MCF_gthr_mutex_unlock_callback(intptr_t __arg) __MCF_NOEXCEPT;
+
+void
+__MCF_gthr_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
+
+intptr_t
+__MCF_gthr_recursive_mutex_unlock_callback(intptr_t __arg) __MCF_NOEXCEPT;
+
+void
+__MCF_gthr_recursive_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
+
 // Performs one-time initialization, like `pthread_once()`.
 int
 __MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void));
@@ -396,6 +409,107 @@ __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOE
       __atomic_store_n(&(__rmtx->__owner), 0, __ATOMIC_RELAXED);
       _MCF_mutex_unlock(&(__rmtx->__mutex));
     }
+    return 0;
+  }
+
+// Initializes a condition variable, like `pthread_cond_init()`.
+// This function exists not in GCC's 'gthr.h' but in 'gthr-posix.h'.
+int
+__MCF_gthr_cond_init(__gthread_cond_t* __cond) __MCF_NOEXCEPT;
+
+#define __gthread_cond_init  __MCF_gthr_cond_init
+#define __GTHREAD_COND_INIT_FUNCTION  __MCF_gthr_cond_init
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_cond_init(__gthread_cond_t* __cond) __MCF_NOEXCEPT
+  {
+    _MCF_cond_init(__cond);
+    return 0;
+  }
+
+// Destroys a condition variable. This function does nothing.
+// This function exists not in GCC's 'gthr.h' but in 'gthr-posix.h'.
+int
+__MCF_gthr_cond_destroy(__gthread_cond_t* __cond) __MCF_NOEXCEPT;
+
+#define __gthread_cond_destroy  __MCF_gthr_cond_destroy
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_cond_destroy(__gthread_cond_t* __cond) __MCF_NOEXCEPT
+  {
+    (void) __cond;
+    return 0;
+  }
+
+// Waits for a condition variable, like `pthread_cond_wait()`.
+int
+__MCF_gthr_cond_wait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
+
+#define __gthread_cond_wait  __MCF_gthr_cond_wait
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_cond_wait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx) __MCF_NOEXCEPT
+  {
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback, __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx, NULL);
+    __MCFGTHREAD_ASSERT(__err == 0);
+    return 0;
+  }
+
+// Waits for a condition variable, like `pthread_cond_wait()`.
+int
+__MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
+
+#define __gthread_cond_wait_recursive  __MCF_gthr_cond_wait_recursive
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
+  {
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) __rmtx, NULL);
+    __MCFGTHREAD_ASSERT(__err == 0);
+    return 0;
+  }
+
+// Waits for a condition variable until a time point, like
+// `pthread_cond_timedwait()`.
+int
+__MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT;
+
+#define __gthread_cond_timedwait  __MCF_gthr_cond_timedwait
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
+  {
+    int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback, __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx, &__timeout);
+    __MCFGTHREAD_ASSERT(__err == 0);
+    return 0;
+  }
+
+// Signals at most one thread that is waiting on the condition variable, like
+// `pthread_cond_signal()`.
+int
+__MCF_gthr_cond_signal(__gthread_cond_t* __cond) __MCF_NOEXCEPT;
+
+#define __gthread_cond_signal  __MCF_gthr_cond_signal
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_cond_signal(__gthread_cond_t* __cond) __MCF_NOEXCEPT
+  {
+    _MCF_cond_signal_some(__cond, 1);
+    return 0;
+  }
+
+// Signals all threads that are waiting on the condition variable, like
+// `pthread_cond_broadcast()`.
+int
+__MCF_gthr_cond_broadcast(__gthread_cond_t* __cond) __MCF_NOEXCEPT;
+
+#define __gthread_cond_broadcast  __MCF_gthr_cond_broadcast
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_cond_broadcast(__gthread_cond_t* __cond) __MCF_NOEXCEPT
+  {
+    _MCF_cond_signal_all(__cond);
     return 0;
   }
 
