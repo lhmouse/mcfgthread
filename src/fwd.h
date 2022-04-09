@@ -97,8 +97,8 @@ extern __MCF_DYNCONST _MCF_thread __MCF_main_thread;
 
 extern _MCF_mutex __MCF_cxa_atexit_mutex;
 extern __MCF_dtor_queue __MCF_cxa_atexit_queue;
-extern _MCF_mutex __MCF_at_quick_exit_mutex;
-extern __MCF_dtor_queue __MCF_at_quick_exit_queue;
+extern _MCF_mutex __MCF_cxa_at_quick_exit_mutex;
+extern __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
 extern uint32_t __MCF_tls_key_serial;
 
 #ifdef __cplusplus
