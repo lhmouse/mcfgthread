@@ -574,7 +574,7 @@ __MCF_gthr_join(__gthread_t __thrd, void** __resultp_opt) __MCF_NOEXCEPT
     return 0;
   }
 
-// Detaches a thread, line `pthread_detach()`
+// Detaches a thread, like `pthread_detach()`
 int
 __MCF_gthr_detach(__gthread_t __thrd) __MCF_NOEXCEPT;
 
