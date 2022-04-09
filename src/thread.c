@@ -16,18 +16,15 @@ do_win32_thread(LPVOID param)
   {
     __MCF_SEH_TERMINATE_FILTER_BEGIN
     _MCF_thread* const self = param;
-    register intptr_t exit_code;
 
     // Attach the thread.
     (void) TlsSetValue(__MCF_win32_tls_index, self);
 
-    // Execute the user-defined procedure, which should save the exit code
-    // into `self->__exit_code`, which is also returned truncated.
+    // Execute the user-defined procedure, which has no return value.
     self->__proc(self);
-    exit_code = __atomic_load_n(self->__exit_code, __ATOMIC_RELAXED);
 
     __MCF_SEH_TERMINATE_FILTER_END
-    return (DWORD) exit_code;
+    return 0;
   }
 
 _MCF_thread*
@@ -82,13 +79,9 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
   }
 
 void
-_MCF_thread_exit(intptr_t exit_code)
+_MCF_thread_exit()
   {
-    _MCF_thread* const self = TlsGetValue(__MCF_win32_tls_index);
-    if(self)
-      __atomic_store_n(self->__exit_code, exit_code, __ATOMIC_RELEASE);
-
-    ExitThread((DWORD) exit_code);
+    ExitThread(0);
     __MCF_UNREACHABLE;
   }
 

@@ -33,7 +33,6 @@ struct __MCF_thread
     __MCF_tls_table __tls_table;  // for `_MCF_tls_get()` and `_MCF_tls_set()`
 
     _MCF_thread_procedure* __proc;  // user-defined thread procedure
-    intptr_t __exit_code[1];
     char __data[0] __MCF_ALIGNED(16);  // user-defined data
   }
   typedef _MCF_thread;
@@ -124,21 +123,9 @@ _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
     return __thrd->__handle;
   }
 
-// Gets the exit code of a thread.
-// This may not be meaningful when the target thread is running.
-intptr_t
-_MCF_thread_get_exit_code(const _MCF_thread* __thrd) __MCF_NOEXCEPT
-  __attribute__((__pure__));
-
-__MCFGTHREAD_THREAD_INLINE intptr_t
-_MCF_thread_get_exit_code(const _MCF_thread* __thrd) __MCF_NOEXCEPT
-  {
-    return __atomic_load_n(__thrd->__exit_code, __ATOMIC_ACQUIRE);
-  }
-
 // Exits from a thread.
 void
-_MCF_thread_exit(intptr_t __exit_code) __MCF_NOEXCEPT
+_MCF_thread_exit(void) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
 
 // Waits for a thread to finish execution.
