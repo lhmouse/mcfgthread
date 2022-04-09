@@ -578,7 +578,7 @@ __MCF_gthr_join(__gthread_t __thrd, void** __resultp_opt) __MCF_NOEXCEPT
 int
 __MCF_gthr_detach(__gthread_t __thrd) __MCF_NOEXCEPT;
 
-#define __gthread_join  __MCF_gthr_join
+#define __gthread_detach  __MCF_gthr_detach
 
 __MCFGTHREAD_GTHR_INLINE int
 __MCF_gthr_detach(__gthread_t __thrd) __MCF_NOEXCEPT
