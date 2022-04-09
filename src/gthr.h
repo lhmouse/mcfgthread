@@ -614,7 +614,7 @@ __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT
 __MCFGTHREAD_GTHR_INLINE int
 __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT
   {
-    return __t1->__tid == __t2->__tid;
+    return __t1 == __t2;
   }
 
 // Gives up the current time slice, like `sched_yield()`.
