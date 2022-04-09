@@ -63,7 +63,6 @@ __MCF_gthr_active_p(void) __MCF_NOEXCEPT
 
 #define __gthread_active_p  __MCF_gthr_active_p
 
-__MCF_CXX11(constexpr)
 __MCFGTHREAD_GTHR_INLINE int
 __MCF_gthr_active_p(void) __MCF_NOEXCEPT
   {
@@ -613,7 +612,6 @@ __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT
 
 #define __gthread_equal  __MCF_thrd_equal
 
-__MCF_CXX11(constexpr)
 __MCFGTHREAD_GTHR_INLINE int
 __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT
   {
