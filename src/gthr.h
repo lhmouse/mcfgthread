@@ -117,6 +117,20 @@ __MCF_gthr_recursive_mutex_unlock_callback(intptr_t __arg) __MCF_NOEXCEPT;
 void
 __MCF_gthr_recursive_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
 
+// This is the wrapper for a gthread.
+typedef void* __MCF_gthr_thread_procedure(void* __arg);
+
+struct __MCF_gthr_thread_record
+  {
+    void* __result;
+    __MCF_gthr_thread_procedure* __proc;
+    void* __arg;
+  }
+  typedef __MCF_gthr_thread_record;
+
+void
+__MCF_gthr_thread_thunk(_MCF_thread* __thrd) __MCF_NOEXCEPT;
+
 // Performs one-time initialization, like `pthread_once()`.
 int
 __MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void));
@@ -511,6 +525,111 @@ __MCF_gthr_cond_broadcast(__gthread_cond_t* __cond) __MCF_NOEXCEPT
   {
     _MCF_cond_signal_all(__cond);
     return 0;
+  }
+
+// Creates a thread, like `pthread_create()`.
+int
+__MCF_gthr_create(__gthread_t* __thrdp, void* __proc(void*), void* __arg) __MCF_NOEXCEPT;
+
+#define __gthread_create  __MCF_gthr_create
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_create(__gthread_t* __thrdp, void* __proc(void*), void* __arg) __MCF_NOEXCEPT
+  {
+    __MCF_gthr_thread_record __rec = { 0 };
+    __rec.__proc = __proc;
+    __rec.__arg = __arg;
+
+    _MCF_thread* __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk, &__rec, sizeof(__rec));
+    *__thrdp = __thrd;
+    return !__thrd ? EAGAIN : 0;  // as specified by POSIX
+  }
+
+// Awaits a thread to terminate and gets its result, like `pthread_join()`.
+int
+__MCF_gthr_join(__gthread_t __thrd, void** __resultp_opt) __MCF_NOEXCEPT;
+
+#define __gthread_join  __MCF_gthr_join
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_join(__gthread_t __thrd, void** __resultp_opt) __MCF_NOEXCEPT
+  {
+    _MCF_thread* __self = _MCF_thread_self();
+    if(__thrd == __self)
+      return EDEADLK;
+
+    // Wait for it.
+    int __err = _MCF_thread_wait(__thrd, NULL);
+    __MCFGTHREAD_ASSERT(__err == 0);
+
+    if(__resultp_opt) {
+      // As there is no type information, we examine the thread procedure to
+      // ensure we don't mistake a thread of a wrong type.
+      if(__thrd->__proc != __MCF_gthr_thread_thunk)
+        *__resultp_opt = NULL;
+      else
+        *__resultp_opt = ((__MCF_gthr_thread_record*) __thrd->__data)->__result;
+    }
+
+    // Free the thread.
+    _MCF_thread_drop_ref(__thrd);
+    return 0;
+  }
+
+// Detaches a thread, line `pthread_detach()`
+int
+__MCF_gthr_detach(__gthread_t __thrd) __MCF_NOEXCEPT;
+
+#define __gthread_join  __MCF_gthr_join
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_detach(__gthread_t __thrd) __MCF_NOEXCEPT
+  {
+    _MCF_thread_drop_ref(__thrd);
+    return 0;
+  }
+
+// Gets a thread itself, like `pthread_self()`.
+// The thread shall be the main thread, or shall have been created by
+// `__gthr_create()`. Otherwise the behavior is undefined.
+__gthread_t
+__MCF_gthr_self(void) __MCF_NOEXCEPT
+  __attribute__((__const__, __returns_nonnull__));
+
+#define __gthread_self  __MCF_gthr_self
+
+__MCFGTHREAD_GTHR_INLINE __gthread_t
+__MCF_gthr_self(void) __MCF_NOEXCEPT
+  {
+    _MCF_thread* __self = _MCF_thread_self();
+    __MCFGTHREAD_CHECK(__self);
+    return __self;
+  }
+
+// Checks whether two thread IDs compare equal, like `pthread_equal()`.
+int
+__MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT
+  __attribute__((__pure__));
+
+#define __gthread_equal  __MCF_thrd_equal
+
+__MCF_CXX11(constexpr)
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT
+  {
+    return __t1->__tid == __t2->__tid;
+  }
+
+// Gives up the current time slice, like `sched_yield()`.
+void
+__MCF_gthr_yield(void) __MCF_NOEXCEPT;
+
+#define __gthread_yield  __MCF_gthr_yield
+
+__MCFGTHREAD_GTHR_INLINE void
+__MCF_gthr_yield(void) __MCF_NOEXCEPT
+  {
+    _MCF_yield();
   }
 
 #ifdef __cplusplus
