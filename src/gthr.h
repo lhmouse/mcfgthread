@@ -259,6 +259,146 @@ __MCF_gthr_mutex_unlock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
     return 0;
   }
 
+// Initializes a recursive mutex, like `pthread_mutex_init()`.
+int
+__MCF_gthr_recursive_mutex_init(__gthread_recursive_mutex_t* __mtx) __MCF_NOEXCEPT;
+
+#define __gthread_recursive_mutex_init  __MCF_gthr_recursive_mutex_init
+#define __GTHREAD_RECURSIVE_MUTEX_INIT_FUNCTION  __MCF_gthr_recursive_mutex_init
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_recursive_mutex_init(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
+  {
+    __rmtx->__owner = 0;
+    __rmtx->__depth = 0;
+    _MCF_mutex_init(&(__rmtx->__mutex));
+    return 0;
+  }
+
+// Destroys a recursive mutex. This function does nothing.
+int
+__MCF_gthr_recursive_mutex_destroy(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
+
+#define __gthread_recursive_mutex_destroy  __MCF_gthr_recursive_mutex_destroy
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_recursive_mutex_destroy(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
+  {
+    (void) __rmtx;
+    return 0;
+  }
+
+// Locks a recursive mutex, like `pthread_mutex_lock()`.
+int
+__MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
+
+#define __gthread_recursive_mutex_lock  __MCF_gthr_recursive_mutex_lock
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
+  {
+    uint32_t __my_tid = _MCF_thread_self_tid();
+    if(__atomic_load_n(&(__rmtx->__owner), __ATOMIC_RELAXED) != __my_tid) {
+      // If the calling thread does not own this mutex, attempt to take ownership.
+      int __err = _MCF_mutex_lock(&(__rmtx->__mutex), NULL);
+      __MCFGTHREAD_ASSERT(__err == 0);
+
+      // The calling thread owns the mutex now.
+      __atomic_store_n(&(__rmtx->__owner), __my_tid, __ATOMIC_RELAXED);
+      __MCFGTHREAD_ASSERT(__rmtx->__depth == 0);
+    }
+
+    // Increment the recursion counter.
+    __MCFGTHREAD_ASSERT(__rmtx->__depth < INT32_MAX);
+    __rmtx->__depth ++;
+    __MCFGTHREAD_ASSERT(__rmtx->__depth != 0);
+    return 0;
+  }
+
+// Tries locking a recursive mutex without blocking, like
+// `pthread_mutex_trylock()`.
+int
+__MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
+
+#define __gthread_recursive_mutex_trylock  __MCF_gthr_recursive_mutex_trylock
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
+  {
+    uint32_t __my_tid = _MCF_thread_self_tid();
+    if(__atomic_load_n(&(__rmtx->__owner), __ATOMIC_RELAXED) != __my_tid) {
+      // If the calling thread does not own this mutex, attempt to take ownership.
+      int64_t __timeout = 0;
+      int __err = _MCF_mutex_lock(&(__rmtx->__mutex), &__timeout);
+      if(__err != 0)
+        return EBUSY;
+
+      // The calling thread owns the mutex now.
+      __atomic_store_n(&(__rmtx->__owner), __my_tid, __ATOMIC_RELAXED);
+      __MCFGTHREAD_ASSERT(__rmtx->__depth == 0);
+    }
+
+    // Increment the recursion counter.
+    __MCFGTHREAD_ASSERT(__rmtx->__depth < INT32_MAX);
+    __rmtx->__depth ++;
+    __MCFGTHREAD_ASSERT(__rmtx->__depth != 0);
+    return 0;
+  }
+
+// Tries locking a recursive mutex until a time point, like
+// `pthread_mutex_timedlock()`.
+int
+__MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT;
+
+#define __gthread_recursive_mutex_timedlock  __MCF_gthr_recursive_mutex_timedlock
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
+  {
+    uint32_t __my_tid = _MCF_thread_self_tid();
+    if(__atomic_load_n(&(__rmtx->__owner), __ATOMIC_RELAXED) != __my_tid) {
+      // If the calling thread does not own this mutex, attempt to take ownership.
+      int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
+      int __err = _MCF_mutex_lock(&(__rmtx->__mutex), &__timeout);
+      if(__err != 0)
+        return ETIMEDOUT;
+
+      // The calling thread owns the mutex now.
+      __atomic_store_n(&(__rmtx->__owner), __my_tid, __ATOMIC_RELAXED);
+      __MCFGTHREAD_ASSERT(__rmtx->__depth == 0);
+    }
+
+    // Increment the recursion counter.
+    __MCFGTHREAD_ASSERT(__rmtx->__depth < INT32_MAX);
+    __rmtx->__depth ++;
+    __MCFGTHREAD_ASSERT(__rmtx->__depth > 0);
+    return 0;
+  }
+
+// Unlocks a recursive mutex, like `pthread_mutex_unlock()`.
+int
+__MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
+
+#define __gthread_recursive_mutex_unlock  __MCF_gthr_recursive_mutex_unlock
+
+__MCFGTHREAD_GTHR_INLINE int
+__MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
+  {
+    uint32_t __my_tid = _MCF_thread_self_tid();
+    __MCFGTHREAD_CHECK(__atomic_load_n(&(__rmtx->__owner), __ATOMIC_RELAXED) == __my_tid);
+
+    // Decrement the recursion counter.
+    __MCFGTHREAD_ASSERT(__rmtx->__depth > 0);
+    __rmtx->__depth --;
+
+    if(__rmtx->__depth == 0) {
+      // The calling thread shall give up ownership now.
+      __atomic_store_n(&(__rmtx->__owner), 0, __ATOMIC_RELAXED);
+      _MCF_mutex_unlock(&(__rmtx->__mutex));
+    }
+    return 0;
+  }
+
 #ifdef __cplusplus
 }
 #endif
