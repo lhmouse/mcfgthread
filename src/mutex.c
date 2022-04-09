@@ -63,7 +63,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 
           // If this mutex has not been locked, lock it and give back the
           // spinning count. Otherwise, do nothing.
-          __MCF_ATOMIC_LOAD_ACQUIRE(&old, mutex);
+          __MCF_ATOMIC_LOAD_RELAXED(&old, mutex);
           if(old.__locked != 0)
             continue;
 
