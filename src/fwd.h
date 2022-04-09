@@ -35,10 +35,10 @@ extern "C" {
 #  define __MCF_UNREACHABLE   __builtin_unreachable()
 #endif
 
-#if defined(__cplusplus) && (__cplusplus >= 201402L)
-#  define __MCF_CXX14(...)     __VA_ARGS__
+#if defined(__cplusplus)
+#  define __MCF_CXX(...)       __VA_ARGS__
 #else
-#  define __MCF_CXX14(...)
+#  define __MCF_CXX(...)
 #endif
 
 #if defined(__cplusplus) && (__cplusplus >= 201103L)
@@ -47,10 +47,10 @@ extern "C" {
 #  define __MCF_CXX11(...)
 #endif
 
-#if defined(__cplusplus)
-#  define __MCF_CXX(...)       __VA_ARGS__
+#if defined(__cplusplus) && (__cplusplus >= 201402L)
+#  define __MCF_CXX14(...)     __VA_ARGS__
 #else
-#  define __MCF_CXX(...)
+#  define __MCF_CXX14(...)
 #endif
 
 #define __MCF_GNU_INLINE       extern __inline__ __attribute__((__gnu_inline__))
