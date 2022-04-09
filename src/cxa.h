@@ -33,6 +33,19 @@ union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
   {
     __MCF_cxa_dtor_thiscall* __thiscall_ptr;
     __MCF_cxa_dtor_cdecl* __cdecl_ptr;
+
+#if defined(__cplusplus) && (__cplusplus >= 201103L)
+    // GCC ignores `__transparent_union__` attribute so mimic it.
+    __MCF_cxa_dtor_union() = default;
+
+    constexpr
+    __MCF_cxa_dtor_union(__MCF_cxa_dtor_thiscall* __arg) noexcept
+      : __thiscall_ptr(__arg)  { }
+
+    constexpr
+    __MCF_cxa_dtor_union(__MCF_cxa_dtor_cdecl* __arg) noexcept
+      : __cdecl_ptr(__arg)  { }
+#endif
   }
   typedef __MCF_cxa_dtor_union;
 
