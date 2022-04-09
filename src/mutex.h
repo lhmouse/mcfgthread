@@ -6,6 +6,7 @@
 #define __MCFGTHREAD_MUTEX_H_
 
 #include "fwd.h"
+#include "atomic.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -52,7 +53,7 @@ __MCFGTHREAD_MUTEX_INLINE void
 _MCF_mutex_init(_MCF_mutex* __mutex) __MCF_NOEXCEPT
   {
     _MCF_mutex __temp = { 0 };
-    __atomic_store(__mutex, &__temp, __ATOMIC_RELEASE);
+    __MCF_ATOMIC_STORE_RELEASE(__mutex, &__temp);
   }
 
 // Attempts to lock a mutex.
@@ -78,7 +79,7 @@ __MCFGTHREAD_MUTEX_INLINE int
 _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
     _MCF_mutex __new, __old;
-    __atomic_load(__mutex, &__old, __ATOMIC_ACQUIRE);
+    __MCF_ATOMIC_LOAD_ACQUIRE(&__old, __mutex);
 
     if(__builtin_expect(__old.__locked, 0) == 0) {
       __new = __old;
@@ -89,7 +90,7 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEP
       if(__old.__nspin_fail != 0)
         __new.__nspin_fail = (__old.__nspin_fail - 1U) & __MCF_MUTEX_NSPIN_M;
 
-      if(__atomic_compare_exchange(__mutex, &__old, &__new, 0, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
+      if(__MCF_ATOMIC_CAS_ACQ_REL(__mutex, &__old, &__new))
         return 0;
     }
 

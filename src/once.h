@@ -6,6 +6,7 @@
 #define __MCFGTHREAD_ONCE_H_
 
 #include "fwd.h"
+#include "atomic.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,7 +43,7 @@ __MCFGTHREAD_ONCE_INLINE void
 _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT
   {
     _MCF_once __temp = { 0 };
-    __atomic_store(__once, &__temp, __ATOMIC_RELEASE);
+    __MCF_ATOMIC_STORE_RELEASE(__once, &__temp);
   }
 
 // Attempts to lock a once-initialization flag.
@@ -71,7 +72,7 @@ __MCFGTHREAD_ONCE_INLINE int
 _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
     _MCF_once __new, __old;
-    __atomic_load(__once, &__old, __ATOMIC_ACQUIRE);
+    __MCF_ATOMIC_LOAD_ACQUIRE(&__old, __once);
 
     if(__builtin_expect(__old.__ready, 1) != 0)
       return 0;
@@ -79,7 +80,7 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
     if(__builtin_expect(__old.__locked, 0) == 0) {
       __new = __old;
       __new.__locked = 1;
-      if(__atomic_compare_exchange(__once, &__old, &__new, 0, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
+      if(__MCF_ATOMIC_CAS_ACQ_REL(__once, &__old, &__new))
         return 1;
     }
 

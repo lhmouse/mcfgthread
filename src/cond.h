@@ -6,6 +6,7 @@
 #define __MCFGTHREAD_COND_H_
 
 #include "fwd.h"
+#include "atomic.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -41,7 +42,7 @@ __MCFGTHREAD_COND_INLINE void
 _MCF_cond_init(_MCF_cond* __cond) __MCF_NOEXCEPT
   {
     _MCF_cond __temp = { 0 };
-    __atomic_store(__cond, &__temp, __ATOMIC_RELEASE);
+    __MCF_ATOMIC_STORE_RELEASE(__cond, &__temp);
   }
 
 // Puts the current thread to sleep on a condition variable.

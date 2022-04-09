@@ -324,13 +324,13 @@ __MCFGTHREAD_GTHR_INLINE int
 __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     uint32_t __my_tid = _MCF_thread_self_tid();
-    if(__atomic_load_n(&(__rmtx->__owner), __ATOMIC_RELAXED) != __my_tid) {
+    if(__MCF_ATOMIC_LOAD_N_RELAXED(&(__rmtx->__owner)) != __my_tid) {
       // If the calling thread does not own this mutex, attempt to take ownership.
       int __err = _MCF_mutex_lock(&(__rmtx->__mutex), NULL);
       __MCFGTHREAD_ASSERT(__err == 0);
 
       // The calling thread owns the mutex now.
-      __atomic_store_n(&(__rmtx->__owner), __my_tid, __ATOMIC_RELAXED);
+      __MCF_ATOMIC_STORE_N_RELAXED(&(__rmtx->__owner), __my_tid);
       __MCFGTHREAD_ASSERT(__rmtx->__depth == 0);
     }
 
@@ -352,7 +352,7 @@ __MCFGTHREAD_GTHR_INLINE int
 __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     uint32_t __my_tid = _MCF_thread_self_tid();
-    if(__atomic_load_n(&(__rmtx->__owner), __ATOMIC_RELAXED) != __my_tid) {
+    if(__MCF_ATOMIC_LOAD_N_RELAXED(&(__rmtx->__owner)) != __my_tid) {
       // If the calling thread does not own this mutex, attempt to take ownership.
       int64_t __timeout = 0;
       int __err = _MCF_mutex_lock(&(__rmtx->__mutex), &__timeout);
@@ -360,7 +360,7 @@ __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NO
         return EBUSY;
 
       // The calling thread owns the mutex now.
-      __atomic_store_n(&(__rmtx->__owner), __my_tid, __ATOMIC_RELAXED);
+      __MCF_ATOMIC_STORE_N_RELAXED(&(__rmtx->__owner), __my_tid);
       __MCFGTHREAD_ASSERT(__rmtx->__depth == 0);
     }
 
@@ -382,7 +382,7 @@ __MCFGTHREAD_GTHR_INLINE int
 __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
   {
     uint32_t __my_tid = _MCF_thread_self_tid();
-    if(__atomic_load_n(&(__rmtx->__owner), __ATOMIC_RELAXED) != __my_tid) {
+    if(__MCF_ATOMIC_LOAD_N_RELAXED(&(__rmtx->__owner)) != __my_tid) {
       // If the calling thread does not own this mutex, attempt to take ownership.
       int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
       int __err = _MCF_mutex_lock(&(__rmtx->__mutex), &__timeout);
@@ -390,7 +390,7 @@ __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const 
         return ETIMEDOUT;
 
       // The calling thread owns the mutex now.
-      __atomic_store_n(&(__rmtx->__owner), __my_tid, __ATOMIC_RELAXED);
+      __MCF_ATOMIC_STORE_N_RELAXED(&(__rmtx->__owner), __my_tid);
       __MCFGTHREAD_ASSERT(__rmtx->__depth == 0);
     }
 
@@ -411,7 +411,7 @@ __MCFGTHREAD_GTHR_INLINE int
 __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     uint32_t __my_tid = _MCF_thread_self_tid();
-    __MCFGTHREAD_CHECK(__atomic_load_n(&(__rmtx->__owner), __ATOMIC_RELAXED) == __my_tid);
+    __MCFGTHREAD_CHECK(__MCF_ATOMIC_LOAD_N_RELAXED(&(__rmtx->__owner)) == __my_tid);
 
     // Decrement the recursion counter.
     __MCFGTHREAD_ASSERT(__rmtx->__depth > 0);
@@ -419,7 +419,7 @@ __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOE
 
     if(__rmtx->__depth == 0) {
       // The calling thread shall give up ownership now.
-      __atomic_store_n(&(__rmtx->__owner), 0, __ATOMIC_RELAXED);
+      __MCF_ATOMIC_STORE_N_RELAXED(&(__rmtx->__owner), 0);
       _MCF_mutex_unlock(&(__rmtx->__mutex));
     }
     return 0;
