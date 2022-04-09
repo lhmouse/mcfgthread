@@ -494,8 +494,7 @@ __MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx, co
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
     int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback, __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx, &__timeout);
-    __MCFGTHREAD_ASSERT(__err == 0);
-    return 0;
+    return (__err != 0) ? ETIMEDOUT : 0;
   }
 
 // Signals at most one thread that is waiting on the condition variable, like

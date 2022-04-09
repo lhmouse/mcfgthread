@@ -17,4 +17,15 @@ check_PROGRAMS +=  \
   %reldir%/tls_set.test  \
   %reldir%/tls_deleted_key.test  \
   %reldir%/tls_many.test  \
+  %reldir%/gthr_once.test  \
+  %reldir%/gthr_mutex_trylock.test  \
+  %reldir%/gthr_mutex_timeout.test  \
+  %reldir%/gthr_mutex.test  \
+  %reldir%/gthr_mutex_nonrecursive.test  \
+  %reldir%/gthr_recursive_mutex.test  \
+  %reldir%/gthr_cond_timeout.test  \
+  %reldir%/gthr_tls_dtor.test  \
+  %reldir%/gthr_tls_set.test  \
+  %reldir%/gthr_tls_deleted_key.test  \
+  %reldir%/gthr_tls_many.test  \
   ${NOTHING}

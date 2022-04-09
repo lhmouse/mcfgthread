@@ -2,13 +2,13 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#include "../src/thread.h"
+#include "../src/gthr.h"
 #include <assert.h>
 #include <stdio.h>
 #include <windows.h>
 
-static _MCF_tls_key* key;
-static _MCF_thread* thrd;
+static __gthread_key_t key;
+static __gthread_t thrd;
 static HANDLE thread_start;
 static HANDLE value_set;
 static HANDLE key_deleted;
@@ -22,25 +22,28 @@ tls_destructor(void* ptr)
     __atomic_fetch_add(&count, 1, __ATOMIC_RELAXED);
   }
 
-static void
-thread_proc(_MCF_thread* self)
+static void*
+thread_proc(void* param)
   {
+    (void) param;
     WaitForSingleObject(thread_start, INFINITE);
 
-    int r = _MCF_tls_set(key, &count);
+    int r = __gthread_setspecific(key, &count);
     assert(r == 0);
-    printf("thread %d set value\n", self->__tid);
+    printf("thread %d set value\n", (int) GetCurrentThreadId());
 
     SetEvent(value_set);
     WaitForSingleObject(key_deleted, INFINITE);
 
-    printf("thread %d quitting\n", self->__tid);
+    printf("thread %d quitting\n", (int) GetCurrentThreadId());
+    return NULL;
   }
 
 int
 main(void)
   {
-    key = _MCF_tls_key_new(tls_destructor);
+    int r = __gthread_key_create(&key, tls_destructor);
+    assert(r == 0);
     assert(key);
 
     thread_start = CreateEventW(NULL, TRUE, FALSE, NULL);
@@ -50,19 +53,20 @@ main(void)
     key_deleted = CreateEventW(NULL, TRUE, FALSE, NULL);
     assert(key_deleted);
 
-    thrd = _MCF_thread_new(thread_proc, NULL, 0);
+    r = __gthread_create(&thrd, thread_proc, NULL);
+    assert(r == 0);
     assert(thrd);
 
     printf("main waiting for value_set\n");
     SetEvent(thread_start);
     WaitForSingleObject(value_set, INFINITE);
 
-    _MCF_tls_key_delete(key);
+    __gthread_key_delete(key);
     key = NULL;
     printf("main deleted key; waiting for termination\n");
     SetEvent(key_deleted);
 
-    WaitForSingleObject(thrd->__handle, INFINITE);
+    __gthread_join(thrd, NULL);
     printf("main wait finished\n");
 
     assert(count == 0);
