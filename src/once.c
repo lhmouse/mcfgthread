@@ -9,7 +9,7 @@
 int
 _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
   {
-    _MCF_once new, old;
+    _MCF_once old, new;
     NTSTATUS status;
     LARGE_INTEGER timeout = { 0 };
     LARGE_INTEGER* use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
@@ -97,7 +97,7 @@ _MCF_once_abort(_MCF_once* once)
   {
     // Clear the `__locked` field and release at most one thread, if any.
     size_t wake_one;
-    _MCF_once new, old;
+    _MCF_once old, new;
 
     __MCF_ATOMIC_LOAD_RELAXED(&old, once);
     do {
@@ -115,8 +115,8 @@ size_t
 _MCF_once_release(_MCF_once* once)
   {
     // Set the `__ready` field and release all threads.
-    _MCF_once new = { 1, 0, 0 };
     _MCF_once old;
+    _MCF_once new = { 1, 0, 0 };
     __MCF_ATOMIC_SWAP_ACQ_REL(&old, once, &new);
 
     return __MCF_batch_release_common(once, old.__nsleep);

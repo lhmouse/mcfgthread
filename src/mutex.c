@@ -9,7 +9,7 @@
 int
 _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
   {
-    _MCF_mutex new, old;
+    _MCF_mutex old, new;
     NTSTATUS status;
     LARGE_INTEGER timeout = { 0 };
     LARGE_INTEGER* use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
@@ -166,7 +166,7 @@ _MCF_mutex_unlock(_MCF_mutex* mutex)
   {
     // Clear the `__locked` field and release at most one thread, if any.
     size_t wake_one;
-    _MCF_mutex new, old;
+    _MCF_mutex old, new;
 
     __MCF_ATOMIC_LOAD_RELAXED(&old, mutex);
     do {

@@ -78,7 +78,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NO
 __MCFGTHREAD_MUTEX_INLINE int
 _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
-    _MCF_mutex __new, __old;
+    _MCF_mutex __old, __new;
     __MCF_ATOMIC_LOAD_RELAXED(&__old, __mutex);
 
     if(__builtin_expect(__old.__locked, 0) == 0) {

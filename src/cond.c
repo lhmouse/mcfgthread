@@ -16,7 +16,7 @@ do_wait_cleanup_common(_MCF_cond_unlock_callback* unlock_opt, intptr_t unlocked,
 int
 _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, const int64_t* timeout_opt)
   {
-    _MCF_cond new, old;
+    _MCF_cond old, new;
     NTSTATUS status;
     LARGE_INTEGER timeout = { 0 };
     LARGE_INTEGER* use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
@@ -86,7 +86,7 @@ _MCF_cond_signal_some(_MCF_cond* cond, size_t max)
   {
     // Get the number of threads to wake up.
     size_t nwoken;
-    _MCF_cond new, old;
+    _MCF_cond old, new;
 
     __MCF_ATOMIC_LOAD_RELAXED(&old, cond);
     do {
@@ -103,8 +103,8 @@ size_t
 _MCF_cond_signal_all(_MCF_cond* cond)
   {
     // Swap out all data.
-    _MCF_cond new = { 0 };
     _MCF_cond old;
+    _MCF_cond new = { 0 };
     __MCF_ATOMIC_SWAP_RELAXED(&old, cond, &new);
 
     return __MCF_batch_release_common(cond, old.__nsleep);
