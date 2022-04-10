@@ -21,7 +21,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     for(;;) {
       // If this flag has not been locked, lock it.
       // Otherwise, allocate a count for the current thread.
-      __MCF_ATOMIC_LOAD_RLX(&old, once);
+      __MCF_ATOMIC_LOAD_ACQ(&old, once);
       do {
         if(old.__ready != 0)
           return 0;

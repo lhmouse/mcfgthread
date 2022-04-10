@@ -72,7 +72,7 @@ __MCFGTHREAD_ONCE_INLINE int
 _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
     _MCF_once __old, __new;
-    __MCF_ATOMIC_LOAD_RLX(&__old, __once);
+    __MCF_ATOMIC_LOAD_ACQ(&__old, __once);
 
     if(__builtin_expect(__old.__ready, 1) != 0)
       return 0;
