@@ -161,7 +161,7 @@ __MCF_gthr_key_create(__gthread_key_t* __keyp, void __dtor(void*)) __MCF_NOEXCEP
   {
     _MCF_tls_key* __key = _MCF_tls_key_new(__dtor);
     *__keyp = __key;
-    return !__key ? ENOMEM : 0;
+    return (__key == NULL) ? ENOMEM : 0;
   }
 
 // Destroys a thread-specific key, like `pthread_key_delete()`.
@@ -539,7 +539,7 @@ __MCF_gthr_create(__gthread_t* __thrdp, void* __proc(void*), void* __arg) __MCF_
 
     _MCF_thread* __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk, &__rec, sizeof(__rec));
     *__thrdp = __thrd;
-    return !__thrd ? EAGAIN : 0;  // as specified by POSIX
+    return (__thrd == NULL) ? EAGAIN : 0;  // as specified by POSIX
   }
 
 // Awaits a thread to terminate and gets its result, like `pthread_join()`.
