@@ -15,22 +15,11 @@ _MCF_tls_key_new(_MCF_tls_dtor* dtor_opt)
     if(!key)
       return NULL;
 
-    // Get the next serial number. Ensure it is non-zero.
-    uint32_t serial = UINT32_C(1) << 31;
-    serial |= __MCF_ATOMIC_ADD_RLX(&__MCF_tls_key_serial, 1);
-
     // Initialize the key structure. The returned pointer is assumed to be
     // unique, so its reference count should be initialized to one.
-    key->__dtor_opt = dtor_opt;
-    __MCF_ATOMIC_STORE_N_RLX(key->__serial, serial);
     __MCF_ATOMIC_STORE_N_RLX(key->__nref, 1);
+    key->__dtor_opt = dtor_opt;
     return key;
-  }
-
-static inline uint32_t
-do_get_key_serial(const _MCF_tls_key* key)
-  {
-    return __MCF_ATOMIC_LOAD_N_RLX(key->__serial);
   }
 
 static void
@@ -42,22 +31,24 @@ do_tls_key_drop_ref_nonnull(_MCF_tls_key* key)
       return;
 
     // Deallocate its storage now.
-    __MCFGTHREAD_ASSERT(do_get_key_serial(key) == 0);
+    __MCFGTHREAD_ASSERT(__MCF_ATOMIC_LOAD_N_RLX(key->__deleted) == 1);
     _MCF_mfree(key);
   }
 
 void
 _MCF_tls_key_delete_nonnull(_MCF_tls_key* key)
   {
-    __MCFGTHREAD_ASSERT(do_get_key_serial(key) != 0);
-    __MCF_ATOMIC_STORE_N_RLX(key->__serial, 0);
+    __MCFGTHREAD_ASSERT(__MCF_ATOMIC_LOAD_N_RLX(key->__deleted) == 0);
+    __MCF_ATOMIC_STORE_N_RLX(key->__deleted, 1);
 
     do_tls_key_drop_ref_nonnull(key);
   }
 
-static __MCF_tls_element*
+static inline __MCF_tls_element*
 do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
   {
+    __MCFGTHREAD_ASSERT(key);
+
     // Keep the load factor no more than 0.5.
     uint64_t dist = (uintptr_t) (table->__end - table->__begin);
     __MCFGTHREAD_ASSERT(dist != 0);
@@ -65,9 +56,8 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
 
     // Make a fixed-point value in the interval [0,1), and then multiply
     // `dist` by it to get an index in the middle.
-    uint32_t serial = do_get_key_serial(key);
-    __MCFGTHREAD_ASSERT(serial != 0);
-    dist = (uint32_t) (serial * 0x9E3779B9) * dist >> 32;
+    dist *= (uint32_t) ((uintptr_t) key * 0x9E3779B9);
+    dist >>= 32;
 
     __MCF_tls_element* origin = table->__begin + (ptrdiff_t) dist;
     __MCFGTHREAD_ASSERT(origin < table->__end);
@@ -75,11 +65,11 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
     // Find an element using linear probing.
     // Note this function may return a pointer to an empty element.
     for(__MCF_tls_element* cur = origin;  cur != table->__end;  ++cur)
-      if(!cur->__key_opt || (do_get_key_serial(cur->__key_opt) == serial))
+      if(!cur->__key_opt || (cur->__key_opt == key))
         return cur;
 
     for(__MCF_tls_element* cur = table->__begin;  cur != origin;  ++cur)
-      if(!cur->__key_opt || (do_get_key_serial(cur->__key_opt) == serial))
+      if(!cur->__key_opt || (cur->__key_opt == key))
         return cur;
 
     __MCF_UNREACHABLE;
@@ -88,7 +78,6 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
 void*
 __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
   {
-    __MCFGTHREAD_ASSERT(key);
     if(!table->__begin)
       return NULL;
 
@@ -105,7 +94,6 @@ __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
 int
 __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value)
   {
-    __MCFGTHREAD_ASSERT(key);
     size_t capacity = (size_t) (table->__end - table->__begin);
     if(table->__size >= capacity / 2) {
       // Allocate a larger table. The number of elements is not changed.
@@ -170,15 +158,14 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
         temp.__end --;
 
         // Skip empty elements.
-        if(temp.__end->__key_opt == NULL)
+        if(!temp.__end->__key_opt)
           continue;
 
         // Invoke the destructor if there is a value and a destructor, and the
         // key has not been deleted.
         _MCF_tls_key* key = temp.__end->__key_opt;
-
-        if(temp.__end->__value && key->__dtor_opt && do_get_key_serial(key))
-          key->__dtor_opt(temp.__end->__value);
+        if(key->__dtor_opt && temp.__end->__value && !__MCF_ATOMIC_LOAD_N_RLX(key->__deleted))
+            key->__dtor_opt(temp.__end->__value);
 
         do_tls_key_drop_ref_nonnull(key);
       }
