@@ -8,18 +8,29 @@ MCF gthread is a gthread implementation for Windows 7 and above that meets the r
 
 I decide to recreate everything from scratch. Apologies for the trouble.
 
-# Warnings
-
-This project is developed and tested under x86 and x64 and hasn't been tested on other CPU architectures.
-
-This project uses a number of undocumented NT system calls for efficiency reasons and may be broken in future Windows versions. The author gives no warranty for this project. Use it at your own risk.
-
 # How to build
 
 You need to run these commands in a native MSYS2 shell (**MINGW32** or **MINGW64** is recommended):
 
 ```sh
-$ autoreconf -i  # requires autoconf, automake and libtool
-$ ./configure
-$ make -j$(nproc)
+autoreconf -i  # requires autoconf, automake and libtool
+./configure
+make -j$(nproc)
+make -j$(nproc) check
 ```
+
+Cross-compiling from Linux is also supported:
+
+```sh
+autoreconf -i  # requires autoconf, automake and libtool
+# Install cross-compilers first.
+# On Debian this can be done with `sudo aptitude install gcc-mingw-w64-{i686,x86-64}`.
+./configure --host=i686-w64-mingw32  # or `x86_64-w64-mingw32` for 64-bit builds
+make -j$(nproc)
+```
+
+# Notes
+
+This project is developed and tested under x86 and x64 and hasn't been tested on other CPU architectures.
+
+This project uses some undocumented NT system calls and might be broken in future Windows versions. The author gives no warranty for this project. Use it at your own risk.
