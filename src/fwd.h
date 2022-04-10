@@ -16,7 +16,11 @@
 extern "C" {
 #endif
 
-#if (0 + __BYTE_ORDER__) != __ORDER_LITTLE_ENDIAN__
+#ifndef _WIN32
+#  error Only native Windows platforms are supported.
+#endif
+
+#if __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
 #  error Windows platforms are assumed to be little-endian.
 #endif
 
