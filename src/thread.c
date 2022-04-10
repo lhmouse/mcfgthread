@@ -14,16 +14,14 @@ do_win32_thread_thunk(LPVOID param)
 static DWORD __stdcall
 do_win32_thread_thunk(LPVOID param)
   {
-    __MCF_SEH_TERMINATE_FILTER_BEGIN
-    _MCF_thread* const self = param;
+    __MCF_SEH_DEFINE_TERMINATE_FILTER;
+    _MCF_thread* self = param;
 
     // Attach the thread.
     (void) TlsSetValue(__MCF_win32_tls_index, self);
 
     // Execute the user-defined procedure, which has no return value.
     self->__proc(self);
-
-    __MCF_SEH_TERMINATE_FILTER_END
     return 0;
   }
 

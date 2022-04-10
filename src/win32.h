@@ -107,30 +107,45 @@ __MCF_seh_top(EXCEPTION_RECORD* __record, void* __frame, CONTEXT* __ctx, void* _
 
 #ifdef __i386__  // SEH is stack-based
 
-#  define __MCF_SEH_TERMINATE_FILTER_BEGIN  \
-    void* __MCF_i386_seh_node[2];  \
-    __asm__ (  \
-      "movl %%fs:0, %%eax            # mov eax, fs:[0]               \n"\
-      "movl %%eax, (%0)              # mov [%0], eax                 \n"\
-      "movl $___MCF_seh_top, 4(%0)   # mov [%0 + 4], offset FILTER   \n"\
-      "movl %0, %%fs:0               # mov fs:[0], %0                \n"\
-      : : "r"(__MCF_i386_seh_node)  \
-      : "eax", "memory");  // use EAX as it is unlikely a parameter
+struct __MCF_i386_seh_node
+  {
+    void* __next;
+    void* __filter;  // typeof(__MCF_seh_top)*
+  }
+  typedef __MCF_i386_seh_node;
 
-#  define __MCF_SEH_TERMINATE_FILTER_END  \
-    __asm__ (  \
-      "movl %0, %%ecx                # mov ecx, [%0]        \n"\
-      "movl %%ecx, %%fs:0            # mov fs:[0], ecx      \n"\
-      : : "m"(__MCF_i386_seh_node)  \
-      : "ecx", "memory");  // use ECX as it is unlikely the return value
+static __attribute__((__always_inline__))
+__inline__ void
+__MCF_i386_seh_install(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
+  {
+    __asm__ (
+      "movl %%fs:0, %%eax            \n"//  mov eax, fs:[0]
+      "movl %%eax, (%0)              \n"//  mov [%0], eax
+      "movl $___MCF_seh_top, 4(%0)   \n"//  mov [%0 + 4], offset FILTER
+      "movl %0, %%fs:0               \n"//  mov fs:[0], %0
+      : : "r"(__seh_node)
+      : "eax", "memory");  // EAX is unlikely a parameter
+  }
+
+static __attribute__((__always_inline__))
+__inline__ void
+__MCF_i386_seh_cleanup(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
+  {
+    __asm__ (
+      "movl %0, %%ecx                \n"//  mov ecx, [%0]
+      "movl %%ecx, %%fs:0            \n"//  mov fs:[0], ecx
+      : : "m"(*__seh_node)
+      : "ecx", "memory");  // ECX is unlikely a return value
+  }
+
+#  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
+    __MCF_i386_seh_node __MCF_seh_node_1 __MCF_USE_DTOR(__MCF_i386_seh_cleanup);  \
+    __MCF_i386_seh_install(&__MCF_seh_node_1)  // no semicolon
 
 #else  // SEH is stack-based  ^/v  SEH is table-based
 
-#  define __MCF_SEH_TERMINATE_FILTER_BEGIN  \
-    __asm__ volatile (".seh_handler __MCF_seh_top, @except");
-
-#  define __MCF_SEH_TERMINATE_FILTER_END  \
-    ((void) 0);
+#  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
+    __asm__ volatile (".seh_handler __MCF_seh_top, @except")  // no semicolon
 
 #endif  // SEH is table-based
 

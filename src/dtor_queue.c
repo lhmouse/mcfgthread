@@ -71,7 +71,7 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* ds
 void
 __MCF_dtor_queue_finalize(__MCF_dtor_queue* queue, _MCF_mutex* mutex_opt, void* dso_opt)
   {
-    __MCF_SEH_TERMINATE_FILTER_BEGIN
+    __MCF_SEH_DEFINE_TERMINATE_FILTER;
     __MCF_dtor_element elem;
     int err;
 
@@ -100,6 +100,4 @@ __MCF_dtor_queue_finalize(__MCF_dtor_queue* queue, _MCF_mutex* mutex_opt, void* 
       elem.__dtor(elem.__this);
 #endif
     }
-
-    __MCF_SEH_TERMINATE_FILTER_END
   }

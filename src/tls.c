@@ -155,7 +155,7 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
 void
 __MCF_tls_table_finalize(__MCF_tls_table* table)
   {
-    __MCF_SEH_TERMINATE_FILTER_BEGIN
+    __MCF_SEH_DEFINE_TERMINATE_FILTER;
     __MCF_tls_table temp;
 
     for(;;) {
@@ -186,6 +186,4 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
       // Deallocate the table which should be empty now.
       _MCF_mfree_nonnull(temp.__begin);
     }
-
-    __MCF_SEH_TERMINATE_FILTER_END
   }
