@@ -79,7 +79,7 @@ _MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 __MCFGTHREAD_THREAD_INLINE void
 _MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT
   {
-    int __old_ref = __MCF_ATOMIC_ADD_RELAXED(__thrd->__nref, 1);
+    int __old_ref = __MCF_ATOMIC_ADD_RLX(__thrd->__nref, 1);
     __MCFGTHREAD_ASSERT(__old_ref < INT_MAX);
     __MCFGTHREAD_ASSERT(__old_ref > 0);
   }

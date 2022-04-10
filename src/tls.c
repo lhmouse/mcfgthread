@@ -17,26 +17,26 @@ _MCF_tls_key_new(_MCF_tls_dtor* dtor_opt)
 
     // Get the next serial number. Ensure it is non-zero.
     uint32_t serial = UINT32_C(1) << 31;
-    serial |= __MCF_ATOMIC_ADD_RELAXED(&__MCF_tls_key_serial, 1);
+    serial |= __MCF_ATOMIC_ADD_RLX(&__MCF_tls_key_serial, 1);
 
     // Initialize the key structure. The returned pointer is assumed to be
     // unique, so its reference count should be initialized to one.
     key->__dtor_opt = dtor_opt;
-    __MCF_ATOMIC_STORE_N_RELAXED(key->__serial, serial);
-    __MCF_ATOMIC_STORE_N_RELAXED(key->__nref, 1);
+    __MCF_ATOMIC_STORE_N_RLX(key->__serial, serial);
+    __MCF_ATOMIC_STORE_N_RLX(key->__nref, 1);
     return key;
   }
 
 static inline uint32_t
 do_get_key_serial(const _MCF_tls_key* key)
   {
-    return __MCF_ATOMIC_LOAD_N_RELAXED(key->__serial);
+    return __MCF_ATOMIC_LOAD_N_RLX(key->__serial);
   }
 
 static void
 do_tls_key_drop_ref_nonnull(_MCF_tls_key* key)
   {
-    int old_ref = __MCF_ATOMIC_SUB_ACQ_REL(key->__nref, 1);
+    int old_ref = __MCF_ATOMIC_SUB_ARL(key->__nref, 1);
     __MCFGTHREAD_ASSERT(old_ref > 0);
     if(old_ref != 1)
       return;
@@ -50,7 +50,7 @@ void
 _MCF_tls_key_delete_nonnull(_MCF_tls_key* key)
   {
     __MCFGTHREAD_ASSERT(do_get_key_serial(key) != 0);
-    __MCF_ATOMIC_STORE_N_RELAXED(key->__serial, 0);
+    __MCF_ATOMIC_STORE_N_RLX(key->__serial, 0);
 
     do_tls_key_drop_ref_nonnull(key);
   }
@@ -140,7 +140,7 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
     // Note `do_linear_probe_nonempty()` may return an empty element.
     __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
     if(!elem->__key_opt) {
-      int old_ref = __MCF_ATOMIC_ADD_ACQ_REL(key->__nref, 1);
+      int old_ref = __MCF_ATOMIC_ADD_ARL(key->__nref, 1);
       __MCFGTHREAD_ASSERT(old_ref > 0);
 
       elem->__key_opt = key;
