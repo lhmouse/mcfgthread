@@ -67,13 +67,13 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
     // `dist` by it to get an index in the middle.
     uint32_t serial = do_get_key_serial(key);
     __MCFGTHREAD_ASSERT(serial != 0);
-    dist = dist * (uint32_t) (serial * 0x9E3779B9) >> 32;
+    dist = (uint32_t) (serial * 0x9E3779B9) * dist >> 32;
 
     __MCF_tls_element* origin = table->__begin + (ptrdiff_t) dist;
     __MCFGTHREAD_ASSERT(origin < table->__end);
 
     // Find an element using linear probing.
-    // Note this function may return the pointer to an empty element.
+    // Note this function may return a pointer to an empty element.
     for(__MCF_tls_element* cur = origin;  cur != table->__end;  ++cur)
       if(!cur->__key_opt || (do_get_key_serial(cur->__key_opt) == serial))
         return cur;
