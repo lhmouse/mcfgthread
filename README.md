@@ -53,9 +53,9 @@ When a thread wishes to lock a mutex, it checks whether the LOCKED bit is clear.
 
 In reality, critical sections are fairly small. If a thread fails to lock a mutex, it might be able to do so soon, and we don't want it to give up its time slice as a syscall is an overkill. Therefore, it is reasonable for a thread to perform some spinning (busy waiting), before it actually decides to sleep.
 
-This could however lead to severe problems in case of heavy contention. When there are hundreds of thread attempting to lock the same mutex, the system scheduler has no idea about whether they are spinning or not. As it is likely that a lot of threads will eventually give up spinning and make a syscall to sleep, we are wasting a lot of CPU time and aggravating the situation.
+This could however lead to severe problems in case of heavy contention. When there are hundreds of thread attempting to lock the same mutex, the system scheduler has no idea whether they are spinning or not. As it is likely that a lot of threads will eventually give up spinning and make a syscall to sleep, we are wasting a lot of CPU time and aggravating the situation.
 
-This issue is solved by mcfgthread by encoding a spin failure counter in each mutex. If a thread gives up spinning because it couldn't lock the mutex within a given number of iterations, the spin failure counter is incremented. If a thread locks a mutex successfully while it is spinning, the spin failure counter is decremented. This counter provides a heuristic way to determine how heavily a mutex is seized. If there have been many spin failures, newcomers will stop spinning, to make a syscall to sleep on the mutex immediately.
+This issue is ultimately solved by mcfgthread by encoding a spin failure counter in each mutex. If a thread gives up spinning because it couldn't lock the mutex within a given number of iterations, the spin failure counter is incremented. If a thread locks a mutex successfully while it is spinning, the spin failure counter is decremented. This counter provides a heuristic way to determine how heavily a mutex is seized. If there have been many spin failures, newcomers will not attempt to spin, but will make a syscall to sleep on the mutex directly.
 
 ### The once-initialization flag
 
