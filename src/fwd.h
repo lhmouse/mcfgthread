@@ -30,6 +30,12 @@ extern "C" {
 #  define __MCF_DYNCONST
 #endif
 
+#ifdef _WIN64
+#  define __MCF_PTR_SIZE    64
+#else
+#  define __MCF_PTR_SIZE    32
+#endif
+
 #ifdef __MCF_DEBUG
 #  define __MCF_UNREACHABLE   __builtin_trap()
 #else
