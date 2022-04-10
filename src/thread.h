@@ -14,10 +14,10 @@
 extern "C" {
 #endif
 
-#ifndef __MCFGTHREAD_THREAD_C_
-#  define __MCFGTHREAD_THREAD_INLINE  __MCF_GNU_INLINE
-#else
+#ifdef __MCFGTHREAD_THREAD_C_
 #  define __MCFGTHREAD_THREAD_INLINE
+#else
+#  define __MCFGTHREAD_THREAD_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Define the prototype for thread procedures.

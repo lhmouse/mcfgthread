@@ -27,10 +27,10 @@
 extern "C" {
 #endif
 
-#ifndef __MCFGTHREAD_WIN32_C_
-#  define __MCFGTHREAD_WIN32_INLINE  __MCF_GNU_INLINE
-#else
+#ifdef __MCFGTHREAD_WIN32_C_
 #  define __MCFGTHREAD_WIN32_INLINE
+#else
+#  define __MCFGTHREAD_WIN32_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Add some attributes to existent functions.

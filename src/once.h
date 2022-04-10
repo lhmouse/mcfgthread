@@ -12,10 +12,10 @@
 extern "C" {
 #endif
 
-#ifndef __MCFGTHREAD_ONCE_C_
-#  define __MCFGTHREAD_ONCE_INLINE  __MCF_GNU_INLINE
-#else
+#ifdef __MCFGTHREAD_ONCE_C_
 #  define __MCFGTHREAD_ONCE_INLINE
+#else
+#  define __MCFGTHREAD_ONCE_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Define the once flag struct.

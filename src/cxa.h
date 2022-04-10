@@ -11,10 +11,10 @@
 extern "C" {
 #endif
 
-#ifndef __MCFGTHREAD_CXA_C_
-#  define __MCFGTHREAD_CXA_INLINE  __MCF_GNU_INLINE
-#else
+#ifdef __MCFGTHREAD_CXA_C_
 #  define __MCFGTHREAD_CXA_INLINE
+#else
+#  define __MCFGTHREAD_CXA_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Declare functions in accordance with the Itanium ABI. They are aliases for

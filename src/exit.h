@@ -11,10 +11,10 @@
 extern "C" {
 #endif
 
-#ifndef __MCFGTHREAD_EXIT_C_
-#  define __MCFGTHREAD_EXIT_INLINE  __MCF_GNU_INLINE
-#else
+#ifdef __MCFGTHREAD_EXIT_C_
 #  define __MCFGTHREAD_EXIT_INLINE
+#else
+#  define __MCFGTHREAD_EXIT_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Define the prototype for callbacks that are passed to `atexit()`

@@ -12,10 +12,10 @@
 extern "C" {
 #endif
 
-#ifndef __MCFGTHREAD_MUTEX_C_
-#  define __MCFGTHREAD_MUTEX_INLINE  __MCF_GNU_INLINE
-#else
+#ifdef __MCFGTHREAD_MUTEX_C_
 #  define __MCFGTHREAD_MUTEX_INLINE
+#else
+#  define __MCFGTHREAD_MUTEX_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Define the mutex struct.

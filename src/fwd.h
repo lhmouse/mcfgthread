@@ -24,12 +24,6 @@ extern "C" {
 #  error Windows platforms are assumed to be little-endian.
 #endif
 
-#ifndef __MCFGTHREAD_STARTUP_C_
-#  define __MCF_DYNCONST    const   // read-only but initialized dynamically
-#else
-#  define __MCF_DYNCONST
-#endif
-
 #ifdef _WIN64
 #  define __MCF_PTR_SIZE    64
 #else
@@ -100,6 +94,12 @@ _MCF_get_win32_error(void) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
 // Declare static data, which are defined in 'startup.c'.
+#ifdef __MCFGTHREAD_STARTUP_C_
+#  define __MCF_DYNCONST
+#else
+#  define __MCF_DYNCONST    const   // read-only but initialized dynamically
+#endif
+
 extern const __MCF_HANDLE _MCF_crt_module;
 extern __MCF_DYNCONST __MCF_HANDLE __MCF_crt_heap;
 extern __MCF_DYNCONST uint32_t __MCF_win32_tls_index;

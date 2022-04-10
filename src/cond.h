@@ -12,10 +12,10 @@
 extern "C" {
 #endif
 
-#ifndef __MCFGTHREAD_COND_C_
-#  define __MCFGTHREAD_COND_INLINE  __MCF_GNU_INLINE
-#else
+#ifdef __MCFGTHREAD_COND_C_
 #  define __MCFGTHREAD_COND_INLINE
+#else
+#  define __MCFGTHREAD_COND_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Define the condition variable struct.

@@ -11,10 +11,10 @@
 extern "C" {
 #endif
 
-#ifndef __MCFGTHREAD_TLS_C_
-#  define __MCFGTHREAD_TLS_INLINE  __MCF_GNU_INLINE
-#else
+#ifdef __MCFGTHREAD_TLS_C_
 #  define __MCFGTHREAD_TLS_INLINE
+#else
+#  define __MCFGTHREAD_TLS_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Define the prototype for destructors for `_MCF_tls_key_new()`.

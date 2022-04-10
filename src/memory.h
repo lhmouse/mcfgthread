@@ -11,10 +11,10 @@
 extern "C" {
 #endif
 
-#ifndef __MCFGTHREAD_MEMORY_C_
-#  define __MCFGTHREAD_MEMORY_INLINE  __MCF_GNU_INLINE
-#else
+#ifdef __MCFGTHREAD_MEMORY_C_
 #  define __MCFGTHREAD_MEMORY_INLINE
+#else
+#  define __MCFGTHREAD_MEMORY_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Allocate a block of zeroed memory, like `calloc()`.

@@ -19,10 +19,10 @@ extern "C" {
 #endif
 
 // Define wrappers as required by 'gthr-default.h'.
-#ifndef __MCFGTHREAD_GTHR_C_
-#  define __MCFGTHREAD_GTHR_INLINE  __MCF_GNU_INLINE
-#else
+#ifdef __MCFGTHREAD_GTHR_C_
 #  define __MCFGTHREAD_GTHR_INLINE
+#else
+#  define __MCFGTHREAD_GTHR_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Enable full C++11 threading support.
