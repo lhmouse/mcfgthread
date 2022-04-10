@@ -143,8 +143,7 @@ __MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void))
     if(__do_init == 0)
       return 0;
 
-    _MCF_once* __cl __attribute__((__cleanup__(__MCF_gthr_unonce)));
-    __cl = __once;
+    _MCF_once* __cl __MCF_USE_DTOR(__MCF_gthr_unonce) = __once;
     __init_proc();
     __cl = NULL;
     _MCF_once_release(__once);
