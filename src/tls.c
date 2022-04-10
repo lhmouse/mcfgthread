@@ -17,7 +17,7 @@ _MCF_tls_key_new(_MCF_tls_dtor* dtor_opt)
 
     // Initialize the key structure. The returned pointer is assumed to be
     // unique, so its reference count should be initialized to one.
-    __MCF_ATOMIC_STORE_N_RLX(key->__nref, 1);
+    __MCF_ATOMIC_STORE_RLX(key->__nref, 1);
     key->__dtor_opt = dtor_opt;
     return key;
   }
@@ -31,15 +31,15 @@ do_tls_key_drop_ref_nonnull(_MCF_tls_key* key)
       return;
 
     // Deallocate its storage now.
-    __MCFGTHREAD_ASSERT(__MCF_ATOMIC_LOAD_N_RLX(key->__deleted) == 1);
+    __MCFGTHREAD_ASSERT(__MCF_ATOMIC_LOAD_RLX(key->__deleted) == 1);
     _MCF_mfree(key);
   }
 
 void
 _MCF_tls_key_delete_nonnull(_MCF_tls_key* key)
   {
-    __MCFGTHREAD_ASSERT(__MCF_ATOMIC_LOAD_N_RLX(key->__deleted) == 0);
-    __MCF_ATOMIC_STORE_N_RLX(key->__deleted, 1);
+    __MCFGTHREAD_ASSERT(__MCF_ATOMIC_LOAD_RLX(key->__deleted) == 0);
+    __MCF_ATOMIC_STORE_RLX(key->__deleted, 1);
 
     do_tls_key_drop_ref_nonnull(key);
   }
@@ -164,7 +164,7 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
         // Invoke the destructor if there is a value and a destructor, and the
         // key has not been deleted.
         _MCF_tls_key* key = temp.__end->__key_opt;
-        if(key->__dtor_opt && temp.__end->__value && !__MCF_ATOMIC_LOAD_N_RLX(key->__deleted))
+        if(key->__dtor_opt && temp.__end->__value && !__MCF_ATOMIC_LOAD_RLX(key->__deleted))
             key->__dtor_opt(temp.__end->__value);
 
         do_tls_key_drop_ref_nonnull(key);

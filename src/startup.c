@@ -60,7 +60,7 @@ __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
       __MCF_main_thread.__tid = GetCurrentThreadId();
       __MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, FALSE, __MCF_main_thread.__tid);
       __MCFGTHREAD_CHECK(__MCF_main_thread.__handle);
-      __MCF_ATOMIC_STORE_N_REL(__MCF_main_thread.__nref, 1);
+      __MCF_ATOMIC_STORE_REL(__MCF_main_thread.__nref, 1);
       __MCFGTHREAD_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
     }
     else if(reason == DLL_THREAD_DETACH) {

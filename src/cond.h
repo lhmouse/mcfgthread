@@ -42,7 +42,7 @@ __MCFGTHREAD_COND_INLINE void
 _MCF_cond_init(_MCF_cond* __cond) __MCF_NOEXCEPT
   {
     _MCF_cond __temp = { 0 };
-    __MCF_ATOMIC_STORE_REL(__cond, &__temp);
+    __MCF_ATOMIC_STORE_PTR_REL(__cond, &__temp);
   }
 
 // Puts the current thread to sleep on a condition variable.

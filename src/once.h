@@ -43,7 +43,7 @@ __MCFGTHREAD_ONCE_INLINE void
 _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT
   {
     _MCF_once __temp = { 0 };
-    __MCF_ATOMIC_STORE_REL(__once, &__temp);
+    __MCF_ATOMIC_STORE_PTR_REL(__once, &__temp);
   }
 
 // Attempts to lock a once-initialization flag.
@@ -72,7 +72,7 @@ __MCFGTHREAD_ONCE_INLINE int
 _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
     _MCF_once __old, __new;
-    __MCF_ATOMIC_LOAD_ACQ(&__old, __once);
+    __MCF_ATOMIC_LOAD_PTR_ACQ(&__old, __once);
 
     if(__builtin_expect(__old.__ready, 1) != 0)
       return 0;
@@ -80,7 +80,7 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
     if(__builtin_expect(__old.__locked, 0) == 0) {
       __new = __old;
       __new.__locked = 1;
-      if(__MCF_ATOMIC_CMPXCHG_ARL(__once, &__old, &__new))
+      if(__MCF_ATOMIC_CMPXCHG_PTR_ARL(__once, &__old, &__new))
         return 1;
     }
 

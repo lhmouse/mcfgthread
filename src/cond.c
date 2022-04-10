@@ -22,12 +22,12 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     LARGE_INTEGER* use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
 
     // Allocate a count for the current thread.
-    __MCF_ATOMIC_LOAD_RLX(&old, cond);
+    __MCF_ATOMIC_LOAD_PTR_RLX(&old, cond);
     do {
       new = old;
       new.__nsleep = (old.__nsleep + 1U) & __MCF_COND_NSLEEP_M;
     }
-    while(!__MCF_ATOMIC_CMPXCHG_WEAK_RLX(cond, &old, &new));
+    while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(cond, &old, &new));
 
     // Now, invoke the unlock callback.
     // If another thread attempts to signal this one, it shall block.
@@ -48,7 +48,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
       // Tell another thread which is going to signal this condition variable
       // that an old waiter has left by decrementing the number of sleeping
       // threads. But see below...
-      __MCF_ATOMIC_LOAD_RLX(&old, cond);
+      __MCF_ATOMIC_LOAD_PTR_RLX(&old, cond);
       do {
         if(old.__nsleep == 0)
           break;
@@ -56,7 +56,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
         new = old;
         new.__nsleep = (old.__nsleep - 1U) & __MCF_COND_NSLEEP_M;
       }
-      while(!__MCF_ATOMIC_CMPXCHG_WEAK_RLX(cond, &old, &new));
+      while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(cond, &old, &new));
 
       if(old.__nsleep != 0) {
         // The operation has timed out.
@@ -88,13 +88,13 @@ _MCF_cond_signal_some(_MCF_cond* cond, size_t max)
     size_t nwoken;
     _MCF_cond old, new;
 
-    __MCF_ATOMIC_LOAD_RLX(&old, cond);
+    __MCF_ATOMIC_LOAD_PTR_RLX(&old, cond);
     do {
       new = old;
       nwoken = _MCF_minz(old.__nsleep, max);
       new.__nsleep = (old.__nsleep - nwoken) & __MCF_COND_NSLEEP_M;
     }
-    while(!__MCF_ATOMIC_CMPXCHG_WEAK_RLX(cond, &old, &new));
+    while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(cond, &old, &new));
 
     return __MCF_batch_release_common(cond, old.__nsleep);
   }
@@ -105,7 +105,7 @@ _MCF_cond_signal_all(_MCF_cond* cond)
     // Swap out all data.
     _MCF_cond old;
     _MCF_cond new = { 0 };
-    __MCF_ATOMIC_XCHG_RLX(&old, cond, &new);
+    __MCF_ATOMIC_XCHG_PTR_RLX(&old, cond, &new);
 
     return __MCF_batch_release_common(cond, old.__nsleep);
   }

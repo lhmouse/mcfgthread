@@ -46,7 +46,7 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
     }
 
     // Initialize the thread control structure.
-    __MCF_ATOMIC_STORE_N_RLX(thrd->__nref, 2);
+    __MCF_ATOMIC_STORE_RLX(thrd->__nref, 2);
     thrd->__proc = proc;
 
     if(data_opt)

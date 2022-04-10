@@ -53,7 +53,7 @@ __MCFGTHREAD_MUTEX_INLINE void
 _MCF_mutex_init(_MCF_mutex* __mutex) __MCF_NOEXCEPT
   {
     _MCF_mutex __temp = { 0 };
-    __MCF_ATOMIC_STORE_REL(__mutex, &__temp);
+    __MCF_ATOMIC_STORE_PTR_REL(__mutex, &__temp);
   }
 
 // Attempts to lock a mutex.
@@ -79,7 +79,7 @@ __MCFGTHREAD_MUTEX_INLINE int
 _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
     _MCF_mutex __old, __new;
-    __MCF_ATOMIC_LOAD_RLX(&__old, __mutex);
+    __MCF_ATOMIC_LOAD_PTR_RLX(&__old, __mutex);
 
     if(__builtin_expect(__old.__locked, 0) == 0) {
       __new = __old;
@@ -90,7 +90,7 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEP
       if(__old.__nspin_fail != 0)
         __new.__nspin_fail = (__old.__nspin_fail - 1U) & __MCF_MUTEX_NSPIN_M;
 
-      if(__MCF_ATOMIC_CMPXCHG_ARL(__mutex, &__old, &__new))
+      if(__MCF_ATOMIC_CMPXCHG_PTR_ARL(__mutex, &__old, &__new))
         return 0;
     }
 
