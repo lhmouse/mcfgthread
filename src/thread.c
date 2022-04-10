@@ -45,6 +45,10 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
       return NULL;
     }
 
+    // Initialize the thread control structure.
+    __MCF_ATOMIC_STORE_N_RLX(thrd->__nref, 2);
+    thrd->__proc = proc;
+
     if(data_opt)
       _MCF_mmove(thrd->__data, data_opt, size);
 
@@ -57,9 +61,6 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
       return NULL;
     }
 
-    // Initialize the thread control structure.
-    thrd->__proc = proc;
-    __MCF_ATOMIC_STORE_N_RLX(thrd->__nref, 2);
     __MCFGTHREAD_CHECK(ResumeThread(thrd->__handle));
     return thrd;
   }
