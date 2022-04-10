@@ -31,7 +31,7 @@ make -j$(nproc)
 
 # Notes
 
-This project is developed and tested under x86 and x64 and hasn't been tested on other CPU architectures.
+This project is developed and tested on x86 and x64 and hasn't been tested on other CPU architectures.
 
 This project uses some undocumented NT system calls and might be broken in future Windows versions. The author gives no warranty for this project. Use it at your own risk.
 
@@ -41,7 +41,7 @@ This project uses some undocumented NT system calls and might be broken in futur
 
 A condition variable is implemented as an atomic counter of threads that are currently waiting on it. Initially the counter is zero, which means no thread is waiting.
 
-When a thread is about to start waiting on a condition variable, it increments the counter and suspends itself using the global keyed event, passing the address of the condition variable as the key. Another thread may read the counter to tell how many threads that it will have to wake up (note this has to be atomic), and release them on the global keyed event, also passing the address of the condition variable as the key.
+When a thread is about to start waiting on a condition variable, it increments the counter and suspends itself using the global keyed event, passing the address of the condition variable as the key. Another thread may read the counter to tell how many threads that it will have to wake up (note this has to be atomic), and release them from the global keyed event, also passing the address of the condition variable as the key.
 
 ### The primitive mutex
 
