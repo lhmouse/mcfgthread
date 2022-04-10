@@ -92,15 +92,16 @@ __MCFGTHREAD_GTHR_INLINE int64_t
 __MCF_gthr_timeout_from_timespec(const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
   {
     double __time_ms = 0.000999;
-    __time_ms += (double) __abs_time->tv_sec * 1000;
     __time_ms += (double) __abs_time->tv_nsec * 0.000001;
+    __time_ms += (double) __abs_time->tv_sec * 1000;
 
     if(__time_ms < 0)
-      return 0;
-    else if(__time_ms > 0x7FFFFFFFFFFFFC00)
-      return 0x7FFFFFFFFFFFFFFF;
-    else
-      return (int64_t) __time_ms;
+      return 0;  // underflowed
+
+    if(__time_ms > 0x7FFFFFFFFFFFFC00)
+      return 0x7FFFFFFFFFFFFFFF;  // overflowed
+
+    return (int64_t) __time_ms;
   }
 
 // These are auxiliary functions for condition variables.
