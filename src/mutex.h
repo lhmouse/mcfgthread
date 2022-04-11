@@ -25,7 +25,7 @@ struct __MCF_mutex
     uintptr_t __locked : 1;
     uintptr_t __nspin : 4;  // number of spinning threads
     uintptr_t __nspin_fail : 4;  // number of timeouts after spinning
-#define __MCF_MUTEX_NSPIN_M  15U
+#define __MCF_MUTEX_NSPIN_M  1U
 
     uintptr_t __nsleep : __MCF_PTR_SIZE - 9;  // number of sleeping threads
 #define __MCF_MUTEX_NSLEEP_M  (UINTPTR_MAX >> 9)
