@@ -36,7 +36,7 @@ struct __MCF_mutex
 // attempt to spin at all.
 // This value must not be greater than `__MCF_MUTEX_NSPIN_M`, and must not be
 // zero.
-#define __MCF_MUTEX_SPIN_FAIL_THRESHOLD  12U
+#define __MCF_MUTEX_SPIN_FAIL_THRESHOLD   6U
 
 // This is the initial number of iterations that a thread may spin before it
 // goes to sleep. As spinning starts to fail more frequently, later threads
