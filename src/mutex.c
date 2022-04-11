@@ -78,7 +78,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
           if(old.__nspin_fail != 0)
             new.__nspin_fail = (old.__nspin_fail - 1U) & __MCF_MUTEX_NSPIN_M;
 
-          if(__MCF_ATOMIC_CMPXCHG_PTR_ARL(mutex, &old, &new))
+          if(__MCF_ATOMIC_CMPXCHG_PTR_ACQ(mutex, &old, &new))
             return 0;
         }
 
@@ -99,7 +99,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
           __MCFGTHREAD_ASSERT(old.__nspin != 0);
           new.__nspin = (old.__nspin - 1U) & __MCF_MUTEX_NSPIN_M;
         }
-        while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_ARL(mutex, &old, &new));
+        while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_ACQ(mutex, &old, &new));
 
         // If this mutex has been locked by the current thread, succeed.
         if(old.__locked == 0)
@@ -172,7 +172,7 @@ _MCF_mutex_unlock(_MCF_mutex* mutex)
       wake_one = _MCF_minz(old.__nsleep, 1);
       new.__nsleep = (old.__nsleep - wake_one) & __MCF_MUTEX_NSLEEP_M;
     }
-    while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_ARL(mutex, &old, &new));
+    while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_REL(mutex, &old, &new));
 
     __MCF_batch_release_common(mutex, wake_one);
   }
