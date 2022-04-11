@@ -26,20 +26,20 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       __MCF_ATOMIC_LOAD_PTR_RLX(&old, mutex);
       do {
         new = old;
-        if(old.__locked == 0) {
+        if(old.__locked == 0)
           new.__locked = 1;
+        else if((old.__nspin < __MCF_MUTEX_NSPIN_M) && (old.__nspin_fail < __MCF_MUTEX_SPIN_FAIL_THRESHOLD))
+          new.__nspin = (old.__nspin + 1U) & __MCF_MUTEX_NSPIN_M;
+        else
+          new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
 
+        if(old.__locked == 0) {
           // If the mutex can be locked immediately, the spinning failure
           // counter should be decremented.
           if(old.__nspin_fail != 0)
             new.__nspin_fail = (old.__nspin_fail - 1U) & __MCF_MUTEX_NSPIN_M;
         }
         else {
-          if((old.__nspin < __MCF_MUTEX_NSPIN_M) && (old.__nspin_fail < __MCF_MUTEX_SPIN_FAIL_THRESHOLD))
-            new.__nspin = (old.__nspin + 1U) & __MCF_MUTEX_NSPIN_M;
-          else
-            new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
-
           // No matter whether the thread is going to spin or not, the failure
           // counter should be incremented anyway.
           if(old.__nspin_fail < __MCF_MUTEX_NSPIN_M)
