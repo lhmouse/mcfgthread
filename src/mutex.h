@@ -78,23 +78,10 @@ _MCF_mutex_lock_slow(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NO
 __MCFGTHREAD_MUTEX_INLINE int
 _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
-    _MCF_mutex __old, __new;
+    _MCF_mutex __old;
     __MCF_ATOMIC_LOAD_PTR_RLX(&__old, __mutex);
 
-    if(__builtin_expect(__old.__locked, 0) == 0) {
-      __new = __old;
-      __new.__locked = 1;
-
-      // If the mutex can be locked immediately, the spinning failure counter
-      // should be decremented.
-      if(__old.__nspin_fail != 0)
-        __new.__nspin_fail = (__old.__nspin_fail - 1U) & __MCF_MUTEX_NSPIN_M;
-
-      if(__MCF_ATOMIC_CMPXCHG_PTR_ARL(__mutex, &__old, &__new))
-        return 0;
-    }
-
-    if(__timeout_opt && (*__timeout_opt == 0))
+    if(__timeout_opt && (*__timeout_opt == 0) && __builtin_expect(__old.__locked, 0))
       return -1;
 
     return _MCF_mutex_lock_slow(__mutex, __timeout_opt);
