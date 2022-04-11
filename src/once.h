@@ -71,20 +71,13 @@ _MCF_once_wait_slow(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXC
 __MCFGTHREAD_ONCE_INLINE int
 _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
-    _MCF_once __old, __new;
+    _MCF_once __old;
     __MCF_ATOMIC_LOAD_PTR_ACQ(&__old, __once);
 
-    if(__builtin_expect(__old.__ready, 1) != 0)
+    if(__builtin_expect(__old.__ready, 1))
       return 0;
 
-    if(__builtin_expect(__old.__locked, 0) == 0) {
-      __new = __old;
-      __new.__locked = 1;
-      if(__MCF_ATOMIC_CMPXCHG_PTR_ARL(__once, &__old, &__new))
-        return 1;
-    }
-
-    if(__timeout_opt && (*__timeout_opt == 0))
+    if(__timeout_opt && (*__timeout_opt == 0) && __builtin_expect(__old.__locked, 0))
       return -1;
 
     return _MCF_once_wait_slow(__once, __timeout_opt);
