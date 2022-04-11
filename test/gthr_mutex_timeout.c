@@ -22,7 +22,7 @@ main(void)
     _MCF_sleep(&sleep_until);
 
     now = _MCF_perf_counter();
-    timeout.tv_sec = (int64_t) time(NULL) + 1;
+    timeout.tv_sec = time(NULL) + 1;
     timeout.tv_nsec = 100000000;
     r = __gthread_mutex_timedlock(&mutex, &timeout);  // lock it
     assert(r == 0);
@@ -31,7 +31,7 @@ main(void)
     assert(delta <= 100);
 
     now = _MCF_perf_counter();
-    timeout.tv_sec = (int64_t) time(NULL) + 1;
+    timeout.tv_sec = time(NULL) + 1;
     timeout.tv_nsec = 100000000;
     r = __gthread_mutex_timedlock(&mutex, &timeout);
     assert(r == ETIMEDOUT);

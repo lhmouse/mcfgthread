@@ -26,7 +26,7 @@ main(void)
     _MCF_sleep(&sleep_until);
 
     now = _MCF_perf_counter();
-    timeout.tv_sec = (int64_t) time(NULL) + 1;
+    timeout.tv_sec = time(NULL) + 1;
     timeout.tv_nsec = 100000000;
     r = __gthread_cond_timedwait(&cond, &mutex, &timeout);
     assert(r == ETIMEDOUT);
