@@ -33,18 +33,11 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         else
           new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
 
-        if(old.__locked == 0) {
-          // If the mutex can be locked immediately, the spinning failure
-          // counter should be decremented.
-          if(old.__nspin_fail != 0)
-            new.__nspin_fail = (old.__nspin_fail - 1U) & __MCF_MUTEX_NSPIN_M;
-        }
-        else {
-          // No matter whether the thread is going to spin or not, the failure
-          // counter should be incremented anyway.
-          if(old.__nspin_fail < __MCF_MUTEX_NSPIN_M)
-            new.__nspin_fail = (old.__nspin_fail + 1U) & __MCF_MUTEX_NSPIN_M;
-        }
+        // If the mutex can be locked immediately, the failure counter shall be
+        // decremented. Otherwise it shall be incremented, no matter whether
+        // the current thread is going to spin or not.
+        uint32_t temp = old.__nspin_fail + old.__locked * 2U - 1U;
+        new.__nspin_fail = (temp - temp / (__MCF_MUTEX_NSPIN_M + 1U)) & __MCF_MUTEX_NSPIN_M;
       }
       while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_ARL(mutex, &old, &new));
 
