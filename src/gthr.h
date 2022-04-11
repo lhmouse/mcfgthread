@@ -563,10 +563,12 @@ __MCF_gthr_join(__gthread_t __thrd, void** __resultp_opt) __MCF_NOEXCEPT
     if(__resultp_opt) {
       // As there is no type information, we examine the thread procedure to
       // ensure we don't mistake a thread of a wrong type.
-      if(__thrd->__proc != __MCF_gthr_thread_thunk)
-        *__resultp_opt = NULL;
+      if(__thrd->__proc == __MCF_gthr_thread_thunk) {
+        __MCF_gthr_thread_record* __rec = (__MCF_gthr_thread_record*) __thrd->__data;
+        *__resultp_opt = __rec->__result;
+      }
       else
-        *__resultp_opt = ((__MCF_gthr_thread_record*) __thrd->__data)->__result;
+        *__resultp_opt = NULL;
     }
 
     // Free the thread.
