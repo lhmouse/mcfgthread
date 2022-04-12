@@ -7,13 +7,13 @@
 
 #include "fwd.h"
 
-// Request Windows Vista.
+// Request Windows 7.
 #ifndef _WIN32_WINNT
-#  define _WIN32_WINNT  0x0600
+#  define _WIN32_WINNT  0x0601
 #endif
 
-#if _WIN32_WINNT < 0x0600
-#  error Please define `_WIN32_WINNT` to at least Windows Vista.
+#if _WIN32_WINNT < 0x0601
+#  error Please define `_WIN32_WINNT` to at least Windows 7.
 #endif
 
 #define WIN32_LEAN_AND_MEAN  1
