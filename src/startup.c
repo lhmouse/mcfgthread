@@ -26,12 +26,6 @@ int __stdcall
 __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
   __asm__("__MCF_startup");
 
-uint32_t
-_MCF_get_win32_error(void)
-  {
-    return GetLastError();
-  }
-
 int __stdcall
 __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
   {
