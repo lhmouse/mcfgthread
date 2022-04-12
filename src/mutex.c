@@ -55,8 +55,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
           __builtin_ia32_pause();
           __atomic_thread_fence(__ATOMIC_SEQ_CST);
 
-          // If this mutex has not been locked, lock it and give back the
-          // spinning count. Otherwise, do nothing.
+          // If this mutex has not been locked, lock it, give back the spinning
+          // count, and decrement the failure counter. Otherwise, do nothing.
           __MCF_ATOMIC_LOAD_PTR_RLX(&old, mutex);
           if(old.__locked != 0)
             continue;
@@ -67,9 +67,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
           __MCFGTHREAD_ASSERT(old.__nspin != 0);
           new.__nspin = (old.__nspin - 1U) & __MCF_MUTEX_NSPIN_M;
 
-          // The spinning failure counter should also be decremented.
-          if(old.__nspin_fail != 0)
-            new.__nspin_fail = (old.__nspin_fail - 1U) & __MCF_MUTEX_NSPIN_M;
+          uint32_t temp = old.__nspin_fail - 1U;
+          new.__nspin_fail = (temp - temp / (__MCF_MUTEX_NSPIN_M + 1U)) & __MCF_MUTEX_NSPIN_M;
 
           if(__MCF_ATOMIC_CMPXCHG_PTR_ACQ(mutex, &old, &new))
             return 0;
