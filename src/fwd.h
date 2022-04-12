@@ -25,9 +25,9 @@ extern "C" {
 #endif
 
 #ifdef _WIN64
-#  define __MCF_PTR_SIZE    64
+#  define __MCF_PTR_BITS    64
 #else
-#  define __MCF_PTR_SIZE    32
+#  define __MCF_PTR_BITS    32
 #endif
 
 #ifdef __MCF_DEBUG
