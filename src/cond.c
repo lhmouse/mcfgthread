@@ -85,18 +85,18 @@ size_t
 _MCF_cond_signal_some(_MCF_cond* cond, size_t max)
   {
     // Get the number of threads to wake up.
-    size_t nwoken;
+    size_t wake_num;
     _MCF_cond old, new;
 
     __MCF_ATOMIC_LOAD_PTR_RLX(&old, cond);
     do {
       new = old;
-      nwoken = _MCF_minz(old.__nsleep, max);
-      new.__nsleep = (old.__nsleep - nwoken) & __MCF_COND_NSLEEP_M;
+      wake_num = _MCF_minz(old.__nsleep, max);
+      new.__nsleep = (old.__nsleep - wake_num) & __MCF_COND_NSLEEP_M;
     }
     while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(cond, &old, &new));
 
-    return __MCF_batch_release_common(cond, nwoken);
+    return __MCF_batch_release_common(cond, wake_num);
   }
 
 size_t
