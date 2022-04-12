@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <windows.h>
 
+#define NTHREADS  64U
+static __gthread_t threads[NTHREADS];
 static __gthread_mutex_t mutex = __GTHREAD_MUTEX_INIT;
 static HANDLE event;
 static int resource = 0;
@@ -36,8 +38,6 @@ main(void)
     event = CreateEventW(NULL, TRUE, FALSE, NULL);
     assert(event);
 
-#define NTHREADS  64U
-    __gthread_t threads[NTHREADS];
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       int r = __gthread_create(&threads[k], thread_proc, NULL);
       assert(r == 0);

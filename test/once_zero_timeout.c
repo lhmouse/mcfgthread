@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include <windows.h>
 
+#define NTHREADS  64U
+static _MCF_thread* threads[NTHREADS];
 static _MCF_once once;
 static HANDLE event;
 static int resource = 0;
@@ -57,8 +59,6 @@ main(void)
     event = CreateEventW(NULL, TRUE, FALSE, NULL);
     assert(event);
 
-#define NTHREADS  64U
-    _MCF_thread* threads[NTHREADS];
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       threads[k] = _MCF_thread_new(thread_proc, NULL, 0);
       assert(threads[k]);
