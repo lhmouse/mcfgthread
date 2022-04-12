@@ -25,6 +25,7 @@ check_PROGRAMS +=  \
   %reldir%/gthr_recursive_mutex.test  \
   %reldir%/gthr_cond_timeout.test  \
   %reldir%/gthr_cond_consumers.test  \
+  %reldir%/gthr_cond_consumers_recursive.test  \
   %reldir%/gthr_tls_dtor.test  \
   %reldir%/gthr_tls_set.test  \
   %reldir%/gthr_tls_deleted_key.test  \
