@@ -8,10 +8,6 @@
 #include "dtor_queue.h"
 #include "win32.h"
 
-int
-at_quick_exit(_MCF_atexit_function* at_func)
-  __attribute__((__alias__("__MCF_at_quick_exit")));
-
 void
 _exit(int status)
   __attribute__((__alias__("__MCF__Exit")));
@@ -20,9 +16,20 @@ void
 _Exit(int status)
   __attribute__((__alias__("__MCF__Exit")));
 
+int
+at_quick_exit(_MCF_atexit_function* at_func)
+  __attribute__((__alias__("__MCF_at_quick_exit")));
+
 void
 quick_exit(int status)
   __attribute__((__alias__("__MCF_quick_exit")));
+
+void
+__MCF__Exit(int status)
+  {
+    TerminateProcess(GetCurrentProcess(), (DWORD) status);
+    __MCF_UNREACHABLE;
+  }
 
 int
 __MCF_at_quick_exit(_MCF_atexit_function* at_func)
@@ -33,13 +40,6 @@ __MCF_at_quick_exit(_MCF_atexit_function* at_func)
     int err = __MCF_dtor_queue_push(&__MCF_cxa_at_quick_exit_queue, &elem);
     _MCF_mutex_unlock(&__MCF_cxa_at_quick_exit_mutex);
     return err;
-  }
-
-void
-__MCF__Exit(int status)
-  {
-    TerminateProcess(GetCurrentProcess(), (DWORD) status);
-    __MCF_UNREACHABLE;
   }
 
 void

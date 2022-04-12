@@ -22,9 +22,6 @@ extern "C" {
 typedef void _MCF_atexit_function(void);
 
 // Declare standard functions here.
-int
-at_quick_exit(_MCF_atexit_function* __at_func) __MCF_NOEXCEPT;
-
 void
 _exit(int __status) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
@@ -33,17 +30,20 @@ void
 _Exit(int __status) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
 
+int
+at_quick_exit(_MCF_atexit_function* __at_func) __MCF_NOEXCEPT;
+
 void
 quick_exit(int __status) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
 
 // Declare 'real' functions here.
-int
-__MCF_at_quick_exit(_MCF_atexit_function* __at_func) __MCF_NOEXCEPT;
-
 void
 __MCF__Exit(int __status) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
+
+int
+__MCF_at_quick_exit(_MCF_atexit_function* __at_func) __MCF_NOEXCEPT;
 
 void
 __MCF_quick_exit(int __status) __MCF_NOEXCEPT
