@@ -11,6 +11,7 @@
 extern char __my_image_base_from_gnu_ld
   __asm__("__image_base__");
 
+// Define static data, which are declared in 'fwd.h'.
 const HANDLE _MCF_crt_module = &__my_image_base_from_gnu_ld;
 HANDLE __MCF_crt_heap;
 uint32_t __MCF_win32_tls_index;
@@ -22,21 +23,11 @@ __MCF_dtor_queue __MCF_cxa_atexit_queue;
 _MCF_mutex __MCF_cxa_at_quick_exit_mutex;
 __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
 
-int __stdcall
-__MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
-  __asm__("__MCF_startup");
-
-int __stdcall
-__MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
+// Define a function that is shared between dynamic and static libraries.
+static int
+do_startup_common(DWORD reason)
   {
-    __MCFGTHREAD_ASSERT(instance == &__my_image_base_from_gnu_ld);
-
     if(reason == DLL_PROCESS_ATTACH) {
-      // Fail if this library is loaded dynamically.
-      // Also note that no cleanup is performed upon `DLL_PROCESS_DETACH`.
-      if(reserved == NULL)
-        return FALSE;
-
       // Create the CRT heap for memory allocation.
       __MCF_crt_heap = GetProcessHeap();
       __MCFGTHREAD_CHECK(__MCF_crt_heap);
@@ -66,3 +57,40 @@ __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
     }
     return TRUE;
   }
+
+#ifdef DLL_EXPORT
+
+// When building the shared library, invoke the common routine from the DLL
+// entry point callback.
+int __stdcall
+__MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
+  __asm__("__MCF_startup");
+
+int __stdcall
+__MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
+  {
+    // The DLL shall not be loaded via `LoadLibrary()`.
+    if((reason == DLL_PROCESS_ATTACH) && (reserved == NULL))
+      return FALSE;
+
+    __MCFGTHREAD_ASSERT(instance == &__my_image_base_from_gnu_ld);
+    do_startup_common(reason);
+  }
+
+#else  // DLL_EXPORT
+
+// When building the static library, invoke the common routine from a TLS
+// callback. This requires the main executable be linked with 'tlssup.o'.
+static void __stdcall
+__MCF_tls_callback(HANDLE instance, DWORD reason, LPVOID reserved)
+  {
+    (void) reserved;
+
+    __MCFGTHREAD_ASSERT(instance == &__my_image_base_from_gnu_ld);
+    do_startup_common(reason);
+  }
+
+static const PIMAGE_TLS_CALLBACK __MCF_xl_d
+  __attribute__((__section__(".CRT$XLD"), __used__)) = __MCF_tls_callback;
+
+#endif  // DLL_EXPORT

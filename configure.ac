@@ -7,7 +7,7 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AC_PROG_CC
 AC_LANG([C])
-LT_INIT([disable-static win32-dll])
+LT_INIT([win32-dll])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 AM_SILENT_RULES([no])
