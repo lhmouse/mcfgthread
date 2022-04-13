@@ -330,6 +330,7 @@ __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXC
       __MCFGTHREAD_ASSERT(__err == 0);
 
       // The calling thread owns the mutex now.
+      __MCFGTHREAD_ASSERT(__rmtx->__owner == 0);
       __MCF_ATOMIC_STORE_RLX(&(__rmtx->__owner), __my_tid);
       __MCFGTHREAD_ASSERT(__rmtx->__depth == 0);
     }
