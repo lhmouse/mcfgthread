@@ -24,7 +24,7 @@ _MCF_mutex __MCF_cxa_at_quick_exit_mutex;
 __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
 
 // Define a function that is shared between dynamic and static libraries.
-static int
+static void
 do_startup_common(DWORD reason)
   {
     if(reason == DLL_PROCESS_ATTACH) {
@@ -55,7 +55,6 @@ do_startup_common(DWORD reason)
       // before calling `ExitProcess()`.
       __MCF_thread_exit_callback();
     }
-    return TRUE;
   }
 
 #ifdef DLL_EXPORT
@@ -75,6 +74,7 @@ __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
 
     __MCFGTHREAD_ASSERT(instance == &__my_image_base_from_gnu_ld);
     do_startup_common(reason);
+    return TRUE;
   }
 
 #else  // DLL_EXPORT
