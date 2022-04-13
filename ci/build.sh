@@ -25,7 +25,7 @@ done
 ${CC} --version
 mkdir -p m4
 autoreconf -ifv
-./configure --disable-silent-rules --disable-static
+./configure --disable-silent-rules --enable-debug-checks --disable-static
 make -j$(nproc)
 
 # test
