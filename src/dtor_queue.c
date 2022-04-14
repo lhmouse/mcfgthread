@@ -13,12 +13,12 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
   {
     // Check whether the current block is full.
     if(queue->__size == __MCF_DTOR_QUEUE_BLOCK_SIZE) {
-      __MCF_dtor_queue* prev = _MCF_malloc0(sizeof(*prev));
+      __MCF_dtor_queue* prev = _MCF_malloc0(sizeof(__MCF_dtor_queue));
       if(!prev)
         return -1;
 
       // Move the contents of `queue` into it to create a linked list.
-      _MCF_mmove(prev, queue, sizeof(*prev));
+      _MCF_mmove(prev, queue, sizeof(__MCF_dtor_queue));
       queue->__prev = prev;
       queue->__size = 0;
     }
@@ -32,23 +32,22 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
   }
 
 int
-__MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* dso_opt)
+__MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* dso)
   {
     // Search for a matching element in the newest block.
     __MCF_dtor_queue* cur_q = queue;
     int err = -1;
 
     do {
-      // Search backwards for an element matching `dso_opt`.
+      // Search backwards for an element matching `dso`.
       for(uint32_t k = cur_q->__size - 1;  k != UINT32_MAX;  --k) {
         __MCF_dtor_element* target = cur_q->__data + k;
-        if(!dso_opt || (dso_opt == target->__dso)) {
-          *elem = *target;
-          err = 0;
-
+        if(!dso || (dso == target->__dso)) {
           // Remove this element.
+          *elem = *target;
           cur_q->__size --;
-          _MCF_mmove(target, target + 1, (cur_q->__size - k) * sizeof(*elem));
+          _MCF_mmove(target, target + 1, (cur_q->__size - k) * sizeof(__MCF_dtor_element));
+          err = 0;
           break;
         }
       }
@@ -57,7 +56,7 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* ds
       // Otherwise, go to the next one.
       if((cur_q->__size == 0) && cur_q->__prev) {
         __MCF_dtor_queue* prev = cur_q->__prev;
-        _MCF_mmove(cur_q, prev, sizeof(*prev));
+        _MCF_mmove(cur_q, prev, sizeof(__MCF_dtor_queue));
         _MCF_mfree_nonnull(prev);
       }
       else
@@ -69,7 +68,7 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* ds
   }
 
 void
-__MCF_dtor_queue_finalize(__MCF_dtor_queue* queue, _MCF_mutex* mutex_opt, void* dso_opt)
+__MCF_dtor_queue_finalize(__MCF_dtor_queue* queue, _MCF_mutex* mutex_opt, void* dso)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     __MCF_dtor_element elem;
@@ -80,7 +79,7 @@ __MCF_dtor_queue_finalize(__MCF_dtor_queue* queue, _MCF_mutex* mutex_opt, void* 
       if(mutex_opt)
         _MCF_mutex_lock(mutex_opt, NULL);
 
-      err = __MCF_dtor_queue_pop(&elem, queue, dso_opt);
+      err = __MCF_dtor_queue_pop(&elem, queue, dso);
 
       if(mutex_opt)
         _MCF_mutex_unlock(mutex_opt);

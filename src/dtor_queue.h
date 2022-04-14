@@ -56,14 +56,14 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtor_element* __ele
 //
 // Returns 0 if an element has been popped, or -1 if the queue is empty.
 int
-__MCF_dtor_queue_pop(__MCF_dtor_element* __elem, __MCF_dtor_queue* __queue, void* __dso_opt) __MCF_NOEXCEPT;
+__MCF_dtor_queue_pop(__MCF_dtor_element* __elem, __MCF_dtor_queue* __queue, void* __dso) __MCF_NOEXCEPT;
 
 // Executes all destructors which match `__dso` in the queue. If `__dso` is
 // null, then all elements are considered matches. This function is used to
 // implement `__cxa_finalize()`. Refer to the Itanium C++ ABI for details about
 // DSO handles.
 void
-__MCF_dtor_queue_finalize(__MCF_dtor_queue* __queue, _MCF_mutex* __mutex_opt, void* __dso_opt) __MCF_NOEXCEPT;
+__MCF_dtor_queue_finalize(__MCF_dtor_queue* __queue, _MCF_mutex* __mutex_opt, void* __dso) __MCF_NOEXCEPT;
 
 #ifdef __cplusplus
 }
