@@ -115,7 +115,7 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
           continue;
 
         if(__MCF_ATOMIC_LOAD_RLX(tkey->__deleted) != 0) {
-          // If the key has been deleted, don't reallocate it; free it instead.
+          // If the key has been deleted, don't relocate it; free it instead.
           do_tls_key_drop_ref_nonnull(tkey);
           continue;
         }
