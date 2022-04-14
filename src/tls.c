@@ -135,9 +135,9 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
     // Note `do_linear_probe_nonempty()` may return an empty element.
     __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
     if(!elem->__key_opt) {
+      // Fill `key` into this element.
       int old_ref = __MCF_ATOMIC_ADD_ARL(key->__nref, 1);
       __MCFGTHREAD_ASSERT(old_ref > 0);
-
       elem->__key_opt = key;
       table->__size ++;
     }
