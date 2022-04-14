@@ -123,6 +123,11 @@ void
 __MCF_cxa_finalize(void* dso)
   {
     if(dso) {
+      // Remove quick exit callbacks that will expire.
+      _MCF_mutex_lock(&__MCF_cxa_at_quick_exit_mutex, NULL);
+      __MCF_dtor_queue_remove(&__MCF_cxa_at_quick_exit_queue, dso);
+      _MCF_mutex_unlock(&__MCF_cxa_at_quick_exit_mutex);
+
       // Call destructors for thread-local objects before static ones in
       // accordance with the C++ standard. See [basic.start.term]/2.
       _MCF_thread* self = _MCF_thread_self();

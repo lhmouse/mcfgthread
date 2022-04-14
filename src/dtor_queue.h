@@ -58,6 +58,14 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtor_element* __ele
 int
 __MCF_dtor_queue_pop(__MCF_dtor_element* __elem, __MCF_dtor_queue* __queue, void* __dso) __MCF_NOEXCEPT;
 
+// Removes all elements that match `__dso` from the queue. If `__dso` is null,
+// then any element is considered a match. Refer to the Itanium C++ ABI for
+// details about DSO handles.
+//
+// Returns the number of elements that have been removed.
+size_t
+__MCF_dtor_queue_remove(__MCF_dtor_queue* __queue, void* __dso) __MCF_NOEXCEPT;
+
 // Executes all destructors which match `__dso` in the queue. If `__dso` is
 // null, then all elements are considered matches. This function is used to
 // implement `__cxa_finalize()`. Refer to the Itanium C++ ABI for details about
