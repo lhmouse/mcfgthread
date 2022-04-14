@@ -63,12 +63,6 @@ __MCF_atexit(__MCF_atexit_callback atfn)
     return __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*)(intptr_t) atfn, NULL, NULL);
   }
 
-#if 0  // FIXME: This is defined by mingw-w64 in CRT.
-int
-atexit(__MCF_atexit_callback atfn)
-  __attribute__((__alias__("__MCF_atexit")));
-#endif
-
 int
 __MCF_cxa_at_quick_exit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
   {
@@ -89,12 +83,6 @@ __MCF_at_quick_exit(__MCF_atexit_callback atfn)
   {
     return __MCF_cxa_at_quick_exit((__MCF_cxa_dtor_cdecl*)(intptr_t) atfn, NULL, NULL);
   }
-
-#if !defined(_UCRT)  // FIXME: This is defined by mingw-w64 in CRT.
-int
-at_quick_exit(__MCF_atexit_callback atfn)
-  __attribute__((__alias__("__MCF_at_quick_exit")));
-#endif
 
 int
 __MCF_cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
