@@ -37,4 +37,4 @@ __MCF_quick_exit(int status)
 
 void
 quick_exit(int status)
-  __attribute__((__alias__("__MCF_quick_exit")));
+  __attribute__((__alias__("__MCF_quick_exit"), __noreturn__));

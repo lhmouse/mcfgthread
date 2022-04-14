@@ -17,19 +17,6 @@ extern "C" {
 #  define __MCFGTHREAD_EXIT_INLINE  __MCF_GNU_INLINE
 #endif
 
-// Declare standard functions here.
-void
-_exit(int __status) __MCF_NOEXCEPT
-  __attribute__((__noreturn__));
-
-void
-_Exit(int __status) __MCF_NOEXCEPT
-  __attribute__((__noreturn__));
-
-void
-quick_exit(int __status) __MCF_NOEXCEPT
-  __attribute__((__noreturn__));
-
 // Declare 'real' functions here.
 void
 __MCF__Exit(int __status) __MCF_NOEXCEPT
