@@ -38,11 +38,6 @@ struct __MCF_thread
   }
   typedef _MCF_thread;
 
-// This is the per-thread cleanup callback. It is declared here for the sake
-// of completeness, and is not meant to be call directly.
-void
-__MCF_thread_exit_callback(void) __MCF_NOEXCEPT;
-
 // Creates a thread. The `__nref` member is initialized to 2.
 //
 // If `__size` is specified as non-zero, storage for user-defined data is

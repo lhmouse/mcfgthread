@@ -22,38 +22,74 @@ __MCF_dtor_queue __MCF_cxa_atexit_queue;
 _MCF_mutex __MCF_cxa_at_quick_exit_mutex;
 __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
 
-// Define a function that is shared between dynamic and static libraries.
-static void
-do_startup_common(DWORD reason)
+// Define startup and cleanup routines.
+void
+__MCF_initialize(void)
   {
-    if(reason == DLL_PROCESS_ATTACH) {
-      // Create the CRT heap for memory allocation.
-      __MCF_crt_heap = GetProcessHeap();
-      __MCFGTHREAD_CHECK(__MCF_crt_heap);
+    // Create the CRT heap for memory allocation.
+    __MCFGTHREAD_CHECK(__MCF_crt_heap == NULL);
+    __MCF_crt_heap = GetProcessHeap();
+    __MCFGTHREAD_CHECK(__MCF_crt_heap);
 
-      // Allocate a TLS slot for this library.
-      __MCF_win32_tls_index = TlsAlloc();
-      __MCFGTHREAD_CHECK(__MCF_win32_tls_index != TLS_OUT_OF_INDEXES);
+    // Allocate a TLS slot for this library.
+    __MCF_win32_tls_index = TlsAlloc();
+    __MCFGTHREAD_CHECK(__MCF_win32_tls_index != TLS_OUT_OF_INDEXES);
 
-      // Get the performance counter resolution.
-      LARGE_INTEGER freq;
-      __MCFGTHREAD_CHECK(QueryPerformanceFrequency(&freq));
-      __MCF_perf_frequency_reciprocal = 1000 / (double) freq.QuadPart;
+    // Get the performance counter resolution.
+    LARGE_INTEGER freq;
+    __MCFGTHREAD_CHECK(QueryPerformanceFrequency(&freq));
+    __MCF_perf_frequency_reciprocal = 1000 / (double) freq.QuadPart;
 
-      // Attach the main thread.
-      __MCF_main_thread.__tid = GetCurrentThreadId();
-      __MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, FALSE, __MCF_main_thread.__tid);
-      __MCFGTHREAD_CHECK(__MCF_main_thread.__handle);
-      __MCF_ATOMIC_STORE_REL(__MCF_main_thread.__nref, 1);
-      __MCFGTHREAD_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
-    }
-    else if(reason == DLL_THREAD_DETACH) {
-      // Perform per-thread cleanup.
-      // This is not done at process detach as it is too late. A thread that
-      // wishes to exit the current process shall call `__cxa_finalize(NULL)`
-      // before calling `ExitProcess()`.
-      __MCF_thread_exit_callback();
-    }
+    // Attach the main thread.
+    __MCF_main_thread.__tid = GetCurrentThreadId();
+    __MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, FALSE, __MCF_main_thread.__tid);
+    __MCFGTHREAD_CHECK(__MCF_main_thread.__handle);
+    __MCF_ATOMIC_STORE_REL(__MCF_main_thread.__nref, 1);
+    __MCFGTHREAD_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
+  }
+
+void
+__MCF_finalize_on_thread_exit(void)
+  {
+    _MCF_thread* self = _MCF_thread_self();
+    if(!self)
+      return;
+
+    // Call destructors for thread-local objects.
+    __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
+
+    // Call destructors and callbacks registered with `__cxa_thread_atexit()`.
+    __MCF_tls_table_finalize(&(self->__tls_table));
+
+    // Detach the current thread.
+    (void) TlsSetValue(__MCF_win32_tls_index, NULL);
+    _MCF_thread_drop_ref_nonnull(self);
+  }
+
+void
+__MCF_finalize_on_process_exit(void)
+  {
+    // Call destructors for thread-local objects before static ones, in
+    // accordance with the C++ standard. See [basic.start.term]/2.
+    __MCF_finalize_on_thread_exit();
+
+    // Call destructors and callbacks registered with `__cxa_atexit()` and
+    // `atexit()`.
+    __MCF_dtor_queue_finalize(&__MCF_cxa_atexit_queue, &__MCF_cxa_atexit_mutex, NULL);
+  }
+
+static void __stdcall
+TlsCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
+  {
+    __MCFGTHREAD_ASSERT(instance == &__my_image_base_from_gnu_ld);
+    (void) reserved;
+
+    if(reason == DLL_PROCESS_ATTACH)
+      __MCF_initialize();
+    else if(reason == DLL_THREAD_DETACH)
+      __MCF_finalize_on_thread_exit();
+    else if(reason == DLL_PROCESS_DETACH)
+      __MCF_finalize_on_process_exit();
   }
 
 #ifdef DLL_EXPORT
@@ -66,12 +102,11 @@ DllMainCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved);
 int __stdcall
 DllMainCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
   {
-    // The DLL shall not be loaded via `LoadLibrary()`.
+    // This DLL shall not be loaded via `LoadLibrary()`.
     if((reason == DLL_PROCESS_ATTACH) && (reserved == NULL))
       return FALSE;
 
-    __MCFGTHREAD_ASSERT(instance == &__my_image_base_from_gnu_ld);
-    do_startup_common(reason);
+    TlsCRTStartup(instance, reason, reserved);
     return TRUE;
   }
 
@@ -81,15 +116,6 @@ DllMainCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
 // callback. This requires the main executable be linked with 'tlssup.o'.
 // `__xl_d` is being used by mingw-w64, so we use `__xl_e` here.
 extern const PIMAGE_TLS_CALLBACK __MCF_xl_e;
-
-static void __stdcall
-TlsCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
-  {
-    (void) reserved;
-
-    __MCFGTHREAD_ASSERT(instance == &__my_image_base_from_gnu_ld);
-    do_startup_common(reason);
-  }
 
 const PIMAGE_TLS_CALLBACK __MCF_xl_e
   __attribute__((__section__(".CRT$XLE"), __used__)) = TlsCRTStartup;
