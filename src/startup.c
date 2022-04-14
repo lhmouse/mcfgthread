@@ -8,8 +8,7 @@
 #include "dtor_queue.h"
 #include "win32.h"
 
-extern char __my_image_base_from_gnu_ld
-  __asm__("__image_base__");
+extern char __my_image_base_from_gnu_ld __asm__("__image_base__");
 
 // Define static data, which are declared in 'fwd.h'.
 const HANDLE _MCF_crt_module = &__my_image_base_from_gnu_ld;
