@@ -38,6 +38,11 @@ struct __MCF_thread
   }
   typedef _MCF_thread;
 
+// This is the per-thread cleanup callback. It is declared here for the sake
+// of completeness, and is not meant to be call directly.
+void
+__MCF_thread_exit_callback(void) __MCF_NOEXCEPT;
+
 // Creates a thread. The `__nref` member is initialized to 2.
 //
 // If `__size` is specified as non-zero, storage for user-defined data is
@@ -182,11 +187,6 @@ _MCF_tls_get(const _MCF_tls_key* __key) __MCF_NOEXCEPT
 // Returns 0 upon success and -1 upon failure.
 int
 _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt) __MCF_NOEXCEPT;
-
-// This is the per-thread cleanup callback. It is declared here for the sake
-// of completeness, and is not meant to be call directly.
-void
-__MCF_thread_exit_callback(void) __MCF_NOEXCEPT;
 
 #ifdef __cplusplus
 }

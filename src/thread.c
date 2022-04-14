@@ -25,6 +25,22 @@ do_win32_thread_thunk(LPVOID param)
     return 0;
   }
 
+void
+__MCF_thread_exit_callback(void)
+  {
+    _MCF_thread* const self = TlsGetValue(__MCF_win32_tls_index);
+    if(!self)
+      return;
+
+    // Call destructors for thread-local objects.
+    __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
+    __MCF_tls_table_finalize(&(self->__tls_table));
+
+   // Detach the thread.
+   (void) TlsSetValue(__MCF_win32_tls_index, NULL);
+    _MCF_thread_drop_ref_nonnull(self);
+  }
+
 _MCF_thread*
 _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
   {
@@ -145,20 +161,4 @@ _MCF_tls_set(_MCF_tls_key* key, const void* value_opt)
       return -1;
 
     return __MCF_tls_table_set(&(self->__tls_table), key, value_opt);
-  }
-
-void
-__MCF_thread_exit_callback(void)
-  {
-    _MCF_thread* const self = TlsGetValue(__MCF_win32_tls_index);
-    if(!self)
-      return;
-
-    // Call destructors for thread-local objects.
-    __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
-    __MCF_tls_table_finalize(&(self->__tls_table));
-
-   // Detach the thread.
-   (void) TlsSetValue(__MCF_win32_tls_index, NULL);
-    _MCF_thread_drop_ref_nonnull(self);
   }
