@@ -41,7 +41,6 @@ lib_libmcfgthread_la_LIBADD =  \
 
 lib_libmcfgthread_la_LDFLAGS =  \
   -Wc,-nostdlib -no-undefined -version-info 1:0  \
-  -Wl,-e__MCF_startup,--subsystem,windows:6.0  \
-  -Wl,--exclude-symbols,__MCF_startup,--export-all-symbols,--exclude-libs,ALL  \
+  -Wl,--subsystem,windows:6.1,--export-all-symbols,--exclude-libs,ALL  \
   -Wl,--disable-runtime-pseudo-reloc,--disable-auto-import  \
   -Wl,--disable-stdcall-fixup,--enable-auto-image-base

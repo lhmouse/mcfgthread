@@ -62,11 +62,10 @@ do_startup_common(DWORD reason)
 // When building the shared library, invoke the common routine from the DLL
 // entry point callback.
 int __stdcall
-__MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
-  __asm__("__MCF_startup");
+DllMainCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved);
 
 int __stdcall
-__MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
+DllMainCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
   {
     // The DLL shall not be loaded via `LoadLibrary()`.
     if((reason == DLL_PROCESS_ATTACH) && (reserved == NULL))
@@ -82,7 +81,7 @@ __MCF_startup(HANDLE instance, DWORD reason, LPVOID reserved)
 // When building the static library, invoke the common routine from a TLS
 // callback. This requires the main executable be linked with 'tlssup.o'.
 static void __stdcall
-__MCF_tls_callback(HANDLE instance, DWORD reason, LPVOID reserved)
+TlsCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
   {
     (void) reserved;
 
@@ -91,6 +90,6 @@ __MCF_tls_callback(HANDLE instance, DWORD reason, LPVOID reserved)
   }
 
 static const PIMAGE_TLS_CALLBACK __MCF_xl_d
-  __attribute__((__section__(".CRT$XLD"), __used__)) = __MCF_tls_callback;
+  __attribute__((__section__(".CRT$XLD"), __used__)) = TlsCRTStartup;
 
 #endif  // DLL_EXPORT
