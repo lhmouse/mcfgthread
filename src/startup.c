@@ -80,6 +80,9 @@ DllMainCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
 
 // When building the static library, invoke the common routine from a TLS
 // callback. This requires the main executable be linked with 'tlssup.o'.
+// `__xl_d` is being used by mingw-w64, so we use `__xl_e` here.
+extern const PIMAGE_TLS_CALLBACK __MCF_xl_e;
+
 static void __stdcall
 TlsCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
   {
@@ -89,7 +92,7 @@ TlsCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
     do_startup_common(reason);
   }
 
-static const PIMAGE_TLS_CALLBACK __MCF_xl_d
-  __attribute__((__section__(".CRT$XLD"), __used__)) = TlsCRTStartup;
+const PIMAGE_TLS_CALLBACK __MCF_xl_e
+  __attribute__((__section__(".CRT$XLE"), __used__)) = TlsCRTStartup;
 
 #endif  // DLL_EXPORT
