@@ -22,7 +22,9 @@ main(void)
       for(size_t k = 0;  k != NKEYS;  ++k) {
         int r = __gthread_setspecific(keys[k], (void*) v);
         assert(r == 0);
+      }
 
+      for(size_t k = 0;  k != NKEYS;  ++k) {
         size_t p = (size_t) __gthread_getspecific(keys[k]);
         assert(p == v);
       }

@@ -21,7 +21,9 @@ main(void)
       for(size_t k = 0;  k != NKEYS;  ++k) {
         int r = _MCF_tls_set(keys[k], (void*) v);
         assert(r == 0);
+      }
 
+      for(size_t k = 0;  k != NKEYS;  ++k) {
         size_t p = (size_t) _MCF_tls_get(keys[k]);
         assert(p == v);
       }
