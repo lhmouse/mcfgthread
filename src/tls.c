@@ -114,6 +114,12 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
         if(!tkey)
           continue;
 
+        if(__MCF_ATOMIC_LOAD_RLX(tkey->__deleted) != 0) {
+          // If the key has been deleted, don't reallocate it; free it instead.
+          do_tls_key_drop_ref_nonnull(tkey);
+          continue;
+        }
+
         // Relocate this element into the new storage.
         elem = do_linear_probe_nonempty(table, tkey);
         __MCFGTHREAD_ASSERT(!elem->__key_opt);
