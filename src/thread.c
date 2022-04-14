@@ -146,7 +146,7 @@ _MCF_sleep(const int64_t* timeout_opt)
 void*
 _MCF_tls_get(const _MCF_tls_key* key)
   {
-    _MCF_thread* const self = TlsGetValue(__MCF_win32_tls_index);
+    _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
     if(!self)
       return NULL;
 
@@ -156,7 +156,7 @@ _MCF_tls_get(const _MCF_tls_key* key)
 int
 _MCF_tls_set(_MCF_tls_key* key, const void* value_opt)
   {
-    _MCF_thread* const self = TlsGetValue(__MCF_win32_tls_index);
+    _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
     if(!self)
       return -1;
 
