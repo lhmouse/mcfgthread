@@ -10,6 +10,7 @@ check_PROGRAMS +=  \
   %reldir%/cond_timeout.test  \
   %reldir%/dtor_queue_dso.test  \
   %reldir%/dtor_queue_all.test  \
+  %reldir%/dtor_queue_remove.test  \
   %reldir%/cxa_atexit_dso.test  \
   %reldir%/cxa_atexit_all.test  \
   %reldir%/cxa_thread_atexit.test  \
