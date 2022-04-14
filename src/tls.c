@@ -110,11 +110,12 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
         temp.__end --;
 
         // Skip empty elements.
-        if(!temp.__end->__key_opt)
+        _MCF_tls_key* tkey = temp.__end->__key_opt;
+        if(!tkey)
           continue;
 
         // Relocate this element into the new storage.
-        elem = do_linear_probe_nonempty(table, temp.__end->__key_opt);
+        elem = do_linear_probe_nonempty(table, tkey);
         __MCFGTHREAD_ASSERT(!elem->__key_opt);
         *elem = *(temp.__end);
       }
@@ -158,16 +159,22 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
         temp.__end --;
 
         // Skip empty elements.
-        if(!temp.__end->__key_opt)
+        _MCF_tls_key* tkey = temp.__end->__key_opt;
+        if(!tkey)
           continue;
 
-        // Invoke the destructor if there is a value and a destructor, and the
-        // key has not been deleted.
-        _MCF_tls_key* key = temp.__end->__key_opt;
-        if(key->__dtor_opt && temp.__end->__value && !__MCF_ATOMIC_LOAD_RLX(key->__deleted))
-            key->__dtor_opt(temp.__end->__value);
+        if(temp.__end->__value) {
+          // Invoke the destructor if there is a value and a destructor, and
+          // the key has not been deleted.
+          _MCF_tls_dtor* dtor = NULL;
+          if(__MCF_ATOMIC_LOAD_RLX(tkey->__deleted) == 0)
+            dtor = tkey->__dtor_opt;
 
-        do_tls_key_drop_ref_nonnull(key);
+          if(dtor)
+            dtor(temp.__end->__value);
+        }
+
+        do_tls_key_drop_ref_nonnull(tkey);
       }
 
       // Deallocate the table which should be empty now.
