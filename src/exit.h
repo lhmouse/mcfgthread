@@ -17,10 +17,6 @@ extern "C" {
 #  define __MCFGTHREAD_EXIT_INLINE  __MCF_GNU_INLINE
 #endif
 
-// Define the prototype for callbacks that are passed to `atexit()`
-// and `at_quick_exit()`.
-typedef void _MCF_atexit_function(void);
-
 // Declare standard functions here.
 void
 _exit(int __status) __MCF_NOEXCEPT
@@ -30,9 +26,6 @@ void
 _Exit(int __status) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
 
-int
-at_quick_exit(_MCF_atexit_function* __at_func) __MCF_NOEXCEPT;
-
 void
 quick_exit(int __status) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
@@ -41,9 +34,6 @@ quick_exit(int __status) __MCF_NOEXCEPT
 void
 __MCF__Exit(int __status) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
-
-int
-__MCF_at_quick_exit(_MCF_atexit_function* __at_func) __MCF_NOEXCEPT;
 
 void
 __MCF_quick_exit(int __status) __MCF_NOEXCEPT

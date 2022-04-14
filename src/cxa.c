@@ -10,39 +10,15 @@
 #include "thread.h"
 
 int
-__cxa_guard_acquire(int64_t* guard)
-  __attribute__((__alias__("__MCF_cxa_guard_acquire")));
-
-void
-__cxa_guard_release(int64_t* guard)
-  __attribute__((__alias__("__MCF_cxa_guard_release")));
-
-void
-__cxa_guard_abort(int64_t* guard)
-  __attribute__((__alias__("__MCF_cxa_guard_abort")));
-
-int
-__cxa_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
-  __attribute__((__alias__("__MCF_cxa_atexit")));
-
-int
-__cxa_at_quick_exit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
-  __attribute__((__alias__("__MCF_cxa_at_quick_exit")));
-
-int
-__cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
-  __attribute__((__alias__("__MCF_cxa_thread_atexit")));
-
-void
-__cxa_finalize(void* dso)
-  __attribute__((__alias__("__MCF_cxa_finalize")));
-
-int
 __MCF_cxa_guard_acquire(int64_t* guard)
   {
     // Reuse the storage of the guard object as a once flag.
     return _MCF_once_wait_slow((_MCF_once*) guard, NULL);
   }
+
+int
+__cxa_guard_acquire(int64_t* guard)
+  __attribute__((__alias__("__MCF_cxa_guard_acquire")));
 
 void
 __MCF_cxa_guard_release(int64_t* guard)
@@ -52,11 +28,19 @@ __MCF_cxa_guard_release(int64_t* guard)
   }
 
 void
+__cxa_guard_release(int64_t* guard)
+  __attribute__((__alias__("__MCF_cxa_guard_release")));
+
+void
 __MCF_cxa_guard_abort(int64_t* guard)
   {
     // Reuse the storage of the guard object as a once flag.
     _MCF_once_abort((_MCF_once*) guard);
   }
+
+void
+__cxa_guard_abort(int64_t* guard)
+  __attribute__((__alias__("__MCF_cxa_guard_abort")));
 
 int
 __MCF_cxa_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
@@ -70,6 +54,22 @@ __MCF_cxa_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
   }
 
 int
+__cxa_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
+  __attribute__((__alias__("__MCF_cxa_atexit")));
+
+int
+__MCF_atexit(__MCF_atexit_callback atfn)
+  {
+    return __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*)(intptr_t) atfn, NULL, NULL);
+  }
+
+#if 0  // FIXME: This is defined by mingw-w64 in CRT.
+int
+atexit(__MCF_atexit_callback atfn)
+  __attribute__((__alias__("__MCF_atexit")));
+#endif
+
+int
 __MCF_cxa_at_quick_exit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
   {
     // Push the element to the global queue.
@@ -79,6 +79,22 @@ __MCF_cxa_at_quick_exit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
     _MCF_mutex_unlock(&__MCF_cxa_at_quick_exit_mutex);
     return err;
   }
+
+int
+__cxa_at_quick_exit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
+  __attribute__((__alias__("__MCF_cxa_at_quick_exit")));
+
+int
+__MCF_at_quick_exit(__MCF_atexit_callback atfn)
+  {
+    return __MCF_cxa_at_quick_exit((__MCF_cxa_dtor_cdecl*)(intptr_t) atfn, NULL, NULL);
+  }
+
+#if !defined(_UCRT)  // FIXME: This is defined by mingw-w64 in CRT.
+int
+at_quick_exit(__MCF_atexit_callback atfn)
+  __attribute__((__alias__("__MCF_at_quick_exit")));
+#endif
 
 int
 __MCF_cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
@@ -93,6 +109,16 @@ __MCF_cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
     return err;
   }
 
+int
+__cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
+  __attribute__((__alias__("__MCF_cxa_thread_atexit")));
+
+int
+__MCF_thread_atexit(__MCF_atexit_callback atfn)
+  {
+    return __MCF_cxa_thread_atexit((__MCF_cxa_dtor_cdecl*)(intptr_t) atfn, NULL, NULL);
+  }
+
 void
 __MCF_cxa_finalize(void* dso)
   {
@@ -105,3 +131,7 @@ __MCF_cxa_finalize(void* dso)
     // Call destructors for static objects.
     __MCF_dtor_queue_finalize(&__MCF_cxa_atexit_queue, &__MCF_cxa_atexit_mutex, dso);
   }
+
+void
+__cxa_finalize(void* dso)
+  __attribute__((__alias__("__MCF_cxa_finalize")));
