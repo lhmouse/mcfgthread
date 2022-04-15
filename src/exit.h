@@ -26,6 +26,10 @@ void
 __MCF_quick_exit(int __status) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
 
+void
+__MCF_exit(int __status) __MCF_NOEXCEPT
+  __attribute__((__noreturn__));
+
 #ifdef __cplusplus
 }
 #endif

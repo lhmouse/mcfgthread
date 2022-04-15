@@ -38,3 +38,18 @@ __MCF_quick_exit(int status)
 void
 quick_exit(int status)
   __attribute__((__alias__("__MCF_quick_exit"), __noreturn__));
+
+void
+__MCF_exit(int status)
+  {
+    // Perform global cleanup like `__cxa_finalize(NULL)`.
+    // The shim library shall have registered a cleanup function for the CRT.
+    __MCF_finalize_on_process_exit();
+
+    // After the CRT has been finalized, exit.
+    __MCF__Exit(status);
+  }
+
+void
+exit(int status)
+  __attribute__((__alias__("__MCF_exit"), __noreturn__));
