@@ -16,10 +16,6 @@ __MCF_cxa_guard_acquire(int64_t* guard)
     return _MCF_once_wait_slow((_MCF_once*) guard, NULL);
   }
 
-int
-__cxa_guard_acquire(int64_t* guard)
-  __attribute__((__alias__("__MCF_cxa_guard_acquire")));
-
 void
 __MCF_cxa_guard_release(int64_t* guard)
   {
@@ -28,19 +24,11 @@ __MCF_cxa_guard_release(int64_t* guard)
   }
 
 void
-__cxa_guard_release(int64_t* guard)
-  __attribute__((__alias__("__MCF_cxa_guard_release")));
-
-void
 __MCF_cxa_guard_abort(int64_t* guard)
   {
     // Reuse the storage of the guard object as a once flag.
     _MCF_once_abort((_MCF_once*) guard);
   }
-
-void
-__cxa_guard_abort(int64_t* guard)
-  __attribute__((__alias__("__MCF_cxa_guard_abort")));
 
 int
 __MCF_cxa_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
@@ -52,10 +40,6 @@ __MCF_cxa_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
     _MCF_mutex_unlock(&__MCF_cxa_atexit_mutex);
     return err;
   }
-
-int
-__cxa_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
-  __attribute__((__alias__("__MCF_cxa_atexit")));
 
 int
 __MCF_atexit(__MCF_atexit_callback atfn)
@@ -75,10 +59,6 @@ __MCF_cxa_at_quick_exit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
   }
 
 int
-__cxa_at_quick_exit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
-  __attribute__((__alias__("__MCF_cxa_at_quick_exit")));
-
-int
 __MCF_at_quick_exit(__MCF_atexit_callback atfn)
   {
     return __MCF_cxa_at_quick_exit((__MCF_cxa_dtor_cdecl*)(intptr_t) atfn, NULL, NULL);
@@ -96,10 +76,6 @@ __MCF_cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
     int err = __MCF_dtor_queue_push(&(self->__atexit_queue), &elem);
     return err;
   }
-
-int
-__cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
-  __attribute__((__alias__("__MCF_cxa_thread_atexit")));
 
 int
 __MCF_thread_atexit(__MCF_atexit_callback atfn)
@@ -128,7 +104,3 @@ __MCF_cxa_finalize(void* dso)
     else
       __MCF_finalize_on_process_exit();
   }
-
-void
-__cxa_finalize(void* dso)
-  __attribute__((__alias__("__MCF_cxa_finalize")));

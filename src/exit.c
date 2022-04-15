@@ -17,14 +17,6 @@ __MCF__Exit(int status)
   }
 
 void
-_exit(int status)
-  __attribute__((__alias__("__MCF__Exit")));
-
-void
-_Exit(int status)
-  __attribute__((__alias__("__MCF__Exit")));
-
-void
 __MCF_quick_exit(int status)
   {
     // Invoke all callbacks that have been registered by `at_quick_exit()` in
@@ -36,10 +28,6 @@ __MCF_quick_exit(int status)
   }
 
 void
-quick_exit(int status)
-  __attribute__((__alias__("__MCF_quick_exit"), __noreturn__));
-
-void
 __MCF_exit(int status)
   {
     // Perform global cleanup like `__cxa_finalize(NULL)`.
@@ -49,7 +37,3 @@ __MCF_exit(int status)
     // After the CRT has been finalized, exit.
     __MCF__Exit(status);
   }
-
-void
-exit(int status)
-  __attribute__((__alias__("__MCF_exit"), __noreturn__));
