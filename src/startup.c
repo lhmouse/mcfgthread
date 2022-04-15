@@ -84,12 +84,16 @@ TlsCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
     __MCFGTHREAD_ASSERT(instance == &__my_image_base_from_gnu_ld);
     (void) reserved;
 
+    // Perform global initialization and per-thread cleanup, as needed.
+    // Note, upon `DLL_PROCESS_DETACH` we don't perform any cleanups, because
+    // other DLLs might have been unloaded and we would be referencing unmapped
+    // memory. User code should call `__cxa_finalize()` before exiting from a
+    // process.
     if(reason == DLL_PROCESS_ATTACH)
       __MCF_initialize();
-    else if(reason == DLL_THREAD_DETACH)
+
+    if(reason == DLL_THREAD_DETACH)
       __MCF_finalize_on_thread_exit();
-    else if(reason == DLL_PROCESS_DETACH)
-      __MCF_finalize_on_process_exit();
   }
 
 #ifdef DLL_EXPORT
