@@ -104,7 +104,7 @@ DllMainCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
   {
     // Prevent unloading of this DLL.
     HMODULE locked;
-    __MCFGTHREAD_CHECK(GetModuleHandleExW(5, instance, &locked);
+    __MCFGTHREAD_CHECK(GetModuleHandleExW(5, instance, &locked));
     __MCFGTHREAD_CHECK(locked == instance);
 
     // Call the common routine. This will not fail.
