@@ -102,10 +102,12 @@ DllMainCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved);
 int __stdcall
 DllMainCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
   {
-    // This DLL shall not be loaded via `LoadLibrary()`.
-    if((reason == DLL_PROCESS_ATTACH) && (reserved == NULL))
-      return FALSE;
+    // Prevent unloading of this DLL.
+    HMODULE locked;
+    __MCFGTHREAD_CHECK(GetModuleHandleExW(5, instance, &locked);
+    __MCFGTHREAD_CHECK(locked == instance);
 
+    // Call the common routine. This will not fail.
     TlsCRTStartup(instance, reason, reserved);
     return TRUE;
   }
