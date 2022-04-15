@@ -16,11 +16,6 @@ include_mcfgthread_HEADERS =  \
   %reldir%/gthr.h  \
   ${NOTHING}
 
-lib_LIBRARIES += lib/libmcfgthread-shim.a
-lib_libmcfgthread_shim_a_SOURCES = \
-  %reldir%/shim.c  \
-  ${NOTHING}
-
 lib_LTLIBRARIES += lib/libmcfgthread.la
 lib_libmcfgthread_la_SOURCES =  \
   %reldir%/startup.c  \
