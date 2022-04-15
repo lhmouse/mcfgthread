@@ -85,10 +85,10 @@ TlsCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
     (void) reserved;
 
     // Perform global initialization and per-thread cleanup, as needed.
-    // Note, upon `DLL_PROCESS_DETACH` we don't perform any cleanups, because
+    // Note, upon `DLL_PROCESS_DETACH` we don't perform any cleanup, because
     // other DLLs might have been unloaded and we would be referencing unmapped
-    // memory. User code should call `__cxa_finalize()` before exiting from a
-    // process.
+    // memory. User code should call `__cxa_finalize(NULL)` before exiting from
+    // a process.
     if(reason == DLL_PROCESS_ATTACH)
       __MCF_initialize();
 
