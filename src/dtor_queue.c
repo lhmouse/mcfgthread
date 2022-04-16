@@ -11,14 +11,13 @@
 int
 __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
   {
-    // Check whether the current block is full.
     if(queue->__size == __MCF_DTOR_QUEUE_BLOCK_SIZE) {
-      __MCF_dtor_queue* prev = _MCF_malloc0(sizeof(__MCF_dtor_queue));
+      // If the current block is full, allocate a new one and create a singly
+      // linked list.
+      __MCF_dtor_queue* prev = _MCF_malloc_copy(queue, sizeof(__MCF_dtor_queue));
       if(!prev)
         return -1;
 
-      // Move the contents of `queue` into it to create a linked list.
-      _MCF_mmove(prev, queue, sizeof(__MCF_dtor_queue));
       queue->__prev = prev;
       queue->__size = 0;
     }
