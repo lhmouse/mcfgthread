@@ -22,12 +22,6 @@ void*
 _MCF_malloc0(size_t __size) __MCF_NOEXCEPT
   __attribute__((__malloc__, __alloc_size__(1)));
 
-// Allocate a copy of a block of memory, like `malloc()` followed by
-// `memcpy()`.
-void*
-_MCF_malloc_copy(const void* __init, size_t __size) __MCF_NOEXCEPT
-  __attribute__((__alloc_size__(2)));
-
 // Re-allocate a block of memory, like `realloc()`. If the existent
 // block should be extended, vacuum bytes are filled with zeroes.
 // The result is a boolean value.
@@ -48,6 +42,12 @@ _MCF_mrealloc0(void** __pptr, size_t __size) __MCF_NOEXCEPT
     *__pptr = __ptr_new;
     return 1;
   }
+
+// Allocate a copy of a block of memory, like `malloc()` followed by
+// `memcpy()`.
+void*
+_MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
+  __attribute__((__alloc_size__(2)));
 
 // Free a block of memory, like `free()`.
 void
