@@ -40,7 +40,7 @@ struct __MCF_tls_table
 struct __MCF_tls_key
   {
     int __nref[1];  // atomic reference count
-    unsigned char __deleted[1];  // deleted?
+    uint8_t __deleted[1];  // deleted?
     uint8_t __reserved[3];
     _MCF_tls_dtor* __dtor_opt;  // destructor, optional
   }
