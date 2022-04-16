@@ -24,23 +24,23 @@ _MCF_malloc0(size_t __size) __MCF_NOEXCEPT
 
 // Re-allocate a block of memory, like `realloc()`. If the existent
 // block should be extended, vacuum bytes are filled with zeroes.
-// Returns 0 upon success and -1 upon failure.
-int
+// The result is a boolean value.
+uint8_t
 _MCF_mrealloc0(void** __pptr, size_t __size) __MCF_NOEXCEPT;
 
 void*
 _MCF_mrealloc0_ptr(void* __ptr, size_t __size) __MCF_NOEXCEPT
   __attribute__((__alloc_size__(2)));
 
-__MCFGTHREAD_MEMORY_INLINE int
+__MCFGTHREAD_MEMORY_INLINE uint8_t
 _MCF_mrealloc0(void** __pptr, size_t __size) __MCF_NOEXCEPT
   {
     void* __ptr_new = _MCF_mrealloc0_ptr(*__pptr, __size);
     if(!__ptr_new)
-      return -1;
+      return 0;
 
     *__pptr = __ptr_new;
-    return 0;
+    return 1;
   }
 
 // Free a block of memory, like `free()`.
@@ -76,7 +76,7 @@ _MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT;
 
 // Check whether two blocks of memory compare equal, like `memcmp() == 0`.
 // The result is a boolean value.
-unsigned char
+uint8_t
 _MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
