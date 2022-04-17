@@ -54,6 +54,18 @@ DWORD __stdcall
 GetLastError(void)
   __attribute__((__dllimport__, __nothrow__, __pure__));
 
+VOID __stdcall
+SetLastError(DWORD __code)
+  __attribute__((__dllimport__, __nothrow__));
+
+LPVOID __stdcall
+TlsGetValue(DWORD __index)
+  __attribute__((__dllimport__, __nothrow__, __pure__));
+
+INT __stdcall
+TlsSetValue(DWORD __index, LPVOID __value)
+  __attribute__((__dllimport__, __nothrow__));
+
 // Undefine macros that redirect to standard functions.
 // This ensures we call the ones from KERNEL32.
 #undef RtlCopyMemory
