@@ -73,7 +73,7 @@ __MCF_finalize_on_thread_exit(void)
   }
 
 void
-__MCF_finalize_on_process_exit(void)
+__MCF_finalize_on_exit(void)
   {
     // Call destructors for thread-local objects before static ones, in
     // accordance with the C++ standard. See [basic.start.term]/2.

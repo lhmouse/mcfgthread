@@ -31,7 +31,7 @@ void
 __MCF_exit(int status)
   {
     // Perform global cleanup like `__cxa_finalize(NULL)`.
-    __MCF_finalize_on_process_exit();
+    __MCF_finalize_on_exit();
 
     // After the CRT has been finalized, exit.
     __MCF__Exit(status);

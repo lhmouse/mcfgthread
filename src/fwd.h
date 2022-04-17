@@ -103,7 +103,7 @@ void
 __MCF_finalize_on_thread_exit(void) __MCF_NOEXCEPT;
 
 void
-__MCF_finalize_on_process_exit(void) __MCF_NOEXCEPT;
+__MCF_finalize_on_exit(void) __MCF_NOEXCEPT;
 
 // Declare static data, which are defined in 'startup.c'.
 #ifdef __MCFGTHREAD_STARTUP_C_

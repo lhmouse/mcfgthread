@@ -102,5 +102,5 @@ __MCF_cxa_finalize(void* dso)
       __MCF_dtor_queue_finalize(&__MCF_cxa_atexit_queue, &__MCF_cxa_atexit_mutex, dso);
     }
     else
-      __MCF_finalize_on_process_exit();
+      __MCF_finalize_on_exit();
   }
