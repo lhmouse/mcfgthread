@@ -31,7 +31,6 @@ void
 __MCF_exit(int status)
   {
     // Perform global cleanup like `__cxa_finalize(NULL)`.
-    // The shim library shall have registered a cleanup function for the CRT.
     __MCF_finalize_on_process_exit();
 
     // After the CRT has been finalized, exit.
