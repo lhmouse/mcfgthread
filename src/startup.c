@@ -28,20 +28,63 @@ _MCF_get_win32_error(void)
     return GetLastError();
   }
 
+static inline void
+do_startup_crt_initialize(void)
+  {
+    // Create the CRT heap for memory allocation.
+    __MCFGTHREAD_CHECK(__MCF_crt_heap == NULL);
+    __MCF_crt_heap = GetProcessHeap();
+    __MCFGTHREAD_CHECK(__MCF_crt_heap);
+
+    // Allocate a TLS slot for this library.
+    __MCF_win32_tls_index = TlsAlloc();
+    __MCFGTHREAD_CHECK(__MCF_win32_tls_index != TLS_OUT_OF_INDEXES);
+
+    // Get the performance counter resolution.
+    LARGE_INTEGER freq;
+    __MCFGTHREAD_CHECK(QueryPerformanceFrequency(&freq));
+    __MCF_perf_frequency_reciprocal = 1000 / (double) freq.QuadPart;
+
+    // Attach the main thread.
+    __MCF_main_thread.__tid = GetCurrentThreadId();
+    __MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, FALSE, __MCF_main_thread.__tid);
+    __MCFGTHREAD_CHECK(__MCF_main_thread.__handle);
+    __MCF_ATOMIC_STORE_REL(__MCF_main_thread.__nref, 1);
+    __MCFGTHREAD_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
+  }
+
+static inline void
+do_startup_thread_finalize(void)
+  {
+    _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
+    if(!self)
+      return;
+
+    // Per-thread atexit callbacks may use TLS, so call them before
+    // destructors of thread-local objects.
+    __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
+    __MCF_tls_table_finalize(&(self->__tls_table));
+  }
+
+static inline void
+do_startup_thread_detach_self(void)
+  {
+    _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
+    if(!self)
+      return;
+
+    TlsSetValue(__MCF_win32_tls_index, NULL);
+    _MCF_thread_drop_ref_nonnull(self);
+  }
+
 void
 __MCF_finalize_on_exit(void)
   {
     // Call destructors for thread-local objects before static ones, in
     // accordance with the C++ standard. See [basic.start.term]/2.
-    _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
-    if(self) {
-      __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
-      __MCF_tls_table_finalize(&(self->__tls_table));
-    }
-
-    // Call destructors and callbacks registered with `__cxa_atexit()` and
-    // `atexit()`.
+    do_startup_thread_finalize();
     __MCF_dtor_queue_finalize(&__MCF_cxa_atexit_queue, &__MCF_cxa_atexit_mutex, NULL);
+    do_startup_thread_detach_self();
   }
 
 // Define the common routine for both static and shared libraries.
@@ -57,46 +100,14 @@ TlsCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
     // memory. User code should call `__cxa_finalize(NULL)` before exiting from
     // a process.
     switch(reason) {
-      case DLL_PROCESS_ATTACH: {
-        // Create the CRT heap for memory allocation.
-        __MCFGTHREAD_CHECK(__MCF_crt_heap == NULL);
-        __MCF_crt_heap = GetProcessHeap();
-        __MCFGTHREAD_CHECK(__MCF_crt_heap);
-
-        // Allocate a TLS slot for this library.
-        __MCF_win32_tls_index = TlsAlloc();
-        __MCFGTHREAD_CHECK(__MCF_win32_tls_index != TLS_OUT_OF_INDEXES);
-
-        // Get the performance counter resolution.
-        LARGE_INTEGER freq;
-        __MCFGTHREAD_CHECK(QueryPerformanceFrequency(&freq));
-        __MCF_perf_frequency_reciprocal = 1000 / (double) freq.QuadPart;
-
-        // Attach the main thread.
-        __MCF_main_thread.__tid = GetCurrentThreadId();
-        __MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, FALSE, __MCF_main_thread.__tid);
-        __MCFGTHREAD_CHECK(__MCF_main_thread.__handle);
-        __MCF_ATOMIC_STORE_REL(__MCF_main_thread.__nref, 1);
-        __MCFGTHREAD_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
+      case DLL_PROCESS_ATTACH:
+        do_startup_crt_initialize();
         break;
-      }
 
-      case DLL_THREAD_DETACH: {
-        // Perform per-thread cleanup.
-        _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
-        if(!self)
-          break;
-
-        // Per-thread atexit callbacks may use TLS, so call them before
-        // destructors of thread-local objects.
-        __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
-        __MCF_tls_table_finalize(&(self->__tls_table));
-
-        // Detach the current thread.
-        TlsSetValue(__MCF_win32_tls_index, NULL);
-        _MCF_thread_drop_ref_nonnull(self);
+      case DLL_THREAD_DETACH:
+        do_startup_thread_finalize();
+        do_startup_thread_detach_self();
         break;
-      }
     }
   }
 
