@@ -22,6 +22,12 @@ __MCF_dtor_queue __MCF_cxa_atexit_queue;
 _MCF_mutex __MCF_cxa_at_quick_exit_mutex;
 __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
 
+uint32_t
+_MCF_get_win32_error(void)
+  {
+    return GetLastError();
+  }
+
 // Define startup and cleanup routines.
 void
 __MCF_initialize(void)

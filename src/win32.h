@@ -101,16 +101,6 @@ RtlDllShutdownInProgress(void)
   __attribute__((__dllimport__, __nothrow__));
 
 // Declare helper functions here.
-uint32_t
-_MCF_get_win32_error(void) __MCF_NOEXCEPT
-  __attribute__((__pure__));
-
-__MCFGTHREAD_WIN32_INLINE uint32_t
-_MCF_get_win32_error(void) __MCF_NOEXCEPT
-  {
-    return GetLastError();
-  }
-
 EXCEPTION_DISPOSITION __cdecl
 __MCF_seh_top(EXCEPTION_RECORD* __record, void* __frame, CONTEXT* __ctx, void* __disp_ctx)
   __attribute__((__nothrow__));

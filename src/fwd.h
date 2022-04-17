@@ -89,7 +89,7 @@ _MCF_maxz(size_t __x, size_t __y) __MCF_NOEXCEPT
     return __x < __y ? __y : __x;
   }
 
-// This function is defined in 'win32.c'.
+// This function is the same as `GetLastError()`.
 uint32_t
 _MCF_get_win32_error(void) __MCF_NOEXCEPT
   __attribute__((__pure__));
