@@ -32,4 +32,5 @@ check_PROGRAMS +=  \
   %reldir%/gthr_tls_deleted_key.test  \
   %reldir%/gthr_tls_many.test  \
   %reldir%/gthr_thread_return.test  \
+  %reldir%/atexit_thread_self.test  \
   ${NOTHING}
