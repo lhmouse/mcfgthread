@@ -94,14 +94,9 @@ uint32_t
 _MCF_get_win32_error(void) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-// These functions are declared here for the sake of completeness, and are not
-// meant to be call directly by users.
-void
-__MCF_initialize(void) __MCF_NOEXCEPT;
-
-void
-__MCF_finalize_on_thread_exit(void) __MCF_NOEXCEPT;
-
+// Performs process cleanup. This function is called by `__cxa_finalize()`. It
+// is declared here for the sake of completeness, and is not meant to be called
+// directly.
 void
 __MCF_finalize_on_exit(void) __MCF_NOEXCEPT;
 
