@@ -12,10 +12,8 @@
 extern "C" {
 #endif
 
-#ifdef __MCFGTHREAD_ONCE_C_
-#  define __MCFGTHREAD_ONCE_INLINE
-#else
-#  define __MCFGTHREAD_ONCE_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_ONCE_EXTERN_INLINE
+#  define __MCF_ONCE_EXTERN_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Define the once flag struct.
@@ -39,7 +37,7 @@ struct __MCF_once
 void
 _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT;
 
-__MCFGTHREAD_ONCE_INLINE void
+__MCF_ONCE_EXTERN_INLINE void
 _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT
   {
     _MCF_once __temp = { 0 };
@@ -68,7 +66,7 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 int
 _MCF_once_wait_slow(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
-__MCFGTHREAD_ONCE_INLINE int
+__MCF_ONCE_EXTERN_INLINE int
 _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
     _MCF_once __old;

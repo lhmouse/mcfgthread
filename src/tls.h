@@ -11,10 +11,8 @@
 extern "C" {
 #endif
 
-#ifdef __MCFGTHREAD_TLS_C_
-#  define __MCFGTHREAD_TLS_INLINE
-#else
-#  define __MCFGTHREAD_TLS_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_TLS_EXTERN_INLINE
+#  define __MCF_TLS_EXTERN_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Define the prototype for destructors for `_MCF_tls_key_new()`.
@@ -72,7 +70,7 @@ _MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT;
 void
 _MCF_tls_key_delete_nonnull(_MCF_tls_key* __key) __MCF_NOEXCEPT;
 
-__MCFGTHREAD_TLS_INLINE void
+__MCF_TLS_EXTERN_INLINE void
 _MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT
   {
     if(__key_opt)

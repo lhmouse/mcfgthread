@@ -2,17 +2,14 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#define __MCFGTHREAD_STARTUP_C_  1
+#define __MCF_DYNCONST
 #include "thread.h"
 #include "mutex.h"
 #include "dtor_queue.h"
 #include "win32.h"
 
-extern char __my_image_base_from_gnu_ld __asm__("__image_base__");
-
-// Define static data, which are declared in 'fwd.h'.
-const HANDLE _MCF_crt_module = &__my_image_base_from_gnu_ld;
-HANDLE __MCF_crt_heap;
+__MCF_HANDLE _MCF_crt_module;
+__MCF_HANDLE __MCF_crt_heap;
 uint32_t __MCF_win32_tls_index;
 double __MCF_perf_frequency_reciprocal;
 _MCF_thread __MCF_main_thread;
@@ -29,10 +26,14 @@ _MCF_get_win32_error(void)
   }
 
 static inline void
-do_startup_crt_initialize(void)
+do_startup_crt_initialize(PVOID instance)
   {
+    // Set up the base address in memory.
+    __MCFGTHREAD_CHECK(!_MCF_crt_module);
+    _MCF_crt_module = instance;
+    __MCFGTHREAD_CHECK(_MCF_crt_module);
+
     // Create the CRT heap for memory allocation.
-    __MCFGTHREAD_CHECK(__MCF_crt_heap == NULL);
     __MCF_crt_heap = GetProcessHeap();
     __MCFGTHREAD_CHECK(__MCF_crt_heap);
 
@@ -89,11 +90,8 @@ __MCF_finalize_on_exit(void)
 
 // Define the common routine for both static and shared libraries.
 static void __stdcall
-TlsCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
+TlsCRTStartup(PVOID instance, DWORD reason, LPVOID reserved)
   {
-    __MCFGTHREAD_ASSERT(instance == &__my_image_base_from_gnu_ld);
-    (void) reserved;
-
     // Perform global initialization and per-thread cleanup, as needed.
     // Note, upon `DLL_PROCESS_DETACH` we don't perform any cleanup, because
     // other DLLs might have been unloaded and we would be referencing unmapped
@@ -101,7 +99,7 @@ TlsCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
     // a process.
     switch(reason) {
       case DLL_PROCESS_ATTACH:
-        do_startup_crt_initialize();
+        do_startup_crt_initialize(instance);
         break;
 
       case DLL_THREAD_DETACH:
@@ -109,6 +107,8 @@ TlsCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
         do_startup_thread_detach_self();
         break;
     }
+
+    (void) reserved;
   }
 
 #ifdef DLL_EXPORT
@@ -116,14 +116,14 @@ TlsCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
 // When building the shared library, invoke the common routine from the DLL
 // entry point callback.
 int __stdcall
-DllMainCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved);
+DllMainCRTStartup(PVOID instance, DWORD reason, PVOID reserved);
 
 int __stdcall
-DllMainCRTStartup(HANDLE instance, DWORD reason, LPVOID reserved)
+DllMainCRTStartup(PVOID instance, DWORD reason, PVOID reserved)
   {
     // Prevent this DLL from being unloaded.
     HMODULE locked;
-    __MCFGTHREAD_CHECK(GetModuleHandleExW(5, instance, &locked));
+    __MCFGTHREAD_CHECK(GetModuleHandleExW(5, (void*) instance, &locked));
     __MCFGTHREAD_CHECK(locked == instance);
 
     // Call the common routine. This will not fail.

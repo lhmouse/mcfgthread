@@ -12,10 +12,8 @@
 extern "C" {
 #endif
 
-#ifdef __MCFGTHREAD_COND_C_
-#  define __MCFGTHREAD_COND_INLINE
-#else
-#  define __MCFGTHREAD_COND_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_COND_EXTERN_INLINE
+#  define __MCF_COND_EXTERN_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Define the condition variable struct.
@@ -38,7 +36,7 @@ typedef void _MCF_cond_relock_callback(intptr_t __lock_arg, intptr_t __unlocked)
 void
 _MCF_cond_init(_MCF_cond* __cond) __MCF_NOEXCEPT;
 
-__MCFGTHREAD_COND_INLINE void
+__MCF_COND_EXTERN_INLINE void
 _MCF_cond_init(_MCF_cond* __cond) __MCF_NOEXCEPT
   {
     _MCF_cond __temp = { 0 };

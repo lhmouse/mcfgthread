@@ -2,7 +2,7 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#define __MCFGTHREAD_WIN32_C_  1
+#define __MCF_WIN32_EXTERN_INLINE
 #include "win32.h"
 
 EXCEPTION_DISPOSITION __cdecl

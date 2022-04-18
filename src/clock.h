@@ -11,10 +11,8 @@
 extern "C" {
 #endif
 
-#ifdef __MCFGTHREAD_CLOCK_C_
-#  define __MCFGTHREAD_CLOCK_INLINE
-#else
-#  define __MCFGTHREAD_CLOCK_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_CLOCK_EXTERN_INLINE
+#  define __MCF_CLOCK_EXTERN_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Get the number of milliseconds since 1970-01-01T00:00:00Z.

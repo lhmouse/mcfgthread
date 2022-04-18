@@ -2,7 +2,7 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#define __MCFGTHREAD_GTHR_C_  1
+#define __MCF_GTHR_EXTERN_INLINE
 #include "gthr.h"
 
 intptr_t

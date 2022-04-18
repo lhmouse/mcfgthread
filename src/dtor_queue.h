@@ -11,10 +11,8 @@
 extern "C" {
 #endif
 
-#ifdef __MCFGTHREAD_DTOR_QUEUE_C_
-#  define __MCFGTHREAD_DTOR_QUEUE_INLINE
-#else
-#  define __MCFGTHREAD_DTOR_QUEUE_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_DTOR_QUEUE_EXTERN_INLINE
+#  define __MCF_DTOR_QUEUE_EXTERN_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Note: In the case of i386, the argument is passed both via the ECX register

@@ -2,7 +2,7 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#define __MCFGTHREAD_CXA_C_  1
+#define __MCF_CXA_EXTERN_INLINE
 #include "cxa.h"
 #include "once.h"
 #include "mutex.h"

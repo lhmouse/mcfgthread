@@ -2,7 +2,7 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#define __MCFGTHREAD_MUTEX_C_  1
+#define __MCF_MUTEX_EXTERN_INLINE
 #include "mutex.h"
 #include "win32.h"
 

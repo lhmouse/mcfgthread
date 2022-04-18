@@ -11,10 +11,8 @@
 extern "C" {
 #endif
 
-#ifdef __MCFGTHREAD_EXIT_C_
-#  define __MCFGTHREAD_EXIT_INLINE
-#else
-#  define __MCFGTHREAD_EXIT_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_EXIT_EXTERN_INLINE
+#  define __MCF_EXIT_EXTERN_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Declare 'real' functions here.

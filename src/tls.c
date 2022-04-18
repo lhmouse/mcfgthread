@@ -2,7 +2,7 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#define __MCFGTHREAD_TLS_C_  1
+#define __MCF_TLS_EXTERN_INLINE
 #include "tls.h"
 #include "atomic.h"
 #include "memory.h"

@@ -2,7 +2,7 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#define __MCFGTHREAD_EXIT_C_  1
+#define __MCF_EXIT_EXTERN_INLINE
 #include "exit.h"
 #include "mutex.h"
 #include "dtor_queue.h"

@@ -2,7 +2,7 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#define __MCFGTHREAD_COND_C_  1
+#define __MCF_COND_EXTERN_INLINE
 #include "cond.h"
 #include "win32.h"
 

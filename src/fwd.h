@@ -101,13 +101,11 @@ void
 __MCF_finalize_on_exit(void) __MCF_NOEXCEPT;
 
 // Declare static data, which are defined in 'startup.c'.
-#ifdef __MCFGTHREAD_STARTUP_C_
-#  define __MCF_DYNCONST
-#else
-#  define __MCF_DYNCONST    const   // read-only but initialized dynamically
+#ifndef __MCF_DYNCONST
+#  define __MCF_DYNCONST    const  // read-only but initialized dynamically
 #endif
 
-extern const __MCF_HANDLE _MCF_crt_module;
+extern __MCF_DYNCONST __MCF_HANDLE _MCF_crt_module;
 extern __MCF_DYNCONST __MCF_HANDLE __MCF_crt_heap;
 extern __MCF_DYNCONST uint32_t __MCF_win32_tls_index;
 extern __MCF_DYNCONST double __MCF_perf_frequency_reciprocal;

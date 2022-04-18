@@ -2,7 +2,7 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#define __MCFGTHREAD_MEMORY_C_  1
+#define __MCF_MEMORY_EXTERN_INLINE
 #include "memory.h"
 #include "win32.h"
 

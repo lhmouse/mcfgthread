@@ -2,7 +2,7 @@
 // See LICENSE.TXT for licensing information.
 // Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-#define __MCFGTHREAD_DTOR_QUEUE_C_  1
+#define __MCF_DTOR_QUEUE_EXTERN_INLINE
 #include "dtor_queue.h"
 #include "memory.h"
 #include "mutex.h"

@@ -27,10 +27,8 @@
 extern "C" {
 #endif
 
-#ifdef __MCFGTHREAD_WIN32_C_
-#  define __MCFGTHREAD_WIN32_INLINE
-#else
-#  define __MCFGTHREAD_WIN32_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_WIN32_EXTERN_INLINE
+#  define __MCF_WIN32_EXTERN_INLINE  __MCF_GNU_INLINE
 #endif
 
 // Add some attributes to existent functions.
@@ -165,7 +163,7 @@ LARGE_INTEGER*
 __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
   __attribute__((__nothrow__));
 
-__MCFGTHREAD_WIN32_INLINE LARGE_INTEGER*
+__MCF_WIN32_EXTERN_INLINE LARGE_INTEGER*
 __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
   {
     double __nt_time;
@@ -203,7 +201,7 @@ size_t
 __MCF_batch_release_common(const void* __key, size_t __count)
   __attribute__((__nothrow__));
 
-__MCFGTHREAD_WIN32_INLINE size_t
+__MCF_WIN32_EXTERN_INLINE size_t
 __MCF_batch_release_common(const void* __key, size_t __count)
   {
     size_t __k;
