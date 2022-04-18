@@ -1,12 +1,12 @@
-// This file is part of MCF gthread.
-// See LICENSE.TXT for licensing information.
-// Copyleft 2022, LH_Mouse. All wrongs reserved.
+/* This file is part of MCF gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #ifndef __MCFGTHREAD_FWD_H_
 #define __MCFGTHREAD_FWD_H_
 
-// Import types about the system ABI.
-// Other standard library facilities are not available.
+/* Import types about the system ABI.
+ * Other standard library facilities are not available.  */
 #include <stddef.h>
 #include <stdint.h>
 #include <stdalign.h>
@@ -62,8 +62,8 @@ extern "C" {
 #define __MCFGTHREAD_ASSERT(...)   ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
 #define __MCFGTHREAD_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __builtin_trap())
 
-// Make some forward-declarations.
-// Note: Private types need not be declared here.
+/* Make some forward-declarations.
+ * Note: Private types need not be declared here.  */
 typedef void* __MCF_HANDLE;
 typedef struct __MCF_dtor_queue __MCF_dtor_queue;
 typedef struct __MCF_tls_table __MCF_tls_table;
@@ -74,7 +74,7 @@ typedef struct __MCF_once _MCF_once;
 typedef struct __MCF_thread _MCF_thread;
 typedef struct __MCF_tls_key _MCF_tls_key;
 
-// Define some helper functions.
+/* Define some helper functions.  */
 __MCF_CXX11(constexpr)
 static __inline__ size_t
 _MCF_minz(size_t __x, size_t __y) __MCF_NOEXCEPT
@@ -89,20 +89,20 @@ _MCF_maxz(size_t __x, size_t __y) __MCF_NOEXCEPT
     return __x < __y ? __y : __x;
   }
 
-// This function is the same as `GetLastError()`.
+/* This function is the same as `GetLastError()`.  */
 uint32_t
 _MCF_get_win32_error(void) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-// Performs process cleanup. This function is called by `__cxa_finalize()`. It
-// is declared here for the sake of completeness, and is not meant to be called
-// directly.
+/* Performs process cleanup. This function is called by `__cxa_finalize()`. It
+ * is declared here for the sake of completeness, and is not meant to be called
+ * directly.  */
 void
 __MCF_finalize_on_exit(void) __MCF_NOEXCEPT;
 
-// Declare static data, which are defined in 'startup.c'.
+/* Declare static data, which are defined in 'startup.c'.  */
 #ifndef __MCF_DYNCONST
-#  define __MCF_DYNCONST    const  // read-only but initialized dynamically
+#  define __MCF_DYNCONST    const  /* read-only but initialized dynamically  */
 #endif
 
 extern __MCF_DYNCONST __MCF_HANDLE _MCF_crt_module;
@@ -120,4 +120,4 @@ extern __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
 }
 #endif
 
-#endif  // __MCFGTHREAD_FWD_H_
+#endif  /* __MCFGTHREAD_FWD_H_  */

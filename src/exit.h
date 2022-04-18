@@ -1,6 +1,6 @@
-// This file is part of MCF gthread.
-// See LICENSE.TXT for licensing information.
-// Copyleft 2022, LH_Mouse. All wrongs reserved.
+/* This file is part of MCF gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #ifndef __MCFGTHREAD_EXIT_H_
 #define __MCFGTHREAD_EXIT_H_
@@ -15,7 +15,7 @@ extern "C" {
 #  define __MCF_EXIT_EXTERN_INLINE  __MCF_GNU_INLINE
 #endif
 
-// Declare 'real' functions here.
+/* Declare 'real' functions here.  */
 void
 __MCF__Exit(int __status) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
@@ -32,4 +32,4 @@ __MCF_exit(int __status) __MCF_NOEXCEPT
 }
 #endif
 
-#endif  // __MCFGTHREAD_EXIT_H_
+#endif  /* __MCFGTHREAD_EXIT_H_  */

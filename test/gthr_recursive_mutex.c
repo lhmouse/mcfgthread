@@ -1,6 +1,6 @@
-// This file is part of MCF gthread.
-// See LICENSE.TXT for licensing information.
-// Copyleft 2022, LH_Mouse. All wrongs reserved.
+/* This file is part of MCF gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "../src/gthr.h"
 #include <assert.h>
@@ -26,7 +26,7 @@ thread_proc(void* param)
     r = __gthread_recursive_mutex_lock(&mutex);
     assert(r == 0);
 
-    // Add a resource.
+    /* Add a resource.  */
     int old = resource;
     Sleep(10);
     resource = old + 1;

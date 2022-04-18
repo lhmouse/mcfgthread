@@ -1,6 +1,6 @@
-// This file is part of MCF gthread.
-// See LICENSE.TXT for licensing information.
-// Copyleft 2022, LH_Mouse. All wrongs reserved.
+/* This file is part of MCF gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #define __MCF_GTHR_EXTERN_INLINE
 #include "gthr.h"
@@ -10,7 +10,7 @@ __MCF_gthr_mutex_unlock_callback(intptr_t arg)
   {
     __gthread_mutex_t* mtx = (__gthread_mutex_t*) arg;
 
-    // Unlock the mutex. The return value is unused.
+    /* Unlock the mutex. The return value is unused.  */
     _MCF_mutex_unlock(mtx);
     return 0;
   }
@@ -20,7 +20,7 @@ __MCF_gthr_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
   {
     __gthread_mutex_t* mtx = (__gthread_mutex_t*) arg;
 
-    // Relock the mutex. The `unlocked` value is unused.
+    /* Relock the mutex. The `unlocked` value is unused.  */
     (void) unlocked;
     _MCF_mutex_lock(mtx, NULL);
   }
@@ -30,7 +30,7 @@ __MCF_gthr_recursive_mutex_unlock_callback(intptr_t arg)
   {
     __gthread_recursive_mutex_t* rmtx = (__gthread_recursive_mutex_t*) arg;
 
-    // Clear the depth counter and return it.
+    /* Clear the depth counter and return it.  */
     intptr_t unlocked = rmtx->__depth;
     rmtx->__depth = 0;
     __MCF_ATOMIC_STORE_RLX(&(rmtx->__owner), 0);
@@ -46,7 +46,7 @@ __MCF_gthr_recursive_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
     __MCFGTHREAD_ASSERT(unlocked > 0);
     __gthread_recursive_mutex_t* rmtx = (__gthread_recursive_mutex_t*) arg;
 
-    // Relock the mutex and restore the depth counter.
+    /* Relock the mutex and restore the depth counter.  */
     _MCF_mutex_lock(&(rmtx->__mutex), NULL);
     __MCFGTHREAD_ASSERT(rmtx->__owner == 0);
     __MCF_ATOMIC_STORE_RLX(&(rmtx->__owner), _MCF_thread_self_tid());
@@ -58,6 +58,6 @@ __MCF_gthr_thread_thunk(_MCF_thread* thrd)
   {
     __MCF_gthr_thread_record* rec = (__MCF_gthr_thread_record*) thrd->__data;
 
-    // Invoke the user-defined procedure and save its result in the record.
+    /* Invoke the user-defined procedure and save its result in the record.  */
     rec->__result = rec->__proc(rec->__arg);
   }

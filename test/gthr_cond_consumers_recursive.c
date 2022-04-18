@@ -1,6 +1,6 @@
-// This file is part of MCF gthread.
-// See LICENSE.TXT for licensing information.
-// Copyleft 2022, LH_Mouse. All wrongs reserved.
+/* This file is part of MCF gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "../src/gthr.h"
 #include <assert.h>
@@ -22,7 +22,7 @@ thread_proc(void* param)
     int* my_consumed = param;
 
     for(;;) {
-      // Wait for value
+      /* Wait for value  */
       int err = __gthread_recursive_mutex_lock(&mutex);
       assert(err == 0);
       err = __gthread_recursive_mutex_lock(&mutex);
@@ -38,7 +38,7 @@ thread_proc(void* param)
         assert(mutex.__owner == GetCurrentThreadId());
       }
 
-      // Consume it
+      /* Consume it  */
       int value_got = value;
       //printf("thread %d got %d\n", (int) GetCurrentThreadId(), value_got);
       if(value_got > 0)
@@ -57,7 +57,7 @@ thread_proc(void* param)
       if(value_got < 0)
         break;
 
-      // Accumulate it.
+      /* Accumulate it.  */
       *my_consumed += value_got;
     }
 
@@ -84,7 +84,7 @@ main(void)
     assert(err == 0);
 
     for(size_t k = 0;  k < NTICKS;  ++k) {
-      // Wait for consumption
+      /* Wait for consumption  */
       while(value != 0) {
         err = __gthread_cond_wait_recursive(&cond_consumed, &mutex);
         assert(err == 0);
@@ -93,7 +93,7 @@ main(void)
         assert(mutex.__owner == GetCurrentThreadId());
       }
 
-      // Produce one
+      /* Produce one  */
       value = 1;
       //printf("main set %d\n", value);
 
@@ -109,7 +109,7 @@ main(void)
       assert(mutex.__owner == GetCurrentThreadId());
     }
 
-    // Inform end of input
+    /* Inform end of input  */
     value = -1;
     printf("main set end of input\n");
 
@@ -123,7 +123,7 @@ main(void)
     err = __gthread_recursive_mutex_unlock(&mutex);
     assert(err == 0);
 
-    // Wait and sum all values
+    /* Wait and sum all values  */
     int total = 0;
 
     printf("main waiting\n");

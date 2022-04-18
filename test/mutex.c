@@ -1,6 +1,6 @@
-// This file is part of MCF gthread.
-// See LICENSE.TXT for licensing information.
-// Copyleft 2022, LH_Mouse. All wrongs reserved.
+/* This file is part of MCF gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "../src/mutex.h"
 #include "../src/thread.h"
@@ -22,7 +22,7 @@ thread_proc(_MCF_thread* self)
     int r = _MCF_mutex_lock(&mutex, NULL);
     assert(r == 0);
 
-    // Add a resource.
+    /* Add a resource.  */
     int old = resource;
     Sleep(10);
     resource = old + 1;

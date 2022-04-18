@@ -1,6 +1,6 @@
-// This file is part of MCF gthread.
-// See LICENSE.TXT for licensing information.
-// Copyleft 2022, LH_Mouse. All wrongs reserved.
+/* This file is part of MCF gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "../src/gthr.h"
 #include "../src/clock.h"
@@ -21,7 +21,7 @@ main(void)
     r = __gthread_mutex_trylock(&mutex);
     assert(r == 0);
 
-    // Round the time up.
+    /* Round the time up.  */
     int64_t sleep_until = (int64_t) time(NULL) * 1000 + 2000;
     _MCF_sleep(&sleep_until);
 

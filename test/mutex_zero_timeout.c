@@ -1,6 +1,6 @@
-// This file is part of MCF gthread.
-// See LICENSE.TXT for licensing information.
-// Copyleft 2022, LH_Mouse. All wrongs reserved.
+/* This file is part of MCF gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "../src/mutex.h"
 #include "../src/thread.h"
@@ -25,7 +25,7 @@ thread_proc(_MCF_thread* self)
       if(r == 0) {
         printf("thread %d got %d\n", self->__tid, r);
 
-        // Add a resource.
+        /* Add a resource.  */
         int old = resource;
         Sleep(10);
         resource = old + 1;
@@ -33,7 +33,7 @@ thread_proc(_MCF_thread* self)
         break;
       }
       else if(r == -1) {
-        // Wait.
+        /* Wait.  */
         Sleep(10);
         continue;
       }

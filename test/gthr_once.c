@@ -1,6 +1,6 @@
-// This file is part of MCF gthread.
-// See LICENSE.TXT for licensing information.
-// Copyleft 2022, LH_Mouse. All wrongs reserved.
+/* This file is part of MCF gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "../src/gthr.h"
 #include <assert.h>
@@ -16,7 +16,7 @@ static int resource = 0;
 static void
 once_do_it(void)
   {
-    // Perform initialization.
+    /* Perform initialization.  */
     int old = resource;
     Sleep(200);
     resource = old + 1;

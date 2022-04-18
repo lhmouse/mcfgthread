@@ -1,6 +1,6 @@
-// This file is part of MCF gthread.
-// See LICENSE.TXT for licensing information.
-// Copyleft 2022, LH_Mouse. All wrongs reserved.
+/* This file is part of MCF gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "../src/once.h"
 #include "../src/thread.h"
@@ -14,8 +14,8 @@ static _MCF_once once;
 static HANDLE event;
 static int resource = 0;
 
-static int num_init = 0;   // threads that performed initialization
-static int num_ready = 0;  // threads that saw so but didn't do it
+static int num_init = 0;   /* threads that performed initialization  */
+static int num_ready = 0;  /* threads that saw so but didn't do it  */
 static int num_timed_out = 0;
 
 static void
@@ -27,7 +27,7 @@ thread_proc(_MCF_thread* self)
     int r = _MCF_once_wait(&once, &zero);
     printf("thread %d got %d\n", self->__tid, r);
     if(r == 1) {
-      // Perform initialization.
+      /* Perform initialization.  */
       int old = resource;
       Sleep(200);
       resource = old + 1;
@@ -37,7 +37,7 @@ thread_proc(_MCF_thread* self)
       __atomic_fetch_add(&num_init, 1, __ATOMIC_RELAXED);
     }
     else if(r == 0) {
-      // Assume `resource` has been initialized.
+      /* Assume `resource` has been initialized.  */
       assert(resource == 1);
 
       Sleep(100);

@@ -1,6 +1,6 @@
-// This file is part of MCF gthread.
-// See LICENSE.TXT for licensing information.
-// Copyleft 2022, LH_Mouse. All wrongs reserved.
+/* This file is part of MCF gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #define __MCF_TLS_EXTERN_INLINE
 #include "tls.h"
@@ -15,8 +15,8 @@ _MCF_tls_key_new(_MCF_tls_dtor* dtor_opt)
     if(!key)
       return NULL;
 
-    // Initialize the key structure. The returned pointer is assumed to be
-    // unique, so its reference count should be initialized to one.
+    /* Initialize the key structure. The returned pointer is assumed to be  */
+    /* unique, so its reference count should be initialized to one.  */
     __MCF_ATOMIC_STORE_RLX(key->__nref, 1);
     key->__dtor_opt = dtor_opt;
     return key;
@@ -30,7 +30,7 @@ do_tls_key_drop_ref_nonnull(_MCF_tls_key* key)
     if(old_ref != 1)
       return;
 
-    // Deallocate its storage now.
+    /* Deallocate its storage now.  */
     __MCFGTHREAD_ASSERT(__MCF_ATOMIC_LOAD_RLX(key->__deleted) == 1);
     _MCF_mfree(key);
   }
@@ -49,21 +49,21 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
   {
     __MCFGTHREAD_ASSERT(key);
 
-    // Keep the load factor no more than 0.5.
+    /* Keep the load factor no more than 0.5.  */
     uint64_t dist = (uintptr_t) (table->__end - table->__begin);
     __MCFGTHREAD_ASSERT(dist != 0);
     __MCFGTHREAD_ASSERT(table->__size <= dist / 2);
 
-    // Make a fixed-point value in the interval [0,1), and then multiply
-    // `dist` by it to get an index in the middle.
+    /* Make a fixed-point value in the interval [0,1), and then multiply  */
+    /* `dist` by it to get an index in the middle.  */
     dist *= (uint32_t) ((uintptr_t) key * 0x9E3779B9);
     dist >>= 32;
 
     __MCF_tls_element* origin = table->__begin + (ptrdiff_t) dist;
     __MCFGTHREAD_ASSERT(origin < table->__end);
 
-    // Find an element using linear probing.
-    // Note this function may return a pointer to an empty element.
+    /* Find an element using linear probing.  */
+    /* Note this function may return a pointer to an empty element.  */
     for(__MCF_tls_element* cur = origin;  cur != table->__end;  ++cur)
       if(!cur->__key_opt || (cur->__key_opt == key))
         return cur;
@@ -81,8 +81,8 @@ __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
     if(!table->__begin)
       return NULL;
 
-    // Search for the given key.
-    // Note `do_linear_probe_nonempty()` may return an empty element.
+    /* Search for the given key.  */
+    /* Note `do_linear_probe_nonempty()` may return an empty element.  */
     __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
     if(!elem->__key_opt)
       return NULL;
@@ -96,7 +96,7 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
   {
     size_t capacity = (size_t) (table->__end - table->__begin);
     if(table->__size >= capacity / 2) {
-      // Allocate a larger table. The number of elements is not changed.
+      /* Allocate a larger table. The number of elements is not changed.  */
       capacity = capacity + capacity / 2 + 17;
       __MCF_tls_element* elem = _MCF_malloc0(capacity * sizeof(__MCF_tls_element));
       if(!elem)
@@ -109,33 +109,33 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
       while(temp.__begin != temp.__end) {
         temp.__end --;
 
-        // Skip empty elements.
+        /* Skip empty elements.  */
         _MCF_tls_key* tkey = temp.__end->__key_opt;
         if(!tkey)
           continue;
 
         if(__MCF_ATOMIC_LOAD_RLX(tkey->__deleted) != 0) {
-          // If the key has been deleted, don't relocate it; free it instead.
+          /* If the key has been deleted, don't relocate it; free it instead.  */
           do_tls_key_drop_ref_nonnull(tkey);
           continue;
         }
 
-        // Relocate this element into the new storage.
+        /* Relocate this element into the new storage.  */
         elem = do_linear_probe_nonempty(table, tkey);
         __MCFGTHREAD_ASSERT(!elem->__key_opt);
         *elem = *(temp.__end);
       }
 
-      // Deallocate the old storage, if amy.
+      /* Deallocate the old storage, if amy.  */
       if(temp.__begin)
         _MCF_mfree_nonnull(temp.__begin);
     }
 
-    // Search for the given key.
-    // Note `do_linear_probe_nonempty()` may return an empty element.
+    /* Search for the given key.  */
+    /* Note `do_linear_probe_nonempty()` may return an empty element.  */
     __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
     if(!elem->__key_opt) {
-      // Fill `key` into this element.
+      /* Fill `key` into this element.  */
       int old_ref = __MCF_ATOMIC_ADD_ARL(key->__nref, 1);
       __MCFGTHREAD_ASSERT(old_ref > 0);
       elem->__key_opt = key;
@@ -154,7 +154,7 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
     __MCF_tls_table temp;
 
     for(;;) {
-      // The table may be modified while being scanned so swap it out first.
+      /* The table may be modified while being scanned so swap it out first.  */
       temp = *table;
       *table = (__MCF_tls_table) { 0 };
 
@@ -164,14 +164,14 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
       while(temp.__begin != temp.__end) {
         temp.__end --;
 
-        // Skip empty elements.
+        /* Skip empty elements.  */
         _MCF_tls_key* tkey = temp.__end->__key_opt;
         if(!tkey)
           continue;
 
         if(temp.__end->__value) {
-          // Invoke the destructor if there is a value and a destructor, and
-          // the key has not been deleted.
+          /* Invoke the destructor if there is a value and a destructor, and  */
+          /* the key has not been deleted.  */
           _MCF_tls_dtor* dtor = NULL;
           if(__MCF_ATOMIC_LOAD_RLX(tkey->__deleted) == 0)
             dtor = tkey->__dtor_opt;
@@ -183,7 +183,7 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
         do_tls_key_drop_ref_nonnull(tkey);
       }
 
-      // Deallocate the table which should be empty now.
+      /* Deallocate the table which should be empty now.  */
       _MCF_mfree_nonnull(temp.__begin);
     }
   }

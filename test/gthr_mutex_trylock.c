@@ -1,6 +1,6 @@
-// This file is part of MCF gthread.
-// See LICENSE.TXT for licensing information.
-// Copyleft 2022, LH_Mouse. All wrongs reserved.
+/* This file is part of MCF gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "../src/gthr.h"
 #include <assert.h>
@@ -24,7 +24,7 @@ thread_proc(void* param)
       if(r == 0) {
         printf("thread %d got %d\n", (int) GetCurrentThreadId(), r);
 
-        // Add a resource.
+        /* Add a resource.  */
         int old = resource;
         Sleep(10);
         resource = old + 1;
@@ -32,7 +32,7 @@ thread_proc(void* param)
         break;
       }
       else if(r == EBUSY) {
-        // Wait.
+        /* Wait.  */
         Sleep(10);
         continue;
       }

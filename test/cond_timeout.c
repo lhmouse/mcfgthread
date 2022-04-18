@@ -1,6 +1,6 @@
-// This file is part of MCF gthread.
-// See LICENSE.TXT for licensing information.
-// Copyleft 2022, LH_Mouse. All wrongs reserved.
+/* This file is part of MCF gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "../src/cond.h"
 #include "../src/clock.h"
@@ -18,7 +18,7 @@ main(void)
     int r;
 
     now = _MCF_perf_counter();
-    timeout = _MCF_utc_now() + 1100;  // absolute
+    timeout = _MCF_utc_now() + 1100;  /* absolute  */
     r = _MCF_cond_wait(&cond, NULL, NULL, 0, &timeout);
     assert(r == -1);
     delta = _MCF_perf_counter() - now;
@@ -27,7 +27,7 @@ main(void)
     assert(delta <= 1200);
 
     now = _MCF_perf_counter();
-    timeout = -1100;  // relative
+    timeout = -1100;  /* relative  */
     r = _MCF_cond_wait(&cond, NULL, NULL, 0, &timeout);
     assert(r == -1);
     delta = _MCF_perf_counter() - now;

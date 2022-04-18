@@ -1,6 +1,6 @@
-// This file is part of MCF gthread.
-// See LICENSE.TXT for licensing information.
-// Copyleft 2022, LH_Mouse. All wrongs reserved.
+/* This file is part of MCF gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #define __MCF_THREAD_EXTERN_INLINE
 #include "thread.h"
@@ -17,10 +17,10 @@ do_win32_thread_thunk(LPVOID param)
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     _MCF_thread* self = param;
 
-    // Attach the thread.
+    /* Attach the thread.  */
     (void) TlsSetValue(__MCF_win32_tls_index, self);
 
-    // Execute the user-defined procedure, which has no return value.
+    /* Execute the user-defined procedure, which has no return value.  */
     self->__proc(self);
     return 0;
   }
@@ -28,7 +28,7 @@ do_win32_thread_thunk(LPVOID param)
 _MCF_thread*
 _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
   {
-    // Validate arguments.
+    /* Validate arguments.  */
     if(!proc) {
       SetLastError(ERROR_INVALID_PARAMETER);
       return NULL;
@@ -45,16 +45,16 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
       return NULL;
     }
 
-    // Initialize the thread control structure.
+    /* Initialize the thread control structure.  */
     __MCF_ATOMIC_STORE_RLX(thrd->__nref, 2);
     thrd->__proc = proc;
 
     if(data_opt)
       _MCF_mmove(thrd->__data, data_opt, size);
 
-    // Create the thread.
-    // The new thread must not begin execution before the `__handle` field is
-    // initialized, after `CreateThread()` returns, so suspend it first.
+    /* Create the thread.  */
+    /* The new thread must not begin execution before the `__handle` field is  */
+    /* initialized, after `CreateThread()` returns, so suspend it first.  */
     thrd->__handle = CreateThread(NULL, 0, do_win32_thread_thunk, thrd, CREATE_SUSPENDED, (DWORD*) &(thrd->__tid));
     if(thrd->__handle == NULL) {
       _MCF_mfree_nonnull(thrd);
@@ -73,7 +73,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
     if(old_ref != 1)
       return;
 
-    // The main thread structure is allocated statically and must not be freed.
+    /* The main thread structure is allocated statically and must not be freed.  */
     if(thrd == &__MCF_main_thread)
       return;
 
