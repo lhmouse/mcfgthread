@@ -8,9 +8,9 @@
 EXCEPTION_DISPOSITION __cdecl
 __MCF_seh_top(EXCEPTION_RECORD* record, void* frame, CONTEXT* ctx, void* disp_ctx)
   {
-    (void)frame;
-    (void)ctx;
-    (void)disp_ctx;
+    UNREFERENCED_PARAMETER(frame);
+    UNREFERENCED_PARAMETER(ctx);
+    UNREFERENCED_PARAMETER(disp_ctx);
 
     // Check for uncaught C++ exceptions.
     if(record->ExceptionFlags & EXCEPTION_NONCONTINUABLE)

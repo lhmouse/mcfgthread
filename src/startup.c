@@ -108,7 +108,7 @@ TlsCRTStartup(PVOID instance, DWORD reason, LPVOID reserved)
         break;
     }
 
-    (void) reserved;
+    UNREFERENCED_PARAMETER(reserved);
   }
 
 #ifdef DLL_EXPORT
