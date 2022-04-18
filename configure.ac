@@ -10,7 +10,7 @@ AC_LANG([C])
 LT_INIT([win32-dll])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects])
-AM_SILENT_RULES([no])
+AM_SILENT_RULES([yes])
 
 ## Check for assertions
 AC_ARG_ENABLE([debug-checks], AS_HELP_STRING([--enable-debug-checks], [enable assertions]))
