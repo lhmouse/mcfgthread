@@ -9,20 +9,25 @@
 static inline uint8_t*
 do_flag_byte(const _MCF_mutex* mutex, uint32_t sp_mask)
   {
-    /* Each bit for a spinning thread is mapped to a block, and each mutex
-     * is hashed to an offset with in such blocks. All bits of a given mutex
-     * are mapped to bytes at the same offset within individual blocks.
-     * The unfortunate GCC `__builtin_ctz()` returns a signed integer which
-     * results in terrible code, so we have to turn to something else if its
-     * argument is not a constant.  */
+    /* Each spinning thread is assigned a byte in the field. If the thread sees
+     * this byte hold a value of zero, it continues spinning; otherwise, it
+     * makes an attempt to lock the mutex where it is spinning. As the number
+     * of spinning iterations is limited, this mechanism need not be reliable.  */
+    uint32_t ntotal = sizeof(__MCF_mutex_spin_field);
     uint32_t nblocks = (uint32_t) __builtin_ctz(__MCF_MUTEX_SP_MASK_M + 1U);
-    DWORD unused;
-    size_t block_index = _BitScanForward(&unused, sp_mask);
 
-    uint32_t nbytes_per_block = sizeof(__MCF_mutex_spin_field) / nblocks;
-    size_t byte_index = (uintptr_t) mutex * 0x9E3779B9U / 0x1000U % nbytes_per_block;
+    /* The unfortunate GCC `__builtin_ctz()` returns a signed integer which
+     * results in terrible machine code, so we have to turn to something else
+     * if its argument is not a constant.  */
+    DWORD base;
+    _BitScanForward(&base, sp_mask);
+    base *= ntotal / nblocks;
 
-    return __MCF_mutex_spin_field + block_index * nbytes_per_block + byte_index;
+    uint32_t hash = (uint32_t)(uintptr_t) mutex / 16U * 0x9E3779B9U;
+    hash /= UINT32_MAX / ntotal + 1U;
+    __MCFGTHREAD_ASSERT(hash < ntotal);
+
+    return __MCF_mutex_spin_field + (base + hash) % ntotal;
   }
 
 int
