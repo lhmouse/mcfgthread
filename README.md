@@ -41,14 +41,14 @@ This project uses some undocumented NT system calls and might be broken in futur
 
 [The test program](mutex_performance.c) was compiled and run on a **Windows 10** machine with a 10-core **Intel i9 10900K** processor.
 
-* **NTHRD**: number of threads
-* **NITER**: number of iterations per thread
+* **#THRD**: number of threads
+* **#ITER**: number of iterations per thread
 * **SRW**: Windows `SRWLOCK`
 * **CS**: Windows `CRITICAL_SECTION`
 * **PTHR**: winpthread `pthread_mutex_t`
 * **MCF**: mcfgthread `__gthread_t`
 
-|NTHRD |    NITER|        SRWLOCK|              CS|           PTHR|            MCF|
+|#THRD |    #ITER|        SRWLOCK|              CS|           PTHR|            MCF|
 |-----:|--------:|--------------:|---------------:|--------------:|--------------:|
 |     1| 20000000|  1512.152 ms  |   1692.265 ms  |**1497.560 ms**|  1836.067 ms  |
 |     2| 10000000|  1590.180 ms  |   1968.060 ms  |  1947.666 ms  |**1791.308 ms**|
