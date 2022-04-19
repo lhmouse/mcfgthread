@@ -45,11 +45,11 @@
 #endif
 
 
-#define  NTHR   16
-#define  NLOOP  1000000
+#define NTHRD  16
+#define NITER  1000000
 
 HANDLE event;
-__gthread_t threads[NTHR];
+__gthread_t threads[NTHRD];
 my_mutex_t mutex;
 volatile double dst = 12345;
 volatile double src = 54321;
@@ -60,7 +60,7 @@ thread_proc(void* arg)
     (void) arg;
     WaitForSingleObject(event, INFINITE);
 
-    for(intptr_t k = 0;  k < NLOOP;  ++k) {
+    for(intptr_t k = 0;  k < NITER;  ++k) {
       my_lock(&mutex);
       double temp = src;
       my_unlock(&mutex);
@@ -83,22 +83,22 @@ main(void)
   {
 #define xstr1(x)  xstr2(x)
 #define xstr2(x)  #x
-    printf("using `%s`:\n  nthreads = %d\n  nloops   = %d\n",
-           xstr1(my_mutex_t), NTHR, NLOOP);
+    printf("using `%s`:\n  # of threads    = %d\n  # of iterations = %d\n",
+           xstr1(my_mutex_t), NTHRD, NITER);
 
     event = CreateEventW(NULL, TRUE, FALSE, NULL);
     __MCFGTHREAD_CHECK(event);
 
     my_init(&mutex);
 
-    for(intptr_t k = 0;  k < NTHR;  ++k)
+    for(intptr_t k = 0;  k < NTHRD;  ++k)
       __MCFGTHREAD_CHECK(__gthread_create(&threads[k], thread_proc, NULL) == 0);
 
     printf("main waiting\n");
     SetEvent(event);
     double t_sta = _MCF_perf_counter();
 
-    for(intptr_t k = 0;  k < NTHR;  ++k)
+    for(intptr_t k = 0;  k < NTHRD;  ++k)
       __MCFGTHREAD_CHECK(__gthread_join(threads[k], NULL) == 0);
 
     double t_fin = _MCF_perf_counter();
