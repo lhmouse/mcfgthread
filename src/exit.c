@@ -19,8 +19,8 @@ __MCF__Exit(int status)
 void
 __MCF_quick_exit(int status)
   {
-    /* Invoke all callbacks that have been registered by `at_quick_exit()` in  */
-    /* reverse order.  */
+    /* Invoke all callbacks that have been registered by `at_quick_exit()` in
+     * reverse order.  */
     __MCF_dtor_queue_finalize(&__MCF_cxa_at_quick_exit_queue, &__MCF_cxa_at_quick_exit_mutex, NULL);
 
     /* Call `_Exit(status)` in accordance with the ISO C standard.  */

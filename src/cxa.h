@@ -19,9 +19,9 @@ extern "C" {
  * the ones with the `__MCF_` prefix.
  *
  * See <https://itanium-cxx-abi.github.io/cxx-abi/abi.html> for details about
- * individual functions.  */
+ * individual functions.
 
-/* Note: In the case of i386, the argument is passed both via the ECX register
+ * Note: In the case of i386, the argument is passed both via the ECX register
  * and on the stack, to allow both `__cdecl` and `__thiscall` functions to work
  * properly. The function prototype is declared for compatibility with GCC.  */
 typedef void __cdecl __MCF_cxa_dtor_cdecl(void* __this);

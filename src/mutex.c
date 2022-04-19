@@ -19,10 +19,10 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       waiting_since = (int64_t) GetTickCount64();
 
     for(;;) {
-      /* If this mutex has not been locked, lock it.  */
-      /* Otherwise, allocate a spinning count for the current thread. If the  */
-      /* maximum number of spinning threads has been reached, allocate a  */
-      /* sleeping count instead.  */
+      /* If this mutex has not been locked, lock it.
+       * Otherwise, allocate a spinning count for the current thread. If the
+       * maximum number of spinning threads has been reached, allocate a
+       * sleeping count instead.  */
       __MCF_ATOMIC_LOAD_PTR_RLX(&old, mutex);
       do {
         new = old;
@@ -33,9 +33,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         else
           new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
 
-        /* If the mutex can be locked immediately, the failure counter shall be  */
-        /* decremented. Otherwise it shall be incremented, no matter whether  */
-        /* the current thread is going to spin or not.  */
+        /* If the mutex can be locked immediately, the failure counter shall be
+         * decremented. Otherwise it shall be incremented, no matter whether
+         * the current thread is going to spin or not.  */
         uint32_t temp = old.__sp_nfail + old.__locked * 2U - 1U;
         new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
       }
@@ -55,8 +55,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
           __builtin_ia32_pause();
           __atomic_thread_fence(__ATOMIC_SEQ_CST);
 
-          /* If this mutex has not been locked, lock it, give back the spinning  */
-          /* count, and decrement the failure counter. Otherwise, do nothing.  */
+          /* If this mutex has not been locked, lock it, give back the spinning
+           * count, and decrement the failure counter. Otherwise, do nothing.  */
           __MCF_ATOMIC_LOAD_PTR_RLX(&old, mutex);
           if(old.__locked != 0)
             continue;
@@ -74,12 +74,12 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
             return 0;
         }
 
-        /* We have wasted some time. Now give back the spinning count and  */
-        /* allocate a sleeping count.  */
-        /* IMPORTANT! We can increment the sleeping counter ONLY IF the mutex  */
-        /* is being locked by another thread. Otherwise, if the other thread  */
-        /* had unlocked the mutex before we incremented the sleeping counter,  */
-        /* we could miss a wakeup and result in deadlocks.  */
+        /* We have wasted some time. Now give back the spinning count and
+         * allocate a sleeping count.
+         * IMPORTANT! We can increment the sleeping counter ONLY IF the mutex
+         * is being locked by another thread. Otherwise, if the other thread
+         * had unlocked the mutex before we incremented the sleeping counter,
+         * we could miss a wakeup and result in deadlocks.  */
         __MCF_ATOMIC_LOAD_PTR_RLX(&old, mutex);
         do {
           new = old;
@@ -107,9 +107,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       }
 
       while(status == STATUS_TIMEOUT) {
-        /* Tell another thread which is going to signal this mutex that an old  */
-        /* waiter has left by decrementing the number of sleeping threads. But  */
-        /* see below...  */
+        /* Tell another thread which is going to signal this mutex that an old
+         * waiter has left by decrementing the number of sleeping threads. But
+         * see below...  */
         __MCF_ATOMIC_LOAD_PTR_RLX(&old, mutex);
         do {
           if(old.__nsleep == 0)
@@ -125,13 +125,13 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
           return -1;
         }
 
-        /* ... It is possible that a second thread has already decremented the  */
-        /* counter. If this does take place, it is going to release the keyed  */
-        /* event soon. We must wait again, otherwise we get a deadlock in the  */
-        /* second thread. Again, a third thread could start waiting for this  */
-        /* keyed event before us, so we set the timeout to zero. If we time out  */
-        /* again, the third thread will have incremented the number of sleeping  */
-        /* threads and we can try decrementing it again.  */
+        /* ... It is possible that a second thread has already decremented the
+         * counter. If this does take place, it is going to release the keyed
+         * event soon. We must wait again, otherwise we get a deadlock in the
+         * second thread. Again, a third thread could start waiting for this
+         * keyed event before us, so we set the timeout to zero. If we time out
+         * again, the third thread will have incremented the number of sleeping
+         * threads and we can try decrementing it again.  */
         LARGE_INTEGER zero = { 0 };
         status = NtWaitForKeyedEvent(NULL, mutex, FALSE, &zero);
         __MCFGTHREAD_ASSERT(NT_SUCCESS(status));

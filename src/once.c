@@ -19,8 +19,8 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
       waiting_since = (int64_t) GetTickCount64();
 
     for(;;) {
-      /* If this flag has not been locked, lock it.  */
-      /* Otherwise, allocate a count for the current thread.  */
+      /* If this flag has not been locked, lock it.
+       * Otherwise, allocate a count for the current thread.  */
       __MCF_ATOMIC_LOAD_PTR_ACQ(&old, once);
       do {
         if(old.__ready != 0)
@@ -34,8 +34,8 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
       }
       while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_ARL(once, &old, &new));
 
-      /* If this flag has been changed from UNLOCKED to LOCKED, return 1 to  */
-      /* allow initialization of protected resources.  */
+      /* If this flag has been changed from UNLOCKED to LOCKED, return 1 to
+       * allow initialization of protected resources.  */
       if(old.__locked == 0)
         return 1;
 
@@ -48,9 +48,9 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
       }
 
       while(status == STATUS_TIMEOUT) {
-        /* Tell another thread which is going to signal this flag that an old  */
-        /* waiter has left by decrementing the number of sleeping threads. But  */
-        /* see below...  */
+        /* Tell another thread which is going to signal this flag that an old
+         * waiter has left by decrementing the number of sleeping threads. But
+         * see below...  */
         __MCF_ATOMIC_LOAD_PTR_RLX(&old, once);
         do {
           if(old.__nsleep == 0)
@@ -62,18 +62,18 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(once, &old, &new));
 
         if(old.__nsleep != 0) {
-          /* The operation has timed out.  */
-          /* We may still return something meaningful here.  */
+          /* The operation has timed out.
+           * We may still return something meaningful here.  */
           return ((int) old.__ready - 1) >> 8;
         }
 
-        /* ... It is possible that a second thread has already decremented the  */
-        /* counter. If this does take place, it is going to release the keyed  */
-        /* event soon. We must wait again, otherwise we get a deadlock in the  */
-        /* second thread. Again, a third thread could start waiting for this  */
-        /* keyed event before us, so we set the timeout to zero. If we time out  */
-        /* again, the third thread will have incremented the number of sleeping  */
-        /* threads and we can try decrementing it again.  */
+        /* ... It is possible that a second thread has already decremented the
+         * counter. If this does take place, it is going to release the keyed
+         * event soon. We must wait again, otherwise we get a deadlock in the
+         * second thread. Again, a third thread could start waiting for this
+         * keyed event before us, so we set the timeout to zero. If we time out
+         * again, the third thread will have incremented the number of sleeping
+         * threads and we can try decrementing it again.  */
         LARGE_INTEGER zero = { 0 };
         status = NtWaitForKeyedEvent(NULL, once, FALSE, &zero);
         __MCFGTHREAD_ASSERT(NT_SUCCESS(status));

@@ -61,8 +61,8 @@ do_startup_thread_finalize(void)
     if(!self)
       return;
 
-    /* Per-thread atexit callbacks may use TLS, so call them before  */
-    /* destructors of thread-local objects.  */
+    /* Per-thread atexit callbacks may use TLS, so call them before
+     * destructors of thread-local objects.  */
     __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
     __MCF_tls_table_finalize(&(self->__tls_table));
   }
@@ -81,8 +81,8 @@ do_startup_thread_detach_self(void)
 void
 __MCF_finalize_on_exit(void)
   {
-    /* Call destructors for thread-local objects before static ones, in  */
-    /* accordance with the C++ standard. See [basic.start.term]/2.  */
+    /* Call destructors for thread-local objects before static ones, in
+     * accordance with the C++ standard. See [basic.start.term]/2.  */
     do_startup_thread_finalize();
     __MCF_dtor_queue_finalize(&__MCF_cxa_atexit_queue, &__MCF_cxa_atexit_mutex, NULL);
     do_startup_thread_detach_self();
@@ -92,11 +92,11 @@ __MCF_finalize_on_exit(void)
 static void __stdcall
 TlsCRTStartup(PVOID instance, DWORD reason, LPVOID reserved)
   {
-    /* Perform global initialization and per-thread cleanup, as needed.  */
-    /* Note, upon `DLL_PROCESS_DETACH` we don't perform any cleanup, because  */
-    /* other DLLs might have been unloaded and we would be referencing unmapped  */
-    /* memory. User code should call `__cxa_finalize(NULL)` before exiting from  */
-    /* a process.  */
+    /* Perform global initialization and per-thread cleanup, as needed.
+     * Note, upon `DLL_PROCESS_DETACH` we don't perform any cleanup, because
+     * other DLLs might have been unloaded and we would be referencing unmapped
+     * memory. User code should call `__cxa_finalize(NULL)` before exiting from
+     * a process.  */
     switch(reason) {
       case DLL_PROCESS_ATTACH:
         do_startup_crt_initialize(instance);
@@ -131,9 +131,9 @@ DllMainCRTStartup(PVOID instance, DWORD reason, PVOID reserved)
     return TRUE;
   }
 
-#else  /* DLL_EXPORT  */
+#else  /* DLL_EXPORT
 
-/* When building the static library, invoke the common routine from a TLS
+ * When building the static library, invoke the common routine from a TLS
  * callback. This requires the main executable be linked with 'tlssup.o'.
  * `__xl_d` is being used by mingw-w64, so we use `__xl_e` here.  */
 extern const PIMAGE_TLS_CALLBACK __MCF_xl_e;

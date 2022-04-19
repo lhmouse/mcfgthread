@@ -19,7 +19,7 @@ __MCF_seh_top(EXCEPTION_RECORD* record, void* frame, CONTEXT* ctx, void* disp_ct
     if((record->ExceptionCode & 0x20FFFFFF) != 0x20474343)  /* (1 << 29) | 'GCC'  */
       return ExceptionContinueSearch;
 
-    /* Cause the C++ runtime to invoke the terminate handler.  */
-    /* By default this is `std::terminate()`.  */
+    /* Cause the C++ runtime to invoke the terminate handler.
+     * By default this is `std::terminate()`.  */
     return ExceptionContinueExecution;
   }

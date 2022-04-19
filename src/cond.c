@@ -29,8 +29,8 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     }
     while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(cond, &old, &new));
 
-    /* Now, invoke the unlock callback.  */
-    /* If another thread attempts to signal this one, it shall block.  */
+    /* Now, invoke the unlock callback.
+     * If another thread attempts to signal this one, it shall block.  */
     intptr_t unlocked = 42;
     if(unlock_opt)
       unlocked = unlock_opt(lock_arg);
@@ -45,9 +45,9 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     }
 
     while(status == STATUS_TIMEOUT) {
-      /* Tell another thread which is going to signal this condition variable  */
-      /* that an old waiter has left by decrementing the number of sleeping  */
-      /* threads. But see below...  */
+      /* Tell another thread which is going to signal this condition variable
+       * that an old waiter has left by decrementing the number of sleeping
+       * threads. But see below...  */
       __MCF_ATOMIC_LOAD_PTR_RLX(&old, cond);
       do {
         if(old.__nsleep == 0)
@@ -64,13 +64,13 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
         return -1;
       }
 
-      /* ... It is possible that a second thread has already decremented the  */
-      /* counter. If this does take place, it is going to release the keyed  */
-      /* event soon. We must wait again, otherwise we get a deadlock in the  */
-      /* second thread. Again, a third thread could start waiting for this  */
-      /* keyed event before us, so we set the timeout to zero. If we time out  */
-      /* again, the third thread will have incremented the number of sleeping  */
-      /* threads and we can try decrementing it again.  */
+      /* ... It is possible that a second thread has already decremented the
+       * counter. If this does take place, it is going to release the keyed
+       * event soon. We must wait again, otherwise we get a deadlock in the
+       * second thread. Again, a third thread could start waiting for this
+       * keyed event before us, so we set the timeout to zero. If we time out
+       * again, the third thread will have incremented the number of sleeping
+       * threads and we can try decrementing it again.  */
       LARGE_INTEGER zero = { 0 };
       status = NtWaitForKeyedEvent(NULL, cond, FALSE, &zero);
       __MCFGTHREAD_ASSERT(NT_SUCCESS(status));

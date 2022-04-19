@@ -172,8 +172,8 @@ __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
       return NULL;  /* wait infinitely  */
 
     if(*__int64_opt > 0) {
-      /* `*__int64_opt` is milliseconds since 1970-01-01T00:00:00Z.  */
-      /* Convert it into the NT epoch.  */
+      /* `*__int64_opt` is milliseconds since 1970-01-01T00:00:00Z.
+       * Convert it into the NT epoch.  */
       __nt_time = 116444736000000000 + (double) *__int64_opt * 10000;
       if(__nt_time > 0x7FFFFFFFFFFFFC00)
         return NULL;  /* overflowed; assume infinity  */
@@ -209,16 +209,16 @@ __MCF_batch_release_common(const void* __key, size_t __count)
     if(__count == 0)
       return 0;
 
-    /* A call to `ExitProcess()` terminates all the other threads, even  */
-    /* if they are waiting. Don't release the keyed event in this case,  */
-    /* as it blocks the calling thread infinitely if there is no thread  */
-    /* to wake up. See <https://github.com/lhmouse/mcfgthread/issues/21>.  */
+    /* A call to `ExitProcess()` terminates all the other threads, even
+     * if they are waiting. Don't release the keyed event in this case,
+     * as it blocks the calling thread infinitely if there is no thread
+     * to wake up. See <https://github.com/lhmouse/mcfgthread/issues/21>.  */
     if(RtlDllShutdownInProgress())
       return 0;
 
     for(__k = 0;  __k != __count;  ++__k) {
-      /* Release a thread. This operation shall block until the target  */
-      /* thread has received the notification.  */
+      /* Release a thread. This operation shall block until the target
+       * thread has received the notification.  */
       NTSTATUS __status = NtReleaseKeyedEvent(NULL, __key, FALSE, NULL);
       __MCFGTHREAD_ASSERT(NT_SUCCESS(__status));
     }

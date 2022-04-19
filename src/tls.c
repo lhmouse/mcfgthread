@@ -15,8 +15,8 @@ _MCF_tls_key_new(_MCF_tls_dtor* dtor_opt)
     if(!key)
       return NULL;
 
-    /* Initialize the key structure. The returned pointer is assumed to be  */
-    /* unique, so its reference count should be initialized to one.  */
+    /* Initialize the key structure. The returned pointer is assumed to be
+     * unique, so its reference count should be initialized to one.  */
     __MCF_ATOMIC_STORE_RLX(key->__nref, 1);
     key->__dtor_opt = dtor_opt;
     return key;
@@ -54,16 +54,16 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
     __MCFGTHREAD_ASSERT(dist != 0);
     __MCFGTHREAD_ASSERT(table->__size <= dist / 2);
 
-    /* Make a fixed-point value in the interval [0,1), and then multiply  */
-    /* `dist` by it to get an index in the middle.  */
+    /* Make a fixed-point value in the interval [0,1), and then multiply
+     * `dist` by it to get an index in the middle.  */
     dist *= (uint32_t) ((uintptr_t) key * 0x9E3779B9);
     dist >>= 32;
 
     __MCF_tls_element* origin = table->__begin + (ptrdiff_t) dist;
     __MCFGTHREAD_ASSERT(origin < table->__end);
 
-    /* Find an element using linear probing.  */
-    /* Note this function may return a pointer to an empty element.  */
+    /* Find an element using linear probing.
+     * Note this function may return a pointer to an empty element.  */
     for(__MCF_tls_element* cur = origin;  cur != table->__end;  ++cur)
       if(!cur->__key_opt || (cur->__key_opt == key))
         return cur;
@@ -81,8 +81,8 @@ __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
     if(!table->__begin)
       return NULL;
 
-    /* Search for the given key.  */
-    /* Note `do_linear_probe_nonempty()` may return an empty element.  */
+    /* Search for the given key.
+     * Note `do_linear_probe_nonempty()` may return an empty element.  */
     __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
     if(!elem->__key_opt)
       return NULL;
@@ -131,8 +131,8 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
         _MCF_mfree_nonnull(temp.__begin);
     }
 
-    /* Search for the given key.  */
-    /* Note `do_linear_probe_nonempty()` may return an empty element.  */
+    /* Search for the given key.
+     * Note `do_linear_probe_nonempty()` may return an empty element.  */
     __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
     if(!elem->__key_opt) {
       /* Fill `key` into this element.  */
@@ -170,8 +170,8 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
           continue;
 
         if(temp.__end->__value) {
-          /* Invoke the destructor if there is a value and a destructor, and  */
-          /* the key has not been deleted.  */
+          /* Invoke the destructor if there is a value and a destructor, and
+           * the key has not been deleted.  */
           _MCF_tls_dtor* dtor = NULL;
           if(__MCF_ATOMIC_LOAD_RLX(tkey->__deleted) == 0)
             dtor = tkey->__dtor_opt;

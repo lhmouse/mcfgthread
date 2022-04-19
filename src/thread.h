@@ -67,9 +67,9 @@ _MCF_thread_get_data(_MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     return __thrd->__data;
   }
-#endif  /* __cplusplus  */
+#endif  /* __cplusplus
 
-/* Adds a reference count of a thread structure. This may be useful if you
+ * Adds a reference count of a thread structure. This may be useful if you
  * wish to pass a pointer to other code.  */
 void
 _MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT;

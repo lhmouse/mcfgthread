@@ -52,9 +52,9 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
     if(data_opt)
       _MCF_mmove(thrd->__data, data_opt, size);
 
-    /* Create the thread.  */
-    /* The new thread must not begin execution before the `__handle` field is  */
-    /* initialized, after `CreateThread()` returns, so suspend it first.  */
+    /* Create the thread.
+     * The new thread must not begin execution before the `__handle` field is
+     * initialized, after `CreateThread()` returns, so suspend it first.  */
     thrd->__handle = CreateThread(NULL, 0, do_win32_thread_thunk, thrd, CREATE_SUSPENDED, (DWORD*) &(thrd->__tid));
     if(thrd->__handle == NULL) {
       _MCF_mfree_nonnull(thrd);

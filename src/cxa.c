@@ -95,8 +95,8 @@ __MCF_cxa_finalize(void* dso)
     __MCF_dtor_queue_remove(&__MCF_cxa_at_quick_exit_queue, dso);
     _MCF_mutex_unlock(&__MCF_cxa_at_quick_exit_mutex);
 
-    /* Call destructors for thread-local objects before static ones in  */
-    /* accordance with the C++ standard. See [basic.start.term]/2.  */
+    /* Call destructors for thread-local objects before static ones in
+     * accordance with the C++ standard. See [basic.start.term]/2.  */
     _MCF_thread* self = _MCF_thread_self();
     if(self)
       __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, dso);

@@ -12,8 +12,8 @@ int
 __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
   {
     if(queue->__size == __MCF_DTOR_QUEUE_BLOCK_SIZE) {
-      /* If the current block is full, allocate a new one and create a singly  */
-      /* linked list.  */
+      /* If the current block is full, allocate a new one and create a singly
+       * linked list.  */
       __MCF_dtor_queue* prev = _MCF_malloc_copy(queue, sizeof(__MCF_dtor_queue));
       if(!prev)
         return -1;
@@ -59,8 +59,8 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* ds
         }
       }
 
-      /* If the current block has become empty, free it.  */
-      /* Otherwise, go to the next one.  */
+      /* If the current block has become empty, free it.
+       * Otherwise, go to the next one.  */
       if((cur_q->__size == 0) && cur_q->__prev) {
         __MCF_dtor_queue* prev = cur_q->__prev;
         _MCF_mmove(cur_q, prev, sizeof(__MCF_dtor_queue));
@@ -92,8 +92,8 @@ __MCF_dtor_queue_remove(__MCF_dtor_queue* queue, void* dso)
         }
       }
 
-      /* If the current block has become empty, free it.  */
-      /* Otherwise, go to the next one.  */
+      /* If the current block has become empty, free it.
+       * Otherwise, go to the next one.  */
       if((cur_q->__size == 0) && cur_q->__prev) {
         __MCF_dtor_queue* prev = cur_q->__prev;
         _MCF_mmove(cur_q, prev, sizeof(__MCF_dtor_queue));
@@ -128,10 +128,10 @@ __MCF_dtor_queue_finalize(__MCF_dtor_queue* queue, _MCF_mutex* mutex_opt, void* 
         break;
 
 #ifdef __i386__
-      /* Note: In the case of i386, the argument is passed both via the ECX  */
-      /* register and on the stack, to allow both `__cdecl` and `__thiscall`  */
-      /* functions to work properly.  */
-      /* Parameters: EAX, EDX, ECX, ESP[4]  */
+      /* Note: In the case of i386, the argument is passed both via the ECX
+       * register and on the stack, to allow both `__cdecl` and `__thiscall`
+       * functions to work properly.
+       * Parameters: EAX, EDX, ECX, ESP[4]  */
       typedef void __attribute__((__regparm__(3))) i386_dtor(void*, void*, void*, void*);
       (*(i386_dtor*)(intptr_t) elem.__dtor)(0, 0, elem.__this, elem.__this);
 #else

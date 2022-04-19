@@ -9,8 +9,8 @@
 int64_t
 _MCF_utc_now(void)
   {
-    /* Get the system time in NT epoch.  */
-    /* This is the number of 10^-7s since 1601-01-01T00:00:00Z.  */
+    /* Get the system time in NT epoch.
+     * This is the number of 10^-7s since 1601-01-01T00:00:00Z.  */
     FILETIME ft;
     GetSystemTimeAsFileTime(&ft);
 
