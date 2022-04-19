@@ -22,8 +22,8 @@ struct __MCF_mutex
   {
     uintptr_t __locked : 1;
 
-    uintptr_t __sp_nthrd : 4;  /* number of spinning threads  */
-#define __MCF_MUTEX_SP_NTHRD_M   1U
+    uintptr_t __sp_mask : 4;  /* mask of spinning threads; 1b/thread  */
+#define __MCF_MUTEX_SP_MASK_M  15U
 
     uintptr_t __sp_nfail : 4;  /* number of timeouts after spinning  */
 #define __MCF_MUTEX_SP_NFAIL_M  15U

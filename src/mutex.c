@@ -6,6 +6,25 @@
 #include "mutex.h"
 #include "win32.h"
 
+static inline uint8_t*
+do_flag_byte(const _MCF_mutex* mutex, uint32_t sp_mask)
+  {
+    /* Each bit for a spinning thread is mapped to a block, and each mutex
+     * is hashed to an offset with in such blocks. All bits of a given mutex
+     * are mapped to bytes at the same offset within individual blocks.
+     * The unfortunate GCC `__builtin_ctz()` returns a signed integer which
+     * results in terrible code, so we have to turn to something else if its
+     * argument is not a constant.  */
+    uint32_t nblocks = (uint32_t) __builtin_ctz(__MCF_MUTEX_SP_MASK_M + 1U);
+    DWORD unused;
+    size_t block_index = _BitScanForward(&unused, sp_mask);
+
+    uint32_t nbytes_per_block = sizeof(__MCF_mutex_spin_field) / nblocks;
+    size_t byte_index = (uintptr_t) mutex * 0x9E3779B9U / 0x1000U % nbytes_per_block;
+
+    return __MCF_mutex_spin_field + block_index * nbytes_per_block + byte_index;
+  }
+
 int
 _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
   {
@@ -20,7 +39,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 
     for(;;) {
       /* If this mutex has not been locked, lock it.
-       * Otherwise, allocate a spinning count for the current thread. If the
+       * Otherwise, allocate a spinning bit for the current thread. If the
        * maximum number of spinning threads has been reached, allocate a
        * sleeping count instead.  */
       __MCF_ATOMIC_LOAD_PTR_RLX(&old, mutex);
@@ -28,8 +47,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         new = old;
         if(old.__locked == 0)
           new.__locked = 1;
-        else if((old.__sp_nthrd != __MCF_MUTEX_SP_NTHRD_M) && (old.__sp_nfail < __MCF_MUTEX_SP_NFAIL_THRESHOLD))
-          new.__sp_nthrd = (old.__sp_nthrd + 1U) & __MCF_MUTEX_SP_NTHRD_M;
+        else if((old.__sp_mask != __MCF_MUTEX_SP_MASK_M) && (old.__sp_nfail < __MCF_MUTEX_SP_NFAIL_THRESHOLD))
+          new.__sp_mask = (old.__sp_mask | (old.__sp_mask + 1U)) & __MCF_MUTEX_SP_MASK_M;
         else
           new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
 
@@ -45,7 +64,11 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       if(old.__locked == 0)
         return 0;
 
-      if(old.__sp_nthrd != new.__sp_nthrd) {
+      if(old.__sp_mask != new.__sp_mask) {
+        /* The current thread shall spin now.  */
+        uint32_t my_mask = (uint32_t) new.__sp_mask ^ old.__sp_mask;
+        __MCFGTHREAD_ASSERT((my_mask & (my_mask - 1)) == 0);
+
         /* Calculate the spin count for this loop.  */
         register int spin = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
         __MCFGTHREAD_ASSERT(spin > 0);
@@ -55,17 +78,19 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
           __builtin_ia32_pause();
           __atomic_thread_fence(__ATOMIC_SEQ_CST);
 
+          /* Wait for my turn.  */
+          uint8_t cmp = 1;
+          if(!__MCF_ATOMIC_CMPXCHG_WEAK_RLX(do_flag_byte(mutex, my_mask), &cmp, 0))
+            continue;
+
           /* If this mutex has not been locked, lock it, give back the spinning
-           * count, and decrement the failure counter. Otherwise, do nothing.  */
+           * bit, and decrement the failure counter. Otherwise, do nothing.  */
           __MCF_ATOMIC_LOAD_PTR_RLX(&old, mutex);
           if(old.__locked != 0)
             continue;
 
           new = old;
           new.__locked = 1;
-
-          __MCFGTHREAD_ASSERT(old.__sp_nthrd != 0);
-          new.__sp_nthrd = (old.__sp_nthrd - 1U) & __MCF_MUTEX_SP_NTHRD_M;
 
           uint32_t temp = old.__sp_nfail - 1U;
           new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
@@ -74,7 +99,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
             return 0;
         }
 
-        /* We have wasted some time. Now give back the spinning count and
+        /* We have wasted some time. Now give back the spinning bit and
          * allocate a sleeping count.
          * IMPORTANT! We can increment the sleeping counter ONLY IF the mutex
          * is being locked by another thread. Otherwise, if the other thread
@@ -87,9 +112,6 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
             new.__locked = 1;
           else
             new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
-
-          __MCFGTHREAD_ASSERT(old.__sp_nthrd != 0);
-          new.__sp_nthrd = (old.__sp_nthrd - 1U) & __MCF_MUTEX_SP_NTHRD_M;
         }
         while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_ACQ(mutex, &old, &new));
 
@@ -161,10 +183,18 @@ _MCF_mutex_unlock(_MCF_mutex* mutex)
     do {
       new = old;
       new.__locked = 0;
+      new.__sp_mask = (old.__sp_mask & (old.__sp_mask - 1U)) & __MCF_MUTEX_SP_MASK_M;
       wake_one = _MCF_minz(old.__nsleep, 1);
       new.__nsleep = (old.__nsleep - wake_one) & __MCF_MUTEX_NSLEEP_M;
     }
     while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_REL(mutex, &old, &new));
+
+    if(old.__sp_mask != new.__sp_mask) {
+      /* Notify a spinning thread.  */
+      uint32_t my_mask = (uint32_t) new.__sp_mask ^ old.__sp_mask;
+      __MCFGTHREAD_ASSERT((my_mask & (my_mask - 1)) == 0);
+      __MCF_ATOMIC_STORE_RLX(do_flag_byte(mutex, my_mask), 1);
+    }
 
     __MCF_batch_release_common(mutex, wake_one);
   }

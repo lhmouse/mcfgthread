@@ -115,6 +115,7 @@ extern _MCF_mutex __MCF_cxa_atexit_mutex;
 extern __MCF_dtor_queue __MCF_cxa_atexit_queue;
 extern _MCF_mutex __MCF_cxa_at_quick_exit_mutex;
 extern __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
+extern uint8_t __MCF_mutex_spin_field[2048];
 
 #ifdef __cplusplus
 }
