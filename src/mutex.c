@@ -28,8 +28,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         new = old;
         if(old.__locked == 0)
           new.__locked = 1;
-        else if((old.__sp_nthrd < __MCF_MUTEX_SP_NTHRD) && (old.__sp_nfail < __MCF_MUTEX_SPIN_FAIL_THRESHOLD))
-          new.__sp_nthrd = (old.__sp_nthrd + 1U) & __MCF_MUTEX_SP_NTHRD;
+        else if((old.__sp_nthrd != __MCF_MUTEX_SP_NTHRD_M) && (old.__sp_nfail < __MCF_MUTEX_SP_NFAIL_THRESHOLD))
+          new.__sp_nthrd = (old.__sp_nthrd + 1U) & __MCF_MUTEX_SP_NTHRD_M;
         else
           new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
 
@@ -47,9 +47,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 
       if(old.__sp_nthrd != new.__sp_nthrd) {
         /* Calculate the spin count for this loop.  */
-        register int spin = (int) (__MCF_MUTEX_SPIN_FAIL_THRESHOLD - old.__sp_nfail);
+        register int spin = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
         __MCFGTHREAD_ASSERT(spin > 0);
-        spin *= (int) (__MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_SPIN_FAIL_THRESHOLD);
+        spin *= (int) (__MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_SP_NFAIL_THRESHOLD);
 
         while(--spin >= 0) {
           __builtin_ia32_pause();
@@ -65,7 +65,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
           new.__locked = 1;
 
           __MCFGTHREAD_ASSERT(old.__sp_nthrd != 0);
-          new.__sp_nthrd = (old.__sp_nthrd - 1U) & __MCF_MUTEX_SP_NTHRD;
+          new.__sp_nthrd = (old.__sp_nthrd - 1U) & __MCF_MUTEX_SP_NTHRD_M;
 
           uint32_t temp = old.__sp_nfail - 1U;
           new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
@@ -89,7 +89,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
             new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
 
           __MCFGTHREAD_ASSERT(old.__sp_nthrd != 0);
-          new.__sp_nthrd = (old.__sp_nthrd - 1U) & __MCF_MUTEX_SP_NTHRD;
+          new.__sp_nthrd = (old.__sp_nthrd - 1U) & __MCF_MUTEX_SP_NTHRD_M;
         }
         while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_ACQ(mutex, &old, &new));
 
