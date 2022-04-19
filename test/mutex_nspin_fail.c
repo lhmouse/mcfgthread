@@ -13,36 +13,36 @@ int
 main(void)
   {
     assert(mutex.__locked == 0);
-    assert(mutex.__nspin == 0);
-    assert(mutex.__nspin_fail == 0);
+    assert(mutex.__sp_nthrd == 0);
+    assert(mutex.__sp_nfail == 0);
 
     int64_t timeout = -100;
     assert(_MCF_mutex_lock(&mutex, &timeout) == 0);
     assert(mutex.__locked == 1);
-    assert(mutex.__nspin == 0);
-    assert(mutex.__nspin_fail == 0);
+    assert(mutex.__sp_nthrd == 0);
+    assert(mutex.__sp_nfail == 0);
 
-    for(size_t count = 1;  count <= __MCF_MUTEX_NSPIN_FAIL_M;  ++count) {
+    for(size_t count = 1;  count <= __MCF_MUTEX_SP_NFAIL_M;  ++count) {
       printf("try failing: %d\n", (int) count);
       assert(_MCF_mutex_lock(&mutex, &timeout) == -1);
       assert(mutex.__locked == 1);
-      assert(mutex.__nspin == 0);
-      assert(mutex.__nspin_fail == count);
+      assert(mutex.__sp_nthrd == 0);
+      assert(mutex.__sp_nfail == count);
     }
 
     printf("try failing: final\n");
     assert(_MCF_mutex_lock(&mutex, &timeout) == -1);
     assert(mutex.__locked == 1);
-    assert(mutex.__nspin == 0);
-    assert(mutex.__nspin_fail == __MCF_MUTEX_NSPIN_FAIL_M);
+    assert(mutex.__sp_nthrd == 0);
+    assert(mutex.__sp_nfail == __MCF_MUTEX_SP_NFAIL_M);
 
-    for(size_t count = __MCF_MUTEX_NSPIN_FAIL_M;  count >= 1;  --count) {
+    for(size_t count = __MCF_MUTEX_SP_NFAIL_M;  count >= 1;  --count) {
       printf("try succeeding: %d\n", (int) count);
       _MCF_mutex_unlock(&mutex);
       assert(mutex.__locked == 0);
       assert(_MCF_mutex_lock(&mutex, &timeout) == 0);
-      assert(mutex.__nspin == 0);
-      assert(mutex.__nspin_fail == count - 1);
+      assert(mutex.__sp_nthrd == 0);
+      assert(mutex.__sp_nfail == count - 1);
       timeout /= 2;
     }
 
@@ -50,6 +50,6 @@ main(void)
     _MCF_mutex_unlock(&mutex);
     assert(mutex.__locked == 0);
     assert(_MCF_mutex_lock(&mutex, &timeout) == 0);
-    assert(mutex.__nspin == 0);
-    assert(mutex.__nspin_fail == 0);
+    assert(mutex.__sp_nthrd == 0);
+    assert(mutex.__sp_nfail == 0);
   }

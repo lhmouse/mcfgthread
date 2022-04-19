@@ -22,11 +22,11 @@ struct __MCF_mutex
   {
     uintptr_t __locked : 1;
 
-    uintptr_t __nspin : 4;  /* number of spinning threads  */
-#define __MCF_MUTEX_NSPIN_M  1U
+    uintptr_t __sp_nthrd : 4;  /* number of spinning threads  */
+#define __MCF_MUTEX_SP_NTHRD  1U
 
-    uintptr_t __nspin_fail : 4;  /* number of timeouts after spinning  */
-#define __MCF_MUTEX_NSPIN_FAIL_M  15U
+    uintptr_t __sp_nfail : 4;  /* number of timeouts after spinning  */
+#define __MCF_MUTEX_SP_NFAIL_M  15U
 
     uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
 #define __MCF_MUTEX_NSLEEP_M  (UINTPTR_MAX >> 9)
@@ -35,7 +35,7 @@ struct __MCF_mutex
 
 /* If the spinning failure counter has reached this number, newcomers will not
  * attempt to spin at all.
- * This value must not be greater than `__MCF_MUTEX_NSPIN_FAIL_M`, and must not
+ * This value must not be greater than `__MCF_MUTEX_SP_NFAIL_M`, and must not
  * be zero.  */
 #define __MCF_MUTEX_SPIN_FAIL_THRESHOLD   10U
 

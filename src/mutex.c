@@ -28,16 +28,16 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         new = old;
         if(old.__locked == 0)
           new.__locked = 1;
-        else if((old.__nspin < __MCF_MUTEX_NSPIN_M) && (old.__nspin_fail < __MCF_MUTEX_SPIN_FAIL_THRESHOLD))
-          new.__nspin = (old.__nspin + 1U) & __MCF_MUTEX_NSPIN_M;
+        else if((old.__sp_nthrd < __MCF_MUTEX_SP_NTHRD) && (old.__sp_nfail < __MCF_MUTEX_SPIN_FAIL_THRESHOLD))
+          new.__sp_nthrd = (old.__sp_nthrd + 1U) & __MCF_MUTEX_SP_NTHRD;
         else
           new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
 
         /* If the mutex can be locked immediately, the failure counter shall be  */
         /* decremented. Otherwise it shall be incremented, no matter whether  */
         /* the current thread is going to spin or not.  */
-        uint32_t temp = old.__nspin_fail + old.__locked * 2U - 1U;
-        new.__nspin_fail = (temp - temp / (__MCF_MUTEX_NSPIN_FAIL_M + 1U)) & __MCF_MUTEX_NSPIN_FAIL_M;
+        uint32_t temp = old.__sp_nfail + old.__locked * 2U - 1U;
+        new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
       }
       while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_ARL(mutex, &old, &new));
 
@@ -45,9 +45,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       if(old.__locked == 0)
         return 0;
 
-      if(old.__nspin != new.__nspin) {
+      if(old.__sp_nthrd != new.__sp_nthrd) {
         /* Calculate the spin count for this loop.  */
-        register int spin = (int) (__MCF_MUTEX_SPIN_FAIL_THRESHOLD - old.__nspin_fail);
+        register int spin = (int) (__MCF_MUTEX_SPIN_FAIL_THRESHOLD - old.__sp_nfail);
         __MCFGTHREAD_ASSERT(spin > 0);
         spin *= (int) (__MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_SPIN_FAIL_THRESHOLD);
 
@@ -64,11 +64,11 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
           new = old;
           new.__locked = 1;
 
-          __MCFGTHREAD_ASSERT(old.__nspin != 0);
-          new.__nspin = (old.__nspin - 1U) & __MCF_MUTEX_NSPIN_M;
+          __MCFGTHREAD_ASSERT(old.__sp_nthrd != 0);
+          new.__sp_nthrd = (old.__sp_nthrd - 1U) & __MCF_MUTEX_SP_NTHRD;
 
-          uint32_t temp = old.__nspin_fail - 1U;
-          new.__nspin_fail = (temp - temp / (__MCF_MUTEX_NSPIN_FAIL_M + 1U)) & __MCF_MUTEX_NSPIN_FAIL_M;
+          uint32_t temp = old.__sp_nfail - 1U;
+          new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
 
           if(__MCF_ATOMIC_CMPXCHG_PTR_ACQ(mutex, &old, &new))
             return 0;
@@ -88,8 +88,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
           else
             new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
 
-          __MCFGTHREAD_ASSERT(old.__nspin != 0);
-          new.__nspin = (old.__nspin - 1U) & __MCF_MUTEX_NSPIN_M;
+          __MCFGTHREAD_ASSERT(old.__sp_nthrd != 0);
+          new.__sp_nthrd = (old.__sp_nthrd - 1U) & __MCF_MUTEX_SP_NTHRD;
         }
         while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_ACQ(mutex, &old, &new));
 
