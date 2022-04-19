@@ -6,7 +6,7 @@ AM_CPPFLAGS = -pipe -Wall -Wextra -include config.h -U_FORTIFY_SOURCE  \
   -D_WIN32_WINNT=0x0601 -D__USE_MINGW_ANSI_STDIO  \
   -f{strict-{aliasing,overflow},merge-all-constants}  \
   -fno-{math-errno,trapping-math,stack-protector}  \
-  -Werror={{,sign-}conversion,sign-compare,write-strings,return-type}  \
+  -Werror={conversion,sign-{compare,conversion},write-strings,return-type}  \
   -Werror={double-promotion,aggressive-loop-optimizations,missing-declarations}  \
   -W{switch-enum,suggest-attribute=noreturn,shadow,missing-field-initializers}  \
   -Wunused-{function,label,local-typedefs,{,but-set-}{variable,parameter}}
