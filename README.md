@@ -37,6 +37,28 @@ This project is developed and tested on x86 and x64 and hasn't been tested on ot
 
 This project uses some undocumented NT system calls and might be broken in future Windows versions. The author gives no warranty for this project. Use it at your own risk.
 
+# Benchmarking
+
+[The test program](mutex_performance.c) was compiled and run on a **Windows 10** machine with a 10-core **Intel i9 10900K** processor.
+
+* **NTHRD**: number of threads
+* **NITER**: number of iterations per thread
+* **SRW**: Windows `SRWLOCK`
+* **CS**: Windows `CRITICAL_SECTION`
+* **PTHR**: winpthread `pthread_mutex_t`
+* **MCF**: mcfgthread `__gthread_t`
+
+|NTHRD |NITER    |SRWLOCK     |CS           |PTHR        |MCF         |
+|-----:|--------:|-----------:|------------:|-----------:|-----------:|
+|     1| 20000000| 1512.152 ms|  1692.265 ms| 1497.560 ms| 1836.067 ms|
+|     2| 10000000| 1590.180 ms|  1968.060 ms| 1947.666 ms| 1791.308 ms|
+|     4|  5000000| 1948.262 ms|  4559.716 ms| 2957.002 ms| 1867.880 ms|
+|     6|  3000000| 2298.616 ms|  4716.880 ms| 3260.748 ms| 1696.661 ms|
+|    10|  1500000| 2354.337 ms|  6016.242 ms| 2908.908 ms| 1432.844 ms|
+|    20|   600000| 2500.839 ms| 10110.718 ms| 2562.878 ms| 1792.559 ms|
+|    60|   200000| 2942.580 ms| 10624.262 ms| 3815.126 ms| 4919.514 ms|
+|   200|    50000| 2447.270 ms| 10011.153 ms| 3145.487 ms| 4055.444 ms|
+
 # Implementation details
 
 ### The condition variable
