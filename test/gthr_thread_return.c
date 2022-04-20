@@ -10,7 +10,8 @@
 static __gthread_t thrd;
 static int magic;
 
-static void*
+static
+void*
 thread_proc(void* param)
   {
     (void) param;

@@ -11,7 +11,8 @@ static _MCF_tls_key* key;
 static _MCF_thread* thrd;
 static int dso_1, dso_2;
 
-static void
+static
+void
 thread_proc(_MCF_thread* self)
   {
     void* p;

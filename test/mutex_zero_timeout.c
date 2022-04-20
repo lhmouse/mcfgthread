@@ -14,7 +14,8 @@ static _MCF_mutex mutex;
 static HANDLE event;
 static int resource = 0;
 
-static void
+static
+void
 thread_proc(_MCF_thread* self)
   {
     WaitForSingleObject(event, INFINITE);

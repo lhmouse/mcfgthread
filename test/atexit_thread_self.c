@@ -9,7 +9,8 @@
 
 static _MCF_thread* thr;
 
-static void
+static
+void
 atexit_function(void)
   {
     _MCF_thread* cmp = _MCF_thread_self();

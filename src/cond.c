@@ -6,7 +6,8 @@
 #include "cond.h"
 #include "win32.h"
 
-static void
+static
+void
 do_wait_cleanup_common(_MCF_cond_unlock_callback* unlock_opt, intptr_t unlocked, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg)
   {
     if(unlock_opt && relock_opt)

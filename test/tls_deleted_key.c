@@ -14,7 +14,8 @@ static HANDLE value_set;
 static HANDLE key_deleted;
 static int count;
 
-static void
+static
+void
 tls_destructor(void* ptr)
   {
     (void) ptr;
@@ -22,7 +23,8 @@ tls_destructor(void* ptr)
     __atomic_fetch_add(&count, 1, __ATOMIC_RELAXED);
   }
 
-static void
+static
+void
 thread_proc(_MCF_thread* self)
   {
     WaitForSingleObject(thread_start, INFINITE);

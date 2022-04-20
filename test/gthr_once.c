@@ -13,7 +13,8 @@ static __gthread_once_t once = __GTHREAD_ONCE_INIT;
 static HANDLE event;
 static int resource = 0;
 
-static void
+static
+void
 once_do_it(void)
   {
     /* Perform initialization.  */
@@ -24,7 +25,8 @@ once_do_it(void)
     Sleep(100);
   }
 
-static void*
+static
+void*
 thread_proc(void* param)
   {
     (void) param;

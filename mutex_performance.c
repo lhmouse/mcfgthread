@@ -54,7 +54,8 @@ my_mutex_t mutex;
 volatile double dst = 12345;
 volatile double src = 54321;
 
-static void*
+static
+void*
 thread_proc(void* arg)
   {
     (void) arg;

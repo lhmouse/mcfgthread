@@ -13,14 +13,16 @@ static _MCF_tls_key* key;
 static HANDLE event;
 static int count;
 
-static void
+static
+void
 tls_destructor(void* ptr)
   {
     printf("thread %d tls_destructor\n", (int) GetCurrentThreadId());
     __atomic_fetch_add((int*) ptr, 1, __ATOMIC_RELAXED);
   }
 
-static void
+static
+void
 thread_proc(_MCF_thread* self)
   {
     WaitForSingleObject(event, INFINITE);

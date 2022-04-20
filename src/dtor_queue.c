@@ -30,7 +30,8 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
     return 0;
   }
 
-static inline void
+static inline
+void
 do_remove_element_common(__MCF_dtor_queue* queue, size_t index)
   {
     __MCFGTHREAD_ASSERT(index < queue->__size);

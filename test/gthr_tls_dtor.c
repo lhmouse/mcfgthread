@@ -13,14 +13,16 @@ static __gthread_key_t key;
 static HANDLE event;
 static int count;
 
-static void
+static
+void
 tls_destructor(void* ptr)
   {
     printf("thread %d tls_destructor\n", (int) GetCurrentThreadId());
     __atomic_fetch_add((int*) ptr, 1, __ATOMIC_RELAXED);
   }
 
-static void*
+static
+void*
 thread_proc(void* param)
   {
     (void) param;

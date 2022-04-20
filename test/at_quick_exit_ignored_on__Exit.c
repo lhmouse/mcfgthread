@@ -8,7 +8,8 @@
 #include <stdio.h>
 #include <windows.h>
 
-static void
+static
+void
 atexit_second(void* ptr)
   {
     __MCF__Exit(*(int*) ptr);

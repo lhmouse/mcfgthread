@@ -10,13 +10,15 @@
 static char buffer[1000];
 static int dso_1, dso_2;
 
-static void __cdecl
+static
+void __cdecl
 cleanup_1(void* ptr)
   {
     strcat(buffer, ptr);
   }
 
-static void __thiscall
+static
+void __thiscall
 cleanup_2(void* ptr)
   {
     strcat(buffer, ptr);

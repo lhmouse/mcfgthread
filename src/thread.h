@@ -54,15 +54,16 @@ __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_THREAD_EXTERN_INLINE __MCF_CXX(const) void*
+__MCF_THREAD_EXTERN_INLINE
+__MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     return (char*) __thrd->__data;
   }
 
 #ifdef __cplusplus
-extern "C++"
-inline void*
+extern "C++" inline
+void*
 _MCF_thread_get_data(_MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     return __thrd->__data;
@@ -74,7 +75,8 @@ _MCF_thread_get_data(_MCF_thread* __thrd) __MCF_NOEXCEPT
 void
 _MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 
-__MCF_THREAD_EXTERN_INLINE void
+__MCF_THREAD_EXTERN_INLINE
+void
 _MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     int __old_ref = __MCF_ATOMIC_ADD_RLX(__thrd->__nref, 1);
@@ -91,7 +93,8 @@ _MCF_thread_drop_ref(_MCF_thread* __thrd_opt) __MCF_NOEXCEPT;
 void
 _MCF_thread_drop_ref_nonnull(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 
-__MCF_THREAD_EXTERN_INLINE void
+__MCF_THREAD_EXTERN_INLINE
+void
 _MCF_thread_drop_ref(_MCF_thread* __thrd_opt) __MCF_NOEXCEPT
   {
     if(__thrd_opt)
@@ -103,7 +106,8 @@ uint32_t
 _MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_THREAD_EXTERN_INLINE uint32_t
+__MCF_THREAD_EXTERN_INLINE
+uint32_t
 _MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     return __thrd->__tid;
@@ -114,7 +118,8 @@ __MCF_HANDLE
 _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_THREAD_EXTERN_INLINE __MCF_HANDLE
+__MCF_THREAD_EXTERN_INLINE
+__MCF_HANDLE
 _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     return __thrd->__handle;

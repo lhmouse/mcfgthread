@@ -13,7 +13,8 @@ static __gthread_recursive_mutex_t mutex = __GTHREAD_RECURSIVE_MUTEX_INIT;
 static HANDLE event;
 static int resource = 0;
 
-static void*
+static
+void*
 thread_proc(void* param)
   {
     (void) param;

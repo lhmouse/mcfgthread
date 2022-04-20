@@ -76,15 +76,15 @@ typedef struct __MCF_thread _MCF_thread;
 typedef struct __MCF_tls_key _MCF_tls_key;
 
 /* Define some helper functions.  */
-__MCF_CXX11(constexpr)
-__MCF_ALWAYS_INLINE size_t
+__MCF_CXX11(constexpr) __MCF_ALWAYS_INLINE
+size_t
 _MCF_minz(size_t __x, size_t __y) __MCF_NOEXCEPT
   {
     return __y < __x ? __y : __x;
   }
 
-__MCF_CXX11(constexpr)
-__MCF_ALWAYS_INLINE size_t
+__MCF_CXX11(constexpr) __MCF_ALWAYS_INLINE
+size_t
 _MCF_maxz(size_t __x, size_t __y) __MCF_NOEXCEPT
   {
     return __x < __y ? __y : __x;

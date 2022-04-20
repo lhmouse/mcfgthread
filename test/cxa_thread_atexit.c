@@ -8,14 +8,16 @@
 #include <stdio.h>
 #include <windows.h>
 
-static void
+static
+void
 thread_atexit_proc(void* arg)
   {
     printf("thread %d atexit\n", (int) GetCurrentThreadId());
     *(int*) arg = 42;
   }
 
-static void
+static
+void
 thread_proc(_MCF_thread* self)
   {
     __MCF_cxa_thread_atexit(thread_atexit_proc, self->__data, NULL);

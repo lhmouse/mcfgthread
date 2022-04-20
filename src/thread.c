@@ -7,11 +7,13 @@
 #include "memory.h"
 #include "win32.h"
 
-static DWORD __stdcall
+static
+DWORD __stdcall
 do_win32_thread_thunk(LPVOID param)
   __attribute__((__force_align_arg_pointer__));
 
-static DWORD __stdcall
+static
+DWORD __stdcall
 do_win32_thread_thunk(LPVOID param)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;

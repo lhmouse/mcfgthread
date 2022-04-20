@@ -16,7 +16,8 @@ static __gthread_cond_t cond_produced, cond_consumed;
 static int value;
 static int consumed[NTHREADS];
 
-static void*
+static
+void*
 thread_proc(void* param)
   {
     int* my_consumed = param;

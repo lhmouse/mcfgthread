@@ -61,7 +61,8 @@ __MCF_gthr_active_p(void) __MCF_NOEXCEPT
 
 #define __gthread_active_p  __MCF_gthr_active_p
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_active_p(void) __MCF_NOEXCEPT
   {
     return 1;
@@ -73,7 +74,8 @@ __MCF_gthr_active_p(void) __MCF_NOEXCEPT
 void
 __MCF_gthr_unonce(__gthread_once_t** __oncep) __MCF_NOEXCEPT;
 
-__MCF_GTHR_EXTERN_INLINE void
+__MCF_GTHR_EXTERN_INLINE
+void
 __MCF_gthr_unonce(__gthread_once_t** __oncep) __MCF_NOEXCEPT
   {
     if(*__oncep)
@@ -86,7 +88,8 @@ int64_t
 __MCF_gthr_timeout_from_timespec(const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_GTHR_EXTERN_INLINE int64_t
+__MCF_GTHR_EXTERN_INLINE
+int64_t
 __MCF_gthr_timeout_from_timespec(const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
   {
     double __time_ms = 0.000999;
@@ -135,7 +138,8 @@ __MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void));
 
 #define __gthread_once  __MCF_gthr_once
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void))
   {
     int __do_init = _MCF_once_wait(__once, NULL);
@@ -155,7 +159,8 @@ __MCF_gthr_key_create(__gthread_key_t* __keyp, void __dtor(void*)) __MCF_NOEXCEP
 
 #define __gthread_key_create  __MCF_gthr_key_create
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_key_create(__gthread_key_t* __keyp, void __dtor(void*)) __MCF_NOEXCEPT
   {
     _MCF_tls_key* __key = _MCF_tls_key_new(__dtor);
@@ -169,7 +174,8 @@ __MCF_gthr_key_delete(__gthread_key_t __key) __MCF_NOEXCEPT;
 
 #define __gthread_key_delete  __MCF_gthr_key_delete
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_key_delete(__gthread_key_t __key) __MCF_NOEXCEPT
   {
     _MCF_tls_key_delete(__key);
@@ -182,7 +188,8 @@ __MCF_gthr_getspecific(__gthread_key_t __key) __MCF_NOEXCEPT;
 
 #define __gthread_getspecific  __MCF_gthr_getspecific
 
-__MCF_GTHR_EXTERN_INLINE void*
+__MCF_GTHR_EXTERN_INLINE
+void*
 __MCF_gthr_getspecific(__gthread_key_t __key) __MCF_NOEXCEPT
   {
     return _MCF_tls_get(__key);
@@ -194,7 +201,8 @@ __MCF_gthr_setspecific(__gthread_key_t __key, const void* __ptr) __MCF_NOEXCEPT;
 
 #define __gthread_setspecific  __MCF_gthr_setspecific
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_setspecific(__gthread_key_t __key, const void* __ptr) __MCF_NOEXCEPT
   {
     int __err = _MCF_tls_set(__key, __ptr);
@@ -208,7 +216,8 @@ __MCF_gthr_mutex_init(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 #define __gthread_mutex_init  __MCF_gthr_mutex_init
 #define __GTHREAD_MUTEX_INIT_FUNCTION  __MCF_gthr_mutex_init
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_mutex_init(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
   {
     _MCF_mutex_init(__mtx);
@@ -221,7 +230,8 @@ __MCF_gthr_mutex_destroy(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 
 #define __gthread_mutex_destroy  __MCF_gthr_mutex_destroy
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_mutex_destroy(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
   {
     (void) __mtx;
@@ -234,7 +244,8 @@ __MCF_gthr_mutex_lock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 
 #define __gthread_mutex_lock  __MCF_gthr_mutex_lock
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_mutex_lock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
   {
     int __err = _MCF_mutex_lock(__mtx, NULL);
@@ -248,7 +259,8 @@ __MCF_gthr_mutex_trylock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 
 #define __gthread_mutex_trylock  __MCF_gthr_mutex_trylock
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_mutex_trylock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
   {
     int64_t __timeout = 0;
@@ -262,7 +274,8 @@ __MCF_gthr_mutex_timedlock(__gthread_mutex_t* __mtx, const __gthread_time_t* __a
 
 #define __gthread_mutex_timedlock  __MCF_gthr_mutex_timedlock
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_mutex_timedlock(__gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
@@ -276,7 +289,8 @@ __MCF_gthr_mutex_unlock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 
 #define __gthread_mutex_unlock  __MCF_gthr_mutex_unlock
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_mutex_unlock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
   {
     _MCF_mutex_unlock(__mtx);
@@ -290,7 +304,8 @@ __MCF_gthr_recursive_mutex_init(__gthread_recursive_mutex_t* __mtx) __MCF_NOEXCE
 #define __gthread_recursive_mutex_init  __MCF_gthr_recursive_mutex_init
 #define __GTHREAD_RECURSIVE_MUTEX_INIT_FUNCTION  __MCF_gthr_recursive_mutex_init
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_recursive_mutex_init(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     __rmtx->__owner = 0;
@@ -305,7 +320,8 @@ __MCF_gthr_recursive_mutex_destroy(__gthread_recursive_mutex_t* __rmtx) __MCF_NO
 
 #define __gthread_recursive_mutex_destroy  __MCF_gthr_recursive_mutex_destroy
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_recursive_mutex_destroy(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     (void) __rmtx;
@@ -318,7 +334,8 @@ __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXC
 
 #define __gthread_recursive_mutex_lock  __MCF_gthr_recursive_mutex_lock
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     uint32_t __my_tid = _MCF_thread_self_tid();
@@ -347,7 +364,8 @@ __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NO
 
 #define __gthread_recursive_mutex_trylock  __MCF_gthr_recursive_mutex_trylock
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     uint32_t __my_tid = _MCF_thread_self_tid();
@@ -377,7 +395,8 @@ __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const 
 
 #define __gthread_recursive_mutex_timedlock  __MCF_gthr_recursive_mutex_timedlock
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
   {
     uint32_t __my_tid = _MCF_thread_self_tid();
@@ -406,7 +425,8 @@ __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOE
 
 #define __gthread_recursive_mutex_unlock  __MCF_gthr_recursive_mutex_unlock
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     uint32_t __my_tid = _MCF_thread_self_tid();
@@ -432,7 +452,8 @@ __MCF_gthr_cond_init(__gthread_cond_t* __cond) __MCF_NOEXCEPT;
 #define __gthread_cond_init  __MCF_gthr_cond_init
 #define __GTHREAD_COND_INIT_FUNCTION  __MCF_gthr_cond_init
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_cond_init(__gthread_cond_t* __cond) __MCF_NOEXCEPT
   {
     _MCF_cond_init(__cond);
@@ -446,7 +467,8 @@ __MCF_gthr_cond_destroy(__gthread_cond_t* __cond) __MCF_NOEXCEPT;
 
 #define __gthread_cond_destroy  __MCF_gthr_cond_destroy
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_cond_destroy(__gthread_cond_t* __cond) __MCF_NOEXCEPT
   {
     (void) __cond;
@@ -459,7 +481,8 @@ __MCF_gthr_cond_wait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx) __MCF_N
 
 #define __gthread_cond_wait  __MCF_gthr_cond_wait
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_cond_wait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx) __MCF_NOEXCEPT
   {
     int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback, __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx, NULL);
@@ -473,7 +496,8 @@ __MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mut
 
 #define __gthread_cond_wait_recursive  __MCF_gthr_cond_wait_recursive
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) __rmtx, NULL);
@@ -488,7 +512,8 @@ __MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx, co
 
 #define __gthread_cond_timedwait  __MCF_gthr_cond_timedwait
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
@@ -503,7 +528,8 @@ __MCF_gthr_cond_signal(__gthread_cond_t* __cond) __MCF_NOEXCEPT;
 
 #define __gthread_cond_signal  __MCF_gthr_cond_signal
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_cond_signal(__gthread_cond_t* __cond) __MCF_NOEXCEPT
   {
     _MCF_cond_signal_some(__cond, 1);
@@ -517,7 +543,8 @@ __MCF_gthr_cond_broadcast(__gthread_cond_t* __cond) __MCF_NOEXCEPT;
 
 #define __gthread_cond_broadcast  __MCF_gthr_cond_broadcast
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_cond_broadcast(__gthread_cond_t* __cond) __MCF_NOEXCEPT
   {
     _MCF_cond_signal_all(__cond);
@@ -530,7 +557,8 @@ __MCF_gthr_create(__gthread_t* __thrdp, void* __proc(void*), void* __arg) __MCF_
 
 #define __gthread_create  __MCF_gthr_create
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_create(__gthread_t* __thrdp, void* __proc(void*), void* __arg) __MCF_NOEXCEPT
   {
     __MCF_gthr_thread_record __rec = { 0 };
@@ -548,7 +576,8 @@ __MCF_gthr_join(__gthread_t __thrd, void** __resultp_opt) __MCF_NOEXCEPT;
 
 #define __gthread_join  __MCF_gthr_join
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_join(__gthread_t __thrd, void** __resultp_opt) __MCF_NOEXCEPT
   {
     _MCF_thread* __self = _MCF_thread_self();
@@ -581,7 +610,8 @@ __MCF_gthr_detach(__gthread_t __thrd) __MCF_NOEXCEPT;
 
 #define __gthread_detach  __MCF_gthr_detach
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_detach(__gthread_t __thrd) __MCF_NOEXCEPT
   {
     _MCF_thread_drop_ref(__thrd);
@@ -597,7 +627,8 @@ __MCF_gthr_self(void) __MCF_NOEXCEPT
 
 #define __gthread_self  __MCF_gthr_self
 
-__MCF_GTHR_EXTERN_INLINE __gthread_t
+__MCF_GTHR_EXTERN_INLINE
+__gthread_t
 __MCF_gthr_self(void) __MCF_NOEXCEPT
   {
     _MCF_thread* __self = _MCF_thread_self();
@@ -612,7 +643,8 @@ __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT
 
 #define __gthread_equal  __MCF_thrd_equal
 
-__MCF_GTHR_EXTERN_INLINE int
+__MCF_GTHR_EXTERN_INLINE
+int
 __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT
   {
     return __t1 == __t2;
@@ -624,7 +656,8 @@ __MCF_gthr_yield(void) __MCF_NOEXCEPT;
 
 #define __gthread_yield  __MCF_gthr_yield
 
-__MCF_GTHR_EXTERN_INLINE void
+__MCF_GTHR_EXTERN_INLINE
+void
 __MCF_gthr_yield(void) __MCF_NOEXCEPT
   {
     _MCF_yield();

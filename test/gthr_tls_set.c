@@ -11,7 +11,8 @@ static __gthread_key_t key;
 static __gthread_t thrd;
 static int dso_1, dso_2;
 
-static void*
+static
+void*
 thread_proc(void* param)
   {
     (void) param;

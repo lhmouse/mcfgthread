@@ -18,7 +18,8 @@ static int num_init = 0;   /* threads that performed initialization  */
 static int num_ready = 0;  /* threads that saw so but didn't do it  */
 static int num_timed_out = 0;
 
-static void
+static
+void
 thread_proc(_MCF_thread* self)
   {
     WaitForSingleObject(event, INFINITE);

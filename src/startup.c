@@ -26,7 +26,8 @@ _MCF_get_win32_error(void)
     return GetLastError();
   }
 
-static inline void
+static inline
+void
 do_startup_crt_initialize(PVOID instance)
   {
     /* Set up the base address in memory.  */
@@ -55,7 +56,8 @@ do_startup_crt_initialize(PVOID instance)
     __MCFGTHREAD_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
   }
 
-static inline void
+static inline
+void
 do_startup_thread_finalize(void)
   {
     _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
@@ -68,7 +70,8 @@ do_startup_thread_finalize(void)
     __MCF_tls_table_finalize(&(self->__tls_table));
   }
 
-static inline void
+static inline
+void
 do_startup_thread_detach_self(void)
   {
     _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
@@ -90,7 +93,8 @@ __MCF_finalize_on_exit(void)
   }
 
 /* Define the common routine for both static and shared libraries.  */
-static void __stdcall
+static
+void __stdcall
 TlsCRTStartup(PVOID instance, DWORD reason, LPVOID reserved)
   {
     /* Perform global initialization and per-thread cleanup, as needed.

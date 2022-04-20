@@ -6,7 +6,8 @@
 #include "mutex.h"
 #include "win32.h"
 
-static inline uint8_t*
+static inline
+uint8_t*
 do_flag_byte(const _MCF_mutex* mutex, uint32_t sp_mask)
   {
     /* Each spinning thread is assigned a byte in the field. If the thread sees

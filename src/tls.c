@@ -22,7 +22,8 @@ _MCF_tls_key_new(_MCF_tls_dtor* dtor_opt)
     return key;
   }
 
-static void
+static
+void
 do_tls_key_drop_ref_nonnull(_MCF_tls_key* key)
   {
     int old_ref = __MCF_ATOMIC_SUB_ARL(key->__nref, 1);
@@ -44,7 +45,8 @@ _MCF_tls_key_delete_nonnull(_MCF_tls_key* key)
     do_tls_key_drop_ref_nonnull(key);
   }
 
-static inline __MCF_tls_element*
+static inline
+__MCF_tls_element*
 do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
   {
     __MCFGTHREAD_ASSERT(key);
