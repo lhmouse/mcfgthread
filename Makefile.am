@@ -4,6 +4,7 @@ NOTHING =
 ## Compiler options
 AM_CPPFLAGS = -pipe -Wall -Wextra  \
   -include config.h -U_FORTIFY_SOURCE -D_WIN32_WINNT=0x0601  \
+  -mnop-fun-dllimport  \
   -f{strict-{aliasing,overflow},merge-all-constants}  \
   -fno-{math-errno,trapping-math,stack-protector}  \
   -Werror={conversion,sign-{compare,conversion},write-strings,return-type}  \
