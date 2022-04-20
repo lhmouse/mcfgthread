@@ -119,31 +119,23 @@ __MCF_seh_top(EXCEPTION_RECORD* __record, void* __frame, CONTEXT* __ctx, void* _
 
 struct __MCF_i386_seh_node
   {
-    void* __next;
-    void* __filter;  /* typeof(__MCF_seh_top)*  */
+    DWORD __next;  /* `__MCF_i386_seh_node*`  */
+    DWORD __filter;  /* `typeof(__MCF_seh_top)*`  */
   }
   typedef __MCF_i386_seh_node;
 
 __MCF_ALWAYS_INLINE void
 __MCF_i386_seh_install(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
   {
-    __asm__ (
-      "movl %%fs:0, %%eax            \n"/*  mov eax, fs:[0]  */
-      "movl %%eax, (%0)              \n"/*  mov [%0], eax  */
-      "movl $___MCF_seh_top, 4(%0)   \n"/*  mov [%0 + 4], offset FILTER  */
-      "movl %0, %%fs:0               \n"/*  mov fs:[0], %0  */
-      : : "r"(__seh_node)
-      : "eax", "memory");  /* EAX is unlikely a parameter  */
+    __seh_node->__next = __readfsdword(0U);
+    __seh_node->__filter = (DWORD) __MCF_seh_top;
+    __writefsdword(0U, (DWORD) __seh_node);
   }
 
 __MCF_ALWAYS_INLINE void
 __MCF_i386_seh_cleanup(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
   {
-    __asm__ (
-      "movl %0, %%ecx                \n"/*  mov ecx, [%0]  */
-      "movl %%ecx, %%fs:0            \n"/*  mov fs:[0], ecx  */
-      : : "m"(*__seh_node)
-      : "ecx", "memory");  /* ECX is unlikely a return value  */
+    __writefsdword(0U, __seh_node->__next);
   }
 
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
