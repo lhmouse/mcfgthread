@@ -124,8 +124,7 @@ struct __MCF_i386_seh_node
   }
   typedef __MCF_i386_seh_node;
 
-static __attribute__((__always_inline__))
-__inline__ void
+__MCF_ALWAYS_INLINE void
 __MCF_i386_seh_install(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
   {
     __asm__ (
@@ -137,8 +136,7 @@ __MCF_i386_seh_install(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
       : "eax", "memory");  /* EAX is unlikely a parameter  */
   }
 
-static __attribute__((__always_inline__))
-__inline__ void
+__MCF_ALWAYS_INLINE void
 __MCF_i386_seh_cleanup(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
   {
     __asm__ (
