@@ -82,11 +82,10 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 
         while(--spin >= 0) {
           __builtin_ia32_pause();
-          __atomic_thread_fence(__ATOMIC_SEQ_CST);
 
           /* Wait for my turn.  */
           uint8_t cmp = 1;
-          if(!__MCF_ATOMIC_CMPXCHG_WEAK_RLX(do_flag_byte(mutex, my_mask), &cmp, 0))
+          if(!__MCF_ATOMIC_CMPXCHG_RLX(do_flag_byte(mutex, my_mask), &cmp, 0))
             continue;
 
           /* If this mutex has not been locked, lock it and decrement the
