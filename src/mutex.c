@@ -88,8 +88,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
           if(!__MCF_ATOMIC_CMPXCHG_WEAK_RLX(do_flag_byte(mutex, my_mask), &cmp, 0))
             continue;
 
-          /* If this mutex has not been locked, lock it, give back the spinning
-           * bit, and decrement the failure counter. Otherwise, do nothing.  */
+          /* If this mutex has not been locked, lock it and decrement the
+           * failure counter. Otherwise, do nothing.  */
           __MCF_ATOMIC_LOAD_PTR_RLX(&old, mutex);
           if(old.__locked != 0)
             continue;
@@ -104,8 +104,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
             return 0;
         }
 
-        /* We have wasted some time. Now give back the spinning bit and
-         * allocate a sleeping count.
+        /* We have wasted some time. Now allocate a sleeping count.
          * IMPORTANT! We can increment the sleeping counter ONLY IF the mutex
          * is being locked by another thread. Otherwise, if the other thread
          * had unlocked the mutex before we incremented the sleeping counter,
@@ -180,7 +179,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 void
 _MCF_mutex_unlock(_MCF_mutex* mutex)
   {
-    /* Clear the `__locked` field and release at most one thread, if any.  */
+    /* Clear the `__locked` field and release at most one thread, if any.
+     * The right most bit one of the spinning mask is also cleared to enable
+     * further threads to spin.  */
     size_t wake_one;
     _MCF_mutex old, new;
 
