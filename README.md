@@ -57,7 +57,7 @@ This project uses some undocumented NT system calls and might be broken in futur
 |       10|     1500000|  2354.337 ms  |    6016.242 ms  |  2908.908 ms  |**1432.844 ms**|
 |       20|      600000|  2500.839 ms  |   10110.718 ms  |  2562.878 ms  |**1792.559 ms**|
 |       60|      200000|**2942.580 ms**|   10624.262 ms  |  3815.126 ms  |  4919.514 ms  |
-|      200|       50000|**2447.270 ms**|   10011.153 ms  |  3145.487 ms  |  4055.444 ms  |
+|      200|       60000|**2930.807 ms**|   12125.320 ms  |  3885.552 ms  |  5377.910 ms  |
 
 # Implementation details
 
