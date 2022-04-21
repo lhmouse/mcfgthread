@@ -177,7 +177,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
   }
 
 void
-_MCF_mutex_unlock(_MCF_mutex* mutex)
+_MCF_mutex_unlock_slow(_MCF_mutex* mutex)
   {
     /* Clear the `__locked` field and release at most one thread, if any.
      * The right most bit one of the spinning mask is also cleared to enable

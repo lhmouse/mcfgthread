@@ -81,8 +81,13 @@ __MCF_MUTEX_EXTERN_INLINE
 int
 _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
-    _MCF_mutex __old;
-    __MCF_ATOMIC_LOAD_PTR_RLX(&__old, __mutex);
+    _MCF_mutex __old = { 0 };
+    _MCF_mutex __new = { 0 };
+
+    /* This is optimized solely for single-thread code.  */
+    __new.__locked = 1;
+    if(__MCF_ATOMIC_CMPXCHG_PTR_ACQ(__mutex, &__old, &__new))
+      return 0;
 
     if(__timeout_opt && (*__timeout_opt == 0) && __builtin_expect(__old.__locked, 0))
       return -1;
@@ -95,6 +100,24 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEP
  * is undefined.  */
 void
 _MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_NOEXCEPT;
+
+void
+_MCF_mutex_unlock_slow(_MCF_mutex* __mutex) __MCF_NOEXCEPT;
+
+__MCF_MUTEX_EXTERN_INLINE
+void
+_MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_NOEXCEPT
+  {
+    _MCF_mutex __old = { 0 };
+    _MCF_mutex __new = { 0 };
+
+    /* This is optimized solely for single-thread code.  */
+    __old.__locked = 1;
+    if(__MCF_ATOMIC_CMPXCHG_PTR_REL(__mutex, &__old, &__new))
+      return;
+
+    _MCF_mutex_unlock_slow(__mutex);
+  }
 
 #ifdef __cplusplus
 }
