@@ -116,7 +116,8 @@ _MCF_once_release(_MCF_once* once)
   {
     /* Set the `__ready` field and release all threads.  */
     _MCF_once old;
-    _MCF_once new = { 1, 0, 0 };
+    _MCF_once new = { 0 };
+    new.__ready = 1;
     __MCF_ATOMIC_XCHG_PTR_ARL(&old, once, &new);
 
     return __MCF_batch_release_common(once, old.__nsleep);
