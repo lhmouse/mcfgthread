@@ -86,7 +86,7 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEP
 
     /* This is optimized solely for single-thread code.  */
     __new.__locked = 1;
-    if(__MCF_ATOMIC_CMPXCHG_PTR_ACQ(__mutex, &__old, &__new))
+    if(__MCF_ATOMIC_CMPXCHG_WEAK_PTR_ACQ(__mutex, &__old, &__new))
       return 0;
 
     if(__timeout_opt && (*__timeout_opt == 0) && __builtin_expect(__old.__locked, 0))
@@ -113,7 +113,7 @@ _MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_NOEXCEPT
 
     /* This is optimized solely for single-thread code.  */
     __old.__locked = 1;
-    if(__MCF_ATOMIC_CMPXCHG_PTR_REL(__mutex, &__old, &__new))
+    if(__MCF_ATOMIC_CMPXCHG_WEAK_PTR_REL(__mutex, &__old, &__new))
       return;
 
     _MCF_mutex_unlock_slow(__mutex);
