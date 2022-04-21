@@ -50,7 +50,8 @@ struct __MCF_mutex
 void
 _MCF_mutex_init(_MCF_mutex* __mutex) __MCF_NOEXCEPT;
 
-__MCF_MUTEX_EXTERN_INLINE void
+__MCF_MUTEX_EXTERN_INLINE
+void
 _MCF_mutex_init(_MCF_mutex* __mutex) __MCF_NOEXCEPT
   {
     _MCF_mutex __temp = { 0 };
@@ -76,7 +77,8 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEP
 int
 _MCF_mutex_lock_slow(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
-__MCF_MUTEX_EXTERN_INLINE int
+__MCF_MUTEX_EXTERN_INLINE
+int
 _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
     _MCF_mutex __old;

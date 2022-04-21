@@ -37,7 +37,8 @@ struct __MCF_once
 void
 _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT;
 
-__MCF_ONCE_EXTERN_INLINE void
+__MCF_ONCE_EXTERN_INLINE
+void
 _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT
   {
     _MCF_once __temp = { 0 };
@@ -66,7 +67,8 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 int
 _MCF_once_wait_slow(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
-__MCF_ONCE_EXTERN_INLINE int
+__MCF_ONCE_EXTERN_INLINE
+int
 _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
     _MCF_once __old;

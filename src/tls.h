@@ -70,7 +70,8 @@ _MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT;
 void
 _MCF_tls_key_delete_nonnull(_MCF_tls_key* __key) __MCF_NOEXCEPT;
 
-__MCF_TLS_EXTERN_INLINE void
+__MCF_TLS_EXTERN_INLINE
+void
 _MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT
   {
     if(__key_opt)

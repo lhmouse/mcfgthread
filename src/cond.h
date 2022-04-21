@@ -36,7 +36,8 @@ typedef void _MCF_cond_relock_callback(intptr_t __lock_arg, intptr_t __unlocked)
 void
 _MCF_cond_init(_MCF_cond* __cond) __MCF_NOEXCEPT;
 
-__MCF_COND_EXTERN_INLINE void
+__MCF_COND_EXTERN_INLINE
+void
 _MCF_cond_init(_MCF_cond* __cond) __MCF_NOEXCEPT
   {
     _MCF_cond __temp = { 0 };

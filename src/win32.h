@@ -124,7 +124,8 @@ struct __MCF_i386_seh_node
   }
   typedef __MCF_i386_seh_node;
 
-__MCF_ALWAYS_INLINE void
+__MCF_ALWAYS_INLINE
+void
 __MCF_i386_seh_install(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
   {
     __seh_node->__next = __readfsdword(0U);
@@ -132,7 +133,8 @@ __MCF_i386_seh_install(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
     __writefsdword(0U, (DWORD) __seh_node);
   }
 
-__MCF_ALWAYS_INLINE void
+__MCF_ALWAYS_INLINE
+void
 __MCF_i386_seh_cleanup(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
   {
     __writefsdword(0U, __seh_node->__next);
@@ -153,7 +155,8 @@ LARGE_INTEGER*
 __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
   __attribute__((__nothrow__));
 
-__MCF_WIN32_EXTERN_INLINE LARGE_INTEGER*
+__MCF_WIN32_EXTERN_INLINE
+LARGE_INTEGER*
 __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
   {
     double __nt_time;
@@ -191,7 +194,8 @@ size_t
 __MCF_batch_release_common(const void* __key, size_t __count)
   __attribute__((__nothrow__));
 
-__MCF_WIN32_EXTERN_INLINE size_t
+__MCF_WIN32_EXTERN_INLINE
+size_t
 __MCF_batch_release_common(const void* __key, size_t __count)
   {
     size_t __k;

@@ -30,7 +30,8 @@ void*
 _MCF_mrealloc0_ptr(void* __ptr, size_t __size) __MCF_NOEXCEPT
   __attribute__((__alloc_size__(2)));
 
-__MCF_MEMORY_EXTERN_INLINE uint8_t
+__MCF_MEMORY_EXTERN_INLINE
+uint8_t
 _MCF_mrealloc0(void** __pptr, size_t __size) __MCF_NOEXCEPT
   {
     void* __ptr_new = _MCF_mrealloc0_ptr(*__pptr, __size);
@@ -54,7 +55,8 @@ _MCF_mfree(void* __ptr_opt) __MCF_NOEXCEPT;
 void
 _MCF_mfree_nonnull(void* __ptr) __MCF_NOEXCEPT;
 
-__MCF_MEMORY_EXTERN_INLINE void
+__MCF_MEMORY_EXTERN_INLINE
+void
 _MCF_mfree(void* __ptr_opt) __MCF_NOEXCEPT
   {
     if(__ptr_opt)
