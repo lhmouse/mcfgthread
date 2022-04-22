@@ -6,7 +6,6 @@
 #include "../src/exit.h"
 #include <assert.h>
 #include <stdio.h>
-#include <windows.h>
 
 static
 void

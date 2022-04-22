@@ -5,7 +5,6 @@
 #include "../src/thread.h"
 #include <assert.h>
 #include <stdio.h>
-#include <windows.h>
 
 static _MCF_tls_key* key;
 static _MCF_thread* thrd;
@@ -27,7 +26,8 @@ thread_proc(_MCF_thread* self)
     p = _MCF_tls_get(key);
     assert(p == &dso_2);
 
-    Sleep(1000);
+    int64_t sleep_time = -1000;
+    _MCF_sleep(&sleep_time);
     printf("thread %d quitting\n", self->__tid);
   }
 
@@ -53,7 +53,7 @@ main(void)
     assert(thrd);
 
     printf("main waiting\n");
-    WaitForSingleObject(thrd->__handle, INFINITE);
+    _MCF_thread_wait(thrd, NULL);
     printf("main wait finished\n");
 
     p = _MCF_tls_get(key);

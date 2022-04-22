@@ -4,7 +4,6 @@
 
 #include "../src/gthr.h"
 #include <assert.h>
-#include <windows.h>
 
 int
 main(void)

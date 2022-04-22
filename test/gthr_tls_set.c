@@ -5,7 +5,6 @@
 #include "../src/gthr.h"
 #include <assert.h>
 #include <stdio.h>
-#include <windows.h>
 
 static __gthread_key_t key;
 static __gthread_t thrd;
@@ -28,8 +27,9 @@ thread_proc(void* param)
     p = __gthread_getspecific(key);
     assert(p == &dso_2);
 
-    Sleep(1000);
-    printf("thread %d quitting\n", (int) GetCurrentThreadId());
+    int64_t sleep_time = -1000;
+    _MCF_sleep(&sleep_time);
+    printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
     return NULL;
   }
 
@@ -57,7 +57,7 @@ main(void)
     assert(thrd);
 
     printf("main waiting\n");
-    WaitForSingleObject(thrd->__handle, INFINITE);
+    __gthread_join(thrd, NULL);
     printf("main wait finished\n");
 
     p = __gthread_getspecific(key);

@@ -6,12 +6,11 @@
 #include "../src/thread.h"
 #include <assert.h>
 #include <stdio.h>
-#include <windows.h>
 
 #define NTHREADS  64U
 static _MCF_thread* threads[NTHREADS];
 static _MCF_once once;
-static HANDLE event;
+static _MCF_once start;
 static int resource = 0;
 
 static int num_init = 0;   /* threads that performed initialization  */
@@ -22,7 +21,7 @@ static
 void
 thread_proc(_MCF_thread* self)
   {
-    WaitForSingleObject(event, INFINITE);
+    _MCF_once_wait(&start, NULL);
 
     int64_t zero = 0;
     int r = _MCF_once_wait(&once, &zero);
@@ -30,22 +29,26 @@ thread_proc(_MCF_thread* self)
     if(r == 1) {
       /* Perform initialization.  */
       int old = resource;
-      Sleep(200);
+      int64_t sleep_time = -200;
+      _MCF_sleep(&sleep_time);
       resource = old + 1;
       _MCF_once_release(&once);
 
-      Sleep(100);
+      sleep_time = -100;
+      _MCF_sleep(&sleep_time);
       __atomic_fetch_add(&num_init, 1, __ATOMIC_RELAXED);
     }
     else if(r == 0) {
       /* Assume `resource` has been initialized.  */
       assert(resource == 1);
 
-      Sleep(100);
+      int64_t sleep_time = -100;
+      _MCF_sleep(&sleep_time);
       __atomic_fetch_add(&num_ready, 1, __ATOMIC_RELAXED);
     }
     else if(r == -1) {
-      Sleep(100);
+      int64_t sleep_time = -100;
+      _MCF_sleep(&sleep_time);
       __atomic_fetch_add(&num_timed_out, 1, __ATOMIC_RELAXED);
     }
     else
@@ -57,18 +60,15 @@ thread_proc(_MCF_thread* self)
 int
 main(void)
   {
-    event = CreateEventW(NULL, TRUE, FALSE, NULL);
-    assert(event);
-
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       threads[k] = _MCF_thread_new(thread_proc, NULL, 0);
       assert(threads[k]);
     }
 
     printf("main waiting\n");
-    SetEvent(event);
+    _MCF_once_release(&start);
     for(size_t k = 0;  k < NTHREADS;  ++k) {
-      WaitForSingleObject(threads[k]->__handle, INFINITE);
+      _MCF_thread_wait(threads[k], NULL);
       printf("main wait finished: %d\n", (int)k);
     }
 

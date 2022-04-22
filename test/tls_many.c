@@ -4,7 +4,6 @@
 
 #include "../src/thread.h"
 #include <assert.h>
-#include <windows.h>
 
 int
 main(void)

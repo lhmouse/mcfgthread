@@ -5,12 +5,11 @@
 #include "../src/gthr.h"
 #include <assert.h>
 #include <stdio.h>
-#include <windows.h>
 
 #define NTHREADS  64U
 static __gthread_t threads[NTHREADS];
 static __gthread_mutex_t mutex = __GTHREAD_MUTEX_INIT;
-static HANDLE event;
+static _MCF_once start;
 static int resource = 0;
 
 static
@@ -18,27 +17,26 @@ void*
 thread_proc(void* param)
   {
     (void) param;
-    WaitForSingleObject(event, INFINITE);
+    _MCF_once_wait(&start, NULL);
+    _MCF_once_wait(&start, NULL);
 
     int r = __gthread_mutex_lock(&mutex);
     assert(r == 0);
 
     /* Add a resource.  */
     int old = resource;
-    Sleep(10);
+    int64_t sleep_time = -10;
+    _MCF_sleep(&sleep_time);
     resource = old + 1;
     __gthread_mutex_unlock(&mutex);
 
-    printf("thread %d quitting\n", (int) GetCurrentThreadId());
+    printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
     return NULL;
   }
 
 int
 main(void)
   {
-    event = CreateEventW(NULL, TRUE, FALSE, NULL);
-    assert(event);
-
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       int r = __gthread_create(&threads[k], thread_proc, NULL);
       assert(r == 0);
@@ -46,7 +44,7 @@ main(void)
     }
 
     printf("main waiting\n");
-    SetEvent(event);
+    _MCF_once_release(&start);
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       int r = __gthread_join(threads[k], NULL);
       assert(r == 0);

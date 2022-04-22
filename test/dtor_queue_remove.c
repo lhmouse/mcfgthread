@@ -5,7 +5,6 @@
 #include "../src/dtor_queue.h"
 #include <assert.h>
 #include <stdio.h>
-#include <windows.h>
 
 static __MCF_dtor_queue queue;
 

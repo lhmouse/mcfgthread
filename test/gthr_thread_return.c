@@ -5,7 +5,6 @@
 #include "../src/gthr.h"
 #include <assert.h>
 #include <stdio.h>
-#include <windows.h>
 
 static __gthread_t thrd;
 static int magic;
@@ -15,9 +14,10 @@ void*
 thread_proc(void* param)
   {
     (void) param;
-    Sleep(500);
+    int64_t sleep_time = -500;
+    _MCF_sleep(&sleep_time);
 
-    printf("thread %d quitting\n", (int) GetCurrentThreadId());
+    printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
     return &magic;
   }
 

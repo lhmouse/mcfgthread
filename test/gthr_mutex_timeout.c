@@ -6,7 +6,6 @@
 #include "../src/clock.h"
 #include <assert.h>
 #include <stdio.h>
-#include <windows.h>
 
 static __gthread_mutex_t mutex = __GTHREAD_MUTEX_INIT;
 

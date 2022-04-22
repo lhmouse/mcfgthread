@@ -5,7 +5,6 @@
 #include "../src/gthr.h"
 #include <assert.h>
 #include <stdio.h>
-#include <windows.h>
 
 #define NTHREADS  64U
 static __gthread_t threads[NTHREADS];
@@ -35,7 +34,7 @@ thread_proc(void* param)
 
       /* Consume it  */
       int value_got = value;
-      //printf("thread %d got %d\n", (int) GetCurrentThreadId(), value_got);
+      //printf("thread %d got %d\n", (int) _MCF_thread_self_tid(), value_got);
       if(value_got > 0)
         value = 0;
 
@@ -52,7 +51,7 @@ thread_proc(void* param)
       *my_consumed += value_got;
     }
 
-    printf("thread %d quitting\n", (int) GetCurrentThreadId());
+    printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
     return NULL;
   }
 
@@ -65,7 +64,8 @@ main(void)
       assert(threads[k]);
     }
 
-    Sleep(500);
+    int64_t sleep_time = -500;
+    _MCF_sleep(&sleep_time);
 
     int err = __gthread_mutex_lock(&mutex);
     assert(err == 0);

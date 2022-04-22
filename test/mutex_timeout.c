@@ -6,7 +6,6 @@
 #include "../src/clock.h"
 #include <assert.h>
 #include <stdio.h>
-#include <windows.h>
 
 static _MCF_mutex mutex;
 
