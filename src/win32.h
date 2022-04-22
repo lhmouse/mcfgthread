@@ -168,7 +168,7 @@ __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
     if(*__int64_opt > 0) {
       /* `*__int64_opt` is milliseconds since 1970-01-01T00:00:00Z.
        * Convert it into the NT epoch.  */
-      __nt_time = 116444736000000000 + (double) *__int64_opt * 10000;
+      __nt_time = ((double) *__int64_opt + 11644473600000) * 10000;
       if(__nt_time > 0x7FFFFFFFFFFFFC00)
         return NULL;  /* overflowed; assume infinity  */
 
