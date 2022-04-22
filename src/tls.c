@@ -108,29 +108,31 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
       table->__begin = elem;
       table->__end = elem + capacity;
 
-      while(temp.__begin != temp.__end) {
-        temp.__end --;
+      /* Relocate existent elements, if any.  */
+      if(temp.__begin) {
+        while(temp.__begin != temp.__end) {
+          temp.__end --;
 
-        /* Skip empty elements.  */
-        _MCF_tls_key* tkey = temp.__end->__key_opt;
-        if(!tkey)
-          continue;
+          /* Skip empty buckets.  */
+          _MCF_tls_key* tkey = temp.__end->__key_opt;
+          if(!tkey)
+            continue;
 
-        if(__MCF_ATOMIC_LOAD_RLX(tkey->__deleted) != 0) {
-          /* If the key has been deleted, don't relocate it; free it instead.  */
-          do_tls_key_drop_ref_nonnull(tkey);
-          continue;
+          if(__MCF_ATOMIC_LOAD_RLX(tkey->__deleted) != 0) {
+            /* If the key has been deleted, don't relocate it; free it instead.  */
+            do_tls_key_drop_ref_nonnull(tkey);
+            continue;
+          }
+
+          /* Relocate this element into the new storage.  */
+          elem = do_linear_probe_nonempty(table, tkey);
+          __MCFGTHREAD_ASSERT(!elem->__key_opt);
+          *elem = *(temp.__end);
         }
 
-        /* Relocate this element into the new storage.  */
-        elem = do_linear_probe_nonempty(table, tkey);
-        __MCFGTHREAD_ASSERT(!elem->__key_opt);
-        *elem = *(temp.__end);
-      }
-
-      /* Deallocate the old storage, if amy.  */
-      if(temp.__begin)
+        /* Deallocate the old table which should be empty now.  */
         _MCF_mfree_nonnull(temp.__begin);
+      }
     }
 
     /* Search for the given key.
@@ -155,18 +157,15 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     __MCF_tls_table temp;
 
-    for(;;) {
-      /* The table may be modified while being scanned so swap it out first.  */
+    /* The table may be modified by destructors, so swap it out first.  */
+    while(table->__begin) {
       temp = *table;
       *table = (__MCF_tls_table) __MCF_0_INIT;
-
-      if(!temp.__begin)
-        break;
 
       while(temp.__begin != temp.__end) {
         temp.__end --;
 
-        /* Skip empty elements.  */
+        /* Skip empty buckets.  */
         _MCF_tls_key* tkey = temp.__end->__key_opt;
         if(!tkey)
           continue;
