@@ -11,7 +11,7 @@
 _MCF_tls_key*
 _MCF_tls_key_new(_MCF_tls_dtor* dtor_opt)
   {
-    _MCF_tls_key* key = _MCF_malloc0(sizeof(_MCF_tls_key));
+    _MCF_tls_key* key = _MCF_malloc_0(sizeof(_MCF_tls_key));
     if(!key)
       return NULL;
 
@@ -100,7 +100,7 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
     if(table->__size >= capacity / 2) {
       /* Allocate a larger table. The number of elements is not changed.  */
       capacity = capacity + capacity / 2 + 17;
-      __MCF_tls_element* elem = _MCF_malloc0(capacity * sizeof(__MCF_tls_element));
+      __MCF_tls_element* elem = _MCF_malloc_0(capacity * sizeof(__MCF_tls_element));
       if(!elem)
         return -1;
 

@@ -41,7 +41,7 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
       return NULL;
     }
 
-    _MCF_thread* thrd = _MCF_malloc0(sizeof(_MCF_thread) + size);
+    _MCF_thread* thrd = _MCF_malloc_0(sizeof(_MCF_thread) + size);
     if(!thrd) {
       SetLastError(ERROR_NOT_ENOUGH_MEMORY);
       return NULL;

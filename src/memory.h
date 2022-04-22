@@ -17,24 +17,24 @@ extern "C" {
 
 /* Allocate a block of zeroed memory, like `calloc()`.  */
 void*
-_MCF_malloc0(size_t __size) __MCF_NOEXCEPT
+_MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
   __attribute__((__malloc__, __alloc_size__(1)));
 
 /* Re-allocate a block of memory, like `realloc()`. If the existent
  * block should be extended, vacuum bytes are filled with zeroes.
  * The result is a boolean value.  */
 uint8_t
-_MCF_mrealloc0(void** __pptr, size_t __size) __MCF_NOEXCEPT;
+_MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT;
 
 void*
-_MCF_mrealloc0_ptr(void* __ptr, size_t __size) __MCF_NOEXCEPT
+_MCF_mprealloc_0(void* __ptr, size_t __size) __MCF_NOEXCEPT
   __attribute__((__alloc_size__(2)));
 
 __MCF_MEMORY_EXTERN_INLINE
 uint8_t
-_MCF_mrealloc0(void** __pptr, size_t __size) __MCF_NOEXCEPT
+_MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT
   {
-    void* __ptr_new = _MCF_mrealloc0_ptr(*__pptr, __size);
+    void* __ptr_new = _MCF_mprealloc_0(*__pptr, __size);
     if(!__ptr_new)
       return 0;
 
