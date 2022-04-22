@@ -25,9 +25,9 @@ extern "C" {
 #endif
 
 #ifdef _WIN64
-#  define __MCF_PTR_BITS    64
+#  define __MCF_PTR_BITS   64
 #else
-#  define __MCF_PTR_BITS    32
+#  define __MCF_PTR_BITS   32
 #endif
 
 #ifdef __MCF_DEBUG
@@ -37,19 +37,25 @@ extern "C" {
 #endif
 
 #if defined(__cplusplus)
-#  define __MCF_CXX(...)       __VA_ARGS__
+#  define __MCF_C(...)
+#else
+#  define __MCF_C(...)   __VA_ARGS__
+#endif
+
+#if defined(__cplusplus)
+#  define __MCF_CXX(...)   __VA_ARGS__
 #else
 #  define __MCF_CXX(...)
 #endif
 
 #if defined(__cplusplus) && (__cplusplus >= 201103L)
-#  define __MCF_CXX11(...)     __VA_ARGS__
+#  define __MCF_CXX11(...)   __VA_ARGS__
 #else
 #  define __MCF_CXX11(...)
 #endif
 
 #if defined(__cplusplus) && (__cplusplus >= 201402L)
-#  define __MCF_CXX14(...)     __VA_ARGS__
+#  define __MCF_CXX14(...)   __VA_ARGS__
 #else
 #  define __MCF_CXX14(...)
 #endif
@@ -59,6 +65,7 @@ extern "C" {
 #define __MCF_NOEXCEPT         __MCF_CXX(throw())
 #define __MCF_ALIGNED(...)     __attribute__((__aligned__(__VA_ARGS__)))
 #define __MCF_USE_DTOR(...)    __attribute__((__cleanup__(__VA_ARGS__)))
+#define __MCF_0_INIT           { __MCF_C(0) }
 
 #define __MCFGTHREAD_ASSERT(...)   ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
 #define __MCFGTHREAD_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __builtin_trap())

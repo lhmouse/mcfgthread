@@ -58,10 +58,10 @@ struct __MCF_gthr_thread_record
   };
 
 /* Define macros for static and dynamic initialization.  */
-#define __GTHREAD_ONCE_INIT  {0}
-#define __GTHREAD_COND_INIT  {0}
-#define __GTHREAD_MUTEX_INIT  {0}
-#define __GTHREAD_RECURSIVE_MUTEX_INIT  {0}
+#define __GTHREAD_ONCE_INIT  __MCF_0_INIT
+#define __GTHREAD_COND_INIT  __MCF_0_INIT
+#define __GTHREAD_MUTEX_INIT  __MCF_0_INIT
+#define __GTHREAD_RECURSIVE_MUTEX_INIT  __MCF_0_INIT
 
 /* Informs the runtime that threading support is active.
  * Windows creates new threads for console control handlers, so threading
@@ -562,7 +562,7 @@ __MCF_GTHR_EXTERN_INLINE
 int
 __MCF_gthr_create(__gthread_t* __thrdp, void* __proc(void*), void* __arg) __MCF_NOEXCEPT
   {
-    __MCF_gthr_thread_record __rec = { 0 };
+    __MCF_gthr_thread_record __rec = __MCF_0_INIT;
     __rec.__proc = __proc;
     __rec.__arg = __arg;
 

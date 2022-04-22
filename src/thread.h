@@ -29,7 +29,7 @@ struct __MCF_thread
     __MCF_tls_table __tls_table;  /* for `_MCF_tls_get()` and `_MCF_tls_set()`  */
 
     _MCF_thread_procedure* __proc;  /* user-defined thread procedure  */
-    char __data[0] __MCF_ALIGNED(16);  /* user-defined data  */
+    __extension__ char __data[0] __MCF_ALIGNED(16);  /* user-defined data  */
   };
 
 /* Creates a thread. The `__nref` member is initialized to 2.

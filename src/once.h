@@ -40,7 +40,7 @@ __MCF_ONCE_EXTERN_INLINE
 void
 _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT
   {
-    _MCF_once __temp = { 0 };
+    _MCF_once __temp = __MCF_0_INIT;
     __MCF_ATOMIC_STORE_PTR_REL(__once, &__temp);
   }
 
