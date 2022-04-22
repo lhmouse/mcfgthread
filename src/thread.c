@@ -93,7 +93,7 @@ _MCF_thread_exit()
 int
 _MCF_thread_wait(const _MCF_thread* thrd, const int64_t* timeout_opt)
   {
-    LARGE_INTEGER timeout = { 0 };
+    LARGE_INTEGER timeout = __MCF_0_INIT;
     LARGE_INTEGER* use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
 
     NTSTATUS status = NtWaitForSingleObject(thrd->__handle, FALSE, use_timeout);
@@ -122,7 +122,7 @@ _MCF_yield(void)
 void
 _MCF_sleep(const int64_t* timeout_opt)
   {
-    LARGE_INTEGER timeout = { 0 };
+    LARGE_INTEGER timeout = __MCF_0_INIT;
     LARGE_INTEGER* use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
 
     NTSTATUS status = NtDelayExecution(FALSE, use_timeout);

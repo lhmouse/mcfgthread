@@ -19,7 +19,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
   {
     _MCF_cond old, new;
     NTSTATUS status;
-    LARGE_INTEGER timeout = { 0 };
+    LARGE_INTEGER timeout = __MCF_0_INIT;
     LARGE_INTEGER* use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
 
     /* Allocate a count for the current thread.  */
@@ -72,7 +72,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
        * keyed event before us, so we set the timeout to zero. If we time out
        * again, the third thread will have incremented the number of sleeping
        * threads and we can try decrementing it again.  */
-      LARGE_INTEGER zero = { 0 };
+      LARGE_INTEGER zero = __MCF_0_INIT;
       status = NtWaitForKeyedEvent(NULL, cond, FALSE, &zero);
       __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
     }
@@ -105,7 +105,7 @@ _MCF_cond_signal_all(_MCF_cond* cond)
   {
     /* Swap out all data.  */
     _MCF_cond old;
-    _MCF_cond new = { 0 };
+    _MCF_cond new = __MCF_0_INIT;
     __MCF_ATOMIC_XCHG_PTR_RLX(&old, cond, &new);
 
     return __MCF_batch_release_common(cond, old.__nsleep);

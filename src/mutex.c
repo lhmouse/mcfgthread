@@ -36,7 +36,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
   {
     _MCF_mutex old, new;
     NTSTATUS status;
-    LARGE_INTEGER timeout = { 0 };
+    LARGE_INTEGER timeout = __MCF_0_INIT;
     LARGE_INTEGER* use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
 
     int64_t waiting_since = 0;
@@ -158,7 +158,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
          * keyed event before us, so we set the timeout to zero. If we time out
          * again, the third thread will have incremented the number of sleeping
          * threads and we can try decrementing it again.  */
-        LARGE_INTEGER zero = { 0 };
+        LARGE_INTEGER zero = __MCF_0_INIT;
         status = NtWaitForKeyedEvent(NULL, mutex, FALSE, &zero);
         __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
       }

@@ -158,7 +158,7 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
     for(;;) {
       /* The table may be modified while being scanned so swap it out first.  */
       temp = *table;
-      *table = (__MCF_tls_table) { 0 };
+      *table = (__MCF_tls_table) __MCF_0_INIT;
 
       if(!temp.__begin)
         break;
