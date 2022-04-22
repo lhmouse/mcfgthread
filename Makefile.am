@@ -12,7 +12,7 @@ AM_CPPFLAGS = -pipe -Wall -Wextra  \
   -W{switch-enum,suggest-attribute=noreturn,shadow,missing-field-initializers}  \
   -Wunused-{function,label,local-typedefs,{,but-set-}{variable,parameter}}
 
-AM_CFLAGS = -std=c99 -Wno-old-style-declaration  \
+AM_CFLAGS = -std=c99  \
   -Werror={discarded-qualifiers,int-conversion,incompatible-pointer-types}  \
   -Werror={strict-prototypes,implicit-{function-declaration,int}}
 
