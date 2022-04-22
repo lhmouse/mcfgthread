@@ -15,17 +15,8 @@ extern "C" {
 #  define __MCF_CXA_EXTERN_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Declare functions in accordance with the Itanium ABI. They are aliases for
- * the ones with the `__MCF_` prefix.
- *
- * See <https://itanium-cxx-abi.github.io/cxx-abi/abi.html> for details about
- * individual functions.
-
- * Note: In the case of i386, the argument is passed both via the ECX register
- * and on the stack, to allow both `__cdecl` and `__thiscall` functions to work
- * properly. The function prototype is declared for compatibility with GCC.  */
-typedef void __cdecl __MCF_cxa_dtor_cdecl(void* __this);
-typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __this);
+/* See <https://itanium-cxx-abi.github.io/cxx-abi/abi.html> for details about
+ * individual functions.  */
 
 union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
   {
@@ -44,10 +35,7 @@ union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
       : __thiscall_ptr(__arg)  { }
 #  endif
 #endif  /* __cplusplus  */
-  }
-  typedef __MCF_cxa_dtor_union;
-
-typedef void __MCF_atexit_callback(void);
+  };
 
 /* Declare 'real' functions here.  */
 int

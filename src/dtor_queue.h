@@ -15,19 +15,13 @@ extern "C" {
 #  define __MCF_DTOR_QUEUE_EXTERN_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Note: In the case of i386, the argument is passed both via the ECX register
- * and on the stack, to allow both `__cdecl` and `__thiscall` functions to work
- * properly. The function prototype is declared according to the Itanium ABI.  */
-typedef void __cdecl __MCF_cxa_dtor_cdecl(void* __this);
-
 /* Define the cxa_atexit queue structure.  */
 struct __MCF_dtor_element
   {
     __MCF_cxa_dtor_cdecl* __dtor;
     void* __this;
     void* __dso;
-  }
-  typedef __MCF_dtor_element;
+  };
 
 struct __MCF_dtor_queue
   {
@@ -36,8 +30,7 @@ struct __MCF_dtor_queue
 
 #define __MCF_DTOR_QUEUE_BLOCK_SIZE  63U
     __MCF_dtor_element __data[__MCF_DTOR_QUEUE_BLOCK_SIZE];
-  }
-  typedef __MCF_dtor_queue;
+  };
 
 /* Appends an element to the queue. `__elem->__dtor` shall not be null. This
  * function is used to implement `__cxa_atexit()`. Refer to the Itanium C++

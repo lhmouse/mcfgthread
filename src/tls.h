@@ -15,24 +15,19 @@ extern "C" {
 #  define __MCF_TLS_EXTERN_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Define the prototype for destructors for `_MCF_tls_key_new()`.  */
-typedef void _MCF_tls_dtor(void* __ptr);
-
 /* Define the table structure that manages all thread-local objects.  */
 struct __MCF_tls_element
   {
     _MCF_tls_key* __key_opt;  /* null denotes an empty element  */
     void* __value;
-  }
-  typedef __MCF_tls_element;
+  };
 
 struct __MCF_tls_table
   {
     __MCF_tls_element* __begin;  /* beginning of hash table  */
     __MCF_tls_element* __end;  /* end of hash table  */
     size_t __size;  /* number of non-empty elements  */
-  }
-  typedef __MCF_tls_table;
+  };
 
 /* Define the structure for thread-local storage keys.  */
 struct __MCF_tls_key
@@ -41,8 +36,7 @@ struct __MCF_tls_key
     uint8_t __deleted[1];  /* deleted?  */
     uint8_t __reserved[3];
     _MCF_tls_dtor* __dtor_opt;  /* destructor, optional  */
-  }
-  typedef _MCF_tls_key;
+  };
 
 /* Creates a thread-local key. The `__nref` member is initialized to 1.
  *

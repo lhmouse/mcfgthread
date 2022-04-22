@@ -38,13 +38,24 @@ typedef _MCF_once __gthread_once_t;
 typedef _MCF_cond __gthread_cond_t;
 typedef _MCF_mutex __gthread_mutex_t;
 
+typedef struct __MCF_gthr_recursive_mutex_t __gthread_recursive_mutex_t;
+typedef struct __MCF_gthr_thread_record __MCF_gthr_thread_record;
+
+typedef void* __MCF_gthr_thread_procedure(void* __arg);
+
 struct __MCF_gthr_recursive_mutex_t
   {
     uint32_t __owner;  /* owner thread ID  */
     int __depth;  /* recursion depth  */
     _MCF_mutex __mutex;
-  }
-  typedef __gthread_recursive_mutex_t;
+  };
+
+struct __MCF_gthr_thread_record
+  {
+    void* __result;
+    __MCF_gthr_thread_procedure* __proc;
+    void* __arg;
+  };
 
 /* Define macros for static and dynamic initialization.  */
 #define __GTHREAD_ONCE_INIT  {0}
@@ -118,17 +129,7 @@ __MCF_gthr_recursive_mutex_unlock_callback(intptr_t __arg) __MCF_NOEXCEPT;
 void
 __MCF_gthr_recursive_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
 
-/* This is the wrapper for a gthread.  */
-typedef void* __MCF_gthr_thread_procedure(void* __arg);
-
-struct __MCF_gthr_thread_record
-  {
-    void* __result;
-    __MCF_gthr_thread_procedure* __proc;
-    void* __arg;
-  }
-  typedef __MCF_gthr_thread_record;
-
+/* This is the actual thread function for a gthread.  */
 void
 __MCF_gthr_thread_thunk(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 

@@ -18,9 +18,6 @@ extern "C" {
 #  define __MCF_THREAD_EXTERN_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Define the prototype for thread procedures.  */
-typedef void _MCF_thread_procedure(_MCF_thread* __thrd);
-
 /* Define the thread control struct.  */
 struct __MCF_thread
   {
@@ -33,8 +30,7 @@ struct __MCF_thread
 
     _MCF_thread_procedure* __proc;  /* user-defined thread procedure  */
     char __data[0] __MCF_ALIGNED(16);  /* user-defined data  */
-  }
-  typedef _MCF_thread;
+  };
 
 /* Creates a thread. The `__nref` member is initialized to 2.
  *

@@ -63,17 +63,39 @@ extern "C" {
 #define __MCFGTHREAD_ASSERT(...)   ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
 #define __MCFGTHREAD_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __builtin_trap())
 
-/* Make some forward-declarations.
- * Note: Private types need not be declared here.  */
-typedef void* __MCF_HANDLE;
+/* Make some forward declarations.  */
+typedef struct __MCF_dtor_element __MCF_dtor_element;
 typedef struct __MCF_dtor_queue __MCF_dtor_queue;
 typedef struct __MCF_tls_table __MCF_tls_table;
+typedef struct __MCF_tls_element __MCF_tls_element;
+typedef union __MCF_cxa_dtor_union __MCF_cxa_dtor_union;
 
 typedef struct __MCF_cond _MCF_cond;
 typedef struct __MCF_mutex _MCF_mutex;
 typedef struct __MCF_once _MCF_once;
 typedef struct __MCF_thread _MCF_thread;
 typedef struct __MCF_tls_key _MCF_tls_key;
+
+typedef void* __MCF_HANDLE;
+
+/* See `_MCF_cond_wait()` for details about these callbacks.  */
+typedef intptr_t _MCF_cond_unlock_callback(intptr_t __lock_arg);
+typedef void _MCF_cond_relock_callback(intptr_t __lock_arg, intptr_t __unlocked);
+
+/* Define the prototype for thread procedures.  */
+typedef void _MCF_thread_procedure(_MCF_thread* __thrd);
+
+/* Define the prototype for destructors for `_MCF_tls_key_new()`.  */
+typedef void _MCF_tls_dtor(void* __ptr);
+
+/* Note: In the case of i386, the argument is passed both via the ECX register
+ * and on the stack, to allow both `__cdecl` and `__thiscall` functions to work
+ * properly. The function prototype is declared for compatibility with GCC.  */
+typedef void __cdecl __MCF_cxa_dtor_cdecl(void* __this);
+typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __this);
+
+/* Define the prototype for `atexit()` and `at_quick_exit()`.  */
+typedef void __MCF_atexit_callback(void);
 
 /* Define some helper functions.  */
 __MCF_CXX11(constexpr) __MCF_ALWAYS_INLINE

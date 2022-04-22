@@ -117,12 +117,13 @@ __MCF_seh_top(EXCEPTION_RECORD* __record, void* __frame, CONTEXT* __ctx, void* _
 
 #ifdef __i386__  /* SEH is stack-based  */
 
+typedef struct __MCF_i386_seh_node __MCF_i386_seh_node;
+
 struct __MCF_i386_seh_node
   {
     DWORD __next;  /* `__MCF_i386_seh_node*`  */
     DWORD __filter;  /* `typeof(__MCF_seh_top)*`  */
-  }
-  typedef __MCF_i386_seh_node;
+  };
 
 __MCF_ALWAYS_INLINE
 void
