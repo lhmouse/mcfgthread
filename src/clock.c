@@ -6,22 +6,38 @@
 #include "clock.h"
 #include "win32.h"
 
+static inline
+double
+do_unix_time_from_nt_time(const FILETIME* ft)
+  {
+    /* Sum the high and low parts.  */
+    LARGE_INTEGER li;
+    li.LowPart = ft->dwLowDateTime;
+    li.HighPart = (LONG) ft->dwHighDateTime;
+
+    /* 11644473600000 is number of milliseconds from 1601-01-01T00:00:00Z
+     * (the NT epoch) to 1970-01-01T00:00:00Z (the Unix Epoch).  */
+    return (double) li.QuadPart * 0.0001 - 11644473600000;
+  }
+
 int64_t
 _MCF_utc_now(void)
   {
-    /* Get the system time in NT epoch.
-     * This is the number of 10^-7s since 1601-01-01T00:00:00Z.  */
     FILETIME ft;
     GetSystemTimeAsFileTime(&ft);
+    return (int64_t) do_unix_time_from_nt_time(&ft);
+  }
 
-    ULARGE_INTEGER ui;
-    ui.LowPart = ft.dwLowDateTime;
-    ui.HighPart = ft.dwHighDateTime;
-
-    /* Convert it into Unix epoch in milliseconds.  */
-    double nt_time = (double)(int64_t) ui.QuadPart;
-    double unix_time = (nt_time - 116444736000000000) * 0.0001;
-    return (int64_t) unix_time;
+double
+_MCF_hires_utc_now(void)
+  {
+    FILETIME ft;
+#if _WIN32_WINNT >= 0x0602
+    GetSystemTimePreciseAsFileTime(&ft);
+#else
+    GetSystemTimeAsFileTime(&ft);
+#endif
+    return do_unix_time_from_nt_time(&ft);
   }
 
 int64_t

@@ -19,6 +19,9 @@ extern "C" {
 int64_t
 _MCF_utc_now(void) __MCF_NOEXCEPT;
 
+double
+_MCF_hires_utc_now(void) __MCF_NOEXCEPT;
+
 /* Get the number of milliseconds since system startup.
  * This value is monotonic.  */
 int64_t
