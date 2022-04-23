@@ -28,5 +28,5 @@ AC_SUBST([ABI_MAJOR])
 AC_SUBST([ABI_MINOR])
 AC_SUBST([ABI_SUFFIX])
 
-AC_CONFIG_FILES([Makefile] [src/fwd.h])
+AC_CONFIG_FILES([Makefile] [src/version.h])
 AC_OUTPUT

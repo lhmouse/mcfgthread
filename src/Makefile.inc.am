@@ -1,6 +1,7 @@
 include_mcfgthreaddir = ${includedir}/mcfgthread
 include_mcfgthread_HEADERS =  \
-  src/fwd.h  \
+  src/version.h  \
+  %reldir%/fwd.h  \
   %reldir%/atomic.h  \
   %reldir%/win32.h  \
   %reldir%/memory.h  \

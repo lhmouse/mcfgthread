@@ -1,0 +1,12 @@
+/* This file is part of MCF gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
+
+#ifndef __MCFGTHREAD_VERSION_H_
+#define __MCFGTHREAD_VERSION_H_
+
+#define _MCF_ABI_VERSION_MAJOR    @ABI_MAJOR@U
+#define _MCF_ABI_VERSION_MINOR    @ABI_MINOR@U
+#define _MCF_ABI_VERSION_STRING   "@ABI_MAJOR@.@ABI_MINOR@-@ABI_SUFFIX@"
+
+#endif

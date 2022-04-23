@@ -7,6 +7,7 @@
 
 /* Import types about the system ABI.
  * Other standard library facilities are not available.  */
+#include "version.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <stdalign.h>
@@ -15,10 +16,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#define _MCF_ABI_VERSION_MAJOR    @ABI_MAJOR@U
-#define _MCF_ABI_VERSION_MINOR    @ABI_MINOR@U
-#define _MCF_ABI_VERSION_STRING   "@ABI_MAJOR@.@ABI_MINOR@-@ABI_SUFFIX@"
 
 #ifndef _WIN32_WINNT
 #  error Only Windows platforms are supported.
