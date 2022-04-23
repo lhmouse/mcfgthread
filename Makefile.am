@@ -15,7 +15,7 @@ AM_CFLAGS = -std=c99  \
   -Werror={discarded-qualifiers,int-conversion,incompatible-pointer-types}  \
   -Werror={strict-prototypes,implicit-{function-declaration,int}}
 
-AM_RCFLAGS = -Isrc -c 65001
+AM_RCFLAGS = -Isrc -c65001
 
 AM_DEFAULT_SOURCE_EXT = .c
 SUFFIXES = .rc
