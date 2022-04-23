@@ -95,7 +95,7 @@ __MCF_finalize_on_exit(void)
 /* Define the common routine for both static and shared libraries.  */
 static
 void __stdcall
-TlsCRTStartup(PVOID instance, DWORD reason, LPVOID reserved)
+do_image_tls_callback(PVOID instance, DWORD reason, LPVOID reserved)
   {
     /* Perform global initialization and per-thread cleanup, as needed.
      * Note, upon `DLL_PROCESS_DETACH` we don't perform any cleanup, because
@@ -121,10 +121,11 @@ TlsCRTStartup(PVOID instance, DWORD reason, LPVOID reserved)
 /* When building the shared library, invoke the common routine from the DLL
  * entry point callback.  */
 int __stdcall
-DllMainCRTStartup(PVOID instance, DWORD reason, PVOID reserved);
+__MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
+  __asm__("__MCF_dll_startup");
 
 int __stdcall
-DllMainCRTStartup(PVOID instance, DWORD reason, PVOID reserved)
+__MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
   {
     /* Prevent this DLL from being unloaded.  */
     HMODULE locked;
@@ -132,7 +133,7 @@ DllMainCRTStartup(PVOID instance, DWORD reason, PVOID reserved)
     __MCFGTHREAD_CHECK(locked == instance);
 
     /* Call the common routine. This will not fail.  */
-    TlsCRTStartup(instance, reason, reserved);
+    do_image_tls_callback(instance, reason, reserved);
     return TRUE;
   }
 
@@ -144,6 +145,6 @@ DllMainCRTStartup(PVOID instance, DWORD reason, PVOID reserved)
 extern const PIMAGE_TLS_CALLBACK __MCF_xl_e;
 
 const PIMAGE_TLS_CALLBACK __MCF_xl_e
-  __attribute__((__section__(".CRT$XLE"), __used__)) = TlsCRTStartup;
+  __attribute__((__section__(".CRT$XLE"), __used__)) = do_image_tls_callback;
 
 #endif  /* DLL_EXPORT  */

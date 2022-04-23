@@ -20,18 +20,12 @@ extern "C" {
 #define _MCF_ABI_VERSION_MINOR    @ABI_MINOR@U
 #define _MCF_ABI_VERSION_STRING   "@ABI_MAJOR@.@ABI_MINOR@-@ABI_SUFFIX@"
 
-#ifndef _WIN32
-#  error Only native Windows platforms are supported.
+#ifndef _WIN32_WINNT
+#  error Only Windows platforms are supported.
 #endif
 
 #if __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
 #  error Windows platforms are assumed to be little-endian.
-#endif
-
-#ifdef _WIN64
-#  define __MCF_PTR_BITS   64
-#else
-#  define __MCF_PTR_BITS   32
 #endif
 
 #ifdef __MCF_DEBUG
@@ -70,6 +64,7 @@ extern "C" {
 #define __MCF_ALIGNED(...)     __attribute__((__aligned__(__VA_ARGS__)))
 #define __MCF_USE_DTOR(...)    __attribute__((__cleanup__(__VA_ARGS__)))
 #define __MCF_0_INIT           { __MCF_C(0) }
+#define __MCF_PTR_BITS         (__SIZEOF_POINTER__ * 8U)
 
 #define __MCFGTHREAD_ASSERT(...)   ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
 #define __MCFGTHREAD_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __builtin_trap())
