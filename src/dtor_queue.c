@@ -2,6 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
+#include "config.h"
 #define __MCF_DTOR_QUEUE_EXTERN_INLINE
 #include "dtor_queue.h"
 #include "memory.h"

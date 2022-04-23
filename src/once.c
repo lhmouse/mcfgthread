@@ -2,6 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
+#include "config.h"
 #define __MCF_ONCE_EXTERN_INLINE
 #include "once.h"
 #include "win32.h"

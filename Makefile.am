@@ -2,7 +2,7 @@ ACLOCAL_AMFLAGS = -I m4
 NOTHING =
 
 ## Compiler options
-AM_CPPFLAGS = -pipe -Wall -Wextra -Isrc -I${srcdir}/src -include config.h  \
+AM_CPPFLAGS = -pipe -Wall -Wextra -Isrc -I${srcdir}/src  \
   -U_FORTIFY_SOURCE -D_WIN32_WINNT=0x0601 -mnop-fun-dllimport  \
   -f{strict-{aliasing,overflow},merge-all-constants}  \
   -fno-{math-errno,trapping-math,stack-protector}  \

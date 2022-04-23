@@ -2,6 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
+#include "config.h"
 #define __MCF_MEMORY_EXTERN_INLINE
 #include "memory.h"
 #include "win32.h"
