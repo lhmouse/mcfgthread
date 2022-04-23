@@ -1,4 +1,4 @@
-/* This file is part of MCF gthread.
+/* This file is part of MCF Gthread.
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
