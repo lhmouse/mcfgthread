@@ -15,8 +15,24 @@ AM_CFLAGS = -std=c99  \
   -Werror={discarded-qualifiers,int-conversion,incompatible-pointer-types}  \
   -Werror={strict-prototypes,implicit-{function-declaration,int}}
 
+AM_RCFLAGS = -Isrc -c 65001
+
 AM_DEFAULT_SOURCE_EXT = .c
+SUFFIXES = .rc
 LDADD = lib/libmcfgthread.la
+
+BUILT_SOURCES =  \
+  src/version.lo  \
+  ${NOTHING}
+
+CLEANFILES =  \
+  src/version.lo  \
+  ${NOTHING}
+
+## Custom rules
+.rc.lo:
+	${AM_V_CC}${LIBTOOL} ${AM_V_lt} --tag=RC ${AM_LIBTOOLFLAGS} ${LIBTOOLFLAGS}  \
+	--mode=compile ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
 
 ## Initialization
 EXTRA_DIST =

@@ -9,6 +9,7 @@ AC_PROG_CC
 
 LT_INIT([win32-dll])
 LT_LANG([C])
+LT_LANG([Windows Resource])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 AM_SILENT_RULES([yes])
