@@ -4,7 +4,6 @@
 
 #include <math.h>
 #include <stdio.h>
-#include <windows.h>
 #include <mcfgthread/gthr.h>
 #include <mcfgthread/clock.h>
 #include <pthread.h>
@@ -48,7 +47,7 @@
 #define NTHRD  16
 #define NITER  1000000
 
-HANDLE event;
+__gthread_once_t start;
 __gthread_t threads[NTHRD];
 my_mutex_t mutex;
 volatile double dst = 12345;
@@ -59,7 +58,8 @@ void*
 thread_proc(void* arg)
   {
     (void) arg;
-    WaitForSingleObject(event, INFINITE);
+    _MCF_once_wait(&start, NULL);
+    _MCF_once_wait(&start, NULL);
 
     for(intptr_t k = 0;  k < NITER;  ++k) {
       my_lock(&mutex);
@@ -72,7 +72,7 @@ thread_proc(void* arg)
       dst = src;
       my_unlock(&mutex);
 
-      SwitchToThread();
+      __gthread_yield();
     }
 
     //printf("thread %d quitting\n", (int) GetCurrentThreadId());
@@ -82,21 +82,18 @@ thread_proc(void* arg)
 int
 main(void)
   {
+    my_init(&mutex);
+
 #define xstr1(x)  xstr2(x)
 #define xstr2(x)  #x
     printf("using `%s`:\n  # of threads    = %d\n  # of iterations = %d\n",
            xstr1(my_mutex_t), NTHRD, NITER);
 
-    event = CreateEventW(NULL, TRUE, FALSE, NULL);
-    __MCFGTHREAD_CHECK(event);
-
-    my_init(&mutex);
-
     for(intptr_t k = 0;  k < NTHRD;  ++k)
       __MCFGTHREAD_CHECK(__gthread_create(&threads[k], thread_proc, NULL) == 0);
 
     printf("main waiting\n");
-    SetEvent(event);
+    _MCF_once_release(&start);
     double t_sta = _MCF_perf_counter();
 
     for(intptr_t k = 0;  k < NTHRD;  ++k)
