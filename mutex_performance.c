@@ -1,6 +1,6 @@
-// This file is part of MCF gthread.
-// See LICENSE.TXT for licensing information.
-// Copyleft 2022, LH_Mouse. All wrongs reserved.
+/* This file is part of MCF Gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include <math.h>
 #include <stdio.h>
@@ -75,7 +75,7 @@ thread_proc(void* arg)
       __gthread_yield();
     }
 
-    //printf("thread %d quitting\n", (int) GetCurrentThreadId());
+    printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
     return NULL;
   }
 
