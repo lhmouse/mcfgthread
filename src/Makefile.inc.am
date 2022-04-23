@@ -1,6 +1,6 @@
 include_mcfgthreaddir = ${includedir}/mcfgthread
 include_mcfgthread_HEADERS =  \
-  %reldir%/fwd.h  \
+  src/fwd.h  \
   %reldir%/atomic.h  \
   %reldir%/win32.h  \
   %reldir%/memory.h  \
@@ -40,7 +40,8 @@ lib_libmcfgthread_la_LIBADD =  \
   -lkernel32 -lntdll
 
 lib_libmcfgthread_la_LDFLAGS =  \
-  -Wc,-nostdlib -no-undefined -version-info 1:0  \
   -Wl,--subsystem,windows:6.1,--export-all-symbols,--exclude-libs,ALL  \
   -Wl,--disable-runtime-pseudo-reloc,--disable-auto-import  \
-  -Wl,--disable-stdcall-fixup,--enable-auto-image-base
+  -Wl,--disable-stdcall-fixup,--enable-auto-image-base  \
+  -Wc,-nostdlib -no-undefined  \
+  -version-info @ABI_MAJOR@:@ABI_MINOR@

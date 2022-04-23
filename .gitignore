@@ -25,6 +25,7 @@
 /config.status
 /libtool
 /stamp-h1
+/src/fwd.h
 
 /lib/
 /bin/

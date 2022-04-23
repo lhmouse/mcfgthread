@@ -13,10 +13,20 @@ LT_LANG([C])
 AM_INIT_AUTOMAKE([foreign subdir-objects])
 AM_SILENT_RULES([yes])
 
+## Define ABI information
+AS_VAR_SET([ABI_MAJOR], [1])
+AS_VAR_SET([ABI_MINOR], [0])
+AS_VAR_SET([ABI_SUFFIX], [beta.4])
+
 ## Check for assertions
 AC_ARG_ENABLE([debug-checks], AS_HELP_STRING([--enable-debug-checks], [enable assertions]))
 AM_CONDITIONAL([enable_debug_checks], [test "${enable_debug_checks}" == "yes"])
 AM_COND_IF([enable_debug_checks], [AC_DEFINE([__MCF_DEBUG], 1, [Define to 1 to enable assertions])])
 
-AC_CONFIG_FILES([Makefile])
+## Finish
+AC_SUBST([ABI_MAJOR])
+AC_SUBST([ABI_MINOR])
+AC_SUBST([ABI_SUFFIX])
+
+AC_CONFIG_FILES([Makefile] [src/fwd.h])
 AC_OUTPUT
