@@ -16,7 +16,6 @@ build:
 
 build_script:
   - cmd: bash -e ./ci/build.sh
-  - cmd: bash -e ./ci/check_includes.sh
 
 on_success:
   - python3 ci/appveyor_irc-notify.py mcfproj "* lh_mouse {repo_name}#{short_commit} passed on {branch} ({build_url})"
