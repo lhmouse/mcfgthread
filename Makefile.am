@@ -22,15 +22,16 @@ SUFFIXES = .rc
 LDADD = lib/libmcfgthread.la
 
 BUILT_SOURCES =  \
-  src/version.lo  \
+  src/version.h  \
   ${NOTHING}
 
 CLEANFILES =  \
+  src/version.h  \
   src/version.lo  \
   ${NOTHING}
 
 ## Custom rules
-.rc.lo:
+%.lo: %.rc
 	${AM_V_GEN}${LIBTOOL} ${AM_V_lt} --tag=RC ${AM_LIBTOOLFLAGS} ${LIBTOOLFLAGS}  \
 	--mode=compile ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
 
