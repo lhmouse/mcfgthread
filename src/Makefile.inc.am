@@ -14,6 +14,7 @@ include_mcfgthread_HEADERS =  \
   %reldir%/dtor_queue.h  \
   %reldir%/exit.h  \
   %reldir%/tls.h  \
+  %reldir%/gthr_aux.h  \
   %reldir%/gthr.h  \
   ${NOTHING}
 
@@ -33,6 +34,7 @@ lib_libmcfgthread_la_SOURCES =  \
   %reldir%/dtor_queue.c  \
   %reldir%/exit.c  \
   %reldir%/tls.c  \
+  %reldir%/gthr_aux.c  \
   %reldir%/gthr.c  \
   ${NOTHING}
 

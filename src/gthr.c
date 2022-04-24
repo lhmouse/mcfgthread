@@ -7,26 +7,6 @@
 #include "gthr.h"
 
 intptr_t
-__MCF_gthr_mutex_unlock_callback(intptr_t arg)
-  {
-    __gthread_mutex_t* mtx = (__gthread_mutex_t*) arg;
-
-    /* Unlock the mutex. The return value is unused.  */
-    _MCF_mutex_unlock(mtx);
-    return 0;
-  }
-
-void
-__MCF_gthr_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
-  {
-    __gthread_mutex_t* mtx = (__gthread_mutex_t*) arg;
-
-    /* Relock the mutex. The `unlocked` value is unused.  */
-    (void) unlocked;
-    _MCF_mutex_lock(mtx, NULL);
-  }
-
-intptr_t
 __MCF_gthr_recursive_mutex_unlock_callback(intptr_t arg)
   {
     __gthread_recursive_mutex_t* rmtx = (__gthread_recursive_mutex_t*) arg;
