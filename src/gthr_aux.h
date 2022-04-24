@@ -9,10 +9,6 @@
 #include "once.h"
 #include <time.h>  /* struct timespec  */
 
-#ifdef __SSE2__
-#  include <emmintrin.h>
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
