@@ -1,7 +1,6 @@
 include_mcfgthreaddir = ${includedir}/mcfgthread
 include_mcfgthread_HEADERS =  \
   src/version.h  \
-  %reldir%/version.h.in  \
   %reldir%/fwd.h  \
   %reldir%/atomic.h  \
   %reldir%/win32.h  \
@@ -20,6 +19,7 @@ include_mcfgthread_HEADERS =  \
 
 lib_LTLIBRARIES += lib/libmcfgthread.la
 lib_libmcfgthread_la_SOURCES =  \
+  %reldir%/version.h.in  \
   %reldir%/version.rc  \
   %reldir%/startup.c  \
   %reldir%/win32.c  \
