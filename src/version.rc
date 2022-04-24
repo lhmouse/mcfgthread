@@ -18,24 +18,24 @@ VS_VERSION_INFO VERSIONINFO
   FILEOS             VOS_NT_WINDOWS32
   FILETYPE           VFT_DLL
   FILESUBTYPE        VFT2_UNKNOWN
-{
-  BLOCK "VarFileInfo"
   {
-    VALUE "Translation", 0x0409, 0x04B0  /* English (US), UTF-16 */
-  }
-
-  BLOCK "StringFileInfo"
-  {
-    BLOCK "040904B0"  /* English (US), UTF-16 */
+    BLOCK "VarFileInfo"
     {
-      VALUE "ProductName",      "The MCF Gthread Library"
-      VALUE "InternalName",     "mcfgthread"
-      VALUE "ProductVersion",   _MCF_ABI_VERSION_STRING
-      VALUE "FileVersion",      _MCF_ABI_VERSION_STRING
-      VALUE "FileDescription",  "Cornerstone of the MOST efficient std::thread on Windows"
-      VALUE "CompanyName",      "LH_Mouse"
-      VALUE "LegalCopyright",   "Copyleft 2022, LH_Mouse. All wrongs reserved."
-      VALUE "Comments",         "https://github.com/lhmouse/mcfgthread"
+      VALUE "Translation", 0x0409, 0x04B0  /* English (US), UTF-16 */
+    }
+
+    BLOCK "StringFileInfo"
+    {
+      BLOCK "040904B0"  /* English (US), UTF-16 */
+      {
+        VALUE "ProductName",      "The MCF Gthread Library"
+        VALUE "InternalName",     "mcfgthread"
+        VALUE "ProductVersion",   _MCF_ABI_VERSION_STRING
+        VALUE "FileVersion",      _MCF_ABI_VERSION_STRING
+        VALUE "FileDescription",  "Cornerstone of the MOST efficient std::thread on Windows"
+        VALUE "CompanyName",      "LH_Mouse"
+        VALUE "LegalCopyright",   "Copyleft 2022, LH_Mouse. All wrongs reserved."
+        VALUE "Comments",         "https://github.com/lhmouse/mcfgthread"
+      }
     }
   }
-}
