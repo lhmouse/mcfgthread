@@ -9,6 +9,10 @@
 #include "once.h"
 #include <time.h>  /* struct timespec  */
 
+#ifdef __SSE2__
+#  include <emmintrin.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -45,13 +49,21 @@ __MCF_gthr_timeout_from_timespec(const struct timespec* __abs_time) __MCF_NOEXCE
     __time_ms += (double) __abs_time->tv_nsec * 0.000001;
     __time_ms += (double) __abs_time->tv_sec * 1000;
 
-    if(__time_ms < 0)
-      return 0;  /* underflowed  */
-
-    if(__time_ms > 0x7FFFFFFFFFFFFC00)
-      return 0x7FFFFFFFFFFFFFFF;  /* overflowed  */
-
-    return (int64_t) __time_ms;
+#ifdef __SSE2__
+    /* On x86-64 this both results in smaller code and runs faster.  */
+    __m128d __time_d = _mm_set_sd(__time_ms);
+    __time_d = _mm_max_pd(__time_d, _mm_setzero_pd());
+    __time_d = _mm_min_pd(__time_d, _mm_set_sd(0x7FFFFFFFFFFFFC00));
+    return _mm_cvttsd_si64(__time_d);
+#else
+    /* This is the portable but slower way to do it.  */
+    if(__time_ms <= 0)
+      return 0;
+    else if(__time_ms <= 0x7FFFFFFFFFFFFC00)
+      return (int64_t) __time_ms;
+    else
+      return 0x7FFFFFFFFFFFFFFF;
+#endif
   }
 
 /* These are auxiliary functions for condition variables. The argument is a
