@@ -30,16 +30,6 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
     return 0;
   }
 
-static inline
-void
-do_remove_element_common(__MCF_dtor_queue* queue, size_t index)
-  {
-    __MCFGTHREAD_ASSERT(index < queue->__size);
-    queue->__size --;
-    for(size_t k = index;  k != queue->__size;  ++k)
-      queue->__data[k] = queue->__data[k+1];
-  }
-
 int
 __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* dso)
   {
@@ -55,7 +45,8 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* ds
           /* Remove this element.  */
           *elem = *target;
           err = 0;
-          do_remove_element_common(cur_q, k);
+          cur_q->__size --;
+          __MCF_mmove(target, target + 1, (cur_q->__size - k) * sizeof(__MCF_dtor_element));
           break;
         }
       }
@@ -89,7 +80,8 @@ __MCF_dtor_queue_remove(__MCF_dtor_queue* queue, void* dso)
         if(!dso || (dso == target->__dso)) {
           /* Remove this element.  */
           count ++;
-          do_remove_element_common(cur_q, k);
+          cur_q->__size --;
+          __MCF_mmove(target, target + 1, (cur_q->__size - k) * sizeof(__MCF_dtor_element));
         }
       }
 
