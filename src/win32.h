@@ -118,8 +118,9 @@ __MCF_i386_seh_cleanup(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
 
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
     __MCF_i386_seh_node __MCF_PPCAT(__MCF_seh_node_, __LINE__)  \
-                 __MCF_USE_DTOR(__MCF_i386_seh_cleanup);  \
-    __MCF_i386_seh_install(&__MCF_seh_node_1)  /* no semicolon  */
+           __MCF_USE_DTOR(__MCF_i386_seh_cleanup);  \
+    __MCF_i386_seh_install(  \
+           &(__MCF_PPCAT(__MCF_seh_node_, __LINE__)))  /* no semicolon  */
 
 #else  /* SEH is stack-based  ^/v  SEH is table-based  */
 
@@ -217,17 +218,18 @@ __MCF_WIN32_EXTERN_INLINE
 void* __cdecl
 __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __size) __MCF_NOEXCEPT
   {
+    __MCFGTHREAD_ASSERT(__size <= (uintptr_t) __dst - (uintptr_t) __src);
 #if defined(__i386__) || defined(__amd64__)
     typedef char __memory[];
     char* __rdi = (char*) __dst;
     const char* __rsi = (const char*) __src;
     size_t __rcx = __size;
-    __MCFGTHREAD_ASSERT(__rcx <= (uintptr_t) (__rdi - __rsi));
 
     __asm__ (
       "rep movsb;"
-      : "=o"(*(__memory*) __rdi), "+D"(__rdi), "+S"(__rsi), "+c"(__rcx)
-      : "o"(*(const __memory*) __rsi)
+      : "=o"(*(__memory*) __rdi),  /* memory output  */
+        "+D"(__rdi), "+S"(__rsi), "+c"(__rcx)
+      : "o"(*(const __memory*) __rsi)  /* memory input  */
     );
 #else
     /* Call the generic but slower version in NTDLL.  */
@@ -245,24 +247,28 @@ void* __cdecl
 __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
+    long __overlap = __size <= (uintptr_t) __dst - (uintptr_t) __src;
+
     typedef char __memory[];
     char* __rdi = (char*) __dst;
     const char* __rsi = (const char*) __src;
     size_t __rcx = __size;
 
-    if(__rcx <= (uintptr_t) (__rdi - __rsi))
+    if(__builtin_expect(__overlap, 0) == 0)
       __asm__ (
-        "rep movsb;"  /* non-overlapped  */
-        : "=o"(*(__memory*) __rdi), "+D"(__rdi), "+S"(__rsi), "+c"(__rcx)
-        : "o"(*(const __memory*) __rsi)
+        "rep movsb;"  /* go forward  */
+        : "=o"(*(__memory*) __rdi),  /* memory output  */
+          "+D"(__rdi), "+S"(__rsi), "+c"(__rcx)
+        : "o"(*(const __memory*) __rsi)  /* memory input  */
       );
     else
       __asm__ (
-        "std;"  /* overlapped  */
-        "rep movsb;"
+        "std;"
+        "rep movsb;"  /* go backward  */
         "cld;"
-        : "=o"(*(__memory*) __rdi), "=D"(__rdi), "=S"(__rsi), "+c"(__rcx)
-        : "o"(*(const __memory*) __rsi),
+        : "=o"(*(__memory*) __rdi),  /* memory output  */
+          "=D"(__rdi), "=S"(__rsi), "+c"(__rcx)
+        : "o"(*(const __memory*) __rsi),  /* memory input  */
           "D"(__rdi + __rcx - 1), "S"(__rsi + __rcx - 1)
       );
 #else
@@ -288,7 +294,8 @@ __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
 
     __asm__ (
       "rep stosb;"
-      : "=o"(*(__memory*) __rdi), "+D"(__rdi), "+c"(__rcx)
+      : "=o"(*(__memory*) __rdi),  /* memory output  */
+        "+D"(__rdi), "+c"(__rcx)
       : "a"(__rax)
     );
 #else
@@ -313,7 +320,8 @@ __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
 
     __asm__ (
       "rep stosb;"
-      : "=o"(*(__memory*) __rdi), "+D"(__rdi), "+c"(__rcx)
+      : "=o"(*(__memory*) __rdi),  /* memory output  */
+        "+D"(__rdi), "+c"(__rcx)
       : "a"(0)
     );
 #else
@@ -350,7 +358,7 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
       : "=a"(__result),
 #  endif
         "+S"(__rsi), "+D"(__rdi), "+c"(__rcx)
-      : "o"(*(__memory*) __rsi), "o"(*(__memory*) __rdi)
+      : "o"(*(__memory*) __rsi), "o"(*(__memory*) __rdi)  /* memory inputs  */
 #  ifdef __GCC_ASM_FLAG_OUTPUTS__
       : "ax"
 #  else
