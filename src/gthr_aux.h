@@ -44,14 +44,15 @@ __MCF_gthr_timeout_from_timespec(const struct timespec* __abs_time) __MCF_NOEXCE
 #ifdef __amd64__
     /* On x86-64 this both results in smaller code and runs faster.  */
     __m128d __time_ms = _mm_set_sd(0.000999);
-    __m128d __temp = _mm_cvtsi64_sd(_mm_setzero_pd(), __abs_time->tv_nsec);
+    __m128d __zero_max = _mm_setr_pd(0, 0x7FFFFFFFFFFFFC00);
+    __m128d __temp = _mm_cvtsi64_sd(__zero_max, __abs_time->tv_nsec);
     __time_ms = _mm_add_sd(__time_ms, _mm_mul_sd(__temp, _mm_set_sd(0.000001)));
-    __temp = _mm_cvtsi64_sd(_mm_setzero_pd(), __abs_time->tv_sec);
+    __temp = _mm_cvtsi64_sd(__zero_max, __abs_time->tv_sec);
     __time_ms = _mm_add_sd(__time_ms, _mm_mul_sd(__temp, _mm_set_sd(1000)));
 
     /* Clamp the result.  */
-    __time_ms = _mm_max_pd(__time_ms, _mm_setzero_pd());
-    __time_ms = _mm_min_pd(__time_ms, _mm_set_sd(0x7FFFFFFFFFFFFC00));
+    __time_ms = _mm_max_pd(__time_ms, __zero_max);
+    __time_ms = _mm_min_pd(__time_ms, _mm_unpackhi_pd(__zero_max, __zero_max));
     return _mm_cvttsd_si64(__time_ms);
 #else
     /* This is the portable but slower way to do it. On x86 there is no way to
