@@ -271,8 +271,7 @@ __MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
   }
 
 /* Re-allocate a block of memory, like `realloc()`. If the existent
- * block should be extended, vacuum bytes are filled with zeroes.
- * The result is a boolean value.  */
+ * block should be extended, vacuum bytes are filled with zeroes.  */
 void*
 __MCF_mrealloc_0(void** __restrict__ __pptr, size_t __size) __MCF_NOEXCEPT
   __attribute__((__warn_unused_result__, __alloc_size__(2)));
