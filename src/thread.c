@@ -98,7 +98,7 @@ _MCF_thread_wait(const _MCF_thread* thrd, const int64_t* timeout_opt)
 
     NTSTATUS status = NtWaitForSingleObject(thrd->__handle, FALSE, use_timeout);
     __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
-    return (status == STATUS_SUCCESS) ? 0 : -1;
+    return (status != STATUS_WAIT_0) ? -1 : 0;
   }
 
 _MCF_thread*
