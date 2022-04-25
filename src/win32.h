@@ -209,11 +209,11 @@ RtlCompareMemory(const void* __s1, const void* __s2, SIZE_T __size)
   __attribute__((__dllimport__, __pure__, __nothrow__));
 
 /* Copy a block of potentially overlapped memory, like `bcopy()`.  */
-void*
+void* __cdecl
 __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
 
 __MCF_WIN32_EXTERN_INLINE
-void*
+void* __cdecl
 __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
     RtlMoveMemory(__dst, __src, __size);
@@ -221,11 +221,11 @@ __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   }
 
 /* Fill a block of memory with the given byte, like `memset()`.  */
-void*
+void* __cdecl
 __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT;
 
 __MCF_WIN32_EXTERN_INLINE
-void*
+void* __cdecl
 __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
   {
     RtlFillMemory(__dst, __size, __val);
@@ -233,11 +233,11 @@ __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
   }
 
 /* Fill a block of memory with zeroes, like `bzero()`.  */
-void*
+void* __cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT;
 
 __MCF_WIN32_EXTERN_INLINE
-void*
+void* __cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
   {
     RtlZeroMemory(__dst, __size);
@@ -246,12 +246,12 @@ __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
 
 /* Check whether two blocks of memory compare equal, like `memcmp() == 0`.
  * The result is a boolean value.  */
-uint8_t
+uint8_t __cdecl
 _MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
 __MCF_WIN32_EXTERN_INLINE
-uint8_t
+uint8_t __cdecl
 _MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
     return RtlCompareMemory(__src, __cmp, __size) == __size;
