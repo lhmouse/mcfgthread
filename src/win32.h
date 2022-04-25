@@ -350,7 +350,7 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
 
     __asm__ (
       "xorl %%eax, %%eax;"
-      "rep cmpsb;"
+      "repz cmpsb;"
 #  ifdef __GCC_ASM_FLAG_OUTPUTS__
       : "=@ccz"(__result),
 #  else
