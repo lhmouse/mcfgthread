@@ -128,10 +128,13 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
 int __stdcall
 __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
   {
-    /* Prevent this DLL from being unloaded.  */
-    HMODULE locked;
-    __MCFGTHREAD_CHECK(GetModuleHandleExW(5, (void*) instance, &locked));
-    __MCFGTHREAD_CHECK(locked == instance);
+    if(reason == DLL_PROCESS_ATTACH) {
+      /* Prevent this DLL from being unloaded.  */
+      HMODULE locked;
+      __MCFGTHREAD_CHECK(GetModuleHandleExW(
+            GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN,
+            (void*)instance, &locked));
+    }
 
     /* Call the common routine. This will not fail.  */
     do_image_tls_callback(instance, reason, reserved);
