@@ -135,34 +135,20 @@ __MCF_WIN32_EXTERN_INLINE
 LARGE_INTEGER*
 __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
   {
-    double __nt_time;
-
     if(__int64_opt == NULL)
       return NULL;  /* wait infinitely  */
 
-    if(*__int64_opt > 0) {
-      /* `*__int64_opt` is milliseconds since 1970-01-01T00:00:00Z.
-       * Convert it into the NT epoch.  */
-      __nt_time = ((double) *__int64_opt + 11644473600000) * 10000;
-      if(__nt_time > 0x7FFFFFFFFFFFFC00)
-        return NULL;  /* overflowed; assume infinity  */
+    if(*__int64_opt > 910692730085477)
+      return NULL;  /* overflowed; assume infinity  */
 
-      __li->QuadPart = (int64_t) __nt_time;
-      return __li;
-    }
+    if(*__int64_opt < -922337203685477)
+      return NULL;  /* overflowed; assume infinity  */
 
-    if(*__int64_opt < 0) {
-      /*  `*__int64_opt` is milliseconds to wait.  */
-      __nt_time = (double) *__int64_opt * 10000;
-      if(__nt_time < -0x7FFFFFFFFFFFFC00)
-        return NULL;  /* overflowed; assume infinity  */
-
-      __li->QuadPart = (int64_t) __nt_time;
-      return __li;
-    }
-
-    /* The wait shall time out immediately.  */
-    __li->QuadPart = 0;
+    /* If `*__int64_opt` is positive, it denotes the number of milliseconds
+     * since 1970-01-01T00:00:00Z, and has to be converted into the number of
+     * 100 nanoseconds since the 1601-01-01T00:00:00Z.  */
+    int64_t __relative = *__int64_opt >> 63;
+    __li->QuadPart = ((~__relative & 11644473600000) + *__int64_opt) * 10000;
     return __li;
   }
 
