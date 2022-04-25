@@ -31,7 +31,7 @@ memcpy(void* dst, const void* src, size_t size)
 
 void* __cdecl
 memmove(void* dst, const void* src, size_t size)
-  __attribute__((__alias__("__MCF_mcopy")));
+  __attribute__((__alias__("__MCF_mmove")));
 
 void* __cdecl
 memset(void* dst, int val, size_t size)

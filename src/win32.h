@@ -117,13 +117,14 @@ __MCF_i386_seh_cleanup(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
   }
 
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
-    __MCF_i386_seh_node __MCF_seh_node_1 __MCF_USE_DTOR(__MCF_i386_seh_cleanup);  \
+    __MCF_i386_seh_node __MCF_PPCAT(__MCF_seh_node_, __LINE__)  \
+                 __MCF_USE_DTOR(__MCF_i386_seh_cleanup);  \
     __MCF_i386_seh_install(&__MCF_seh_node_1)  /* no semicolon  */
 
 #else  /* SEH is stack-based  ^/v  SEH is table-based  */
 
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
-    __asm__ volatile (".seh_handler __MCF_seh_top, @except")  /* no semicolon  */
+    __asm__ volatile (".seh_handler __MCF_seh_top, @except;")  /* no semicolon  */
 
 #endif  /* SEH is table-based  */
 
@@ -208,15 +209,66 @@ SIZE_T __stdcall
 RtlCompareMemory(const void* __s1, const void* __s2, SIZE_T __size)
   __attribute__((__dllimport__, __pure__, __nothrow__));
 
-/* Copy a block of potentially overlapped memory, like `bcopy()`.  */
+/* Copy a block of memory, like `memcpy()`.  */
 void* __cdecl
-__MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
+__MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __size) __MCF_NOEXCEPT;
 
 __MCF_WIN32_EXTERN_INLINE
 void* __cdecl
-__MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
+__MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __size) __MCF_NOEXCEPT
   {
+#if defined(__i386__) || defined(__amd64__)
+    typedef char __memory[];
+    char* __rdi = (char*) __dst;
+    const char* __rsi = (const char*) __src;
+    size_t __rcx = __size;
+    __MCFGTHREAD_ASSERT(__rcx <= (uintptr_t) (__rdi - __rsi));
+
+    __asm__ (
+      "rep movsb;"
+      : "=o"(*(__memory*) __rdi), "+D"(__rdi), "+S"(__rsi), "+c"(__rcx)
+      : "o"(*(const __memory*) __rsi)
+    );
+#else
+    /* Call the generic but slower version in NTDLL.  */
     RtlMoveMemory(__dst, __src, __size);
+#endif
+    return __dst;
+  }
+
+/* Copy a block of potentially overlapped memory, like `memmove()`.  */
+void* __cdecl
+__MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
+
+__MCF_WIN32_EXTERN_INLINE
+void* __cdecl
+__MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
+  {
+#if defined(__i386__) || defined(__amd64__)
+    typedef char __memory[];
+    char* __rdi = (char*) __dst;
+    const char* __rsi = (const char*) __src;
+    size_t __rcx = __size;
+
+    if(__rcx <= (uintptr_t) (__rdi - __rsi))
+      __asm__ (
+        "rep movsb;"  /* non-overlapped  */
+        : "=o"(*(__memory*) __rdi), "+D"(__rdi), "+S"(__rsi), "+c"(__rcx)
+        : "o"(*(const __memory*) __rsi)
+      );
+    else
+      __asm__ (
+        "std;"  /* overlapped  */
+        "rep movsb;"
+        "cld;"
+        : "=o"(*(__memory*) __rdi), "=D"(__rdi), "=S"(__rsi), "+c"(__rcx)
+        : "o"(*(const __memory*) __rsi),
+          "D"(__rdi + __rcx - 1), "S"(__rsi + __rcx - 1)
+      );
+#else
+    /* Call the generic but slower version in NTDLL.  */
+    RtlMoveMemory(__dst, __src, __size);
+#endif
     return __dst;
   }
 
@@ -228,7 +280,21 @@ __MCF_WIN32_EXTERN_INLINE
 void* __cdecl
 __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
   {
+#if defined(__i386__) || defined(__amd64__)
+    typedef char __memory[];
+    char* __rdi = (char*) __dst;
+    int __rax = __val;
+    size_t __rcx = __size;
+
+    __asm__ (
+      "rep stosb;"
+      : "=o"(*(__memory*) __rdi), "+D"(__rdi), "+c"(__rcx)
+      : "a"(__rax)
+    );
+#else
+    /* Call the generic but slower version in NTDLL.  */
     RtlFillMemory(__dst, __size, __val);
+#endif
     return __dst;
   }
 
@@ -240,7 +306,20 @@ __MCF_WIN32_EXTERN_INLINE
 void* __cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
   {
+#if defined(__i386__) || defined(__amd64__)
+    typedef char __memory[];
+    char* __rdi = (char*) __dst;
+    size_t __rcx = __size;
+
+    __asm__ (
+      "rep stosb;"
+      : "=o"(*(__memory*) __rdi), "+D"(__rdi), "+c"(__rcx)
+      : "a"(0)
+    );
+#else
+    /* Call the generic but slower version in NTDLL.  */
     RtlZeroMemory(__dst, __size);
+#endif
     return __dst;
   }
 
@@ -254,7 +333,35 @@ __MCF_WIN32_EXTERN_INLINE
 uint8_t __cdecl
 __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
-    return RtlCompareMemory(__src, __cmp, __size) == __size;
+    uint8_t __result;
+#if defined(__i386__) || defined(__amd64__)
+    typedef char __memory[];
+    const char* __rsi = (const char*) __src;
+    const char* __rdi = (const char*) __cmp;
+    size_t __rcx = __size;
+
+    __asm__ (
+      "xorl %%eax, %%eax;"
+      "rep cmpsb;"
+#  ifdef __GCC_ASM_FLAG_OUTPUTS__
+      : "=@ccz"(__result),
+#  else
+      "setzb %%al;"
+      : "=a"(__result),
+#  endif
+        "+S"(__rsi), "+D"(__rdi), "+c"(__rcx)
+      : "o"(*(__memory*) __rsi), "o"(*(__memory*) __rdi)
+#  ifdef __GCC_ASM_FLAG_OUTPUTS__
+      : "ax"
+#  else
+      : "cc"
+#  endif
+    );
+#else
+    /* Call the generic but slower version in NTDLL.  */
+    __result = RtlCompareMemory(__src, __cmp, __size) == __size;
+#endif
+    return __result;
   }
 
 /* Allocate a block of zeroed memory, like `calloc()`.  */

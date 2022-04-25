@@ -1,4 +1,5 @@
 check_PROGRAMS +=  \
+  %reldir%/memory.test  \
   %reldir%/once_zero_timeout.test  \
   %reldir%/once_release.test  \
   %reldir%/once_abort.test  \
