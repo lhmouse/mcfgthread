@@ -64,31 +64,6 @@ INT __stdcall
 TlsSetValue(DWORD __index, LPVOID __value)
   __attribute__((__dllimport__, __nothrow__));
 
-/* Undefine macros that redirect to standard functions.
- * This ensures we call the ones from KERNEL32.  */
-#undef RtlCopyMemory
-#undef RtlMoveMemory
-#undef RtlFillMemory
-#undef RtlZeroMemory
-#undef RtlCompareMemory
-#undef RtlEqualMemory
-
-void __stdcall
-RtlMoveMemory(void* __dst, const void* __src, SIZE_T __size)
-  __attribute__((__dllimport__, __nothrow__));
-
-void __stdcall
-RtlFillMemory(void* __dst, SIZE_T __size, int __val)
-  __attribute__((__dllimport__, __nothrow__));
-
-void __stdcall
-RtlZeroMemory(void* __dst, SIZE_T __size)
-  __attribute__((__dllimport__, __nothrow__));
-
-SIZE_T __stdcall
-RtlCompareMemory(const void* __s1, const void* __s2, SIZE_T __size)
-  __attribute__((__dllimport__, __pure__, __nothrow__));
-
 /* Declare some NTDLL functions that are not available here.  */
 NTSTATUS __stdcall
 NtWaitForKeyedEvent(HANDLE __event, const void* __key, BOOLEAN __alertable, LARGE_INTEGER* __timeout)
@@ -220,6 +195,154 @@ __MCF_batch_release_common(const void* __key, size_t __count)
 
     /* Return the number of threads that have been woken.  */
     return __count;
+  }
+
+/* Undefine macros that redirect to standard functions.
+ * This ensures we call the ones from KERNEL32.  */
+#undef RtlCopyMemory
+#undef RtlMoveMemory
+#undef RtlFillMemory
+#undef RtlZeroMemory
+#undef RtlCompareMemory
+#undef RtlEqualMemory
+
+void __stdcall
+RtlMoveMemory(void* __dst, const void* __src, SIZE_T __size)
+  __attribute__((__dllimport__, __nothrow__));
+
+void __stdcall
+RtlFillMemory(void* __dst, SIZE_T __size, int __val)
+  __attribute__((__dllimport__, __nothrow__));
+
+void __stdcall
+RtlZeroMemory(void* __dst, SIZE_T __size)
+  __attribute__((__dllimport__, __nothrow__));
+
+SIZE_T __stdcall
+RtlCompareMemory(const void* __s1, const void* __s2, SIZE_T __size)
+  __attribute__((__dllimport__, __pure__, __nothrow__));
+
+/* Copy a block of potentially overlapped memory, like `bcopy()`.  */
+void*
+__MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
+
+__MCF_WIN32_EXTERN_INLINE
+void*
+__MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
+  {
+    RtlMoveMemory(__dst, __src, __size);
+    return __dst;
+  }
+
+/* Fill a block of memory with the given byte, like `memset()`.  */
+void*
+__MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT;
+
+__MCF_WIN32_EXTERN_INLINE
+void*
+__MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
+  {
+    RtlFillMemory(__dst, __size, __val);
+    return __dst;
+  }
+
+/* Fill a block of memory with zeroes, like `bzero()`.  */
+void*
+__MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT;
+
+__MCF_WIN32_EXTERN_INLINE
+void*
+__MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
+  {
+    RtlZeroMemory(__dst, __size);
+    return __dst;
+  }
+
+/* Check whether two blocks of memory compare equal, like `memcmp() == 0`.
+ * The result is a boolean value.  */
+uint8_t
+_MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
+  __attribute__((__pure__));
+
+__MCF_WIN32_EXTERN_INLINE
+uint8_t
+_MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
+  {
+    return RtlCompareMemory(__src, __cmp, __size) == __size;
+  }
+
+/* Allocate a block of zeroed memory, like `calloc()`.  */
+void*
+__MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
+  __attribute__((__warn_unused_result__, __malloc__, __alloc_size__(1)));
+
+__MCF_WIN32_EXTERN_INLINE
+void*
+__MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
+  {
+    void* __ptr = HeapAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY, __size);
+    return __ptr;
+  }
+
+/* Re-allocate a block of memory, like `realloc()`. If the existent
+ * block should be extended, vacuum bytes are filled with zeroes.
+ * The result is a boolean value.  */
+void*
+__MCF_mrealloc_0(void** __restrict__ __pptr, size_t __size) __MCF_NOEXCEPT
+  __attribute__((__warn_unused_result__, __alloc_size__(2)));
+
+__MCF_WIN32_EXTERN_INLINE
+void*
+__MCF_mrealloc_0(void** __restrict__ __pptr, size_t __size) __MCF_NOEXCEPT
+  {
+    void* __ptr = HeapReAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY, *__pptr, __size);
+    return !__ptr ? NULL : (*__pptr = __ptr);
+  }
+
+/* Allocate a copy of a block of memory, like `malloc()` followed by
+ * `memcpy()`.  */
+void*
+__MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
+  __attribute__((__warn_unused_result__, __alloc_size__(2)));
+
+__MCF_WIN32_EXTERN_INLINE
+void*
+__MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
+  {
+    void* __ptr = HeapAlloc(__MCF_crt_heap, 0, __size);
+    return !__ptr ? NULL : __MCF_mcopy(__ptr, __data, __size);
+  }
+
+/* Get the size of an allocated block, like `malloc_usable_size()`.  */
+size_t
+_MCF_msize(const void* __ptr) __MCF_NOEXCEPT
+  __attribute__((__pure__));
+
+__MCF_WIN32_EXTERN_INLINE
+size_t
+_MCF_msize(const void* __ptr) __MCF_NOEXCEPT
+  {
+    size_t __size = HeapSize(__MCF_crt_heap, 0, __ptr);
+    __MCFGTHREAD_ASSERT(__size != (size_t)-1);
+    return __size;
+  }
+
+/* Free a block of memory, like `free()`.  */
+void
+__MCF_mfree(void* __ptr) __MCF_NOEXCEPT;
+
+__MCF_WIN32_EXTERN_INLINE
+void
+__MCF_mfree(void* __ptr) __MCF_NOEXCEPT
+  {
+    if(!__ptr)
+      return;
+
+#ifdef __MCF_DEBUG
+    __MCF_mfill(__ptr, 0xFE, HeapSize(__MCF_crt_heap, 0, __ptr));
+#endif
+    int __succ = HeapFree(__MCF_crt_heap, 0, __ptr);
+    __MCFGTHREAD_ASSERT(__succ);
   }
 
 #ifdef __cplusplus

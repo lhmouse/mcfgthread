@@ -5,7 +5,6 @@
 #include "config.h"
 #define __MCF_THREAD_EXTERN_INLINE
 #include "thread.h"
-#include "memory.h"
 #include "win32.h"
 
 static
@@ -42,7 +41,7 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
       return NULL;
     }
 
-    _MCF_thread* thrd = _MCF_malloc_0(sizeof(_MCF_thread) + size);
+    _MCF_thread* thrd = __MCF_malloc_0(sizeof(_MCF_thread) + size);
     if(!thrd) {
       SetLastError(ERROR_NOT_ENOUGH_MEMORY);
       return NULL;
@@ -53,14 +52,14 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
     thrd->__proc = proc;
 
     if(data_opt)
-      _MCF_mmove(thrd->__data, data_opt, size);
+      __MCF_mcopy(thrd->__data, data_opt, size);
 
     /* Create the thread.
      * The new thread must not begin execution before the `__handle` field is
      * initialized, after `CreateThread()` returns, so suspend it first.  */
     thrd->__handle = CreateThread(NULL, 0, do_win32_thread_thunk, thrd, CREATE_SUSPENDED, (DWORD*) &(thrd->__tid));
     if(thrd->__handle == NULL) {
-      _MCF_mfree_nonnull(thrd);
+      __MCF_mfree(thrd);
       return NULL;
     }
 
@@ -81,7 +80,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
       return;
 
     __MCFGTHREAD_CHECK(CloseHandle(thrd->__handle));
-    _MCF_mfree_nonnull(thrd);
+    __MCF_mfree(thrd);
   }
 
 void

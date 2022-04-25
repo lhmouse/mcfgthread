@@ -6,13 +6,12 @@
 #define __MCF_TLS_EXTERN_INLINE
 #include "tls.h"
 #include "atomic.h"
-#include "memory.h"
 #include "win32.h"
 
 _MCF_tls_key*
 _MCF_tls_key_new(_MCF_tls_dtor* dtor_opt)
   {
-    _MCF_tls_key* key = _MCF_malloc_0(sizeof(_MCF_tls_key));
+    _MCF_tls_key* key = __MCF_malloc_0(sizeof(_MCF_tls_key));
     if(!key)
       return NULL;
 
@@ -34,7 +33,7 @@ do_tls_key_drop_ref_nonnull(_MCF_tls_key* key)
 
     /* Deallocate its storage now.  */
     __MCFGTHREAD_ASSERT(__MCF_ATOMIC_LOAD_RLX(key->__deleted) == 1);
-    _MCF_mfree(key);
+    __MCF_mfree(key);
   }
 
 void
@@ -101,7 +100,7 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
     if(table->__size >= capacity / 2) {
       /* Allocate a larger table. The number of elements is not changed.  */
       capacity = capacity + capacity / 2 + 17;
-      __MCF_tls_element* elem = _MCF_malloc_0(capacity * sizeof(__MCF_tls_element));
+      __MCF_tls_element* elem = __MCF_malloc_0(capacity * sizeof(__MCF_tls_element));
       if(!elem)
         return -1;
 
@@ -132,7 +131,7 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
         }
 
         /* Deallocate the old table which should be empty now.  */
-        _MCF_mfree_nonnull(temp.__begin);
+        __MCF_mfree(temp.__begin);
       }
     }
 
@@ -186,6 +185,6 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
       }
 
       /* Deallocate the table which should be empty now.  */
-      _MCF_mfree_nonnull(temp.__begin);
+      __MCF_mfree(temp.__begin);
     }
   }

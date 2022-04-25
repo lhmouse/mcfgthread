@@ -5,7 +5,6 @@
 #include "config.h"
 #define __MCF_DTOR_QUEUE_EXTERN_INLINE
 #include "dtor_queue.h"
-#include "memory.h"
 #include "mutex.h"
 #include "win32.h"
 
@@ -15,7 +14,7 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
     if(queue->__size == __MCF_DTOR_QUEUE_BLOCK_SIZE) {
       /* If the current block is full, allocate a new one and create a singly
        * linked list.  */
-      __MCF_dtor_queue* prev = _MCF_malloc_copy(queue, sizeof(__MCF_dtor_queue));
+      __MCF_dtor_queue* prev = __MCF_malloc_copy(queue, sizeof(__MCF_dtor_queue));
       if(!prev)
         return -1;
 
@@ -65,8 +64,8 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* ds
        * Otherwise, go to the next one.  */
       if((cur_q->__size == 0) && cur_q->__prev) {
         __MCF_dtor_queue* prev = cur_q->__prev;
-        _MCF_mmove(cur_q, prev, sizeof(__MCF_dtor_queue));
-        _MCF_mfree_nonnull(prev);
+        __MCF_mcopy(cur_q, prev, sizeof(__MCF_dtor_queue));
+        __MCF_mfree(prev);
       }
       else
         cur_q = cur_q->__prev;
@@ -98,8 +97,8 @@ __MCF_dtor_queue_remove(__MCF_dtor_queue* queue, void* dso)
        * Otherwise, go to the next one.  */
       if((cur_q->__size == 0) && cur_q->__prev) {
         __MCF_dtor_queue* prev = cur_q->__prev;
-        _MCF_mmove(cur_q, prev, sizeof(__MCF_dtor_queue));
-        _MCF_mfree_nonnull(prev);
+        __MCF_mcopy(cur_q, prev, sizeof(__MCF_dtor_queue));
+        __MCF_mfree(prev);
       }
       else
         cur_q = cur_q->__prev;
