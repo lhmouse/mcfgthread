@@ -41,20 +41,27 @@ __MCF_GTHR_AUX_EXTERN_INLINE
 int64_t
 __MCF_gthr_timeout_from_timespec(const struct timespec* __abs_time) __MCF_NOEXCEPT
   {
-    double __time_ms = 0.000999;
-    __time_ms += (double) __abs_time->tv_nsec * 0.000001;
-    __time_ms += (double) __abs_time->tv_sec * 1000;
-
 #ifdef __amd64__
     /* On x86-64 this both results in smaller code and runs faster.  */
-    __m128d __time_d = _mm_set_sd(__time_ms);
-    __time_d = _mm_max_pd(__time_d, _mm_setzero_pd());
-    __time_d = _mm_min_pd(__time_d, _mm_set_sd(0x7FFFFFFFFFFFFC00));
-    return _mm_cvttsd_si64(__time_d);
+    __m128d __time_ms = _mm_set_sd(0.000999);
+    __m128d __temp = _mm_cvtsi64_sd(_mm_setzero_pd(), __abs_time->tv_nsec);
+    __time_ms = _mm_add_sd(__time_ms, _mm_mul_sd(__temp, _mm_set_sd(0.000001)));
+    __temp = _mm_cvtsi64_sd(_mm_setzero_pd(), __abs_time->tv_sec);
+    __time_ms = _mm_add_sd(__time_ms, _mm_mul_sd(__temp, _mm_set_sd(1000)));
+
+    /* Clamp the result.  */
+    __time_ms = _mm_max_pd(__time_ms, _mm_setzero_pd());
+    __time_ms = _mm_min_pd(__time_ms, _mm_set_sd(0x7FFFFFFFFFFFFC00));
+    return _mm_cvttsd_si64(__time_ms);
 #else
     /* This is the portable but slower way to do it. On x86 there is no way to
      * convert an XMM register to a 64-bit integer in EDX:EAX, so we also have
      * to live with this one.  */
+    double __time_ms = 0.000999;
+    __time_ms += (double) __abs_time->tv_nsec * 0.000001;
+    __time_ms += (double) __abs_time->tv_sec * 1000;
+
+    /* Clamp the result.  */
     if(__time_ms <= 0)
       return 0;
     else if(__time_ms <= 0x7FFFFFFFFFFFFC00)
