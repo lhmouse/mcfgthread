@@ -12,7 +12,7 @@ LT_LANG([C])
 LT_LANG([Windows Resource])
 
 AM_INIT_AUTOMAKE([foreign subdir-objects])
-AM_SILENT_RULES([yes])
+#AM_SILENT_RULES([yes])
 
 ## Define ABI information
 AS_VAR_SET([ABI_MAJOR], [1])
