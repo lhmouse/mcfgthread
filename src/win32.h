@@ -365,7 +365,46 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
     );
 #else
     /* Call the generic but slower version in NTDLL.  */
-    __result = RtlCompareMemory(__src, __cmp, __size) == __size;
+    SIZE_T __n = RtlCompareMemory(__src, __cmp, __size);
+    __result = __n == __size;
+#endif
+    return __result;
+  }
+
+/* Compare two blocks of memory, like `memcmp()`.  */
+int __cdecl
+__MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
+  __attribute__((__pure__));
+
+__MCF_WIN32_EXTERN_INLINE
+int __cdecl
+__MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
+  {
+    int __result;
+#if defined(__i386__) || defined(__amd64__)
+    typedef char __memory[];
+    const char* __rsi = (const char*) __src;
+    const char* __rdi = (const char*) __cmp;
+    size_t __rcx = __size;
+
+    __asm__ (
+      "xorl %%eax, %%eax;"
+      "repz cmpsb;"
+      "setnzb %%al;"
+      "sbbl %%ecx, %%ecx;"
+      "orl %%ecx, %%eax;"
+      : "=a"(__result),
+        "+S"(__rsi), "+D"(__rdi), "+c"(__rcx)
+      : "o"(*(__memory*) __rsi), "o"(*(__memory*) __rdi)  /* memory inputs  */
+      : "cc"
+    );
+#else
+    /* Call the generic but slower version in NTDLL.  */
+    SIZE_T __n = RtlCompareMemory(__src, __cmp, __size);
+    if(__n == __size)
+      __result = 0;
+    else
+      __result = *((PCUCHAR) __src + __n) - *((PCUCHAR) __cmp + __n);
 #endif
     return __result;
   }

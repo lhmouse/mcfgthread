@@ -84,4 +84,24 @@ main(void)
 
     assert(RtlCompareMemory(comp, data, sizeof(comp)) == sizeof(comp));
     assert(__MCF_mequal(comp, data, sizeof(comp)) != 0);
+
+    // __MCF_mcomp (equal)
+    do_generate_random_bytes();
+
+    assert(RtlCompareMemory(comp, data, sizeof(comp)) == sizeof(comp));
+    assert(__MCF_mcomp(comp, data, sizeof(comp)) == 0);
+
+    // __MCF_mcomp (less)
+    comp[70] = '1';
+    data[70] = '2';
+
+    assert(RtlCompareMemory(comp, data, sizeof(comp)) == 70);
+    assert(__MCF_mcomp(comp, data, sizeof(comp)) < 0);
+
+    // __MCF_mcomp (greater)
+    comp[50] = '4';
+    data[50] = '3';
+
+    assert(RtlCompareMemory(comp, data, sizeof(comp)) == 50);
+    assert(__MCF_mcomp(comp, data, sizeof(comp)) > 0);
   }

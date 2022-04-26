@@ -36,3 +36,7 @@ memmove(void* dst, const void* src, size_t size)
 void* __cdecl
 memset(void* dst, int val, size_t size)
   __attribute__((__alias__("__MCF_mfill")));
+
+int __cdecl
+memcmp(const void* src, const void* cmp, size_t size)
+  __attribute__((__alias__("__MCF_mcomp")));
