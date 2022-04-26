@@ -9,7 +9,7 @@
 
 static inline
 uint8_t*
-do_flag_byte(const _MCF_mutex* mutex, uint32_t sp_mask)
+do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
   {
     /* Each spinning thread is assigned a byte in the field. If the thread sees
      * this byte hold a value of zero, it continues spinning; otherwise, it
@@ -86,7 +86,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 
           /* Wait for my turn.  */
           uint8_t cmp = 1;
-          if(!__MCF_ATOMIC_CMPXCHG_WEAK_RLX(do_flag_byte(mutex, my_mask), &cmp, 0))
+          if(!__MCF_ATOMIC_CMPXCHG_WEAK_RLX(do_spin_byte_ptr(mutex, my_mask), &cmp, 0))
             continue;
 
           /* If this mutex has not been locked, lock it and decrement the
@@ -200,7 +200,7 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
       /* Notify a spinning thread.  */
       uint32_t my_mask = (uint32_t) new.__sp_mask ^ old.__sp_mask;
       __MCFGTHREAD_ASSERT((my_mask & (my_mask - 1)) == 0);
-      __MCF_ATOMIC_STORE_RLX(do_flag_byte(mutex, my_mask), 1);
+      __MCF_ATOMIC_STORE_RLX(do_spin_byte_ptr(mutex, my_mask), 1);
     }
 
     __MCF_batch_release_common(mutex, wake_one);
