@@ -353,12 +353,12 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
       : "=@ccz"(__result), "+S"(__rsi), "+D"(__rdi), "+c"(__rcx)
       : "o"(*(__memory*) __rsi), "o"(*(__memory*) __rdi)  /* memory inputs  */
       : "ax"
-#  else
+#  else  /* __GCC_ASM_FLAG_OUTPUTS__  */
       "setzb %%al;"
       : "=a"(__result), "+S"(__rsi), "+D"(__rdi), "+c"(__rcx)
       : "o"(*(__memory*) __rsi), "o"(*(__memory*) __rdi)  /* memory inputs  */
       : "cc"
-#  endif
+#  endif  /* __GCC_ASM_FLAG_OUTPUTS__  */
     );
 #else
     /* Call the generic but slower version in NTDLL.  */
