@@ -121,10 +121,11 @@ do_image_tls_callback(PVOID instance, DWORD reason, LPVOID reserved)
 #ifdef DLL_EXPORT
 
 /* When building the shared library, invoke the common routine from the DLL
- * entry point callback.  */
+ * entry point callback. The decorated name is fabricated such that it remains
+ * the same on both x86 and x86-64.  */
 int __stdcall
 __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
-  __asm__("__MCF_dll_startup");
+  __asm__("__MCF_dll_startup@@Z");
 
 int __stdcall
 __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
