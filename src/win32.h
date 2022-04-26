@@ -252,8 +252,7 @@ __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
     const char* __rsi = (const char*) __src;
     size_t __rcx = __size;
 
-    long __no_overlap = (__size <= (uintptr_t) __dst - (uintptr_t) __src);
-    if(__builtin_expect(__no_overlap, 1) != 0)
+    if(__size <= (uintptr_t) __dst - (uintptr_t) __src)
       __asm__ (
         "rep movsb;"  /* go forward  */
         : "=o"(*(__memory*) __rdi),  /* memory output  */
