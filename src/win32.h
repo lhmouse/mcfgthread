@@ -350,16 +350,13 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
       "xorl %%eax, %%eax;"
       "repz cmpsb;"
 #  ifdef __GCC_ASM_FLAG_OUTPUTS__
-      : "=@ccz"(__result),
-#  else
-      "setzb %%al;"
-      : "=a"(__result),
-#  endif
-        "+S"(__rsi), "+D"(__rdi), "+c"(__rcx)
+      : "=@ccz"(__result), "+S"(__rsi), "+D"(__rdi), "+c"(__rcx)
       : "o"(*(__memory*) __rsi), "o"(*(__memory*) __rdi)  /* memory inputs  */
-#  ifdef __GCC_ASM_FLAG_OUTPUTS__
       : "ax"
 #  else
+      "setzb %%al;"
+      : "=a"(__result), "+S"(__rsi), "+D"(__rdi), "+c"(__rcx)
+      : "o"(*(__memory*) __rsi), "o"(*(__memory*) __rdi)  /* memory inputs  */
       : "cc"
 #  endif
     );
@@ -393,8 +390,7 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
       "setnzb %%al;"
       "sbbl %%ecx, %%ecx;"
       "orl %%ecx, %%eax;"
-      : "=a"(__result),
-        "+S"(__rsi), "+D"(__rdi), "+c"(__rcx)
+      : "=a"(__result), "+S"(__rsi), "+D"(__rdi), "+c"(__rcx)
       : "o"(*(__memory*) __rsi), "o"(*(__memory*) __rdi)  /* memory inputs  */
       : "cc"
     );
