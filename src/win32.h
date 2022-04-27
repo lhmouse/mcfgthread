@@ -220,11 +220,12 @@ __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __s
   {
     __MCFGTHREAD_ASSERT(__size <= (uintptr_t) __dst - (uintptr_t) __src);
 #if defined(__i386__) || defined(__amd64__)
-    intptr_t __di, __si, __cx;
+    typedef char __mem[];
+    uintptr_t __di, __si, __cx;
     __asm__ (
       "rep movsb;"
-      : "=m"(*(char(*)[])__dst), "=D"(__di), "=S"(__si), "=c"(__cx)
-      : "m"(*(const char(*)[])__src), "D"(__dst), "S"(__src), "c"(__size)
+      : "=m"(*(__mem*)__dst), "=D"(__di), "=S"(__si), "=c"(__cx)
+      : "m"(*(const __mem*)__src), "D"(__dst), "S"(__src), "c"(__size)
     );
 #else
     /* Call the generic but slower version in NTDLL.  */
@@ -242,21 +243,22 @@ void* __cdecl
 __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
-    intptr_t __di, __si, __cx;
+    typedef char __mem[];
+    uintptr_t __di, __si, __cx;
     if(__size <= (uintptr_t) __dst - (uintptr_t) __src)
       __asm__ (
         "rep movsb;"  /* go forward  */
-        : "=m"(*(char(*)[])__dst), "=D"(__di), "=S"(__si), "=c"(__cx)
-        : "m"(*(const char(*)[])__src), "D"(__dst), "S"(__src), "c"(__size)
+        : "=m"(*(__mem*)__dst), "=D"(__di), "=S"(__si), "=c"(__cx)
+        : "m"(*(const __mem*)__src), "D"(__dst), "S"(__src), "c"(__size)
       );
     else
       __asm__ (
         "std;"
         "rep movsb;"  /* go backward  */
         "cld;"
-        : "=m"(*(char(*)[])__dst), "=D"(__di), "=S"(__si), "=c"(__cx)
-        : "m"(*(const char(*)[])__src), "D"((uintptr_t) __dst + __size - 1),
-          "S"((uintptr_t) __src + __size - 1), "c"(__size)
+        : "=m"(*(__mem*)__dst), "=D"(__di), "=S"(__si), "=c"(__cx)
+        : "m"(*(const __mem*)__src), "D"((char*) __dst + __size - 1),
+          "S"((const char*) __src + __size - 1), "c"(__size)
       );
 #else
     /* Call the generic but slower version in NTDLL.  */
@@ -274,10 +276,11 @@ void* __cdecl
 __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
-    intptr_t __di, __cx;
+    typedef char __mem[];
+    uintptr_t __di, __cx;
     __asm__ (
       "rep stosb;"
-      : "=m"(*(char(*)[])__dst), "=D"(__di), "=c"(__cx)
+      : "=m"(*(__mem*)__dst), "=D"(__di), "=c"(__cx)
       : "D"(__dst), "a"(__val), "c"(__size)
     );
 #else
@@ -296,10 +299,11 @@ void* __cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
-    intptr_t __di, __cx;
+    typedef char __mem[];
+    uintptr_t __di, __cx;
     __asm__ (
       "rep stosb;"
-      : "=m"(*(char(*)[])__dst), "=D"(__di), "=c"(__cx)
+      : "=m"(*(__mem*)__dst), "=D"(__di), "=c"(__cx)
       : "D"(__dst), "a"(0), "c"(__size)
     );
 #else
@@ -321,19 +325,20 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
     uint8_t __result;
 #if defined(__i386__) || defined(__amd64__)
-    intptr_t __si, __di, __cx;
+    typedef char __mem[];
+    uintptr_t __si, __di, __cx;
     __asm__ (
       "xorl %%eax, %%eax;"
       "repz cmpsb;"
 #  ifdef __GCC_ASM_FLAG_OUTPUTS__
       : "=@ccz"(__result), "=S"(__si), "=D"(__di), "=c"(__cx)
-      : "m"(*(const char(*)[])__src), "m"(*(const char(*)[])__cmp),
+      : "m"(*(const __mem*)__src), "m"(*(const __mem*)__cmp),
         "S"(__src), "D"(__cmp), "c"(__size)
       : "ax"
 #  else  /* __GCC_ASM_FLAG_OUTPUTS__  */
       "setzb %%al;"
       : "=a"(__result), "=S"(__si), "=D"(__di), "=c"(__cx)
-      : "m"(*(const char(*)[])__src), "m"(*(const char(*)[])__cmp),
+      : "m"(*(const __mem*)__src), "m"(*(const __mem*)__cmp),
         "S"(__src), "D"(__cmp), "c"(__size)
       : "cc"
 #  endif  /* __GCC_ASM_FLAG_OUTPUTS__  */
@@ -357,7 +362,8 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
     int __result;
 #if defined(__i386__) || defined(__amd64__)
-    intptr_t __si, __di, __cx;
+    typedef char __mem[];
+    uintptr_t __si, __di, __cx;
     __asm__ (
       "xorl %%eax, %%eax;"
       "repz cmpsb;"
@@ -365,7 +371,7 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
       "sbbl %%ecx, %%ecx;"
       "orl %%ecx, %%eax;"
       : "=a"(__result), "=S"(__si), "=D"(__di), "=c"(__cx)
-      : "m"(*(const char(*)[])__src), "m"(*(const char(*)[])__cmp),
+      : "m"(*(const __mem*)__src), "m"(*(const __mem*)__cmp),
         "S"(__src), "D"(__cmp), "c"(__size)
       : "cc"
     );
