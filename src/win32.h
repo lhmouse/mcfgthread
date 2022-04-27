@@ -220,16 +220,14 @@ __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __s
   {
     __MCFGTHREAD_ASSERT(__size <= (uintptr_t) __dst - (uintptr_t) __src);
 #if defined(__i386__) || defined(__amd64__)
-    typedef char __memory[];
-    char* __rdi = (char*) __dst;
-    const char* __rsi = (const char*) __src;
-    size_t __rcx = __size;
+    char* __di = (char*) __dst;
+    const char* __si = (const char*) __src;
+    size_t __cx = __size;
 
     __asm__ (
       "rep movsb;"
-      : "=o"(*(__memory*) __rdi),  /* memory output  */
-        "+D"(__rdi), "+S"(__rsi), "+c"(__rcx)
-      : "o"(*(const __memory*) __rsi)  /* memory input  */
+      : "=m"(*(char(*)[])__di), "+D"(__di), "+S"(__si), "+c"(__cx)
+      : "m"(*(const char(*)[])__si)
     );
 #else
     /* Call the generic but slower version in NTDLL.  */
@@ -247,27 +245,23 @@ void* __cdecl
 __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
-    typedef char __memory[];
-    char* __rdi = (char*) __dst;
-    const char* __rsi = (const char*) __src;
-    size_t __rcx = __size;
+    char* __di = (char*) __dst;
+    const char* __si = (const char*) __src;
+    size_t __cx = __size;
 
     if(__size <= (uintptr_t) __dst - (uintptr_t) __src)
       __asm__ (
         "rep movsb;"  /* go forward  */
-        : "=o"(*(__memory*) __rdi),  /* memory output  */
-          "+D"(__rdi), "+S"(__rsi), "+c"(__rcx)
-        : "o"(*(const __memory*) __rsi)  /* memory input  */
+        : "=m"(*(char(*)[])__di), "+D"(__di), "+S"(__si), "+c"(__cx)
+        : "m"(*(const char(*)[])__si)
       );
     else
       __asm__ (
         "std;"
         "rep movsb;"  /* go backward  */
         "cld;"
-        : "=o"(*(__memory*) __rdi),  /* memory output  */
-          "=D"(__rdi), "=S"(__rsi), "+c"(__rcx)
-        : "o"(*(const __memory*) __rsi),  /* memory input  */
-          "D"(__rdi + __rcx - 1), "S"(__rsi + __rcx - 1)
+        : "=m"(*(char(*)[])__di), "=D"(__di), "=S"(__si), "+c"(__cx)
+        : "m"(*(const char(*)[])__si), "D"(__di+__cx-1), "S"(__si+__cx-1)
       );
 #else
     /* Call the generic but slower version in NTDLL.  */
@@ -285,16 +279,14 @@ void* __cdecl
 __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
-    typedef char __memory[];
-    char* __rdi = (char*) __dst;
-    int __rax = __val;
-    size_t __rcx = __size;
+    char* __di = (char*) __dst;
+    int __ax = __val;
+    size_t __cx = __size;
 
     __asm__ (
       "rep stosb;"
-      : "=o"(*(__memory*) __rdi),  /* memory output  */
-        "+D"(__rdi), "+c"(__rcx)
-      : "a"(__rax)
+      : "=m"(*(char(*)[])__di), "+D"(__di), "+c"(__cx)
+      : "a"(__ax)
     );
 #else
     /* Call the generic but slower version in NTDLL.  */
@@ -312,14 +304,12 @@ void* __cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
-    typedef char __memory[];
-    char* __rdi = (char*) __dst;
-    size_t __rcx = __size;
+    char* __di = (char*) __dst;
+    size_t __cx = __size;
 
     __asm__ (
       "rep stosb;"
-      : "=o"(*(__memory*) __rdi),  /* memory output  */
-        "+D"(__rdi), "+c"(__rcx)
+      : "=m"(*(char(*)[])__di), "+D"(__di), "+c"(__cx)
       : "a"(0)
     );
 #else
@@ -341,22 +331,21 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
     uint8_t __result;
 #if defined(__i386__) || defined(__amd64__)
-    typedef char __memory[];
-    const char* __rsi = (const char*) __src;
-    const char* __rdi = (const char*) __cmp;
-    size_t __rcx = __size;
+    const char* __si = (const char*) __src;
+    const char* __di = (const char*) __cmp;
+    size_t __cx = __size;
 
     __asm__ (
       "xorl %%eax, %%eax;"
       "repz cmpsb;"
 #  ifdef __GCC_ASM_FLAG_OUTPUTS__
-      : "=@ccz"(__result), "+S"(__rsi), "+D"(__rdi), "+c"(__rcx)
-      : "o"(*(__memory*) __rsi), "o"(*(__memory*) __rdi)  /* memory inputs  */
+      : "=@ccz"(__result), "+S"(__si), "+D"(__di), "+c"(__cx)
+      : "m"(*(const char(*)[])__si), "m"(*(const char(*)[])__di)
       : "ax"
 #  else  /* __GCC_ASM_FLAG_OUTPUTS__  */
       "setzb %%al;"
-      : "=a"(__result), "+S"(__rsi), "+D"(__rdi), "+c"(__rcx)
-      : "o"(*(__memory*) __rsi), "o"(*(__memory*) __rdi)  /* memory inputs  */
+      : "=a"(__result), "+S"(__si), "+D"(__di), "+c"(__cx)
+      : "m"(*(const char(*)[])__si), "m"(*(const char(*)[])__di)
       : "cc"
 #  endif  /* __GCC_ASM_FLAG_OUTPUTS__  */
     );
@@ -379,10 +368,9 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
     int __result;
 #if defined(__i386__) || defined(__amd64__)
-    typedef char __memory[];
-    const char* __rsi = (const char*) __src;
-    const char* __rdi = (const char*) __cmp;
-    size_t __rcx = __size;
+    const char* __si = (const char*) __src;
+    const char* __di = (const char*) __cmp;
+    size_t __cx = __size;
 
     __asm__ (
       "xorl %%eax, %%eax;"
@@ -390,17 +378,19 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
       "setnzb %%al;"
       "sbbl %%ecx, %%ecx;"
       "orl %%ecx, %%eax;"
-      : "=a"(__result), "+S"(__rsi), "+D"(__rdi), "+c"(__rcx)
-      : "o"(*(__memory*) __rsi), "o"(*(__memory*) __rdi)  /* memory inputs  */
+      : "=a"(__result), "+S"(__si), "+D"(__di), "+c"(__cx)
+      : "m"(*(const char(*)[])__si), "m"(*(const char(*)[])__di)
       : "cc"
     );
 #else
     /* Call the generic but slower version in NTDLL.  */
     SIZE_T __n = RtlCompareMemory(__src, __cmp, __size);
-    if(__n == __size)
-      __result = 0;
+    if(__n != __size) {
+      __result = *((const uint8_t*)__src + __n) - *((const uint8_t*)__cmp + __n);
+      __MCFGTHREAD_ASSERT(__result != 0);
+    }
     else
-      __result = *((PCUCHAR) __src + __n) - *((PCUCHAR) __cmp + __n);
+      __result = 0;
 #endif
     return __result;
   }
