@@ -37,7 +37,7 @@ lib_libmcfgthread_la_SOURCES =  \
   ${NOTHING}
 
 lib_libmcfgthread_la_CFLAGS =  \
-  ${AM_CFLAGS} -ffreestanding -nostdlib
+  ${AM_CFLAGS} -nostdlib -f{freestanding,unwind-tables}
 
 lib_libmcfgthread_la_LIBADD =  \
   -lkernel32 -lntdll
