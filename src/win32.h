@@ -220,14 +220,11 @@ __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __s
   {
     __MCFGTHREAD_ASSERT(__size <= (uintptr_t) __dst - (uintptr_t) __src);
 #if defined(__i386__) || defined(__amd64__)
-    char* __di = (char*) __dst;
-    const char* __si = (const char*) __src;
-    size_t __cx = __size;
-
+    intptr_t __di, __si, __cx;
     __asm__ (
       "rep movsb;"
-      : "=m"(*(char(*)[])__di), "+D"(__di), "+S"(__si), "+c"(__cx)
-      : "m"(*(const char(*)[])__si)
+      : "=m"(*(char(*)[])__dst), "=D"(__di), "=S"(__si), "=c"(__cx)
+      : "m"(*(const char(*)[])__src), "D"(__dst), "S"(__src), "c"(__size)
     );
 #else
     /* Call the generic but slower version in NTDLL.  */
@@ -245,23 +242,21 @@ void* __cdecl
 __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
-    char* __di = (char*) __dst;
-    const char* __si = (const char*) __src;
-    size_t __cx = __size;
-
+    intptr_t __di, __si, __cx;
     if(__size <= (uintptr_t) __dst - (uintptr_t) __src)
       __asm__ (
         "rep movsb;"  /* go forward  */
-        : "=m"(*(char(*)[])__di), "+D"(__di), "+S"(__si), "+c"(__cx)
-        : "m"(*(const char(*)[])__si)
+        : "=m"(*(char(*)[])__dst), "=D"(__di), "=S"(__si), "=c"(__cx)
+        : "m"(*(const char(*)[])__src), "D"(__dst), "S"(__src), "c"(__size)
       );
     else
       __asm__ (
         "std;"
         "rep movsb;"  /* go backward  */
         "cld;"
-        : "=m"(*(char(*)[])__di), "=D"(__di), "=S"(__si), "+c"(__cx)
-        : "m"(*(const char(*)[])__si), "D"(__di+__cx-1), "S"(__si+__cx-1)
+        : "=m"(*(char(*)[])__dst), "=D"(__di), "=S"(__si), "=c"(__cx)
+        : "m"(*(const char(*)[])__src), "D"((uintptr_t) __dst + __size - 1),
+          "S"((uintptr_t) __src + __size - 1), "c"(__size)
       );
 #else
     /* Call the generic but slower version in NTDLL.  */
@@ -279,14 +274,11 @@ void* __cdecl
 __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
-    char* __di = (char*) __dst;
-    int __ax = __val;
-    size_t __cx = __size;
-
+    intptr_t __di, __cx;
     __asm__ (
       "rep stosb;"
-      : "=m"(*(char(*)[])__di), "+D"(__di), "+c"(__cx)
-      : "a"(__ax)
+      : "=m"(*(char(*)[])__dst), "=D"(__di), "=c"(__cx)
+      : "D"(__dst), "a"(__val), "c"(__size)
     );
 #else
     /* Call the generic but slower version in NTDLL.  */
@@ -304,13 +296,11 @@ void* __cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
-    char* __di = (char*) __dst;
-    size_t __cx = __size;
-
+    intptr_t __di, __cx;
     __asm__ (
       "rep stosb;"
-      : "=m"(*(char(*)[])__di), "+D"(__di), "+c"(__cx)
-      : "a"(0)
+      : "=m"(*(char(*)[])__dst), "=D"(__di), "=c"(__cx)
+      : "D"(__dst), "a"(0), "c"(__size)
     );
 #else
     /* Call the generic but slower version in NTDLL.  */
@@ -331,21 +321,20 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
     uint8_t __result;
 #if defined(__i386__) || defined(__amd64__)
-    const char* __si = (const char*) __src;
-    const char* __di = (const char*) __cmp;
-    size_t __cx = __size;
-
+    intptr_t __si, __di, __cx;
     __asm__ (
       "xorl %%eax, %%eax;"
       "repz cmpsb;"
 #  ifdef __GCC_ASM_FLAG_OUTPUTS__
-      : "=@ccz"(__result), "+S"(__si), "+D"(__di), "+c"(__cx)
-      : "m"(*(const char(*)[])__si), "m"(*(const char(*)[])__di)
+      : "=@ccz"(__result), "=S"(__si), "=D"(__di), "=c"(__cx)
+      : "m"(*(const char(*)[])__src), "m"(*(const char(*)[])__cmp),
+        "S"(__src), "D"(__cmp), "c"(__size)
       : "ax"
 #  else  /* __GCC_ASM_FLAG_OUTPUTS__  */
       "setzb %%al;"
-      : "=a"(__result), "+S"(__si), "+D"(__di), "+c"(__cx)
-      : "m"(*(const char(*)[])__si), "m"(*(const char(*)[])__di)
+      : "=a"(__result), "=S"(__si), "=D"(__di), "=c"(__cx)
+      : "m"(*(const char(*)[])__src), "m"(*(const char(*)[])__cmp),
+        "S"(__src), "D"(__cmp), "c"(__size)
       : "cc"
 #  endif  /* __GCC_ASM_FLAG_OUTPUTS__  */
     );
@@ -368,18 +357,16 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
     int __result;
 #if defined(__i386__) || defined(__amd64__)
-    const char* __si = (const char*) __src;
-    const char* __di = (const char*) __cmp;
-    size_t __cx = __size;
-
+    intptr_t __si, __di, __cx;
     __asm__ (
       "xorl %%eax, %%eax;"
       "repz cmpsb;"
       "setnzb %%al;"
       "sbbl %%ecx, %%ecx;"
       "orl %%ecx, %%eax;"
-      : "=a"(__result), "+S"(__si), "+D"(__di), "+c"(__cx)
-      : "m"(*(const char(*)[])__si), "m"(*(const char(*)[])__di)
+      : "=a"(__result), "=S"(__si), "=D"(__di), "=c"(__cx)
+      : "m"(*(const char(*)[])__src), "m"(*(const char(*)[])__cmp),
+        "S"(__src), "D"(__cmp), "c"(__size)
       : "cc"
     );
 #else
