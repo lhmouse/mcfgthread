@@ -17,7 +17,7 @@ AM_INIT_AUTOMAKE([foreign subdir-objects])
 ## Define ABI information
 AS_VAR_SET([ABI_MAJOR], [1])
 AS_VAR_SET([ABI_MINOR], [0])
-AS_VAR_SET([ABI_SUFFIX], [beta.4])
+AS_VAR_SET([ABI_SUFFIX], [beta.5])
 
 ## Check for assertions
 AC_ARG_ENABLE([debug-checks], AS_HELP_STRING([--enable-debug-checks], [enable assertions]))
