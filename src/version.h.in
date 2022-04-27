@@ -5,8 +5,8 @@
 #ifndef __MCFGTHREAD_VERSION_H_
 #define __MCFGTHREAD_VERSION_H_
 
-#define _MCF_ABI_VERSION_MAJOR    @ABI_MAJOR@
-#define _MCF_ABI_VERSION_MINOR    @ABI_MINOR@
-#define _MCF_ABI_VERSION_STRING   "@ABI_MAJOR@.@ABI_MINOR@-@ABI_SUFFIX@"
+#define _MCF_ABI_VERSION_MAJOR    @abi_major@
+#define _MCF_ABI_VERSION_MINOR    @abi_minor@
+#define _MCF_ABI_VERSION_STRING   "@abi_major@.@abi_minor@-@abi_suffix@"
 
 #endif

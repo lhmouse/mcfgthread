@@ -47,4 +47,4 @@ lib_libmcfgthread_la_LDFLAGS =  \
   -Wl,--{exclude-symbols,entry},__MCF_dll_startup@@Z  \
   -Wl,--disable-{runtime-pseudo-reloc,auto-import,stdcall-fixup}  \
   -Wl,--enable-auto-image-base -Wc,-nostdlib -no-undefined  \
-  -version-info @ABI_MAJOR@:@ABI_MINOR@
+  -version-info @abi_major@:@abi_minor@
