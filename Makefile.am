@@ -24,7 +24,7 @@ LDADD = lib/libmcfgthread.la
 ## Custom rules
 .rc.lo:
 	${AM_V_GEN}${LIBTOOL} ${AM_V_lt} --tag=RC ${AM_LIBTOOLFLAGS} ${LIBTOOLFLAGS}  \
-	--mode=compile ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
+	  --mode=compile ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
 
 ## Initialization
 EXTRA_DIST =
