@@ -29,12 +29,6 @@ extern "C" {
 #  error Windows platforms are assumed to be little-endian.
 #endif
 
-#ifdef __MCF_DEBUG
-#  define __MCF_UNREACHABLE   __builtin_trap()
-#else
-#  define __MCF_UNREACHABLE   __builtin_unreachable()
-#endif
-
 #if defined(__cplusplus)
 #  define __MCF_C(...)
 #else
@@ -59,6 +53,12 @@ extern "C" {
 #  define __MCF_CXX14(...)
 #endif
 
+#ifdef __MCF_DEBUG
+#  define __MCF_UNREACHABLE   __builtin_trap()
+#else
+#  define __MCF_UNREACHABLE   __builtin_unreachable()
+#endif
+
 #define __MCF_PPCAT(x, y)      x##y
 #define __MCF_GNU_INLINE       extern __inline__ __attribute__((__gnu_inline__))
 #define __MCF_ALWAYS_INLINE    static __inline__ __attribute__((__always_inline__))
@@ -68,8 +68,8 @@ extern "C" {
 #define __MCF_0_INIT           { __MCF_C(0) }
 #define __MCF_PTR_BITS         (__SIZEOF_POINTER__ * 8U)
 
-#define __MCFGTHREAD_ASSERT(...)   ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
-#define __MCFGTHREAD_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __builtin_trap())
+#define __MCFGTHREAD_ASSERT(...)   ((__VA_ARGS__) ? (void)0 : __MCF_UNREACHABLE)
+#define __MCFGTHREAD_CHECK(...)    ((__VA_ARGS__) ? (void)0 : __builtin_trap())
 
 /* Make some forward declarations.  */
 typedef struct __MCF_dtor_element __MCF_dtor_element;
