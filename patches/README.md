@@ -1,6 +1,6 @@
 These are patches that I use to build GCC 11 with mcfgthread support.
 
-Normally, mingw-w64 CRT performs per-thread cleanup upon receipt of `DLL_PROCESS_DETACH` in a TLS callback (of an EXE) or the `DllMainCRTStartup()` function (of a DLL). There are two major issues in this approach:
+Normally, mingw-w64 CRT performs per-thread cleanup upon receipt of `DLL_PROCESS_DETACH` in a TLS callback (of an EXE) or the `DllMainCRTStartup()` function (of a DLL). There are some major issues in this approach:
 
 1. These callbacks are invoked after Windows has terminated all the other threads. If another thread is terminated while it has locked a mutex, the mutex will never get unlocked. If a destructor of a static object or a callback that has been registered with `atexit()` attempts to acquire the exact mutex, deadlocks can occur.
 2. These callbacks are still invoked if the user calls `_Exit()` or `quick_exit()`, such as [in LLVM](https://reviews.llvm.org/D102944). As specified by the C++ standard, they shall not be called.
