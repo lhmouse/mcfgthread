@@ -329,14 +329,14 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
     __asm__ (
       "xorl %%eax, %%eax;"
       "repz cmpsb;"
-      "setnzb %%al;"
-      "sbbl %%ecx, %%ecx;"
-      "orl %%ecx, %%eax;"
+      "setnzb %%al;"        /* EAX = 0 if equal; 1 if not equal.  */
+      "sbbl %%ecx, %%ecx;"  /* ECX = 0 if equal or greater; -1 if less.  */
       : "=a"(__result), "=S"(__si), "=D"(__di), "=c"(__cx)
       : "m"(*(const __mem*)__src), "m"(*(const __mem*)__cmp),
         "S"(__src), "D"(__cmp), "c"(__size)
       : "cc"
     );
+    __result |= (int) __cx;
 #else
     /* Call the generic but slower version in NTDLL.  */
     SIZE_T __n = RtlCompareMemory(__src, __cmp, __size);
