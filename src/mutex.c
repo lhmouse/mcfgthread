@@ -54,10 +54,10 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         new = old;
         if(old.__locked == 0)
           new.__locked = 1;
-        else if((old.__sp_mask != __MCF_MUTEX_SP_MASK_M) && (old.__sp_nfail < __MCF_MUTEX_SP_NFAIL_THRESHOLD))
-          new.__sp_mask = (old.__sp_mask | (old.__sp_mask + 1U)) & __MCF_MUTEX_SP_MASK_M;
-        else
+        else if((old.__sp_mask == __MCF_MUTEX_SP_MASK_M) || (old.__sp_nfail >= __MCF_MUTEX_SP_NFAIL_THRESHOLD))
           new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
+        else
+          new.__sp_mask = (old.__sp_mask | (old.__sp_mask + 1U)) & __MCF_MUTEX_SP_MASK_M;
 
         /* If the mutex can be locked immediately, the failure counter shall be
          * decremented. Otherwise it shall be incremented, no matter whether
