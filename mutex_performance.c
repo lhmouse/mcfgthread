@@ -7,6 +7,7 @@
 #include <mcfgthread/gthr.h>
 #include <mcfgthread/clock.h>
 #include <pthread.h>
+#include <windows.h>
 
 
 #if defined(USE_SRWLOCK)
