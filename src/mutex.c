@@ -45,10 +45,12 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       waiting_since = (int64_t) GetTickCount64();
 
     for(;;) {
-      /* If this mutex has not been locked, lock it.
-       * Otherwise, allocate a spinning bit for the current thread. If the
-       * maximum number of spinning threads has been reached, allocate a
-       * sleeping count instead.  */
+      /* If this mutex has not been locked, lock it. Otherwise, if the maximum
+       * number of spinning threads has been reached, allocate a sleeping count
+       * for it. Otherwise, allocate a spinning bit for the current thread. If
+       * the mutex can be locked immediately, the failure counter shall be
+       * decremented. Otherwise it shall be incremented, no matter whether the
+       * current thread is going to spin or not.  */
       __MCF_ATOMIC_LOAD_PTR_RLX(&old, mutex);
       do {
         new = old;
@@ -59,10 +61,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         else
           new.__sp_mask = (old.__sp_mask | (old.__sp_mask + 1U)) & __MCF_MUTEX_SP_MASK_M;
 
-        /* If the mutex can be locked immediately, the failure counter shall be
-         * decremented. Otherwise it shall be incremented, no matter whether
-         * the current thread is going to spin or not.  */
-        uint32_t temp = old.__sp_nfail + old.__locked * 2U - 1U;
+        uint32_t temp = old.__sp_nfail - 1U + old.__locked * 2U;
         new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
       }
       while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_ARL(mutex, &old, &new));
@@ -117,6 +116,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
             new.__locked = 1;
           else
             new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
+
+          uint32_t temp = old.__sp_nfail - 1U + old.__locked;
+          new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
         }
         while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_ACQ(mutex, &old, &new));
 
