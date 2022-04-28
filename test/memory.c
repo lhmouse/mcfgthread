@@ -91,17 +91,31 @@ main(void)
     assert(RtlCompareMemory(comp, data, sizeof(comp)) == sizeof(comp));
     assert(__MCF_mcomp(comp, data, sizeof(comp)) == 0);
 
-    // __MCF_mcomp (less)
-    comp[70] = '1';
-    data[70] = '2';
+    // __MCF_mcomp (less 2)
+    comp[72] = '1';
+    data[72] = '2';
 
-    assert(RtlCompareMemory(comp, data, sizeof(comp)) == 70);
+    assert(RtlCompareMemory(comp, data, sizeof(comp)) == 72);
     assert(__MCF_mcomp(comp, data, sizeof(comp)) < 0);
 
-    // __MCF_mcomp (greater)
-    comp[50] = '4';
-    data[50] = '3';
+    // __MCF_mcomp (greater 1)
+    comp[71] = '\x80';
+    data[71] = '\x7F';
 
-    assert(RtlCompareMemory(comp, data, sizeof(comp)) == 50);
+    assert(RtlCompareMemory(comp, data, sizeof(comp)) == 71);
     assert(__MCF_mcomp(comp, data, sizeof(comp)) > 0);
+
+    // __MCF_mcomp (greater 2)
+    comp[45] = '2';
+    data[45] = '1';
+
+    assert(RtlCompareMemory(comp, data, sizeof(comp)) == 45);
+    assert(__MCF_mcomp(comp, data, sizeof(comp)) > 0);
+
+    // __MCF_mcomp (less 1)
+    comp[44] = '\x7F';
+    data[44] = '\x80';
+
+    assert(RtlCompareMemory(comp, data, sizeof(comp)) == 44);
+    assert(__MCF_mcomp(comp, data, sizeof(comp)) < 0);
   }
