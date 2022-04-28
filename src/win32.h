@@ -313,44 +313,6 @@ __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
     return __dst;
   }
 
-/* Check whether two blocks of memory compare equal, like `memcmp() == 0`.
- * The result is a boolean value.  */
-uint8_t __cdecl
-__MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
-  __attribute__((__pure__));
-
-__MCF_WIN32_EXTERN_INLINE
-uint8_t __cdecl
-__MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
-  {
-    uint8_t __result;
-#if defined(__i386__) || defined(__amd64__)
-    typedef char __mem[];
-    uintptr_t __si, __di, __cx;
-    __asm__ (
-      "xorl %%eax, %%eax;"
-      "repz cmpsb;"
-#  ifdef __GCC_ASM_FLAG_OUTPUTS__
-      : "=@ccz"(__result), "=S"(__si), "=D"(__di), "=c"(__cx)
-      : "m"(*(const __mem*)__src), "m"(*(const __mem*)__cmp),
-        "S"(__src), "D"(__cmp), "c"(__size)
-      : "ax"
-#  else  /* __GCC_ASM_FLAG_OUTPUTS__  */
-      "setzb %%al;"
-      : "=a"(__result), "=S"(__si), "=D"(__di), "=c"(__cx)
-      : "m"(*(const __mem*)__src), "m"(*(const __mem*)__cmp),
-        "S"(__src), "D"(__cmp), "c"(__size)
-      : "cc"
-#  endif  /* __GCC_ASM_FLAG_OUTPUTS__  */
-    );
-#else
-    /* Call the generic but slower version in NTDLL.  */
-    SIZE_T __n = RtlCompareMemory(__src, __cmp, __size);
-    __result = __n == __size;
-#endif
-    return __result;
-  }
-
 /* Compare two blocks of memory, like `memcmp()`.  */
 int __cdecl
 __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
@@ -384,6 +346,48 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
     }
     else
       __result = 0;
+#endif
+    return __result;
+  }
+
+/* Check whether two blocks of memory compare equal, like `memcmp() == 0`.
+ * The result is a boolean value.  */
+uint8_t __cdecl
+__MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
+  __attribute__((__pure__));
+
+__MCF_WIN32_EXTERN_INLINE
+uint8_t __cdecl
+__MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
+  {
+    uint8_t __result;
+#if defined(__i386__) || defined(__amd64__)
+    typedef char __mem[];
+    uintptr_t __si, __di, __cx;
+    __asm__ (
+      "xorl %%eax, %%eax;"
+      "repz cmpsb;"
+#  ifdef __GCC_ASM_FLAG_OUTPUTS__
+      /* Store the result in FL and clobber AX.  */
+      : "=@ccz"(__result),
+#  else
+      /* Store the result in AX and clobber FL.  */
+      "setzb %%al;"
+      : "=a"(__result),
+#  endif
+        "=S"(__si), "=D"(__di), "=c"(__cx)
+      : "m"(*(const __mem*)__src), "m"(*(const __mem*)__cmp),
+        "S"(__src), "D"(__cmp), "c"(__size)
+#  ifdef __GCC_ASM_FLAG_OUTPUTS__
+      : "ax"
+#  else
+      : "cc"
+#  endif
+    );
+#else
+    /* Call the generic but slower version in NTDLL.  */
+    SIZE_T __n = RtlCompareMemory(__src, __cmp, __size);
+    __result = __n == __size;
 #endif
     return __result;
   }
