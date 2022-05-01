@@ -175,12 +175,30 @@ void*
 _MCF_tls_get(const _MCF_tls_key* __key) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
+__MCF_THREAD_EXTERN_INLINE
+void*
+_MCF_tls_get(const _MCF_tls_key* __key) __MCF_NOEXCEPT
+  {
+    _MCF_thread* __self = _MCF_thread_self();
+    return (__self == NULL) ? NULL
+               : __MCF_tls_table_get(&(__self->__tls_table), __key);
+  }
+
 /* Sets a thread-local value. The calling thread shall have been created by
  * `_MCF_thread_new()`, or shall be the main thread.
  *
  * Returns 0 upon success and -1 upon failure.  */
 int
 _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt) __MCF_NOEXCEPT;
+
+__MCF_THREAD_EXTERN_INLINE
+int
+_MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt) __MCF_NOEXCEPT
+  {
+    _MCF_thread* __self = _MCF_thread_self();
+    return (__self == NULL) ? -1
+               : __MCF_tls_table_set(&(__self->__tls_table), __key, __value_opt);
+  }
 
 #ifdef __cplusplus
 }
