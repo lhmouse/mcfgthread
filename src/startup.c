@@ -27,40 +27,21 @@ _MCF_get_win32_error(void)
     return GetLastError();
   }
 
-static inline
-void
-do_startup_thread_finalize(void)
-  {
-    _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
-    if(!self)
-      return;
-
-    /* Per-thread atexit callbacks may use TLS, so call them before
-     * destructors of thread-local objects.  */
-    __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
-    __MCF_tls_table_finalize(&(self->__tls_table));
-  }
-
-static inline
-void
-do_startup_thread_detach_self(void)
-  {
-    _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
-    if(!self)
-      return;
-
-    TlsSetValue(__MCF_win32_tls_index, NULL);
-    _MCF_thread_drop_ref_nonnull(self);
-  }
-
 void
 __MCF_finalize_on_exit(void)
   {
+    _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
+    if(!self)
+      return __MCF_dtor_queue_finalize(&__MCF_cxa_atexit_queue, &__MCF_cxa_atexit_mutex, NULL);
+
     /* Call destructors for thread-local objects before static ones, in
-     * accordance with the C++ standard. See [basic.start.term]/2.  */
-    do_startup_thread_finalize();
+     * accordance with the C++ standard. See [basic.start.term]/2.
+     * Thread-local destructors are not called according to POSIX.  */
+    __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
     __MCF_dtor_queue_finalize(&__MCF_cxa_atexit_queue, &__MCF_cxa_atexit_mutex, NULL);
-    do_startup_thread_detach_self();
+
+    TlsSetValue(__MCF_win32_tls_index, NULL);
+    _MCF_thread_drop_ref_nonnull(self);
   }
 
 /* Define the common routine for both static and shared libraries.  */

@@ -19,6 +19,10 @@ check_PROGRAMS +=  \
   %reldir%/tls_set.test  \
   %reldir%/tls_deleted_key.test  \
   %reldir%/tls_many.test  \
+  %reldir%/tls_dtor_thread_exit.test  \
+  %reldir%/tls_dtor_ignored_on_exit.test  \
+  %reldir%/tls_dtor_ignored_on_quick_exit.test  \
+  %reldir%/tls_dtor_ignored_on__Exit.test  \
   %reldir%/gthr_once.test  \
   %reldir%/gthr_mutex_trylock.test  \
   %reldir%/gthr_mutex_timeout.test  \
