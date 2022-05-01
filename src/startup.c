@@ -29,37 +29,6 @@ _MCF_get_win32_error(void)
 
 static inline
 void
-do_startup_crt_initialize(PVOID instance)
-  {
-    /* Set up the base address in memory.  */
-    __MCFGTHREAD_CHECK(!_MCF_crt_module);
-    _MCF_crt_module = instance;
-    __MCFGTHREAD_CHECK(_MCF_crt_module);
-
-    /* Create the CRT heap for memory allocation.  */
-    __MCF_crt_heap = GetProcessHeap();
-    __MCFGTHREAD_CHECK(__MCF_crt_heap);
-
-    /* Allocate a TLS slot for this library.  */
-    __MCF_win32_tls_index = TlsAlloc();
-    __MCFGTHREAD_CHECK(__MCF_win32_tls_index != TLS_OUT_OF_INDEXES);
-
-    /* Get the performance counter resolution.  */
-    LARGE_INTEGER freq;
-    __MCFGTHREAD_CHECK(QueryPerformanceFrequency(&freq));
-    __MCF_perf_frequency_reciprocal = 1000 / (double) freq.QuadPart;
-
-    /* Attach the main thread.  */
-    DWORD main_tid = GetCurrentThreadId();
-    __MCF_main_thread.__tid = main_tid;
-    __MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, FALSE, main_tid);
-    __MCFGTHREAD_CHECK(__MCF_main_thread.__handle);
-    __MCF_ATOMIC_STORE_REL(__MCF_main_thread.__nref, 1);
-    __MCFGTHREAD_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
-  }
-
-static inline
-void
 do_startup_thread_finalize(void)
   {
     _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
@@ -104,15 +73,38 @@ do_image_tls_callback(PVOID instance, DWORD reason, LPVOID reserved)
      * other DLLs might have been unloaded and we would be referencing unmapped
      * memory. User code should call `__cxa_finalize(NULL)` before exiting from
      * a process.  */
-    switch(reason) {
-      case DLL_PROCESS_ATTACH:
-        do_startup_crt_initialize(instance);
-        break;
+    if(reason == DLL_PROCESS_ATTACH) {
+      if(_MCF_crt_module)
+        return;
 
-      case DLL_THREAD_DETACH:
-        do_startup_thread_finalize();
-        do_startup_thread_detach_self();
-        break;
+      /* Set up the base address in memory.  */
+      _MCF_crt_module = instance;
+      __MCFGTHREAD_CHECK(_MCF_crt_module);
+
+      /* Create the CRT heap for memory allocation.  */
+      __MCF_crt_heap = GetProcessHeap();
+      __MCFGTHREAD_CHECK(__MCF_crt_heap);
+
+      /* Allocate a TLS slot for this library.  */
+      __MCF_win32_tls_index = TlsAlloc();
+      __MCFGTHREAD_CHECK(__MCF_win32_tls_index != TLS_OUT_OF_INDEXES);
+
+      /* Get the performance counter resolution.  */
+      LARGE_INTEGER freq;
+      __MCFGTHREAD_CHECK(QueryPerformanceFrequency(&freq));
+      __MCF_perf_frequency_reciprocal = 1000 / (double) freq.QuadPart;
+
+      /* Attach the main thread.  */
+      DWORD main_tid = GetCurrentThreadId();
+      __MCF_main_thread.__tid = main_tid;
+      __MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, FALSE, main_tid);
+      __MCFGTHREAD_CHECK(__MCF_main_thread.__handle);
+      __MCF_ATOMIC_STORE_REL(__MCF_main_thread.__nref, 1);
+      __MCFGTHREAD_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
+    }
+    else if(reason == DLL_THREAD_DETACH) {
+      do_startup_thread_finalize();
+      do_startup_thread_detach_self();
     }
 
     UNREFERENCED_PARAMETER(reserved);
