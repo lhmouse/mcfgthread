@@ -103,8 +103,17 @@ do_image_tls_callback(PVOID instance, DWORD reason, LPVOID reserved)
       __MCFGTHREAD_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
     }
     else if(reason == DLL_THREAD_DETACH) {
-      do_startup_thread_finalize();
-      do_startup_thread_detach_self();
+      _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
+      if(!self)
+        return;
+
+      /* Per-thread atexit callbacks may use TLS, so call them before
+       * destructors of thread-local objects.  */
+      __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
+      __MCF_tls_table_finalize(&(self->__tls_table));
+
+      TlsSetValue(__MCF_win32_tls_index, NULL);
+      _MCF_thread_drop_ref_nonnull(self);
     }
 
     UNREFERENCED_PARAMETER(reserved);
