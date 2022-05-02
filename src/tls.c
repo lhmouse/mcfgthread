@@ -58,10 +58,8 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
 
     /* Make a fixed-point value in the interval [0,1), and then multiply
      * `dist` by it to get an index in the middle.  */
-    dist *= (uint32_t) ((uintptr_t) key * 0x9E3779B9U);
-    dist >>= 32;
-
-    __MCF_tls_element* origin = table->__begin + (ptrdiff_t) dist;
+    uint32_t ratio = (uint32_t) ((uintptr_t) key / sizeof(void*)) * 0x9E3779B9U;
+    __MCF_tls_element* origin = table->__begin + (ptrdiff_t) (dist * ratio >> 32);
     __MCFGTHREAD_ASSERT(origin < table->__end);
 
     /* Find an element using linear probing.
