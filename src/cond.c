@@ -7,12 +7,19 @@
 #include "cond.h"
 #include "win32.h"
 
+struct cond_unlock_result
+  {
+    _MCF_cond_relock_callback* relock_opt;
+    intptr_t lock_arg;
+    intptr_t unlocked;
+  };
+
 static
 void
-do_wait_cleanup_common(_MCF_cond_unlock_callback* unlock_opt, intptr_t unlocked, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg)
+do_unlock_cleanup(struct cond_unlock_result* res)
   {
-    if(unlock_opt && relock_opt)
-      relock_opt(lock_arg, unlocked);
+    if(res->relock_opt)
+      res->relock_opt(res->lock_arg, res->unlocked);
   }
 
 int
@@ -22,6 +29,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     NTSTATUS status;
     LARGE_INTEGER timeout = __MCF_0_INIT;
     LARGE_INTEGER* use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
+    struct cond_unlock_result ulres __MCF_USE_DTOR(do_unlock_cleanup) = __MCF_0_INIT;
 
     /* Allocate a count for the current thread.  */
     __MCF_ATOMIC_LOAD_PTR_RLX(&old, cond);
@@ -31,20 +39,19 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     }
     while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(cond, &old, &new));
 
-    /* Now, invoke the unlock callback.
-     * If another thread attempts to signal this one, it shall block.  */
-    intptr_t unlocked = 42;
-    if(unlock_opt)
-      unlocked = unlock_opt(lock_arg);
+    if(unlock_opt) {
+      /* Now, unlock the associated mutex. If another thread attempts to signal
+       * this one, it shall block.  */
+      ulres.relock_opt = relock_opt;
+      ulres.lock_arg = lock_arg;
+      ulres.unlocked = unlock_opt(lock_arg);
+    }
 
     /* Try waiting.  */
     status = NtWaitForKeyedEvent(NULL, cond, FALSE, use_timeout);
     __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
-    if(!use_timeout) {
-      /* The wait operation was infinite.  */
-      do_wait_cleanup_common(unlock_opt, unlocked, relock_opt, lock_arg);
+    if(!use_timeout)
       return 0;
-    }
 
     while(status == STATUS_TIMEOUT) {
       /* Tell another thread which is going to signal this condition variable
@@ -60,11 +67,8 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
       }
       while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(cond, &old, &new));
 
-      if(old.__nsleep != 0) {
-        /* The operation has timed out.  */
-        do_wait_cleanup_common(unlock_opt, unlocked, relock_opt, lock_arg);
+      if(old.__nsleep != 0)
         return -1;
-      }
 
       /* ... It is possible that a second thread has already decremented the
        * counter. If this does take place, it is going to release the keyed
@@ -78,8 +82,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
       __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
     }
 
-    /* After the wakeup, relock the associated mutex, if any.  */
-    do_wait_cleanup_common(unlock_opt, unlocked, relock_opt, lock_arg);
+    /* We have got notified.  */
     return 0;
   }
 
