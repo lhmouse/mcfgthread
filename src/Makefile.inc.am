@@ -47,8 +47,7 @@ lib_libmcfgthread_la_LIBADD =  \
   -lkernel32 -lntdll
 
 lib_libmcfgthread_la_LDFLAGS =  \
-  -Wl,--subsystem,windows:6.1,--export-all-symbols,--exclude-libs,ALL  \
-  -Wl,--{exclude-symbols,entry},__MCF_dll_startup@@Z  \
-  -Wl,--disable-{runtime-pseudo-reloc,auto-import,stdcall-fixup}  \
-  -Wl,--enable-auto-image-base -Wc,-nostdlib -no-undefined  \
-  -version-info @abi_major@:@abi_minor@
+  -Wl,--subsystem,windows:6.1,--{exclude-symbols,entry},__MCF_dll_startup@@Z  \
+  -Wl,--export-all-symbols,--exclude-libs,ALL,--enable-auto-image-base  \
+  -Wl,--disable-{runtime-pseudo-reloc,stdcall-fixup}  \
+  -Wc,-nostdlib -no-undefined -version-info @abi_major@:@abi_minor@
