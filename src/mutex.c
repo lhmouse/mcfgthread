@@ -130,10 +130,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       /* Try waiting.  */
       status = NtWaitForKeyedEvent(NULL, mutex, FALSE, use_timeout);
       __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
-      if(!use_timeout) {
-        /* The wait operation was infinite.  */
+      if(!use_timeout)
         continue;
-      }
 
       while(status == STATUS_TIMEOUT) {
         /* Tell another thread which is going to signal this mutex that an old
@@ -149,10 +147,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         }
         while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(mutex, &old, &new));
 
-        if(old.__nsleep != 0) {
-          /* The operation has timed out.  */
+        if(old.__nsleep != 0)
           return -1;
-        }
 
         /* ... It is possible that a second thread has already decremented the
          * counter. If this does take place, it is going to release the keyed

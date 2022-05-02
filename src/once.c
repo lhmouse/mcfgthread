@@ -43,10 +43,8 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
       /* Try waiting.  */
       status = NtWaitForKeyedEvent(NULL, once, FALSE, use_timeout);
       __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
-      if(!use_timeout) {
-        /* The wait operation was infinite.  */
+      if(!use_timeout)
         continue;
-      }
 
       while(status == STATUS_TIMEOUT) {
         /* Tell another thread which is going to signal this flag that an old
@@ -62,11 +60,9 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         }
         while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(once, &old, &new));
 
-        if(old.__nsleep != 0) {
-          /* The operation has timed out.
-           * We may still return something meaningful here.  */
+        /* We may still return something meaningful here.  */
+        if(old.__nsleep != 0)
           return ((int) old.__ready - 1) >> 8;
-        }
 
         /* ... It is possible that a second thread has already decremented the
          * counter. If this does take place, it is going to release the keyed
