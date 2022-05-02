@@ -531,13 +531,13 @@ __MCF_gthr_create(__gthread_t* __thrdp, void* __proc(void*), void* __arg) __MCF_
 
 /* Awaits a thread to terminate and gets its result, like `pthread_join()`.  */
 int
-__MCF_gthr_join(__gthread_t __thrd, void** __resultp_opt) __MCF_NOEXCEPT;
+__MCF_gthr_join(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT;
 
 #define __gthread_join  __MCF_gthr_join
 
 __MCF_GTHR_EXTERN_INLINE
 int
-__MCF_gthr_join(__gthread_t __thrd, void** __resultp_opt) __MCF_NOEXCEPT
+__MCF_gthr_join(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
   {
     _MCF_thread* __self = _MCF_thread_self();
     if(__thrd == __self)
@@ -547,16 +547,11 @@ __MCF_gthr_join(__gthread_t __thrd, void** __resultp_opt) __MCF_NOEXCEPT
     int __err = _MCF_thread_wait(__thrd, NULL);
     __MCFGTHREAD_ASSERT(__err == 0);
 
-    if(__resultp_opt) {
-      /* As there is no type information, we examine the thread procedure to
-       * ensure we don't mistake a thread of a wrong type.  */
-      if(__thrd->__proc == __MCF_gthr_thread_thunk) {
-        __MCF_gthr_thread_record* __rec = (__MCF_gthr_thread_record*) __thrd->__data;
-        *__resultp_opt = __rec->__result;
-      }
-      else
-        *__resultp_opt = NULL;
-    }
+    /* As there is no type information, we examine the thread procedure to
+     * ensure we don't mistake a thread of a wrong type.  */
+    if(__resp_opt)
+      *__resp_opt = (__thrd->__proc != __MCF_gthr_thread_thunk) ? NULL
+              : ((__MCF_gthr_thread_record*)(void*) __thrd->__data)->__result;
 
     /* Free the thread.  */
     _MCF_thread_drop_ref(__thrd);
