@@ -18,18 +18,21 @@ do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
     uint32_t ntotal = sizeof(__MCF_mutex_spin_field);
     uint32_t nblocks = (uint32_t) __builtin_ctz(__MCF_MUTEX_SP_MASK_M + 1U);
 
+    /* We use an `uint32_t` as a fixed-point ratio within [0,1]. Hence
+     * `offset-in-table = ratio / 2^32 * ntotal = ratio / (2^32 / ntotal)`,
+     * where `ntotal / 2^32` is a constant.  */
+    uint32_t ratio = (uint32_t) ((uintptr_t) mutex / sizeof(void*)) * 0x9E3779B9U;
+    DWORD base = ratio / (DWORD) (0x100000000U / ntotal);
+    __MCFGTHREAD_ASSERT(base < ntotal);
+
     /* The unfortunate GCC `__builtin_ctz()` returns a signed integer which
      * results in terrible machine code, so we have to turn to something else
      * if its argument is not a constant.  */
-    DWORD base;
-    _BitScanForward(&base, sp_mask);
-    base *= ntotal / nblocks;
+    DWORD index;
+    _BitScanForward(&index, sp_mask);
+    index *= ntotal / nblocks;
 
-    uint32_t hash = (uint32_t)(uintptr_t) mutex / 16U * 0x9E3779B9U;
-    hash /= UINT32_MAX / ntotal + 1U;
-    __MCFGTHREAD_ASSERT(hash < ntotal);
-
-    return __MCF_mutex_spin_field + (base + hash) % ntotal;
+    return __MCF_mutex_spin_field + (base + index) % ntotal;
   }
 
 int
