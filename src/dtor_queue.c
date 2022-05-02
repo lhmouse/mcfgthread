@@ -23,9 +23,9 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
     }
 
     /* There is room in the current block, so append it there.  */
-    __MCFGTHREAD_ASSERT(queue->__size < __MCF_DTOR_QUEUE_BLOCK_SIZE);
-    __MCF_dtor_element* target = queue->__data + queue->__size;
-    *target = *elem;
+    uint32_t index = queue->__size;
+    __MCFGTHREAD_ASSERT(index < __MCF_DTOR_QUEUE_BLOCK_SIZE);
+    queue->__data[index] = *elem;
     queue->__size ++;
     return 0;
   }
@@ -38,28 +38,33 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* ds
     int err = -1;
 
     do {
+      uint32_t index = cur_q->__size - 1;
+
       /* Search backwards for an element matching `dso`.  */
-      for(uint32_t k = cur_q->__size - 1;  k != UINT32_MAX;  --k) {
-        __MCF_dtor_element* target = cur_q->__data + k;
-        if(!dso || (dso == target->__dso)) {
-          /* Remove this element.  */
-          *elem = *target;
-          err = 0;
-          cur_q->__size --;
-          __MCF_mmove(target, target + 1, (cur_q->__size - k) * sizeof(__MCF_dtor_element));
-          break;
-        }
+      if(dso)
+        while((index != UINT32_MAX) && (dso != cur_q->__data[index].__dso))
+          index --;
+
+      /* If an element has been found, remove it.  */
+      if(index != UINT32_MAX) {
+        err = 0;
+        *elem = cur_q->__data[index];
+        cur_q->__size --;
+
+        if(index != cur_q->__size)
+          __MCF_mmove(cur_q->__data + index, cur_q->__data + index + 1,
+                        (cur_q->__size - index) * sizeof(__MCF_dtor_element));
       }
 
-      /* If the current block has become empty, free it.
-       * Otherwise, go to the next one.  */
-      if((cur_q->__size == 0) && cur_q->__prev) {
-        __MCF_dtor_queue* prev = cur_q->__prev;
+      /* If the current block has become empty, deallocate it. Otherwise,
+       * go to the next one.  */
+      __MCF_dtor_queue* prev = cur_q->__prev;
+      if((cur_q->__size == 0) && prev) {
         __MCF_mcopy(cur_q, prev, sizeof(__MCF_dtor_queue));
         __MCF_mfree(prev);
       }
       else
-        cur_q = cur_q->__prev;
+        cur_q = prev;
     }
     while((err != 0) && cur_q);
 
@@ -74,26 +79,28 @@ __MCF_dtor_queue_remove(__MCF_dtor_queue* queue, void* dso)
     size_t count = 0;
 
     do {
-      /* Search backwards for an element matching `dso`.  */
-      for(uint32_t k = cur_q->__size - 1;  k != UINT32_MAX;  --k) {
-        __MCF_dtor_element* target = cur_q->__data + k;
-        if(!dso || (dso == target->__dso)) {
-          /* Remove this element.  */
-          count ++;
-          cur_q->__size --;
-          __MCF_mmove(target, target + 1, (cur_q->__size - k) * sizeof(__MCF_dtor_element));
-        }
-      }
+      uint32_t index = UINT32_MAX;
+      uint32_t new_size = 0;
 
-      /* If the current block has become empty, free it.
-       * Otherwise, go to the next one.  */
-      if((cur_q->__size == 0) && cur_q->__prev) {
-        __MCF_dtor_queue* prev = cur_q->__prev;
+      /* Search forwards and copy all elements not matching `dso`.  */
+      if(dso)
+        while(++index != cur_q->__size)
+          if(dso != cur_q->__data[index].__dso)
+            cur_q->__data[new_size++] = cur_q->__data[index];
+
+      /* Truncate the current block.  */
+      count += cur_q->__size - new_size;
+      cur_q->__size = new_size;
+
+      /* If the current block has become empty, deallocate it. Otherwise,
+       * go to the next one.  */
+      __MCF_dtor_queue* prev = cur_q->__prev;
+      if((cur_q->__size == 0) && prev) {
         __MCF_mcopy(cur_q, prev, sizeof(__MCF_dtor_queue));
         __MCF_mfree(prev);
       }
       else
-        cur_q = cur_q->__prev;
+        cur_q = prev;
     }
     while(cur_q);
 
