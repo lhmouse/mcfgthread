@@ -24,19 +24,3 @@ __MCF_seh_top(EXCEPTION_RECORD* record, void* frame, CONTEXT* ctx, void* disp_ct
      * By default this is `std::terminate()`.  */
     return ExceptionContinueExecution;
   }
-
-void* __cdecl
-memcpy(void* dst, const void* src, size_t size)
-  __attribute__((__alias__("__MCF_mcopy")));
-
-void* __cdecl
-memmove(void* dst, const void* src, size_t size)
-  __attribute__((__alias__("__MCF_mmove")));
-
-void* __cdecl
-memset(void* dst, int val, size_t size)
-  __attribute__((__alias__("__MCF_mfill")));
-
-int __cdecl
-memcmp(const void* src, const void* cmp, size_t size)
-  __attribute__((__alias__("__MCF_mcomp")));

@@ -269,11 +269,11 @@ __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
 
 /* Fill a block of memory with the given byte, like `memset()`.  */
 void* __cdecl
-__MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT;
+__MCF_mfill(void* __dst, uint8_t __val, size_t __size) __MCF_NOEXCEPT;
 
 __MCF_WIN32_EXTERN_INLINE
 void* __cdecl
-__MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
+__MCF_mfill(void* __dst, uint8_t __val, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
     typedef char __mem[];

@@ -23,6 +23,10 @@ lib_libmcfgthread_la_SOURCES =  \
   %reldir%/version.rc  \
   %reldir%/startup.c  \
   %reldir%/win32.c  \
+  %reldir%/memcpy.c  \
+  %reldir%/memmove.c  \
+  %reldir%/memcmp.c  \
+  %reldir%/memset.c  \
   %reldir%/clock.c  \
   %reldir%/mutex.c  \
   %reldir%/cond.c  \
