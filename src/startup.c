@@ -78,7 +78,7 @@ do_image_tls_callback(PVOID instance, DWORD reason, LPVOID reserved)
       /* Attach the main thread.  */
       DWORD main_tid = GetCurrentThreadId();
       __MCF_main_thread.__tid = main_tid;
-      __MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, FALSE, main_tid);
+      __MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, false, main_tid);
       __MCFGTHREAD_CHECK(__MCF_main_thread.__handle);
       __MCF_ATOMIC_STORE_REL(__MCF_main_thread.__nref, 1);
       __MCFGTHREAD_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
@@ -122,7 +122,7 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
 
     /* Call the common routine. This will not fail.  */
     do_image_tls_callback(instance, reason, reserved);
-    return TRUE;
+    return 1;
   }
 
 #else  /* DLL_EXPORT

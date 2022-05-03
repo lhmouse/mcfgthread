@@ -41,7 +41,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         return 1;
 
       /* Try waiting.  */
-      status = NtWaitForKeyedEvent(NULL, once, FALSE, use_timeout);
+      status = NtWaitForKeyedEvent(NULL, once, false, use_timeout);
       __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
       if(!use_timeout)
         continue;
@@ -72,7 +72,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
          * again, the third thread will have incremented the number of sleeping
          * threads and we can try decrementing it again.  */
         LARGE_INTEGER zero = __MCF_0_INIT;
-        status = NtWaitForKeyedEvent(NULL, once, FALSE, &zero);
+        status = NtWaitForKeyedEvent(NULL, once, false, &zero);
         __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
       }
 

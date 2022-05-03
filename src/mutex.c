@@ -131,7 +131,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       }
 
       /* Try waiting.  */
-      status = NtWaitForKeyedEvent(NULL, mutex, FALSE, use_timeout);
+      status = NtWaitForKeyedEvent(NULL, mutex, false, use_timeout);
       __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
       if(!use_timeout)
         continue;
@@ -161,7 +161,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
          * again, the third thread will have incremented the number of sleeping
          * threads and we can try decrementing it again.  */
         LARGE_INTEGER zero = __MCF_0_INIT;
-        status = NtWaitForKeyedEvent(NULL, mutex, FALSE, &zero);
+        status = NtWaitForKeyedEvent(NULL, mutex, false, &zero);
         __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
       }
 

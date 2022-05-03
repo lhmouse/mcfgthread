@@ -48,7 +48,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     }
 
     /* Try waiting.  */
-    status = NtWaitForKeyedEvent(NULL, cond, FALSE, use_timeout);
+    status = NtWaitForKeyedEvent(NULL, cond, false, use_timeout);
     __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
     if(!use_timeout)
       return 0;
@@ -78,7 +78,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
        * again, the third thread will have incremented the number of sleeping
        * threads and we can try decrementing it again.  */
       LARGE_INTEGER zero = __MCF_0_INIT;
-      status = NtWaitForKeyedEvent(NULL, cond, FALSE, &zero);
+      status = NtWaitForKeyedEvent(NULL, cond, false, &zero);
       __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
     }
 

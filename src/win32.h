@@ -177,7 +177,7 @@ __MCF_batch_release_common(const void* __key, size_t __count)
     for(__k = 0;  __k != __count;  ++__k) {
       /* Release a thread. This operation shall block until the target
        * thread has received the notification.  */
-      NTSTATUS __status = NtReleaseKeyedEvent(NULL, __key, FALSE, NULL);
+      NTSTATUS __status = NtReleaseKeyedEvent(NULL, __key, false, NULL);
       __MCFGTHREAD_ASSERT(NT_SUCCESS(__status));
     }
 
@@ -352,15 +352,15 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
 
 /* Check whether two blocks of memory compare equal, like `memcmp() == 0`.
  * The result is a boolean value.  */
-uint8_t __cdecl
+bool __cdecl
 __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
 __MCF_WIN32_EXTERN_INLINE
-uint8_t __cdecl
+bool __cdecl
 __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
-    uint8_t __result;
+    bool __result;
 #if defined(__i386__) || defined(__amd64__)
     typedef char __mem[];
     uintptr_t __si, __di, __cx;
