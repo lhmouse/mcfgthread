@@ -134,13 +134,24 @@ __MCF_win32_error_i(uint32_t __code, int __val) __MCF_NOEXCEPT;
 void*
 __MCF_win32_error_p(uint32_t __code, void* __ptr) __MCF_NOEXCEPT;
 
-/* Performs process cleanup. This function is called by `__cxa_finalize()`. It
- * is declared here for the sake of completeness, and is not meant to be called
- * directly.  */
+/* Performs initialization and cleanup. These functions are declared here for
+ * the sake of completeness, and are not meant to be called directly.  */
+void
+__MCF_dll_callback_on_process_attach(void* __module) __MCF_NOEXCEPT;
+
+void
+__MCF_dll_callback_on_thread_detach(void) __MCF_NOEXCEPT;
+
+void
+__MCF_run_dtors_at_quick_exit(void) __MCF_NOEXCEPT;
+
+void
+__MCF_run_dtors_atexit(void) __MCF_NOEXCEPT;
+
 void
 __MCF_finalize_on_exit(void) __MCF_NOEXCEPT;
 
-/* Declare static data, which are defined in 'startup.c'.  */
+/* Declare global data.  */
 #ifndef __MCF_DYNCONST
 #  define __MCF_DYNCONST    const  /* read-only but initialized dynamically  */
 #endif

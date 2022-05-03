@@ -5,8 +5,6 @@
 #include "config.h"
 #define __MCF_EXIT_EXTERN_INLINE
 #include "exit.h"
-#include "mutex.h"
-#include "dtor_queue.h"
 #include "win32.h"
 
 void
@@ -22,7 +20,7 @@ __MCF_quick_exit(int status)
   {
     /* Invoke all callbacks that have been registered by `at_quick_exit()` in
      * reverse order.  */
-    __MCF_dtor_queue_finalize(&__MCF_cxa_at_quick_exit_queue, &__MCF_cxa_at_quick_exit_mutex, NULL);
+    __MCF_run_dtors_at_quick_exit();
 
     /* Call `_Exit(status)` in accordance with the ISO C standard.  */
     __MCF__Exit(status);
