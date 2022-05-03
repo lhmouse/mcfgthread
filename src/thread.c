@@ -31,21 +31,15 @@ _MCF_thread*
 _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
   {
     /* Validate arguments.  */
-    if(!proc) {
-      SetLastError(ERROR_INVALID_PARAMETER);
-      return NULL;
-    }
+    if(!proc)
+      return __MCF_win32_error_p(ERROR_INVALID_PARAMETER, NULL);
 
-    if(size > SIZE_MAX / 4 - sizeof(_MCF_thread)) {
-      SetLastError(ERROR_NOT_ENOUGH_MEMORY);
-      return NULL;
-    }
+    if(size > SIZE_MAX / 4 - sizeof(_MCF_thread))
+      return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, NULL);
 
     _MCF_thread* thrd = __MCF_malloc_0(sizeof(_MCF_thread) + size);
-    if(!thrd) {
-      SetLastError(ERROR_NOT_ENOUGH_MEMORY);
-      return NULL;
-    }
+    if(!thrd)
+      return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, NULL);
 
     /* Initialize the thread control structure.  */
     __MCF_ATOMIC_STORE_RLX(thrd->__nref, 2);
@@ -57,11 +51,13 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
     /* Create the thread.
      * The new thread must not begin execution before the `__handle` field is
      * initialized, after `CreateThread()` returns, so suspend it first.  */
-    thrd->__handle = CreateThread(NULL, 0, do_win32_thread_thunk, thrd, CREATE_SUSPENDED, (DWORD*) &(thrd->__tid));
+    DWORD tid;
+    thrd->__handle = CreateThread(NULL, 0, do_win32_thread_thunk, thrd, CREATE_SUSPENDED, &tid);
     if(thrd->__handle == NULL) {
       __MCF_mfree(thrd);
       return NULL;
     }
+    thrd->__tid = tid;
 
     __MCFGTHREAD_CHECK(ResumeThread(thrd->__handle));
     return thrd;

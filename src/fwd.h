@@ -126,6 +126,14 @@ uint32_t
 _MCF_get_win32_error(void) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
+/* These functions set the last error code and return the second argument.
+ * They should be subject to tail-call optimization.  */
+int
+__MCF_win32_error_i(uint32_t __code, int __val) __MCF_NOEXCEPT;
+
+void*
+__MCF_win32_error_p(uint32_t __code, void* __ptr) __MCF_NOEXCEPT;
+
 /* Performs process cleanup. This function is called by `__cxa_finalize()`. It
  * is declared here for the sake of completeness, and is not meant to be called
  * directly.  */

@@ -26,6 +26,20 @@ _MCF_get_win32_error(void)
     return GetLastError();
   }
 
+int
+__MCF_win32_error_i(uint32_t code, int val)
+  {
+    SetLastError(code);
+    return val;
+  }
+
+void*
+__MCF_win32_error_p(uint32_t code, void* ptr)
+  {
+    SetLastError(code);
+    return ptr;
+  }
+
 void
 __MCF_finalize_on_exit(void)
   {

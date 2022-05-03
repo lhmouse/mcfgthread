@@ -13,7 +13,7 @@ _MCF_tls_key_new(_MCF_tls_dtor* dtor_opt)
   {
     _MCF_tls_key* key = __MCF_malloc_0(sizeof(_MCF_tls_key));
     if(!key)
-      return NULL;
+      return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, NULL);
 
     /* Initialize the key structure. The returned pointer is assumed to be
      * unique, so its reference count should be initialized to one.  */
