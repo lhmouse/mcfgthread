@@ -28,7 +28,7 @@ If a thread takes _Action 1_, it will have locked the mutex. If a thread takes _
 
 The most interesting and complex part is _Action 2_. If a thread has set a bit of `__sp_mask`, it gains a chance to perform some busy-waiting.
 
-### Naive Busy-waiting
+### The Problems about Busy-waiting
 
 A naive way of busy-waiting is to read and test the `__locked` bit repeatedly in a loop. This is not incorrect, but it can increase pressure of the CPU bus a lot, if there are a lot of threads running.
 
@@ -38,7 +38,7 @@ The fundamental problem about a linked list of waiters is that, it has to be _re
 
 We have already noticed that a thread may stop spinning and go to sleep at any time. So, is it possible to trade reliability for some efficiency?
 
-### The 'Smartest' Way of Busy-waiting
+### The Ultimate Solution
 
 The ultimate solution by mcfgthread is to use a static hash table. A waiter is assigned a flag byte from the table, according to the hash value of the mutex and its bit index in `__sp_mask`. It then only needs to check its own flag byte. If the byte is zero, it continues spinning; otherwise, it resets the byte to zero and makes an attempt to lock the mutex. The flag bytes for all spinning threads of the same mutex are scattered in the hash table such that they never share the same cache line. The table will never be deallocated, so no notifier can access deallocated memory.
 
