@@ -2,9 +2,11 @@
 
 ### Synopsis
 
-The `_MCF_mutex` structure in MCF Gthread is a one-pointer-size structure with fields like follows:
+The `_MCF_mutex` type in MCF Gthread is a one-pointer-size structure with fields like follows:
 
 ```c
+typedef __MCF_mutex _MCF_mutex;
+
 struct __MCF_mutex
   {
     uintptr_t __locked : 1;
