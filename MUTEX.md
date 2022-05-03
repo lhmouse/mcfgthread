@@ -1,0 +1,43 @@
+# Introduction to Mutexes in MCF Gthread
+
+### Synopsis
+
+The `_MCF_mutex` structure in MCF Gthread is a one-pointer-size structure with fields like follows:
+
+```c
+struct __MCF_mutex
+  {
+    uintptr_t __locked : 1;
+    uintptr_t __sp_mask : 4;  /* mask of spinning threads; 1b/thread  */
+    uintptr_t __sp_nfail : 4;  /* number of timeouts after spinning  */
+    uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
+  };
+```
+
+Initially all bits are zeroes, which means the mutex is not locked, and no thread is spinning or waiting. In order to acquire/lock a mutex, a thread has to change the `__locked` bit from zero to one. If it can't do so because the mutex has been locked by another thread, then it must wait until the `__locked__` bit becomes zero.
+
+In an attempt to lock a mutex, a thread must test and update the mutex with _atomic operations_, taking _exactly_ one of the three possible actions:
+
+1. Change `__locked` from zero to one;
+2. Change one bit of `__sp_mask` from zero to one;
+3. Increment `__nsleep`.
+
+If a thread takes Action 1, it will have locked the mutex. If a thread takes Action 3, it will go to sleep on the global _Keyed Event_, passing the mutex's address as the key, so it can be woken up later. These are straightforward.
+
+The most interesting and complex one is Action 2. If a thread has set a bit of `__sp_mask`, it gains a chance to perform some busy-waiting.
+
+### Naive Busy-waiting
+
+A naive way of busy-waiting is to read and test the `__locked` bit repeatedly in a loop. This is not incorrect, but it can increase pressure of the CPU bus a lot, if there are a lot of threads running.
+
+This can be addressed by allocating separate flag bytes for each spinning thread, so they don't read the same location over and over. An example is the [K42 lock algorithm](https://locklessinc.com/articles/locks/), and is also what Microsoft has adopted in their `SRWLOCK`s.
+
+The fundamental problem about using a linked list of waiters is that, it has to be _reliable_. Because a thread that attempts to unlock a mutex must notify a next waiter, it has to access this linked list. If a waiter could time out and remove a node from the linked list, the notifier could access deallocated memory which is catastrophic.
+
+We have noted that a thread may stop spinning and go to sleep at any time. So, is it possible to give up reliability for efficiency?
+
+### The 'Smartest' Way of Busy-waiting
+
+The ultimate solution by mcfgthread is to use a static hash table. A waiter is assigned a flag byte from the table, according to the hash value of the mutex and its bit index in `__sp_mask`. It then only needs to check its own flag byte. If the byte is zero, it continues spinning; otherwise, it resets the byte to zero and makes an attempt to lock the mutex. The flag bytes for all spinning threads of the same mutex are scattered in the hash table such that they never share the same cache line. The table will never be deallocated, so no notifier can access deallocated memory.
+
+The last question is, _what about hash collisions_? Well, we ignore collisions, because they don't matter. This notification mechanism is not reliable, and never has to be, as the number of spinning iterations is capped. A spinning thread will use up its number of iterations sooner or later, and never will we get incorrect results because of accidental hash collisions.
