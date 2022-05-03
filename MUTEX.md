@@ -1,4 +1,4 @@
-# Introduction to Mutexes in MCF Gthread
+# Introduction to the MCF Gthread Mutex
 
 ### Synopsis
 
