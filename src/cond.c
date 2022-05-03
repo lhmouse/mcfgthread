@@ -14,7 +14,7 @@ struct cond_unlock_result
     intptr_t unlocked;
   };
 
-static
+static inline
 void
 do_unlock_cleanup(struct cond_unlock_result* res)
   {
