@@ -24,7 +24,9 @@ In an attempt to lock a mutex, a thread must test and update the mutex with _ato
 2. Change one bit of `__sp_mask` from zero to one;
 3. Increment `__nsleep`.
 
-If a thread takes _Action 1_, it will have locked the mutex. If a thread takes _Action 3_, it will go to sleep on the global _Keyed Event_, passing the mutex's address as the key, so it can be woken up later. These are straightforward. The most interesting and complex one is _Action 2_. If a thread has set a bit of `__sp_mask`, it gains a chance to perform some busy-waiting.
+If a thread takes _Action 1_, it will have locked the mutex. If a thread takes _Action 3_, it will go to sleep on the global _Keyed Event_, passing the mutex's address as the key, so it can be woken up later. These are straightforward.
+
+The most interesting and complex part is _Action 2_. If a thread has set a bit of `__sp_mask`, it gains a chance to perform some busy-waiting.
 
 ### Naive Busy-waiting
 
