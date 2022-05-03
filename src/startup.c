@@ -10,7 +10,6 @@
 #include "win32.h"
 
 __MCF_HANDLE _MCF_crt_module;
-__MCF_HANDLE __MCF_crt_heap;
 uint32_t __MCF_win32_tls_index;
 double __MCF_perf_frequency_reciprocal;
 _MCF_thread __MCF_main_thread;
@@ -61,10 +60,6 @@ do_image_tls_callback(PVOID instance, DWORD reason, LPVOID reserved)
       /* Set up the base address in memory.  */
       _MCF_crt_module = instance;
       __MCFGTHREAD_CHECK(_MCF_crt_module);
-
-      /* Create the CRT heap for memory allocation.  */
-      __MCF_crt_heap = GetProcessHeap();
-      __MCFGTHREAD_CHECK(__MCF_crt_heap);
 
       /* Allocate a TLS slot for this library.  */
       __MCF_win32_tls_index = TlsAlloc();

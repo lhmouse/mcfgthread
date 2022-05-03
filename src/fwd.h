@@ -138,7 +138,6 @@ __MCF_finalize_on_exit(void) __MCF_NOEXCEPT;
 #endif
 
 extern __MCF_DYNCONST __MCF_HANDLE _MCF_crt_module;
-extern __MCF_DYNCONST __MCF_HANDLE __MCF_crt_heap;
 extern __MCF_DYNCONST uint32_t __MCF_win32_tls_index;
 extern __MCF_DYNCONST double __MCF_perf_frequency_reciprocal;
 extern __MCF_DYNCONST _MCF_thread __MCF_main_thread;

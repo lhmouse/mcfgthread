@@ -64,6 +64,10 @@ INT __stdcall
 TlsSetValue(DWORD __index, LPVOID __value)
   __attribute__((__dllimport__, __nothrow__));
 
+HANDLE __stdcall
+GetProcessHeap(void)
+  __attribute__((__dllimport__, __nothrow__, __const__));
+
 /* Declare some NTDLL functions that are not available here.  */
 NTSTATUS __stdcall
 NtWaitForKeyedEvent(HANDLE __event, const void* __key, BOOLEAN __alertable, LARGE_INTEGER* __timeout)
@@ -401,7 +405,7 @@ __MCF_WIN32_EXTERN_INLINE
 void*
 __MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
   {
-    void* __ptr = HeapAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY, __size);
+    void* __ptr = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, __size);
     return __ptr;
   }
 
@@ -415,7 +419,7 @@ __MCF_WIN32_EXTERN_INLINE
 void*
 __MCF_mrealloc_0(void** __restrict__ __pptr, size_t __size) __MCF_NOEXCEPT
   {
-    void* __ptr = HeapReAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY, *__pptr, __size);
+    void* __ptr = HeapReAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, *__pptr, __size);
     return !__ptr ? NULL : (*__pptr = __ptr);
   }
 
@@ -429,7 +433,7 @@ __MCF_WIN32_EXTERN_INLINE
 void*
 __MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
   {
-    void* __ptr = HeapAlloc(__MCF_crt_heap, 0, __size);
+    void* __ptr = HeapAlloc(GetProcessHeap(), 0, __size);
     return !__ptr ? NULL : __MCF_mcopy(__ptr, __data, __size);
   }
 
@@ -442,7 +446,7 @@ __MCF_WIN32_EXTERN_INLINE
 size_t
 __MCF_msize(const void* __ptr) __MCF_NOEXCEPT
   {
-    size_t __size = HeapSize(__MCF_crt_heap, 0, __ptr);
+    size_t __size = HeapSize(GetProcessHeap(), 0, __ptr);
     __MCFGTHREAD_ASSERT(__size != (size_t)-1);
     return __size;
   }
@@ -459,9 +463,9 @@ __MCF_mfree(void* __ptr) __MCF_NOEXCEPT
       return;
 
 #ifdef __MCF_DEBUG
-    __MCF_mfill(__ptr, 0xFE, HeapSize(__MCF_crt_heap, 0, __ptr));
+    __MCF_mfill(__ptr, 0xFE, HeapSize(GetProcessHeap(), 0, __ptr));
 #endif
-    int __succ = HeapFree(__MCF_crt_heap, 0, __ptr);
+    int __succ = HeapFree(GetProcessHeap(), 0, __ptr);
     __MCFGTHREAD_ASSERT(__succ);
   }
 
