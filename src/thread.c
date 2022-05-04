@@ -19,6 +19,15 @@ do_win32_thread_thunk(LPVOID param)
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     _MCF_thread* self = param;
 
+    /* Wait until the structure has been fully initialized.  */
+    while(__MCF_ATOMIC_LOAD_ACQ(&(self->__tid)) == 0) {
+      LARGE_INTEGER timeout;
+      timeout.QuadPart = -262144;  /* 26.2 ms  */
+
+      NTSTATUS status = NtDelayExecution(false, &timeout);
+      __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
+    }
+
     /* Attach the thread.  */
     (void) TlsSetValue(__MCF_win32_tls_index, self);
 
@@ -42,24 +51,18 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
       return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, NULL);
 
     /* Initialize the thread control structure.  */
-    __MCF_ATOMIC_STORE_RLX(thrd->__nref, 2);
     thrd->__proc = proc;
-
     if(data_opt)
       __MCF_mcopy(thrd->__data, data_opt, size);
 
-    /* Create the thread.
-     * The new thread must not begin execution before the `__handle` field is
-     * initialized, after `CreateThread()` returns, so suspend it first.  */
-    DWORD tid;
-    thrd->__handle = CreateThread(NULL, 0, do_win32_thread_thunk, thrd, CREATE_SUSPENDED, &tid);
+    /* Create the thread. The new thread will wait until `__nref` contains a
+     * non-zero value.  */
+    thrd->__handle = CreateThread(NULL, 0, do_win32_thread_thunk, thrd, 0, (DWORD*) &(thrd->__tid));
     if(thrd->__handle == NULL) {
       __MCF_mfree(thrd);
       return NULL;
     }
-    thrd->__tid = tid;
-
-    __MCFGTHREAD_CHECK(ResumeThread(thrd->__handle));
+    __MCF_ATOMIC_STORE_RLX(thrd->__nref, 2);
     return thrd;
   }
 
@@ -75,7 +78,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
     if(thrd == &__MCF_main_thread)
       return;
 
-    __MCFGTHREAD_CHECK(CloseHandle(thrd->__handle));
+    __MCFGTHREAD_CHECK(NT_SUCCESS(NtClose(thrd->__handle)));
     __MCF_mfree(thrd);
   }
 
