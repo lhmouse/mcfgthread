@@ -22,8 +22,7 @@ thread_proc(_MCF_thread* self)
     _MCF_once_wait(&start, NULL);
 
     for(;;) {
-      const int64_t timeout = 0;
-      int r = _MCF_mutex_lock(&mutex, &timeout);
+      int r = _MCF_mutex_lock(&mutex, (const int64_t[]){ 0 });
       if(r == 0) {
         printf("thread %d got %d\n", self->__tid, r);
 

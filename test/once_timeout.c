@@ -13,20 +13,17 @@ int
 main(void)
   {
     double now, delta;
-    int64_t timeout;
     int r;
 
     now = _MCF_perf_counter();
-    timeout = _MCF_utc_now() + 1100;  /* absolute  */
-    r = _MCF_once_wait(&once, &timeout);  /* lock it  */
+    r = _MCF_once_wait(&once, (const int64_t[]){ _MCF_utc_now() + 1100 });  /* absolute  */
     assert(r == 1);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
     assert(delta <= 100);
 
     now = _MCF_perf_counter();
-    timeout = _MCF_utc_now() + 1100;  /* absolute  */
-    r = _MCF_once_wait(&once, &timeout);
+    r = _MCF_once_wait(&once, (const int64_t[]){ _MCF_utc_now() + 1100 });  /* absolute  */
     assert(r == -1);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
@@ -34,8 +31,7 @@ main(void)
     assert(delta <= 1200);
 
     now = _MCF_perf_counter();
-    timeout = -1100;  /* relative  */
-    r = _MCF_once_wait(&once, &timeout);
+    r = _MCF_once_wait(&once, (const int64_t[]){ -1100 });  /* relative  */
     assert(r == -1);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
