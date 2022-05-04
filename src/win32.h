@@ -31,21 +31,17 @@ extern "C" {
 #  define __MCF_WIN32_EXTERN_INLINE  __MCF_GNU_INLINE
 #endif
 
+/* Hard-code these.  */
+#define GetCurrentProcess()  ((HANDLE) -1)
+#define GetCurrentThread()   ((HANDLE) -2)
+
 /* Add some attributes to existent functions.  */
 DWORD __stdcall
 GetCurrentThreadId(void)
   __attribute__((__dllimport__, __nothrow__, __const__));
 
-HANDLE __stdcall
-GetCurrentThread(void)
-  __attribute__((__dllimport__, __nothrow__, __const__));
-
 DWORD __stdcall
 GetCurrentProcessId(void)
-  __attribute__((__dllimport__, __nothrow__, __const__));
-
-HANDLE __stdcall
-GetCurrentProcess(void)
   __attribute__((__dllimport__, __nothrow__, __const__));
 
 DWORD __stdcall
