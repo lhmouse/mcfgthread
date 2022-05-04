@@ -57,7 +57,7 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
 
     /* Create the thread. The new thread will wait until `__nref` contains a
      * non-zero value.  */
-    thrd->__handle = CreateThread(NULL, 0, do_win32_thread_thunk, thrd, 0, (DWORD*) &(thrd->__tid));
+    thrd->__handle = CreateRemoteThreadEx(GetCurrentProcess(), NULL, 0, do_win32_thread_thunk, thrd, 0, NULL, (DWORD*) &(thrd->__tid));
     if(thrd->__handle == NULL) {
       __MCF_mfree(thrd);
       return NULL;
