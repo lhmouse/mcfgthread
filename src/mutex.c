@@ -193,12 +193,9 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mutex, size_t reserved)
     }
     while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_REL(mutex, &old, &new));
 
-    if(old.__sp_mask != new.__sp_mask) {
-      /* Notify a spinning thread.  */
-      uint32_t my_mask = (uint32_t) new.__sp_mask ^ old.__sp_mask;
-      __MCFGTHREAD_ASSERT((my_mask & (my_mask - 1)) == 0);
-      __MCF_ATOMIC_STORE_RLX(do_spin_byte_ptr(mutex, my_mask), 1);
-    }
+    /* Notify a spinning thread, if any.  */
+    if(old.__sp_mask != 0)
+      __MCF_ATOMIC_STORE_RLX(do_spin_byte_ptr(mutex, old.__sp_mask), 1);
 
     (void) reserved;
     return __MCF_batch_release_common(mutex, wake_one);
