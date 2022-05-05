@@ -58,9 +58,11 @@ __MCF_dll_callback_on_process_attach(void* module)
     __MCF_perf_frequency_reciprocal = 1000 / (double) freq.QuadPart;
 
     /* Attach the main thread.  */
-    DWORD tid = GetCurrentThreadId();
-    __MCF_main_thread.__tid = tid;
-    __MCF_main_thread.__handle = OpenThread(THREAD_ALL_ACCESS, false, tid);
+    __MCF_main_thread.__tid = GetCurrentThreadId();
+    __MCFGTHREAD_CHECK(NT_SUCCESS(NtDuplicateObject(GetCurrentProcess(),
+          GetCurrentThread(), GetCurrentProcess(), &(__MCF_main_thread.__handle),
+          0, 0, DUPLICATE_SAME_ACCESS)));
+
     __MCFGTHREAD_CHECK(__MCF_main_thread.__handle);
     __MCF_ATOMIC_STORE_REL(__MCF_main_thread.__nref, 1);
     __MCFGTHREAD_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));

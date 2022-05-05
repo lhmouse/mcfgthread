@@ -85,6 +85,15 @@ BOOLEAN __stdcall
 RtlDllShutdownInProgress(void)
   __attribute__((__dllimport__, __nothrow__));
 
+/* These are public APIs declared in the Windows DDK.  */
+NTSTATUS __stdcall
+NtDuplicateObject(HANDLE __src_proc, HANDLE __src, HANDLE __targ_proc, HANDLE* __targ, ACCESS_MASK __accmask, ULONG __attrs, ULONG __opts)
+  __attribute__((__dllimport__, __nothrow__));
+
+NTSTATUS __stdcall
+NtClose(HANDLE __obj)
+  __attribute__((__dllimport__, __nothrow__));
+
 /* Declare helper functions here.  */
 EXCEPTION_DISPOSITION __cdecl
 __MCF_seh_top(EXCEPTION_RECORD* __record, void* __frame, CONTEXT* __ctx, void* __disp_ctx)
