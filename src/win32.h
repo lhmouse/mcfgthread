@@ -164,12 +164,11 @@ __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
   }
 
 size_t
-__MCF_batch_release_common(const void* __key, size_t __count)
-  __attribute__((__nothrow__));
+__MCF_batch_release_common(const void* __key, size_t __count) __MCF_NOEXCEPT;
 
 __MCF_WIN32_EXTERN_INLINE
 size_t
-__MCF_batch_release_common(const void* __key, size_t __count)
+__MCF_batch_release_common(const void* __key, size_t __count) __MCF_NOEXCEPT
   {
     size_t __k;
 
