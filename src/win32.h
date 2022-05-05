@@ -66,11 +66,11 @@ GetProcessHeap(void)
 
 /* Declare some NTDLL functions that are not available here.  */
 NTSTATUS __stdcall
-NtWaitForKeyedEvent(HANDLE KeyedEvent, const void* Key, BOOLEAN Alertable, PLARGE_INTEGER Timeout)
+NtWaitForKeyedEvent(HANDLE KeyedEvent, const void* Key, BOOLEAN Alertable, const LARGE_INTEGER* Timeout)
   __attribute__((__dllimport__, __nothrow__));
 
 NTSTATUS __stdcall
-NtReleaseKeyedEvent(HANDLE KeyedEvent, const void* Key, BOOLEAN Alertable, PLARGE_INTEGER Timeout)
+NtReleaseKeyedEvent(HANDLE KeyedEvent, const void* Key, BOOLEAN Alertable, const LARGE_INTEGER* Timeout)
   __attribute__((__dllimport__, __nothrow__));
 
 NTSTATUS __stdcall
@@ -138,13 +138,30 @@ __MCF_i386_seh_cleanup(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
 
 #endif  /* SEH is table-based  */
 
+__MCF_ALWAYS_INLINE
+NTSTATUS
+__MCF_keyed_event_wait(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
+  {
+    NTSTATUS __status = NtWaitForKeyedEvent(NULL, __key, false, __timeout);
+    __MCFGTHREAD_ASSERT(NT_SUCCESS(__status));
+    return __status;
+  }
+
+__MCF_ALWAYS_INLINE
+NTSTATUS
+__MCF_keyed_event_signal(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
+  {
+    NTSTATUS __status = NtReleaseKeyedEvent(NULL, __key, false, __timeout);
+    __MCFGTHREAD_ASSERT(NT_SUCCESS(__status));
+    return __status;
+  }
+
 LARGE_INTEGER*
-__MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
-  __attribute__((__nothrow__));
+__MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt) __MCF_NOEXCEPT;
 
 __MCF_WIN32_EXTERN_INLINE
 LARGE_INTEGER*
-__MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
+__MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt) __MCF_NOEXCEPT
   {
     if(__int64_opt == NULL)
       return NULL;  /* wait infinitely  */
@@ -163,35 +180,9 @@ __MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt)
     return __li;
   }
 
+/* Note this function is subject to tail-call optimization.  */
 size_t
 __MCF_batch_release_common(const void* __key, size_t __count) __MCF_NOEXCEPT;
-
-__MCF_WIN32_EXTERN_INLINE
-size_t
-__MCF_batch_release_common(const void* __key, size_t __count) __MCF_NOEXCEPT
-  {
-    size_t __k;
-
-    if(__count == 0)
-      return 0;
-
-    /* A call to `ExitProcess()` terminates all the other threads, even
-     * if they are waiting. Don't release the keyed event in this case,
-     * as it blocks the calling thread infinitely if there is no thread
-     * to wake up. See <https://github.com/lhmouse/mcfgthread/issues/21>.  */
-    if(RtlDllShutdownInProgress())
-      return 0;
-
-    for(__k = 0;  __k != __count;  ++__k) {
-      /* Release a thread. This operation shall block until the target
-       * thread has received the notification.  */
-      NTSTATUS __status = NtReleaseKeyedEvent(NULL, __key, false, NULL);
-      __MCFGTHREAD_ASSERT(NT_SUCCESS(__status));
-    }
-
-    /* Return the number of threads that have been woken.  */
-    return __count;
-  }
 
 /* Undefine macros that redirect to standard functions.
  * This ensures we call the ones from KERNEL32.  */
