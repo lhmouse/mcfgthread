@@ -514,13 +514,13 @@ __MCF_gthr_cond_broadcast(__gthread_cond_t* __cond) __MCF_NOEXCEPT
 
 /* Creates a thread, like `pthread_create()`.  */
 int
-__MCF_gthr_create(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT;
+__MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT;
 
-#define __gthread_create  __MCF_gthr_create
+#define __gthread_create  __MCF_gthr_create_v2
 
 __MCF_GTHR_EXTERN_INLINE
 int
-__MCF_gthr_create(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT
+__MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT
   {
     __MCF_gthr_thread_record __rec = { NULL, __proc, __arg, 1, __MCF_0_INIT };
     _MCF_thread* __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk, &__rec, sizeof(__rec));
@@ -530,13 +530,13 @@ __MCF_gthr_create(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, voi
 
 /* Awaits a thread to terminate and gets its result, like `pthread_join()`.  */
 int
-__MCF_gthr_join(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT;
+__MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT;
 
-#define __gthread_join  __MCF_gthr_join
+#define __gthread_join  __MCF_gthr_join_v2
 
 __MCF_GTHR_EXTERN_INLINE
 int
-__MCF_gthr_join(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
+__MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
   {
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
@@ -564,13 +564,13 @@ __MCF_gthr_join(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
 
 /* Detaches a thread, like `pthread_detach()`  */
 int
-__MCF_gthr_detach(__gthread_t __thrd) __MCF_NOEXCEPT;
+__MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_NOEXCEPT;
 
-#define __gthread_detach  __MCF_gthr_detach
+#define __gthread_detach  __MCF_gthr_detach_v2
 
 __MCF_GTHR_EXTERN_INLINE
 int
-__MCF_gthr_detach(__gthread_t __thrd) __MCF_NOEXCEPT
+__MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_NOEXCEPT
   {
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
