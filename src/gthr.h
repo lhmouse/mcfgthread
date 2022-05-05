@@ -55,6 +55,8 @@ struct __MCF_gthr_thread_record
     void* __result;
     __MCF_gthr_thread_procedure* __proc;
     void* __arg;
+    uint8_t __joinable;
+    intptr_t __reserved[2];
   };
 
 /* Define macros for static and dynamic initialization.  */
@@ -512,18 +514,15 @@ __MCF_gthr_cond_broadcast(__gthread_cond_t* __cond) __MCF_NOEXCEPT
 
 /* Creates a thread, like `pthread_create()`.  */
 int
-__MCF_gthr_create(__gthread_t* __thrdp, void* __proc(void*), void* __arg) __MCF_NOEXCEPT;
+__MCF_gthr_create(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT;
 
 #define __gthread_create  __MCF_gthr_create
 
 __MCF_GTHR_EXTERN_INLINE
 int
-__MCF_gthr_create(__gthread_t* __thrdp, void* __proc(void*), void* __arg) __MCF_NOEXCEPT
+__MCF_gthr_create(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT
   {
-    __MCF_gthr_thread_record __rec = __MCF_0_INIT;
-    __rec.__proc = __proc;
-    __rec.__arg = __arg;
-
+    __MCF_gthr_thread_record __rec = { NULL, __proc, __arg, 1, __MCF_0_INIT };
     _MCF_thread* __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk, &__rec, sizeof(__rec));
     *__thrdp = __thrd;
     return (__thrd == NULL) ? EAGAIN : 0;  /* as specified by POSIX  */
@@ -539,19 +538,24 @@ __MCF_GTHR_EXTERN_INLINE
 int
 __MCF_gthr_join(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
   {
-    _MCF_thread* __self = _MCF_thread_self();
-    if(__thrd == __self)
+    /* As there is no type information, we examine the thread procedure to
+     * ensure we don't mistake a thread of a wrong type.  */
+    if(__thrd->__proc != __MCF_gthr_thread_thunk)
+      return EINVAL;
+
+    __MCF_gthr_thread_record* __rec = (__MCF_gthr_thread_record*) __thrd->__data;
+    if(__MCF_ATOMIC_XCHG_RLX(&(__rec->__joinable), 0) == 0)
+      return EINVAL;
+
+    if(__thrd == _MCF_thread_self())
       return EDEADLK;
 
     /* Wait for it.  */
     int __err = _MCF_thread_wait(__thrd, NULL);
     __MCFGTHREAD_ASSERT(__err == 0);
 
-    /* As there is no type information, we examine the thread procedure to
-     * ensure we don't mistake a thread of a wrong type.  */
     if(__resp_opt)
-      *__resp_opt = (__thrd->__proc != __MCF_gthr_thread_thunk) ? NULL
-              : ((__MCF_gthr_thread_record*)(void*) __thrd->__data)->__result;
+      *__resp_opt = __rec->__result;
 
     /* Free the thread.  */
     _MCF_thread_drop_ref(__thrd);
@@ -568,6 +572,16 @@ __MCF_GTHR_EXTERN_INLINE
 int
 __MCF_gthr_detach(__gthread_t __thrd) __MCF_NOEXCEPT
   {
+    /* As there is no type information, we examine the thread procedure to
+     * ensure we don't mistake a thread of a wrong type.  */
+    if(__thrd->__proc != __MCF_gthr_thread_thunk)
+      return EINVAL;
+
+    __MCF_gthr_thread_record* __rec = (__MCF_gthr_thread_record*) __thrd->__data;
+    if(__MCF_ATOMIC_XCHG_RLX(&(__rec->__joinable), 0) == 0)
+      return EINVAL;
+
+    /* Free the thread.  */
     _MCF_thread_drop_ref(__thrd);
     return 0;
   }
