@@ -174,8 +174,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     }
   }
 
-size_t
-_MCF_mutex_unlock_slow(_MCF_mutex* mutex, size_t reserved)
+void
+_MCF_mutex_unlock_slow(_MCF_mutex* mutex)
   {
     /* Clear the `__locked` field and release at most one thread, if any.
      * The right most bit one of the spinning mask is also cleared to enable
@@ -193,10 +193,11 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mutex, size_t reserved)
     }
     while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_REL(mutex, &old, &new));
 
-    /* Notify a spinning thread, if any.  */
+    /* Notify a spinning thread, if any. If `__sp_mask` was non-zero, only its
+     * rightmost bit should have been cleared, so we need not calculate the
+     * bit difference, unlike `_MCF_mutex_lock_slow()`.  */
     if(old.__sp_mask != 0)
       __MCF_ATOMIC_STORE_RLX(do_spin_byte_ptr(mutex, old.__sp_mask), 1);
 
-    (void) reserved;
-    return __MCF_batch_release_common(mutex, wake_one);
+    __MCF_batch_release_common(mutex, wake_one);
   }

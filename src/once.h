@@ -93,16 +93,6 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
 void
 _MCF_once_abort(_MCF_once* __once) __MCF_NOEXCEPT;
 
-size_t
-_MCF_once_abort_slow(_MCF_once* __once, size_t __reserved) __MCF_NOEXCEPT;
-
-__MCF_ONCE_EXTERN_INLINE
-void
-_MCF_once_abort(_MCF_once* __once) __MCF_NOEXCEPT
-  {
-    _MCF_once_abort_slow(__once, 0);
-  }
-
 /* Releases a once-initialization flag which shall be in the LOCKED state. If
  * the flag has not been locked already, the behavior is undefined.
  *
@@ -110,16 +100,6 @@ _MCF_once_abort(_MCF_once* __once) __MCF_NOEXCEPT
  * are sleeping on this flag, whose calls to `_MCF_once_wait()` will return 0.  */
 void
 _MCF_once_release(_MCF_once* __once) __MCF_NOEXCEPT;
-
-size_t
-_MCF_once_release_slow(_MCF_once* __once, size_t __reserved) __MCF_NOEXCEPT;
-
-__MCF_ONCE_EXTERN_INLINE
-void
-_MCF_once_release(_MCF_once* __once) __MCF_NOEXCEPT
-  {
-    _MCF_once_release_slow(__once, 0);
-  }
 
 #ifdef __cplusplus
 }

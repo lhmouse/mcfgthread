@@ -100,8 +100,8 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEP
 void
 _MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_NOEXCEPT;
 
-size_t
-_MCF_mutex_unlock_slow(_MCF_mutex* __mutex, size_t __reserved) __MCF_NOEXCEPT;
+void
+_MCF_mutex_unlock_slow(_MCF_mutex* __mutex) __MCF_NOEXCEPT;
 
 __MCF_MUTEX_EXTERN_INLINE
 void
@@ -115,7 +115,7 @@ _MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_NOEXCEPT
     if(__MCF_ATOMIC_CMPXCHG_WEAK_PTR_REL(__mutex, &__old, &__new))
       return;
 
-    _MCF_mutex_unlock_slow(__mutex, 0);
+    _MCF_mutex_unlock_slow(__mutex);
   }
 
 #ifdef __cplusplus

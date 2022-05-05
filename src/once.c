@@ -86,8 +86,8 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     }
   }
 
-size_t
-_MCF_once_abort_slow(_MCF_once* once, size_t reserved)
+void
+_MCF_once_abort(_MCF_once* once)
   {
     /* Clear the `__locked` field and release at most one thread, if any.  */
     size_t wake_one;
@@ -102,12 +102,11 @@ _MCF_once_abort_slow(_MCF_once* once, size_t reserved)
     }
     while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(once, &old, &new));
 
-    (void) reserved;
-    return __MCF_batch_release_common(once, wake_one);
+    __MCF_batch_release_common(once, wake_one);
   }
 
-size_t
-_MCF_once_release_slow(_MCF_once* once, size_t reserved)
+void
+_MCF_once_release(_MCF_once* once)
   {
     /* Set the `__ready` field and release all threads.  */
     _MCF_once old;
@@ -115,6 +114,5 @@ _MCF_once_release_slow(_MCF_once* once, size_t reserved)
     new.__ready = 1;
     __MCF_ATOMIC_XCHG_PTR_ARL(&old, once, &new);
 
-    (void) reserved;
-    return __MCF_batch_release_common(once, old.__nsleep);
+    __MCF_batch_release_common(once, old.__nsleep);
   }
