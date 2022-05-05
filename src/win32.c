@@ -7,9 +7,9 @@
 #include "win32.h"
 
 EXCEPTION_DISPOSITION __cdecl
-__MCF_seh_top(EXCEPTION_RECORD* record, void* frame, CONTEXT* ctx, void* disp_ctx)
+__MCF_seh_top(EXCEPTION_RECORD* record, void* estab_frame, CONTEXT* ctx, void* disp_ctx)
   {
-    (void) frame;
+    (void) estab_frame;
     (void) ctx;
     (void) disp_ctx;
 

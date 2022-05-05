@@ -49,15 +49,15 @@ GetLastError(void)
   __attribute__((__dllimport__, __nothrow__, __pure__));
 
 VOID __stdcall
-SetLastError(DWORD __code)
+SetLastError(DWORD dwErrCode)
   __attribute__((__dllimport__, __nothrow__));
 
 LPVOID __stdcall
-TlsGetValue(DWORD __index)
+TlsGetValue(DWORD dwTlsIndex)
   __attribute__((__dllimport__, __nothrow__, __pure__));
 
 INT __stdcall
-TlsSetValue(DWORD __index, LPVOID __value)
+TlsSetValue(DWORD dwTlsIndex, LPVOID lpTlsValue)
   __attribute__((__dllimport__, __nothrow__));
 
 HANDLE __stdcall
@@ -66,19 +66,19 @@ GetProcessHeap(void)
 
 /* Declare some NTDLL functions that are not available here.  */
 NTSTATUS __stdcall
-NtWaitForKeyedEvent(HANDLE __event, const void* __key, BOOLEAN __alertable, LARGE_INTEGER* __timeout)
+NtWaitForKeyedEvent(HANDLE KeyedEvent, const void* Key, BOOLEAN Alertable, PLARGE_INTEGER Timeout)
   __attribute__((__dllimport__, __nothrow__));
 
 NTSTATUS __stdcall
-NtReleaseKeyedEvent(HANDLE __event, const void* __key, BOOLEAN __alertable, LARGE_INTEGER* __timeout)
+NtReleaseKeyedEvent(HANDLE KeyedEvent, const void* Key, BOOLEAN Alertable, PLARGE_INTEGER Timeout)
   __attribute__((__dllimport__, __nothrow__));
 
 NTSTATUS __stdcall
-NtDelayExecution(BOOLEAN __alertable, LARGE_INTEGER* __timeout)
+NtDelayExecution(BOOLEAN Alertable, PLARGE_INTEGER Timeout)
   __attribute__((__dllimport__, __nothrow__));
 
 NTSTATUS __stdcall
-NtWaitForSingleObject(HANDLE __object, BOOLEAN __alertable, LARGE_INTEGER* __timeout)
+NtWaitForSingleObject(HANDLE Handle, BOOLEAN Alertable, PLARGE_INTEGER Timeout)
   __attribute__((__dllimport__, __nothrow__));
 
 BOOLEAN __stdcall
@@ -87,16 +87,16 @@ RtlDllShutdownInProgress(void)
 
 /* These are public APIs declared in the Windows DDK.  */
 NTSTATUS __stdcall
-NtDuplicateObject(HANDLE __src_proc, HANDLE __src, HANDLE __targ_proc, HANDLE* __targ, ACCESS_MASK __accmask, ULONG __attrs, ULONG __opts)
+NtDuplicateObject(HANDLE SourceProcessHandle, HANDLE SourceHandle, HANDLE TargetProcessHandle, HANDLE* TargetHandle, ACCESS_MASK DesiredAccess, ULONG HandleAttributes, ULONG Options)
   __attribute__((__dllimport__, __nothrow__));
 
 NTSTATUS __stdcall
-NtClose(HANDLE __obj)
+NtClose(HANDLE Handle)
   __attribute__((__dllimport__, __nothrow__));
 
 /* Declare helper functions here.  */
 EXCEPTION_DISPOSITION __cdecl
-__MCF_seh_top(EXCEPTION_RECORD* __record, void* __frame, CONTEXT* __ctx, void* __disp_ctx)
+__MCF_seh_top(EXCEPTION_RECORD* __record, void* __estab_frame, CONTEXT* __ctx, void* __disp_ctx)
   __attribute__((__nothrow__));
 
 #ifdef __i386__  /* SEH is stack-based  */
