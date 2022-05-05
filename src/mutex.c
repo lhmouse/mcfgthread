@@ -175,7 +175,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
   }
 
 size_t
-_MCF_mutex_unlock_slow(_MCF_mutex* mutex)
+_MCF_mutex_unlock_slow(_MCF_mutex* mutex, size_t reserved)
   {
     /* Clear the `__locked` field and release at most one thread, if any.
      * The right most bit one of the spinning mask is also cleared to enable
@@ -200,5 +200,6 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
       __MCF_ATOMIC_STORE_RLX(do_spin_byte_ptr(mutex, my_mask), 1);
     }
 
+    (void) reserved;
     return __MCF_batch_release_common(mutex, wake_one);
   }
