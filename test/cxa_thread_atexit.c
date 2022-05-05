@@ -20,8 +20,7 @@ void
 thread_proc(_MCF_thread* self)
   {
     __MCF_cxa_thread_atexit(thread_atexit_proc, self->__data, NULL);
-    int64_t sleep_time = -1000;
-    _MCF_sleep(&sleep_time);
+    _MCF_sleep((const int64_t[]) { -1000 });
     printf("thread %d quitting\n", self->__tid);
   }
 

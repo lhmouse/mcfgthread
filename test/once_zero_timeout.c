@@ -23,32 +23,27 @@ thread_proc(_MCF_thread* self)
   {
     _MCF_once_wait(&start, NULL);
 
-    int64_t zero = 0;
-    int r = _MCF_once_wait(&once, &zero);
+    int r = _MCF_once_wait(&once, (const int64_t[]) { 0 });
     printf("thread %d got %d\n", self->__tid, r);
     if(r == 1) {
       /* Perform initialization.  */
       int old = resource;
-      int64_t sleep_time = -200;
-      _MCF_sleep(&sleep_time);
+      _MCF_sleep((const int64_t[]) { -200 });
       resource = old + 1;
       _MCF_once_release(&once);
 
-      sleep_time = -100;
-      _MCF_sleep(&sleep_time);
+      _MCF_sleep((const int64_t[]) { -100 });
       __atomic_fetch_add(&num_init, 1, __ATOMIC_RELAXED);
     }
     else if(r == 0) {
       /* Assume `resource` has been initialized.  */
       assert(resource == 1);
 
-      int64_t sleep_time = -100;
-      _MCF_sleep(&sleep_time);
+      _MCF_sleep((const int64_t[]) { -100 });
       __atomic_fetch_add(&num_ready, 1, __ATOMIC_RELAXED);
     }
     else if(r == -1) {
-      int64_t sleep_time = -100;
-      _MCF_sleep(&sleep_time);
+      _MCF_sleep((const int64_t[]) { -100 });
       __atomic_fetch_add(&num_timed_out, 1, __ATOMIC_RELAXED);
     }
     else

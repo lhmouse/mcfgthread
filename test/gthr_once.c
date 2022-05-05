@@ -18,12 +18,10 @@ once_do_it(void)
   {
     /* Perform initialization.  */
     int old = resource;
-    int64_t sleep_time = -200;
-    _MCF_sleep(&sleep_time);
+    _MCF_sleep((const int64_t[]) { -200 });
     resource = old + 1;
 
-    sleep_time = -100;
-    _MCF_sleep(&sleep_time);
+    _MCF_sleep((const int64_t[]) { -100 });
   }
 
 static

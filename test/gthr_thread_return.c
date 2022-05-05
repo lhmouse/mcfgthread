@@ -14,8 +14,7 @@ void*
 thread_proc(void* param)
   {
     (void) param;
-    int64_t sleep_time = -500;
-    _MCF_sleep(&sleep_time);
+    _MCF_sleep((const int64_t[]) { -500 });
 
     printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
     return &magic;

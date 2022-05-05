@@ -27,8 +27,7 @@ thread_proc(void* param)
     p = __gthread_getspecific(key);
     assert(p == &dso_2);
 
-    int64_t sleep_time = -1000;
-    _MCF_sleep(&sleep_time);
+    _MCF_sleep((const int64_t[]) { -1000 });
     printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
     return NULL;
   }

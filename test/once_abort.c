@@ -27,21 +27,18 @@ thread_proc(_MCF_thread* self)
     if(r == 1) {
       /* Perform initialization.  */
       int old = resource;
-      int64_t sleep_time = -10;
-      _MCF_sleep(&sleep_time);
+      _MCF_sleep((const int64_t[]) { -10 });
       resource = old + 1;
       _MCF_once_abort(&once);
 
-      sleep_time = -100;
-      _MCF_sleep(&sleep_time);
+      _MCF_sleep((const int64_t[]) { -100 });
       __atomic_fetch_add(&num_init, 1, __ATOMIC_RELAXED);
     }
     else if(r == 0) {
       /* Assume `resource` has been initialized.  */
       assert(resource == 1);
 
-      int64_t sleep_time = -100;
-      _MCF_sleep(&sleep_time);
+      _MCF_sleep((const int64_t[]) { -100 });
       __atomic_fetch_add(&num_ready, 1, __ATOMIC_RELAXED);
     }
     else

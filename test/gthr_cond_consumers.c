@@ -64,8 +64,7 @@ main(void)
       assert(threads[k]);
     }
 
-    int64_t sleep_time = -500;
-    _MCF_sleep(&sleep_time);
+    _MCF_sleep((const int64_t[]) { -500 });
 
     int err = __gthread_mutex_lock(&mutex);
     assert(err == 0);

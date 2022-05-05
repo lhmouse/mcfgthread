@@ -26,8 +26,7 @@ thread_proc(_MCF_thread* self)
 
     /* Add a resource.  */
     int old = resource;
-    int64_t sleep_time = -10;
-    _MCF_sleep(&sleep_time);
+    _MCF_sleep((const int64_t[]) { -10 });
     resource = old + 1;
     _MCF_mutex_unlock(&mutex);
 
