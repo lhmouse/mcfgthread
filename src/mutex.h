@@ -100,7 +100,7 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEP
 void
 _MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_NOEXCEPT;
 
-void
+size_t
 _MCF_mutex_unlock_slow(_MCF_mutex* __mutex) __MCF_NOEXCEPT;
 
 __MCF_MUTEX_EXTERN_INLINE
