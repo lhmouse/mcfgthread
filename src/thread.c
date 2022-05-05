@@ -19,17 +19,13 @@ do_win32_thread_thunk(LPVOID param)
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     _MCF_thread* self = param;
 
-    /* Wait until the structure has been fully initialized.  */
-    while(__MCF_ATOMIC_LOAD_ACQ(&(self->__tid)) == 0) {
-      LARGE_INTEGER timeout;
-      timeout.QuadPart = -262144;  /* 26.2 ms  */
-
-      NTSTATUS status = NtDelayExecution(false, &timeout);
-      __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
-    }
-
     /* Attach the thread.  */
     (void) TlsSetValue(__MCF_win32_tls_index, self);
+
+    /* Wait until the structure has been fully initialized.  */
+    uint32_t cmp = 0;
+    if(__MCF_ATOMIC_CMPXCHG_RLX(&(self->__tid), &cmp, UINT32_MAX))
+      __MCF_keyed_event_wait(self, NULL);
 
     /* Execute the user-defined procedure, which has no return value.  */
     self->__proc(self);
@@ -51,18 +47,27 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
       return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, NULL);
 
     /* Initialize the thread control structure.  */
+    __MCF_ATOMIC_STORE_RLX(thrd->__nref, 2);
     thrd->__proc = proc;
+
     if(data_opt)
       __MCF_mcopy(thrd->__data, data_opt, size);
 
-    /* Create the thread. The new thread will wait until `__nref` contains a
-     * non-zero value.  */
-    thrd->__handle = CreateRemoteThreadEx(GetCurrentProcess(), NULL, 0, do_win32_thread_thunk, thrd, 0, NULL, (DWORD*) &(thrd->__tid));
+    /* Create the thread. The new thread will wait until `__tid` contains a
+     * valid thread ID.  */
+    DWORD tid;
+    thrd->__handle = CreateRemoteThreadEx(GetCurrentProcess(), NULL, 0, do_win32_thread_thunk, thrd, 0, NULL, &tid);
     if(thrd->__handle == NULL) {
       __MCF_mfree(thrd);
       return NULL;
     }
-    __MCF_ATOMIC_STORE_RLX(thrd->__nref, 2);
+
+    /* Set the thread ID. If its old value is not zero, the new thread should
+     * have been waiting, so notify it.  */
+    if(__MCF_ATOMIC_XCHG_RLX(&(thrd->__tid), tid) != 0)
+      __MCF_keyed_event_signal(thrd, NULL);
+
+    __MCFGTHREAD_ASSERT(thrd->__tid == tid);
     return thrd;
   }
 
