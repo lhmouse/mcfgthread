@@ -62,7 +62,7 @@ extern "C" {
 
 #define __MCF_PPCAT(x, y)      x##y
 #define __MCF_GNU_INLINE       extern __inline__ __attribute__((__gnu_inline__))
-#define __MCF_ALWAYS_INLINE    static __inline__ __attribute__((__always_inline__))
+#define __MCF_ALWAYS_INLINE    __MCF_GNU_INLINE __attribute__((__always_inline__))
 #define __MCF_NOEXCEPT         __MCF_CXX(throw())
 #define __MCF_ALIGNED(...)     __attribute__((__aligned__(__VA_ARGS__)))
 #define __MCF_USE_DTOR(...)    __attribute__((__cleanup__(__VA_ARGS__)))
