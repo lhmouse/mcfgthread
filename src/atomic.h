@@ -27,18 +27,18 @@
 #define __MCF_ATOMIC_XCHG_PTR_CST(out, mem, in)   __atomic_exchange(mem, in, out, __ATOMIC_SEQ_CST)
 
 /* Generic strong compare-and-exchange  */
-#define __MCF_ATOMIC_CMPXCHG_PTR_RLX(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, 0, __ATOMIC_RELAXED, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_CMPXCHG_PTR_ACQ(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, 0, __ATOMIC_ACQUIRE, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_CMPXCHG_PTR_REL(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, 0, __ATOMIC_RELEASE, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_CMPXCHG_PTR_ARL(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, 0, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_CMPXCHG_PTR_CST(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, 0, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)
+#define __MCF_ATOMIC_CMPXCHG_PTR_RLX(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, false, __ATOMIC_RELAXED, __ATOMIC_RELAXED)
+#define __MCF_ATOMIC_CMPXCHG_PTR_ACQ(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, false, __ATOMIC_ACQUIRE, __ATOMIC_ACQUIRE)
+#define __MCF_ATOMIC_CMPXCHG_PTR_REL(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, false, __ATOMIC_RELEASE, __ATOMIC_RELAXED)
+#define __MCF_ATOMIC_CMPXCHG_PTR_ARL(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)
+#define __MCF_ATOMIC_CMPXCHG_PTR_CST(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)
 
 /* Generic weak compare-and-exchange  */
-#define __MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, 1, __ATOMIC_RELAXED, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_CMPXCHG_WEAK_PTR_ACQ(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, 1, __ATOMIC_ACQUIRE, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_CMPXCHG_WEAK_PTR_REL(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, 1, __ATOMIC_RELEASE, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_CMPXCHG_WEAK_PTR_ARL(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, 1, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_CMPXCHG_WEAK_PTR_CST(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, 1, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)
+#define __MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, true, __ATOMIC_RELAXED, __ATOMIC_RELAXED)
+#define __MCF_ATOMIC_CMPXCHG_WEAK_PTR_ACQ(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, true, __ATOMIC_ACQUIRE, __ATOMIC_ACQUIRE)
+#define __MCF_ATOMIC_CMPXCHG_WEAK_PTR_REL(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, true, __ATOMIC_RELEASE, __ATOMIC_RELAXED)
+#define __MCF_ATOMIC_CMPXCHG_WEAK_PTR_ARL(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, true, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)
+#define __MCF_ATOMIC_CMPXCHG_WEAK_PTR_CST(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)
 
 /* Scalar atomic load  */
 #define __MCF_ATOMIC_LOAD_RLX(mem)   __atomic_load_n(mem, __ATOMIC_RELAXED)
@@ -58,18 +58,18 @@
 #define __MCF_ATOMIC_XCHG_CST(mem, val)   __atomic_exchange_n(mem, val, __ATOMIC_SEQ_CST)
 
 /* Scalar strong compare-and-exchange  */
-#define __MCF_ATOMIC_CMPXCHG_RLX(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, 0, __ATOMIC_RELAXED, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_CMPXCHG_ACQ(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, 0, __ATOMIC_ACQUIRE, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_CMPXCHG_REL(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, 0, __ATOMIC_RELEASE, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_CMPXCHG_ARL(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, 0, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_CMPXCHG_CST(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, 0, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)
+#define __MCF_ATOMIC_CMPXCHG_RLX(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, false, __ATOMIC_RELAXED, __ATOMIC_RELAXED)
+#define __MCF_ATOMIC_CMPXCHG_ACQ(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, false, __ATOMIC_ACQUIRE, __ATOMIC_ACQUIRE)
+#define __MCF_ATOMIC_CMPXCHG_REL(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, false, __ATOMIC_RELEASE, __ATOMIC_RELAXED)
+#define __MCF_ATOMIC_CMPXCHG_ARL(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)
+#define __MCF_ATOMIC_CMPXCHG_CST(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)
 
 /* Scalar weak compare-and-exchange  */
-#define __MCF_ATOMIC_CMPXCHG_WEAK_RLX(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, 1, __ATOMIC_RELAXED, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_CMPXCHG_WEAK_ACQ(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, 1, __ATOMIC_ACQUIRE, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_CMPXCHG_WEAK_REL(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, 1, __ATOMIC_RELEASE, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_CMPXCHG_WEAK_ARL(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, 1, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_CMPXCHG_WEAK_CST(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, 1, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)
+#define __MCF_ATOMIC_CMPXCHG_WEAK_RLX(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, true, __ATOMIC_RELAXED, __ATOMIC_RELAXED)
+#define __MCF_ATOMIC_CMPXCHG_WEAK_ACQ(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, true, __ATOMIC_ACQUIRE, __ATOMIC_ACQUIRE)
+#define __MCF_ATOMIC_CMPXCHG_WEAK_REL(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, true, __ATOMIC_RELEASE, __ATOMIC_RELAXED)
+#define __MCF_ATOMIC_CMPXCHG_WEAK_ARL(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, true, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)
+#define __MCF_ATOMIC_CMPXCHG_WEAK_CST(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)
 
 /* Scalar exchange-and-add  */
 #define __MCF_ATOMIC_ADD_RLX(mem, val)   __atomic_fetch_add(mem, val, __ATOMIC_RELAXED)
