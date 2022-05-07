@@ -23,7 +23,7 @@
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_load_
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   const void* __mem
 
-#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+#define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     return __atomic_load_n((const INTEGER*) __mem, ORDER_SUCC);
 
 #define __MCF_ATOMIC_HAS_ACQUIRE_
@@ -37,7 +37,7 @@
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_load_p
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __retp, const void* __mem
 
-#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+#define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __val = __atomic_load_n((const INTEGER*) __mem, ORDER_SUCC);  \
     *(INTEGER*) __retp = __val;
 
@@ -52,7 +52,7 @@
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_store_
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, INTEGER __val
 
-#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+#define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     __atomic_store_n((INTEGER*) __mem, __val, ORDER_SUCC);  \
     return __val;
 
@@ -67,7 +67,7 @@
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_store_p
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, const void* __valp
 
-#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+#define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __val = *(const INTEGER*) __valp;  \
     __atomic_store_n((INTEGER*) __mem, __val, ORDER_SUCC);
 
@@ -83,7 +83,7 @@
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_xchg_
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, INTEGER __val
 
-#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+#define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     return __atomic_exchange_n((INTEGER*) __mem, __val, ORDER_SUCC);
 
 #define __MCF_ATOMIC_HAS_ACQUIRE_
@@ -99,7 +99,7 @@
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_xchg_p
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __retp, void* __mem, const void* __valp
 
-#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+#define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __val = *(const INTEGER*) __valp;  \
     __val = __atomic_exchange_n((INTEGER*) __mem, __val, ORDER_SUCC);  \
     *(INTEGER*) __retp = __val;
@@ -117,7 +117,7 @@
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_cmpxchg_
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* __cmpp, INTEGER __val
 
-#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+#define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __cmp = *(INTEGER*) __cmpp;  \
     bool __r = __atomic_compare_exchange_n((INTEGER*) __mem,  \
           &__cmp, __val, 0, ORDER_SUCC, ORDER_FAIL);  \
@@ -137,7 +137,7 @@
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_cmpxchg_p
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* __cmpp, const void* __valp
 
-#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+#define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __cmp = *(INTEGER*) __cmpp;  \
     INTEGER __val = *(const INTEGER*) __valp;  \
     bool __r = __atomic_compare_exchange_n((INTEGER*) __mem,  \
@@ -158,7 +158,7 @@
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_cmpxchg_weak_
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* __cmpp, INTEGER __val
 
-#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+#define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __cmp = *(INTEGER*) __cmpp;  \
     bool __r = __atomic_compare_exchange_n((INTEGER*) __mem,  \
           &__cmp, __val, 1, ORDER_SUCC, ORDER_FAIL);  \
@@ -178,7 +178,7 @@
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_cmpxchg_weak_p
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* __cmpp, const void* __valp
 
-#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+#define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __cmp = *(INTEGER*) __cmpp;  \
     INTEGER __val = *(const INTEGER*) __valp;  \
     bool __r = __atomic_compare_exchange_n((INTEGER*) __mem,  \
@@ -199,7 +199,7 @@
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_xadd_
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, INTEGER __val
 
-#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+#define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     return __atomic_fetch_add((INTEGER*) __mem, __val, ORDER_SUCC);  \
 
 #define __MCF_ATOMIC_HAS_ACQUIRE_
@@ -215,7 +215,7 @@
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_xsub_
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, INTEGER __val
 
-#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+#define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     return __atomic_fetch_sub((INTEGER*) __mem, __val, ORDER_SUCC);  \
 
 #define __MCF_ATOMIC_HAS_ACQUIRE_
