@@ -115,7 +115,7 @@
  * `bool _MCF_atomic_cmpxchg_WIDTH_ORDER(void* restrict mem, void* restrict cmpp, INTEGER val);`  */
 #define __MCF_ATOMIC_RETURN_(INTEGER)   bool
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_cmpxchg_
-#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* restrict __cmpp, INTEGER __val
+#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* __cmpp, INTEGER __val
 
 #define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __cmp = *(INTEGER*) __cmpp;  \
@@ -135,7 +135,7 @@
  * `bool _MCF_atomic_cmpxchg_pWIDTH_ORDER(void* restrict mem, void* restrict cmpp, const void* val);`  */
 #define __MCF_ATOMIC_RETURN_(INTEGER)   bool
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_cmpxchg_p
-#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* restrict __cmpp, const void* __valp
+#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* __cmpp, const void* __valp
 
 #define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __cmp = *(INTEGER*) __cmpp;  \
@@ -156,7 +156,7 @@
  * `bool _MCF_atomic_cmpxchg_weak_WIDTH_ORDER(void* restrict mem, void* restrict cmpp, INTEGER val);`  */
 #define __MCF_ATOMIC_RETURN_(INTEGER)   bool
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_cmpxchg_weak_
-#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* restrict __cmpp, INTEGER __val
+#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* __cmpp, INTEGER __val
 
 #define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __cmp = *(INTEGER*) __cmpp;  \
@@ -176,7 +176,7 @@
  * `bool _MCF_atomic_cmpxchg_weak_pWIDTH_ORDER(void* restrict mem, void* restrict cmpp, const void* val);`  */
 #define __MCF_ATOMIC_RETURN_(INTEGER)   bool
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_cmpxchg_weak_p
-#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* restrict __cmpp, const void* __valp
+#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* __cmpp, const void* __valp
 
 #define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __cmp = *(INTEGER*) __cmpp;  \
