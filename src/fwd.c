@@ -64,7 +64,7 @@ __MCF_dll_callback_on_process_attach(void* module)
           0, 0, DUPLICATE_SAME_ACCESS)));
 
     __MCFGTHREAD_CHECK(__MCF_main_thread.__handle);
-    __MCF_ATOMIC_STORE_REL(__MCF_main_thread.__nref, 1);
+    _MCF_atomic_store_32_rel(__MCF_main_thread.__nref, 1);
     __MCFGTHREAD_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
   }
 

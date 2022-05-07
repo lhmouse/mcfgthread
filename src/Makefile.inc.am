@@ -1,6 +1,7 @@
 include_mcfgthreaddir = ${includedir}/mcfgthread
 include_mcfgthread_HEADERS =  \
   src/version.h  \
+  %reldir%/atomic_gen.i  \
   %reldir%/atomic.h  \
   %reldir%/fwd.h  \
   %reldir%/win32.h  \

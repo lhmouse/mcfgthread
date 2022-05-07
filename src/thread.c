@@ -24,7 +24,7 @@ do_win32_thread_thunk(LPVOID param)
 
     /* Wait until the structure has been fully initialized.  */
     uint32_t cmp = 0;
-    if(__MCF_ATOMIC_CMPXCHG_RLX(&(self->__tid), &cmp, UINT32_MAX))
+    if(_MCF_atomic_cmpxchg_32_rlx(&(self->__tid), &cmp, -1))
       __MCF_keyed_event_wait(self, NULL);
 
     /* Execute the user-defined procedure, which has no return value.  */
@@ -47,7 +47,7 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
       return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, NULL);
 
     /* Initialize the thread control structure.  */
-    __MCF_ATOMIC_STORE_RLX(thrd->__nref, 2);
+    _MCF_atomic_store_32_rlx(thrd->__nref, 2);
     thrd->__proc = proc;
 
     if(data_opt)
@@ -64,7 +64,7 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
 
     /* Set the thread ID. If its old value is not zero, the new thread should
      * have been waiting, so notify it.  */
-    if(__MCF_ATOMIC_XCHG_RLX(&(thrd->__tid), tid) != 0)
+    if(_MCF_atomic_xchg_32_rlx(&(thrd->__tid), (int32_t) tid) != 0)
       __MCF_keyed_event_signal(thrd, NULL);
 
     __MCFGTHREAD_ASSERT(thrd->__tid == tid);
@@ -74,7 +74,7 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
 void
 _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
   {
-    int32_t old_ref = __MCF_ATOMIC_SUB_ARL(thrd->__nref, 1);
+    int32_t old_ref = _MCF_atomic_xsub_32_arl(thrd->__nref, 1);
     __MCFGTHREAD_ASSERT(old_ref > 0);
     if(old_ref != 1)
       return;

@@ -17,7 +17,7 @@ _MCF_tls_key_new(_MCF_tls_dtor* dtor_opt)
 
     /* Initialize the key structure. The returned pointer is assumed to be
      * unique, so its reference count should be initialized to one.  */
-    __MCF_ATOMIC_STORE_RLX(key->__nref, 1);
+    _MCF_atomic_store_32_rlx(key->__nref, 1);
     key->__dtor_opt = dtor_opt;
     return key;
   }
@@ -26,7 +26,7 @@ static
 void
 do_tls_key_drop_ref_nonnull(_MCF_tls_key* key)
   {
-    int32_t old_ref = __MCF_ATOMIC_SUB_ARL(key->__nref, 1);
+    int32_t old_ref = _MCF_atomic_xsub_32_arl(key->__nref, 1);
     __MCFGTHREAD_ASSERT(old_ref > 0);
     if(old_ref != 1)
       return;
@@ -40,7 +40,7 @@ void
 _MCF_tls_key_delete_nonnull(_MCF_tls_key* key)
   {
     __MCFGTHREAD_ASSERT(key->__deleted[0] == 0);
-    __MCF_ATOMIC_STORE_RLX(key->__deleted, 1);
+    _MCF_atomic_store_8_rlx(key->__deleted, 1);
 
     do_tls_key_drop_ref_nonnull(key);
   }
@@ -116,7 +116,7 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
           if(!tkey)
             continue;
 
-          if(__MCF_ATOMIC_LOAD_RLX(tkey->__deleted) != 0) {
+          if(_MCF_atomic_load_8_rlx(tkey->__deleted) != 0) {
             /* If the key has been deleted, don't relocate it; free it instead.  */
             do_tls_key_drop_ref_nonnull(tkey);
             continue;
@@ -138,7 +138,7 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
     __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
     if(!elem->__key_opt) {
       /* Fill `key` into this element.  */
-      int32_t old_ref = __MCF_ATOMIC_ADD_ARL(key->__nref, 1);
+      int32_t old_ref = _MCF_atomic_xadd_32_arl(key->__nref, 1);
       __MCFGTHREAD_ASSERT(old_ref > 0);
       elem->__key_opt = key;
       table->__size ++;
@@ -172,7 +172,7 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
           /* Invoke the destructor if there is a value and a destructor, and
            * the key has not been deleted.  */
           _MCF_tls_dtor* dtor = NULL;
-          if(__MCF_ATOMIC_LOAD_RLX(tkey->__deleted) == 0)
+          if(_MCF_atomic_load_8_rlx(tkey->__deleted) == 0)
             dtor = tkey->__dtor_opt;
 
           if(dtor)

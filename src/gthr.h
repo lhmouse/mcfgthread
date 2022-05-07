@@ -300,14 +300,14 @@ int
 __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     uint32_t __my_tid = _MCF_thread_self_tid();
-    if(__MCF_ATOMIC_LOAD_RLX(&(__rmtx->__owner)) != __my_tid) {
+    if(_MCF_atomic_load_32_rlx(&(__rmtx->__owner)) != (int32_t) __my_tid) {
       /* If the calling thread does not own this mutex, attempt to take ownership.  */
       int __err = _MCF_mutex_lock(&(__rmtx->__mutex), NULL);
       __MCFGTHREAD_ASSERT(__err == 0);
 
       /* The calling thread owns the mutex now.  */
       __MCFGTHREAD_ASSERT(__rmtx->__owner == 0);
-      __MCF_ATOMIC_STORE_RLX(&(__rmtx->__owner), __my_tid);
+      _MCF_atomic_store_32_rlx(&(__rmtx->__owner), (int32_t) __my_tid);
       __MCFGTHREAD_ASSERT(__rmtx->__depth == 0);
     }
 
@@ -330,7 +330,7 @@ int
 __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     uint32_t __my_tid = _MCF_thread_self_tid();
-    if(__MCF_ATOMIC_LOAD_RLX(&(__rmtx->__owner)) != __my_tid) {
+    if(_MCF_atomic_load_32_rlx(&(__rmtx->__owner)) != (int32_t) __my_tid) {
       /* If the calling thread does not own this mutex, attempt to take ownership.  */
       int64_t __timeout = 0;
       int __err = _MCF_mutex_lock(&(__rmtx->__mutex), &__timeout);
@@ -338,7 +338,7 @@ __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NO
         return EBUSY;
 
       /* The calling thread owns the mutex now.  */
-      __MCF_ATOMIC_STORE_RLX(&(__rmtx->__owner), __my_tid);
+      _MCF_atomic_store_32_rlx(&(__rmtx->__owner), (int32_t) __my_tid);
       __MCFGTHREAD_ASSERT(__rmtx->__depth == 0);
     }
 
@@ -361,7 +361,7 @@ int
 __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
   {
     uint32_t __my_tid = _MCF_thread_self_tid();
-    if(__MCF_ATOMIC_LOAD_RLX(&(__rmtx->__owner)) != __my_tid) {
+    if(_MCF_atomic_load_32_rlx(&(__rmtx->__owner)) != (int32_t) __my_tid) {
       /* If the calling thread does not own this mutex, attempt to take ownership.  */
       int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
       int __err = _MCF_mutex_lock(&(__rmtx->__mutex), &__timeout);
@@ -369,7 +369,7 @@ __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const 
         return ETIMEDOUT;
 
       /* The calling thread owns the mutex now.  */
-      __MCF_ATOMIC_STORE_RLX(&(__rmtx->__owner), __my_tid);
+      _MCF_atomic_store_32_rlx(&(__rmtx->__owner), (int32_t) __my_tid);
       __MCFGTHREAD_ASSERT(__rmtx->__depth == 0);
     }
 
@@ -391,7 +391,7 @@ int
 __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     uint32_t __my_tid = _MCF_thread_self_tid();
-    __MCFGTHREAD_CHECK(__MCF_ATOMIC_LOAD_RLX(&(__rmtx->__owner)) == __my_tid);
+    __MCFGTHREAD_ASSERT(__rmtx->__owner == __my_tid);
 
     /* Decrement the recursion counter.  */
     __MCFGTHREAD_ASSERT(__rmtx->__depth > 0);
@@ -399,7 +399,7 @@ __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOE
 
     if(__rmtx->__depth == 0) {
       /* The calling thread shall give up ownership now.  */
-      __MCF_ATOMIC_STORE_RLX(&(__rmtx->__owner), 0);
+      _MCF_atomic_store_32_rlx(&(__rmtx->__owner), 0);
       _MCF_mutex_unlock(&(__rmtx->__mutex));
     }
     return 0;
@@ -544,7 +544,7 @@ __MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
       return EINVAL;
 
     __MCF_gthr_thread_record* __rec = (__MCF_gthr_thread_record*) __thrd->__data;
-    if(__MCF_ATOMIC_XCHG_RLX(&(__rec->__joinable), 0) == 0)
+    if(_MCF_atomic_xchg_8_rlx(&(__rec->__joinable), 0) == 0)
       return EINVAL;
 
     if(__thrd == _MCF_thread_self())
@@ -578,7 +578,7 @@ __MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_NOEXCEPT
       return EINVAL;
 
     __MCF_gthr_thread_record* __rec = (__MCF_gthr_thread_record*) __thrd->__data;
-    if(__MCF_ATOMIC_XCHG_RLX(&(__rec->__joinable), 0) == 0)
+    if(_MCF_atomic_xchg_8_rlx(&(__rec->__joinable), 0) == 0)
       return EINVAL;
 
     /* Free the thread.  */

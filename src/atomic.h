@@ -7,103 +7,219 @@
 
 #include "fwd.h"
 
-/* Generic atomic load
- * Note the order of arguments is swapped. Output precedes input.  */
-#define __MCF_ATOMIC_LOAD_PTR_RLX(out, mem)   __atomic_load(mem, out, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_LOAD_PTR_ACQ(out, mem)   __atomic_load(mem, out, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_LOAD_PTR_CST(out, mem)   __atomic_load(mem, out, __ATOMIC_SEQ_CST)
+/* We don't use the generic builtins due to a GCC bug.
+ * See <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105495> for details.
+ *
+ * These functions are provided as inlined ones only. Hereinafter, `WIDTH` sets
+ * `INTEGER` to `intWIDTH_t`. `ORDER` may be `rlx` for relaxed order, `acq` for
+ * acquire order, `rel` for release order, `arl` for both acquire and release
+ * order, or `cst` for sequentially-consistent order.  */
 
-/* Generic atomic store  */
-#define __MCF_ATOMIC_STORE_PTR_RLX(mem, in)   __atomic_store(mem, in, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_STORE_PTR_REL(mem, in)   __atomic_store(mem, in, __ATOMIC_RELEASE)
-#define __MCF_ATOMIC_STORE_PTR_CST(mem, in)   __atomic_store(mem, in, __ATOMIC_SEQ_CST)
+/* Performs a scalar atomic load operation.
+ * The value that has been read is returned as an integer.
+ *
+ * `INTEGER _MCF_atomic_load_WIDTH_ORDER(const void* restrict mem);`  */
+#define __MCF_ATOMIC_RETURN_(INTEGER)   INTEGER
+#define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_load_
+#define __MCF_ATOMIC_PARAMS_(INTEGER)   const void* __mem
 
-/* Generic atomic exchange
- * Note the order of arguments is swapped. Output precedes input.  */
-#define __MCF_ATOMIC_XCHG_PTR_RLX(out, mem, in)   __atomic_exchange(mem, in, out, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_XCHG_PTR_ACQ(out, mem, in)   __atomic_exchange(mem, in, out, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_XCHG_PTR_REL(out, mem, in)   __atomic_exchange(mem, in, out, __ATOMIC_RELEASE)
-#define __MCF_ATOMIC_XCHG_PTR_ARL(out, mem, in)   __atomic_exchange(mem, in, out, __ATOMIC_ACQ_REL)
-#define __MCF_ATOMIC_XCHG_PTR_CST(out, mem, in)   __atomic_exchange(mem, in, out, __ATOMIC_SEQ_CST)
+#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+    return __atomic_load_n((const INTEGER*) __mem, ORDER_SUCC);
 
-/* Generic strong compare-and-exchange  */
-#define __MCF_ATOMIC_CMPXCHG_PTR_RLX(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, false, __ATOMIC_RELAXED, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_CMPXCHG_PTR_ACQ(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, false, __ATOMIC_ACQUIRE, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_CMPXCHG_PTR_REL(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, false, __ATOMIC_RELEASE, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_CMPXCHG_PTR_ARL(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_CMPXCHG_PTR_CST(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)
+#define __MCF_ATOMIC_HAS_ACQUIRE_
+#include "atomic_gen.i"
 
-/* Generic weak compare-and-exchange  */
-#define __MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, true, __ATOMIC_RELAXED, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_CMPXCHG_WEAK_PTR_ACQ(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, true, __ATOMIC_ACQUIRE, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_CMPXCHG_WEAK_PTR_REL(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, true, __ATOMIC_RELEASE, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_CMPXCHG_WEAK_PTR_ARL(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, true, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_CMPXCHG_WEAK_PTR_CST(mem, cmp, in)   __atomic_compare_exchange(mem, cmp, in, true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)
+/* Performs a generic atomic load operation.
+ * The value that has been read is returned via the pointer `retp`.
+ *
+ * `void _MCF_atomic_load_pWIDTH_ORDER(void* retp, const void* restrict mem);`  */
+#define __MCF_ATOMIC_RETURN_(INTEGER)   void
+#define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_load_p
+#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __retp, const void* __mem
 
-/* Scalar atomic load  */
-#define __MCF_ATOMIC_LOAD_RLX(mem)   __atomic_load_n(mem, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_LOAD_ACQ(mem)   __atomic_load_n(mem, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_LOAD_CST(mem)   __atomic_load_n(mem, __ATOMIC_SEQ_CST)
+#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+    INTEGER __val = __atomic_load_n((const INTEGER*) __mem, ORDER_SUCC);  \
+    *(INTEGER*) __retp = __val;
 
-/* Scalar atomic store  */
-#define __MCF_ATOMIC_STORE_RLX(mem, val)   __atomic_store_n(mem, val, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_STORE_REL(mem, val)   __atomic_store_n(mem, val, __ATOMIC_RELEASE)
-#define __MCF_ATOMIC_STORE_CST(mem, val)   __atomic_store_n(mem, val, __ATOMIC_SEQ_CST)
+#define __MCF_ATOMIC_HAS_ACQUIRE_
+#include "atomic_gen.i"
 
-/* Scalar atomic exchange  */
-#define __MCF_ATOMIC_XCHG_RLX(mem, val)   __atomic_exchange_n(mem, val, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_XCHG_ACQ(mem, val)   __atomic_exchange_n(mem, val, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_XCHG_REL(mem, val)   __atomic_exchange_n(mem, val, __ATOMIC_RELEASE)
-#define __MCF_ATOMIC_XCHG_ARL(mem, val)   __atomic_exchange_n(mem, val, __ATOMIC_ACQ_REL)
-#define __MCF_ATOMIC_XCHG_CST(mem, val)   __atomic_exchange_n(mem, val, __ATOMIC_SEQ_CST)
+/* Performs a scalar atomic store operation.
+ * The value to write is passed by value as an integer.
+ *
+ * `INTEGER _MCF_atomic_store_WIDTH_ORDER(void* restrict mem, INTEGER val);`  */
+#define __MCF_ATOMIC_RETURN_(INTEGER)   INTEGER
+#define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_store_
+#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, INTEGER __val
 
-/* Scalar strong compare-and-exchange  */
-#define __MCF_ATOMIC_CMPXCHG_RLX(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, false, __ATOMIC_RELAXED, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_CMPXCHG_ACQ(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, false, __ATOMIC_ACQUIRE, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_CMPXCHG_REL(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, false, __ATOMIC_RELEASE, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_CMPXCHG_ARL(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_CMPXCHG_CST(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, false, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)
+#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+    __atomic_store_n((INTEGER*) __mem, __val, ORDER_SUCC);  \
+    return __val;
 
-/* Scalar weak compare-and-exchange  */
-#define __MCF_ATOMIC_CMPXCHG_WEAK_RLX(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, true, __ATOMIC_RELAXED, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_CMPXCHG_WEAK_ACQ(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, true, __ATOMIC_ACQUIRE, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_CMPXCHG_WEAK_REL(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, true, __ATOMIC_RELEASE, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_CMPXCHG_WEAK_ARL(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, true, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_CMPXCHG_WEAK_CST(mem, cmp, val)   __atomic_compare_exchange_n(mem, cmp, val, true, __ATOMIC_SEQ_CST, __ATOMIC_SEQ_CST)
+#define __MCF_ATOMIC_HAS_RELEASE_
+#include "atomic_gen.i"
 
-/* Scalar exchange-and-add  */
-#define __MCF_ATOMIC_ADD_RLX(mem, val)   __atomic_fetch_add(mem, val, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_ADD_ACQ(mem, val)   __atomic_fetch_add(mem, val, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_ADD_REL(mem, val)   __atomic_fetch_add(mem, val, __ATOMIC_RELEASE)
-#define __MCF_ATOMIC_ADD_ARL(mem, val)   __atomic_fetch_add(mem, val, __ATOMIC_ACQ_REL)
-#define __MCF_ATOMIC_ADD_CST(mem, val)   __atomic_fetch_add(mem, val, __ATOMIC_SEQ_CST)
+/* Performs a generic atomic store operation.
+ * The value to write is passed via the pointer `valp`.
+ *
+ * `void _MCF_atomic_store_pWIDTH_ORDER(void* restrict mem, const void* valp);`  */
+#define __MCF_ATOMIC_RETURN_(INTEGER)   void
+#define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_store_p
+#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, const void* __valp
 
-/* Scalar exchange-and-sub  */
-#define __MCF_ATOMIC_SUB_RLX(mem, val)   __atomic_fetch_sub(mem, val, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_SUB_ACQ(mem, val)   __atomic_fetch_sub(mem, val, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_SUB_REL(mem, val)   __atomic_fetch_sub(mem, val, __ATOMIC_RELEASE)
-#define __MCF_ATOMIC_SUB_ARL(mem, val)   __atomic_fetch_sub(mem, val, __ATOMIC_ACQ_REL)
-#define __MCF_ATOMIC_SUB_CST(mem, val)   __atomic_fetch_sub(mem, val, __ATOMIC_SEQ_CST)
+#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+    INTEGER __val = *(const INTEGER*) __valp;  \
+    __atomic_store_n((INTEGER*) __mem, __val, ORDER_SUCC);
 
-/* Scalar exchange-and-bitwise-and  */
-#define __MCF_ATOMIC_AND_RLX(mem, val)   __atomic_fetch_and(mem, val, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_AND_ACQ(mem, val)   __atomic_fetch_and(mem, val, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_AND_REL(mem, val)   __atomic_fetch_and(mem, val, __ATOMIC_RELEASE)
-#define __MCF_ATOMIC_AND_ARL(mem, val)   __atomic_fetch_and(mem, val, __ATOMIC_ACQ_REL)
-#define __MCF_ATOMIC_AND_CST(mem, val)   __atomic_fetch_and(mem, val, __ATOMIC_SEQ_CST)
+#define __MCF_ATOMIC_HAS_RELEASE_
+#include "atomic_gen.i"
 
-/* Scalar exchange-and-bitwise-or  */
-#define __MCF_ATOMIC_OR_RLX(mem, val)   __atomic_fetch_or(mem, val, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_OR_ACQ(mem, val)   __atomic_fetch_or(mem, val, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_OR_REL(mem, val)   __atomic_fetch_or(mem, val, __ATOMIC_RELEASE)
-#define __MCF_ATOMIC_OR_ARL(mem, val)   __atomic_fetch_or(mem, val, __ATOMIC_ACQ_REL)
-#define __MCF_ATOMIC_OR_CST(mem, val)   __atomic_fetch_or(mem, val, __ATOMIC_SEQ_CST)
+/* Performs a scalar atomic exchange operation.
+ * The previous value is returned as an integer.
+ * The value to write is passed by value as an integer.
+ *
+ * `INTEGER _MCF_atomic_xchg_WIDTH_ORDER(void* restrict mem, INTEGER val);`  */
+#define __MCF_ATOMIC_RETURN_(INTEGER)   INTEGER
+#define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_xchg_
+#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, INTEGER __val
 
-/* Scalar exchange-and-bitwise-xor  */
-#define __MCF_ATOMIC_XOR_RLX(mem, val)   __atomic_fetch_xor(mem, val, __ATOMIC_RELAXED)
-#define __MCF_ATOMIC_XOR_ACQ(mem, val)   __atomic_fetch_xor(mem, val, __ATOMIC_ACQUIRE)
-#define __MCF_ATOMIC_XOR_REL(mem, val)   __atomic_fetch_xor(mem, val, __ATOMIC_RELEASE)
-#define __MCF_ATOMIC_XOR_ARL(mem, val)   __atomic_fetch_xor(mem, val, __ATOMIC_ACQ_REL)
-#define __MCF_ATOMIC_XOR_CST(mem, val)   __atomic_fetch_xor(mem, val, __ATOMIC_SEQ_CST)
+#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+    return __atomic_exchange_n((INTEGER*) __mem, __val, ORDER_SUCC);
+
+#define __MCF_ATOMIC_HAS_ACQUIRE_
+#define __MCF_ATOMIC_HAS_RELEASE_
+#include "atomic_gen.i"
+
+/* Performs a generic atomic exchange operation.
+ * The previous value is returned via the pointer `retp`.
+ * The value to write is passed via the pointer `valp`.
+ *
+ * `void _MCF_atomic_xchg_pWIDTH_ORDER(void* retp, void* restrict mem, const void* valp);`  */
+#define __MCF_ATOMIC_RETURN_(INTEGER)   void
+#define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_xchg_p
+#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __retp, void* __mem, const void* __valp
+
+#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+    INTEGER __val = *(const INTEGER*) __valp;  \
+    __val = __atomic_exchange_n((INTEGER*) __mem, __val, ORDER_SUCC);  \
+    *(INTEGER*) __retp = __val;
+
+#define __MCF_ATOMIC_HAS_ACQUIRE_
+#define __MCF_ATOMIC_HAS_RELEASE_
+#include "atomic_gen.i"
+
+/* Performs a scalar atomic compare-and-exchange operation.
+ * The value for comparison is passed via the pointer `cmpp`.
+ * The value to write is passed by value as an integer.
+ *
+ * `bool _MCF_atomic_cmpxchg_WIDTH_ORDER(void* restrict mem, void* restrict cmpp, INTEGER val);`  */
+#define __MCF_ATOMIC_RETURN_(INTEGER)   bool
+#define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_cmpxchg_
+#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* restrict __cmpp, INTEGER __val
+
+#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+    INTEGER __cmp = *(INTEGER*) __cmpp;  \
+    bool __r = __atomic_compare_exchange_n((INTEGER*) __mem,  \
+          &__cmp, __val, 0, ORDER_SUCC, ORDER_FAIL);  \
+    *(INTEGER*) __cmpp = __cmp;  \
+    return __r;
+
+#define __MCF_ATOMIC_HAS_ACQUIRE_
+#define __MCF_ATOMIC_HAS_RELEASE_
+#include "atomic_gen.i"
+
+/* Performs a generic atomic compare-and-exchange operation.
+ * The value for comparison is passed via the pointer `cmpp`.
+ * The value to write is passed by value as an integer.
+ *
+ * `bool _MCF_atomic_cmpxchg_pWIDTH_ORDER(void* restrict mem, void* restrict cmpp, const void* val);`  */
+#define __MCF_ATOMIC_RETURN_(INTEGER)   bool
+#define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_cmpxchg_p
+#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* restrict __cmpp, const void* __valp
+
+#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+    INTEGER __cmp = *(INTEGER*) __cmpp;  \
+    INTEGER __val = *(const INTEGER*) __valp;  \
+    bool __r = __atomic_compare_exchange_n((INTEGER*) __mem,  \
+          &__cmp, __val, 0, ORDER_SUCC, ORDER_FAIL);  \
+    *(INTEGER*) __cmpp = __cmp;  \
+    return __r;
+
+#define __MCF_ATOMIC_HAS_ACQUIRE_
+#define __MCF_ATOMIC_HAS_RELEASE_
+#include "atomic_gen.i"
+
+/* Performs a scalar atomic weak compare-and-exchange operation.
+ * The value for comparison is passed via the pointer `cmpp`.
+ * The value to write is passed by value as an integer.
+ *
+ * `bool _MCF_atomic_cmpxchg_weak_WIDTH_ORDER(void* restrict mem, void* restrict cmpp, INTEGER val);`  */
+#define __MCF_ATOMIC_RETURN_(INTEGER)   bool
+#define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_cmpxchg_weak_
+#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* restrict __cmpp, INTEGER __val
+
+#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+    INTEGER __cmp = *(INTEGER*) __cmpp;  \
+    bool __r = __atomic_compare_exchange_n((INTEGER*) __mem,  \
+          &__cmp, __val, 1, ORDER_SUCC, ORDER_FAIL);  \
+    *(INTEGER*) __cmpp = __cmp;  \
+    return __r;
+
+#define __MCF_ATOMIC_HAS_ACQUIRE_
+#define __MCF_ATOMIC_HAS_RELEASE_
+#include "atomic_gen.i"
+
+/* Performs a generic atomic weak compare-and-exchange operation.
+ * The value for comparison is passed via the pointer `cmpp`.
+ * The value to write is passed by value as an integer.
+ *
+ * `bool _MCF_atomic_cmpxchg_weak_pWIDTH_ORDER(void* restrict mem, void* restrict cmpp, const void* val);`  */
+#define __MCF_ATOMIC_RETURN_(INTEGER)   bool
+#define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_cmpxchg_weak_p
+#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* restrict __cmpp, const void* __valp
+
+#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+    INTEGER __cmp = *(INTEGER*) __cmpp;  \
+    INTEGER __val = *(const INTEGER*) __valp;  \
+    bool __r = __atomic_compare_exchange_n((INTEGER*) __mem,  \
+          &__cmp, __val, 1, ORDER_SUCC, ORDER_FAIL);  \
+    *(INTEGER*) __cmpp = __cmp;  \
+    return __r;  \
+
+#define __MCF_ATOMIC_HAS_ACQUIRE_
+#define __MCF_ATOMIC_HAS_RELEASE_
+#include "atomic_gen.i"
+
+/* Performs a generic atomic fetch-and-add operation.
+ * The value that has been swapped out is returned as an integer.
+ * The value to add is passed by value as an integer.
+ *
+ * `INTEGER val __MCF_atomic_xadd_WIDTH_ORDER(void* restrict mem, INTEGER val);`  */
+#define __MCF_ATOMIC_RETURN_(INTEGER)   INTEGER
+#define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_xadd_
+#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, INTEGER __val
+
+#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+    return __atomic_fetch_add((INTEGER*) __mem, __val, ORDER_SUCC);  \
+
+#define __MCF_ATOMIC_HAS_ACQUIRE_
+#define __MCF_ATOMIC_HAS_RELEASE_
+#include "atomic_gen.i"
+
+/* Performs a generic atomic fetch-and-subtract operation.
+ * The value that has been swapped out is returned as an integer.
+ * The value to subtract is passed by value as an integer.
+ *
+ * `INTEGER val __MCF_atomic_xsub_WIDTH_ORDER(void* restrict mem, INTEGER val);`  */
+#define __MCF_ATOMIC_RETURN_(INTEGER)   INTEGER
+#define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_xsub_
+#define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, INTEGER __val
+
+#define __MCF_ATOMIC_FUNC_BODY_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
+    return __atomic_fetch_sub((INTEGER*) __mem, __val, ORDER_SUCC);  \
+
+#define __MCF_ATOMIC_HAS_ACQUIRE_
+#define __MCF_ATOMIC_HAS_RELEASE_
+#include "atomic_gen.i"
 
 #endif  /* __MCFGTHREAD_ATOMIC_H_  */
