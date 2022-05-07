@@ -83,7 +83,8 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
     if(thrd == &__MCF_main_thread)
       return;
 
-    __MCFGTHREAD_CHECK(NT_SUCCESS(NtClose(thrd->__handle)));
+    NTSTATUS status = NtClose(thrd->__handle);
+    __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
     __MCF_mfree(thrd);
   }
 
