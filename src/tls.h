@@ -32,7 +32,7 @@ struct __MCF_tls_table
 /* Define the structure for thread-local storage keys.  */
 struct __MCF_tls_key
   {
-    int __nref[1];  /* atomic reference count  */
+    int32_t __nref[1];  /* atomic reference count  */
     uint8_t __deleted[1];  /* deleted?  */
     uint8_t __reserved[3];
     _MCF_tls_dtor* __dtor_opt;  /* destructor, optional  */

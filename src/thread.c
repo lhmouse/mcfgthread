@@ -74,7 +74,7 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
 void
 _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
   {
-    int old_ref = __MCF_ATOMIC_SUB_ARL(thrd->__nref, 1);
+    int32_t old_ref = __MCF_ATOMIC_SUB_ARL(thrd->__nref, 1);
     __MCFGTHREAD_ASSERT(old_ref > 0);
     if(old_ref != 1)
       return;

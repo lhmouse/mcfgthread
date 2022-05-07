@@ -26,20 +26,20 @@ static
 void
 do_tls_key_drop_ref_nonnull(_MCF_tls_key* key)
   {
-    int old_ref = __MCF_ATOMIC_SUB_ARL(key->__nref, 1);
+    int32_t old_ref = __MCF_ATOMIC_SUB_ARL(key->__nref, 1);
     __MCFGTHREAD_ASSERT(old_ref > 0);
     if(old_ref != 1)
       return;
 
     /* Deallocate its storage now.  */
-    __MCFGTHREAD_ASSERT(__MCF_ATOMIC_LOAD_RLX(key->__deleted) == 1);
+    __MCFGTHREAD_ASSERT(key->__deleted[0] == 1);
     __MCF_mfree(key);
   }
 
 void
 _MCF_tls_key_delete_nonnull(_MCF_tls_key* key)
   {
-    __MCFGTHREAD_ASSERT(__MCF_ATOMIC_LOAD_RLX(key->__deleted) == 0);
+    __MCFGTHREAD_ASSERT(key->__deleted[0] == 0);
     __MCF_ATOMIC_STORE_RLX(key->__deleted, 1);
 
     do_tls_key_drop_ref_nonnull(key);
@@ -138,7 +138,7 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
     __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
     if(!elem->__key_opt) {
       /* Fill `key` into this element.  */
-      int old_ref = __MCF_ATOMIC_ADD_ARL(key->__nref, 1);
+      int32_t old_ref = __MCF_ATOMIC_ADD_ARL(key->__nref, 1);
       __MCFGTHREAD_ASSERT(old_ref > 0);
       elem->__key_opt = key;
       table->__size ++;

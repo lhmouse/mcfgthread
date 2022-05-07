@@ -21,7 +21,7 @@ extern "C" {
 /* Define the thread control struct.  */
 struct __MCF_thread
   {
-    int __nref[1];  /* atomic reference count  */
+    int32_t __nref[1];  /* atomic reference count  */
     uint32_t __tid;  /* thread id  */
     __MCF_HANDLE __handle;  /* win32 thread handle  */
 
@@ -75,7 +75,7 @@ __MCF_THREAD_EXTERN_INLINE
 void
 _MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT
   {
-    int __old_ref = __MCF_ATOMIC_ADD_RLX(__thrd->__nref, 1);
+    int32_t __old_ref = __MCF_ATOMIC_ADD_RLX(__thrd->__nref, 1);
     __MCFGTHREAD_ASSERT(__old_ref < INT_MAX);
     __MCFGTHREAD_ASSERT(__old_ref > 0);
   }
