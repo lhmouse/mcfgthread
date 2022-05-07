@@ -18,7 +18,7 @@
 /* Performs a scalar atomic load operation.
  * The value that has been read is returned as an integer.
  *
- * `INTEGER _MCF_atomic_load_WIDTH_ORDER(const void* restrict mem);`  */
+ * `INTEGER _MCF_atomic_load_WIDTH_ORDER(const void* mem);`  */
 #define __MCF_ATOMIC_RETURN_(INTEGER)   INTEGER
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_load_
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   const void* __mem
@@ -32,7 +32,7 @@
 /* Performs a generic atomic load operation.
  * The value that has been read is returned via the pointer `retp`.
  *
- * `void _MCF_atomic_load_pWIDTH_ORDER(void* retp, const void* restrict mem);`  */
+ * `void _MCF_atomic_load_pWIDTH_ORDER(void* retp, const void* mem);`  */
 #define __MCF_ATOMIC_RETURN_(INTEGER)   void
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_load_p
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __retp, const void* __mem
@@ -47,7 +47,7 @@
 /* Performs a scalar atomic store operation.
  * The value to write is passed by value as an integer.
  *
- * `INTEGER _MCF_atomic_store_WIDTH_ORDER(void* restrict mem, INTEGER val);`  */
+ * `INTEGER _MCF_atomic_store_WIDTH_ORDER(void* mem, INTEGER val);`  */
 #define __MCF_ATOMIC_RETURN_(INTEGER)   INTEGER
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_store_
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, INTEGER __val
@@ -62,7 +62,7 @@
 /* Performs a generic atomic store operation.
  * The value to write is passed via the pointer `valp`.
  *
- * `void _MCF_atomic_store_pWIDTH_ORDER(void* restrict mem, const void* valp);`  */
+ * `void _MCF_atomic_store_pWIDTH_ORDER(void* mem, const void* valp);`  */
 #define __MCF_ATOMIC_RETURN_(INTEGER)   void
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_store_p
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, const void* __valp
@@ -78,7 +78,7 @@
  * The previous value is returned as an integer.
  * The value to write is passed by value as an integer.
  *
- * `INTEGER _MCF_atomic_xchg_WIDTH_ORDER(void* restrict mem, INTEGER val);`  */
+ * `INTEGER _MCF_atomic_xchg_WIDTH_ORDER(void* mem, INTEGER val);`  */
 #define __MCF_ATOMIC_RETURN_(INTEGER)   INTEGER
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_xchg_
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, INTEGER __val
@@ -94,7 +94,7 @@
  * The previous value is returned via the pointer `retp`.
  * The value to write is passed via the pointer `valp`.
  *
- * `void _MCF_atomic_xchg_pWIDTH_ORDER(void* retp, void* restrict mem, const void* valp);`  */
+ * `void _MCF_atomic_xchg_pWIDTH_ORDER(void* retp, void* mem, const void* valp);`  */
 #define __MCF_ATOMIC_RETURN_(INTEGER)   void
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_xchg_p
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __retp, void* __mem, const void* __valp
@@ -112,7 +112,7 @@
  * The value for comparison is passed via the pointer `cmpp`.
  * The value to write is passed by value as an integer.
  *
- * `bool _MCF_atomic_cmpxchg_WIDTH_ORDER(void* restrict mem, void* restrict cmpp, INTEGER val);`  */
+ * `bool _MCF_atomic_cmpxchg_WIDTH_ORDER(void* mem, void* cmpp, INTEGER val);`  */
 #define __MCF_ATOMIC_RETURN_(INTEGER)   bool
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_cmpxchg_
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* __cmpp, INTEGER __val
@@ -132,7 +132,7 @@
  * The value for comparison is passed via the pointer `cmpp`.
  * The value to write is passed by value as an integer.
  *
- * `bool _MCF_atomic_cmpxchg_pWIDTH_ORDER(void* restrict mem, void* restrict cmpp, const void* val);`  */
+ * `bool _MCF_atomic_cmpxchg_pWIDTH_ORDER(void* mem, void* cmpp, const void* val);`  */
 #define __MCF_ATOMIC_RETURN_(INTEGER)   bool
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_cmpxchg_p
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* __cmpp, const void* __valp
@@ -153,7 +153,7 @@
  * The value for comparison is passed via the pointer `cmpp`.
  * The value to write is passed by value as an integer.
  *
- * `bool _MCF_atomic_cmpxchg_weak_WIDTH_ORDER(void* restrict mem, void* restrict cmpp, INTEGER val);`  */
+ * `bool _MCF_atomic_cmpxchg_weak_WIDTH_ORDER(void* mem, void* cmpp, INTEGER val);`  */
 #define __MCF_ATOMIC_RETURN_(INTEGER)   bool
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_cmpxchg_weak_
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* __cmpp, INTEGER __val
@@ -173,7 +173,7 @@
  * The value for comparison is passed via the pointer `cmpp`.
  * The value to write is passed by value as an integer.
  *
- * `bool _MCF_atomic_cmpxchg_weak_pWIDTH_ORDER(void* restrict mem, void* restrict cmpp, const void* val);`  */
+ * `bool _MCF_atomic_cmpxchg_weak_pWIDTH_ORDER(void* mem, void* cmpp, const void* val);`  */
 #define __MCF_ATOMIC_RETURN_(INTEGER)   bool
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_cmpxchg_weak_p
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, void* __cmpp, const void* __valp
@@ -194,7 +194,7 @@
  * The value that has been swapped out is returned as an integer.
  * The value to add is passed by value as an integer.
  *
- * `INTEGER val __MCF_atomic_xadd_WIDTH_ORDER(void* restrict mem, INTEGER val);`  */
+ * `INTEGER val __MCF_atomic_xadd_WIDTH_ORDER(void* mem, INTEGER val);`  */
 #define __MCF_ATOMIC_RETURN_(INTEGER)   INTEGER
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_xadd_
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, INTEGER __val
@@ -210,7 +210,7 @@
  * The value that has been swapped out is returned as an integer.
  * The value to subtract is passed by value as an integer.
  *
- * `INTEGER val __MCF_atomic_xsub_WIDTH_ORDER(void* restrict mem, INTEGER val);`  */
+ * `INTEGER val __MCF_atomic_xsub_WIDTH_ORDER(void* mem, INTEGER val);`  */
 #define __MCF_ATOMIC_RETURN_(INTEGER)   INTEGER
 #define __MCF_ATOMIC_FUNCTION_          _MCF_atomic_xsub_
 #define __MCF_ATOMIC_PARAMS_(INTEGER)   void* __mem, INTEGER __val
