@@ -54,7 +54,7 @@ void
 _MCF_mutex_init(_MCF_mutex* __mutex) __MCF_NOEXCEPT
   {
     _MCF_mutex __temp = __MCF_0_INIT;
-    __MCF_ATOMIC_STORE_PTR_REL(__mutex, &__temp);
+    _MCF_atomic_store_pptr_rel(__mutex, &__temp);
   }
 
 /* Attempts to lock a mutex.
@@ -85,7 +85,7 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEP
 
     /* This is optimized solely for single-thread code.  */
     __new.__locked = 1;
-    if(__MCF_ATOMIC_CMPXCHG_WEAK_PTR_ACQ(__mutex, &__old, &__new))
+    if(_MCF_atomic_cmpxchg_weak_pptr_acq(__mutex, &__old, &__new))
       return 0;
 
     if(__timeout_opt && (*__timeout_opt == 0) && __old.__locked)
@@ -112,7 +112,7 @@ _MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_NOEXCEPT
 
     /* This is optimized solely for single-thread code.  */
     __old.__locked = 1;
-    if(__MCF_ATOMIC_CMPXCHG_WEAK_PTR_REL(__mutex, &__old, &__new))
+    if(_MCF_atomic_cmpxchg_weak_pptr_rel(__mutex, &__old, &__new))
       return;
 
     _MCF_mutex_unlock_slow(__mutex);

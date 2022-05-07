@@ -32,12 +32,12 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     struct cond_unlock_result ulres __MCF_USE_DTOR(do_unlock_cleanup) = __MCF_0_INIT;
 
     /* Allocate a count for the current thread.  */
-    __MCF_ATOMIC_LOAD_PTR_RLX(&old, cond);
+    _MCF_atomic_load_pptr_rlx(&old, cond);
     do {
       new = old;
       new.__nsleep = (old.__nsleep + 1U) & __MCF_COND_NSLEEP_M;
     }
-    while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(cond, &old, &new));
+    while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
 
     if(unlock_opt) {
       /* Now, unlock the associated mutex. If another thread attempts to signal
@@ -56,7 +56,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
       /* Tell another thread which is going to signal this condition variable
        * that an old waiter has left by decrementing the number of sleeping
        * threads. But see below...  */
-      __MCF_ATOMIC_LOAD_PTR_RLX(&old, cond);
+      _MCF_atomic_load_pptr_rlx(&old, cond);
       do {
         if(old.__nsleep == 0)
           break;
@@ -64,7 +64,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
         new = old;
         new.__nsleep = (old.__nsleep - 1U) & __MCF_COND_NSLEEP_M;
       }
-      while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(cond, &old, &new));
+      while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
 
       if(old.__nsleep != 0)
         return -1;
@@ -90,13 +90,13 @@ _MCF_cond_signal_some(_MCF_cond* cond, size_t max)
     size_t wake_num;
     _MCF_cond old, new;
 
-    __MCF_ATOMIC_LOAD_PTR_RLX(&old, cond);
+    _MCF_atomic_load_pptr_rlx(&old, cond);
     do {
       new = old;
       wake_num = _MCF_minz(old.__nsleep, max);
       new.__nsleep = (old.__nsleep - wake_num) & __MCF_COND_NSLEEP_M;
     }
-    while(!__MCF_ATOMIC_CMPXCHG_WEAK_PTR_RLX(cond, &old, &new));
+    while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
 
     return __MCF_batch_release_common(cond, wake_num);
   }
@@ -107,7 +107,7 @@ _MCF_cond_signal_all(_MCF_cond* cond)
     /* Swap out all data.  */
     _MCF_cond old;
     _MCF_cond new = __MCF_0_INIT;
-    __MCF_ATOMIC_XCHG_PTR_RLX(&old, cond, &new);
+    _MCF_atomic_xchg_pptr_rlx(&old, cond, &new);
 
     return __MCF_batch_release_common(cond, old.__nsleep);
   }

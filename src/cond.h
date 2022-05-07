@@ -36,7 +36,7 @@ void
 _MCF_cond_init(_MCF_cond* __cond) __MCF_NOEXCEPT
   {
     _MCF_cond __temp = __MCF_0_INIT;
-    __MCF_ATOMIC_STORE_PTR_REL(__cond, &__temp);
+    _MCF_atomic_store_pptr_rel(__cond, &__temp);
   }
 
 /* Puts the current thread to sleep on a condition variable.

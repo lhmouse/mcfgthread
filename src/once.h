@@ -41,7 +41,7 @@ void
 _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT
   {
     _MCF_once __temp = __MCF_0_INIT;
-    __MCF_ATOMIC_STORE_PTR_REL(__once, &__temp);
+    _MCF_atomic_store_pptr_rel(__once, &__temp);
   }
 
 /* Attempts to lock a once-initialization flag.
@@ -71,7 +71,7 @@ int
 _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
     _MCF_once __old;
-    __MCF_ATOMIC_LOAD_PTR_ACQ(&__old, __once);
+    _MCF_atomic_load_pptr_acq(&__old, __once);
 
     /* Check the first byte to see whether initialization has been completed,
      * and if that's the case, don't do anything.  */
