@@ -216,12 +216,12 @@ __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __s
   {
     __MCFGTHREAD_ASSERT(__size <= (uintptr_t) __dst - (uintptr_t) __src);
 #if defined(__i386__) || defined(__amd64__)
-    typedef char __mem[];
+    typedef char __bytes[__size];
     uintptr_t __di, __si, __cx;
     __asm__ (
       "rep movsb;"
-      : "=m"(*(__mem*) __dst), "=D"(__di), "=S"(__si), "=c"(__cx)
-      : "m"(*(const __mem*) __src), "D"(__dst), "S"(__src), "c"(__size)
+      : "=m"(*(__bytes*) __dst), "=D"(__di), "=S"(__si), "=c"(__cx)
+      : "m"(*(const __bytes*) __src), "D"(__dst), "S"(__src), "c"(__size)
     );
 #else
     /* Call the generic but slower version in NTDLL.  */
@@ -239,21 +239,21 @@ void* __cdecl
 __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
-    typedef char __mem[];
+    typedef char __bytes[__size];
     uintptr_t __di, __si, __cx;
     if(__size <= (uintptr_t) __dst - (uintptr_t) __src)
       __asm__ (
         "rep movsb;"  /* go forward  */
-        : "=m"(*(__mem*) __dst), "=D"(__di), "=S"(__si), "=c"(__cx)
-        : "m"(*(const __mem*) __src), "D"(__dst), "S"(__src), "c"(__size)
+        : "=m"(*(__bytes*) __dst), "=D"(__di), "=S"(__si), "=c"(__cx)
+        : "m"(*(const __bytes*) __src), "D"(__dst), "S"(__src), "c"(__size)
       );
     else
       __asm__ (
         "std;"
         "rep movsb;"  /* go backward  */
         "cld;"
-        : "=m"(*(__mem*) __dst), "=D"(__di), "=S"(__si), "=c"(__cx)
-        : "m"(*(const __mem*) __src), "D"((char*) __dst + __size - 1),
+        : "=m"(*(__bytes*) __dst), "=D"(__di), "=S"(__si), "=c"(__cx)
+        : "m"(*(const __bytes*) __src), "D"((char*) __dst + __size - 1),
           "S"((const char*) __src + __size - 1), "c"(__size)
       );
 #else
@@ -272,11 +272,11 @@ void* __cdecl
 __MCF_mfill(void* __dst, uint8_t __val, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
-    typedef char __mem[];
+    typedef char __bytes[__size];
     uintptr_t __di, __cx;
     __asm__ (
       "rep stosb;"
-      : "=m"(*(__mem*) __dst), "=D"(__di), "=c"(__cx)
+      : "=m"(*(__bytes*) __dst), "=D"(__di), "=c"(__cx)
       : "D"(__dst), "a"(__val), "c"(__size)
     );
 #else
@@ -295,11 +295,11 @@ void* __cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
-    typedef char __mem[];
+    typedef char __bytes[__size];
     uintptr_t __di, __cx;
     __asm__ (
       "rep stosb;"
-      : "=m"(*(__mem*) __dst), "=D"(__di), "=c"(__cx)
+      : "=m"(*(__bytes*) __dst), "=D"(__di), "=c"(__cx)
       : "D"(__dst), "a"(0), "c"(__size)
     );
 #else
@@ -320,7 +320,7 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
     int __result;
 #if defined(__i386__) || defined(__amd64__)
-    typedef char __mem[];
+    typedef char __bytes[__size];
     uintptr_t __si, __di, __cx;
     __asm__ (
       "xorl %%eax, %%eax;"
@@ -328,7 +328,7 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
       "setnzb %%al;"        /* EAX = 0 if equal; 1 if not equal.  */
       "sbbl %%ecx, %%ecx;"  /* ECX = 0 if equal or greater; -1 if less.  */
       : "=a"(__result), "=S"(__si), "=D"(__di), "=c"(__cx)
-      : "m"(*(const __mem*) __src), "m"(*(const __mem*) __cmp),
+      : "m"(*(const __bytes*) __src), "m"(*(const __bytes*) __cmp),
         "S"(__src), "D"(__cmp), "c"(__size)
       : "cc"
     );
@@ -358,7 +358,7 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
     bool __result;
 #if defined(__i386__) || defined(__amd64__)
-    typedef char __mem[];
+    typedef char __bytes[__size];
     uintptr_t __si, __di, __cx;
     __asm__ (
       "xorl %%eax, %%eax;"
@@ -372,7 +372,7 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
       : "=a"(__result),
 #  endif
         "=S"(__si), "=D"(__di), "=c"(__cx)
-      : "m"(*(const __mem*) __src), "m"(*(const __mem*) __cmp),
+      : "m"(*(const __bytes*) __src), "m"(*(const __bytes*) __cmp),
         "S"(__src), "D"(__cmp), "c"(__size)
 #  ifdef __GCC_ASM_FLAG_OUTPUTS__
       : "ax"
