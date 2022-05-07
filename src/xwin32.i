@@ -124,16 +124,20 @@ __MCF_i386_seh_cleanup(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
     __writefsdword(0U, __seh_node->__next);
   }
 
+/* SEH is stack-based.  */
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
-    __MCF_i386_seh_node __MCF_PPCAT2(__MCF_seh_node_, __LINE__) __MCF_USE_DTOR(__MCF_i386_seh_cleanup);  \
-    __MCF_i386_seh_install(&(__MCF_PPCAT2(__MCF_seh_node_, __LINE__)))  /* no semicolon  */
+    __MCF_i386_seh_node __MCF_PPCAT2(__MCF_seh_node_, __LINE__)  \
+        __MCF_USE_DTOR(__MCF_i386_seh_cleanup);  \
+    __MCF_i386_seh_install(  \
+          &(__MCF_PPCAT2(__MCF_seh_node_, __LINE__)))  /* no semicolon  */
 
-#else  /* SEH is stack-based  ^/v  SEH is table-based  */
+#else
 
+/* SEH is table-based.  */
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
     __asm__ volatile (".seh_handler __MCF_seh_top, @except;")  /* no semicolon  */
 
-#endif  /* SEH is table-based  */
+#endif
 
 __MCF_ALWAYS_INLINE
 NTSTATUS
