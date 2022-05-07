@@ -27,7 +27,7 @@
     return __atomic_load_n((const INTEGER*) __mem, ORDER_SUCC);
 
 #define __MCF_ATOMIC_HAS_ACQUIRE_
-#include "atomic_gen.i"
+#include "xatomic.i"
 
 /* Performs a generic atomic load operation.
  * The value that has been read is returned via the pointer `retp`.
@@ -42,7 +42,7 @@
     *(INTEGER*) __retp = __val;
 
 #define __MCF_ATOMIC_HAS_ACQUIRE_
-#include "atomic_gen.i"
+#include "xatomic.i"
 
 /* Performs a scalar atomic store operation.
  * The value to write is passed by value as an integer.
@@ -57,7 +57,7 @@
     return __val;
 
 #define __MCF_ATOMIC_HAS_RELEASE_
-#include "atomic_gen.i"
+#include "xatomic.i"
 
 /* Performs a generic atomic store operation.
  * The value to write is passed via the pointer `valp`.
@@ -72,7 +72,7 @@
     __atomic_store_n((INTEGER*) __mem, __val, ORDER_SUCC);
 
 #define __MCF_ATOMIC_HAS_RELEASE_
-#include "atomic_gen.i"
+#include "xatomic.i"
 
 /* Performs a scalar atomic exchange operation.
  * The previous value is returned as an integer.
@@ -88,7 +88,7 @@
 
 #define __MCF_ATOMIC_HAS_ACQUIRE_
 #define __MCF_ATOMIC_HAS_RELEASE_
-#include "atomic_gen.i"
+#include "xatomic.i"
 
 /* Performs a generic atomic exchange operation.
  * The previous value is returned via the pointer `retp`.
@@ -106,7 +106,7 @@
 
 #define __MCF_ATOMIC_HAS_ACQUIRE_
 #define __MCF_ATOMIC_HAS_RELEASE_
-#include "atomic_gen.i"
+#include "xatomic.i"
 
 /* Performs a scalar atomic compare-and-exchange operation.
  * The value for comparison is passed via the pointer `cmpp`.
@@ -126,7 +126,7 @@
 
 #define __MCF_ATOMIC_HAS_ACQUIRE_
 #define __MCF_ATOMIC_HAS_RELEASE_
-#include "atomic_gen.i"
+#include "xatomic.i"
 
 /* Performs a generic atomic compare-and-exchange operation.
  * The value for comparison is passed via the pointer `cmpp`.
@@ -147,7 +147,7 @@
 
 #define __MCF_ATOMIC_HAS_ACQUIRE_
 #define __MCF_ATOMIC_HAS_RELEASE_
-#include "atomic_gen.i"
+#include "xatomic.i"
 
 /* Performs a scalar atomic weak compare-and-exchange operation.
  * The value for comparison is passed via the pointer `cmpp`.
@@ -167,7 +167,7 @@
 
 #define __MCF_ATOMIC_HAS_ACQUIRE_
 #define __MCF_ATOMIC_HAS_RELEASE_
-#include "atomic_gen.i"
+#include "xatomic.i"
 
 /* Performs a generic atomic weak compare-and-exchange operation.
  * The value for comparison is passed via the pointer `cmpp`.
@@ -188,7 +188,7 @@
 
 #define __MCF_ATOMIC_HAS_ACQUIRE_
 #define __MCF_ATOMIC_HAS_RELEASE_
-#include "atomic_gen.i"
+#include "xatomic.i"
 
 /* Performs a generic atomic fetch-and-add operation.
  * The value that has been swapped out is returned as an integer.
@@ -204,7 +204,7 @@
 
 #define __MCF_ATOMIC_HAS_ACQUIRE_
 #define __MCF_ATOMIC_HAS_RELEASE_
-#include "atomic_gen.i"
+#include "xatomic.i"
 
 /* Performs a generic atomic fetch-and-subtract operation.
  * The value that has been swapped out is returned as an integer.
@@ -220,6 +220,6 @@
 
 #define __MCF_ATOMIC_HAS_ACQUIRE_
 #define __MCF_ATOMIC_HAS_RELEASE_
-#include "atomic_gen.i"
+#include "xatomic.i"
 
 #endif  /* __MCFGTHREAD_ATOMIC_H_  */
