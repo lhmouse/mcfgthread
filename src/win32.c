@@ -4,7 +4,7 @@
 
 #include "config.h"
 #define __MCF_WIN32_EXTERN_INLINE
-#include "win32.h"
+#include "xwin32.i"
 
 EXCEPTION_DISPOSITION __cdecl
 __MCF_seh_top(EXCEPTION_RECORD* record, void* estab_frame, CONTEXT* ctx, void* disp_ctx)

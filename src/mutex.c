@@ -5,7 +5,7 @@
 #include "config.h"
 #define __MCF_MUTEX_EXTERN_INLINE
 #include "mutex.h"
-#include "win32.h"
+#include "xwin32.i"
 
 static inline
 uint8_t*

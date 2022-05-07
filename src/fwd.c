@@ -7,7 +7,7 @@
 #include "thread.h"
 #include "mutex.h"
 #include "dtor_queue.h"
-#include "win32.h"
+#include "xwin32.i"
 
 __MCF_HANDLE _MCF_crt_module;
 uint32_t __MCF_win32_tls_index;

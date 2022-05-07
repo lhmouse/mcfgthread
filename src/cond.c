@@ -5,7 +5,7 @@
 #include "config.h"
 #define __MCF_COND_EXTERN_INLINE
 #include "cond.h"
-#include "win32.h"
+#include "xwin32.i"
 
 struct cond_unlock_result
   {

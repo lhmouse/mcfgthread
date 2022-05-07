@@ -6,7 +6,7 @@
 #define __MCF_DTOR_QUEUE_EXTERN_INLINE
 #include "dtor_queue.h"
 #include "mutex.h"
-#include "win32.h"
+#include "xwin32.i"
 
 int
 __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)

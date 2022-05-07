@@ -5,7 +5,7 @@
 #include "config.h"
 #define __MCF_CLOCK_EXTERN_INLINE
 #include "clock.h"
-#include "win32.h"
+#include "xwin32.i"
 
 static inline
 double

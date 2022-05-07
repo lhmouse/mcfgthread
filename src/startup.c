@@ -4,7 +4,7 @@
 
 #include "config.h"
 #include "fwd.h"
-#include "win32.h"
+#include "xwin32.i"
 
 static
 void __stdcall

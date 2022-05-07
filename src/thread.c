@@ -5,7 +5,7 @@
 #include "config.h"
 #define __MCF_THREAD_EXTERN_INLINE
 #include "thread.h"
-#include "win32.h"
+#include "xwin32.i"
 
 static
 DWORD __stdcall

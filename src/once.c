@@ -5,7 +5,7 @@
 #include "config.h"
 #define __MCF_ONCE_EXTERN_INLINE
 #include "once.h"
-#include "win32.h"
+#include "xwin32.i"
 
 int
 _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)

@@ -3,7 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "config.h"
-#include "win32.h"
+#include "xwin32.i"
 
 int __cdecl
 memcmp(const void* src, const void* cmp, size_t size)

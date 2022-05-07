@@ -5,7 +5,7 @@
 #include "config.h"
 #define __MCF_EXIT_EXTERN_INLINE
 #include "exit.h"
-#include "win32.h"
+#include "xwin32.i"
 
 void
 __MCF__Exit(int status)

@@ -6,7 +6,7 @@
 #define __MCF_TLS_EXTERN_INLINE
 #include "tls.h"
 #include "atomic.h"
-#include "win32.h"
+#include "xwin32.i"
 
 _MCF_tls_key*
 _MCF_tls_key_new(_MCF_tls_dtor* dtor_opt)

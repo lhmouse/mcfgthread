@@ -2,7 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "../src/win32.h"
+#include "../src/xwin32.i"
 #include <assert.h>
 #include <stdio.h>
 #include <ntsecapi.h>

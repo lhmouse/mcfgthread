@@ -4,7 +4,6 @@ include_mcfgthread_HEADERS =  \
   %reldir%/xatomic.i  \
   %reldir%/atomic.h  \
   %reldir%/fwd.h  \
-  %reldir%/win32.h  \
   %reldir%/clock.h  \
   %reldir%/mutex.h  \
   %reldir%/cond.h  \
@@ -21,6 +20,7 @@ include_mcfgthread_HEADERS =  \
 lib_LTLIBRARIES += lib/libmcfgthread.la
 lib_libmcfgthread_la_SOURCES =  \
   %reldir%/version.h.in  \
+  %reldir%/xwin32.i  \
   %reldir%/version.rc  \
   %reldir%/startup.c  \
   %reldir%/fwd.c  \
