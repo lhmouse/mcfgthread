@@ -60,7 +60,8 @@ extern "C" {
 #  define __MCF_UNREACHABLE   __builtin_unreachable()
 #endif
 
-#define __MCF_PPCAT(x, y)      x##y
+#define __MCF_PPCAT2(x,y)      x##y
+#define __MCF_PPCAT3(x,y,z)    x##y##z
 #define __MCF_GNU_INLINE       extern __inline__ __attribute__((__gnu_inline__))
 #define __MCF_ALWAYS_INLINE    __MCF_GNU_INLINE __attribute__((__always_inline__, __artificial__))
 #define __MCF_NOEXCEPT         __MCF_CXX(throw())
