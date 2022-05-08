@@ -4,6 +4,7 @@
 
 #include "config.h"
 #define __MCF_DYNCONST
+#include "fwd.h"
 #include "thread.h"
 #include "mutex.h"
 #include "dtor_queue.h"
