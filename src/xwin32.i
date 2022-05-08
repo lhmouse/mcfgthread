@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_WIN32_H_
-#define __MCFGTHREAD_WIN32_H_
+#ifndef __MCFGTHREAD_XWIN32_
+#define __MCFGTHREAD_XWIN32_
 
 #include "fwd.h"
 
@@ -469,4 +469,4 @@ __MCF_mfree(void* __ptr) __MCF_NOEXCEPT
 }
 #endif
 
-#endif  /* __MCFGTHREAD_WIN32_H_  */
+#endif  /* __MCFGTHREAD_XWIN32_  */
