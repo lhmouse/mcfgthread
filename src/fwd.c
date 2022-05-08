@@ -11,6 +11,13 @@
 #include "xwin32.i"
 
 __MCF_DLLEXPORT
+void
+__MCF_runtime_failure(void)
+  {
+    __builtin_trap();
+  }
+
+__MCF_DLLEXPORT
 uint32_t
 _MCF_get_win32_error(void)
   {
