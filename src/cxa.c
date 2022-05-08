@@ -2,7 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "config.h"
+#include "precompiled.i"
 #define __MCF_CXA_EXTERN_INLINE
 #include "cxa.h"
 #include "once.h"

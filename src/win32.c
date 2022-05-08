@@ -2,7 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "config.h"
+#include "precompiled.i"
 #define __MCF_WIN32_EXTERN_INLINE
 #include "xwin32.i"
 

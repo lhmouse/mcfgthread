@@ -20,6 +20,7 @@ include_mcfgthread_HEADERS =  \
 lib_LTLIBRARIES += lib/libmcfgthread.la
 lib_libmcfgthread_la_SOURCES =  \
   %D%/version.h.in  \
+  %D%/precompiled.i  \
   %D%/xwin32.i  \
   %D%/version.rc  \
   %D%/startup.c  \

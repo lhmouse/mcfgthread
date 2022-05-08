@@ -2,7 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "config.h"
+#include "precompiled.i"
 #define __MCF_MUTEX_EXTERN_INLINE
 #include "mutex.h"
 #include "xwin32.i"
