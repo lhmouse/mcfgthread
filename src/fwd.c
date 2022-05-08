@@ -15,7 +15,7 @@ void
 __MCF_runtime_failure(const char* __where)
   {
     /* The argument can be examined with a debugger.  */
-    (void) __where;
+    __asm__ volatile ("" : : "r"(__where) : "memory");
     __builtin_trap();
   }
 
