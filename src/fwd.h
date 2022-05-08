@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_FWD_H_
-#define __MCFGTHREAD_FWD_H_
+#ifndef __MCFGTHREAD_FWD_
+#define __MCFGTHREAD_FWD_
 
 /* Import types about the system ABI.
  * Other standard library facilities are not available.  */
@@ -174,4 +174,4 @@ extern uint8_t __MCF_mutex_spin_field[2048];
 }
 #endif
 
-#endif  /* __MCFGTHREAD_FWD_H_  */
+#endif  /* __MCFGTHREAD_FWD_  */

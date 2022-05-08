@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_MUTEX_H_
-#define __MCFGTHREAD_MUTEX_H_
+#ifndef __MCFGTHREAD_MUTEX_
+#define __MCFGTHREAD_MUTEX_
 
 #include "fwd.h"
 #include "atomic.h"
@@ -122,4 +122,4 @@ _MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_NOEXCEPT
 }
 #endif
 
-#endif  /* __MCFGTHREAD_MUTEX_H_  */
+#endif  /* __MCFGTHREAD_MUTEX_  */

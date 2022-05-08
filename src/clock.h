@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_CLOCK_H_
-#define __MCFGTHREAD_CLOCK_H_
+#ifndef __MCFGTHREAD_CLOCK_
+#define __MCFGTHREAD_CLOCK_
 
 #include "fwd.h"
 
@@ -36,4 +36,4 @@ _MCF_perf_counter(void) __MCF_NOEXCEPT;
 }
 #endif
 
-#endif  /* __MCFGTHREAD_CLOCK_H_  */
+#endif  /* __MCFGTHREAD_CLOCK_  */

@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_GTHR_H_
-#define __MCFGTHREAD_GTHR_H_
+#ifndef __MCFGTHREAD_GTHR_
+#define __MCFGTHREAD_GTHR_
 
 #include "fwd.h"
 #include "tls.h"
@@ -635,4 +635,4 @@ __MCF_gthr_yield(void) __MCF_NOEXCEPT
 }
 #endif
 
-#endif  /* __MCFGTHREAD_GTHR_H_  */
+#endif  /* __MCFGTHREAD_GTHR_  */

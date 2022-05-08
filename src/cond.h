@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_COND_H_
-#define __MCFGTHREAD_COND_H_
+#ifndef __MCFGTHREAD_COND_
+#define __MCFGTHREAD_COND_
 
 #include "fwd.h"
 #include "atomic.h"
@@ -73,4 +73,4 @@ _MCF_cond_signal_all(_MCF_cond* __cond) __MCF_NOEXCEPT;
 }
 #endif
 
-#endif  /* __MCFGTHREAD_COND_H_  */
+#endif  /* __MCFGTHREAD_COND_  */

@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_DTOR_QUEUE_H_
-#define __MCFGTHREAD_DTOR_QUEUE_H_
+#ifndef __MCFGTHREAD_DTOR_QUEUE_
+#define __MCFGTHREAD_DTOR_QUEUE_
 
 #include "fwd.h"
 
@@ -68,4 +68,4 @@ __MCF_dtor_queue_finalize(__MCF_dtor_queue* __queue, _MCF_mutex* __mutex_opt, vo
 }
 #endif
 
-#endif  /* __MCFGTHREAD_DTOR_QUEUE_H_  */
+#endif  /* __MCFGTHREAD_DTOR_QUEUE_  */

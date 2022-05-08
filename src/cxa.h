@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_CXA_H_
-#define __MCFGTHREAD_CXA_H_
+#ifndef __MCFGTHREAD_CXA_
+#define __MCFGTHREAD_CXA_
 
 #include "fwd.h"
 
@@ -72,4 +72,4 @@ __MCF_cxa_finalize(void* __dso) __MCF_NOEXCEPT;
 }
 #endif
 
-#endif  /* __MCFGTHREAD_CXA_H_  */
+#endif  /* __MCFGTHREAD_CXA_  */

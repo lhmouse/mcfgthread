@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_THREAD_H_
-#define __MCFGTHREAD_THREAD_H_
+#ifndef __MCFGTHREAD_THREAD_
+#define __MCFGTHREAD_THREAD_
 
 #include "fwd.h"
 #include "dtor_queue.h"
@@ -204,4 +204,4 @@ _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt) __MCF_NOEXCEPT
 }
 #endif
 
-#endif  /* __MCFGTHREAD_THREAD_H_  */
+#endif  /* __MCFGTHREAD_THREAD_  */

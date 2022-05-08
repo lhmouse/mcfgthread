@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_EXIT_H_
-#define __MCFGTHREAD_EXIT_H_
+#ifndef __MCFGTHREAD_EXIT_
+#define __MCFGTHREAD_EXIT_
 
 #include "fwd.h"
 
@@ -32,4 +32,4 @@ __MCF_exit(int __status) __MCF_NOEXCEPT
 }
 #endif
 
-#endif  /* __MCFGTHREAD_EXIT_H_  */
+#endif  /* __MCFGTHREAD_EXIT_  */

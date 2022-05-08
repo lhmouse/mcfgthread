@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_TLS_H_
-#define __MCFGTHREAD_TLS_H_
+#ifndef __MCFGTHREAD_TLS_
+#define __MCFGTHREAD_TLS_
 
 #include "fwd.h"
 
@@ -97,4 +97,4 @@ __MCF_tls_table_finalize(__MCF_tls_table* __table) __MCF_NOEXCEPT;
 }
 #endif
 
-#endif  /* __MCFGTHREAD_TLS_H_  */
+#endif  /* __MCFGTHREAD_TLS_  */

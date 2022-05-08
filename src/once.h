@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_ONCE_H_
-#define __MCFGTHREAD_ONCE_H_
+#ifndef __MCFGTHREAD_ONCE_
+#define __MCFGTHREAD_ONCE_
 
 #include "fwd.h"
 #include "atomic.h"
@@ -105,4 +105,4 @@ _MCF_once_release(_MCF_once* __once) __MCF_NOEXCEPT;
 }
 #endif
 
-#endif  /* __MCFGTHREAD_ONCE_H_  */
+#endif  /* __MCFGTHREAD_ONCE_  */

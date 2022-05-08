@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_ATOMIC_H_
-#define __MCFGTHREAD_ATOMIC_H_
+#ifndef __MCFGTHREAD_ATOMIC_
+#define __MCFGTHREAD_ATOMIC_
 
 #include "fwd.h"
 
@@ -222,4 +222,4 @@
 #define __MCF_ATOMIC_HAS_RELEASE_
 #include "xatomic.i"
 
-#endif  /* __MCFGTHREAD_ATOMIC_H_  */
+#endif  /* __MCFGTHREAD_ATOMIC_  */

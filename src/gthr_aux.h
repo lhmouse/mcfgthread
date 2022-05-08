@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_GTHR_AUX_H_
-#define __MCFGTHREAD_GTHR_AUX_H_
+#ifndef __MCFGTHREAD_GTHR_AUX_
+#define __MCFGTHREAD_GTHR_AUX_
 
 #include "fwd.h"
 #include "once.h"
@@ -84,4 +84,4 @@ __MCF_gthr_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEX
 }
 #endif
 
-#endif  /* __MCFGTHREAD_GTHR_AUX_H_  */
+#endif  /* __MCFGTHREAD_GTHR_AUX_  */
