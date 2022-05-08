@@ -137,14 +137,8 @@ __MCF_win32_error_i(uint32_t __code, int __val) __MCF_NOEXCEPT;
 void*
 __MCF_win32_error_p(uint32_t __code, void* __ptr) __MCF_NOEXCEPT;
 
-/* Performs initialization and cleanup. These functions are declared here for
- * the sake of completeness, and are not meant to be called directly.  */
-void
-__MCF_dll_callback_on_process_attach(void) __MCF_NOEXCEPT;
-
-void
-__MCF_dll_callback_on_thread_detach(void) __MCF_NOEXCEPT;
-
+/* These functions are declared here for the sake of completeness, and are not
+ * meant to be called directly.  */
 void
 __MCF_run_dtors_at_quick_exit(void) __MCF_NOEXCEPT;
 
@@ -168,6 +162,13 @@ extern __MCF_dtor_queue __MCF_cxa_atexit_queue;
 extern _MCF_mutex __MCF_cxa_at_quick_exit_mutex;
 extern __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
 extern uint8_t __MCF_mutex_spin_field[2048];
+
+/* These are private functions that are not exported from the DLL.  */
+void
+__MCF_dll_callback_on_process_attach(void) __MCF_NOEXCEPT;
+
+void
+__MCF_dll_callback_on_thread_detach(void) __MCF_NOEXCEPT;
 
 #ifdef __cplusplus
 }

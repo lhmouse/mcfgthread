@@ -45,47 +45,6 @@ __MCF_win32_error_p(uint32_t code, void* ptr)
 
 __MCF_DLLEXPORT
 void
-__MCF_dll_callback_on_process_attach(void)
-  {
-    /* Allocate a TLS slot for this library.  */
-    __MCF_win32_tls_index = TlsAlloc();
-    __MCFGTHREAD_CHECK(__MCF_win32_tls_index != TLS_OUT_OF_INDEXES);
-
-    /* Get the performance counter resolution.  */
-    LARGE_INTEGER freq;
-    __MCFGTHREAD_CHECK(QueryPerformanceFrequency(&freq));
-    __MCF_perf_frequency_reciprocal = 1000 / (double) freq.QuadPart;
-
-    /* Attach the main thread.  */
-    __MCF_main_thread.__tid = GetCurrentThreadId();
-    __MCFGTHREAD_CHECK(NT_SUCCESS(NtDuplicateObject(GetCurrentProcess(),
-          GetCurrentThread(), GetCurrentProcess(), &(__MCF_main_thread.__handle),
-          0, 0, DUPLICATE_SAME_ACCESS)));
-
-    __MCFGTHREAD_CHECK(__MCF_main_thread.__handle);
-    _MCF_atomic_store_32_rel(__MCF_main_thread.__nref, 1);
-    __MCFGTHREAD_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
-  }
-
-__MCF_DLLEXPORT
-void
-__MCF_dll_callback_on_thread_detach(void)
-  {
-    _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
-    if(!self)
-      return;
-
-    /* Per-thread atexit callbacks may use TLS, so call them before
-     * destructors of thread-local objects.  */
-    __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
-    __MCF_tls_table_finalize(&(self->__tls_table));
-
-    TlsSetValue(__MCF_win32_tls_index, NULL);
-    _MCF_thread_drop_ref_nonnull(self);
-  }
-
-__MCF_DLLEXPORT
-void
 __MCF_run_dtors_at_quick_exit(void)
   {
     __MCF_dtor_queue_finalize(&__MCF_cxa_at_quick_exit_queue, &__MCF_cxa_at_quick_exit_mutex, NULL);
@@ -111,6 +70,45 @@ __MCF_finalize_on_exit(void)
      * Thread-local destructors are not called according to POSIX.  */
     __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
     __MCF_run_dtors_atexit();
+
+    TlsSetValue(__MCF_win32_tls_index, NULL);
+    _MCF_thread_drop_ref_nonnull(self);
+  }
+
+void
+__MCF_dll_callback_on_process_attach(void)
+  {
+    /* Allocate a TLS slot for this library.  */
+    __MCF_win32_tls_index = TlsAlloc();
+    __MCFGTHREAD_CHECK(__MCF_win32_tls_index != TLS_OUT_OF_INDEXES);
+
+    /* Get the performance counter resolution.  */
+    LARGE_INTEGER freq;
+    __MCFGTHREAD_CHECK(QueryPerformanceFrequency(&freq));
+    __MCF_perf_frequency_reciprocal = 1000 / (double) freq.QuadPart;
+
+    /* Attach the main thread.  */
+    __MCF_main_thread.__tid = GetCurrentThreadId();
+    __MCFGTHREAD_CHECK(NT_SUCCESS(NtDuplicateObject(GetCurrentProcess(),
+          GetCurrentThread(), GetCurrentProcess(), &(__MCF_main_thread.__handle),
+          0, 0, DUPLICATE_SAME_ACCESS)));
+
+    __MCFGTHREAD_CHECK(__MCF_main_thread.__handle);
+    _MCF_atomic_store_32_rel(__MCF_main_thread.__nref, 1);
+    __MCFGTHREAD_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
+  }
+
+void
+__MCF_dll_callback_on_thread_detach(void)
+  {
+    _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
+    if(!self)
+      return;
+
+    /* Per-thread atexit callbacks may use TLS, so call them before
+     * destructors of thread-local objects.  */
+    __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
+    __MCF_tls_table_finalize(&(self->__tls_table));
 
     TlsSetValue(__MCF_win32_tls_index, NULL);
     _MCF_thread_drop_ref_nonnull(self);
