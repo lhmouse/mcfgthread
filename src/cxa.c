@@ -3,7 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_CXA_EXTERN_INLINE
+#define __MCF_CXA_EXTERN_INLINE  __MCF_DLLEXPORT
 #include "cxa.h"
 #include "once.h"
 #include "mutex.h"

@@ -3,7 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_GTHR_AUX_EXTERN_INLINE
+#define __MCF_GTHR_AUX_EXTERN_INLINE  __MCF_DLLEXPORT
 #include "gthr_aux.h"
 #include "mutex.h"
 

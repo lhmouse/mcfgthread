@@ -3,7 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_MUTEX_EXTERN_INLINE
+#define __MCF_MUTEX_EXTERN_INLINE  __MCF_DLLEXPORT
 #include "mutex.h"
 #include "xwin32.i"
 
