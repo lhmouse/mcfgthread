@@ -5,6 +5,7 @@
 #include "precompiled.i"
 #include "xwin32.i"
 
+__MCF_DLLEXPORT
 void* __cdecl
 memset(void* dst, int val, size_t size)
   {

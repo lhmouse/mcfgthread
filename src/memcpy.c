@@ -5,6 +5,7 @@
 #include "precompiled.i"
 #include "xwin32.i"
 
+__MCF_DLLEXPORT
 void* __cdecl
 memcpy(void* dst, const void* src, size_t size)
   {
