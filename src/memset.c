@@ -3,11 +3,16 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#include "xwin32.i"
+
+void* __cdecl
+memset(void* dst, int val, size_t size);
+
+void* __cdecl
+__MCF_mfill(void* dst, int val, size_t size);
 
 __MCF_DLLEXPORT
 void* __cdecl
 memset(void* dst, int val, size_t size)
   {
-    return __MCF_mfill(dst, (uint8_t) val, size);
+    return __MCF_mfill(dst, val, size);
   }

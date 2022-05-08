@@ -3,7 +3,12 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#include "xwin32.i"
+
+int __cdecl
+memcmp(const void* src, const void* cmp, size_t size);
+
+int __cdecl
+__MCF_mcomp(const void* src, const void* cmp, size_t size);
 
 __MCF_DLLEXPORT
 int __cdecl
