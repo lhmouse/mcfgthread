@@ -136,8 +136,8 @@ __MCF_dtor_queue_finalize(__MCF_dtor_queue* queue, _MCF_mutex* mutex_opt, void* 
        * register and on the stack, to allow both `__cdecl` and `__thiscall`
        * functions to work properly.
        * Parameters: EAX, EDX, ECX, ESP[4]  */
-      typedef void __attribute__((__regparm__(3))) i386_dtor(void*, void*, void*, void*);
-      (*(i386_dtor*)(intptr_t) elem.__dtor)(0, 0, elem.__this, elem.__this);
+      typedef void __attribute__((__regparm__(3))) i386_dtor(int, int, void*, void*);
+      (*(i386_dtor*)(int) elem.__dtor)(0, 0, elem.__this, elem.__this);
 #else
       /* This works on x86_64, and should work on ARM (FIXME: untested).  */
       elem.__dtor(elem.__this);
