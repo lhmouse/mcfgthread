@@ -55,7 +55,7 @@ extern "C" {
 #endif
 
 #ifdef __MCF_DEBUG
-#  define __MCF_UNREACHABLE   __MCF_runtime_failure()
+#  define __MCF_UNREACHABLE   __MCF_runtime_failure(__func__)
 #else
 #  define __MCF_UNREACHABLE   __builtin_unreachable()
 #endif
@@ -73,7 +73,7 @@ extern "C" {
 #define __MCF_PTR_BITS         (__SIZEOF_POINTER__ * 8U)
 
 #define __MCFGTHREAD_ASSERT(...)   ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
-#define __MCFGTHREAD_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure())
+#define __MCFGTHREAD_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__func__))
 
 /* Make some forward declarations.  */
 typedef struct __MCF_dtor_element __MCF_dtor_element;
@@ -91,7 +91,7 @@ typedef struct __MCF_tls_key _MCF_tls_key;
 typedef void* __MCF_HANDLE;
 
 void
-__MCF_runtime_failure(void)
+__MCF_runtime_failure(const char* __where)
   __attribute__((__noreturn__, __noinline__, __cold__));
 
 /* See `_MCF_cond_wait()` for details about these callbacks.  */
