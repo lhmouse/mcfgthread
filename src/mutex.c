@@ -128,7 +128,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       }
 
       /* Try waiting.  */
-      status = __MCF_keyed_event_wait(mutex, &(nt_timeout.__li));
+      status = __MCF_keyed_event_wait(mutex, nt_timeout.__li);
       while(status == STATUS_TIMEOUT) {
         /* Tell another thread which is going to signal this mutex that an old
          * waiter has left by decrementing the number of sleeping threads. But

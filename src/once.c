@@ -39,7 +39,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         return 1;
 
       /* Try waiting.  */
-      status = __MCF_keyed_event_wait(once, &(nt_timeout.__li));
+      status = __MCF_keyed_event_wait(once, nt_timeout.__li);
       while(status == STATUS_TIMEOUT) {
         /* Tell another thread which is going to signal this flag that an old
          * waiter has left by decrementing the number of sleeping threads. But

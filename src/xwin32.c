@@ -26,6 +26,57 @@ __MCF_seh_top(EXCEPTION_RECORD* record, void* estab_frame, CONTEXT* ctx, void* d
   }
 
 __MCF_DLLEXPORT
+void
+__MCF_initialize_timeout_v2(__MCF_winnt_timeout* to, const int64_t* int64_opt)
+  {
+    /* Initialize it to an infinite value.  */
+    to->__li->QuadPart = INT64_MIN;
+
+    /* If no timeout is given, wait indefinitely.  */
+    if(!int64_opt)
+      return;
+
+    if(*int64_opt > 0) {
+      /* If `*int64_opt` is positive, it denotes the number of milliseconds
+       * since 1970-01-01T00:00:00Z, and has to be converted into the number of
+       * 100 nanoseconds since the 1601-01-01T00:00:00Z.  */
+      if(*int64_opt > 910692730085477)
+        return;
+
+      to->__li->QuadPart = (11644473600000 + *int64_opt) * 10000;
+      to->__since = 0;
+    }
+    else if(*int64_opt < 0) {
+      /* If `*int64_opt` is negative, it denotes the number of milliseconds
+       * to wait, relatively.  */
+      if(*int64_opt < -922337203685477)
+        return;
+
+      to->__li->QuadPart = *int64_opt * 10000;
+      to->__since = GetTickCount64();
+    }
+    else
+      to->__li->QuadPart = 0;
+  }
+
+__MCF_DLLEXPORT
+void
+__MCF_adjust_timeout_v2(__MCF_winnt_timeout* to)
+  {
+    /* Absolute timeouts need no adjustment.  */
+    int64_t temp = to->__li->QuadPart;
+    if(temp >= 0)
+      return;
+
+    /* Add the number of 100 nanoseconds that have elapsed so far, to the
+     * timeout which is negative, using saturation arithmetic.  */
+    uint64_t now = GetTickCount64();
+    temp += (int64_t) (now - to->__since) * 10000;
+    to->__li->QuadPart = temp & (temp >> 63);
+    to->__since = now;
+  }
+
+__MCF_DLLEXPORT
 size_t
 __MCF_batch_release_common(const void* key, size_t count)
   {
