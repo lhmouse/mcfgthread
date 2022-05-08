@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "config.h"
 #include "version.h"
+#include "config.h"
 #include <winver.h>
 
 VS_VERSION_INFO VERSIONINFO
