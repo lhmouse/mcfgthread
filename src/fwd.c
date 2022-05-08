@@ -10,16 +10,6 @@
 #include "dtor_queue.h"
 #include "xwin32.i"
 
-uint32_t __MCF_win32_tls_index;
-double __MCF_perf_frequency_reciprocal;
-_MCF_thread __MCF_main_thread;
-
-_MCF_mutex __MCF_cxa_atexit_mutex;
-__MCF_dtor_queue __MCF_cxa_atexit_queue;
-_MCF_mutex __MCF_cxa_at_quick_exit_mutex;
-__MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
-uint8_t __MCF_mutex_spin_field[];
-
 __MCF_DLLEXPORT
 uint32_t
 _MCF_get_win32_error(void)
@@ -113,3 +103,15 @@ __MCF_dll_callback_on_thread_detach(void)
     TlsSetValue(__MCF_win32_tls_index, NULL);
     _MCF_thread_drop_ref_nonnull(self);
   }
+
+/* Define global data last to ensure that all of them have all been
+ * forward-declared properly.  */
+uint32_t __MCF_win32_tls_index;
+double __MCF_perf_frequency_reciprocal;
+_MCF_thread __MCF_main_thread;
+
+_MCF_mutex __MCF_cxa_atexit_mutex;
+__MCF_dtor_queue __MCF_cxa_atexit_queue;
+_MCF_mutex __MCF_cxa_at_quick_exit_mutex;
+__MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
+uint8_t __MCF_mutex_spin_field[];
