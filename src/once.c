@@ -13,12 +13,9 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
   {
     _MCF_once old, new;
     NTSTATUS status;
-    LARGE_INTEGER timeout = __MCF_0_INIT;
-    LARGE_INTEGER* use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
 
-    int64_t waiting_since = 0;
-    if(timeout_opt && (*timeout_opt < 0))
-      waiting_since = (int64_t) GetTickCount64();
+    __MCF_winnt_timeout nt_timeout;
+    __MCF_initialize_timeout_v2(&nt_timeout, timeout_opt);
 
     for(;;) {
       /* If this flag has not been locked, lock it.
@@ -42,10 +39,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         return 1;
 
       /* Try waiting.  */
-      status = __MCF_keyed_event_wait(once, use_timeout);
-      if(!use_timeout)
-        continue;
-
+      status = __MCF_keyed_event_wait(once, &(nt_timeout.__li));
       while(status == STATUS_TIMEOUT) {
         /* Tell another thread which is going to signal this flag that an old
          * waiter has left by decrementing the number of sleeping threads. But
@@ -75,15 +69,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
       }
 
       /* We have got notified. Recheck now.  */
-      if(timeout.QuadPart >= 0)
-        continue;
-
-      /* If the timeout is relative, it has to be updated.  */
-      int64_t now = (int64_t) GetTickCount64();
-      timeout.QuadPart += (now - waiting_since) * 10000;
-      waiting_since = now;
-      if(timeout.QuadPart >= 0)
-        return -1;
+      __MCF_adjust_timeout_v2(&nt_timeout);
     }
   }
 

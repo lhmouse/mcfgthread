@@ -28,9 +28,9 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
   {
     _MCF_cond old, new;
     NTSTATUS status;
-    LARGE_INTEGER timeout = __MCF_0_INIT;
-    LARGE_INTEGER* use_timeout = __MCF_initialize_timeout(&timeout, timeout_opt);
-    struct cond_unlock_result ulres __MCF_USE_DTOR(do_unlock_cleanup) = __MCF_0_INIT;
+
+    __MCF_winnt_timeout nt_timeout;
+    __MCF_initialize_timeout_v2(&nt_timeout, timeout_opt);
 
     /* Allocate a count for the current thread.  */
     _MCF_atomic_load_pptr_rlx(&old, cond);
@@ -40,6 +40,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
 
+    struct cond_unlock_result ulres __MCF_USE_DTOR(do_unlock_cleanup) = __MCF_0_INIT;
     if(unlock_opt) {
       /* Now, unlock the associated mutex. If another thread attempts to signal
        * this one, it shall block.  */
@@ -49,10 +50,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     }
 
     /* Try waiting.  */
-    status = __MCF_keyed_event_wait(cond, use_timeout);
-    if(!use_timeout)
-      return 0;
-
+    status = __MCF_keyed_event_wait(cond, &(nt_timeout.__li));
     while(status == STATUS_TIMEOUT) {
       /* Tell another thread which is going to signal this condition variable
        * that an old waiter has left by decrementing the number of sleeping
@@ -81,6 +79,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     }
 
     /* We have got notified.  */
+    __MCF_adjust_timeout_v2(&nt_timeout);
     return 0;
   }
 

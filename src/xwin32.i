@@ -157,28 +157,69 @@ __MCF_keyed_event_signal(const void* __key, const LARGE_INTEGER* __timeout) __MC
     return __status;
   }
 
-LARGE_INTEGER*
-__MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt) __MCF_NOEXCEPT;
+typedef struct __MCF_winnt_timeout __MCF_winnt_timeout;
+
+struct __MCF_winnt_timeout
+  {
+    LARGE_INTEGER __li;
+    uint64_t __since;
+  };
+
+void
+__MCF_initialize_timeout_v2(__MCF_winnt_timeout* __to, const int64_t* __int64_opt) __MCF_NOEXCEPT;
 
 __MCF_WIN32_EXTERN_INLINE
-LARGE_INTEGER*
-__MCF_initialize_timeout(LARGE_INTEGER* __li, const int64_t* __int64_opt) __MCF_NOEXCEPT
+void
+__MCF_initialize_timeout_v2(__MCF_winnt_timeout* __to, const int64_t* __int64_opt) __MCF_NOEXCEPT
   {
-    if(__int64_opt == NULL)
-      return NULL;  /* wait infinitely  */
+    /* Initialize it to an infinite value.  */
+    __to->__li.QuadPart = INT64_MIN;
 
-    if(*__int64_opt > 910692730085477)
-      return NULL;  /* overflowed; assume infinity  */
+    /* If no timeout is given, wait indefinitely.  */
+    if(!__int64_opt)
+      return;
 
-    if(*__int64_opt < -922337203685477)
-      return NULL;  /* overflowed; assume infinity  */
+    if(*__int64_opt > 0) {
+      /* If `*__int64_opt` is positive, it denotes the number of milliseconds
+       * since 1970-01-01T00:00:00Z, and has to be converted into the number of
+       * 100 nanoseconds since the 1601-01-01T00:00:00Z.  */
+      if(*__int64_opt > 910692730085477)
+        return;
 
-    /* If `*__int64_opt` is positive, it denotes the number of milliseconds
-     * since 1970-01-01T00:00:00Z, and has to be converted into the number of
-     * 100 nanoseconds since the 1601-01-01T00:00:00Z.  */
-    int64_t __relative = *__int64_opt >> 63;
-    __li->QuadPart = ((~__relative & 11644473600000) + *__int64_opt) * 10000;
-    return __li;
+      __to->__li.QuadPart = (11644473600000 + *__int64_opt) * 10000;
+      __to->__since = 0;
+    }
+    else if(*__int64_opt < 0) {
+      /* If `*__int64_opt` is negative, it denotes the number of milliseconds
+       * to wait, relatively.  */
+      if(*__int64_opt < -922337203685477)
+        return;
+
+      __to->__li.QuadPart = *__int64_opt * 10000;
+      __to->__since = GetTickCount64();
+    }
+    else
+      __to->__li.QuadPart = 0;
+  }
+
+void
+__MCF_adjust_timeout_v2(__MCF_winnt_timeout* __to) __MCF_NOEXCEPT;
+
+__MCF_WIN32_EXTERN_INLINE
+void
+__MCF_adjust_timeout_v2(__MCF_winnt_timeout* __to) __MCF_NOEXCEPT
+  {
+    /* Absolute timeouts need no adjustment.  */
+    int64_t __temp = __to->__li.QuadPart;
+    if(__temp >= 0)
+      return;
+
+    /* Add the number of 100 nanoseconds that have elapsed so far, to the
+     * timeout which is negative, using saturation arithmetic.  */
+    uint64_t __now = GetTickCount64();
+    __temp += (int64_t) (__now - __to->__since) * 10000;
+    __to->__li.QuadPart = __temp & (__temp >> 63);
+    __to->__since = __now;
   }
 
 /* Note this function is subject to tail-call optimization.  */
