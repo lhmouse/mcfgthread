@@ -9,7 +9,6 @@
 #include "dtor_queue.h"
 #include "xwin32.i"
 
-__MCF_HANDLE _MCF_crt_module;
 uint32_t __MCF_win32_tls_index;
 double __MCF_perf_frequency_reciprocal;
 _MCF_thread __MCF_main_thread;
@@ -41,13 +40,8 @@ __MCF_win32_error_p(uint32_t code, void* ptr)
   }
 
 void
-__MCF_dll_callback_on_process_attach(void* module)
+__MCF_dll_callback_on_process_attach(void)
   {
-    /* Set up the base address in memory.  */
-    __MCFGTHREAD_CHECK(!_MCF_crt_module);
-    _MCF_crt_module = module;
-    __MCFGTHREAD_CHECK(_MCF_crt_module);
-
     /* Allocate a TLS slot for this library.  */
     __MCF_win32_tls_index = TlsAlloc();
     __MCFGTHREAD_CHECK(__MCF_win32_tls_index != TLS_OUT_OF_INDEXES);

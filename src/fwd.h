@@ -140,7 +140,7 @@ __MCF_win32_error_p(uint32_t __code, void* __ptr) __MCF_NOEXCEPT;
 /* Performs initialization and cleanup. These functions are declared here for
  * the sake of completeness, and are not meant to be called directly.  */
 void
-__MCF_dll_callback_on_process_attach(void* __module) __MCF_NOEXCEPT;
+__MCF_dll_callback_on_process_attach(void) __MCF_NOEXCEPT;
 
 void
 __MCF_dll_callback_on_thread_detach(void) __MCF_NOEXCEPT;
@@ -159,7 +159,6 @@ __MCF_finalize_on_exit(void) __MCF_NOEXCEPT;
 #  define __MCF_DYNCONST    const  /* read-only but initialized dynamically  */
 #endif
 
-extern __MCF_DYNCONST __MCF_HANDLE _MCF_crt_module;
 extern __MCF_DYNCONST uint32_t __MCF_win32_tls_index;
 extern __MCF_DYNCONST double __MCF_perf_frequency_reciprocal;
 extern __MCF_DYNCONST _MCF_thread __MCF_main_thread;

@@ -10,6 +10,7 @@ static
 void __stdcall
 do_image_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
   {
+    (void) module;
     (void) reserved;
 
     /* Perform global initialization and per-thread cleanup, as needed.
@@ -18,7 +19,7 @@ do_image_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
      * memory. User code should call `__cxa_finalize(NULL)` before exiting from
      * a process.  */
     if(reason == DLL_PROCESS_ATTACH)
-      __MCF_dll_callback_on_process_attach(module);
+      __MCF_dll_callback_on_process_attach();
     else if(reason == DLL_THREAD_DETACH)
       __MCF_dll_callback_on_thread_detach();
   }
@@ -39,8 +40,8 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
       /* Prevent this DLL from being unloaded.  */
       HMODULE locked;
       __MCFGTHREAD_CHECK(GetModuleHandleExW(
-            GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN,
-            (void*)instance, &locked));
+          GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN,
+          (void*) instance, &locked));
     }
 
     /* Call the common routine. This will not fail.  */
