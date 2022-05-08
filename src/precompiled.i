@@ -11,6 +11,12 @@
 #  include <config.h>
 #endif
 
+#ifdef DLL_EXPORT
+#  define __MCF_DLLEXPORT  __declspec(dllexport)
+#else
+#  define __MCF_DLLEXPORT
+#endif
+
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>

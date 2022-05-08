@@ -22,6 +22,7 @@ do_unlock_cleanup(struct cond_unlock_result* res)
       res->relock_opt(res->lock_arg, res->unlocked);
   }
 
+__MCF_DLLEXPORT
 int
 _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, const int64_t* timeout_opt)
   {
@@ -83,6 +84,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     return 0;
   }
 
+__MCF_DLLEXPORT
 size_t
 _MCF_cond_signal_some(_MCF_cond* cond, size_t max)
   {
@@ -101,6 +103,7 @@ _MCF_cond_signal_some(_MCF_cond* cond, size_t max)
     return __MCF_batch_release_common(cond, wake_num);
   }
 
+__MCF_DLLEXPORT
 size_t
 _MCF_cond_signal_all(_MCF_cond* cond)
   {

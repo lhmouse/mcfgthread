@@ -20,12 +20,14 @@ _MCF_mutex __MCF_cxa_at_quick_exit_mutex;
 __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
 uint8_t __MCF_mutex_spin_field[];
 
+__MCF_DLLEXPORT
 uint32_t
 _MCF_get_win32_error(void)
   {
     return GetLastError();
   }
 
+__MCF_DLLEXPORT
 int
 __MCF_win32_error_i(uint32_t code, int val)
   {
@@ -33,6 +35,7 @@ __MCF_win32_error_i(uint32_t code, int val)
     return val;
   }
 
+__MCF_DLLEXPORT
 void*
 __MCF_win32_error_p(uint32_t code, void* ptr)
   {
@@ -40,6 +43,7 @@ __MCF_win32_error_p(uint32_t code, void* ptr)
     return ptr;
   }
 
+__MCF_DLLEXPORT
 void
 __MCF_dll_callback_on_process_attach(void)
   {
@@ -63,6 +67,7 @@ __MCF_dll_callback_on_process_attach(void)
     __MCFGTHREAD_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
   }
 
+__MCF_DLLEXPORT
 void
 __MCF_dll_callback_on_thread_detach(void)
   {
@@ -79,18 +84,21 @@ __MCF_dll_callback_on_thread_detach(void)
     _MCF_thread_drop_ref_nonnull(self);
   }
 
+__MCF_DLLEXPORT
 void
 __MCF_run_dtors_at_quick_exit(void)
   {
     __MCF_dtor_queue_finalize(&__MCF_cxa_at_quick_exit_queue, &__MCF_cxa_at_quick_exit_mutex, NULL);
   }
 
+__MCF_DLLEXPORT
 void
 __MCF_run_dtors_atexit(void)
   {
     __MCF_dtor_queue_finalize(&__MCF_cxa_atexit_queue, &__MCF_cxa_atexit_mutex, NULL);
   }
 
+__MCF_DLLEXPORT
 void
 __MCF_finalize_on_exit(void)
   {

@@ -26,6 +26,7 @@ do_image_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
 
 #ifdef DLL_EXPORT
 
+__MCF_DLLEXPORT
 /* When building the shared library, invoke the common routine from the DLL
  * entry point callback. The decorated name is fabricated such that it remains
  * the same on both x86 and x86-64.  */
@@ -33,6 +34,7 @@ int __stdcall
 __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
   __asm__("__MCF_dll_startup@@Z");
 
+__MCF_DLLEXPORT
 int __stdcall
 __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
   {

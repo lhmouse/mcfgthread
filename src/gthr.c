@@ -6,6 +6,7 @@
 #define __MCF_GTHR_EXTERN_INLINE
 #include "gthr.h"
 
+__MCF_DLLEXPORT
 intptr_t
 __MCF_gthr_recursive_mutex_unlock_callback(intptr_t arg)
   {
@@ -21,6 +22,7 @@ __MCF_gthr_recursive_mutex_unlock_callback(intptr_t arg)
     return unlocked;
   }
 
+__MCF_DLLEXPORT
 void
 __MCF_gthr_recursive_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
   {
@@ -34,6 +36,7 @@ __MCF_gthr_recursive_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
     rmtx->__depth = (int32_t) unlocked;
   }
 
+__MCF_DLLEXPORT
 void
 __MCF_gthr_thread_thunk(_MCF_thread* thrd)
   {

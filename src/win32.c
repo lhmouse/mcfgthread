@@ -6,6 +6,7 @@
 #define __MCF_WIN32_EXTERN_INLINE
 #include "xwin32.i"
 
+__MCF_DLLEXPORT
 EXCEPTION_DISPOSITION __cdecl
 __MCF_seh_top(EXCEPTION_RECORD* record, void* estab_frame, CONTEXT* ctx, void* disp_ctx)
   {
@@ -24,6 +25,7 @@ __MCF_seh_top(EXCEPTION_RECORD* record, void* estab_frame, CONTEXT* ctx, void* d
     return ExceptionContinueExecution;
   }
 
+__MCF_DLLEXPORT
 size_t
 __MCF_batch_release_common(const void* key, size_t count)
   {

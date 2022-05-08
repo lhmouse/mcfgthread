@@ -7,6 +7,7 @@
 #include "gthr_aux.h"
 #include "mutex.h"
 
+__MCF_DLLEXPORT
 intptr_t
 __MCF_gthr_mutex_unlock_callback(intptr_t arg)
   {
@@ -17,6 +18,7 @@ __MCF_gthr_mutex_unlock_callback(intptr_t arg)
     return 0;
   }
 
+__MCF_DLLEXPORT
 void
 __MCF_gthr_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
   {
