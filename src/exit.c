@@ -7,6 +7,7 @@
 #include "exit.h"
 #include "xwin32.i"
 
+__MCF_DLLEXPORT
 void
 __MCF__Exit(int status)
   {
