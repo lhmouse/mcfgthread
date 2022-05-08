@@ -25,6 +25,7 @@ check_PROGRAMS +=  \
   test/tls_dtor_ignored_on_exit.test  \
   test/tls_dtor_ignored_on_quick_exit.test  \
   test/tls_dtor_ignored_on__Exit.test  \
+  test/gthr_c89.test  \
   test/gthr_once.test  \
   test/gthr_mutex_trylock.test  \
   test/gthr_mutex_timeout.test  \
@@ -47,3 +48,5 @@ check_PROGRAMS +=  \
   test/at_quick_exit_ignored_on_exit.test  \
   test/at_quick_exit_ignored_on__Exit.test  \
   ${NOTHING}
+
+test_gthr_c89_test_CFLAGS = -std=c89 -Wall -Wextra -Werror
