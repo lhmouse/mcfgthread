@@ -22,14 +22,14 @@ lib_libmcfgthread_la_SOURCES =  \
   %D%/version.h.in  \
   %D%/precompiled.i  \
   %D%/xwin32.i  \
-  %D%/version.rc  \
-  %D%/startup.c  \
-  %D%/fwd.c  \
-  %D%/win32.c  \
+  %D%/xwin32.c  \
   %D%/memcpy.c  \
   %D%/memmove.c  \
   %D%/memcmp.c  \
   %D%/memset.c  \
+  %D%/version.rc  \
+  %D%/startup.c  \
+  %D%/fwd.c  \
   %D%/clock.c  \
   %D%/mutex.c  \
   %D%/cond.c  \
