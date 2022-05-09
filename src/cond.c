@@ -5,7 +5,7 @@
 #include "precompiled.i"
 #define __MCF_COND_EXTERN_INLINE  __MCF_DLLEXPORT
 #include "cond.h"
-#include "xwin32.i"
+#include "xwinnt.i"
 
 struct cond_unlock_result
   {

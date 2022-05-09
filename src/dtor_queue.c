@@ -6,7 +6,7 @@
 #define __MCF_DTOR_QUEUE_EXTERN_INLINE  __MCF_DLLEXPORT
 #include "dtor_queue.h"
 #include "mutex.h"
-#include "xwin32.i"
+#include "xwinnt.i"
 
 __MCF_DLLEXPORT
 int

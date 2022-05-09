@@ -3,8 +3,8 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_WIN32_EXTERN_INLINE  __MCF_DLLEXPORT
-#include "xwin32.i"
+#define __MCF_WINNT_EXTERN_INLINE  __MCF_DLLEXPORT
+#include "xwinnt.i"
 
 __MCF_DLLEXPORT
 EXCEPTION_DISPOSITION __cdecl

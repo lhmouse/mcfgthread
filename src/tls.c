@@ -6,7 +6,7 @@
 #define __MCF_TLS_EXTERN_INLINE  __MCF_DLLEXPORT
 #include "tls.h"
 #include "atomic.h"
-#include "xwin32.i"
+#include "xwinnt.i"
 
 __MCF_DLLEXPORT
 _MCF_tls_key*

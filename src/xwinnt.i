@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_XWIN32_
-#define __MCFGTHREAD_XWIN32_
+#ifndef __MCFGTHREAD_XWINNT_
+#define __MCFGTHREAD_XWINNT_
 
 #include "fwd.h"
 
@@ -27,8 +27,8 @@
 extern "C" {
 #endif
 
-#ifndef __MCF_WIN32_EXTERN_INLINE
-#  define __MCF_WIN32_EXTERN_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_WINNT_EXTERN_INLINE
+#  define __MCF_WINNT_EXTERN_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* Hard-code these.  */
@@ -205,7 +205,7 @@ RtlCompareMemory(const void* __s1, const void* __s2, SIZE_T __size)
 void* __cdecl
 __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __size) __MCF_NOEXCEPT;
 
-__MCF_WIN32_EXTERN_INLINE
+__MCF_WINNT_EXTERN_INLINE
 void* __cdecl
 __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __size) __MCF_NOEXCEPT
   {
@@ -229,7 +229,7 @@ __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __s
 void* __cdecl
 __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
 
-__MCF_WIN32_EXTERN_INLINE
+__MCF_WINNT_EXTERN_INLINE
 void* __cdecl
 __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
@@ -262,7 +262,7 @@ __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
 void* __cdecl
 __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT;
 
-__MCF_WIN32_EXTERN_INLINE
+__MCF_WINNT_EXTERN_INLINE
 void* __cdecl
 __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
   {
@@ -285,7 +285,7 @@ __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
 void* __cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT;
 
-__MCF_WIN32_EXTERN_INLINE
+__MCF_WINNT_EXTERN_INLINE
 void* __cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
   {
@@ -309,7 +309,7 @@ int __cdecl
 __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_WIN32_EXTERN_INLINE
+__MCF_WINNT_EXTERN_INLINE
 int __cdecl
 __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
@@ -347,7 +347,7 @@ bool __cdecl
 __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_WIN32_EXTERN_INLINE
+__MCF_WINNT_EXTERN_INLINE
 bool __cdecl
 __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
@@ -388,7 +388,7 @@ void*
 __MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
   __attribute__((__warn_unused_result__, __malloc__, __alloc_size__(1)));
 
-__MCF_WIN32_EXTERN_INLINE
+__MCF_WINNT_EXTERN_INLINE
 void*
 __MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
   {
@@ -402,7 +402,7 @@ void*
 __MCF_mrealloc_0(void** __restrict__ __pptr, size_t __size) __MCF_NOEXCEPT
   __attribute__((__warn_unused_result__, __alloc_size__(2)));
 
-__MCF_WIN32_EXTERN_INLINE
+__MCF_WINNT_EXTERN_INLINE
 void*
 __MCF_mrealloc_0(void** __restrict__ __pptr, size_t __size) __MCF_NOEXCEPT
   {
@@ -416,7 +416,7 @@ void*
 __MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
   __attribute__((__warn_unused_result__, __alloc_size__(2)));
 
-__MCF_WIN32_EXTERN_INLINE
+__MCF_WINNT_EXTERN_INLINE
 void*
 __MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
   {
@@ -429,7 +429,7 @@ size_t
 __MCF_msize(const void* __ptr) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_WIN32_EXTERN_INLINE
+__MCF_WINNT_EXTERN_INLINE
 size_t
 __MCF_msize(const void* __ptr) __MCF_NOEXCEPT
   {
@@ -442,7 +442,7 @@ __MCF_msize(const void* __ptr) __MCF_NOEXCEPT
 void
 __MCF_mfree(void* __ptr) __MCF_NOEXCEPT;
 
-__MCF_WIN32_EXTERN_INLINE
+__MCF_WINNT_EXTERN_INLINE
 void
 __MCF_mfree(void* __ptr) __MCF_NOEXCEPT
   {
@@ -460,4 +460,4 @@ __MCF_mfree(void* __ptr) __MCF_NOEXCEPT
 }
 #endif
 
-#endif  /* __MCFGTHREAD_XWIN32_  */
+#endif  /* __MCFGTHREAD_XWINNT_  */

@@ -8,7 +8,7 @@
 #include "thread.h"
 #include "mutex.h"
 #include "dtor_queue.h"
-#include "xwin32.i"
+#include "xwinnt.i"
 
 __MCF_DLLEXPORT
 void

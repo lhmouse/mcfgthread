@@ -5,7 +5,7 @@
 #include "precompiled.i"
 #define __MCF_MUTEX_EXTERN_INLINE  __MCF_DLLEXPORT
 #include "mutex.h"
-#include "xwin32.i"
+#include "xwinnt.i"
 
 static inline
 uint8_t*

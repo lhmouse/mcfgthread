@@ -4,7 +4,7 @@
 
 #include "precompiled.i"
 #include "fwd.h"
-#include "xwin32.i"
+#include "xwinnt.i"
 
 static
 void __stdcall
