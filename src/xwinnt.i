@@ -201,7 +201,7 @@ SIZE_T __stdcall
 RtlCompareMemory(const void* __s1, const void* __s2, SIZE_T __size)
   __attribute__((__dllimport__, __pure__, __nothrow__));
 
-/* Copy a block of memory, like `memcpy()`.  */
+/* Copy a block of memory forward, like `memcpy()`.  */
 void* __cdecl
 __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __size) __MCF_NOEXCEPT;
 
@@ -211,6 +211,7 @@ __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __s
   {
     __MCFGTHREAD_ASSERT(__size <= (uintptr_t) __dst - (uintptr_t) __src);
 #if defined(__i386__) || defined(__amd64__)
+    /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
     uintptr_t __di, __si, __cx;
     __asm__ (
@@ -234,6 +235,7 @@ void* __cdecl
 __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
+    /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
     uintptr_t __di, __si, __cx;
     if(__size <= (uintptr_t) __dst - (uintptr_t) __src)
@@ -267,6 +269,7 @@ void* __cdecl
 __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
+    /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
     uintptr_t __di, __cx;
     __asm__ (
@@ -290,6 +293,7 @@ void* __cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
+    /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
     uintptr_t __di, __cx;
     __asm__ (
@@ -315,6 +319,7 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
     int __result;
 #if defined(__i386__) || defined(__amd64__)
+    /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
     uintptr_t __si, __di, __cx;
     __asm__ (
@@ -353,6 +358,7 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
     bool __result;
 #if defined(__i386__) || defined(__amd64__)
+    /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
     uintptr_t __si, __di, __cx;
     __asm__ (
