@@ -214,6 +214,7 @@ __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __s
     /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
     uintptr_t __di, __si, __cx;
+
     __asm__ (
       "rep movsb;"
       : "=m"(*(__bytes*) __dst), "=D"(__di), "=S"(__si), "=c"(__cx)
@@ -239,6 +240,7 @@ __MCF_mcopy_backward(void* __restrict__ __dst, const void* __restrict__ __src, s
     /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
     uintptr_t __di, __si, __cx;
+
     __asm__ (
       "std;"
       "rep movsb;"
@@ -279,6 +281,7 @@ __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
     /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
     uintptr_t __di, __cx;
+
     __asm__ (
       "rep stosb;"
       : "=m"(*(__bytes*) __dst), "=D"(__di), "=c"(__cx)
@@ -303,6 +306,7 @@ __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
     /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
     uintptr_t __di, __cx;
+
     __asm__ (
       "rep stosb;"
       : "=m"(*(__bytes*) __dst), "=D"(__di), "=c"(__cx)
@@ -329,6 +333,7 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
     /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
     uintptr_t __si, __di, __cx;
+
     __asm__ (
       "xorl %%eax, %%eax;"
       "repz cmpsb;"
@@ -368,6 +373,7 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
     /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
     uintptr_t __si, __di, __cx;
+
     __asm__ (
       "xorl %%eax, %%eax;"
       "repz cmpsb;"
