@@ -80,9 +80,6 @@ __MCF_DLLEXPORT
 size_t
 __MCF_batch_release_common(const void* key, size_t count)
   {
-    if(count == 0)
-      return 0;
-
     /* A call to `ExitProcess()` terminates all the other threads, even if
      * they are waiting. We don't release the keyed event in this case, as it
      * blocks the calling thread infinitely if there is no thread to wake up.
@@ -93,5 +90,6 @@ __MCF_batch_release_common(const void* key, size_t count)
     for(size_t k = 0;  k != count;  ++k)
       __MCF_keyed_event_signal(key, NULL);  /* infinite timeout  */
 
+    /* Return the number of threads that have been woken.  */
     return count;
   }
