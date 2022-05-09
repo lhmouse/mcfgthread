@@ -205,23 +205,33 @@ RtlCompareMemory(const void* __s1, const void* __s2, SIZE_T __size)
 void* __cdecl
 __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __size) __MCF_NOEXCEPT;
 
+__MCF_ALWAYS_INLINE __attribute__((__pure__))
+bool
+__MCF_can_copy_forward(void* __restrict__ __dst, const void* __restrict__ __src, size_t __size) __MCF_NOEXCEPT
+  {
+    return (uintptr_t) __dst - (uintptr_t) __src >= __size;
+  }
+
 __MCF_WINNT_EXTERN_INLINE
 void* __cdecl
 __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __size) __MCF_NOEXCEPT
   {
-    __MCFGTHREAD_ASSERT(__size <= (uintptr_t) __dst - (uintptr_t) __src);
+    __MCFGTHREAD_ASSERT(__MCF_can_copy_forward(__dst, __src, __size));
 #if defined(__i386__) || defined(__amd64__)
     /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
-    uintptr_t __di, __si, __cx;
+    uintptr_t __di = (uintptr_t) __dst;
+    uintptr_t __si = (uintptr_t) __src;
+    uintptr_t __cx = __size;
 
     __asm__ (
       "rep movsb;"
-      : "=m"(*(__bytes*) __dst), "=D"(__di), "=S"(__si), "=c"(__cx)
-      : "m"(*(const __bytes*) __src), "D"(__dst), "S"(__src), "c"(__size)
+      : "+D"(__di), "+S"(__si), "+c"(__cx), "=m"(*(__bytes*) __dst)
+      : "m"(*(const __bytes*) __src)
     );
 #else
-    /* Call the generic but slower version in NTDLL.  */
+    /* Call the generic but slower version in NTDLL. We have to call
+     * `RtlMoveMemory()` because `RtlCopyMemory()` isn't always exported.  */
     RtlMoveMemory(__dst, __src, __size);
 #endif
     return __dst;
@@ -238,22 +248,27 @@ __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
 #if defined(__i386__) || defined(__amd64__)
     /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
-    uintptr_t __di, __si, __cx;
-    if(__size <= (uintptr_t) __dst - (uintptr_t) __src)
-      __asm__ (
-        "rep movsb;"  /* go forward  */
-        : "=m"(*(__bytes*) __dst), "=D"(__di), "=S"(__si), "=c"(__cx)
-        : "m"(*(const __bytes*) __src), "D"(__dst), "S"(__src), "c"(__size)
-      );
-    else
+    uintptr_t __di = (uintptr_t) __dst;
+    uintptr_t __si = (uintptr_t) __src;
+    uintptr_t __cx = __size;
+
+    /* If we can't copy forward, adjust pointers and set DF to copy backward.
+     * This has to provide a dependency output for the next statement so GCC
+     * does not reorder them.  */
+    if(!__MCF_can_copy_forward(__dst, __src, __size))
       __asm__ (
         "std;"
-        "rep movsb;"  /* go backward  */
-        "cld;"
-        : "=m"(*(__bytes*) __dst), "=D"(__di), "=S"(__si), "=c"(__cx)
-        : "m"(*(const __bytes*) __src), "D"((char*) __dst + __size - 1),
-          "S"((const char*) __src + __size - 1), "c"(__size)
+        : "=D"(__di), "=S"(__si)
+        : "D"(__di + __cx - 1), "S"(__si + __cx - 1)
       );
+
+    /* Now copy memory. The DF flag shall be cleared before returning.  */
+    __asm__ (
+      "rep movsb;"
+      "cld;"
+      : "+D"(__di), "+S"(__si), "+c"(__cx), "=m"(*(__bytes*) __dst)
+      : "m"(*(const __bytes*) __src)
+    );
 #else
     /* Call the generic but slower version in NTDLL.  */
     RtlMoveMemory(__dst, __src, __size);
@@ -272,12 +287,13 @@ __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
 #if defined(__i386__) || defined(__amd64__)
     /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
-    uintptr_t __di, __cx;
+    uintptr_t __di = (uintptr_t) __dst;
+    uintptr_t __cx = __size;
 
     __asm__ (
       "rep stosb;"
-      : "=m"(*(__bytes*) __dst), "=D"(__di), "=c"(__cx)
-      : "D"(__dst), "a"(__val), "c"(__size)
+      : "+D"(__di), "+c"(__cx), "=m"(*(__bytes*) __dst)
+      : "a"(__val)
     );
 #else
     /* Call the generic but slower version in NTDLL.  */
@@ -297,12 +313,13 @@ __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
 #if defined(__i386__) || defined(__amd64__)
     /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
-    uintptr_t __di, __cx;
+    uintptr_t __di = (uintptr_t) __dst;
+    uintptr_t __cx = __size;
 
     __asm__ (
       "rep stosb;"
-      : "=m"(*(__bytes*) __dst), "=D"(__di), "=c"(__cx)
-      : "D"(__dst), "a"(0), "c"(__size)
+      : "+D"(__di), "+c"(__cx), "=m"(*(__bytes*) __dst)
+      : "a"(0)
     );
 #else
     /* Call the generic but slower version in NTDLL.  */
@@ -324,16 +341,17 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
 #if defined(__i386__) || defined(__amd64__)
     /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
-    uintptr_t __si, __di, __cx;
+    uintptr_t __si = (uintptr_t) __src;
+    uintptr_t __di = (uintptr_t) __cmp;
+    uintptr_t __cx = __size;
 
     __asm__ (
       "xorl %%eax, %%eax;"
       "repz cmpsb;"
       "setnzb %%al;"        /* EAX = 0 if equal; 1 if not equal.  */
       "sbbl %%ecx, %%ecx;"  /* ECX = 0 if equal or greater; -1 if less.  */
-      : "=a"(__result), "=S"(__si), "=D"(__di), "=c"(__cx)
-      : "m"(*(const __bytes*) __src), "m"(*(const __bytes*) __cmp),
-        "S"(__src), "D"(__cmp), "c"(__size)
+      : "=a"(__result), "+S"(__si), "+D"(__di), "+c"(__cx)
+      : "m"(*(const __bytes*) __src), "m"(*(const __bytes*) __cmp)
       : "cc"
     );
     __result |= (int) __cx;
@@ -364,7 +382,9 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
 #if defined(__i386__) || defined(__amd64__)
     /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
-    uintptr_t __si, __di, __cx;
+    uintptr_t __si = (uintptr_t) __src;
+    uintptr_t __di = (uintptr_t) __cmp;
+    uintptr_t __cx = __size;
 
     __asm__ (
       "xorl %%eax, %%eax;"
@@ -377,9 +397,8 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
       "setzb %%al;"
       : "=a"(__result),
 #  endif
-        "=S"(__si), "=D"(__di), "=c"(__cx)
-      : "m"(*(const __bytes*) __src), "m"(*(const __bytes*) __cmp),
-        "S"(__src), "D"(__cmp), "c"(__size)
+        "+S"(__si), "+D"(__di), "+c"(__cx)
+      : "m"(*(const __bytes*) __src), "m"(*(const __bytes*) __cmp)
 #  ifdef __GCC_ASM_FLAG_OUTPUTS__
       : "ax"
 #  else
