@@ -49,13 +49,14 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* ds
 
       /* If an element has been found, remove it.  */
       if(index != UINT32_MAX) {
-        err = 0;
-        *elem = cur_q->__data[index];
+        __MCF_dtor_element* cur_elem = cur_q->__data + index;
+        *elem = *cur_elem;
         cur_q->__size --;
+        err = 0;
 
-        if(index != cur_q->__size)
-          __MCF_mmove(cur_q->__data + index, cur_q->__data + index + 1,
-                        (cur_q->__size - index) * sizeof(__MCF_dtor_element));
+        uint32_t shift = cur_q->__size - index;
+        if(shift != 0)
+          __MCF_mcopy(cur_elem, cur_elem + 1, shift * sizeof(__MCF_dtor_element));
       }
 
       /* If the current block has become empty, deallocate it. Otherwise,
