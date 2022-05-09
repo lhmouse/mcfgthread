@@ -226,6 +226,34 @@ __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __s
     return __dst;
   }
 
+/* Copy a block of memory backward.  */
+void* __cdecl
+__MCF_mcopy_backward(void* __restrict__ __dst, const void* __restrict__ __src, size_t __size) __MCF_NOEXCEPT;
+
+__MCF_WINNT_EXTERN_INLINE
+void* __cdecl
+__MCF_mcopy_backward(void* __restrict__ __dst, const void* __restrict__ __src, size_t __size) __MCF_NOEXCEPT
+  {
+    __MCFGTHREAD_ASSERT(__size <= (uintptr_t) __src - (uintptr_t) __dst);
+#if defined(__i386__) || defined(__amd64__)
+    /* Use inline assembly to reduce code size.  */
+    typedef char __bytes[__size];
+    uintptr_t __di, __si, __cx;
+    __asm__ (
+      "std;"
+      "rep movsb;"
+      "cld;"
+      : "=m"(*(__bytes*) __dst), "=D"(__di), "=S"(__si), "=c"(__cx)
+      : "m"(*(const __bytes*) __src), "D"((char*) __dst + __size - 1),
+        "S"((const char*) __src + __size - 1), "c"(__size)
+    );
+#else
+    /* Call the generic but slower version in NTDLL.  */
+    RtlMoveMemory(__dst, __src, __size);
+#endif
+    return __dst;
+  }
+
 /* Copy a block of potentially overlapped memory, like `memmove()`.  */
 void* __cdecl
 __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
@@ -234,30 +262,9 @@ __MCF_WINNT_EXTERN_INLINE
 void* __cdecl
 __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
-#if defined(__i386__) || defined(__amd64__)
-    /* Use inline assembly to reduce code size.  */
-    typedef char __bytes[__size];
-    uintptr_t __di, __si, __cx;
-    if(__size <= (uintptr_t) __dst - (uintptr_t) __src)
-      __asm__ (
-        "rep movsb;"  /* go forward  */
-        : "=m"(*(__bytes*) __dst), "=D"(__di), "=S"(__si), "=c"(__cx)
-        : "m"(*(const __bytes*) __src), "D"(__dst), "S"(__src), "c"(__size)
-      );
-    else
-      __asm__ (
-        "std;"
-        "rep movsb;"  /* go backward  */
-        "cld;"
-        : "=m"(*(__bytes*) __dst), "=D"(__di), "=S"(__si), "=c"(__cx)
-        : "m"(*(const __bytes*) __src), "D"((char*) __dst + __size - 1),
-          "S"((const char*) __src + __size - 1), "c"(__size)
-      );
-#else
-    /* Call the generic but slower version in NTDLL.  */
-    RtlMoveMemory(__dst, __src, __size);
-#endif
-    return __dst;
+    return (__size <= (uintptr_t) __dst - (uintptr_t) __src)
+                ? __MCF_mcopy(__dst, __src, __size)
+                : __MCF_mcopy_backward(__dst, __src, __size);
   }
 
 /* Fill a block of memory with the given byte, like `memset()`.  */
