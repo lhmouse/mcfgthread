@@ -30,7 +30,7 @@ void
 __MCF_initialize_timeout_v2(__MCF_winnt_timeout* to, const int64_t* int64_opt)
   {
     /* Initialize it to an infinite value.  */
-    to->__li->QuadPart = INT64_MIN;
+    to->__li->QuadPart = INT64_MAX;
 
     /* If no timeout is given, wait indefinitely.  */
     if(!int64_opt)
