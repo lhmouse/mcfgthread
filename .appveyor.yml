@@ -9,7 +9,7 @@ environment:
       CXX: i686-w64-mingw32-g++
 
 install:
-  - cmd: pacman -S --noconfirm autoconf automake libtool gcc make mingw-w64-{x86_64,i686}-gcc
+  - cmd: pacman -S --noconfirm autoconf automake libtool make mingw-w64-{x86_64,i686}-gcc
 
 build:
   parallel: true
