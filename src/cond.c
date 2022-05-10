@@ -79,7 +79,6 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     }
 
     /* We have got notified.  */
-    __MCF_adjust_winnt_timeout_v2(&nt_timeout);
     return 0;
   }
 
