@@ -27,7 +27,7 @@ __MCF_seh_top(EXCEPTION_RECORD* record, void* estab_frame, CONTEXT* ctx, void* d
 
 __MCF_DLLEXPORT
 void
-__MCF_initialize_timeout_v2(__MCF_winnt_timeout* to, const int64_t* int64_opt)
+__MCF_initialize_winnt_timeout_v2(__MCF_winnt_timeout* to, const int64_t* int64_opt)
   {
     /* Initialize it to an infinite value.  */
     to->__li->QuadPart = INT64_MAX;
@@ -61,7 +61,7 @@ __MCF_initialize_timeout_v2(__MCF_winnt_timeout* to, const int64_t* int64_opt)
 
 __MCF_DLLEXPORT
 void
-__MCF_adjust_timeout_v2(__MCF_winnt_timeout* to)
+__MCF_adjust_winnt_timeout_v2(__MCF_winnt_timeout* to)
   {
     /* Absolute timeouts need no adjustment.  */
     int64_t temp = to->__li->QuadPart;

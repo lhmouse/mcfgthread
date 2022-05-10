@@ -42,7 +42,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     NTSTATUS status;
 
     __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_timeout_v2(&nt_timeout, timeout_opt);
+    __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
 
     for(;;) {
       /* If this mutex has not been locked, lock it. Otherwise, if the maximum
@@ -157,7 +157,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       }
 
       /* We have got notified. Recheck now.  */
-      __MCF_adjust_timeout_v2(&nt_timeout);
+      __MCF_adjust_winnt_timeout_v2(&nt_timeout);
     }
   }
 

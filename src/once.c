@@ -15,7 +15,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     NTSTATUS status;
 
     __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_timeout_v2(&nt_timeout, timeout_opt);
+    __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
 
     for(;;) {
       /* If this flag has not been locked, lock it.
@@ -69,7 +69,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
       }
 
       /* We have got notified. Recheck now.  */
-      __MCF_adjust_timeout_v2(&nt_timeout);
+      __MCF_adjust_winnt_timeout_v2(&nt_timeout);
     }
   }
 

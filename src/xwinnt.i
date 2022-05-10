@@ -167,10 +167,10 @@ struct __MCF_winnt_timeout
   };
 
 void
-__MCF_initialize_timeout_v2(__MCF_winnt_timeout* __to, const int64_t* __int64_opt) __MCF_NOEXCEPT;
+__MCF_initialize_winnt_timeout_v2(__MCF_winnt_timeout* __to, const int64_t* __int64_opt) __MCF_NOEXCEPT;
 
 void
-__MCF_adjust_timeout_v2(__MCF_winnt_timeout* __to) __MCF_NOEXCEPT;
+__MCF_adjust_winnt_timeout_v2(__MCF_winnt_timeout* __to) __MCF_NOEXCEPT;
 
 /* Note this function is subject to tail-call optimization.  */
 size_t

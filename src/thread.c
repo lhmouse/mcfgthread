@@ -103,7 +103,7 @@ int
 _MCF_thread_wait(const _MCF_thread* thrd, const int64_t* timeout_opt)
   {
     __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_timeout_v2(&nt_timeout, timeout_opt);
+    __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
 
     NTSTATUS status = NtWaitForSingleObject(thrd->__handle, false, nt_timeout.__li);
     __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
@@ -136,7 +136,7 @@ void
 _MCF_sleep(const int64_t* timeout_opt)
   {
     __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_timeout_v2(&nt_timeout, timeout_opt);
+    __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
 
     NTSTATUS status = NtDelayExecution(false, nt_timeout.__li);
     __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
