@@ -48,7 +48,7 @@
 #define NTHRD  16
 #define NITER  1000000
 
-__gthread_once_t start;
+HANDLE start;
 __gthread_t threads[NTHRD];
 my_mutex_t mutex;
 volatile double dst = 12345;
@@ -59,8 +59,7 @@ void*
 thread_proc(void* arg)
   {
     (void) arg;
-    _MCF_once_wait(&start, NULL);
-    _MCF_once_wait(&start, NULL);
+    WaitForSingleObject(start, INFINITE);
 
     for(intptr_t k = 0;  k < NITER;  ++k) {
       my_lock(&mutex);
@@ -83,6 +82,9 @@ thread_proc(void* arg)
 int
 main(void)
   {
+    start = CreateEventW(NULL, TRUE, FALSE, NULL);
+    __MCFGTHREAD_CHECK(start);
+
     my_init(&mutex);
 
 #define xstr1(x)  xstr2(x)
@@ -94,7 +96,7 @@ main(void)
       __MCFGTHREAD_CHECK(__gthread_create(&threads[k], thread_proc, NULL) == 0);
 
     printf("main waiting\n");
-    _MCF_once_release(&start);
+    SetEvent(start);
     double t_sta = _MCF_perf_counter();
 
     for(intptr_t k = 0;  k < NTHRD;  ++k)
