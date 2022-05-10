@@ -8,6 +8,7 @@ include_mcfgthread_HEADERS =  \
   %D%/mutex.h  \
   %D%/cond.h  \
   %D%/once.h  \
+  %D%/sem.h  \
   %D%/thread.h  \
   %D%/cxa.h  \
   %D%/dtor_queue.h  \
@@ -33,6 +34,7 @@ lib_libmcfgthread_la_SOURCES =  \
   %D%/clock.c  \
   %D%/mutex.c  \
   %D%/cond.c  \
+  %D%/sem.c  \
   %D%/once.c  \
   %D%/thread.c  \
   %D%/cxa.c  \
