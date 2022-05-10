@@ -3,14 +3,15 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "../src/gthr.h"
+#include "../src/sem.h"
 #include <assert.h>
 #include <stdio.h>
 
 static __gthread_key_t key;
 static __gthread_t thrd;
-static __gthread_once_t thread_start;
-static __gthread_once_t value_set;
-static __gthread_once_t key_deleted;
+static _MCF_sem thread_start = __MCF_SEM_INIT(0);
+static _MCF_sem value_set = __MCF_SEM_INIT(0);
+static _MCF_sem key_deleted = __MCF_SEM_INIT(0);
 static int count;
 
 static
@@ -27,16 +28,14 @@ void*
 thread_proc(void* param)
   {
     (void) param;
-    _MCF_once_wait(&thread_start, NULL);
-    _MCF_once_wait(&thread_start, NULL);
+    _MCF_sem_wait(&thread_start, NULL);
 
     int r = __gthread_setspecific(key, &count);
     assert(r == 0);
     printf("thread %d set value\n", (int) _MCF_thread_self_tid());
 
-    _MCF_once_release(&value_set);
-    _MCF_once_wait(&key_deleted, NULL);
-    _MCF_once_wait(&key_deleted, NULL);
+    _MCF_sem_signal(&value_set, 1);
+    _MCF_sem_wait(&key_deleted, NULL);
 
     printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
     return NULL;
@@ -54,14 +53,13 @@ main(void)
     assert(thrd);
 
     printf("main waiting for value_set\n");
-    _MCF_once_release(&thread_start);
-    _MCF_once_wait(&value_set, NULL);
-    _MCF_once_wait(&value_set, NULL);
+    _MCF_sem_signal(&thread_start, 1);
+    _MCF_sem_wait(&value_set, NULL);
 
     __gthread_key_delete(key);
     key = NULL;
     printf("main deleted key; waiting for termination\n");
-    _MCF_once_release(&key_deleted);
+    _MCF_sem_signal(&key_deleted, 1);
 
     __gthread_join(thrd, NULL);
     printf("main wait finished\n");

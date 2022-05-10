@@ -4,22 +4,21 @@
 
 #include "../src/mutex.h"
 #include "../src/thread.h"
-#include "../src/once.h"
+#include "../src/sem.h"
 #include <assert.h>
 #include <stdio.h>
 
 #define NTHREADS  64U
 static _MCF_thread* threads[NTHREADS];
 static _MCF_mutex mutex;
-static _MCF_once start;
+static _MCF_sem start = __MCF_SEM_INIT(NTHREADS);
 static int resource = 0;
 
 static
 void
 thread_proc(_MCF_thread* self)
   {
-    _MCF_once_wait(&start, NULL);
-    _MCF_once_wait(&start, NULL);
+    _MCF_sem_wait(&start, NULL);
 
     for(;;) {
       int r = _MCF_mutex_lock(&mutex, (const int64_t[]){ 0 });
@@ -54,7 +53,7 @@ main(void)
     }
 
     printf("main waiting\n");
-    _MCF_once_release(&start);
+    _MCF_sem_signal(&start, NTHREADS);
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       _MCF_thread_wait(threads[k], NULL);
       printf("main wait finished: %d\n", (int)k);
