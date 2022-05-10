@@ -3,13 +3,14 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "../src/gthr.h"
+#include "../src/sem.h"
 #include <assert.h>
 #include <stdio.h>
 
 #define NTHREADS  64U
 static __gthread_t threads[NTHREADS];
 static __gthread_recursive_mutex_t mutex = __GTHREAD_RECURSIVE_MUTEX_INIT;
-static _MCF_once start;
+static _MCF_sem start = __MCF_SEM_INIT(NTHREADS);
 static int resource = 0;
 
 static
@@ -17,8 +18,7 @@ void*
 thread_proc(void* param)
   {
     (void) param;
-    _MCF_once_wait(&start, NULL);
-    _MCF_once_wait(&start, NULL);
+    _MCF_sem_wait(&start, NULL);
 
     int r = __gthread_recursive_mutex_lock(&mutex);
     assert(r == 0);
@@ -53,7 +53,7 @@ main(void)
     }
 
     printf("main waiting\n");
-    _MCF_once_release(&start);
+    _MCF_sem_signal(&start, NTHREADS);
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       int r = __gthread_join(threads[k], NULL);
       assert(r == 0);
