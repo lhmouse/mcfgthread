@@ -103,13 +103,15 @@ __MCF_GTHR_EXTERN_INLINE
 int
 __MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void))
   {
+    _MCF_once* __cleanup __MCF_USE_DTOR(__MCF_gthr_unonce) = NULL;
     int __do_init = _MCF_once_wait(__once, NULL);
     if(__do_init == 0)
       return 0;
 
-    _MCF_once* __cl __MCF_USE_DTOR(__MCF_gthr_unonce) = __once;
+    __MCFGTHREAD_ASSERT(__do_init == 1);
+    __cleanup = __once;
     __init_proc();
-    __cl = NULL;
+    __cleanup = NULL;
     _MCF_once_release(__once);
     return 0;
   }
@@ -538,12 +540,15 @@ __MCF_GTHR_EXTERN_INLINE
 int
 __MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
   {
+    __MCF_gthr_thread_record* __rec;
+    int __err;
+
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
     if(__thrd->__proc != __MCF_gthr_thread_thunk)
       return EINVAL;
 
-    __MCF_gthr_thread_record* __rec = (__MCF_gthr_thread_record*) __thrd->__data;
+    __rec = (__MCF_gthr_thread_record*) __thrd->__data;
     if(_MCF_atomic_xchg_8_rlx(&(__rec->__joinable), 0) == 0)
       return EINVAL;
 
@@ -551,7 +556,7 @@ __MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
       return EDEADLK;
 
     /* Wait for it.  */
-    int __err = _MCF_thread_wait(__thrd, NULL);
+    __err = _MCF_thread_wait(__thrd, NULL);
     __MCFGTHREAD_ASSERT(__err == 0);
 
     if(__resp_opt)
@@ -572,12 +577,14 @@ __MCF_GTHR_EXTERN_INLINE
 int
 __MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_NOEXCEPT
   {
+    __MCF_gthr_thread_record* __rec;
+
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
     if(__thrd->__proc != __MCF_gthr_thread_thunk)
       return EINVAL;
 
-    __MCF_gthr_thread_record* __rec = (__MCF_gthr_thread_record*) __thrd->__data;
+    __rec = (__MCF_gthr_thread_record*) __thrd->__data;
     if(_MCF_atomic_xchg_8_rlx(&(__rec->__joinable), 0) == 0)
       return EINVAL;
 

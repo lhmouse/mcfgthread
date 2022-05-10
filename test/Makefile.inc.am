@@ -25,7 +25,7 @@ check_PROGRAMS +=  \
   %D%/tls_dtor_ignored_on_exit.test  \
   %D%/tls_dtor_ignored_on_quick_exit.test  \
   %D%/tls_dtor_ignored_on__Exit.test  \
-  %D%/gthr_c89.test  \
+  %D%/gthr_c89_pedantic.test  \
   %D%/gthr_once.test  \
   %D%/gthr_mutex_trylock.test  \
   %D%/gthr_mutex_timeout.test  \
@@ -49,4 +49,5 @@ check_PROGRAMS +=  \
   %D%/at_quick_exit_ignored_on__Exit.test  \
   ${NOTHING}
 
-test_gthr_c89_test_CFLAGS = -std=c89 -Wall -Wextra -Werror
+test_gthr_c89_pedantic_test_CFLAGS =  \
+  ${AM_CFLAGS} -std=c89 -W{no-error=,}pedantic -Wno-{long-long,variadic-macros}
