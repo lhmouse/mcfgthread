@@ -58,8 +58,9 @@ _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT
  * If this once-initialization flag is in the UNLOCKED state, this function
  * changes it into the LOCKED state and returns 1. If it is in the LOCKED state
  * because another thread has locked it, this function blocks until the other
- * thread releases the lock, or returns -1 if the operation times out. If it is
- * in the READY state, this function does nothing and returns 0 immediately.  */
+ * thread releases the lock, or returns -1 if the operation has timed out. If
+ * the once flag is already in the READY state, this function does nothing and
+ * returns 0 immediately.  */
 int
 _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
