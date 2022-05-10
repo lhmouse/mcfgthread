@@ -86,6 +86,7 @@ typedef union __MCF_cxa_dtor_union __MCF_cxa_dtor_union;
 typedef struct __MCF_cond _MCF_cond;
 typedef struct __MCF_mutex _MCF_mutex;
 typedef struct __MCF_once _MCF_once;
+typedef struct __MCF_sem _MCF_sem;
 typedef struct __MCF_thread _MCF_thread;
 typedef struct __MCF_tls_key _MCF_tls_key;
 
