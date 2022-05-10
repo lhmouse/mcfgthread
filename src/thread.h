@@ -32,7 +32,8 @@ struct __MCF_thread
     __extension__ char __data[0] __MCF_ALIGNED(16);  /* user-defined data  */
   };
 
-/* Creates a thread. The `__nref` member is initialized to 2.
+/* Creates a thread. The `__nref` member is initialized to 2, because a running
+ * thread holds a reference to itself.
  *
  * If `__size` is specified as non-zero, storage for user-defined data is
  * reserved. The storage is initialized to zeroes. If `__data_opt` is non-null,

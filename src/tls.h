@@ -42,9 +42,9 @@ struct __MCF_tls_key
  *
  * A thread-local key is used to get and set thread-local values, which are
  * exclusive to the calling thread. A key may be assigned a destructor. When a
- * thread exists, if its value that is associated with a key is non-null, and
- * the key has a destructor, the destructor is invoked for the value. The order
- * of multiple destructors during a thread's exit is unspecified.
+ * thread exists, for every value which is not a null pointer and is associated
+ * with a key that has a destructor and has not been deleted, the destructor is
+ * invoked. The order of destructors during a thread's exit is unspecified.
  *
  * Returns a new thread-local key. The caller is responsible for calling
  * `_MCF_tls_key_delete()` when it is no longer needed. If the thread-local key
