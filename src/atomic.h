@@ -21,7 +21,7 @@
  * `INTEGER _MCF_atomic_load_WIDTH_ORDER(const void* mem);`  */
 #define __MCF_ATOMIC_PROTOTYPE_(INTEGER, SUFFIX)  \
   INTEGER  \
-  _MCF_atomic_load_##SUFFIX(const void* __mem)
+  _MCF_atomic_load_##SUFFIX(const void* __mem) __MCF_NOEXCEPT
 
 #define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     return __atomic_load_n((const INTEGER*) __mem, ORDER_SUCC);
@@ -35,7 +35,7 @@
  * `void _MCF_atomic_load_pWIDTH_ORDER(void* retp, const void* mem);`  */
 #define __MCF_ATOMIC_PROTOTYPE_(INTEGER, SUFFIX)  \
   void  \
-  _MCF_atomic_load_p##SUFFIX(void* __retp, const void* __mem)
+  _MCF_atomic_load_p##SUFFIX(void* __retp, const void* __mem) __MCF_NOEXCEPT
 
 #define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __val = __atomic_load_n((const INTEGER*) __mem, ORDER_SUCC);  \
@@ -50,7 +50,7 @@
  * `INTEGER _MCF_atomic_store_WIDTH_ORDER(void* mem, INTEGER val);`  */
 #define __MCF_ATOMIC_PROTOTYPE_(INTEGER, SUFFIX)  \
   INTEGER  \
-  _MCF_atomic_store_##SUFFIX(void* __mem, INTEGER __val)
+  _MCF_atomic_store_##SUFFIX(void* __mem, INTEGER __val) __MCF_NOEXCEPT
 
 #define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     __atomic_store_n((INTEGER*) __mem, __val, ORDER_SUCC);  \
@@ -65,7 +65,7 @@
  * `void _MCF_atomic_store_pWIDTH_ORDER(void* mem, const void* valp);`  */
 #define __MCF_ATOMIC_PROTOTYPE_(INTEGER, SUFFIX)  \
   void  \
-  _MCF_atomic_store_p##SUFFIX(void* __mem, const void* __valp)
+  _MCF_atomic_store_p##SUFFIX(void* __mem, const void* __valp) __MCF_NOEXCEPT
 
 #define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __val = *(const INTEGER*) __valp;  \
@@ -81,7 +81,7 @@
  * `INTEGER _MCF_atomic_xchg_WIDTH_ORDER(void* mem, INTEGER val);`  */
 #define __MCF_ATOMIC_PROTOTYPE_(INTEGER, SUFFIX)  \
   INTEGER  \
-  _MCF_atomic_xchg_##SUFFIX(void* __mem, INTEGER __val)
+  _MCF_atomic_xchg_##SUFFIX(void* __mem, INTEGER __val) __MCF_NOEXCEPT
 
 #define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     return __atomic_exchange_n((INTEGER*) __mem, __val, ORDER_SUCC);
@@ -97,7 +97,7 @@
  * `void _MCF_atomic_xchg_pWIDTH_ORDER(void* retp, void* mem, const void* valp);`  */
 #define __MCF_ATOMIC_PROTOTYPE_(INTEGER, SUFFIX)  \
   void  \
-  _MCF_atomic_xchg_p##SUFFIX(void* __retp, void* __mem, const void* __valp)
+  _MCF_atomic_xchg_p##SUFFIX(void* __retp, void* __mem, const void* __valp) __MCF_NOEXCEPT
 
 #define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __val = *(const INTEGER*) __valp;  \
@@ -115,7 +115,7 @@
  * `bool _MCF_atomic_cmpxchg_WIDTH_ORDER(void* mem, void* cmpp, INTEGER val);`  */
 #define __MCF_ATOMIC_PROTOTYPE_(INTEGER, SUFFIX)  \
   bool  \
-  _MCF_atomic_cmpxchg_##SUFFIX(void* __mem, void* __cmpp, INTEGER __val)
+  _MCF_atomic_cmpxchg_##SUFFIX(void* __mem, void* __cmpp, INTEGER __val) __MCF_NOEXCEPT
 
 #define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __cmp = *(INTEGER*) __cmpp;  \
@@ -135,7 +135,7 @@
  * `bool _MCF_atomic_cmpxchg_pWIDTH_ORDER(void* mem, void* cmpp, const void* val);`  */
 #define __MCF_ATOMIC_PROTOTYPE_(INTEGER, SUFFIX)  \
   bool  \
-  _MCF_atomic_cmpxchg_p##SUFFIX(void* __mem, void* __cmpp, const void* __valp)
+  _MCF_atomic_cmpxchg_p##SUFFIX(void* __mem, void* __cmpp, const void* __valp) __MCF_NOEXCEPT
 
 #define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __cmp = *(INTEGER*) __cmpp;  \
@@ -156,7 +156,7 @@
  * `bool _MCF_atomic_cmpxchg_weak_WIDTH_ORDER(void* mem, void* cmpp, INTEGER val);`  */
 #define __MCF_ATOMIC_PROTOTYPE_(INTEGER, SUFFIX)  \
   bool  \
-  _MCF_atomic_cmpxchg_weak_##SUFFIX(void* __mem, void* __cmpp, INTEGER __val)
+  _MCF_atomic_cmpxchg_weak_##SUFFIX(void* __mem, void* __cmpp, INTEGER __val) __MCF_NOEXCEPT
 
 #define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __cmp = *(INTEGER*) __cmpp;  \
@@ -176,7 +176,7 @@
  * `bool _MCF_atomic_cmpxchg_weak_pWIDTH_ORDER(void* mem, void* cmpp, const void* val);`  */
 #define __MCF_ATOMIC_PROTOTYPE_(INTEGER, SUFFIX)  \
   bool  \
-  _MCF_atomic_cmpxchg_weak_p##SUFFIX(void* __mem, void* __cmpp, const void* __valp)
+  _MCF_atomic_cmpxchg_weak_p##SUFFIX(void* __mem, void* __cmpp, const void* __valp) __MCF_NOEXCEPT
 
 #define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     INTEGER __cmp = *(INTEGER*) __cmpp;  \
@@ -197,7 +197,7 @@
  * `INTEGER val __MCF_atomic_xadd_WIDTH_ORDER(void* mem, INTEGER val);`  */
 #define __MCF_ATOMIC_PROTOTYPE_(INTEGER, SUFFIX)  \
   INTEGER  \
-  _MCF_atomic_xadd_##SUFFIX(void* __mem, INTEGER __val)
+  _MCF_atomic_xadd_##SUFFIX(void* __mem, INTEGER __val) __MCF_NOEXCEPT
 
 #define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     return __atomic_fetch_add((INTEGER*) __mem, __val, ORDER_SUCC);  \
@@ -213,7 +213,7 @@
  * `INTEGER val __MCF_atomic_xsub_WIDTH_ORDER(void* mem, INTEGER val);`  */
 #define __MCF_ATOMIC_PROTOTYPE_(INTEGER, SUFFIX)  \
   INTEGER  \
-  _MCF_atomic_xsub_##SUFFIX(void* __mem, INTEGER __val)
+  _MCF_atomic_xsub_##SUFFIX(void* __mem, INTEGER __val) __MCF_NOEXCEPT
 
 #define __MCF_ATOMIC_STATEMENTS_(INTEGER, ORDER_SUCC, ORDER_FAIL)  \
     return __atomic_fetch_sub((INTEGER*) __mem, __val, ORDER_SUCC);  \
