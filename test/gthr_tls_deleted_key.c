@@ -34,7 +34,7 @@ thread_proc(void* param)
     assert(r == 0);
     printf("thread %d set value\n", (int) _MCF_thread_self_tid());
 
-    _MCF_sem_signal_some(&value_set, 1);
+    _MCF_sem_signal(&value_set);
     _MCF_sem_wait(&key_deleted, NULL);
 
     printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
@@ -53,13 +53,13 @@ main(void)
     assert(thrd);
 
     printf("main waiting for value_set\n");
-    _MCF_sem_signal_some(&thread_start, 1);
+    _MCF_sem_signal(&thread_start);
     _MCF_sem_wait(&value_set, NULL);
 
     __gthread_key_delete(key);
     key = NULL;
     printf("main deleted key; waiting for termination\n");
-    _MCF_sem_signal_some(&key_deleted, 1);
+    _MCF_sem_signal(&key_deleted);
 
     __gthread_join(thrd, NULL);
     printf("main wait finished\n");
