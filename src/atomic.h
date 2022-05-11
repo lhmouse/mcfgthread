@@ -115,7 +115,7 @@
  * `bool _MCF_atomic_cmpxchg_WIDTH_ORDER(void* mem, void* cmpp, INTEGER val);`  */
 #define __MCF_ATOMIC_FUNCTION_(INTEGER, SUFFIX, ORDER_SUCC, ORDER_FAIL)  \
   bool  \
-  _MCF_atomic_cmpxchg_##SUFFIX(void* __mem, void* __cmpp, INTEGER __val) __MCF_NOEXCEPT  \
+  _MCF_atomic_cmpxchg_##SUFFIX(void* __restrict __mem, void* __restrict __cmpp, INTEGER __val) __MCF_NOEXCEPT  \
     {  \
       INTEGER __cmp = *(INTEGER*) __cmpp;  \
       bool __r = __atomic_compare_exchange_n((INTEGER*) __mem, &__cmp, __val, 0, ORDER_SUCC, ORDER_FAIL);  \
@@ -134,7 +134,7 @@
  * `bool _MCF_atomic_cmpxchg_pWIDTH_ORDER(void* mem, void* cmpp, const void* val);`  */
 #define __MCF_ATOMIC_FUNCTION_(INTEGER, SUFFIX, ORDER_SUCC, ORDER_FAIL)  \
   bool  \
-  _MCF_atomic_cmpxchg_p##SUFFIX(void* __mem, void* __cmpp, const void* __valp) __MCF_NOEXCEPT  \
+  _MCF_atomic_cmpxchg_p##SUFFIX(void* __restrict __mem, void* __restrict __cmpp, const void* __valp) __MCF_NOEXCEPT  \
     {  \
       INTEGER __cmp = *(INTEGER*) __cmpp;  \
       INTEGER __val = *(const INTEGER*) __valp;  \
@@ -154,7 +154,7 @@
  * `bool _MCF_atomic_cmpxchg_weak_WIDTH_ORDER(void* mem, void* cmpp, INTEGER val);`  */
 #define __MCF_ATOMIC_FUNCTION_(INTEGER, SUFFIX, ORDER_SUCC, ORDER_FAIL)  \
   bool  \
-  _MCF_atomic_cmpxchg_weak_##SUFFIX(void* __mem, void* __cmpp, INTEGER __val) __MCF_NOEXCEPT  \
+  _MCF_atomic_cmpxchg_weak_##SUFFIX(void* __restrict __mem, void* __restrict __cmpp, INTEGER __val) __MCF_NOEXCEPT  \
     {  \
       INTEGER __cmp = *(INTEGER*) __cmpp;  \
       bool __r = __atomic_compare_exchange_n((INTEGER*) __mem, &__cmp, __val, 1, ORDER_SUCC, ORDER_FAIL);  \
@@ -173,7 +173,7 @@
  * `bool _MCF_atomic_cmpxchg_weak_pWIDTH_ORDER(void* mem, void* cmpp, const void* val);`  */
 #define __MCF_ATOMIC_FUNCTION_(INTEGER, SUFFIX, ORDER_SUCC, ORDER_FAIL)  \
   bool  \
-  _MCF_atomic_cmpxchg_weak_p##SUFFIX(void* __mem, void* __cmpp, const void* __valp) __MCF_NOEXCEPT  \
+  _MCF_atomic_cmpxchg_weak_p##SUFFIX(void* __restrict __mem, void* __restrict __cmpp, const void* __valp) __MCF_NOEXCEPT  \
     {  \
       INTEGER __cmp = *(INTEGER*) __cmpp;  \
       INTEGER __val = *(const INTEGER*) __valp;  \
