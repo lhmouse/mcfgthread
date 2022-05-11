@@ -18,12 +18,8 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
     __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
 
     /* Decrement the counter.  */
-    _MCF_atomic_load_pptr_rlx(&old, sem);
-    do {
-      new = old;
-      new.__value = old.__value - 1;
-    }
-    while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(sem, &old, &new));
+    old.__value = _MCF_atomic_xsub_ptr_rlx(&(sem->__value), 1);
+    new.__value = old.__value - 1;
 
     /* If the new value is non-negative, the calling thread should leave.  */
     if(new.__value >= 0)
