@@ -26,7 +26,7 @@ main(void)
     assert(_MCF_sem_wait(&sem, (const int64_t[]){0}) == -1);
     assert(_MCF_sem_get(&sem) == 0);
 
-    assert(_MCF_sem_signal(&sem, 2) == 0);
+    assert(_MCF_sem_signal_some(&sem, 2) == 0);
     assert(_MCF_sem_get(&sem) == 2);
 
     assert(_MCF_sem_wait(&sem, (const int64_t[]){0}) == 0);

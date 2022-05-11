@@ -49,7 +49,7 @@ main(void)
     }
 
     printf("main waiting\n");
-    _MCF_sem_signal(&start, NTHREADS);
+    _MCF_sem_signal_some(&start, NTHREADS);
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       r = __gthread_join(threads[k], NULL);
       assert(r == 0);

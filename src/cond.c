@@ -84,7 +84,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
 
 __MCF_DLLEXPORT
 size_t
-_MCF_cond_signal_some(_MCF_cond* cond, size_t max)
+_MCF_cond_signal_some_slow(_MCF_cond* cond, size_t max)
   {
     /* Get the number of threads to wake up.  */
     size_t wake_num;
@@ -99,16 +99,4 @@ _MCF_cond_signal_some(_MCF_cond* cond, size_t max)
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
 
     return __MCF_batch_release_common(cond, wake_num);
-  }
-
-__MCF_DLLEXPORT
-size_t
-_MCF_cond_signal_all(_MCF_cond* cond)
-  {
-    /* Swap out all data.  */
-    _MCF_cond old;
-    _MCF_cond new = __MCF_0_INIT;
-    _MCF_atomic_xchg_pptr_rlx(&old, cond, &new);
-
-    return __MCF_batch_release_common(cond, old.__nsleep);
   }

@@ -67,7 +67,42 @@ size_t
 _MCF_cond_signal_some(_MCF_cond* __cond, size_t __max) __MCF_NOEXCEPT;
 
 size_t
+_MCF_cond_signal_some_slow(_MCF_cond* __cond, size_t __max) __MCF_NOEXCEPT;
+
+__MCF_COND_EXTERN_INLINE
+size_t
+_MCF_cond_signal_some(_MCF_cond* __cond, size_t __max) __MCF_NOEXCEPT
+  {
+    _MCF_cond __old;
+    _MCF_atomic_load_pptr_acq(&__old, __cond);
+
+    if(__old.__nsleep == 0)
+      return 0;
+
+    return _MCF_cond_signal_some_slow(__cond, __max);
+  }
+
+/* This function is equivalent to `_MCF_cond_signal_some(cond, 1)`.  */
+size_t
+_MCF_cond_signal(_MCF_cond* __cond) __MCF_NOEXCEPT;
+
+__MCF_COND_EXTERN_INLINE
+size_t
+_MCF_cond_signal(_MCF_cond* __cond) __MCF_NOEXCEPT
+  {
+    return _MCF_cond_signal_some(__cond, 1U);
+  }
+
+/* This function is equivalent to `_MCF_cond_signal_some(cond, SIZE_MAX)`.  */
+size_t
 _MCF_cond_signal_all(_MCF_cond* __cond) __MCF_NOEXCEPT;
+
+__MCF_COND_EXTERN_INLINE
+size_t
+_MCF_cond_signal_all(_MCF_cond* __cond) __MCF_NOEXCEPT
+  {
+    return _MCF_cond_signal_some(__cond, SIZE_MAX);
+  }
 
 #ifdef __cplusplus
 }
