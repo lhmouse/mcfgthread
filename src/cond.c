@@ -82,7 +82,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     return 0;
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_NEVER_INLINE
 size_t
 _MCF_cond_signal_some_slow(_MCF_cond* cond, size_t max)
   {

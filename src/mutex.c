@@ -161,7 +161,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     }
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_NEVER_INLINE
 void
 _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
   {

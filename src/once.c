@@ -73,7 +73,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     }
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_NEVER_INLINE
 void
 _MCF_once_abort(_MCF_once* once)
   {
@@ -93,7 +93,7 @@ _MCF_once_abort(_MCF_once* once)
     __MCF_batch_release_common(once, wake_one);
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_NEVER_INLINE
 void
 _MCF_once_release(_MCF_once* once)
   {
