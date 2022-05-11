@@ -62,7 +62,7 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
 
 __MCF_DLLEXPORT
 int
-_MCF_sem_signal(_MCF_sem* sem, intptr_t value_add)
+_MCF_sem_signal_some(_MCF_sem* sem, intptr_t value_add)
   {
     /* Validate arguments.  */
     if(value_add == 0)

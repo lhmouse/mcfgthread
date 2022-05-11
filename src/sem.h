@@ -89,7 +89,18 @@ _MCF_sem_wait(_MCF_sem* __sem, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
  * Returns 0 if the value has been updated successfully, or -1 in case of
  * invalid arguments, or -2 if the result would overflow.  */
 int
-_MCF_sem_signal(_MCF_sem* __sem, intptr_t __value_add) __MCF_NOEXCEPT;
+_MCF_sem_signal_some(_MCF_sem* __sem, intptr_t __value_add) __MCF_NOEXCEPT;
+
+/* This function is equivalent to `_MCF_sem_signal_some(sem, 1)`.  */
+int
+_MCF_sem_signal(_MCF_sem* __sem) __MCF_NOEXCEPT;
+
+__MCF_SEM_EXTERN_INLINE
+int
+_MCF_sem_signal(_MCF_sem* __sem) __MCF_NOEXCEPT
+  {
+    return _MCF_sem_signal_some(__sem, 1);
+  }
 
 #ifdef __cplusplus
 }
