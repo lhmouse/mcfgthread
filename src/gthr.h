@@ -495,7 +495,7 @@ __MCF_GTHR_EXTERN_INLINE
 int
 __MCF_gthr_cond_signal(__gthread_cond_t* __cond) __MCF_NOEXCEPT
   {
-    _MCF_cond_signal_some(__cond, 1);
+    _MCF_cond_signal(__cond);
     return 0;
   }
 
