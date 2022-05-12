@@ -33,8 +33,8 @@ lib_libmcfgthread_la_SOURCES =  \
   %D%/clock.c  \
   %D%/mutex.c  \
   %D%/cond.c  \
-  %D%/sem.c  \
   %D%/once.c  \
+  %D%/sem.c  \
   %D%/thread.c  \
   %D%/cxa.c  \
   %D%/dtor_queue.c  \
