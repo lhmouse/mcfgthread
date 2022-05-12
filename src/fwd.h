@@ -60,22 +60,28 @@ extern "C" {
 #  define __MCF_UNREACHABLE   __builtin_unreachable()
 #endif
 
-#define __MCF_PPCAT2(x,y)      x##y
-#define __MCF_PPCAT3(x,y,z)    x##y##z
-#define __MCF_PPLAZY(f,...)    f(__VA_ARGS__)
+#define __MCF_PPCAT2(x,y)     x##y
+#define __MCF_PPCAT3(x,y,z)   x##y##z
+#define __MCF_PPLAZY(f,...)   f(__VA_ARGS__)
 
-#define __MCF_GNU_INLINE       extern __inline__ __attribute__((__gnu_inline__))
-#define __MCF_ALWAYS_INLINE    __MCF_GNU_INLINE __attribute__((__always_inline__, __artificial__))
-#define __MCF_NEVER_INLINE     __attribute__((__noinline__))
-#define __MCF_NOEXCEPT         __MCF_CXX(throw())
-#define __MCF_ALIGNED(...)     __attribute__((__aligned__(__VA_ARGS__)))
-#define __MCF_USE_DTOR(...)    __attribute__((__cleanup__(__VA_ARGS__)))
-#define __MCF_0_INIT           { __MCF_C(0) }
-#define __MCF_PTR_BITS         (__SIZEOF_POINTER__ * 8U)
+#define __MCF_GNU_INLINE      extern __inline__ __attribute__((__gnu_inline__))
+#define __MCF_ALWAYS_INLINE   __MCF_GNU_INLINE __attribute__((__always_inline__, __artificial__))
+#define __MCF_NEVER_INLINE    __attribute__((__noinline__))
+#define __MCF_NOEXCEPT        __MCF_CXX(throw())
+#define __MCF_ALIGNED(...)    __attribute__((__aligned__(__VA_ARGS__)))
+#define __MCF_USE_DTOR(...)   __attribute__((__cleanup__(__VA_ARGS__)))
+#define __MCF_0_INIT          { __MCF_C(0) }
+#define __MCF_PTR_BITS        (__SIZEOF_POINTER__ * 8U)
 
-#define __MCF_STATIC_ASSERT(...)   (sizeof(struct{ int : (__VA_ARGS__) ? 1 : -1; }))
-#define __MCF_ASSERT(...)          ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
-#define __MCF_CHECK(...)           ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__func__))
+/* The `__MCF_ASSERT()` and `__MCF_CHECK()` perform run-time checks. If an
+ * argument yields false, `__MCF_ASSERT()` results in undefined behavior, and
+ * `__MCF_CHECK()` effects abnormal termination of the current program.  */
+#define __MCF_ASSERT(...)     ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
+#define __MCF_CHECK(...)      ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__func__))
+
+/* The `__MCF_STATIC_ASSERT()` is an expression that yields zero if it compiles
+ * anyway. Its argument must be a constant expression.  */
+#define __MCF_STATIC_ASSERT(...)    ((int) sizeof(struct{ char : (__VA_ARGS__) ? 1 : -1; }) - 1)
 
 /* Make some forward declarations.  */
 typedef struct __MCF_dtor_element __MCF_dtor_element;
