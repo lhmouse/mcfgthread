@@ -13,6 +13,9 @@ check_PROGRAMS +=  \
   %D%/sem_init.test  \
   %D%/sem_timeout.test  \
   %D%/sem_value.test  \
+  %D%/event_init.test  \
+  %D%/event_timeout.test  \
+  %D%/event_value.test  \
   %D%/dtor_queue_dso.test  \
   %D%/dtor_queue_all.test  \
   %D%/dtor_queue_remove.test  \
