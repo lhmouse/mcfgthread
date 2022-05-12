@@ -1,7 +1,6 @@
 include_mcfgthreaddir = ${includedir}/mcfgthread
 include_mcfgthread_HEADERS =  \
   %D%/version.h  \
-  %D%/xatomic.i  \
   %D%/atomic.h  \
   %D%/fwd.h  \
   %D%/clock.h  \
