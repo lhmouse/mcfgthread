@@ -11,8 +11,8 @@ check_PROGRAMS +=  \
   %D%/mutex.test  \
   %D%/cond_timeout.test  \
   %D%/sem_init.test  \
-  %D%/sem_count.test  \
   %D%/sem_timeout.test  \
+  %D%/sem_value.test  \
   %D%/dtor_queue_dso.test  \
   %D%/dtor_queue_all.test  \
   %D%/dtor_queue_remove.test  \
