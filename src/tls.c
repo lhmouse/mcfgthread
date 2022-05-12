@@ -28,12 +28,12 @@ void
 do_tls_key_drop_ref_nonnull(_MCF_tls_key* key)
   {
     int32_t old_ref = _MCF_atomic_xsub_32_arl(key->__nref, 1);
-    __MCFGTHREAD_ASSERT(old_ref > 0);
+    __MCF_ASSERT(old_ref > 0);
     if(old_ref != 1)
       return;
 
     /* Deallocate its storage now.  */
-    __MCFGTHREAD_ASSERT(key->__deleted[0] == 1);
+    __MCF_ASSERT(key->__deleted[0] == 1);
     __MCF_mfree(key);
   }
 
@@ -41,7 +41,7 @@ __MCF_DLLEXPORT
 void
 _MCF_tls_key_delete_nonnull(_MCF_tls_key* key)
   {
-    __MCFGTHREAD_ASSERT(key->__deleted[0] == 0);
+    __MCF_ASSERT(key->__deleted[0] == 0);
     _MCF_atomic_store_8_rlx(key->__deleted, 1);
 
     do_tls_key_drop_ref_nonnull(key);
@@ -51,18 +51,18 @@ static inline
 __MCF_tls_element*
 do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
   {
-    __MCFGTHREAD_ASSERT(key);
+    __MCF_ASSERT(key);
 
     /* Keep the load factor no more than 0.5.  */
     uint64_t dist = (uintptr_t) (table->__end - table->__begin);
-    __MCFGTHREAD_ASSERT(dist != 0);
-    __MCFGTHREAD_ASSERT(table->__size <= dist / 2);
+    __MCF_ASSERT(dist != 0);
+    __MCF_ASSERT(table->__size <= dist / 2);
 
     /* Make a fixed-point value in the interval [0,1), and then multiply
      * `dist` by it to get an index in the middle.  */
     uint32_t ratio = (uint32_t) ((uintptr_t) key / sizeof(void*)) * 0x9E3779B9U;
     __MCF_tls_element* origin = table->__begin + (ptrdiff_t) (dist * ratio >> 32);
-    __MCFGTHREAD_ASSERT(origin < table->__end);
+    __MCF_ASSERT(origin < table->__end);
 
     /* Find an element using linear probing.
      * Note this function may return a pointer to an empty element.  */
@@ -90,7 +90,7 @@ __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
     if(!elem->__key_opt)
       return NULL;
 
-    __MCFGTHREAD_ASSERT(elem->__key_opt == key);
+    __MCF_ASSERT(elem->__key_opt == key);
     return elem->__value;
   }
 
@@ -128,7 +128,7 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
 
           /* Relocate this element into the new storage.  */
           elem = do_linear_probe_nonempty(table, tkey);
-          __MCFGTHREAD_ASSERT(!elem->__key_opt);
+          __MCF_ASSERT(!elem->__key_opt);
           *elem = *(temp.__end);
         }
 
@@ -143,12 +143,12 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
     if(!elem->__key_opt) {
       /* Fill `key` into this element.  */
       int32_t old_ref = _MCF_atomic_xadd_32_arl(key->__nref, 1);
-      __MCFGTHREAD_ASSERT(old_ref > 0);
+      __MCF_ASSERT(old_ref > 0);
       elem->__key_opt = key;
       table->__size ++;
     }
 
-    __MCFGTHREAD_ASSERT(elem->__key_opt == key);
+    __MCF_ASSERT(elem->__key_opt == key);
     elem->__value = (void*) value;
     return 0;
   }

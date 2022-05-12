@@ -77,8 +77,8 @@ void
 _MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     int32_t __old_ref = _MCF_atomic_xadd_32_rlx(__thrd->__nref, 1);
-    __MCFGTHREAD_ASSERT(__old_ref < INT_MAX);
-    __MCFGTHREAD_ASSERT(__old_ref > 0);
+    __MCF_ASSERT(__old_ref < INT_MAX);
+    __MCF_ASSERT(__old_ref > 0);
   }
 
 /* Drops a reference count of a thread structure. An active thread owns a

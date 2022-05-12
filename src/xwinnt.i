@@ -144,7 +144,7 @@ NTSTATUS
 __MCF_keyed_event_wait(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
   {
     NTSTATUS __status = NtWaitForKeyedEvent(NULL, __key, false, __timeout);
-    __MCFGTHREAD_ASSERT(NT_SUCCESS(__status));
+    __MCF_ASSERT(NT_SUCCESS(__status));
     return __status;
   }
 
@@ -153,7 +153,7 @@ NTSTATUS
 __MCF_keyed_event_signal(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
   {
     NTSTATUS __status = NtReleaseKeyedEvent(NULL, __key, false, __timeout);
-    __MCFGTHREAD_ASSERT(NT_SUCCESS(__status));
+    __MCF_ASSERT(NT_SUCCESS(__status));
     return __status;
   }
 
@@ -216,7 +216,7 @@ __MCF_WINNT_EXTERN_INLINE
 void* __cdecl
 __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __size) __MCF_NOEXCEPT
   {
-    __MCFGTHREAD_ASSERT(__MCF_can_copy_forward(__dst, __src, __size));
+    __MCF_ASSERT(__MCF_can_copy_forward(__dst, __src, __size));
 #if defined(__i386__) || defined(__amd64__)
     /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
@@ -360,7 +360,7 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
     SIZE_T __n = RtlCompareMemory(__src, __cmp, __size);
     if(__n != __size) {
       __result = *((const uint8_t*)__src + __n) - *((const uint8_t*)__cmp + __n);
-      __MCFGTHREAD_ASSERT(__result != 0);
+      __MCF_ASSERT(__result != 0);
     }
     else
       __result = 0;
@@ -464,7 +464,7 @@ size_t
 __MCF_msize(const void* __ptr) __MCF_NOEXCEPT
   {
     size_t __size = HeapSize(GetProcessHeap(), 0, __ptr);
-    __MCFGTHREAD_ASSERT(__size != (size_t)-1);
+    __MCF_ASSERT(__size != (size_t)-1);
     return __size;
   }
 
@@ -483,7 +483,7 @@ __MCF_mfree(void* __ptr) __MCF_NOEXCEPT
     __MCF_mfill(__ptr, 0xFE, HeapSize(GetProcessHeap(), 0, __ptr));
 #endif
     int __succ = HeapFree(GetProcessHeap(), 0, __ptr);
-    __MCFGTHREAD_ASSERT(__succ);
+    __MCF_ASSERT(__succ);
   }
 
 #ifdef __cplusplus

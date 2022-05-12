@@ -25,7 +25,7 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
 
     /* There is room in the current block, so append it there.  */
     uint32_t index = queue->__size;
-    __MCFGTHREAD_ASSERT(index < __MCF_DTOR_QUEUE_BLOCK_SIZE);
+    __MCF_ASSERT(index < __MCF_DTOR_QUEUE_BLOCK_SIZE);
     queue->__data[index] = *elem;
     queue->__size ++;
     return 0;

@@ -39,7 +39,7 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
     if(reason == DLL_PROCESS_ATTACH) {
       /* Prevent this DLL from being unloaded.  */
       HMODULE locked;
-      __MCFGTHREAD_CHECK(GetModuleHandleExW(
+      __MCF_CHECK(GetModuleHandleExW(
           GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN,
           (void*) instance, &locked));
     }

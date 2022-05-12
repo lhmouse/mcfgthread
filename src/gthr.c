@@ -18,7 +18,7 @@ __MCF_gthr_recursive_mutex_unlock_callback(intptr_t arg)
     _MCF_atomic_store_32_rlx(&(rmtx->__owner), 0);
     _MCF_mutex_unlock(&(rmtx->__mutex));
 
-    __MCFGTHREAD_ASSERT(unlocked > 0);
+    __MCF_ASSERT(unlocked > 0);
     return unlocked;
   }
 
@@ -26,12 +26,12 @@ __MCF_DLLEXPORT
 void
 __MCF_gthr_recursive_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
   {
-    __MCFGTHREAD_ASSERT(unlocked > 0);
+    __MCF_ASSERT(unlocked > 0);
     __gthread_recursive_mutex_t* rmtx = (__gthread_recursive_mutex_t*) arg;
 
     /* Relock the mutex and restore the depth counter.  */
     _MCF_mutex_lock(&(rmtx->__mutex), NULL);
-    __MCFGTHREAD_ASSERT(rmtx->__owner == 0);
+    __MCF_ASSERT(rmtx->__owner == 0);
     _MCF_atomic_store_32_rlx(&(rmtx->__owner), (int32_t) _MCF_thread_self_tid());
     rmtx->__depth = (int32_t) unlocked;
   }

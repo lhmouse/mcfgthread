@@ -79,22 +79,22 @@ __MCF_dll_callback_on_process_attach(void)
   {
     /* Allocate a TLS slot for this library.  */
     __MCF_win32_tls_index = TlsAlloc();
-    __MCFGTHREAD_CHECK(__MCF_win32_tls_index != TLS_OUT_OF_INDEXES);
+    __MCF_CHECK(__MCF_win32_tls_index != TLS_OUT_OF_INDEXES);
 
     /* Get the performance counter resolution.  */
     LARGE_INTEGER freq;
-    __MCFGTHREAD_CHECK(QueryPerformanceFrequency(&freq));
+    __MCF_CHECK(QueryPerformanceFrequency(&freq));
     __MCF_perf_frequency_reciprocal = 1000 / (double) freq.QuadPart;
 
     /* Attach the main thread.  */
     __MCF_main_thread.__tid = GetCurrentThreadId();
-    __MCFGTHREAD_CHECK(NT_SUCCESS(NtDuplicateObject(GetCurrentProcess(),
+    __MCF_CHECK(NT_SUCCESS(NtDuplicateObject(GetCurrentProcess(),
           GetCurrentThread(), GetCurrentProcess(), &(__MCF_main_thread.__handle),
           0, 0, DUPLICATE_SAME_ACCESS)));
 
-    __MCFGTHREAD_CHECK(__MCF_main_thread.__handle);
+    __MCF_CHECK(__MCF_main_thread.__handle);
     _MCF_atomic_store_32_rel(__MCF_main_thread.__nref, 1);
-    __MCFGTHREAD_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
+    __MCF_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
   }
 
 void

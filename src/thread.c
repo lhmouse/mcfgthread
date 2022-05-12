@@ -68,7 +68,7 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
     if(_MCF_atomic_xchg_32_rlx(&(thrd->__tid), (int32_t) tid) != 0)
       __MCF_keyed_event_signal(thrd, NULL);
 
-    __MCFGTHREAD_ASSERT(thrd->__tid == tid);
+    __MCF_ASSERT(thrd->__tid == tid);
     return thrd;
   }
 
@@ -77,7 +77,7 @@ void
 _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
   {
     int32_t old_ref = _MCF_atomic_xsub_32_arl(thrd->__nref, 1);
-    __MCFGTHREAD_ASSERT(old_ref > 0);
+    __MCF_ASSERT(old_ref > 0);
     if(old_ref != 1)
       return;
 
@@ -86,7 +86,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
       return;
 
     NTSTATUS status = NtClose(thrd->__handle);
-    __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
+    __MCF_ASSERT(NT_SUCCESS(status));
     __MCF_mfree(thrd);
   }
 
@@ -106,7 +106,7 @@ _MCF_thread_wait(const _MCF_thread* thrd, const int64_t* timeout_opt)
     __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
 
     NTSTATUS status = NtWaitForSingleObject(thrd->__handle, false, nt_timeout.__li);
-    __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
+    __MCF_ASSERT(NT_SUCCESS(status));
     return (status != STATUS_WAIT_0) ? -1 : 0;
   }
 
@@ -139,5 +139,5 @@ _MCF_sleep(const int64_t* timeout_opt)
     __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
 
     NTSTATUS status = NtDelayExecution(false, nt_timeout.__li);
-    __MCFGTHREAD_ASSERT(NT_SUCCESS(status));
+    __MCF_ASSERT(NT_SUCCESS(status));
   }

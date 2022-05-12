@@ -23,7 +23,7 @@ do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
      * table_size)`, where `table_size / 2^32` is a constant.  */
     uint32_t ratio = (uint32_t) ((uintptr_t) mutex / sizeof(void*)) * 0x9E3779B9U;
     DWORD base = ratio / (DWORD) (0x100000000U / table_size);
-    __MCFGTHREAD_ASSERT(base < table_size);
+    __MCF_ASSERT(base < table_size);
 
     /* The unfortunate GCC `__builtin_ctz()` returns a signed integer which
      * results in terrible machine code, so we have to turn to something else
@@ -73,11 +73,11 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       if(old.__sp_mask != new.__sp_mask) {
         /* The current thread shall spin now.  */
         uint32_t my_mask = (uint32_t) new.__sp_mask ^ old.__sp_mask;
-        __MCFGTHREAD_ASSERT((my_mask & (my_mask - 1)) == 0);
+        __MCF_ASSERT((my_mask & (my_mask - 1)) == 0);
 
         /* Calculate the spin count for this loop.  */
         register int spin = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
-        __MCFGTHREAD_ASSERT(spin > 0);
+        __MCF_ASSERT(spin > 0);
         spin *= (int) (__MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_SP_NFAIL_THRESHOLD);
 
         while(--spin >= 0) {

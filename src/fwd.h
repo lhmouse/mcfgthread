@@ -73,9 +73,9 @@ extern "C" {
 #define __MCF_0_INIT           { __MCF_C(0) }
 #define __MCF_PTR_BITS         (__SIZEOF_POINTER__ * 8U)
 
-#define __MCFGTHREAD_STATIC_ASSERT(...)   (sizeof(struct{ int : (__VA_ARGS__) ? 1 : -1; }))
-#define __MCFGTHREAD_ASSERT(...)          ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
-#define __MCFGTHREAD_CHECK(...)           ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__func__))
+#define __MCF_STATIC_ASSERT(...)   (sizeof(struct{ int : (__VA_ARGS__) ? 1 : -1; }))
+#define __MCF_ASSERT(...)          ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
+#define __MCF_CHECK(...)           ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__func__))
 
 /* Make some forward declarations.  */
 typedef struct __MCF_dtor_element __MCF_dtor_element;

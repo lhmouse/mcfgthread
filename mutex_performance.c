@@ -83,7 +83,7 @@ int
 main(void)
   {
     start = CreateEventW(NULL, TRUE, FALSE, NULL);
-    __MCFGTHREAD_CHECK(start);
+    __MCF_CHECK(start);
 
     my_init(&mutex);
 
@@ -93,14 +93,14 @@ main(void)
            xstr1(my_mutex_t), NTHRD, NITER);
 
     for(intptr_t k = 0;  k < NTHRD;  ++k)
-      __MCFGTHREAD_CHECK(__gthread_create(&threads[k], thread_proc, NULL) == 0);
+      __MCF_CHECK(__gthread_create(&threads[k], thread_proc, NULL) == 0);
 
     printf("main waiting\n");
     SetEvent(start);
     double t_sta = _MCF_perf_counter();
 
     for(intptr_t k = 0;  k < NTHRD;  ++k)
-      __MCFGTHREAD_CHECK(__gthread_join(threads[k], NULL) == 0);
+      __MCF_CHECK(__gthread_join(threads[k], NULL) == 0);
 
     double t_fin = _MCF_perf_counter();
     printf("total time:\n  %.3f milliseconds\n", t_fin - t_sta);

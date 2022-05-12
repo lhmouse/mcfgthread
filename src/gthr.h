@@ -108,7 +108,7 @@ __MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void))
     if(__do_init == 0)
       return 0;
 
-    __MCFGTHREAD_ASSERT(__do_init == 1);
+    __MCF_ASSERT(__do_init == 1);
     __cleanup = __once;
     __init_proc();
     __cleanup = NULL;
@@ -212,7 +212,7 @@ int
 __MCF_gthr_mutex_lock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
   {
     int __err = _MCF_mutex_lock(__mtx, NULL);
-    __MCFGTHREAD_ASSERT(__err == 0);
+    __MCF_ASSERT(__err == 0);
     return 0;
   }
 
@@ -305,18 +305,18 @@ __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXC
     if(_MCF_atomic_load_32_rlx(&(__rmtx->__owner)) != (int32_t) __my_tid) {
       /* If the calling thread does not own this mutex, attempt to take ownership.  */
       int __err = _MCF_mutex_lock(&(__rmtx->__mutex), NULL);
-      __MCFGTHREAD_ASSERT(__err == 0);
+      __MCF_ASSERT(__err == 0);
 
       /* The calling thread owns the mutex now.  */
-      __MCFGTHREAD_ASSERT(__rmtx->__owner == 0);
+      __MCF_ASSERT(__rmtx->__owner == 0);
       _MCF_atomic_store_32_rlx(&(__rmtx->__owner), (int32_t) __my_tid);
-      __MCFGTHREAD_ASSERT(__rmtx->__depth == 0);
+      __MCF_ASSERT(__rmtx->__depth == 0);
     }
 
     /* Increment the recursion counter.  */
-    __MCFGTHREAD_ASSERT(__rmtx->__depth < INT_MAX);
+    __MCF_ASSERT(__rmtx->__depth < INT_MAX);
     __rmtx->__depth ++;
-    __MCFGTHREAD_ASSERT(__rmtx->__depth != 0);
+    __MCF_ASSERT(__rmtx->__depth != 0);
     return 0;
   }
 
@@ -341,13 +341,13 @@ __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NO
 
       /* The calling thread owns the mutex now.  */
       _MCF_atomic_store_32_rlx(&(__rmtx->__owner), (int32_t) __my_tid);
-      __MCFGTHREAD_ASSERT(__rmtx->__depth == 0);
+      __MCF_ASSERT(__rmtx->__depth == 0);
     }
 
     /* Increment the recursion counter.  */
-    __MCFGTHREAD_ASSERT(__rmtx->__depth < INT_MAX);
+    __MCF_ASSERT(__rmtx->__depth < INT_MAX);
     __rmtx->__depth ++;
-    __MCFGTHREAD_ASSERT(__rmtx->__depth != 0);
+    __MCF_ASSERT(__rmtx->__depth != 0);
     return 0;
   }
 
@@ -372,13 +372,13 @@ __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const 
 
       /* The calling thread owns the mutex now.  */
       _MCF_atomic_store_32_rlx(&(__rmtx->__owner), (int32_t) __my_tid);
-      __MCFGTHREAD_ASSERT(__rmtx->__depth == 0);
+      __MCF_ASSERT(__rmtx->__depth == 0);
     }
 
     /* Increment the recursion counter.  */
-    __MCFGTHREAD_ASSERT(__rmtx->__depth < INT_MAX);
+    __MCF_ASSERT(__rmtx->__depth < INT_MAX);
     __rmtx->__depth ++;
-    __MCFGTHREAD_ASSERT(__rmtx->__depth > 0);
+    __MCF_ASSERT(__rmtx->__depth > 0);
     return 0;
   }
 
@@ -393,10 +393,10 @@ int
 __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     uint32_t __my_tid = _MCF_thread_self_tid();
-    __MCFGTHREAD_ASSERT(__rmtx->__owner == __my_tid);
+    __MCF_ASSERT(__rmtx->__owner == __my_tid);
 
     /* Decrement the recursion counter.  */
-    __MCFGTHREAD_ASSERT(__rmtx->__depth > 0);
+    __MCF_ASSERT(__rmtx->__depth > 0);
     __rmtx->__depth --;
 
     if(__rmtx->__depth == 0) {
@@ -449,7 +449,7 @@ int
 __MCF_gthr_cond_wait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx) __MCF_NOEXCEPT
   {
     int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback, __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx, NULL);
-    __MCFGTHREAD_ASSERT(__err == 0);
+    __MCF_ASSERT(__err == 0);
     return 0;
   }
 
@@ -464,7 +464,7 @@ int
 __MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) __rmtx, NULL);
-    __MCFGTHREAD_ASSERT(__err == 0);
+    __MCF_ASSERT(__err == 0);
     return 0;
   }
 
@@ -557,7 +557,7 @@ __MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
 
     /* Wait for it.  */
     __err = _MCF_thread_wait(__thrd, NULL);
-    __MCFGTHREAD_ASSERT(__err == 0);
+    __MCF_ASSERT(__err == 0);
 
     if(__resp_opt)
       *__resp_opt = __rec->__result;
@@ -607,7 +607,7 @@ __gthread_t
 __MCF_gthr_self(void) __MCF_NOEXCEPT
   {
     _MCF_thread* __self = _MCF_thread_self();
-    __MCFGTHREAD_CHECK(__self);
+    __MCF_CHECK(__self);
     return __self;
   }
 
