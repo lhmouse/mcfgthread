@@ -7,7 +7,7 @@
 #include "cond.h"
 #include "xwinnt.i"
 
-struct cond_unlock_result
+struct unlock_result
   {
     _MCF_cond_relock_callback* relock_opt;
     intptr_t lock_arg;
@@ -16,7 +16,7 @@ struct cond_unlock_result
 
 static inline
 void
-do_unlock_cleanup(struct cond_unlock_result* res)
+do_unlock_cleanup(struct unlock_result* res)
   {
     if(res->relock_opt)
       res->relock_opt(res->lock_arg, res->unlocked);
@@ -26,6 +26,9 @@ __MCF_DLLEXPORT
 int
 _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, const int64_t* timeout_opt)
   {
+    __MCF_SEH_DEFINE_TERMINATE_FILTER;
+    struct unlock_result ul_res __MCF_USE_DTOR(do_unlock_cleanup) = __MCF_0_INIT;
+
     _MCF_cond old, new;
     NTSTATUS status;
 
@@ -40,13 +43,12 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
 
-    struct cond_unlock_result ulres __MCF_USE_DTOR(do_unlock_cleanup) = __MCF_0_INIT;
     if(unlock_opt) {
       /* Now, unlock the associated mutex. If another thread attempts to signal
        * this one, it shall block.  */
-      ulres.relock_opt = relock_opt;
-      ulres.lock_arg = lock_arg;
-      ulres.unlocked = unlock_opt(lock_arg);
+      ul_res.unlocked = unlock_opt(lock_arg);
+      ul_res.lock_arg = lock_arg;
+      ul_res.relock_opt = relock_opt;
     }
 
     /* Try waiting.  */

@@ -47,6 +47,7 @@ _MCF_cond_init(_MCF_cond* __cond) __MCF_NOEXCEPT
  * the unlock callback is passed to the relock callback verbatim. An unlock
  * callback may be provided regardless of a relock callback, but if a relock
  * callback is provided without an unlock callback, it is not invoked at all.
+ * Neither callback is allowed to throw exceptions.
  *
  * If the `timeout` argument points to a positive integer, it denotes the wait
  * expiration time, in number of milliseconds since 1970-01-01T00:00:00Z. If it
