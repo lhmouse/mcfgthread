@@ -1,0 +1,16 @@
+/* This file is part of MCF Gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
+
+#include "fwd.hdef"
+
+LIBRARY "NTDLL.DLL"
+EXPORTS
+
+STDCALL(NtDuplicateObject, 28)
+STDCALL(NtClose, 4)
+STDCALL(NtWaitForSingleObject, 12)
+STDCALL(NtWaitForKeyedEvent, 16)
+STDCALL(NtReleaseKeyedEvent, 16)
+STDCALL(NtDelayExecution, 8)
+STDCALL(RtlDllShutdownInProgress, 0)

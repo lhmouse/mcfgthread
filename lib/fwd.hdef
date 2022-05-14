@@ -1,0 +1,9 @@
+/* This file is part of MCF Gthread.
+ * See LICENSE.TXT for licensing information.
+ * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
+
+#ifdef __i386__
+#  define STDCALL(function,N)   function@N
+#else
+#  define STDCALL(function,N)   function
+#endif

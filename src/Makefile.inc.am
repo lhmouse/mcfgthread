@@ -44,15 +44,17 @@ lib_libmcfgthread_la_SOURCES =  \
   %D%/tls.c  \
   %D%/gthr_aux.c  \
   %D%/gthr.c  \
-  %D%/libkernelbase_tiny.def  \
-  %D%/libntdll_tiny.def  \
   ${NOTHING}
 
 lib_libmcfgthread_la_CFLAGS =  \
   ${AM_CFLAGS} -nostdlib -f{freestanding,unwind-tables}
 
 lib_libmcfgthread_la_LDFLAGS =  \
-  -Wc,-nostdlib,src/libkernelbase_tiny.a,src/libntdll_tiny.a  \
+  -Wc,-nostdlib,lib/libkernelbase_tiny.dll.a,lib/libntdll_tiny.dll.a  \
   -Wl,--subsystem,windows:6.1,--entry,__MCF_dll_startup@@Z,--exclude-all-symbols  \
   -Wl,--enable-auto-image-base,--disable-{runtime-pseudo-reloc,stdcall-fixup}  \
   -no-undefined -version-info @abi_major@:@abi_minor@
+
+.rc.lo:
+	${AM_V_GEN}${LIBTOOL} ${AM_V_lt} --tag=RC ${AM_LIBTOOLFLAGS} ${LIBTOOLFLAGS}  \
+	    --mode=compile ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
