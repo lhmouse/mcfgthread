@@ -72,10 +72,10 @@ __MCF_WINAPI(BOOL, SwitchToThread, void);
 
 /* Declare NTDLL (driver) APIs here.  */
 __MCF_WINAPI(BOOLEAN, RtlDllShutdownInProgress, void);
-__MCF_WINAPI(void, RtlMoveMemory, void*, const void*, size_t);
-__MCF_WINAPI(void, RtlFillMemory, void*, size_t, int);
-__MCF_WINAPI(void, RtlZeroMemory, void*, size_t);
-__MCF_WINAPI(size_t, RtlCompareMemory, const void*, const void*, size_t);
+__MCF_WINAPI(void, RtlMoveMemory, void*, const void*, SIZE_T);
+__MCF_WINAPI(void, RtlFillMemory, void*, SIZE_T, int);
+__MCF_WINAPI(void, RtlZeroMemory, void*, SIZE_T);
+__MCF_WINAPI(SIZE_T, RtlCompareMemory, const void*, const void*, SIZE_T);
 
 __MCF_WINAPI(NTSTATUS, NtDuplicateObject, HANDLE, HANDLE, HANDLE, PHANDLE, ACCESS_MASK, ULONG, ULONG);
 __MCF_WINAPI(NTSTATUS, NtClose, HANDLE);

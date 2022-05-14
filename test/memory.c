@@ -6,11 +6,13 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include <libloaderapi.h>
 #include <ntsecapi.h>
 
 static char comp[100];
 static char data[100];
+
+HMODULE LoadLibraryA(LPCSTR);
+FARPROC GetProcAddress(HMODULE, LPCSTR);
 
 int
 main(void)
