@@ -74,8 +74,8 @@ _MCF_sem_get(const _MCF_sem* __sem) __MCF_NOEXCEPT
 /* Decrements the value of a semaphore. If the result is negative, the calling
  * thread will be suspended.
  *
- * If the `timeout` argument points to a positive integer, it denotes the wait
- * expiration time, in number of milliseconds since 1970-01-01T00:00:00Z. If it
+ * If the `__timeout_opt` argument points to a positive integer, it denotes the
+ * expiration time in number of milliseconds since 1970-01-01T00:00:00Z. If it
  * points to a negative integer, the absolute value of it denotes the number of
  * milliseconds to wait. If it points to zero, the function returns immediately
  * without waiting. If it is null, the function waits indefinitely.

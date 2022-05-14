@@ -129,8 +129,8 @@ _MCF_thread_exit(void) __MCF_NOEXCEPT
 
 /* Waits for a thread to finish execution.
  *
- * If the `timeout` argument points to a positive integer, it denotes the wait
- * expiration time, in number of milliseconds since 1970-01-01T00:00:00Z. If it
+ * If the `__timeout_opt` argument points to a positive integer, it denotes the
+ * expiration time in number of milliseconds since 1970-01-01T00:00:00Z. If it
  * points to a negative integer, the absolute value of it denotes the number of
  * milliseconds to wait. If it points to zero, the function returns immediately
  * without waiting. If it is null, the function waits indefinitely.
@@ -159,8 +159,8 @@ _MCF_yield(void) __MCF_NOEXCEPT;
 
 /* Suspends the calling thread for a given amount of time.
  *
- * If the `timeout` argument points to a positive integer, it denotes the sleep
- * expiration time, in number of milliseconds since 1970-01-01T00:00:00Z. If it
+ * If the `__timeout_opt` argument points to a positive integer, it denotes the
+ * expiration time in number of milliseconds since 1970-01-01T00:00:00Z. If it
  * points to a negative integer, the absolute value of it denotes the number of
  * milliseconds to sleep. If it points to a value of zero, the function returns
  * immediately. If it is null, the function sleeps indefinitely.  */

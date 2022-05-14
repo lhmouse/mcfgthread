@@ -62,8 +62,8 @@ _MCF_mutex_init(_MCF_mutex* __mutex) __MCF_NOEXCEPT
  * the caller attempts to lock a mutex which it has already held, deadlocks may
  * occur.
  *
- * If the `timeout` argument points to a positive integer, it denotes the wait
- * expiration time, in number of milliseconds since 1970-01-01T00:00:00Z. If it
+ * If the `__timeout_opt` argument points to a positive integer, it denotes the
+ * expiration time in number of milliseconds since 1970-01-01T00:00:00Z. If it
  * points to a negative integer, the absolute value of it denotes the number of
  * milliseconds to wait. If it points to zero, the function returns immediately
  * without waiting. If it is null, the function waits indefinitely.
