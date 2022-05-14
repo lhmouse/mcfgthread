@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_XWINNT_
-#define __MCFGTHREAD_XWINNT_
+#ifndef __MCFGTHREAD_XGLOBALS_
+#define __MCFGTHREAD_XGLOBALS_
 
 #include "fwd.h"
 #include <windows.h>
