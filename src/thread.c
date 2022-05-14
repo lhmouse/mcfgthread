@@ -7,12 +7,7 @@
 #include "thread.h"
 #include "xglobals.i"
 
-static
-DWORD __stdcall
-do_win32_thread_thunk(LPVOID param)
-  __attribute__((__force_align_arg_pointer__));
-
-static
+static __attribute__((__force_align_arg_pointer__))
 DWORD __stdcall
 do_win32_thread_thunk(LPVOID param)
   {
