@@ -19,10 +19,8 @@ do_win32_thread_thunk(LPVOID param)
     if(_MCF_atomic_cmpxchg_32_rlx(&(self->__tid), &cmp, -1))
       __MCF_keyed_event_wait(self, NULL);
 
-    /* Attach the thread.  */
-    (void) TlsSetValue(__MCF_win32_tls_index, self);
-
-    /* Execute the user-defined procedure, which has no return value.  */
+    /* Attach the thread and execute the user-defined procedure.  */
+    TlsSetValue(__MCF_win32_tls_index, self);
     self->__proc(self);
     return 0;
   }
@@ -38,11 +36,11 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
     if(size > SIZE_MAX / 4 - sizeof(_MCF_thread))
       return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, NULL);
 
+    /* Allocate and initialize the thread control structure.  */
     _MCF_thread* thrd = __MCF_malloc_0(sizeof(_MCF_thread) + size);
     if(!thrd)
       return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, NULL);
 
-    /* Initialize the thread control structure.  */
     _MCF_atomic_store_32_rlx(thrd->__nref, 2);
     thrd->__proc = proc;
 
