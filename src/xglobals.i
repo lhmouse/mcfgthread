@@ -59,6 +59,9 @@ __MCF_WINAPI(SIZE_T, HeapSize, HANDLE, DWORD, LPCVOID);
 __MCF_WINAPI(BOOL, HeapFree, HANDLE, DWORD, LPVOID);
 
 __MCF_WINAPI(void, GetSystemTimeAsFileTime, LPFILETIME);
+#if _WIN32_WINNT >= 0x0602
+__MCF_WINAPI(void, GetSystemTimePreciseAsFileTime, LPFILETIME);
+#else
 __MCF_WINAPI(ULONGLONG, GetTickCount64, void);
 __MCF_WINAPI(BOOL, QueryPerformanceFrequency, LARGE_INTEGER*);
 __MCF_WINAPI(BOOL, QueryPerformanceCounter, LARGE_INTEGER*);
