@@ -54,5 +54,5 @@ lib_libmcfgthread_la_CFLAGS =  \
 lib_libmcfgthread_la_LDFLAGS =  \
   -Wc,-nostdlib,src/libkernelbase_tiny.a,src/libntdll_tiny.a  \
   -Wl,--subsystem,windows:6.1,--entry,__MCF_dll_startup@@Z,--exclude-all-symbols  \
-  -Wl,--enable-auto-image-base,--disable-{runtime-pseudo-reloc,stdcall-fixup}  \
+  -Wl,--enable-{auto-image-base,stdcall-fixup},--disable-runtime-pseudo-reloc  \
   -no-undefined -version-info @abi_major@:@abi_minor@
