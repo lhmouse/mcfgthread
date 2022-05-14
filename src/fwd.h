@@ -134,14 +134,14 @@ __MCF_CXX11(constexpr) __MCF_ALWAYS_INLINE
 size_t
 _MCF_minz(size_t __x, size_t __y) __MCF_NOEXCEPT
   {
-    return __y < __x ? __y : __x;
+    return (__y < __x) ? __y : __x;
   }
 
 __MCF_CXX11(constexpr) __MCF_ALWAYS_INLINE
 size_t
 _MCF_maxz(size_t __x, size_t __y) __MCF_NOEXCEPT
   {
-    return __x < __y ? __y : __x;
+    return (__x < __y) ? __y : __x;
   }
 
 /* This function is the same as `GetLastError()`.  */
