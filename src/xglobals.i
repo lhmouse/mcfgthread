@@ -82,7 +82,7 @@ NtClose(HANDLE Handle)
 
 /* Declare helper functions here.  */
 EXCEPTION_DISPOSITION __cdecl
-__MCF_seh_top(EXCEPTION_RECORD* __record, void* __estab_frame, CONTEXT* __ctx, void* __disp_ctx) __MCF_NOEXCEPT;
+__MCF_seh_top(EXCEPTION_RECORD* __rec, void* __estab_frame, CONTEXT* __ctx, void* __disp_ctx) __MCF_NOEXCEPT;
 
 #ifdef __i386__  /* SEH is stack-based  */
 

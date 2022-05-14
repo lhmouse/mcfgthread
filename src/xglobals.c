@@ -12,21 +12,16 @@
 
 __MCF_DLLEXPORT
 EXCEPTION_DISPOSITION __cdecl
-__MCF_seh_top(EXCEPTION_RECORD* record, void* estab_frame, CONTEXT* ctx, void* disp_ctx)
+__MCF_seh_top(EXCEPTION_RECORD* rec, void* estab_frame, CONTEXT* ctx, void* disp_ctx)
   {
     (void) estab_frame;
     (void) ctx;
     (void) disp_ctx;
 
     /* Check for uncaught C++ exceptions.  */
-    if(record->ExceptionFlags & EXCEPTION_NONCONTINUABLE)
-      return ExceptionContinueSearch;
-
-    if((record->ExceptionCode & 0x20FFFFFF) != 0x20474343)  /* (1 << 29) | 'GCC'  */
-      return ExceptionContinueSearch;
-
-    /* Cause the C++ runtime to invoke the terminate handler.  */
-    return ExceptionContinueExecution;
+    DWORD r = rec->ExceptionFlags & EXCEPTION_NONCONTINUABLE;
+    r |= (rec->ExceptionCode & 0x20FFFFFFU) - 0x20474343U;  /* (1 << 29) | 'GCC' */
+    return r ? ExceptionContinueSearch : ExceptionContinueExecution;
   }
 
 __MCF_DLLEXPORT
