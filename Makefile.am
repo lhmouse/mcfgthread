@@ -52,10 +52,10 @@ TESTS = ${check_PROGRAMS}
 ## Custom rules
 .rc.lo:
 	${AM_V_GEN}${LIBTOOL} ${AM_V_lt} --tag=RC ${AM_LIBTOOLFLAGS} ${LIBTOOLFLAGS}  \
-	  --mode=compile ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
+	    --mode=compile ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
 
 .def.a:
-	${AM_V_GEN}${DLLTOOL} -d $< -l $@
+	${AM_V_GEN}${DLLTOOL} ${AM_DLLTOOLFLAGS} ${DLLTOOLFLAGS} -d $< -l $@
 
 ## Programs and libraries
 include src/Makefile.inc.am
