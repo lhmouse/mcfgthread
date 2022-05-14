@@ -3,7 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_XGLOBALS_EXTERN_INLING  __MCF_DLLEXPORT
+#define __MCF_XGLOBALS_EXTERN_INLINE  __MCF_DLLEXPORT
 #define __MCF_DYNCONST
 #include "xglobals.i"
 #include "thread.h"
