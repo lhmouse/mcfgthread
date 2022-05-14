@@ -19,13 +19,13 @@ do_win32_thread_thunk(LPVOID param)
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     _MCF_thread* self = param;
 
-    /* Attach the thread.  */
-    (void) TlsSetValue(__MCF_win32_tls_index, self);
-
     /* Wait until the structure has been fully initialized.  */
-    uint32_t cmp = 0;
+    DWORD cmp = 0;
     if(_MCF_atomic_cmpxchg_32_rlx(&(self->__tid), &cmp, -1))
       __MCF_keyed_event_wait(self, NULL);
+
+    /* Attach the thread.  */
+    (void) TlsSetValue(__MCF_win32_tls_index, self);
 
     /* Execute the user-defined procedure, which has no return value.  */
     self->__proc(self);
@@ -51,9 +51,6 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
     _MCF_atomic_store_32_rlx(thrd->__nref, 2);
     thrd->__proc = proc;
 
-    if(data_opt)
-      __MCF_mcopy(thrd->__data, data_opt, size);
-
     /* Create the thread. The new thread will wait until `__tid` contains a
      * valid thread ID.  */
     DWORD tid;
@@ -62,6 +59,10 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
       __MCF_mfree(thrd);
       return NULL;
     }
+
+    /* Copy user-defined data in, before setting the `__tid` field.  */
+    if(data_opt)
+      __MCF_mcopy(thrd->__data, data_opt, size);
 
     /* Set the thread ID. If its old value is not zero, the new thread should
      * have been waiting, so notify it.  */
