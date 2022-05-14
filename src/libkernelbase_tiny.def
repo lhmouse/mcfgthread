@@ -1,0 +1,29 @@
+; This file is part of MCF Gthread.
+; See LICENSE.TXT for licensing information.
+; Copyleft 2022, LH_Mouse. All wrongs reserved.
+
+LIBRARY "KERNELBASE.DLL"
+EXPORTS
+
+GetLastError
+SetLastError
+GetProcessHeap
+HeapAlloc
+HeapFree
+HeapReAlloc
+HeapSize
+GetModuleHandleExW
+TerminateProcess
+GetSystemTimeAsFileTime
+GetSystemTimePreciseAsFileTime
+GetTickCount64
+QueryPerformanceFrequency
+QueryPerformanceCounter
+CreateRemoteThreadEx
+ExitThread
+GetCurrentThreadId
+SwitchToThread
+TlsAlloc
+TlsFree
+TlsGetValue
+TlsSetValue

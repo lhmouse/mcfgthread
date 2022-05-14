@@ -17,19 +17,12 @@ AM_CFLAGS = -std=c99  \
 AM_RCFLAGS = -Isrc -c65001
 
 AM_DEFAULT_SOURCE_EXT = .c
-SUFFIXES = .rc
+SUFFIXES = .rc .def
 LDADD = lib/libmcfgthread.la
 
-## Custom rules
-.rc.lo:
-	${AM_V_GEN}${LIBTOOL} ${AM_V_lt} --tag=RC ${AM_LIBTOOLFLAGS} ${LIBTOOLFLAGS}  \
-	  --mode=compile ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
-
 ## Initialization
-EXTRA_DIST =
 noinst_LIBRARIES =
 noinst_LTLIBRARIES =
-TESTS = ${check_PROGRAMS}
 
 include_HEADERS =
 lib_LIBRARIES =
@@ -40,6 +33,29 @@ check_HEADERS =
 check_LIBRARIES =
 check_LTLIBRARIES =
 check_PROGRAMS =
+
+BUILT_SOURCES =  \
+  src/libkernelbase_tiny.a  \
+  src/libntdll_tiny.a  \
+  ${NOTHING}
+
+CLEANFILES =  \
+  src/libkernelbase_tiny.a  \
+  src/libntdll_tiny.a  \
+  ${NOTHING}
+
+EXTRA_DIST =  \
+  ${NOTHING}
+
+TESTS = ${check_PROGRAMS}
+
+## Custom rules
+.rc.lo:
+	${AM_V_GEN}${LIBTOOL} ${AM_V_lt} --tag=RC ${AM_LIBTOOLFLAGS} ${LIBTOOLFLAGS}  \
+	  --mode=compile ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
+
+.def.a:
+	${AM_V_GEN}${DLLTOOL} -d $< -l $@
 
 ## Programs and libraries
 include src/Makefile.inc.am
