@@ -33,50 +33,55 @@ extern "C" {
 #undef RtlCompareMemory
 #undef RtlEqualMemory
 
-/* Add some attributes to existent functions.  */
-#define __MCF_WINAPI(r, f, ...)  r __stdcall f(__VA_ARGS__) __asm__(#f) __attribute__((__dllimport__, __nothrow__))
+/* Despite the stdcall calling convention, names of Windows APIs in export
+ * tables are not decorated. This macro forces symbol names in assembly, so
+ * they will not end up in undefined references.  */
+#define __MCF_WINAPI(RETURN, function, ...)  \
+  RETURN __stdcall function(__VA_ARGS__)  \
+    __asm__(#function) __attribute__((__dllimport__, __nothrow__))
 
-__MCF_WINAPI(DWORD, GetLastError, VOID) __attribute__((__pure__));
-__MCF_WINAPI(VOID, SetLastError, DWORD dwErrCode);
+/* Declare Windows APIs here.  */
+__MCF_WINAPI(DWORD, GetLastError, void) __attribute__((__pure__));
+__MCF_WINAPI(void, SetLastError, DWORD);
 
-__MCF_WINAPI(DWORD, GetCurrentThreadId, VOID) __attribute__((__const__));
-__MCF_WINAPI(DWORD, GetCurrentProcessId, VOID) __attribute__((__const__));
+__MCF_WINAPI(DWORD, GetCurrentThreadId, void) __attribute__((__const__));
+__MCF_WINAPI(DWORD, GetCurrentProcessId, void) __attribute__((__const__));
 
-__MCF_WINAPI(DWORD, TlsAlloc, VOID);
-__MCF_WINAPI(BOOL, TlsFree, DWORD dwTlsIndex);
-__MCF_WINAPI(LPVOID, TlsGetValue, DWORD dwTlsIndex) __attribute__((__pure__));
-__MCF_WINAPI(INT, TlsSetValue, DWORD dwTlsIndex, LPVOID lpTlsValue);
+__MCF_WINAPI(DWORD, TlsAlloc, void);
+__MCF_WINAPI(BOOL, TlsFree, DWORD);
+__MCF_WINAPI(LPVOID, TlsGetValue, DWORD) __attribute__((__pure__));
+__MCF_WINAPI(INT, TlsSetValue, DWORD, LPVOID);
 
-__MCF_WINAPI(HANDLE, GetProcessHeap, VOID) __attribute__((__const__));
-__MCF_WINAPI(LPVOID, HeapAlloc, HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes);
-__MCF_WINAPI(LPVOID, HeapReAlloc, HANDLE hHeap, DWORD dwFlags, LPVOID lpMem, SIZE_T dwBytes);
-__MCF_WINAPI(SIZE_T, HeapSize, HANDLE hHeap, DWORD dwFlags, LPCVOID lpMem);
-__MCF_WINAPI(BOOL, HeapFree, HANDLE hHeap, DWORD dwFlags, LPVOID lpMem);
+__MCF_WINAPI(HANDLE, GetProcessHeap, void) __attribute__((__const__));
+__MCF_WINAPI(LPVOID, HeapAlloc, HANDLE, DWORD, SIZE_T);
+__MCF_WINAPI(LPVOID, HeapReAlloc, HANDLE, DWORD, LPVOID, SIZE_T);
+__MCF_WINAPI(SIZE_T, HeapSize, HANDLE, DWORD, LPCVOID);
+__MCF_WINAPI(BOOL, HeapFree, HANDLE, DWORD, LPVOID);
 
-__MCF_WINAPI(VOID, GetSystemTimeAsFileTime, LPFILETIME lpSystemTimeAsFileTime);
-__MCF_WINAPI(ULONGLONG, GetTickCount64, VOID);
-__MCF_WINAPI(BOOL, QueryPerformanceFrequency, LARGE_INTEGER* lpFrequency);
-__MCF_WINAPI(BOOL, QueryPerformanceCounter, LARGE_INTEGER* lpPerformanceCount);
+__MCF_WINAPI(void, GetSystemTimeAsFileTime, LPFILETIME);
+__MCF_WINAPI(ULONGLONG, GetTickCount64, void);
+__MCF_WINAPI(BOOL, QueryPerformanceFrequency, LARGE_INTEGER*);
+__MCF_WINAPI(BOOL, QueryPerformanceCounter, LARGE_INTEGER*);
 
-__MCF_WINAPI(BOOL, GetModuleHandleExW, DWORD dwFlags, LPCWSTR lpModuleName, HMODULE *phModule);
-__MCF_WINAPI(BOOL, TerminateProcess, HANDLE hProcess, UINT uExitCode);
+__MCF_WINAPI(BOOL, GetModuleHandleExW, DWORD, LPCWSTR, HMODULE*);
+__MCF_WINAPI(BOOL, TerminateProcess, HANDLE, UINT);
 
-__MCF_WINAPI(HANDLE, CreateThread, LPSECURITY_ATTRIBUTES lpThreadAttributes, SIZE_T dwStackSize, LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameter, DWORD dwCreationFlags, LPDWORD lpThreadId);
-__MCF_WINAPI(VOID, ExitThread, DWORD dwExitCode);
-__MCF_WINAPI(BOOL, SwitchToThread, VOID);
+__MCF_WINAPI(HANDLE, CreateThread, LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, DWORD, LPDWORD);
+__MCF_WINAPI(void, ExitThread, DWORD);
+__MCF_WINAPI(BOOL, SwitchToThread, void);
 
-__MCF_WINAPI(BOOLEAN, RtlDllShutdownInProgress, VOID);
-__MCF_WINAPI(VOID, RtlMoveMemory, VOID* Destination, const VOID* Source, SIZE_T Length);
-__MCF_WINAPI(VOID, RtlFillMemory, VOID* Destination, SIZE_T Length, INT Fill);
-__MCF_WINAPI(VOID, RtlZeroMemory, VOID* Destination, SIZE_T Length);
-__MCF_WINAPI(SIZE_T, RtlCompareMemory, const VOID* Source1, const VOID* Source2, SIZE_T Length);
+__MCF_WINAPI(BOOLEAN, RtlDllShutdownInProgress, void);
+__MCF_WINAPI(void, RtlMoveMemory, void*, const void*, size_t);
+__MCF_WINAPI(void, RtlFillMemory, void*, size_t, int);
+__MCF_WINAPI(void, RtlZeroMemory, void*, size_t);
+__MCF_WINAPI(size_t, RtlCompareMemory, const void*, const void*, size_t);
 
-__MCF_WINAPI(NTSTATUS, NtDuplicateObject, HANDLE SourceProcessHandle, HANDLE SourceHandle, HANDLE TargetProcessHandle, PHANDLE TargetHandle, ACCESS_MASK DesiredAccess, ULONG HandleAttributes, ULONG Options);
-__MCF_WINAPI(NTSTATUS, NtClose, HANDLE Handle);
-__MCF_WINAPI(NTSTATUS, NtWaitForSingleObject, HANDLE Handle, BOOLEAN Alertable, PLARGE_INTEGER Timeout);
-__MCF_WINAPI(NTSTATUS, NtDelayExecution, BOOLEAN Alertable, PLARGE_INTEGER Timeout);
-__MCF_WINAPI(NTSTATUS, NtWaitForKeyedEvent, HANDLE KeyedEvent, const VOID* Key, BOOLEAN Alertable, PLARGE_INTEGER Timeout);
-__MCF_WINAPI(NTSTATUS, NtReleaseKeyedEvent, HANDLE KeyedEvent, const VOID* Key, BOOLEAN Alertable, PLARGE_INTEGER Timeout);
+__MCF_WINAPI(NTSTATUS, NtDuplicateObject, HANDLE, HANDLE, HANDLE, PHANDLE, ACCESS_MASK, ULONG, ULONG);
+__MCF_WINAPI(NTSTATUS, NtClose, HANDLE);
+__MCF_WINAPI(NTSTATUS, NtWaitForSingleObject, HANDLE, BOOLEAN, PLARGE_INTEGER);
+__MCF_WINAPI(NTSTATUS, NtDelayExecution, BOOLEAN, const LARGE_INTEGER*);
+__MCF_WINAPI(NTSTATUS, NtWaitForKeyedEvent, HANDLE, PVOID, BOOLEAN, PLARGE_INTEGER);
+__MCF_WINAPI(NTSTATUS, NtReleaseKeyedEvent, HANDLE, PVOID, BOOLEAN, PLARGE_INTEGER);
 
 /* Declare helper functions here.  */
 EXCEPTION_DISPOSITION __cdecl
@@ -125,18 +130,18 @@ __MCF_i386_seh_cleanup(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
 
 __MCF_ALWAYS_INLINE
 NTSTATUS
-__MCF_keyed_event_wait(const void* __key, PLARGE_INTEGER __timeout) __MCF_NOEXCEPT
+__MCF_keyed_event_wait(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
   {
-    NTSTATUS __status = NtWaitForKeyedEvent(NULL, __key, false, __timeout);
+    NTSTATUS __status = NtWaitForKeyedEvent(NULL, (PVOID) __key, 0, (PLARGE_INTEGER) __timeout);
     __MCF_ASSERT(NT_SUCCESS(__status));
     return __status;
   }
 
 __MCF_ALWAYS_INLINE
 NTSTATUS
-__MCF_keyed_event_signal(const void* __key, PLARGE_INTEGER __timeout) __MCF_NOEXCEPT
+__MCF_keyed_event_signal(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
   {
-    NTSTATUS __status = NtReleaseKeyedEvent(NULL, __key, false, __timeout);
+    NTSTATUS __status = NtReleaseKeyedEvent(NULL, (PVOID) __key, 0, (PLARGE_INTEGER) __timeout);
     __MCF_ASSERT(NT_SUCCESS(__status));
     return __status;
   }
