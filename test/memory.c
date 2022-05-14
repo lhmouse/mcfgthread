@@ -6,13 +6,13 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include <ntsecapi.h>
 
 static char comp[100];
 static char data[100];
 
-HMODULE LoadLibraryA(LPCSTR);
-FARPROC GetProcAddress(HMODULE, LPCSTR);
+HMODULE __stdcall LoadLibraryA(LPCSTR);
+FARPROC __stdcall GetProcAddress(HMODULE, LPCSTR);
+BOOLEAN __stdcall SystemFunction036(PVOID, ULONG);  // SystemFunction036
 
 int
 main(void)
@@ -33,7 +33,7 @@ main(void)
     assert(pmemcmp);
 
     // __MCF_mfill
-    RtlGenRandom(comp, sizeof(comp));
+    SystemFunction036(comp, sizeof(comp));
     pmemmove(data, comp, sizeof(comp));
 
     pmemset(comp + 20, 'b', 30);
@@ -48,7 +48,7 @@ main(void)
     assert(__MCF_mequal(comp, data, sizeof(comp)) != 0);
 
     // __MCF_mzero
-    RtlGenRandom(comp, sizeof(comp));
+    SystemFunction036(comp, sizeof(comp));
     pmemmove(data, comp, sizeof(comp));
 
     pmemset(comp + 20, 0, 30);
@@ -63,7 +63,7 @@ main(void)
     assert(__MCF_mequal(comp, data, sizeof(comp)) != 0);
 
     // __MCF_mcopy
-    RtlGenRandom(comp, sizeof(comp));
+    SystemFunction036(comp, sizeof(comp));
     pmemmove(data, comp, sizeof(comp));
 
     pmemmove(comp + 10, comp + 80, 20);
@@ -78,7 +78,7 @@ main(void)
     assert(__MCF_mequal(comp, data, sizeof(comp)) != 0);
 
     // __MCF_mmove (forward)
-    RtlGenRandom(comp, sizeof(comp));
+    SystemFunction036(comp, sizeof(comp));
     pmemmove(data, comp, sizeof(comp));
 
     pmemmove(comp + 10, comp + 20, 40);
@@ -89,7 +89,7 @@ main(void)
     assert(__MCF_mequal(comp, data, sizeof(comp)) != 0);
 
     // __MCF_mmove (backward)
-    RtlGenRandom(comp, sizeof(comp));
+    SystemFunction036(comp, sizeof(comp));
     pmemmove(data, comp, sizeof(comp));
 
     pmemmove(comp + 20, comp + 10, 40);
@@ -100,7 +100,7 @@ main(void)
     assert(__MCF_mequal(comp, data, sizeof(comp)) != 0);
 
     // __MCF_mcomp (equal)
-    RtlGenRandom(comp, sizeof(comp));
+    SystemFunction036(comp, sizeof(comp));
     pmemmove(data, comp, sizeof(comp));
 
     assert(pmemcmp(comp, data, sizeof(comp)) == 0);
