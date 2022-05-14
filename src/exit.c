@@ -5,7 +5,7 @@
 #include "precompiled.i"
 #define __MCF_EXIT_EXTERN_INLINE  __MCF_DLLEXPORT
 #include "exit.h"
-#include "xwinnt.i"
+#include "xglobals.i"
 
 __MCF_DLLEXPORT
 void

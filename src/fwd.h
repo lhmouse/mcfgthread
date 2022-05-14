@@ -149,47 +149,6 @@ uint32_t
 _MCF_get_win32_error(void) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-/* These functions set the last error code and return the second argument.
- * They should be subject to tail-call optimization.  */
-int
-__MCF_win32_error_i(uint32_t __code, int __val) __MCF_NOEXCEPT;
-
-void*
-__MCF_win32_error_p(uint32_t __code, void* __ptr) __MCF_NOEXCEPT;
-
-/* These functions are declared here for the sake of completeness, and are not
- * meant to be called directly.  */
-void
-__MCF_run_dtors_at_quick_exit(void) __MCF_NOEXCEPT;
-
-void
-__MCF_run_dtors_atexit(void) __MCF_NOEXCEPT;
-
-void
-__MCF_finalize_on_exit(void) __MCF_NOEXCEPT;
-
-/* Declare global data.  */
-#ifndef __MCF_DYNCONST
-#  define __MCF_DYNCONST    const  /* read-only but initialized dynamically  */
-#endif
-
-extern __MCF_DYNCONST uint32_t __MCF_win32_tls_index;
-extern __MCF_DYNCONST double __MCF_perf_frequency_reciprocal;
-extern __MCF_DYNCONST _MCF_thread __MCF_main_thread;
-
-extern _MCF_mutex __MCF_cxa_atexit_mutex;
-extern __MCF_dtor_queue __MCF_cxa_atexit_queue;
-extern _MCF_mutex __MCF_cxa_at_quick_exit_mutex;
-extern __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
-extern uint8_t __MCF_mutex_spin_field[2048];
-
-/* These are private functions that are not exported from the DLL.  */
-void
-__MCF_dll_callback_on_process_attach(void) __MCF_NOEXCEPT;
-
-void
-__MCF_dll_callback_on_thread_detach(void) __MCF_NOEXCEPT;
-
 #ifdef __cplusplus
 }
 #endif

@@ -4,7 +4,7 @@
 
 #include "precompiled.i"
 #include "fwd.h"
-#include "xwinnt.i"
+#include "xglobals.i"
 
 static
 void __stdcall

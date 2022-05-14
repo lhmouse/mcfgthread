@@ -5,7 +5,7 @@
 #include "precompiled.i"
 #define __MCF_THREAD_EXTERN_INLINE  __MCF_DLLEXPORT
 #include "thread.h"
-#include "xwinnt.i"
+#include "xglobals.i"
 
 static
 DWORD __stdcall

@@ -5,7 +5,7 @@
 #include "precompiled.i"
 #define __MCF_SEM_EXTERN_INLINE  __MCF_DLLEXPORT
 #include "sem.h"
-#include "xwinnt.i"
+#include "xglobals.i"
 
 __MCF_DLLEXPORT
 int

@@ -5,7 +5,7 @@
 #include "precompiled.i"
 #define __MCF_ONCE_EXTERN_INLINE  __MCF_DLLEXPORT
 #include "once.h"
-#include "xwinnt.i"
+#include "xglobals.i"
 
 __MCF_DLLEXPORT
 int

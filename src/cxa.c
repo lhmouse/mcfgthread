@@ -9,6 +9,7 @@
 #include "mutex.h"
 #include "dtor_queue.h"
 #include "thread.h"
+#include "xglobals.i"
 
 __MCF_DLLEXPORT
 int

@@ -5,7 +5,7 @@
 #include "precompiled.i"
 #define __MCF_EVENT_EXTERN_INLINE  __MCF_DLLEXPORT
 #include "event.h"
-#include "xwinnt.i"
+#include "xglobals.i"
 
 __MCF_DLLEXPORT
 int

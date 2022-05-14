@@ -5,7 +5,7 @@
 #include "precompiled.i"
 #define __MCF_CLOCK_EXTERN_INLINE  __MCF_DLLEXPORT
 #include "clock.h"
-#include "xwinnt.i"
+#include "xglobals.i"
 
 static inline
 double

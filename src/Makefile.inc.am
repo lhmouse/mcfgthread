@@ -22,8 +22,8 @@ lib_LTLIBRARIES += lib/libmcfgthread.la
 lib_libmcfgthread_la_SOURCES =  \
   %D%/version.h.in  \
   %D%/precompiled.i  \
-  %D%/xwinnt.i  \
-  %D%/xwinnt.c  \
+  %D%/xglobals.i  \
+  %D%/xglobals.c  \
   %D%/memcpy.c  \
   %D%/memmove.c  \
   %D%/memcmp.c  \

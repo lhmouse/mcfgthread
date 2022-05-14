@@ -5,10 +5,10 @@
 #include "precompiled.i"
 #define __MCF_MUTEX_EXTERN_INLINE  __MCF_DLLEXPORT
 #include "mutex.h"
-#include "xwinnt.i"
+#include "xglobals.i"
 
 static inline
-uint8_t*
+BYTE*
 do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
   {
     /* Each spinning thread is assigned a byte in the field. If the thread sees
