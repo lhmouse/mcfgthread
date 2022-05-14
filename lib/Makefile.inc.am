@@ -1,19 +1,21 @@
 BUILT_SOURCES +=  \
-  lib/libkernelbase_tiny.dll.a  \
-  lib/libntdll_tiny.dll.a  \
+  %D%/libkernelbase_tiny.a  \
+  %D%/libntdll_tiny.a  \
   ${NOTHING}
 
 CLEANFILES +=  \
-  lib/libkernelbase_tiny.dll.a  \
-  lib/libntdll_tiny.dll.a  \
+  %D%/libkernelbase_tiny.a  \
+  %D%/libntdll_tiny.a  \
   ${NOTHING}
 
 EXTRA_DIST +=  \
-  lib/fwd.hdef  \
-  lib/kernelbase_tiny.cdef  \
-  lib/ntdll_tiny.cdef  \
+  %D%/fwd.hdef  \
+  %D%/libkernelbase_tiny.cdef  \
+  %D%/libntdll_tiny.cdef  \
   ${NOTHING}
 
-lib/lib%.dll.a: ${srcdir}/lib/%.cdef
+.cdef.a:
+	@mkdir -p %D%
 	${AM_V_GEN}${CC} -W{all,extra,undef} -std=c99 -x c-header $< -P -E -o $@.def &&  \
 	    ${DLLTOOL} ${AM_DLLTOOLFLAGS} ${DLLTOOLFLAGS} -k -d $@.def -l $@
+	@rm -f $@.def

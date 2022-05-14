@@ -17,7 +17,7 @@ AM_CFLAGS = -std=c99  \
 AM_RCFLAGS = -Isrc -c65001
 
 AM_DEFAULT_SOURCE_EXT = .c
-SUFFIXES = .rc .dll.a .cdef
+SUFFIXES = .rc .cdef
 LDADD = lib/libmcfgthread.la
 
 ## Initialization
