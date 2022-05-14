@@ -6,8 +6,11 @@
 #define __MCFGTHREAD_XGLOBALS_
 
 #include "fwd.h"
-#include <windows.h>
+#include <minwindef.h>
+#include <minwinbase.h>
+#include <winerror.h>
 #include <winternl.h>
+#include <ntstatus.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,64 +24,59 @@ extern "C" {
 #define GetCurrentProcess()  ((HANDLE) -1)
 #define GetCurrentThread()   ((HANDLE) -2)
 
+/* Undefine macros that redirect to standard functions.
+ * This ensures we call the ones from KERNEL32.  */
+#undef RtlCopyMemory
+#undef RtlMoveMemory
+#undef RtlFillMemory
+#undef RtlZeroMemory
+#undef RtlCompareMemory
+#undef RtlEqualMemory
+
 /* Add some attributes to existent functions.  */
-DWORD __stdcall
-GetCurrentThreadId(void)
-  __attribute__((__dllimport__, __nothrow__, __const__));
+#define __MCF_WINAPI(r, f, ...)  r __stdcall f(__VA_ARGS__) __asm__(#f) __attribute__((__dllimport__, __nothrow__))
 
-DWORD __stdcall
-GetCurrentProcessId(void)
-  __attribute__((__dllimport__, __nothrow__, __const__));
+__MCF_WINAPI(DWORD, GetLastError, VOID) __attribute__((__pure__));
+__MCF_WINAPI(VOID, SetLastError, DWORD dwErrCode);
 
-DWORD __stdcall
-GetLastError(void)
-  __attribute__((__dllimport__, __nothrow__, __pure__));
+__MCF_WINAPI(DWORD, GetCurrentThreadId, VOID) __attribute__((__const__));
+__MCF_WINAPI(DWORD, GetCurrentProcessId, VOID) __attribute__((__const__));
 
-VOID __stdcall
-SetLastError(DWORD dwErrCode)
-  __attribute__((__dllimport__, __nothrow__));
+__MCF_WINAPI(DWORD, TlsAlloc, VOID);
+__MCF_WINAPI(BOOL, TlsFree, DWORD dwTlsIndex);
+__MCF_WINAPI(LPVOID, TlsGetValue, DWORD dwTlsIndex) __attribute__((__pure__));
+__MCF_WINAPI(INT, TlsSetValue, DWORD dwTlsIndex, LPVOID lpTlsValue);
 
-LPVOID __stdcall
-TlsGetValue(DWORD dwTlsIndex)
-  __attribute__((__dllimport__, __nothrow__, __pure__));
+__MCF_WINAPI(HANDLE, GetProcessHeap, VOID) __attribute__((__const__));
+__MCF_WINAPI(LPVOID, HeapAlloc, HANDLE hHeap, DWORD dwFlags, SIZE_T dwBytes);
+__MCF_WINAPI(LPVOID, HeapReAlloc, HANDLE hHeap, DWORD dwFlags, LPVOID lpMem, SIZE_T dwBytes);
+__MCF_WINAPI(SIZE_T, HeapSize, HANDLE hHeap, DWORD dwFlags, LPCVOID lpMem);
+__MCF_WINAPI(BOOL, HeapFree, HANDLE hHeap, DWORD dwFlags, LPVOID lpMem);
 
-INT __stdcall
-TlsSetValue(DWORD dwTlsIndex, LPVOID lpTlsValue)
-  __attribute__((__dllimport__, __nothrow__));
+__MCF_WINAPI(VOID, GetSystemTimeAsFileTime, LPFILETIME lpSystemTimeAsFileTime);
+__MCF_WINAPI(ULONGLONG, GetTickCount64, VOID);
+__MCF_WINAPI(BOOL, QueryPerformanceFrequency, LARGE_INTEGER* lpFrequency);
+__MCF_WINAPI(BOOL, QueryPerformanceCounter, LARGE_INTEGER* lpPerformanceCount);
 
-HANDLE __stdcall
-GetProcessHeap(void)
-  __attribute__((__dllimport__, __nothrow__, __const__));
+__MCF_WINAPI(BOOL, GetModuleHandleExW, DWORD dwFlags, LPCWSTR lpModuleName, HMODULE *phModule);
+__MCF_WINAPI(BOOL, TerminateProcess, HANDLE hProcess, UINT uExitCode);
 
-/* Declare some NTDLL functions that are not available here.  */
-NTSTATUS __stdcall
-NtWaitForKeyedEvent(HANDLE KeyedEvent, const void* Key, BOOLEAN Alertable, const LARGE_INTEGER* Timeout)
-  __attribute__((__dllimport__, __nothrow__));
+__MCF_WINAPI(HANDLE, CreateThread, LPSECURITY_ATTRIBUTES lpThreadAttributes, SIZE_T dwStackSize, LPTHREAD_START_ROUTINE lpStartAddress, LPVOID lpParameter, DWORD dwCreationFlags, LPDWORD lpThreadId);
+__MCF_WINAPI(VOID, ExitThread, DWORD dwExitCode);
+__MCF_WINAPI(BOOL, SwitchToThread, VOID);
 
-NTSTATUS __stdcall
-NtReleaseKeyedEvent(HANDLE KeyedEvent, const void* Key, BOOLEAN Alertable, const LARGE_INTEGER* Timeout)
-  __attribute__((__dllimport__, __nothrow__));
+__MCF_WINAPI(BOOLEAN, RtlDllShutdownInProgress, VOID);
+__MCF_WINAPI(VOID, RtlMoveMemory, VOID* Destination, const VOID* Source, SIZE_T Length);
+__MCF_WINAPI(VOID, RtlFillMemory, VOID* Destination, SIZE_T Length, INT Fill);
+__MCF_WINAPI(VOID, RtlZeroMemory, VOID* Destination, SIZE_T Length);
+__MCF_WINAPI(SIZE_T, RtlCompareMemory, const VOID* Source1, const VOID* Source2, SIZE_T Length);
 
-NTSTATUS __stdcall
-NtDelayExecution(BOOLEAN Alertable, PLARGE_INTEGER Timeout)
-  __attribute__((__dllimport__, __nothrow__));
-
-NTSTATUS __stdcall
-NtWaitForSingleObject(HANDLE Handle, BOOLEAN Alertable, PLARGE_INTEGER Timeout)
-  __attribute__((__dllimport__, __nothrow__));
-
-BOOLEAN __stdcall
-RtlDllShutdownInProgress(void)
-  __attribute__((__dllimport__, __nothrow__));
-
-/* These are public APIs declared in the Windows DDK.  */
-NTSTATUS __stdcall
-NtDuplicateObject(HANDLE SourceProcessHandle, HANDLE SourceHandle, HANDLE TargetProcessHandle, HANDLE* TargetHandle, ACCESS_MASK DesiredAccess, ULONG HandleAttributes, ULONG Options)
-  __attribute__((__dllimport__, __nothrow__));
-
-NTSTATUS __stdcall
-NtClose(HANDLE Handle)
-  __attribute__((__dllimport__, __nothrow__));
+__MCF_WINAPI(NTSTATUS, NtDuplicateObject, HANDLE SourceProcessHandle, HANDLE SourceHandle, HANDLE TargetProcessHandle, PHANDLE TargetHandle, ACCESS_MASK DesiredAccess, ULONG HandleAttributes, ULONG Options);
+__MCF_WINAPI(NTSTATUS, NtClose, HANDLE Handle);
+__MCF_WINAPI(NTSTATUS, NtWaitForSingleObject, HANDLE Handle, BOOLEAN Alertable, PLARGE_INTEGER Timeout);
+__MCF_WINAPI(NTSTATUS, NtDelayExecution, BOOLEAN Alertable, PLARGE_INTEGER Timeout);
+__MCF_WINAPI(NTSTATUS, NtWaitForKeyedEvent, HANDLE KeyedEvent, const VOID* Key, BOOLEAN Alertable, PLARGE_INTEGER Timeout);
+__MCF_WINAPI(NTSTATUS, NtReleaseKeyedEvent, HANDLE KeyedEvent, const VOID* Key, BOOLEAN Alertable, PLARGE_INTEGER Timeout);
 
 /* Declare helper functions here.  */
 EXCEPTION_DISPOSITION __cdecl
@@ -127,7 +125,7 @@ __MCF_i386_seh_cleanup(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
 
 __MCF_ALWAYS_INLINE
 NTSTATUS
-__MCF_keyed_event_wait(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
+__MCF_keyed_event_wait(const void* __key, PLARGE_INTEGER __timeout) __MCF_NOEXCEPT
   {
     NTSTATUS __status = NtWaitForKeyedEvent(NULL, __key, false, __timeout);
     __MCF_ASSERT(NT_SUCCESS(__status));
@@ -136,7 +134,7 @@ __MCF_keyed_event_wait(const void* __key, const LARGE_INTEGER* __timeout) __MCF_
 
 __MCF_ALWAYS_INLINE
 NTSTATUS
-__MCF_keyed_event_signal(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
+__MCF_keyed_event_signal(const void* __key, PLARGE_INTEGER __timeout) __MCF_NOEXCEPT
   {
     NTSTATUS __status = NtReleaseKeyedEvent(NULL, __key, false, __timeout);
     __MCF_ASSERT(NT_SUCCESS(__status));
@@ -161,31 +159,6 @@ __MCF_adjust_winnt_timeout_v2(__MCF_winnt_timeout* __to) __MCF_NOEXCEPT;
 /* Note this function is subject to tail-call optimization.  */
 size_t
 __MCF_batch_release_common(const void* __key, size_t __count) __MCF_NOEXCEPT;
-
-/* Undefine macros that redirect to standard functions.
- * This ensures we call the ones from KERNEL32.  */
-#undef RtlCopyMemory
-#undef RtlMoveMemory
-#undef RtlFillMemory
-#undef RtlZeroMemory
-#undef RtlCompareMemory
-#undef RtlEqualMemory
-
-void __stdcall
-RtlMoveMemory(void* __dst, const void* __src, SIZE_T __size)
-  __attribute__((__dllimport__, __nothrow__));
-
-void __stdcall
-RtlFillMemory(void* __dst, SIZE_T __size, int __val)
-  __attribute__((__dllimport__, __nothrow__));
-
-void __stdcall
-RtlZeroMemory(void* __dst, SIZE_T __size)
-  __attribute__((__dllimport__, __nothrow__));
-
-SIZE_T __stdcall
-RtlCompareMemory(const void* __s1, const void* __s2, SIZE_T __size)
-  __attribute__((__dllimport__, __pure__, __nothrow__));
 
 /* Copy a block of memory forward, like `memcpy()`.  */
 void* __cdecl

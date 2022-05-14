@@ -37,11 +37,10 @@ int __stdcall
 __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
   {
     if(reason == DLL_PROCESS_ATTACH) {
-      /* Prevent this DLL from being unloaded.  */
+      /* Prevent this DLL from being unloaded.
+       * 5 = GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN  */
       HMODULE locked;
-      __MCF_CHECK(GetModuleHandleExW(
-          GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_PIN,
-          (void*) instance, &locked));
+      __MCF_CHECK(GetModuleHandleExW(5, (void*) instance, &locked));
     }
 
     /* Call the common routine. This will not fail.  */

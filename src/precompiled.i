@@ -26,7 +26,9 @@
 #define WIN32_LEAN_AND_MEAN  1
 #define NOMINMAX  1
 #define NOCOMM 1
-#include <windows.h>
+#include <minwindef.h>
+#include <minwinbase.h>
+#include <winerror.h>
 #include <winternl.h>
 #include <ntstatus.h>
 

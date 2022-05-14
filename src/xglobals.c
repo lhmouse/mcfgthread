@@ -146,7 +146,7 @@ __MCF_dll_callback_on_process_attach(void)
   {
     /* Allocate a TLS slot for this library.  */
     __MCF_win32_tls_index = TlsAlloc();
-    __MCF_CHECK(__MCF_win32_tls_index != TLS_OUT_OF_INDEXES);
+    __MCF_CHECK(__MCF_win32_tls_index != UINT32_MAX);
 
     /* Get the performance counter resolution.  */
     LARGE_INTEGER freq;
