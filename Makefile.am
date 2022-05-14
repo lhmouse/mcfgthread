@@ -41,7 +41,6 @@ TESTS = ${check_PROGRAMS}
 
 ## Programs and libraries
 include src/Makefile.inc.am
-include lib/Makefile.inc.am
 
 ## Tests
 include test/Makefile.inc.am
