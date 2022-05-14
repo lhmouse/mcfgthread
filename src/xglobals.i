@@ -40,7 +40,7 @@ extern "C" {
   RETURN __stdcall function(__VA_ARGS__)  \
     __asm__(#function) __attribute__((__dllimport__, __nothrow__))
 
-/* Declare Windows APIs here.  */
+/* Declare KERNELBASE APIs here.  */
 __MCF_WINAPI(DWORD, GetLastError, void) __attribute__((__pure__));
 __MCF_WINAPI(void, SetLastError, DWORD);
 
@@ -70,6 +70,7 @@ __MCF_WINAPI(HANDLE, CreateThread, LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START
 __MCF_WINAPI(void, ExitThread, DWORD);
 __MCF_WINAPI(BOOL, SwitchToThread, void);
 
+/* Declare NTDLL (driver) APIs here.  */
 __MCF_WINAPI(BOOLEAN, RtlDllShutdownInProgress, void);
 __MCF_WINAPI(void, RtlMoveMemory, void*, const void*, size_t);
 __MCF_WINAPI(void, RtlFillMemory, void*, size_t, int);
