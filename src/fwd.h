@@ -81,7 +81,13 @@ extern "C" {
 
 /* The `__MCF_STATIC_ASSERT()` is an expression that yields zero if it compiles
  * anyway. Its argument must be a constant expression.  */
-#define __MCF_STATIC_ASSERT(...)    ((int) sizeof(struct{ char : (__VA_ARGS__) ? 1 : -1; }) - 1)
+#ifdef __cplusplus
+extern "C++" template<bool __value> struct __MCF_static_assert;
+extern "C++" template<> struct __MCF_static_assert<true> { char __unused;  };
+#  define __MCF_STATIC_ASSERT(...)   ((int) sizeof(::__MCF_static_assert<(__VA_ARGS__)>) - 1)
+#else
+#  define __MCF_STATIC_ASSERT(...)   ((int) sizeof(struct { char: 1|-!(__VA_ARGS__);  }) - 1)
+#endif
 
 /* Make some forward declarations.  */
 typedef struct __MCF_dtor_element __MCF_dtor_element;
