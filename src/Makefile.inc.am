@@ -1,68 +1,68 @@
 include_mcfgthreaddir = ${includedir}/mcfgthread
 include_mcfgthread_HEADERS =  \
-  %D%/version.h  \
-  %D%/atomic.h  \
-  %D%/fwd.h  \
-  %D%/clock.h  \
-  %D%/mutex.h  \
-  %D%/cond.h  \
-  %D%/once.h  \
-  %D%/sem.h  \
-  %D%/event.h  \
-  %D%/thread.h  \
-  %D%/cxa.h  \
-  %D%/dtor_queue.h  \
-  %D%/exit.h  \
-  %D%/tls.h  \
-  %D%/gthr_aux.h  \
-  %D%/gthr.h  \
-  ${NOTHING}
+  %reldir%/version.h  \
+  %reldir%/atomic.h  \
+  %reldir%/fwd.h  \
+  %reldir%/clock.h  \
+  %reldir%/mutex.h  \
+  %reldir%/cond.h  \
+  %reldir%/once.h  \
+  %reldir%/sem.h  \
+  %reldir%/event.h  \
+  %reldir%/thread.h  \
+  %reldir%/cxa.h  \
+  %reldir%/dtor_queue.h  \
+  %reldir%/exit.h  \
+  %reldir%/tls.h  \
+  %reldir%/gthr_aux.h  \
+  %reldir%/gthr.h  \
+  ${END}
 
 lib_LTLIBRARIES += lib/libmcfgthread.la
 lib_libmcfgthread_la_SOURCES =  \
-  %D%/version.h.in  \
-  %D%/precompiled.i  \
-  %D%/xglobals.i  \
-  %D%/xglobals.c  \
-  %D%/memcpy.c  \
-  %D%/memmove.c  \
-  %D%/memcmp.c  \
-  %D%/memset.c  \
-  %D%/version.rc  \
-  %D%/startup.c  \
-  %D%/fwd.c  \
-  %D%/clock.c  \
-  %D%/mutex.c  \
-  %D%/cond.c  \
-  %D%/once.c  \
-  %D%/sem.c  \
-  %D%/event.c  \
-  %D%/thread.c  \
-  %D%/cxa.c  \
-  %D%/dtor_queue.c  \
-  %D%/exit.c  \
-  %D%/tls.c  \
-  %D%/gthr_aux.c  \
-  %D%/gthr.c  \
-  %D%/libkernelbase_tiny.def  \
-  %D%/libntdll_tiny.def  \
-  ${NOTHING}
+  %reldir%/version.h.in  \
+  %reldir%/precompiled.i  \
+  %reldir%/xglobals.i  \
+  %reldir%/xglobals.c  \
+  %reldir%/memcpy.c  \
+  %reldir%/memmove.c  \
+  %reldir%/memcmp.c  \
+  %reldir%/memset.c  \
+  %reldir%/version.rc  \
+  %reldir%/startup.c  \
+  %reldir%/fwd.c  \
+  %reldir%/clock.c  \
+  %reldir%/mutex.c  \
+  %reldir%/cond.c  \
+  %reldir%/once.c  \
+  %reldir%/sem.c  \
+  %reldir%/event.c  \
+  %reldir%/thread.c  \
+  %reldir%/cxa.c  \
+  %reldir%/dtor_queue.c  \
+  %reldir%/exit.c  \
+  %reldir%/tls.c  \
+  %reldir%/gthr_aux.c  \
+  %reldir%/gthr.c  \
+  %reldir%/libkernelbase_tiny.def  \
+  %reldir%/libntdll_tiny.def  \
+  ${END}
 
 BUILT_SOURCES +=  \
-  %D%/libkernelbase_tiny.a  \
-  %D%/libntdll_tiny.a  \
-  ${NOTHING}
+  %reldir%/libkernelbase_tiny.a  \
+  %reldir%/libntdll_tiny.a  \
+  ${END}
 
 CLEANFILES +=  \
-  %D%/libkernelbase_tiny.a  \
-  %D%/libntdll_tiny.a  \
-  ${NOTHING}
+  %reldir%/libkernelbase_tiny.a  \
+  %reldir%/libntdll_tiny.a  \
+  ${END}
 
 lib_libmcfgthread_la_CFLAGS =  \
   ${AM_CFLAGS} -nostdlib -f{freestanding,unwind-tables}
 
 lib_libmcfgthread_la_LDFLAGS =  \
-  -Wc,-nostdlib,%D%/lib{kernelbase,ntdll}_tiny.a  \
+  -Wc,-nostdlib,%reldir%/lib{kernelbase,ntdll}_tiny.a  \
   -Wl,--subsystem,windows:6.1,--entry,__MCF_dll_startup@@Z,--exclude-all-symbols  \
   -Wl,--enable-auto-image-base,--disable-{runtime-pseudo-reloc,stdcall-fixup}  \
   -no-undefined -version-info @abi_major@:@abi_minor@

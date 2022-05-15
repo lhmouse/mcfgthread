@@ -1,5 +1,5 @@
 ACLOCAL_AMFLAGS = -I m4
-NOTHING =
+END =
 
 ## Compiler options
 AM_CPPFLAGS = -pipe -Wall -Wextra -Isrc -U_FORTIFY_SOURCE -D_WIN32_WINNT=0x0601  \
