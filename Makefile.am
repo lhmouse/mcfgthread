@@ -15,7 +15,6 @@ AM_CFLAGS = -std=c99  \
   -Werror={strict-prototypes,implicit-{function-declaration,int}}
 
 AM_RCFLAGS = -Isrc -c65001
-AM_DLLTOOLFLAGS =
 
 AM_DEFAULT_SOURCE_EXT = .c
 SUFFIXES = .rc .def
