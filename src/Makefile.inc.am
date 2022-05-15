@@ -62,7 +62,7 @@ lib_libmcfgthread_la_CFLAGS =  \
   ${AM_CFLAGS} -nostdlib -f{freestanding,unwind-tables}
 
 lib_libmcfgthread_la_LDFLAGS =  \
-  -Wc,-nostdlib -Wl,%D%/lib{kernelbase,ntdll}_tiny.a  \
+  -Wc,-nostdlib,%D%/lib{kernelbase,ntdll}_tiny.a  \
   -Wl,--subsystem,windows:6.1,--entry,__MCF_dll_startup@@Z,--exclude-all-symbols  \
   -Wl,--enable-auto-image-base,--disable-{runtime-pseudo-reloc,stdcall-fixup}  \
   -no-undefined -version-info @abi_major@:@abi_minor@
