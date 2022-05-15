@@ -302,6 +302,7 @@ int
 __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     uint32_t __my_tid = _MCF_thread_self_tid();
+    int __err;
 
     /* Check whether the mutex has already been owned.  */
     if(_MCF_atomic_load_32_rlx(&(__rmtx->__owner)) == (int32_t) __my_tid) {
@@ -311,7 +312,7 @@ __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXC
     }
 
     /* Attempt to take ownership.  */
-    int __err = _MCF_mutex_lock(&(__rmtx->__mutex), NULL);
+    __err = _MCF_mutex_lock(&(__rmtx->__mutex), NULL);
     __MCF_ASSERT(__err == 0);
 
     /* The calling thread owns the mutex now.  */
@@ -334,6 +335,8 @@ int
 __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     uint32_t __my_tid = _MCF_thread_self_tid();
+    int64_t __timeout = 0;
+    int __err;
 
     /* Check whether the mutex has already been owned.  */
     if(_MCF_atomic_load_32_rlx(&(__rmtx->__owner)) == (int32_t) __my_tid) {
@@ -343,8 +346,7 @@ __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NO
     }
 
     /* Attempt to take ownership.  */
-    int64_t __timeout = 0;
-    int __err = _MCF_mutex_lock(&(__rmtx->__mutex), &__timeout);
+    __err = _MCF_mutex_lock(&(__rmtx->__mutex), &__timeout);
     if(__err != 0)
       return EBUSY;
 
@@ -368,6 +370,8 @@ int
 __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
   {
     uint32_t __my_tid = _MCF_thread_self_tid();
+    int64_t __timeout = 0;
+    int __err;
 
     /* Check whether the mutex has already been owned.  */
     if(_MCF_atomic_load_32_rlx(&(__rmtx->__owner)) == (int32_t) __my_tid) {
@@ -377,8 +381,8 @@ __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const 
     }
 
     /* Attempt to take ownership.  */
-    int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
-    int __err = _MCF_mutex_lock(&(__rmtx->__mutex), &__timeout);
+    __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
+    __err = _MCF_mutex_lock(&(__rmtx->__mutex), &__timeout);
     if(__err != 0)
       return ETIMEDOUT;
 

@@ -28,7 +28,7 @@ main(void)
     assert(thrd);
 
     printf("main waiting\n");
-    void* ret;
+    void* ret = NULL;
     r = __gthread_join(thrd, &ret);
     assert(r == 0);
     printf("main wait finished: %p\n", ret);
