@@ -305,7 +305,7 @@ __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXC
 
     /* Check whether the mutex has already been owned.  */
     if(_MCF_atomic_load_32_rlx(&(__rmtx->__owner)) == (int32_t) __my_tid) {
-      __MCF_ASSERT(__rmtx->__depth < INT32_MAX);
+      __MCF_ASSERT(__rmtx->__depth < __INT32_MAX__);
       __rmtx->__depth ++;
       return 0;
     }
@@ -337,7 +337,7 @@ __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NO
 
     /* Check whether the mutex has already been owned.  */
     if(_MCF_atomic_load_32_rlx(&(__rmtx->__owner)) == (int32_t) __my_tid) {
-      __MCF_ASSERT(__rmtx->__depth < INT32_MAX);
+      __MCF_ASSERT(__rmtx->__depth < __INT32_MAX__);
       __rmtx->__depth ++;
       return 0;
     }
@@ -371,7 +371,7 @@ __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const 
 
     /* Check whether the mutex has already been owned.  */
     if(_MCF_atomic_load_32_rlx(&(__rmtx->__owner)) == (int32_t) __my_tid) {
-      __MCF_ASSERT(__rmtx->__depth < INT32_MAX);
+      __MCF_ASSERT(__rmtx->__depth < __INT32_MAX__);
       __rmtx->__depth ++;
       return 0;
     }

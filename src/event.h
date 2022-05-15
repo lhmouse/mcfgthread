@@ -23,11 +23,11 @@ struct __MCF_event
     uintptr_t __value : 8;
 
     uintptr_t __nsleep : __MCF_PTR_BITS - 8;  /* number of sleeping threads  */
-#define __MCF_EVENT_NSLEEP_M  (UINTPTR_MAX >> 8)
+#define __MCF_EVENT_NSLEEP_M  (__UINTPTR_MAX__ >> 8)
   };
 
 /* This is the maximum value of an event.  */
-#define __MCF_EVENT_VALUE_MAX   UINT8_MAX
+#define __MCF_EVENT_VALUE_MAX   __UINT8_MAX__
 
 /* Define a macro for static initialization of events. The argument is the
  * initial value of the event.  */

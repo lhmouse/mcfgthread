@@ -24,7 +24,7 @@ struct __MCF_sem
   };
 
 /* This is the maximum value of a semaphore.  */
-#define __MCF_SEM_VALUE_MAX   INTPTR_MAX
+#define __MCF_SEM_VALUE_MAX   __INTPTR_MAX__
 
 /* Define a macro for static initialization of semaphores. The argument is the
  * initial value of the semaphore, which shall not be negative.  */

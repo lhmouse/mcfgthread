@@ -44,11 +44,11 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* ds
 
       /* Search backwards for an element matching `dso`.  */
       if(dso)
-        while((index != UINT32_MAX) && (dso != cur_q->__data[index].__dso))
+        while((index != __UINT32_MAX__) && (dso != cur_q->__data[index].__dso))
           index --;
 
       /* If an element has been found, remove it.  */
-      if(index != UINT32_MAX) {
+      if(index != __UINT32_MAX__) {
         __MCF_dtor_element* cur_elem = cur_q->__data + index;
         *elem = *cur_elem;
         cur_q->__size --;
@@ -83,7 +83,7 @@ __MCF_dtor_queue_remove(__MCF_dtor_queue* queue, void* dso)
     size_t count = 0;
 
     do {
-      uint32_t index = UINT32_MAX;
+      uint32_t index = __UINT32_MAX__;
       uint32_t new_size = 0;
 
       /* Search forwards and copy all elements not matching `dso`.  */

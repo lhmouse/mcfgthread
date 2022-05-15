@@ -29,7 +29,7 @@ void
 __MCF_initialize_winnt_timeout_v2(__MCF_winnt_timeout* to, const int64_t* int64_opt)
   {
     /* Initialize it to an infinite value.  */
-    to->__li->QuadPart = INT64_MAX;
+    to->__li->QuadPart = __INT64_MAX__;
 
     /* If no timeout is given, wait indefinitely.  */
     if(!int64_opt)
@@ -146,7 +146,7 @@ __MCF_dll_callback_on_process_attach(void)
   {
     /* Allocate a TLS slot for this library.  */
     __MCF_win32_tls_index = TlsAlloc();
-    __MCF_CHECK(__MCF_win32_tls_index != UINT32_MAX);
+    __MCF_CHECK(__MCF_win32_tls_index != __UINT32_MAX__);
 
     /* Get the performance counter resolution.  */
     LARGE_INTEGER freq;

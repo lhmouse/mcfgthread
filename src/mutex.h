@@ -29,7 +29,7 @@ struct __MCF_mutex
 #define __MCF_MUTEX_SP_NFAIL_M  15U
 
     uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
-#define __MCF_MUTEX_NSLEEP_M  (UINTPTR_MAX >> 9)
+#define __MCF_MUTEX_NSLEEP_M  (__UINTPTR_MAX__ >> 9)
   };
 
 /* If the spinning failure counter has reached this number, newcomers will not
