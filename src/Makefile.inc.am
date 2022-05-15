@@ -69,7 +69,7 @@ lib_libmcfgthread_la_LDFLAGS =  \
 
 %.xi: %.i %reldir%/version.h config.h
 	${AM_V_GEN}printf '#include "%s"\n' $$(cygpath -am $< || echo $(abspath $<)) > $@
-	${AM_V_CC}${LTCOMPILE} -x c-header -Wno-error $< -o $@.o &&  \
+	${AM_V_CC}${LTCOMPILE} -x c-header ${lib_libmcfgthread_la_CFLAGS} -Wno-error $< -o $@.o &&  \
 	    source $@.lo &&  \
 	    mv -f %reldir%/$${pic_object} $@.gch &&  \
 	    rm -f $@.lo
