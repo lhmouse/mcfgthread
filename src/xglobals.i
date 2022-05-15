@@ -66,15 +66,15 @@ __MCF_WINAPI(ULONGLONG, GetTickCount64, void);
 __MCF_WINAPI(BOOL, QueryPerformanceFrequency, LARGE_INTEGER*);
 __MCF_WINAPI(BOOL, QueryPerformanceCounter, LARGE_INTEGER*);
 
-__MCF_WINAPI(BOOL, GetModuleHandleExW, DWORD, LPCWSTR, HMODULE*);
-__MCF_WINAPI(BOOL, TerminateProcess, HANDLE, UINT);
-
 __MCF_WINAPI(HANDLE, CreateThread, LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, DWORD, LPDWORD);
 __MCF_WINAPI(void, ExitThread, DWORD);
 __MCF_WINAPI(BOOL, SwitchToThread, void);
+__MCF_WINAPI(BOOL, TerminateProcess, HANDLE, UINT);
 
 /* Declare NTDLL (driver) APIs here.  */
+__MCF_WINAPI(NTSTATUS, LdrAddRefDll, ULONG, PVOID);
 __MCF_WINAPI(BOOLEAN, RtlDllShutdownInProgress, void);
+
 __MCF_WINAPI(void, RtlMoveMemory, void*, const void*, SIZE_T);
 __MCF_WINAPI(void, RtlFillMemory, void*, SIZE_T, int);
 __MCF_WINAPI(void, RtlZeroMemory, void*, SIZE_T);

@@ -12,7 +12,6 @@ EXPORTS
   HeapReAlloc
   HeapFree
   HeapSize
-  GetModuleHandleExW
   TerminateProcess
   GetSystemTimeAsFileTime
   GetSystemTimePreciseAsFileTime
