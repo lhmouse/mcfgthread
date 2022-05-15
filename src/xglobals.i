@@ -220,16 +220,16 @@ __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
     uintptr_t __si = (uintptr_t) __src;
     uintptr_t __cx = __size;
 
-    /* If we can't copy forward, adjust pointers and set DF to copy backward.
-     * This has to provide a dependency output for the next statement so GCC
-     * does not reorder them.  */
     if(!__MCF_can_copy_forward(__dst, __src, __size))
-      __asm__ (
+      /* Set DF and adjust pointers to copy backward. This has to provide a
+       * dependency output for the next statement so GCC won't reorder them.  */
+      __asm__ volatile (
         "std;"
-        : "=D"(__di), "=S"(__si)
-        : "D"(__di + __cx - 1), "S"(__si + __cx - 1)
-        : "memory"
+        : "+D"(__di), "+S"(__si)
       );
+      __di += __cx - 1;
+      __si += __cx - 1;
+    }
 
     /* Now copy memory. The DF flag shall be cleared before returning.  */
     __asm__ (
