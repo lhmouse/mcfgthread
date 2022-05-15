@@ -24,6 +24,10 @@ AC_ARG_ENABLE([debug-checks], AS_HELP_STRING([--enable-debug-checks], [enable as
 AM_CONDITIONAL([enable_debug_checks], [test "${enable_debug_checks}" == "yes"])
 AM_COND_IF([enable_debug_checks], [AC_DEFINE([__MCF_DEBUG], 1, [Define to 1 to enable assertions])])
 
+## Check for pre-compiled headers
+AC_ARG_ENABLE([pch], AS_HELP_STRING([--disable-pch], [do not use pre-compiled headers]))
+AM_CONDITIONAL([enable_pch], [test "${enable_pch}" != "no"])
+
 ## Finish
 AC_SUBST([abi_major])
 AC_SUBST([abi_minor])

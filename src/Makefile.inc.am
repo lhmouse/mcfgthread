@@ -48,20 +48,15 @@ lib_libmcfgthread_la_SOURCES =  \
   %reldir%/libntdll_tiny.def  \
   ${END}
 
-AM_CFLAGS += -include %reldir%/precompiled.xi
+.rc.lo:
+	${AM_V_GEN}${LIBTOOL} ${AM_V_lt} --tag=RC --mode=compile  \
+	  ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
 
-BUILT_SOURCES +=  \
-  %reldir%/precompiled.xi  \
-  %reldir%/libkernelbase_tiny.a  \
-  %reldir%/libntdll_tiny.a  \
-  ${END}
+.def.a:
+	${AM_V_GEN}${DLLTOOL} ${AM_DLLTOOLFLAGS} -k -d $< -l $@
 
-CLEANFILES +=  \
-  %reldir%/precompiled.xi  \
-  %reldir%/precompiled.xi.gch  \
-  %reldir%/libkernelbase_tiny.a  \
-  %reldir%/libntdll_tiny.a  \
-  ${END}
+BUILT_SOURCES += %reldir%/libkernelbase_tiny.a %reldir%/libntdll_tiny.a
+CLEANFILES += %reldir%/libkernelbase_tiny.a %reldir%/libntdll_tiny.a
 
 lib_libmcfgthread_la_CFLAGS =  \
   ${AM_CFLAGS} -nostdlib -f{freestanding,unwind-tables}
@@ -72,16 +67,15 @@ lib_libmcfgthread_la_LDFLAGS =  \
   -Wl,--enable-auto-image-base,--disable-{runtime-pseudo-reloc,stdcall-fixup}  \
   -no-undefined -version-info @abi_major@:@abi_minor@
 
-.rc.lo:
-	${AM_V_GEN}${LIBTOOL} ${AM_V_lt} --tag=RC --mode=compile  \
-	  ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
-
-.def.a:
-	${AM_V_GEN}${DLLTOOL} ${AM_DLLTOOLFLAGS} -k -d $< -l $@
-
 %.xi: %.i %reldir%/version.h config.h
 	${AM_V_GEN}printf '#include "%s"\n' $$(cygpath -am $< || echo $(abspath $<)) > $@
 	${AM_V_CC}${LTCOMPILE} -x c-header -Wno-error $< -o $@.o &&  \
 	    source $@.lo &&  \
 	    mv -f %reldir%/$${pic_object} $@.gch &&  \
 	    rm -f $@.lo
+
+if enable_pch
+AM_CFLAGS += -include %reldir%/precompiled.xi -Winvalid-pch
+BUILT_SOURCES += %reldir%/precompiled.xi
+CLEANFILES += %reldir%/precompiled.xi %reldir%/precompiled.xi.gch
+endif
