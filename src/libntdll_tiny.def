@@ -3,16 +3,16 @@
 ;; Copyleft 2022, LH_Mouse. All wrongs reserved.
 
 LIBRARY "NTDLL.DLL"
-EXPORTS
 
-NtDuplicateObject
-NtClose
-NtWaitForSingleObject
-NtWaitForKeyedEvent
-NtReleaseKeyedEvent
-NtDelayExecution
-RtlDllShutdownInProgress
-RtlMoveMemory
-RtlFillMemory
-RtlZeroMemory
-RtlCompareMemory
+EXPORTS
+  NtDuplicateObject
+  NtClose
+  NtWaitForSingleObject
+  NtWaitForKeyedEvent
+  NtReleaseKeyedEvent
+  NtDelayExecution
+  RtlDllShutdownInProgress
+  RtlMoveMemory
+  RtlFillMemory
+  RtlZeroMemory
+  RtlCompareMemory
