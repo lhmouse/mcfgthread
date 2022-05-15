@@ -71,8 +71,8 @@ extern "C" {
 #define __MCF_0_INIT          { __MCF_C(0) }
 #define __MCF_PTR_BITS        (__SIZEOF_POINTER__ * 8U)
 
-/* The `__MCF_STATIC_ASSERT()` is an expression that yields zero if it compiles
- * anyway. Its argument must be a constant expression.  */
+/* The `__MCF_STATIC_ASSERT()` macro is an expression that yields zero if it
+ * compiles anyway. Its argument must be a constant expression.  */
 #ifdef __cplusplus
 extern "C++" template<bool __value> struct __MCF_static_assert;
 extern "C++" template<> struct __MCF_static_assert<true> { char __unused;  };
@@ -91,9 +91,9 @@ __MCF_runtime_failure(const char* __where)
 #  define __MCF_UNREACHABLE   __builtin_unreachable()
 #endif
 
-/* The `__MCF_ASSERT()` and `__MCF_CHECK()` perform run-time checks. If an
- * argument yields false, `__MCF_ASSERT()` results in undefined behavior, and
- * `__MCF_CHECK()` effects abnormal termination of the current program.  */
+/* The `__MCF_ASSERT()` and `__MCF_CHECK()` macros perform run-time checks. If
+ * an argument yields false, `__MCF_ASSERT()` results in undefined behavior,
+ * and `__MCF_CHECK()` effects abnormal termination of the current program.  */
 #define __MCF_ASSERT(...)     ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
 #define __MCF_CHECK(...)      ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__func__))
 
