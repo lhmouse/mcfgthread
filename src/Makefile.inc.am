@@ -48,12 +48,17 @@ lib_libmcfgthread_la_SOURCES =  \
   %reldir%/libntdll_tiny.def  \
   ${END}
 
+AM_CFLAGS += -include %reldir%/precompiled.xi
+
 BUILT_SOURCES +=  \
+  %reldir%/precompiled.xi  \
   %reldir%/libkernelbase_tiny.a  \
   %reldir%/libntdll_tiny.a  \
   ${END}
 
 CLEANFILES +=  \
+  %reldir%/precompiled.xi  \
+  %reldir%/precompiled.xi.gch  \
   %reldir%/libkernelbase_tiny.a  \
   %reldir%/libntdll_tiny.a  \
   ${END}
@@ -73,3 +78,10 @@ lib_libmcfgthread_la_LDFLAGS =  \
 
 .def.a:
 	${AM_V_GEN}${DLLTOOL} ${AM_DLLTOOLFLAGS} -k -d $< -l $@
+
+%.xi: %.i %reldir%/version.h config.h
+	${AM_V_GEN}printf '#include "%s"\n' $$(cygpath -am $< || echo $(abspath $<)) > $@
+	${AM_V_CXX}${LTCXXCOMPILE} -x c-header -Wno-error $< -o $@.o &&  \
+	    source $@.lo &&  \
+	    mv -f %reldir%/$${pic_object} $@.gch &&  \
+	    rm -f $@.lo
