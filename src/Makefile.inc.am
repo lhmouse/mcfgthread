@@ -68,8 +68,8 @@ lib_libmcfgthread_la_LDFLAGS =  \
   -no-undefined -version-info @abi_major@:@abi_minor@
 
 .rc.lo:
-	${AM_V_GEN}${LIBTOOL} ${AM_V_lt} --tag=RC ${AM_LIBTOOLFLAGS} ${LIBTOOLFLAGS}  \
-	    --mode=compile ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
+	${AM_V_GEN}${LIBTOOL} ${AM_V_lt} --tag=RC --mode=compile  \
+	  ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
 
 .def.a:
-	${AM_V_GEN}${DLLTOOL} ${AM_DLLTOOLFLAGS} ${DLLTOOLFLAGS} -k -d $< -l $@
+	${AM_V_GEN}${DLLTOOL} ${AM_DLLTOOLFLAGS} -k -d $< -l $@
