@@ -8,8 +8,8 @@
 #include "fwd.h"
 #include <minwindef.h>
 #include <minwinbase.h>
-#include <winerror.h>
 #include <winternl.h>
+#include <winerror.h>
 #include <ntstatus.h>
 
 #ifdef __cplusplus
