@@ -224,7 +224,7 @@ __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
      * This has to provide a dependency output for the next statement so GCC
      * does not reorder them.  */
     if(!__MCF_can_copy_forward(__dst, __src, __size))
-      __asm__ (
+      __asm__ volatile (
         "std;"
         : "=D"(__di), "=S"(__si)
         : "D"(__di + __cx - 1), "S"(__si + __cx - 1)
