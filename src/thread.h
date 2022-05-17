@@ -49,20 +49,23 @@ _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __
 
 /* Gets a pointer to user-defined data of a thread.  */
 __MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
-__MCF_CXX11(constexpr) __MCF_CXX(const) void*
+__MCF_CXX11(constexpr)
+__MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
 __MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
-__MCF_CXX11(constexpr) __MCF_CXX(const) void*
+__MCF_CXX11(constexpr)
+__MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     return (char*) __thrd->__data;
   }
 
 #ifdef __cplusplus
-extern "C++" inline
-__MCF_CXX11(constexpr) void*
+extern "C++"
+__MCF_CXX11(constexpr) inline
+void*
 _MCF_thread_get_data(_MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     return __thrd->__data;
@@ -105,12 +108,14 @@ _MCF_thread_drop_ref(_MCF_thread* __thrd_opt) __MCF_NOEXCEPT
 
 /* Gets the ID of a thread.  */
 __MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
-__MCF_CXX11(constexpr) uint32_t
+__MCF_CXX11(constexpr)
+uint32_t
 _MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
 __MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
-__MCF_CXX11(constexpr) uint32_t
+__MCF_CXX11(constexpr)
+uint32_t
 _MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     return __thrd->__tid;
@@ -118,12 +123,14 @@ _MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT
 
 /* Gets the handle of a thread.  */
 __MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
-__MCF_CXX11(constexpr) __MCF_HANDLE
+__MCF_CXX11(constexpr)
+__MCF_HANDLE
 _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
 __MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
-__MCF_CXX11(constexpr) __MCF_HANDLE
+__MCF_CXX11(constexpr)
+__MCF_HANDLE
 _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     return __thrd->__handle;
