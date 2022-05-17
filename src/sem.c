@@ -3,11 +3,10 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_SEM_EXTERN_INLINE  __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_SEM(...)  __MCF_DLLEXPORT
 #include "sem.h"
 #include "xglobals.i"
 
-__MCF_DLLEXPORT
 int
 _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
   {

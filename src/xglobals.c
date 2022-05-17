@@ -3,14 +3,13 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_XGLOBALS_EXTERN_INLINE  __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_XGLOBALS(...)  __MCF_DLLEXPORT
 #define __MCF_DYNCONST
 #include "xglobals.i"
 #include "thread.h"
 #include "mutex.h"
 #include "dtor_queue.h"
 
-__MCF_DLLEXPORT
 EXCEPTION_DISPOSITION __cdecl
 __MCF_seh_top(EXCEPTION_RECORD* rec, void* estab_frame, CONTEXT* ctx, void* disp_ctx)
   {
@@ -24,7 +23,6 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, void* estab_frame, CONTEXT* ctx, void* disp
     return r ? ExceptionContinueSearch : ExceptionContinueExecution;
   }
 
-__MCF_DLLEXPORT
 void
 __MCF_initialize_winnt_timeout_v2(__MCF_winnt_timeout* to, const int64_t* int64_opt)
   {
@@ -58,7 +56,6 @@ __MCF_initialize_winnt_timeout_v2(__MCF_winnt_timeout* to, const int64_t* int64_
       to->__li->QuadPart = 0;
   }
 
-__MCF_DLLEXPORT
 void
 __MCF_adjust_winnt_timeout_v2(__MCF_winnt_timeout* to)
   {
@@ -75,7 +72,6 @@ __MCF_adjust_winnt_timeout_v2(__MCF_winnt_timeout* to)
     to->__since = now;
   }
 
-__MCF_DLLEXPORT
 size_t
 __MCF_batch_release_common(const void* key, size_t count)
   {
@@ -93,7 +89,6 @@ __MCF_batch_release_common(const void* key, size_t count)
     return count;
   }
 
-__MCF_DLLEXPORT
 int
 __MCF_win32_error_i(DWORD code, int val)
   {
@@ -101,7 +96,6 @@ __MCF_win32_error_i(DWORD code, int val)
     return val;
   }
 
-__MCF_DLLEXPORT
 void*
 __MCF_win32_error_p(DWORD code, void* ptr)
   {
@@ -109,21 +103,18 @@ __MCF_win32_error_p(DWORD code, void* ptr)
     return ptr;
   }
 
-__MCF_DLLEXPORT
 void
 __MCF_run_dtors_at_quick_exit(void)
   {
     __MCF_dtor_queue_finalize(&__MCF_cxa_at_quick_exit_queue, &__MCF_cxa_at_quick_exit_mutex, NULL);
   }
 
-__MCF_DLLEXPORT
 void
 __MCF_run_dtors_atexit(void)
   {
     __MCF_dtor_queue_finalize(&__MCF_cxa_atexit_queue, &__MCF_cxa_atexit_mutex, NULL);
   }
 
-__MCF_DLLEXPORT
 void
 __MCF_finalize_on_exit(void)
   {

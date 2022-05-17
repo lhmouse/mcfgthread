@@ -11,19 +11,22 @@
 extern "C" {
 #endif
 
-#ifndef __MCF_EXIT_EXTERN_INLINE
-#  define __MCF_EXIT_EXTERN_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_DECLSPEC_EXIT
+#  define __MCF_DECLSPEC_EXIT(...)  __VA_ARGS__
 #endif
 
 /* Declare 'real' functions here.  */
+__MCF_DECLSPEC_EXIT()
 void
 __MCF__Exit(int __status) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
 
+__MCF_DECLSPEC_EXIT()
 void
 __MCF_quick_exit(int __status) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
 
+__MCF_DECLSPEC_EXIT()
 void
 __MCF_exit(int __status) __MCF_NOEXCEPT
   __attribute__((__noreturn__));

@@ -3,7 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_THREAD_EXTERN_INLINE  __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_THREAD(...)  __MCF_DLLEXPORT
 #include "thread.h"
 #include "xglobals.i"
 
@@ -25,7 +25,6 @@ do_win32_thread_thunk(LPVOID param)
     return 0;
   }
 
-__MCF_DLLEXPORT
 _MCF_thread*
 _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
   {
@@ -66,7 +65,6 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
     return thrd;
   }
 
-__MCF_DLLEXPORT
 void
 _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
   {
@@ -84,7 +82,6 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
     __MCF_mfree(thrd);
   }
 
-__MCF_DLLEXPORT
 void
 _MCF_thread_exit()
   {
@@ -92,7 +89,6 @@ _MCF_thread_exit()
     __MCF_UNREACHABLE;
   }
 
-__MCF_DLLEXPORT
 int
 _MCF_thread_wait(const _MCF_thread* thrd, const int64_t* timeout_opt)
   {
@@ -104,28 +100,24 @@ _MCF_thread_wait(const _MCF_thread* thrd, const int64_t* timeout_opt)
     return (status != STATUS_WAIT_0) ? -1 : 0;
   }
 
-__MCF_DLLEXPORT
 _MCF_thread*
 _MCF_thread_self(void)
   {
     return TlsGetValue(__MCF_win32_tls_index);
   }
 
-__MCF_DLLEXPORT
 uint32_t
 _MCF_thread_self_tid(void)
   {
     return GetCurrentThreadId();
   }
 
-__MCF_DLLEXPORT
 void
 _MCF_yield(void)
   {
     SwitchToThread();
   }
 
-__MCF_DLLEXPORT
 void
 _MCF_sleep(const int64_t* timeout_opt)
   {

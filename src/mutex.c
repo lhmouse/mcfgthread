@@ -3,7 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_MUTEX_EXTERN_INLINE  __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_MUTEX(...)  __MCF_DLLEXPORT
 #include "mutex.h"
 #include "xglobals.i"
 
@@ -35,7 +35,6 @@ do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
     return __MCF_mutex_spin_field + (base + index * block_size) % table_size;
   }
 
-__MCF_DLLEXPORT
 int
 _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
   {

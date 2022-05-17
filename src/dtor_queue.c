@@ -3,12 +3,11 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_DTOR_QUEUE_EXTERN_INLINE  __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_DTOR_QUEUE(...)  __MCF_DLLEXPORT
 #include "dtor_queue.h"
 #include "mutex.h"
 #include "xglobals.i"
 
-__MCF_DLLEXPORT
 int
 __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
   {
@@ -31,7 +30,6 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
     return 0;
   }
 
-__MCF_DLLEXPORT
 int
 __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* dso)
   {
@@ -74,7 +72,6 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* ds
     return err;
   }
 
-__MCF_DLLEXPORT
 size_t
 __MCF_dtor_queue_remove(__MCF_dtor_queue* queue, void* dso)
   {
@@ -111,7 +108,6 @@ __MCF_dtor_queue_remove(__MCF_dtor_queue* queue, void* dso)
     return count;
   }
 
-__MCF_DLLEXPORT
 void
 __MCF_dtor_queue_finalize(__MCF_dtor_queue* queue, _MCF_mutex* mutex_opt, void* dso)
   {

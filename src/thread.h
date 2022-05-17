@@ -14,8 +14,8 @@
 extern "C" {
 #endif
 
-#ifndef __MCF_THREAD_EXTERN_INLINE
-#  define __MCF_THREAD_EXTERN_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_DECLSPEC_THREAD
+#  define __MCF_DECLSPEC_THREAD(...)  __VA_ARGS__
 #endif
 
 /* Define the thread control struct.  */
@@ -43,16 +43,18 @@ struct __MCF_thread
  * `_MCF_thread_drop_ref()` when it is no longer needed. If the thread cannot
  * be created, a null pointer is returned and an error code can be obtained
  * via `_MCF_get_win32_error()`.  */
+__MCF_DECLSPEC_THREAD()
 _MCF_thread*
 _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __size) __MCF_NOEXCEPT;
 
 /* Gets a pointer to user-defined data of a thread.  */
-__MCF_CXX(const) void*
+__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
+__MCF_CXX11(constexpr) __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_THREAD_EXTERN_INLINE
-__MCF_CXX(const) void*
+__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
+__MCF_CXX11(constexpr) __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     return (char*) __thrd->__data;
@@ -60,7 +62,7 @@ _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
 
 #ifdef __cplusplus
 extern "C++" inline
-void*
+__MCF_CXX11(constexpr) void*
 _MCF_thread_get_data(_MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     return __thrd->__data;
@@ -69,10 +71,11 @@ _MCF_thread_get_data(_MCF_thread* __thrd) __MCF_NOEXCEPT
 
  * Adds a reference count of a thread structure. This may be useful if you
  * wish to pass a pointer to other code.  */
+__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
 void
 _MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 
-__MCF_THREAD_EXTERN_INLINE
+__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
 void
 _MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT
   {
@@ -84,13 +87,15 @@ _MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT
 /* Drops a reference count of a thread structure. An active thread owns a
  * reference count of itself and `_MCF_thread_new()` returns another one. When
  * the reference count is reduced to zero, the structure is deallocated.  */
-void
-_MCF_thread_drop_ref(_MCF_thread* __thrd_opt) __MCF_NOEXCEPT;
-
+__MCF_DECLSPEC_THREAD()
 void
 _MCF_thread_drop_ref_nonnull(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 
-__MCF_THREAD_EXTERN_INLINE
+__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
+void
+_MCF_thread_drop_ref(_MCF_thread* __thrd_opt) __MCF_NOEXCEPT;
+
+__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
 void
 _MCF_thread_drop_ref(_MCF_thread* __thrd_opt) __MCF_NOEXCEPT
   {
@@ -99,30 +104,33 @@ _MCF_thread_drop_ref(_MCF_thread* __thrd_opt) __MCF_NOEXCEPT
   }
 
 /* Gets the ID of a thread.  */
-uint32_t
+__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
+__MCF_CXX11(constexpr) uint32_t
 _MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_THREAD_EXTERN_INLINE
-uint32_t
+__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
+__MCF_CXX11(constexpr) uint32_t
 _MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     return __thrd->__tid;
   }
 
 /* Gets the handle of a thread.  */
-__MCF_HANDLE
+__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
+__MCF_CXX11(constexpr) __MCF_HANDLE
 _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_THREAD_EXTERN_INLINE
-__MCF_HANDLE
+__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
+__MCF_CXX11(constexpr) __MCF_HANDLE
 _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     return __thrd->__handle;
   }
 
 /* Exits from a thread.  */
+__MCF_DECLSPEC_THREAD()
 void
 _MCF_thread_exit(void) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
@@ -137,6 +145,7 @@ _MCF_thread_exit(void) __MCF_NOEXCEPT
  *
  * Returns 0 if the thread has terminated, or -1 if the wait operation has
  * timed out.  */
+__MCF_DECLSPEC_THREAD()
 int
 _MCF_thread_wait(const _MCF_thread* __thrd, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
@@ -144,16 +153,19 @@ _MCF_thread_wait(const _MCF_thread* __thrd, const int64_t* __timeout_opt) __MCF_
  *
  * IMPORTANT! This function is only meaningful for the main thread and threads
  * that were created by `_MCF_thread_new()`.  */
+__MCF_DECLSPEC_THREAD()
 _MCF_thread*
 _MCF_thread_self(void) __MCF_NOEXCEPT
   __attribute__((__const__));
 
 /* Gets the thread ID of the current thread.  */
+__MCF_DECLSPEC_THREAD()
 uint32_t
 _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   __attribute__((__const__));
 
 /* Gives up the current time slice.  */
+__MCF_DECLSPEC_THREAD()
 void
 _MCF_yield(void) __MCF_NOEXCEPT;
 
@@ -164,6 +176,7 @@ _MCF_yield(void) __MCF_NOEXCEPT;
  * points to a negative integer, the absolute value of it denotes the number of
  * milliseconds to sleep. If it points to a value of zero, the function returns
  * immediately. If it is null, the function sleeps indefinitely.  */
+__MCF_DECLSPEC_THREAD()
 void
 _MCF_sleep(const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
@@ -172,11 +185,12 @@ _MCF_sleep(const int64_t* __timeout_opt) __MCF_NOEXCEPT;
  *
  * Returns the thread-local value if one has been set by the calling thread, or
  * a null pointer otherwise. No return value is reserved to indicate errors.  */
+__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
 void*
 _MCF_tls_get(const _MCF_tls_key* __key) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_THREAD_EXTERN_INLINE
+__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
 void*
 _MCF_tls_get(const _MCF_tls_key* __key) __MCF_NOEXCEPT
   {
@@ -189,10 +203,11 @@ _MCF_tls_get(const _MCF_tls_key* __key) __MCF_NOEXCEPT
  * `_MCF_thread_new()`, or shall be the main thread.
  *
  * Returns 0 upon success and -1 upon failure.  */
+__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
 int
 _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt) __MCF_NOEXCEPT;
 
-__MCF_THREAD_EXTERN_INLINE
+__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
 int
 _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt) __MCF_NOEXCEPT
   {

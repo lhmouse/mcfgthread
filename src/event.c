@@ -3,11 +3,10 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_EVENT_EXTERN_INLINE  __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_EVENT(...)  __MCF_DLLEXPORT
 #include "event.h"
 #include "xglobals.i"
 
-__MCF_DLLEXPORT
 int
 _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* timeout_opt)
   {
