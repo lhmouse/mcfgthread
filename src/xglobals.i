@@ -50,7 +50,7 @@ __MCF_WINAPI(DWORD, GetCurrentProcessId, void) __attribute__((__const__));
 __MCF_WINAPI(DWORD, TlsAlloc, void);
 __MCF_WINAPI(BOOL, TlsFree, DWORD);
 __MCF_WINAPI(LPVOID, TlsGetValue, DWORD) __attribute__((__pure__));
-__MCF_WINAPI(INT, TlsSetValue, DWORD, LPVOID);
+__MCF_WINAPI(BOOL, TlsSetValue, DWORD, LPVOID);
 
 __MCF_WINAPI(HANDLE, GetProcessHeap, void) __attribute__((__const__));
 __MCF_WINAPI(LPVOID, HeapAlloc, HANDLE, DWORD, SIZE_T);
