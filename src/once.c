@@ -3,11 +3,10 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_ONCE_EXTERN_INLINE  __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_ONCE(...)  __MCF_DLLEXPORT
 #include "once.h"
 #include "xglobals.i"
 
-__MCF_DLLEXPORT
 int
 _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
   {

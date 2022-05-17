@@ -71,6 +71,10 @@ extern "C" {
 #define __MCF_0_INIT          { __MCF_C(0) }
 #define __MCF_PTR_BITS        (__SIZEOF_POINTER__ * 8U)
 
+#ifndef __MCF_DECLSPEC_FWD
+#  define __MCF_DECLSPEC_FWD(...)  __VA_ARGS__
+#endif
+
 /* The `__MCF_STATIC_ASSERT()` macro is an expression that yields zero if it
  * compiles anyway. Its argument must be a constant expression.  */
 #ifdef __cplusplus
@@ -80,10 +84,6 @@ extern "C++" template<> struct __MCF_static_assert<true> { char __unused;  };
 #else
 #  define __MCF_STATIC_ASSERT(...)   ((int) sizeof(struct { char: 1|-!(__VA_ARGS__); }) - 1)
 #endif
-
-void
-__MCF_runtime_failure(const char* __where)
-  __attribute__((__noreturn__, __noinline__, __cold__));
 
 #ifdef __MCF_DEBUG
 #  define __MCF_UNREACHABLE   __MCF_runtime_failure(__func__)
@@ -148,7 +148,12 @@ _MCF_maxz(size_t __x, size_t __y) __MCF_NOEXCEPT
     return (__x < __y) ? __y : __x;
   }
 
-/* This function is the same as `GetLastError()`.  */
+__MCF_DECLSPEC_FWD()
+void
+__MCF_runtime_failure(const char* __where)
+  __attribute__((__noreturn__, __noinline__, __cold__));
+
+__MCF_DECLSPEC_FWD()
 uint32_t
 _MCF_get_win32_error(void) __MCF_NOEXCEPT
   __attribute__((__pure__));

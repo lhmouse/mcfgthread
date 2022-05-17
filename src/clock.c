@@ -3,7 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_CLOCK_EXTERN_INLINE  __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_CLOCK(...)  __MCF_DLLEXPORT
 #include "clock.h"
 #include "xglobals.i"
 
@@ -21,7 +21,6 @@ do_unix_time_from_nt_time(const FILETIME* ft)
     return (double) li.QuadPart * 0.0001 - 11644473600000;
   }
 
-__MCF_DLLEXPORT
 int64_t
 _MCF_utc_now(void)
   {
@@ -30,7 +29,6 @@ _MCF_utc_now(void)
     return (int64_t) do_unix_time_from_nt_time(&ft);
   }
 
-__MCF_DLLEXPORT
 double
 _MCF_hires_utc_now(void)
   {
@@ -43,14 +41,12 @@ _MCF_hires_utc_now(void)
     return do_unix_time_from_nt_time(&ft);
   }
 
-__MCF_DLLEXPORT
 int64_t
 _MCF_tick_count(void)
   {
     return (int64_t) GetTickCount64();
   }
 
-__MCF_DLLEXPORT
 double
 _MCF_perf_counter(void)
   {

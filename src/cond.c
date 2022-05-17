@@ -3,7 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_COND_EXTERN_INLINE  __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_COND(...)  __MCF_DLLEXPORT
 #include "cond.h"
 #include "xglobals.i"
 
@@ -22,7 +22,6 @@ do_unlock_cleanup(struct unlock_result* res)
       res->relock_opt(res->lock_arg, res->unlocked);
   }
 
-__MCF_DLLEXPORT
 int
 _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, const int64_t* timeout_opt)
   {

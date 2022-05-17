@@ -3,7 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_CXA_EXTERN_INLINE  __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_CXA(...)  __MCF_DLLEXPORT
 #include "cxa.h"
 #include "once.h"
 #include "mutex.h"
@@ -11,7 +11,6 @@
 #include "thread.h"
 #include "xglobals.i"
 
-__MCF_DLLEXPORT
 int
 __MCF_cxa_guard_acquire(int64_t* guard)
   {
@@ -19,7 +18,6 @@ __MCF_cxa_guard_acquire(int64_t* guard)
     return _MCF_once_wait_slow((_MCF_once*) guard, NULL);
   }
 
-__MCF_DLLEXPORT
 void
 __MCF_cxa_guard_release(int64_t* guard)
   {
@@ -27,7 +25,6 @@ __MCF_cxa_guard_release(int64_t* guard)
     _MCF_once_release((_MCF_once*) guard);
   }
 
-__MCF_DLLEXPORT
 void
 __MCF_cxa_guard_abort(int64_t* guard)
   {
@@ -35,7 +32,6 @@ __MCF_cxa_guard_abort(int64_t* guard)
     _MCF_once_abort((_MCF_once*) guard);
   }
 
-__MCF_DLLEXPORT
 int
 __MCF_cxa_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
   {
@@ -47,14 +43,12 @@ __MCF_cxa_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
     return err;
   }
 
-__MCF_DLLEXPORT
 int
 __MCF_atexit(__MCF_atexit_callback atfn)
   {
     return __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*)(intptr_t) atfn, NULL, NULL);
   }
 
-__MCF_DLLEXPORT
 int
 __MCF_cxa_at_quick_exit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
   {
@@ -66,14 +60,12 @@ __MCF_cxa_at_quick_exit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
     return err;
   }
 
-__MCF_DLLEXPORT
 int
 __MCF_at_quick_exit(__MCF_atexit_callback atfn)
   {
     return __MCF_cxa_at_quick_exit((__MCF_cxa_dtor_cdecl*)(intptr_t) atfn, NULL, NULL);
   }
 
-__MCF_DLLEXPORT
 int
 __MCF_cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
   {
@@ -87,14 +79,12 @@ __MCF_cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
     return err;
   }
 
-__MCF_DLLEXPORT
 int
 __MCF_thread_atexit(__MCF_atexit_callback atfn)
   {
     return __MCF_cxa_thread_atexit((__MCF_cxa_dtor_cdecl*)(intptr_t) atfn, NULL, NULL);
   }
 
-__MCF_DLLEXPORT
 void
 __MCF_cxa_finalize(void* dso)
   {

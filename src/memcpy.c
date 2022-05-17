@@ -5,10 +5,10 @@
 #include "precompiled.i"
 
 void* __cdecl
-memcpy(void* dst, const void* src, size_t size);
+__MCF_mcopy(void* dst, const void* src, size_t size);
 
 void* __cdecl
-__MCF_mcopy(void* dst, const void* src, size_t size);
+memcpy(void* dst, const void* src, size_t size);
 
 __MCF_DLLEXPORT
 void* __cdecl

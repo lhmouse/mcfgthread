@@ -5,10 +5,10 @@
 #include "precompiled.i"
 
 int __cdecl
-memcmp(const void* src, const void* cmp, size_t size);
+__MCF_mcomp(const void* src, const void* cmp, size_t size);
 
 int __cdecl
-__MCF_mcomp(const void* src, const void* cmp, size_t size);
+memcmp(const void* src, const void* cmp, size_t size);
 
 __MCF_DLLEXPORT
 int __cdecl

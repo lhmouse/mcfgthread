@@ -12,8 +12,8 @@
 extern "C" {
 #endif
 
-#ifndef __MCF_EVENT_EXTERN_INLINE
-#  define __MCF_EVENT_EXTERN_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_DECLSPEC_EVENT
+#  define __MCF_DECLSPEC_EVENT(...)  __VA_ARGS__
 #endif
 
 /* Define the event struct.
@@ -23,7 +23,7 @@ struct __MCF_event
     uintptr_t __value : 8;
 
     uintptr_t __nsleep : __MCF_PTR_BITS - 8;  /* number of sleeping threads  */
-#define __MCF_EVENT_NSLEEP_M  (__UINTPTR_MAX__ >> 8)
+#define __MCF_EVENT_NSLEEP_M   (__UINTPTR_MAX__ >> 8)
   };
 
 /* This is the maximum value of an event.  */
@@ -42,10 +42,11 @@ struct __MCF_event
  *
  * Returns 0 if the initialization is successful, or -1 in case of invalid
  * arguments.  */
+__MCF_DECLSPEC_EVENT(__MCF_GNU_INLINE)
 int
 _MCF_event_init(_MCF_event* __event, int __value_init) __MCF_NOEXCEPT;
 
-__MCF_EVENT_EXTERN_INLINE
+__MCF_DECLSPEC_EVENT(__MCF_GNU_INLINE)
 int
 _MCF_event_init(_MCF_event* __event, int __value_init) __MCF_NOEXCEPT
   {
@@ -58,10 +59,11 @@ _MCF_event_init(_MCF_event* __event, int __value_init) __MCF_NOEXCEPT
   }
 
 /* Gets the current value of an event.  */
+__MCF_DECLSPEC_EVENT(__MCF_GNU_INLINE)
 uint8_t
 _MCF_event_get(const _MCF_event* __event) __MCF_NOEXCEPT;
 
-__MCF_EVENT_EXTERN_INLINE
+__MCF_DECLSPEC_EVENT(__MCF_GNU_INLINE)
 uint8_t
 _MCF_event_get(const _MCF_event* __event) __MCF_NOEXCEPT
   {
@@ -84,13 +86,15 @@ _MCF_event_get(const _MCF_event* __event) __MCF_NOEXCEPT
  *
  * Returns 0 if the value does not equal the lowest byte of `__undesired`, or
  * -1 if the operation has timed out, or -2 in case of invalid arguments.  */
-int
-_MCF_event_await_change(_MCF_event* __event, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
-
+__MCF_DECLSPEC_EVENT()
 int
 _MCF_event_await_change_slow(_MCF_event* __event, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
-__MCF_EVENT_EXTERN_INLINE
+__MCF_DECLSPEC_EVENT(__MCF_GNU_INLINE)
+int
+_MCF_event_await_change(_MCF_event* __event, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+
+__MCF_DECLSPEC_EVENT(__MCF_GNU_INLINE)
 int
 _MCF_event_await_change(_MCF_event* __event, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
@@ -116,13 +120,15 @@ _MCF_event_await_change(_MCF_event* __event, int __undesired, const int64_t* __t
  *
  * Returns 0 if the value has been updated successfully, or -1 in case of
  * invalid arguments.  */
-int
-_MCF_event_set(_MCF_event* __event, int __value) __MCF_NOEXCEPT;
-
+__MCF_DECLSPEC_EVENT()
 int
 _MCF_event_set_slow(_MCF_event* __event, int __value) __MCF_NOEXCEPT;
 
-__MCF_EVENT_EXTERN_INLINE
+__MCF_DECLSPEC_EVENT(__MCF_GNU_INLINE)
+int
+_MCF_event_set(_MCF_event* __event, int __value) __MCF_NOEXCEPT;
+
+__MCF_DECLSPEC_EVENT(__MCF_GNU_INLINE)
 int
 _MCF_event_set(_MCF_event* __event, int __value) __MCF_NOEXCEPT
   {

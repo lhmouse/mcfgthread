@@ -12,8 +12,8 @@
 extern "C" {
 #endif
 
-#ifndef __MCF_MUTEX_EXTERN_INLINE
-#  define __MCF_MUTEX_EXTERN_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_DECLSPEC_MUTEX
+#  define __MCF_DECLSPEC_MUTEX(...)  __VA_ARGS__
 #endif
 
 /* Define the mutex struct.
@@ -42,14 +42,15 @@ struct __MCF_mutex
  * goes to sleep. As spinning starts to fail more frequently, later threads
  * spin fewer times, until the number drops to zero.
  * This value had better be divisible by `__MCF_MUTEX_SP_NFAIL_THRESHOLD`.  */
-#define __MCF_MUTEX_MAX_SPIN_COUNT      1280U
+#define __MCF_MUTEX_MAX_SPIN_COUNT     1280U
 
 /* Initializes a mutex dynamically.
  * Static ones should be initialized with `{0}`, like other structs.  */
+__MCF_DECLSPEC_MUTEX(__MCF_GNU_INLINE)
 void
 _MCF_mutex_init(_MCF_mutex* __mutex) __MCF_NOEXCEPT;
 
-__MCF_MUTEX_EXTERN_INLINE
+__MCF_DECLSPEC_MUTEX(__MCF_GNU_INLINE)
 void
 _MCF_mutex_init(_MCF_mutex* __mutex) __MCF_NOEXCEPT
   {
@@ -70,13 +71,15 @@ _MCF_mutex_init(_MCF_mutex* __mutex) __MCF_NOEXCEPT
  *
  * Returns 0 if the mutex has been locked by the caller, or -1 if the operation
  * has timed out.  */
-int
-_MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
-
+__MCF_DECLSPEC_MUTEX()
 int
 _MCF_mutex_lock_slow(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
-__MCF_MUTEX_EXTERN_INLINE
+__MCF_DECLSPEC_MUTEX(__MCF_GNU_INLINE)
+int
+_MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+
+__MCF_DECLSPEC_MUTEX(__MCF_GNU_INLINE)
 int
 _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
@@ -97,13 +100,15 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEP
 /* Releases a mutex. This function may be called by a different thread from
  * which locked the same mutex. If the mutex has not been locked, the behavior
  * is undefined.  */
-void
-_MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_NOEXCEPT;
-
+__MCF_DECLSPEC_MUTEX()
 void
 _MCF_mutex_unlock_slow(_MCF_mutex* __mutex) __MCF_NOEXCEPT;
 
-__MCF_MUTEX_EXTERN_INLINE
+__MCF_DECLSPEC_MUTEX(__MCF_GNU_INLINE)
+void
+_MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_NOEXCEPT;
+
+__MCF_DECLSPEC_MUTEX(__MCF_GNU_INLINE)
 void
 _MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_NOEXCEPT
   {
