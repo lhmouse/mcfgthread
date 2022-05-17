@@ -53,9 +53,9 @@ __MCF_WINAPI(LPVOID, TlsGetValue, DWORD) __attribute__((__pure__));
 __MCF_WINAPI(BOOL, TlsSetValue, DWORD, LPVOID);
 
 __MCF_WINAPI(HANDLE, GetProcessHeap, void) __attribute__((__const__));
-__MCF_WINAPI(LPVOID, HeapAlloc, HANDLE, DWORD, SIZE_T);
-__MCF_WINAPI(LPVOID, HeapReAlloc, HANDLE, DWORD, LPVOID, SIZE_T);
-__MCF_WINAPI(SIZE_T, HeapSize, HANDLE, DWORD, LPCVOID);
+__MCF_WINAPI(LPVOID, HeapAlloc, HANDLE, DWORD, SIZE_T) __attribute__((__alloc_size__(3)));
+__MCF_WINAPI(LPVOID, HeapReAlloc, HANDLE, DWORD, LPVOID, SIZE_T) __attribute__((__alloc_size__(4)));
+__MCF_WINAPI(SIZE_T, HeapSize, HANDLE, DWORD, LPCVOID) __attribute__((__pure__));
 __MCF_WINAPI(BOOL, HeapFree, HANDLE, DWORD, LPVOID);
 
 __MCF_WINAPI(void, GetSystemTimeAsFileTime, LPFILETIME);
@@ -67,7 +67,7 @@ __MCF_WINAPI(BOOL, QueryPerformanceFrequency, LARGE_INTEGER*);
 __MCF_WINAPI(BOOL, QueryPerformanceCounter, LARGE_INTEGER*);
 
 __MCF_WINAPI(HANDLE, CreateThread, LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, DWORD, LPDWORD);
-__MCF_WINAPI(void, ExitThread, DWORD);
+__MCF_WINAPI(void, ExitThread, DWORD) __attribute__((__noreturn__));
 __MCF_WINAPI(BOOL, SwitchToThread, void);
 __MCF_WINAPI(BOOL, TerminateProcess, HANDLE, UINT);
 
@@ -78,7 +78,7 @@ __MCF_WINAPI(BOOLEAN, RtlDllShutdownInProgress, void);
 __MCF_WINAPI(void, RtlMoveMemory, void*, const void*, SIZE_T);
 __MCF_WINAPI(void, RtlFillMemory, void*, SIZE_T, int);
 __MCF_WINAPI(void, RtlZeroMemory, void*, SIZE_T);
-__MCF_WINAPI(SIZE_T, RtlCompareMemory, const void*, const void*, SIZE_T);
+__MCF_WINAPI(SIZE_T, RtlCompareMemory, const void*, const void*, SIZE_T) __attribute__((__pure__));
 
 __MCF_WINAPI(NTSTATUS, NtDuplicateObject, HANDLE, HANDLE, HANDLE, PHANDLE, ACCESS_MASK, ULONG, ULONG);
 __MCF_WINAPI(NTSTATUS, NtClose, HANDLE);
