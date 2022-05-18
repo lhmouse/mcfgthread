@@ -14,10 +14,15 @@ _MCF_utc_now(void)
     GetSystemTimeAsFileTime(&ft);
 
     /* `t := (low + high * 0x1p32) * 0x68DB8`BAC710CB / 0x1p64`  */
+#ifdef __SIZEOF_INT128__
+    uint64_t t = ft.dwLowDateTime | (uint64_t) ft.dwHighDateTime << 32;
+    t = (uint64_t) ((unsigned __int128) t * 0x68DB8BAC710CBULL >> 64);
+#else
     uint64_t t = ft.dwLowDateTime * 0xBAC710CBULL >> 32;
     uint64_t middle = ft.dwLowDateTime * 0x68DB8ULL;
     t = (ft.dwHighDateTime * 0xBAC710CBULL + (uint32_t) middle + t) >> 32;
     t += (middle >> 32) + ft.dwHighDateTime * 0x68DB8ULL;
+#endif
 
     /* 11644473600000 is number of milliseconds from 1601-01-01T00:00:00Z
      * (the NT epoch) to 1970-01-01T00:00:00Z (the Unix Epoch).  */
