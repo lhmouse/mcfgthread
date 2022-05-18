@@ -22,7 +22,7 @@ _MCF_utc_now(void)
     uint64_t middle = ft.dwLowDateTime * 0x68DB8ULL;
     t = (ft.dwHighDateTime * 0xBAC710CBULL + (uint32_t) middle + t) >> 32;
     t += (middle >> 32) + ft.dwHighDateTime * 0x68DB8ULL;
-#endif
+#endif  /* `__int128`  */
 
     /* 11644473600000 is number of milliseconds from 1601-01-01T00:00:00Z
      * (the NT epoch) to 1970-01-01T00:00:00Z (the Unix Epoch).  */
@@ -37,7 +37,7 @@ _MCF_hires_utc_now(void)
     GetSystemTimePreciseAsFileTime(&ft);
 #else
     GetSystemTimeAsFileTime(&ft);
-#endif
+#endif  /* Windows 8  */
 
     /* `t := (low + high * 0x1p32) / 10000`  */
     double t = (double) ft.dwLowDateTime;
