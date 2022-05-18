@@ -7,26 +7,21 @@
 #include "clock.h"
 #include "xglobals.i"
 
-static inline
-double
-do_unix_time_from_nt_time(const FILETIME* ft)
-  {
-    /* Sum the high and low parts.  */
-    LARGE_INTEGER li;
-    li.LowPart = ft->dwLowDateTime;
-    li.HighPart = (LONG) ft->dwHighDateTime;
-
-    /* 11644473600000 is number of milliseconds from 1601-01-01T00:00:00Z
-     * (the NT epoch) to 1970-01-01T00:00:00Z (the Unix Epoch).  */
-    return (double) li.QuadPart * 0.0001 - 11644473600000;
-  }
-
 int64_t
 _MCF_utc_now(void)
   {
     FILETIME ft;
     GetSystemTimeAsFileTime(&ft);
-    return (int64_t) do_unix_time_from_nt_time(&ft);
+
+    /* `t := (low + high * 0x1p32) * 0x68DB8`BAC710CB / 0x1p64`  */
+    uint64_t t = ft.dwLowDateTime * 0xBAC710CBULL >> 32;
+    uint64_t middle = ft.dwLowDateTime * 0x68DB8ULL;
+    t = (ft.dwHighDateTime * 0xBAC710CBULL + (uint32_t) middle + t) >> 32;
+    t += (middle >> 32) + ft.dwHighDateTime * 0x68DB8ULL;
+
+    /* 11644473600000 is number of milliseconds from 1601-01-01T00:00:00Z
+     * (the NT epoch) to 1970-01-01T00:00:00Z (the Unix Epoch).  */
+    return (int64_t) t - 11644473600000;
   }
 
 double
@@ -38,7 +33,15 @@ _MCF_hires_utc_now(void)
 #else
     GetSystemTimeAsFileTime(&ft);
 #endif
-    return do_unix_time_from_nt_time(&ft);
+
+    /* `t := (low + high * 0x1p32) / 10000`  */
+    double t = (double) ft.dwLowDateTime;
+    t += (double) ft.dwHighDateTime * 0x1p32;
+    t *= 0.0001;
+
+    /* 11644473600000 is number of milliseconds from 1601-01-01T00:00:00Z
+     * (the NT epoch) to 1970-01-01T00:00:00Z (the Unix Epoch).  */
+    return t - 11644473600000;
   }
 
 int64_t
