@@ -108,15 +108,15 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void))
   {
-    _MCF_once* __cleanup __MCF_USE_DTOR(__MCF_gthr_unonce) = NULL;
-    int __do_init = _MCF_once_wait(__once, NULL);
-    if(__do_init == 0)
+    _MCF_once* __cleanup __attribute__((__cleanup__(__MCF_gthr_unonce))) = NULL;
+
+    if(_MCF_once_wait(__once, NULL) == 0)
       return 0;
 
-    __MCF_ASSERT(__do_init == 1);
     __cleanup = __once;
     __init_proc();
     __cleanup = NULL;
+
     _MCF_once_release(__once);
     return 0;
   }

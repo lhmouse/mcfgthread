@@ -26,7 +26,7 @@ int
 _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, const int64_t* timeout_opt)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
-    struct unlock_result ul_res __MCF_USE_DTOR(do_unlock_cleanup) = __MCF_0_INIT;
+    struct unlock_result ul_res __attribute__((__cleanup__(do_unlock_cleanup))) = __MCF_0_INIT;
 
     _MCF_cond old, new;
     NTSTATUS status;

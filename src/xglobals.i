@@ -121,7 +121,7 @@ __MCF_i386_seh_cleanup(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
 /* SEH is stack-based.  */
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
       __MCF_i386_seh_node __MCF_PPCAT2(__MCF_seh_node_, __LINE__)  \
-          __MCF_USE_DTOR(__MCF_i386_seh_cleanup);  \
+          __attribute__((__cleanup__(__MCF_i386_seh_cleanup)));  \
       __MCF_i386_seh_install(  \
             &(__MCF_PPCAT2(__MCF_seh_node_, __LINE__)))  /* no semicolon  */
 
