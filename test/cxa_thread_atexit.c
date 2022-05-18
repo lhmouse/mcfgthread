@@ -19,7 +19,7 @@ static
 void
 thread_proc(_MCF_thread* self)
   {
-    __MCF_cxa_thread_atexit(thread_atexit_proc, self->__data, NULL);
+    __MCF_cxa_thread_atexit(thread_atexit_proc, _MCF_thread_get_data(self), NULL);
     _MCF_sleep((const int64_t[]) { -1000 });
     printf("thread %d quitting\n", self->__tid);
   }
@@ -30,7 +30,7 @@ main(void)
     _MCF_thread* thrd = _MCF_thread_new(thread_proc, NULL, sizeof(int));
     assert(thrd);
 
-    int* value = (int*) thrd->__data;
+    int* value = _MCF_thread_get_data(thrd);
     assert(*value == 0);
 
     printf("main waiting\n");
