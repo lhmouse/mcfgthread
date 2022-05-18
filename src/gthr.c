@@ -37,7 +37,7 @@ __MCF_gthr_recursive_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
 void
 __MCF_gthr_thread_thunk(_MCF_thread* thrd)
   {
-    __MCF_gthr_thread_record* rec = (__MCF_gthr_thread_record*) thrd->__data;
+    __MCF_gthr_thread_record* rec = _MCF_thread_get_data(thrd);
 
     /* Invoke the user-defined procedure and save its result in the record.  */
     rec->__result = rec->__proc(rec->__arg);

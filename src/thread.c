@@ -42,6 +42,7 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
 
     _MCF_atomic_store_32_rlx(thrd->__nref, 2);
     thrd->__proc = proc;
+    thrd->__data_ptr = thrd->__data_storage;
 
     /* Create the thread. The new thread will wait until `__tid` contains a
      * valid thread ID.  */
@@ -54,7 +55,7 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
 
     /* Copy user-defined data in, before setting the `__tid` field.  */
     if(data_opt)
-      __MCF_mcopy(thrd->__data, data_opt, size);
+      __MCF_mcopy(thrd->__data_storage, data_opt, size);
 
     /* Set the thread ID. If its old value is not zero, the new thread should
      * have been waiting, so notify it.  */

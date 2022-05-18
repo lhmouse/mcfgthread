@@ -29,7 +29,12 @@ struct __MCF_thread
     __MCF_tls_table __tls_table;  /* for `_MCF_tls_get()` and `_MCF_tls_set()`  */
 
     _MCF_thread_procedure* __proc;  /* user-defined thread procedure  */
-    __extension__ char __data[0] __MCF_ALIGNED(16);  /* user-defined data  */
+    void* __data_ptr;  /* pointer to user-defined data.  */
+
+    /* `__data_ptr` shall always point to `__data_storage` below. The space
+     * preceding it is reserved for future use. It is not safe to assume the
+     * offset of `__data_storage` to be a constant.  */
+    __extension__ char __data_storage[0] __MCF_ALIGNED(16);
   };
 
 /* Creates a thread. The `__nref` member is initialized to 2, because a running
@@ -59,7 +64,7 @@ __MCF_CXX11(constexpr)
 __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
-    return (char*) __thrd->__data;
+    return __thrd->__data_ptr;
   }
 
 #ifdef __cplusplus
@@ -68,7 +73,7 @@ __MCF_CXX11(constexpr) inline
 void*
 _MCF_thread_get_data(_MCF_thread* __thrd) __MCF_NOEXCEPT
   {
-    return __thrd->__data;
+    return __thrd->__data_ptr;
   }
 #endif  /* __cplusplus
 
