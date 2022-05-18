@@ -25,11 +25,11 @@ struct __MCF_thread
     uint32_t __tid;  /* thread id  */
     __MCF_HANDLE __handle;  /* win32 thread handle  */
 
-    __MCF_dtor_queue __atexit_queue;  /* for `__cxa_thread_atexit()`  */
-    __MCF_tls_table __tls_table;  /* for `_MCF_tls_get()` and `_MCF_tls_set()`  */
-
     _MCF_thread_procedure* __proc;  /* user-defined thread procedure  */
     void* __data_ptr;  /* pointer to user-defined data.  */
+
+    __MCF_dtor_queue __atexit_queue;  /* for `__cxa_thread_atexit()`  */
+    __MCF_tls_table __tls_table;  /* for `_MCF_tls_get()` and `_MCF_tls_set()`  */
 
     /* `__data_ptr` shall always point to `__data_storage` below. The space
      * preceding it is reserved for future use. It is not safe to assume the
