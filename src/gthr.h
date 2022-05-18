@@ -95,7 +95,7 @@ __MCF_gthr_recursive_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) 
 /* This is the actual thread function for a gthread.  */
 __MCF_DECLSPEC_GTHR()
 void
-__MCF_gthr_thread_thunk(_MCF_thread* __thrd) __MCF_NOEXCEPT;
+__MCF_gthr_thread_thunk_v2(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 
 /* Performs one-time initialization, like `pthread_once()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -557,16 +557,16 @@ __MCF_gthr_cond_broadcast(__gthread_cond_t* __cond) __MCF_NOEXCEPT
 /* Creates a thread, like `pthread_create()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
-__MCF_gthr_create_v3(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT;
+__MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT;
 
-#define __gthread_create  __MCF_gthr_create_v3
+#define __gthread_create  __MCF_gthr_create_v2
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
-__MCF_gthr_create_v3(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT
+__MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT
   {
     __MCF_gthr_thread_record __rec = { NULL, __proc, __arg, 1, __MCF_0_INIT };
-    _MCF_thread* __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk, &__rec, sizeof(__rec));
+    _MCF_thread* __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk_v2, &__rec, sizeof(__rec));
     *__thrdp = __thrd;
     return (__thrd == NULL) ? EAGAIN : 0;  /* as specified by POSIX  */
   }
@@ -574,20 +574,20 @@ __MCF_gthr_create_v3(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, 
 /* Awaits a thread to terminate and gets its result, like `pthread_join()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
-__MCF_gthr_join_v3(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT;
+__MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT;
 
-#define __gthread_join  __MCF_gthr_join_v3
+#define __gthread_join  __MCF_gthr_join_v2
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
-__MCF_gthr_join_v3(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
+__MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
   {
     __MCF_gthr_thread_record* __rec;
     int __err;
 
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
-    if(__thrd->__proc != __MCF_gthr_thread_thunk)
+    if(__thrd->__proc != __MCF_gthr_thread_thunk_v2)
       return EINVAL;
 
     __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
@@ -614,19 +614,19 @@ __MCF_gthr_join_v3(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
 /* Detaches a thread, like `pthread_detach()`  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
-__MCF_gthr_detach_v3(__gthread_t __thrd) __MCF_NOEXCEPT;
+__MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_NOEXCEPT;
 
-#define __gthread_detach  __MCF_gthr_detach_v3
+#define __gthread_detach  __MCF_gthr_detach_v2
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
-__MCF_gthr_detach_v3(__gthread_t __thrd) __MCF_NOEXCEPT
+__MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_NOEXCEPT
   {
     __MCF_gthr_thread_record* __rec;
 
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
-    if(__thrd->__proc != __MCF_gthr_thread_thunk)
+    if(__thrd->__proc != __MCF_gthr_thread_thunk_v2)
       return EINVAL;
 
     __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
