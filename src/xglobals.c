@@ -4,7 +4,6 @@
 
 #include "precompiled.i"
 #define __MCF_DECLSPEC_XGLOBALS(...)  __MCF_DLLEXPORT
-#define __MCF_DYNCONST
 #include "xglobals.i"
 #include "thread.h"
 #include "mutex.h"

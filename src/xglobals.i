@@ -496,13 +496,9 @@ void
 __MCF_finalize_on_exit(void) __MCF_NOEXCEPT;
 
 /* Declare global data.  */
-#ifndef __MCF_DYNCONST
-#  define __MCF_DYNCONST   const  /* read-only but initialized dynamically  */
-#endif
-
-extern __MCF_DYNCONST DWORD __MCF_win32_tls_index;
-extern __MCF_DYNCONST double __MCF_perf_frequency_reciprocal;
-extern __MCF_DYNCONST _MCF_thread __MCF_main_thread;
+extern DWORD __MCF_win32_tls_index;
+extern double __MCF_perf_frequency_reciprocal;
+extern _MCF_thread __MCF_main_thread;
 
 extern _MCF_mutex __MCF_cxa_atexit_mutex;
 extern __MCF_dtor_queue __MCF_cxa_atexit_queue;
