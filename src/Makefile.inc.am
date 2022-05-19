@@ -48,8 +48,7 @@ lib_libmcfgthread_la_SOURCES =  \
   ${END}
 
 .rc.lo:
-	${AM_V_GEN}${LIBTOOL} ${AM_V_lt} --tag=RC --mode=compile  \
-	  ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
+	${AM_V_GEN}${LIBTOOL} ${AM_V_lt} --tag=RC --mode=compile ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
 
 BUILT_SOURCES += %reldir%/libkernelbase_tiny.a %reldir%/libntdll_tiny.a
 CLEANFILES += %reldir%/libkernelbase_tiny.a %reldir%/libntdll_tiny.a
