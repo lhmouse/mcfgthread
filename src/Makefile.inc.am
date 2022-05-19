@@ -66,15 +66,20 @@ lib_libmcfgthread_la_LDFLAGS =  \
   -no-undefined -version-info @abi_major@:@abi_minor@
 
 if enable_pch
-lib_libmcfgthread_la_CFLAGS += -include %reldir%/precompiled.xi -Winvalid-pch
+lib_libmcfgthread_la_CFLAGS += -include %reldir%/precompiled.xi
 BUILT_SOURCES += %reldir%/precompiled.xi
-CLEANFILES += %reldir%/precompiled.xi %reldir%/precompiled.xi.gch
+CLEANFILES += %reldir%/precompiled.xi
 endif
 
 %.xi: %.i %reldir%/version.h config.h
-	${AM_V_GEN}printf '#include "%s"\n' $$(cygpath -am $< 2>/dev/null || echo $(abspath $<)) > $@
 	${AM_V_CC}${LTCOMPILE} -ffreestanding -x c-header -Wno-error $< -o $@.o  \
 	  && . $@.lo  \
-	  && test "$${non_pic_object}" == none || mv -f %reldir%/$${non_pic_object} $@.gch  \
-	  && test "$${pic_object}" == none || mv -f %reldir%/$${pic_object} $@.gch  \
+	  && rm -rf $@.gch  \
+	  && mkdir $@.gch  \
+	  && test "$${pic_object}" == none || mv -f %reldir%/$${pic_object} $@.gch/pic  \
+	  && test "$${non_pic_object}" == none || mv -f %reldir%/$${non_pic_object} $@.gch/non_pic  \
 	  && rm -f $@.lo
+	${AM_V_GEN}echo '#error PCH unusable' > $@
+
+clean-local:
+	-rm -rf %reldir%/precompiled.xi.gch
