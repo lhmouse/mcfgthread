@@ -56,7 +56,8 @@ CLEANFILES += %reldir%/libkernelbase_tiny.a %reldir%/libntdll_tiny.a
 .def.a:
 	${AM_V_GEN}${DLLTOOL} ${AM_DLLTOOLFLAGS} -k -d $< -l $@
 
-lib_libmcfgthread_la_CFLAGS = ${AM_CFLAGS} -nostdlib -f{freestanding,unwind-tables}
+lib_libmcfgthread_la_CFLAGS =  \
+  ${AM_CFLAGS} -nostdlib -f{freestanding,unwind-tables}
 
 lib_libmcfgthread_la_LDFLAGS =  \
   -Wc,-nostdlib,%reldir%/lib{kernelbase,ntdll}_tiny.a  \
@@ -71,10 +72,9 @@ CLEANFILES += %reldir%/precompiled.xi %reldir%/precompiled.xi.gch
 endif
 
 %.xi: %.i %reldir%/version.h config.h
-	${AM_V_GEN}printf '#include "%s"\n' $$(cygpath -am $< 2>/dev/null ||  \
-	                                       echo $(abspath $<)) > $@
-	${AM_V_CC}${LTCOMPILE} -x c-header ${lib_libmcfgthread_la_CFLAGS}  \
-	            ${CFLAGS} -Wno-error $< -o $@.o &&  \
-	  source $@.lo &&  \
-	  mv -f %reldir%/$${pic_object} $@.gch &&  \
-	  rm -f $@.lo
+	${AM_V_GEN}printf '#include "%s"\n' $$(cygpath -am $< 2>/dev/null || echo $(abspath $<)) > $@
+	${AM_V_CC}${LTCOMPILE} -ffreestanding -x c-header -Wno-error $< -o $@.o  \
+	  && . $@.lo  \
+	  && test "$${non_pic_object}" == none || mv -f %reldir%/$${non_pic_object} $@.gch  \
+	  && test "$${pic_object}" == none || mv -f %reldir%/$${pic_object} $@.gch  \
+	  && rm -f $@.lo
