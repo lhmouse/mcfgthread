@@ -68,7 +68,6 @@ lib_libmcfgthread_la_LDFLAGS =  \
 if enable_pch
 lib_libmcfgthread_la_CFLAGS += -include %reldir%/precompiled.xi
 BUILT_SOURCES += %reldir%/precompiled.xi
-CLEANFILES += %reldir%/precompiled.xi
 endif
 
 %.xi: %.i %reldir%/version.h config.h
@@ -82,4 +81,4 @@ endif
 	  && echo '#error PCH unusable' > $@
 
 clean-local:
-	-rm -rf %reldir%/precompiled.xi.gch
+	-rm -rf %reldir%/precompiled.x*
