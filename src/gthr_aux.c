@@ -11,14 +11,14 @@ __MCF_DLLEXPORT
 int64_t
 __MCF_gthr_timeout_from_timespec(const struct timespec* abs_time)
   {
-    double value = (double) abs_time->tv_nsec * 0.000001 + (double) abs_time->tv_sec * 1000;
-    if(value <= 0)
-      return 0;
+    double value = 0.0009999;
+    value += (double) abs_time->tv_nsec * 0.000001;
+    value += (double) abs_time->tv_sec * 1000;
 
-    if(value >= 0x7FFFFFFFFFFFFC00)
-      return __INT64_MAX__;
-
-    return (int64_t) (value + 0.0009999);
+    /* Clamp the timestamp.  */
+    value = __builtin_fmax(value, 0);
+    value = __builtin_fmin(value, 0x1p63 - 0x1p10);
+    return (int64_t) value;
   }
 
 __MCF_DLLEXPORT
