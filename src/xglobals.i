@@ -31,13 +31,6 @@ extern _MCF_mutex __MCF_cxa_at_quick_exit_mutex;
 extern __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
 extern BYTE __MCF_mutex_spin_field[2048];
 
-/* These are private functions that are not exported from the DLL.  */
-void
-__MCF_dll_callback_on_process_attach(void) __MCF_NOEXCEPT;
-
-void
-__MCF_dll_callback_on_thread_detach(void) __MCF_NOEXCEPT;
-
 /* Hard-code these.  */
 #define GetCurrentProcess()  ((HANDLE) -1)
 #define GetCurrentThread()   ((HANDLE) -2)
