@@ -2,8 +2,9 @@ ACLOCAL_AMFLAGS = -I m4
 END =
 
 ## Compiler options
-AM_CPPFLAGS = -pipe -Wall -Wextra -Isrc -U_FORTIFY_SOURCE -D_WIN32_WINNT=0x0601  \
-  -f{PIC,strict-{aliasing,overflow},merge-all-constants,fast-math}  \
+AM_CPPFLAGS = -pipe -Wall -Wextra -Isrc -U_FORTIFY_SOURCE  \
+  -D_WIN32_WINNT=0x0601 -{f,D}PIC  \
+  -f{strict-{aliasing,overflow},merge-all-constants,fast-math}  \
   -fno-{stack-protector,align-{functions,jumps,loops},ident}  \
   -Werror={conversion,sign-{compare,conversion},write-strings,return-type}  \
   -Werror={double-promotion,aggressive-loop-optimizations,missing-declarations}  \
