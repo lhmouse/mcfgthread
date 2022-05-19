@@ -7,6 +7,19 @@
 #include "gthr_aux.h"
 #include "mutex.h"
 
+int64_t
+__MCF_gthr_timeout_from_timespec(const struct timespec* abs_time)
+  {
+    double value = (double) abs_time->tv_nsec * 0.000001 + (double) abs_time->tv_sec * 1000;
+    if(value <= 0)
+      return 0;
+
+    if(value >= 0x7FFFFFFFFFFFFC00)
+      return __INT64_MAX__;
+
+    return (int64_t) (value + 0.0009999);
+  }
+
 intptr_t
 __MCF_gthr_mutex_unlock_callback(intptr_t arg)
   {

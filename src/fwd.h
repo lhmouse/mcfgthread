@@ -14,10 +14,6 @@
 #include <stdalign.h>
 #include <limits.h>
 
-#ifdef __SSE2__
-#  include <emmintrin.h>
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
