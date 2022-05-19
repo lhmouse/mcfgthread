@@ -565,8 +565,12 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT
   {
-    __MCF_gthr_thread_record __rec = { NULL, __proc, __arg, 1, __MCF_0_INIT };
-    _MCF_thread* __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk_v2, &__rec, sizeof(__rec));
+    __MCF_gthr_thread_record __rec[1];
+    __rec->__proc = __proc;
+    __rec->__arg = __arg;
+    __rec->__joinable = true;
+
+    _MCF_thread* __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk_v2, __rec, sizeof(*__rec));
     *__thrdp = __thrd;
     return (__thrd == NULL) ? EAGAIN : 0;  /* as specified by POSIX  */
   }
