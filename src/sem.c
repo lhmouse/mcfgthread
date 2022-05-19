@@ -7,6 +7,7 @@
 #include "sem.h"
 #include "xglobals.i"
 
+__MCF_DLLEXPORT
 int
 _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
   {

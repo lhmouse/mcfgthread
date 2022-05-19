@@ -20,6 +20,24 @@ extern "C" {
 #  define __MCF_DECLSPEC_XGLOBALS(...)  __VA_ARGS__
 #endif
 
+/* Declare global data.  */
+extern DWORD __MCF_win32_tls_index;
+extern double __MCF_perf_frequency_reciprocal;
+extern _MCF_thread __MCF_main_thread;
+
+extern _MCF_mutex __MCF_cxa_atexit_mutex;
+extern __MCF_dtor_queue __MCF_cxa_atexit_queue;
+extern _MCF_mutex __MCF_cxa_at_quick_exit_mutex;
+extern __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
+extern BYTE __MCF_mutex_spin_field[2048];
+
+/* These are private functions that are not exported from the DLL.  */
+void
+__MCF_dll_callback_on_process_attach(void) __MCF_NOEXCEPT;
+
+void
+__MCF_dll_callback_on_thread_detach(void) __MCF_NOEXCEPT;
+
 /* Hard-code these.  */
 #define GetCurrentProcess()  ((HANDLE) -1)
 #define GetCurrentThread()   ((HANDLE) -2)
@@ -494,24 +512,6 @@ __MCF_run_dtors_atexit(void) __MCF_NOEXCEPT;
 __MCF_DECLSPEC_XGLOBALS()
 void
 __MCF_finalize_on_exit(void) __MCF_NOEXCEPT;
-
-/* Declare global data.  */
-extern DWORD __MCF_win32_tls_index;
-extern double __MCF_perf_frequency_reciprocal;
-extern _MCF_thread __MCF_main_thread;
-
-extern _MCF_mutex __MCF_cxa_atexit_mutex;
-extern __MCF_dtor_queue __MCF_cxa_atexit_queue;
-extern _MCF_mutex __MCF_cxa_at_quick_exit_mutex;
-extern __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
-extern BYTE __MCF_mutex_spin_field[2048];
-
-/* These are private functions that are not exported from the DLL.  */
-void
-__MCF_dll_callback_on_process_attach(void) __MCF_NOEXCEPT;
-
-void
-__MCF_dll_callback_on_thread_detach(void) __MCF_NOEXCEPT;
 
 #ifdef __cplusplus
 }

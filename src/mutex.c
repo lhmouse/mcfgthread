@@ -35,6 +35,7 @@ do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
     return __MCF_mutex_spin_field + (base + index * block_size) % table_size;
   }
 
+__MCF_DLLEXPORT
 int
 _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
   {

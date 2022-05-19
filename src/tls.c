@@ -8,6 +8,7 @@
 #include "atomic.h"
 #include "xglobals.i"
 
+__MCF_DLLEXPORT
 _MCF_tls_key*
 _MCF_tls_key_new(_MCF_tls_dtor* dtor_opt)
   {
@@ -36,6 +37,7 @@ do_tls_key_drop_ref_nonnull(_MCF_tls_key* key)
     __MCF_mfree(key);
   }
 
+__MCF_DLLEXPORT
 void
 _MCF_tls_key_delete_nonnull(_MCF_tls_key* key)
   {
@@ -75,6 +77,7 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
     __MCF_UNREACHABLE;
   }
 
+__MCF_DLLEXPORT
 void*
 __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
   {
@@ -91,6 +94,7 @@ __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
     return elem->__value;
   }
 
+__MCF_DLLEXPORT
 int
 __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value)
   {
@@ -149,6 +153,7 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
     return 0;
   }
 
+__MCF_DLLEXPORT
 void
 __MCF_tls_table_finalize(__MCF_tls_table* table)
   {

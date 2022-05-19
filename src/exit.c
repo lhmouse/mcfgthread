@@ -7,6 +7,7 @@
 #include "exit.h"
 #include "xglobals.i"
 
+__MCF_DLLEXPORT
 void
 __MCF__Exit(int status)
   {
@@ -15,6 +16,7 @@ __MCF__Exit(int status)
     __MCF_UNREACHABLE;
   }
 
+__MCF_DLLEXPORT
 void
 __MCF_quick_exit(int status)
   {
@@ -26,6 +28,7 @@ __MCF_quick_exit(int status)
     __MCF__Exit(status);
   }
 
+__MCF_DLLEXPORT
 void
 __MCF_exit(int status)
   {

@@ -7,6 +7,7 @@
 #include "once.h"
 #include "xglobals.i"
 
+__MCF_DLLEXPORT
 int
 _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
   {

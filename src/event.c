@@ -7,6 +7,7 @@
 #include "event.h"
 #include "xglobals.i"
 
+__MCF_DLLEXPORT
 int
 _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* timeout_opt)
   {

@@ -7,6 +7,7 @@
 #include "clock.h"
 #include "xglobals.i"
 
+__MCF_DLLEXPORT
 int64_t
 _MCF_utc_now(void)
   {
@@ -29,6 +30,7 @@ _MCF_utc_now(void)
     return (int64_t) t - 11644473600000;
   }
 
+__MCF_DLLEXPORT
 double
 _MCF_hires_utc_now(void)
   {
@@ -49,12 +51,14 @@ _MCF_hires_utc_now(void)
     return t - 11644473600000;
   }
 
+__MCF_DLLEXPORT
 int64_t
 _MCF_tick_count(void)
   {
     return (int64_t) GetTickCount64();
   }
 
+__MCF_DLLEXPORT
 double
 _MCF_perf_counter(void)
   {
