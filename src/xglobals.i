@@ -17,6 +17,18 @@
 extern "C" {
 #endif
 
+#ifndef _WIN32_WINNT
+#  error Only Windows platforms are supported.
+#endif
+
+#if _WIN32_WINNT < 0x0601
+#  error Please define `_WIN32_WINNT` to at least Windows 7.
+#endif
+
+#if __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
+#  error Windows platforms are assumed to be little-endian.
+#endif
+
 #ifndef __MCF_DECLSPEC_XGLOBALS
 #  define __MCF_DECLSPEC_XGLOBALS(...)  __VA_ARGS__
 #endif
