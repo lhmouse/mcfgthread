@@ -7,8 +7,8 @@
 #include <winver.h>
 
 VS_VERSION_INFO VERSIONINFO
-  FILEVERSION        _MCF_ABI_VERSION_MAJOR, _MCF_ABI_VERSION_MINOR, 0, 0
   PRODUCTVERSION     _MCF_ABI_VERSION_MAJOR, _MCF_ABI_VERSION_MINOR, 0, 0
+  FILEVERSION        _MCF_ABI_VERSION_MAJOR, _MCF_ABI_VERSION_MINOR, 0, 0
   FILEFLAGSMASK      VS_FFI_FILEFLAGSMASK
 #ifdef __MCF_DEBUG
   FILEFLAGS          VS_FF_DEBUG
@@ -29,7 +29,7 @@ VS_VERSION_INFO VERSIONINFO
       BLOCK "040904B0"  /* English (US), UTF-16 */
       {
         VALUE "ProductName",      "The MCF Gthread Library"
-        VALUE "InternalName",     "mcfgthread"
+        VALUE "InternalName",     "libmcfgthread"
         VALUE "ProductVersion",   _MCF_ABI_VERSION_STRING
         VALUE "FileVersion",      _MCF_ABI_VERSION_STRING
         VALUE "FileDescription",  "Cornerstone of the MOST efficient std::thread on Windows"
