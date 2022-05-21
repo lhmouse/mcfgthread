@@ -205,12 +205,6 @@ __MCF_can_copy_forward(void* __restrict__ __dst, const void* __restrict__ __src,
     return (uintptr_t) __dst - (uintptr_t) __src >= __size;
   }
 
-/* Define macros for inline assembly.  */
-
-#define __MCF_ASMBYTE_00   "\x00"
-#define __MCF_ASMBYTE_01   "\x01"
-#define __MCF_ASMBYTE_02   "\x02"
-
 /* Copy a block of memory forward, like `memcpy()`.  */
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void* __cdecl
