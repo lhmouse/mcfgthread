@@ -272,6 +272,6 @@
     __MCF_XASM_BYTE_##j __MCF_XASM_BYTE_##k __MCF_XASM_BYTE_##l  \
     "\"\n\t"
 
-#define __MCF_XASM(...)   __MCF_XASM_STR(__VA_ARGS__,,,,,,,,,,,,)
+#define __MCF_XASM_BYTES(...)   __MCF_XASM_STR(__VA_ARGS__,,,,,,,,,,,,)
 
 #endif  /* __MCFGTHREAD_XASM_  */
