@@ -45,121 +45,121 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
 
-    for(;;) {
-      /* If this mutex has not been locked, lock it. Otherwise, if the maximum
-       * number of spinning threads has been reached, allocate a sleeping count
-       * for it. Otherwise, allocate a spinning bit for the current thread. If
-       * the mutex can be locked immediately, the failure counter shall be
-       * decremented. Otherwise it shall be incremented, no matter whether the
-       * current thread is going to spin or not.  */
+  r:
+    /* If this mutex has not been locked, lock it. Otherwise, if the maximum
+     * number of spinning threads has been reached, allocate a sleeping count
+     * for it. Otherwise, allocate a spinning bit for the current thread. If
+     * the mutex can be locked immediately, the failure counter shall be
+     * decremented. Otherwise it shall be incremented, no matter whether the
+     * current thread is going to spin or not.  */
+    _MCF_atomic_load_pptr_rlx(&old, mutex);
+    do {
+      new = old;
+      if(old.__locked == 0)
+        new.__locked = 1;
+      else if((old.__sp_mask == __MCF_MUTEX_SP_MASK_M) || (old.__sp_nfail >= __MCF_MUTEX_SP_NFAIL_THRESHOLD))
+        new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
+      else
+        new.__sp_mask = (old.__sp_mask | (old.__sp_mask + 1U)) & __MCF_MUTEX_SP_MASK_M;
+
+      uint32_t temp = old.__sp_nfail - 1U + old.__locked * 2U;
+      new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
+    }
+    while(!_MCF_atomic_cmpxchg_weak_pptr_arl(mutex, &old, &new));
+
+    /* If this mutex has been locked by the current thread, succeed.  */
+    if(old.__locked == 0)
+      return 0;
+
+    if(old.__sp_mask != new.__sp_mask) {
+      /* The current thread shall spin now.  */
+      uint32_t my_mask = (uint32_t) new.__sp_mask ^ old.__sp_mask;
+      __MCF_ASSERT((my_mask & (my_mask - 1)) == 0);
+
+      /* Calculate the spin count for this loop.  */
+      register int spin = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
+      __MCF_ASSERT(spin > 0);
+      spin *= (int) (__MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_SP_NFAIL_THRESHOLD);
+
+      while(--spin >= 0) {
+        __builtin_ia32_pause();
+
+        /* Wait for my turn.  */
+        uint8_t cmp = 1;
+        if(!_MCF_atomic_cmpxchg_weak_8_rlx(do_spin_byte_ptr(mutex, my_mask), &cmp, 0))
+          continue;
+
+        /* If this mutex has not been locked, lock it and decrement the
+         * failure counter. Otherwise, do nothing.  */
+        _MCF_atomic_load_pptr_rlx(&old, mutex);
+        if(old.__locked != 0)
+          continue;
+
+        new = old;
+        new.__locked = 1;
+
+        uint32_t temp = old.__sp_nfail - 1U;
+        new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
+
+        if(_MCF_atomic_cmpxchg_pptr_acq(mutex, &old, &new))
+          return 0;
+      }
+
+      /* We have wasted some time. Now allocate a sleeping count.
+       * IMPORTANT! We can increment the sleeping counter ONLY IF the mutex
+       * is being locked by another thread. Otherwise, if the other thread
+       * had unlocked the mutex before we incremented the sleeping counter,
+       * we could miss a wakeup and result in deadlocks.  */
       _MCF_atomic_load_pptr_rlx(&old, mutex);
       do {
         new = old;
         if(old.__locked == 0)
           new.__locked = 1;
-        else if((old.__sp_mask == __MCF_MUTEX_SP_MASK_M) || (old.__sp_nfail >= __MCF_MUTEX_SP_NFAIL_THRESHOLD))
-          new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
         else
-          new.__sp_mask = (old.__sp_mask | (old.__sp_mask + 1U)) & __MCF_MUTEX_SP_MASK_M;
+          new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
 
-        uint32_t temp = old.__sp_nfail - 1U + old.__locked * 2U;
+        uint32_t temp = old.__sp_nfail - 1U + old.__locked;
         new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
       }
-      while(!_MCF_atomic_cmpxchg_weak_pptr_arl(mutex, &old, &new));
+      while(!_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new));
 
       /* If this mutex has been locked by the current thread, succeed.  */
       if(old.__locked == 0)
         return 0;
-
-      if(old.__sp_mask != new.__sp_mask) {
-        /* The current thread shall spin now.  */
-        uint32_t my_mask = (uint32_t) new.__sp_mask ^ old.__sp_mask;
-        __MCF_ASSERT((my_mask & (my_mask - 1)) == 0);
-
-        /* Calculate the spin count for this loop.  */
-        register int spin = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
-        __MCF_ASSERT(spin > 0);
-        spin *= (int) (__MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_SP_NFAIL_THRESHOLD);
-
-        while(--spin >= 0) {
-          __builtin_ia32_pause();
-
-          /* Wait for my turn.  */
-          uint8_t cmp = 1;
-          if(!_MCF_atomic_cmpxchg_weak_8_rlx(do_spin_byte_ptr(mutex, my_mask), &cmp, 0))
-            continue;
-
-          /* If this mutex has not been locked, lock it and decrement the
-           * failure counter. Otherwise, do nothing.  */
-          _MCF_atomic_load_pptr_rlx(&old, mutex);
-          if(old.__locked != 0)
-            continue;
-
-          new = old;
-          new.__locked = 1;
-
-          uint32_t temp = old.__sp_nfail - 1U;
-          new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
-
-          if(_MCF_atomic_cmpxchg_pptr_acq(mutex, &old, &new))
-            return 0;
-        }
-
-        /* We have wasted some time. Now allocate a sleeping count.
-         * IMPORTANT! We can increment the sleeping counter ONLY IF the mutex
-         * is being locked by another thread. Otherwise, if the other thread
-         * had unlocked the mutex before we incremented the sleeping counter,
-         * we could miss a wakeup and result in deadlocks.  */
-        _MCF_atomic_load_pptr_rlx(&old, mutex);
-        do {
-          new = old;
-          if(old.__locked == 0)
-            new.__locked = 1;
-          else
-            new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
-
-          uint32_t temp = old.__sp_nfail - 1U + old.__locked;
-          new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
-        }
-        while(!_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new));
-
-        /* If this mutex has been locked by the current thread, succeed.  */
-        if(old.__locked == 0)
-          return 0;
-      }
-
-      /* Try waiting.  */
-      status = __MCF_keyed_event_wait(mutex, nt_timeout.__li);
-      while(status == STATUS_TIMEOUT) {
-        /* Tell another thread which is going to signal this mutex that an old
-         * waiter has left by decrementing the number of sleeping threads. But
-         * see below...  */
-        _MCF_atomic_load_pptr_rlx(&old, mutex);
-        do {
-          if(old.__nsleep == 0)
-            break;
-
-          new = old;
-          new.__nsleep = (old.__nsleep - 1U) & __MCF_MUTEX_NSLEEP_M;
-        }
-        while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(mutex, &old, &new));
-
-        if(old.__nsleep != 0)
-          return -1;
-
-        /* ... It is possible that a second thread has already decremented the
-         * counter. If this does take place, it is going to release the keyed
-         * event soon. We must wait again, otherwise we get a deadlock in the
-         * second thread. Again, a third thread could start waiting for this
-         * keyed event before us, so we set the timeout to zero. If we time out
-         * again, the third thread will have incremented the number of sleeping
-         * threads and we can try decrementing it again.  */
-        status = __MCF_keyed_event_signal(mutex, (LARGE_INTEGER[]) { 0 });
-      }
-
-      /* We have got notified. Recheck now.  */
-      __MCF_adjust_winnt_timeout_v2(&nt_timeout);
     }
+
+    /* Try waiting.  */
+    status = __MCF_keyed_event_wait(mutex, nt_timeout.__li);
+    while(status == STATUS_TIMEOUT) {
+      /* Tell another thread which is going to signal this mutex that an old
+       * waiter has left by decrementing the number of sleeping threads. But
+       * see below...  */
+      _MCF_atomic_load_pptr_rlx(&old, mutex);
+      do {
+        if(old.__nsleep == 0)
+          break;
+
+        new = old;
+        new.__nsleep = (old.__nsleep - 1U) & __MCF_MUTEX_NSLEEP_M;
+      }
+      while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(mutex, &old, &new));
+
+      if(old.__nsleep != 0)
+        return -1;
+
+      /* ... It is possible that a second thread has already decremented the
+       * counter. If this does take place, it is going to release the keyed
+       * event soon. We must wait again, otherwise we get a deadlock in the
+       * second thread. Again, a third thread could start waiting for this
+       * keyed event before us, so we set the timeout to zero. If we time out
+       * again, the third thread will have incremented the number of sleeping
+       * threads and we can try decrementing it again.  */
+      status = __MCF_keyed_event_signal(mutex, (LARGE_INTEGER[]) { 0 });
+    }
+
+    /* We have got notified.  */
+    __MCF_adjust_winnt_timeout_v2(&nt_timeout);
+    goto r;
   }
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
