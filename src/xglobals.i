@@ -223,7 +223,7 @@ __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __s
     uintptr_t __cx = __size;
 
     __asm__ (
-      __MCF_XASM(F3,A4)  /* rep movsb  */
+      __MCF_XASM_BYTES(F3,A4)  /* rep movsb  */
       : "+D"(__di), "+S"(__si), "+c"(__cx), "=m"(*(__bytes*) __dst)
       : "m"(*(const __bytes*) __src)
     );
@@ -254,15 +254,15 @@ __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
     if(!__MCF_can_copy_forward(__dst, __src, __size)) {
       /* Set DF and adjust pointers to copy backward. This has to provide a
        * dependency output for the next statement so GCC won't reorder them.  */
-      __asm__ volatile ( __MCF_XASM(FD) /* std  */ : "+c"(__cx) );
+      __asm__ volatile ( __MCF_XASM_BYTES(FD) /* std  */ : "+c"(__cx) );
       __di += __cx - 1;
       __si += __cx - 1;
     }
 
     /* Now copy memory. The DF flag shall be cleared before returning.  */
     __asm__ (
-      __MCF_XASM(F3,A4)  /* rep movsb  */
-      __MCF_XASM(FC)     /* cld  */
+      __MCF_XASM_BYTES(F3,A4)  /* rep movsb  */
+      __MCF_XASM_BYTES(FC)     /* cld  */
       : "+D"(__di), "+S"(__si), "+c"(__cx), "=m"(*(__bytes*) __dst)
       : "m"(*(const __bytes*) __src)
     );
@@ -289,7 +289,7 @@ __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
     uintptr_t __cx = __size;
 
     __asm__ (
-      __MCF_XASM(F3,AA)  /* rep stosb  */
+      __MCF_XASM_BYTES(F3,AA)  /* rep stosb  */
       : "+D"(__di), "+c"(__cx), "=m"(*(__bytes*) __dst)
       : "a"(__val)
     );
@@ -316,7 +316,7 @@ __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
     uintptr_t __cx = __size;
 
     __asm__ (
-      __MCF_XASM(F3,AA)  /* rep stosb  */
+      __MCF_XASM_BYTES(F3,AA)  /* rep stosb  */
       : "+D"(__di), "+c"(__cx), "=m"(*(__bytes*) __dst)
       : "a"(0)
     );
@@ -346,10 +346,10 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
     uintptr_t __cx = __size;
 
     __asm__ (
-      __MCF_XASM(31,C0)     /* xor eax, eax  */
-      __MCF_XASM(F3,A6)     /* repz cmpsb  */
-      __MCF_XASM(0F,95,C0)  /* setnz al  */
-      __MCF_XASM(19,C9)     /* sbb ecx, ecx  */
+      __MCF_XASM_BYTES(31,C0)     /* xor eax, eax  */
+      __MCF_XASM_BYTES(F3,A6)     /* repz cmpsb  */
+      __MCF_XASM_BYTES(0F,95,C0)  /* setnz al  */
+      __MCF_XASM_BYTES(19,C9)     /* sbb ecx, ecx  */
       : "=a"(__result), "+S"(__si), "+D"(__di), "+c"(__cx)
       : "m"(*(const __bytes*) __src), "m"(*(const __bytes*) __cmp)
       : "cc"
@@ -388,14 +388,14 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
     uintptr_t __cx = __size;
 
     __asm__ (
-      __MCF_XASM(31,C0)  /* xor eax, eax  */
-      __MCF_XASM(F3,A6)  /* repz cmpsb  */
+      __MCF_XASM_BYTES(31,C0)  /* xor eax, eax  */
+      __MCF_XASM_BYTES(F3,A6)  /* repz cmpsb  */
 #  ifdef __GCC_ASM_FLAG_OUTPUTS__
       /* Store the result in FL and clobber AX.  */
       : "=@ccz"(__result),
 #  else
       /* Store the result in AX and clobber FL.  */
-      __MCF_XASM(0F,94,C0)  /* setz al  */
+      __MCF_XASM_BYTES(0F,94,C0)  /* setz al  */
       : "=a"(__result),
 #  endif
         "+S"(__si), "+D"(__di), "+c"(__cx)
