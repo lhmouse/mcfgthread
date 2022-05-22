@@ -49,7 +49,7 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
        * before us, so we set the timeout to zero. If we time out again, the
        * third thread will have decrement the value of this semaphore and we
        * can try incrementing it again.  */
-      status = __MCF_keyed_event_signal(sem, (LARGE_INTEGER[1]) { 0 });
+      status = __MCF_keyed_event_signal(sem, (LARGE_INTEGER[]) { 0 });
     }
 
     /* We have got notified.  */
