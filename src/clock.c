@@ -14,7 +14,7 @@ _MCF_utc_now(void)
     FILETIME ft;
     GetSystemTimeAsFileTime(&ft);
 
-    /* `t := (low + high * 0x1p32) * 0x68DB8`BAC710CB / 0x1p64`  */
+    /* `t := (low + high * 0x1p32) * 0x68DB8BAC710CB / 0x1p64`  */
 #ifdef __SIZEOF_INT128__
     uint64_t t = ft.dwLowDateTime | (uint64_t) ft.dwHighDateTime << 32;
     t = (uint64_t) ((unsigned __int128) t * 0x68DB8BAC710CBULL >> 64);
