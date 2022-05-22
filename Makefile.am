@@ -2,17 +2,20 @@ ACLOCAL_AMFLAGS = -I m4
 END =
 
 ## Compiler options
-AM_CPPFLAGS = -pipe -Wall -Wextra -Isrc -U_FORTIFY_SOURCE -D_WIN32_WINNT=0x0601  \
+AM_CPPFLAGS = -pipe -Wall -Wextra -Isrc  \
+  -U_FORTIFY_SOURCE -D_WIN32_WINNT=0x0601  \
   -f{strict-{aliasing,overflow},merge-all-constants,fast-math}  \
   -fno-{stack-protector,align-{functions,jumps,loops},ident}  \
-  -Werror={conversion,sign-{compare,conversion},write-strings,return-type}  \
-  -Werror={double-promotion,aggressive-loop-optimizations,missing-declarations}  \
-  -W{switch-enum,suggest-attribute=noreturn,shadow,missing-field-initializers}  \
-  -Wunused-{function,label,local-typedefs,{,but-set-}{variable,parameter}}
+  -Werror={conversion,sign-{compare,conversion},write-strings}  \
+  -Werror={return-type,double-promotion,missing-declarations}  \
+  -W{missing-field-initializers,suggest-attribute=noreturn,shadow}  \
+  -W{switch-enum,unused-{function,label,local-typedefs}}  \
+  -Wunused-but-set-{variable,parameter}
 
 AM_CFLAGS = -std=c99  \
-  -Werror={discarded-qualifiers,int-conversion,incompatible-pointer-types}  \
-  -Werror={strict-prototypes,implicit-{function-declaration,int}}
+  -Werror={discarded-qualifiers,incompatible-pointer-types}  \
+  -Werror={strict-prototypes,int-conversion}  \
+  -Werror=implicit-{function-declaration,int}
 
 AM_RCFLAGS = -Isrc -c65001
 
