@@ -163,7 +163,7 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
     /* The table may be modified by destructors, so swap it out first.  */
     while(table->__begin) {
       temp = *table;
-      *table = (__MCF_tls_table) __MCF_0_INIT;
+      *table = (__MCF_tls_table) { 0 };
 
       while(temp.__begin != temp.__end) {
         temp.__end --;
