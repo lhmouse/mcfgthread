@@ -224,6 +224,7 @@ __MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __s
 
     __asm__ (
       __MCF_XASM_BYTES(F3,A4)  /* rep movsb  */
+
       : "+D"(__di), "+S"(__si), "+c"(__cx), "=m"(*(__bytes*) __dst)
       : "m"(*(const __bytes*) __src)
     );
@@ -254,15 +255,16 @@ __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
     if(!__MCF_can_copy_forward(__dst, __src, __size)) {
       /* Set DF and adjust pointers to copy backward. This has to provide a
        * dependency output for the next statement so GCC won't reorder them.  */
-      __asm__ volatile ( __MCF_XASM_BYTES(FD) /* std  */ : "+c"(__cx) );
       __di += __cx - 1;
       __si += __cx - 1;
+      __asm__ volatile ( __MCF_XASM_BYTES(FD) /* std  */ : "+c"(__cx)  );
     }
 
     /* Now copy memory. The DF flag shall be cleared before returning.  */
     __asm__ (
       __MCF_XASM_BYTES(F3,A4)  /* rep movsb  */
       __MCF_XASM_BYTES(FC)     /* cld  */
+
       : "+D"(__di), "+S"(__si), "+c"(__cx), "=m"(*(__bytes*) __dst)
       : "m"(*(const __bytes*) __src)
     );
@@ -290,6 +292,7 @@ __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
 
     __asm__ (
       __MCF_XASM_BYTES(F3,AA)  /* rep stosb  */
+
       : "+D"(__di), "+c"(__cx), "=m"(*(__bytes*) __dst)
       : "a"(__val)
     );
@@ -317,6 +320,7 @@ __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
 
     __asm__ (
       __MCF_XASM_BYTES(F3,AA)  /* rep stosb  */
+
       : "+D"(__di), "+c"(__cx), "=m"(*(__bytes*) __dst)
       : "a"(0)
     );
@@ -350,6 +354,7 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
       __MCF_XASM_BYTES(F3,A6)     /* repz cmpsb  */
       __MCF_XASM_BYTES(0F,95,C0)  /* setnz al  */
       __MCF_XASM_BYTES(19,C9)     /* sbb ecx, ecx  */
+
       : "=a"(__result), "+S"(__si), "+D"(__di), "+c"(__cx)
       : "m"(*(const __bytes*) __src), "m"(*(const __bytes*) __cmp)
       : "cc"
