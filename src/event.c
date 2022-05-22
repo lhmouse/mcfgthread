@@ -56,7 +56,7 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
          * keyed event before us, so we set the timeout to zero. If we time out
          * again, the third thread will have incremented the number of sleeping
          * threads and we can try decrementing it again.  */
-        status = __MCF_keyed_event_signal(event, (LARGE_INTEGER[1]) { 0 });
+        status = __MCF_keyed_event_signal(event, (LARGE_INTEGER[]) { 0 });
       }
 
       /* We have got notified. Recheck now.  */
