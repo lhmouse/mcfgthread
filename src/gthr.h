@@ -124,15 +124,15 @@ __MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void))
 /* Allocates a thread-specific key, like `pthread_key_create()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
-__MCF_gthr_key_create(__gthread_key_t* __keyp, void __dtor(void*)) __MCF_NOEXCEPT;
+__MCF_gthr_key_create(__gthread_key_t* __keyp, void __dtor_opt(void*)) __MCF_NOEXCEPT;
 
 #define __gthread_key_create  __MCF_gthr_key_create
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
-__MCF_gthr_key_create(__gthread_key_t* __keyp, void __dtor(void*)) __MCF_NOEXCEPT
+__MCF_gthr_key_create(__gthread_key_t* __keyp, void __dtor_opt(void*)) __MCF_NOEXCEPT
   {
-    _MCF_tls_key* __key = _MCF_tls_key_new(__dtor);
+    _MCF_tls_key* __key = _MCF_tls_key_new(__dtor_opt);
     *__keyp = __key;
     return (__key == NULL) ? ENOMEM : 0;
   }
@@ -169,15 +169,15 @@ __MCF_gthr_getspecific(__gthread_key_t __key) __MCF_NOEXCEPT
 /* Sets a thread-specific value, like `pthread_setspecific()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
-__MCF_gthr_setspecific(__gthread_key_t __key, const void* __ptr) __MCF_NOEXCEPT;
+__MCF_gthr_setspecific(__gthread_key_t __key, const void* __val_opt) __MCF_NOEXCEPT;
 
 #define __gthread_setspecific  __MCF_gthr_setspecific
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
-__MCF_gthr_setspecific(__gthread_key_t __key, const void* __ptr) __MCF_NOEXCEPT
+__MCF_gthr_setspecific(__gthread_key_t __key, const void* __val_opt) __MCF_NOEXCEPT
   {
-    int __err = _MCF_tls_set(__key, __ptr);
+    int __err = _MCF_tls_set(__key, __val_opt);
     return (__err != 0) ? ENOMEM : 0;
   }
 
