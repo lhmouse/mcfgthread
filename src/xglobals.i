@@ -197,14 +197,6 @@ __MCF_DECLSPEC_XGLOBALS()
 size_t
 __MCF_batch_release_common(const void* __key, size_t __count) __MCF_NOEXCEPT;
 
-/* Check whether two memory blocks overlap.  */
-__MCF_ALWAYS_INLINE __attribute__((__pure__))
-bool
-__MCF_can_copy_forward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
-  {
-    return (uintptr_t) __dst - (uintptr_t) __src >= __size;
-  }
-
 /* Copy a block of memory forward, like `memcpy()`.  */
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void* __cdecl
@@ -214,7 +206,7 @@ __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void* __cdecl
 __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
-    __MCF_ASSERT(__MCF_can_copy_forward(__dst, __src, __size));
+    __MCF_ASSERT((uintptr_t) __dst - (uintptr_t) __src >= __size);
 #if defined(__i386__) || defined(__amd64__)
     /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
@@ -236,32 +228,25 @@ __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
     return __dst;
   }
 
-/* Copy a block of potentially overlapped memory, like `memmove()`.  */
+/* Copy a block of memory backward.  */
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void* __cdecl
-__MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
+__MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
 
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void* __cdecl
-__MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
+__MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
+    __MCF_ASSERT((uintptr_t) __src - (uintptr_t) __dst >= __size);
 #if defined(__i386__) || defined(__amd64__)
     /* Use inline assembly to reduce code size.  */
     typedef char __bytes[__size];
-    uintptr_t __di = (uintptr_t) __dst;
-    uintptr_t __si = (uintptr_t) __src;
+    uintptr_t __di = (uintptr_t) __dst + __size - 1;
+    uintptr_t __si = (uintptr_t) __src + __size - 1;
     uintptr_t __cx = __size;
 
-    if(!__MCF_can_copy_forward(__dst, __src, __size)) {
-      /* Set DF and adjust pointers to copy backward. This has to provide a
-       * dependency output for the next statement so GCC won't reorder them.  */
-      __di += __cx - 1;
-      __si += __cx - 1;
-      __asm__ volatile ( __MCF_XASM_BYTES(FD) /* std  */ : "+c"(__cx)  );
-    }
-
-    /* Now copy memory. The DF flag shall be cleared before returning.  */
     __asm__ (
+      __MCF_XASM_BYTES(FD)     /* std  */
       __MCF_XASM_BYTES(F3,A4)  /* rep movsb  */
       __MCF_XASM_BYTES(FC)     /* cld  */
 
@@ -273,6 +258,20 @@ __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
     RtlMoveMemory(__dst, __src, __size);
 #endif
     return __dst;
+  }
+
+/* Copy a block of potentially overlapped memory, like `memmove()`.  */
+__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
+void* __cdecl
+__MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
+
+__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
+void* __cdecl
+__MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
+  {
+    return ((uintptr_t) __dst - (uintptr_t) __src >= __size)
+               ? __MCF_mcopy(__dst, __src, __size)
+               : __MCF_mcopy_backward(__dst, __src, __size);
   }
 
 /* Fill a block of memory with the given byte, like `memset()`.  */
