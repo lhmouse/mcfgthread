@@ -393,10 +393,12 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
     uintptr_t __cx = __size;
 
     __asm__ (
+      __MCF_XASM_BYTES(31,C0)  /* xor eax, eax  */
       __MCF_XASM_BYTES(F3,A6)  /* repz cmpsb  */
 
       : "=@ccz"(__result), "+S"(__si), "+D"(__di), "+c"(__cx)
-      : "a"(0), "m"(*(const __bytes*) __src), "m"(*(const __bytes*) __cmp)
+      : "m"(*(const __bytes*) __src), "m"(*(const __bytes*) __cmp)
+      : "ax"
     );
 #else
     /* Call the generic but slower version in NTDLL.  */
