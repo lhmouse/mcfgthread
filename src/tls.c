@@ -91,12 +91,12 @@ __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
       return NULL;
 
     __MCF_ASSERT(elem->__key_opt == key);
-    return elem->__value;
+    return elem->__value_opt;
   }
 
 __MCF_DLLEXPORT
 int
-__MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value)
+__MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value_opt)
   {
     size_t capacity = (size_t) (table->__end - table->__begin);
     if(table->__size >= capacity / 2) {
@@ -149,7 +149,7 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
     }
 
     __MCF_ASSERT(elem->__key_opt == key);
-    elem->__value = (void*) value;
+    elem->__value_opt = (void*) value_opt;
     return 0;
   }
 
@@ -173,7 +173,7 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
         if(!tkey)
           continue;
 
-        if(temp.__end->__value) {
+        if(temp.__end->__value_opt) {
           /* Invoke the destructor if there is a value and a destructor, and
            * the key has not been deleted.  */
           _MCF_tls_dtor* dtor = NULL;
@@ -181,7 +181,7 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
             dtor = tkey->__dtor_opt;
 
           if(dtor)
-            dtor(temp.__end->__value);
+            dtor(temp.__end->__value_opt);
         }
 
         do_tls_key_drop_ref_nonnull(tkey);
