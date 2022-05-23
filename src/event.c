@@ -17,9 +17,9 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
 
-  r:
     /* If this event contains some other value, return immediately.
     *  Otherwise, allocate a count for the current thread.  */
+  try_wait_loop:
     _MCF_atomic_load_pptr_acq(&old, event);
     do {
       if(old.__value != (uint8_t) undesired)
@@ -61,7 +61,7 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
 
     /* We have got notified.  */
     __MCF_adjust_winnt_timeout_v2(&nt_timeout);
-    goto r;
+    goto try_wait_loop;
   }
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
