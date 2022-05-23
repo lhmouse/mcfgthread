@@ -17,9 +17,9 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
 
-  r:
     /* If this flag has not been locked, lock it.
      * Otherwise, allocate a count for the current thread.  */
+  try_lock_loop:
     _MCF_atomic_load_pptr_acq(&old, once);
     do {
       if(old.__ready != 0)
@@ -70,7 +70,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
 
     /* We have got notified.  */
     __MCF_adjust_winnt_timeout_v2(&nt_timeout);
-    goto r;
+    goto try_lock_loop;
   }
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE

@@ -45,13 +45,13 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
 
-  r:
     /* If this mutex has not been locked, lock it. Otherwise, if the maximum
      * number of spinning threads has been reached, allocate a sleeping count
      * for it. Otherwise, allocate a spinning bit for the current thread. If
      * the mutex can be locked immediately, the failure counter shall be
      * decremented. Otherwise it shall be incremented, no matter whether the
      * current thread is going to spin or not.  */
+  try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, mutex);
     do {
       new = old;
@@ -159,7 +159,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 
     /* We have got notified.  */
     __MCF_adjust_winnt_timeout_v2(&nt_timeout);
-    goto r;
+    goto try_lock_loop;
   }
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
