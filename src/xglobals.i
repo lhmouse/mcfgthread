@@ -200,7 +200,7 @@ __MCF_batch_release_common(const void* __key, size_t __count) __MCF_NOEXCEPT;
 /* Check whether two memory blocks overlap.  */
 __MCF_ALWAYS_INLINE __attribute__((__pure__))
 bool
-__MCF_can_copy_forward(void* __restrict__ __dst, const void* __restrict__ __src, size_t __size) __MCF_NOEXCEPT
+__MCF_can_copy_forward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
     return (uintptr_t) __dst - (uintptr_t) __src >= __size;
   }
@@ -208,11 +208,11 @@ __MCF_can_copy_forward(void* __restrict__ __dst, const void* __restrict__ __src,
 /* Copy a block of memory forward, like `memcpy()`.  */
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void* __cdecl
-__MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __size) __MCF_NOEXCEPT;
+__MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
 
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void* __cdecl
-__MCF_mcopy(void* __restrict__ __dst, const void* __restrict__ __src, size_t __size) __MCF_NOEXCEPT
+__MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
     __MCF_ASSERT(__MCF_can_copy_forward(__dst, __src, __size));
 #if defined(__i386__) || defined(__amd64__)
@@ -426,12 +426,12 @@ __MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
  * block should be extended, vacuum bytes are filled with zeroes.  */
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void*
-__MCF_mrealloc_0(void** __restrict__ __pptr, size_t __size) __MCF_NOEXCEPT
+__MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT
   __attribute__((__warn_unused_result__, __alloc_size__(2)));
 
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void*
-__MCF_mrealloc_0(void** __restrict__ __pptr, size_t __size) __MCF_NOEXCEPT
+__MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT
   {
     void* __ptr = HeapReAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, *__pptr, __size);
     return !__ptr ? NULL : (*__pptr = __ptr);
