@@ -16,6 +16,7 @@ include_mcfgthread_HEADERS =  \
   %reldir%/tls.h  \
   %reldir%/gthr_aux.h  \
   %reldir%/gthr.h  \
+  %reldir%/c11.h  \
   ${END}
 
 lib_LTLIBRARIES += lib/libmcfgthread.la
@@ -44,6 +45,7 @@ lib_libmcfgthread_la_SOURCES =  \
   %reldir%/tls.c  \
   %reldir%/gthr_aux.c  \
   %reldir%/gthr.c  \
+  %reldir%/c11.c  \
   %reldir%/libkernelbase_tiny.def  \
   %reldir%/libntdll_tiny.def  \
   ${END}
