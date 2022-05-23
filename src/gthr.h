@@ -568,7 +568,7 @@ __MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, 
     __MCF_gthr_thread_record __rec[1];
     __rec->__proc = __proc;
     __rec->__arg = __arg;
-    __rec->__joinable = true;
+    __rec->__joinable = 1;
 
     _MCF_thread* __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk_v2, __rec, sizeof(*__rec));
     *__thrdp = __thrd;
