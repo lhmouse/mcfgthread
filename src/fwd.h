@@ -20,29 +20,57 @@ extern "C" {
 #  error Only Windows platforms are supported.
 #endif
 
-#if defined(__cplusplus)
-#  define __MCF_C(...)
+#ifdef __cplusplus
+#  /* C++  */
+#  define __MCF_C(...)         /* nothing  */
+#  define __MCF_C99(...)       /* nothing  */
+#  define __MCF_C11(...)       /* nothing  */
+#
+#elif !defined(__STDC_VERSION__) || (__STDC_VERSION__ < 199901L)
+#  /* C89  */
+#  define __MCF_C(...)         __VA_ARGS__
+#  define __MCF_C99(...)       /* nothing  */
+#  define __MCF_C11(...)       /* nothing  */
+#
+#elif __STDC_VERSION__ < 201103L
+#  /* C99  */
+#  define __MCF_C(...)         __VA_ARGS__
+#  define __MCF_C99(...)       __VA_ARGS__
+#  define __MCF_C11(...)       /* nothing  */
+#
 #else
-#  define __MCF_C(...)   __VA_ARGS__
-#endif
+#  /* C11  */
+#  define __MCF_C(...)         __VA_ARGS__
+#  define __MCF_C99(...)       __VA_ARGS__
+#  define __MCF_C11(...)       __VA_ARGS__
+#
+#endif  /* __STDC_VERSION__  */
 
-#if defined(__cplusplus)
-#  define __MCF_CXX(...)   __VA_ARGS__
+#ifndef __cplusplus
+#  /* C  */
+#  define __MCF_CXX(...)       /* nothing  */
+#  define __MCF_CXX11(...)     /* nothing  */
+#  define __MCF_CXX14(...)     /* nothing  */
+#
+#elif __cplusplus < 201103L
+#  /* C++98  */
+#  define __MCF_CXX(...)       __VA_ARGS__
+#  define __MCF_CXX11(...)     /* nothing  */
+#  define __MCF_CXX14(...)     /* nothing  */
+#
+#elif __cplusplus < 201402L
+#  /* C++11  */
+#  define __MCF_CXX(...)       __VA_ARGS__
+#  define __MCF_CXX11(...)     __VA_ARGS__
+#  define __MCF_CXX14(...)     /* nothing  */
+#
 #else
-#  define __MCF_CXX(...)
-#endif
-
-#if defined(__cplusplus) && (__cplusplus >= 201103L)
-#  define __MCF_CXX11(...)   __VA_ARGS__
-#else
-#  define __MCF_CXX11(...)
-#endif
-
-#if defined(__cplusplus) && (__cplusplus >= 201402L)
-#  define __MCF_CXX14(...)   __VA_ARGS__
-#else
-#  define __MCF_CXX14(...)
-#endif
+#  /* C++14  */
+#  define __MCF_CXX(...)       __VA_ARGS__
+#  define __MCF_CXX11(...)     __VA_ARGS__
+#  define __MCF_CXX14(...)     __VA_ARGS__
+#
+#endif  /* __cplusplus  */
 
 #define __MCF_PPCAT2(x,y)     x##y
 #define __MCF_PPCAT3(x,y,z)   x##y##z
