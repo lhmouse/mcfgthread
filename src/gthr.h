@@ -848,7 +848,7 @@ static __inline__
 void
 __gthread_yield(void) __MCF_NOEXCEPT
   {
-    return __MCF_gthr_yield();
+    __MCF_gthr_yield();
   }
 
 #ifdef __cplusplus
