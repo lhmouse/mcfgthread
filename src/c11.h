@@ -485,11 +485,13 @@ int
 __MCF_c11_thrd_create(thrd_t* __thrdp, thrd_start_t __proc, void* __arg) __MCF_NOEXCEPT
   {
     __MCF_c11_thread_record __rec[1];
+    _MCF_thread* __thrd;
+
     __rec->__proc = __proc;
     __rec->__arg = __arg;
     __rec->__joinable = true;
 
-    _MCF_thread* __thrd = _MCF_thread_new(__MCF_c11_thread_thunk_v2, __rec, sizeof(*__rec));
+    __thrd = _MCF_thread_new(__MCF_c11_thread_thunk_v2, __rec, sizeof(*__rec));
     *__thrdp = __thrd;
     return (__thrd == NULL) ? thrd_nomem : thrd_success;
   }
