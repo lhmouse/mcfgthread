@@ -155,7 +155,8 @@ __MCF_gthr_key_delete(__gthread_key_t __key) __MCF_NOEXCEPT
 /* Gets a thread-specific value, like `pthread_getspecific()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 void*
-__MCF_gthr_getspecific(__gthread_key_t __key) __MCF_NOEXCEPT;
+__MCF_gthr_getspecific(__gthread_key_t __key) __MCF_NOEXCEPT
+  __attribute__((__pure__));
 
 #define __gthread_getspecific  __MCF_gthr_getspecific
 
