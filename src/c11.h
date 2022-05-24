@@ -612,7 +612,7 @@ static __inline__
 void
 thrd_exit(int __res) __MCF_NOEXCEPT
   {
-    return __MCF_c11_thrd_exit(__res);
+    __MCF_c11_thrd_exit(__res);
   }
 
 /* 7.26.5.6 The thrd_join function  */
