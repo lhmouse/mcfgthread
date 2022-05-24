@@ -42,6 +42,7 @@ extern _MCF_mutex __MCF_cxa_atexit_mutex;
 extern __MCF_dtor_queue __MCF_cxa_atexit_queue;
 extern _MCF_mutex __MCF_cxa_at_quick_exit_mutex;
 extern __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
+extern _MCF_cond __MCF_interrupt_cond;
 extern BYTE __MCF_mutex_spin_field[2048];
 
 /* Hard-code these.  */
@@ -95,6 +96,9 @@ __MCF_WINAPI(void, ExitThread, DWORD) __attribute__((__noreturn__));
 __MCF_WINAPI(BOOL, SwitchToThread, void);
 __MCF_WINAPI(BOOL, TerminateProcess, HANDLE, UINT);
 
+typedef BOOL __stdcall HANDLER_ROUTINE(DWORD CtrlType);
+__MCF_WINAPI(BOOL, SetConsoleCtrlHandler, HANDLER_ROUTINE*, BOOL);
+
 /* Declare NTDLL (driver) APIs here.  */
 __MCF_WINAPI(NTSTATUS, LdrAddRefDll, ULONG, PVOID);
 __MCF_WINAPI(BOOLEAN, RtlDllShutdownInProgress, void);
@@ -107,7 +111,6 @@ __MCF_WINAPI(SIZE_T, RtlCompareMemory, const void*, const void*, SIZE_T) __attri
 __MCF_WINAPI(NTSTATUS, NtDuplicateObject, HANDLE, HANDLE, HANDLE, PHANDLE, ACCESS_MASK, ULONG, ULONG);
 __MCF_WINAPI(NTSTATUS, NtClose, HANDLE);
 __MCF_WINAPI(NTSTATUS, NtWaitForSingleObject, HANDLE, BOOLEAN, PLARGE_INTEGER);
-__MCF_WINAPI(NTSTATUS, NtDelayExecution, BOOLEAN, PLARGE_INTEGER);
 __MCF_WINAPI(NTSTATUS, NtWaitForKeyedEvent, HANDLE, PVOID, BOOLEAN, PLARGE_INTEGER);
 __MCF_WINAPI(NTSTATUS, NtReleaseKeyedEvent, HANDLE, PVOID, BOOLEAN, PLARGE_INTEGER);
 

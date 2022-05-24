@@ -10,7 +10,6 @@ EXPORTS
   NtWaitForSingleObject
   NtWaitForKeyedEvent
   NtReleaseKeyedEvent
-  NtDelayExecution
   LdrAddRefDll
   RtlDllShutdownInProgress
   RtlMoveMemory

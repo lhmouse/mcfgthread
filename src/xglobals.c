@@ -7,6 +7,7 @@
 #include "xglobals.i"
 #include "thread.h"
 #include "mutex.h"
+#include "cond.h"
 #include "dtor_queue.h"
 
 __MCF_DLLEXPORT
@@ -150,6 +151,7 @@ _MCF_mutex __MCF_cxa_atexit_mutex;
 __MCF_dtor_queue __MCF_cxa_atexit_queue;
 _MCF_mutex __MCF_cxa_at_quick_exit_mutex;
 __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
+_MCF_cond __MCF_interrupt_cond;
 BYTE __MCF_mutex_spin_field[];
 
 static
