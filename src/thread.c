@@ -5,6 +5,8 @@
 #include "precompiled.i"
 #define __MCF_DECLSPEC_THREAD(...)  __MCF_DLLEXPORT
 #include "thread.h"
+#include "mutex.h"
+#include "cond.h"
 #include "xglobals.i"
 
 static __attribute__((__force_align_arg_pointer__))
@@ -126,13 +128,26 @@ _MCF_yield(void)
     SwitchToThread();
   }
 
+static
+BOOL __stdcall
+do_ctrl_handler(DWORD type)
+  {
+    (void) type;
+    _MCF_cond_signal_all(&__MCF_interrupt_cond);
+    return false;
+  }
+
 __MCF_DLLEXPORT
-void
+int
 _MCF_sleep(const int64_t* timeout_opt)
   {
-    __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
+    /* Set a handler to receive Ctrl-C notifications.  */
+    if(!SetConsoleCtrlHandler(do_ctrl_handler, true))
+      return -1;
 
-    NTSTATUS status = NtDelayExecution(false, nt_timeout.__li);
-    __MCF_ASSERT(NT_SUCCESS(status));
+    /* Await for notifications. The handler shall be removed when this thread
+     * wakes up, no matter what the reason is.  */
+    int err = _MCF_cond_wait(&__MCF_interrupt_cond, NULL, NULL, 0, timeout_opt);
+    SetConsoleCtrlHandler(do_ctrl_handler, false);
+    return ~err;
   }
