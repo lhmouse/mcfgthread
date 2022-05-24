@@ -64,12 +64,20 @@ __MCF_c11_thrd_sleep(const struct timespec* dur, struct timespec* rem_opt)
     value = __builtin_fmin(value, 0x1p63 - 0x1p10);
 
     int64_t timeout = (int64_t) value;
-    _MCF_sleep(&timeout);
+    int err = _MCF_sleep(&timeout);
 
-    /* Windows does not support signals, so this function never fails.  */
-    if(rem_opt)
+    if(err && rem_opt) {
+      /* Calculate the remaining time if the operation was interrupted.  */
+      value -= _MCF_hires_utc_now();
+      value = __builtin_fmax(value, 0);
+
+      value *= 0.001;
+      rem_opt->tv_sec = (time_t) value;
+      rem_opt->tv_nsec = (long) ((value - (double) rem_opt->tv_sec) * 1000000000);
+    }
+    else if(rem_opt)
       *rem_opt = (struct timespec) __MCF_0_INIT;
 
-    /* The C11 standard doesn't say we should return `thrd_success.  */
-    return 0;
+    /* Return 0 in case of timeouts, and -1 in case of interrupts.  */
+    return err;
   }
