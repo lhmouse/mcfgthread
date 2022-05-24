@@ -8,11 +8,16 @@
 #include <time.h>
 #include <windows.h>
 
+#ifdef _USE_32BIT_TIME_T
+#  define my_mktime   _mktime64
+#else
+#  define my_mktime   mktime
+#endif
 
 int
 main(void)
   {
-    _tzset();
+    tzset();
 
     SYSTEMTIME st;
     GetLocalTime(&st);
@@ -24,7 +29,7 @@ main(void)
     tm.tm_hour = st.wHour;
     tm.tm_min = st.wMinute;
     tm.tm_sec = st.wSecond;
-    int64_t vcrt_now = _mktime64(&tm) * 1000 + st.wMilliseconds;
+    int64_t vcrt_now = my_mktime(&tm) * 1000 + st.wMilliseconds;
     printf("vcrt_now = %lld\n", vcrt_now);
 
     int64_t ms_now = _MCF_utc_now();
