@@ -46,7 +46,7 @@ __MCF_DLLEXPORT
 intptr_t
 __MCF_gthr_recursive_mutex_unlock_callback(intptr_t arg)
   {
-    __gthread_recursive_mutex_t* rmtx = (__gthread_recursive_mutex_t*) arg;
+    __MCF_gthr_rc_mutex* rmtx = (__MCF_gthr_rc_mutex*) arg;
 
     /* Clear the depth counter and return it.  */
     intptr_t unlocked = rmtx->__depth;
@@ -63,7 +63,7 @@ void
 __MCF_gthr_recursive_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
   {
     __MCF_ASSERT(unlocked > 0);
-    __gthread_recursive_mutex_t* rmtx = (__gthread_recursive_mutex_t*) arg;
+    __MCF_gthr_rc_mutex* rmtx = (__MCF_gthr_rc_mutex*) arg;
 
     /* Relock the mutex and restore the depth counter.  */
     _MCF_mutex_lock(&(rmtx->__mutex), NULL);
