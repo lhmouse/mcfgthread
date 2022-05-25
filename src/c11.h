@@ -553,14 +553,12 @@ thrd_detach(thrd_t __thrd) __MCF_NOEXCEPT
   }
 
 /* 7.26.5.4 The thrd_equal function  */
-__MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
-__MCF_CXX11(constexpr)
+__MCF_DECLSPEC_C11(__MCF_GNU_INLINE) __MCF_CXX11(constexpr)
 int
 __MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
-__MCF_CXX11(constexpr)
+__MCF_DECLSPEC_C11(__MCF_GNU_INLINE) __MCF_CXX11(constexpr)
 int
 __MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_NOEXCEPT
   {
