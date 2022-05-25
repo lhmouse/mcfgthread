@@ -33,6 +33,9 @@ extern "C" {
 
 /* Define <threads.h> types. These usually map to our APIs directly, except
  * the mutex.  */
+typedef struct __MCF_c11_thread_record __MCF_c11_thread_record;
+typedef int __MCF_c11_thread_procedure(void* __arg);
+
 typedef _MCF_thread* thrd_t;
 typedef _MCF_tls_key* tss_t;
 typedef _MCF_tls_dtor* tss_dtor_t;
@@ -41,9 +44,6 @@ typedef _MCF_once once_flag;
 typedef _MCF_cond cnd_t;
 typedef struct __MCF_c11_mutex mtx_t;
 
-typedef struct __MCF_c11_thread_record __MCF_c11_thread_record;
-
-typedef int __MCF_c11_thread_procedure(void* __arg);
 typedef __MCF_c11_thread_procedure* thrd_start_t;
 
 struct __MCF_c11_mutex
