@@ -130,7 +130,7 @@ _MCF_yield(void)
 
 static
 BOOL __stdcall
-do_ctrl_handler(DWORD type)
+do_handle_interrupt(DWORD type)
   {
     (void) type;
     _MCF_cond_signal_all(&__MCF_interrupt_cond);
@@ -142,12 +142,12 @@ int
 _MCF_sleep(const int64_t* timeout_opt)
   {
     /* Set a handler to receive Ctrl-C notifications.  */
-    if(!SetConsoleCtrlHandler(do_ctrl_handler, true))
+    if(!SetConsoleCtrlHandler(do_handle_interrupt, true))
       return -1;
 
-    /* Await for notifications. The handler shall be removed when this thread
-     * wakes up, no matter what the reason is.  */
+    /* Await notifications.
+     * The handler shall be removed when this thread wakes up.  */
     int err = _MCF_cond_wait(&__MCF_interrupt_cond, NULL, NULL, 0, timeout_opt);
-    SetConsoleCtrlHandler(do_ctrl_handler, false);
+    SetConsoleCtrlHandler(do_handle_interrupt, false);
     return ~err;
   }
