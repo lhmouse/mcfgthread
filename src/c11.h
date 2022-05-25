@@ -6,13 +6,7 @@
 #define __MCFGTHREAD_C11_
 
 #include "fwd.h"
-#include "tls.h"
-#include "once.h"
-#include "mutex.h"
-#include "cond.h"
-#include "thread.h"
 #include "gthr_aux.h"
-#include <errno.h>
 
 #ifdef __cplusplus
 extern "C" {
