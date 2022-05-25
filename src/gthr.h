@@ -31,6 +31,7 @@ typedef _MCF_tls_key* __gthread_key_t;
 typedef _MCF_once __gthread_once_t;
 typedef _MCF_cond __gthread_cond_t;
 typedef _MCF_mutex __gthread_mutex_t;
+typedef __MCF_gthr_rc_mutex __gthread_recursive_mutex_t;
 
 /* Define macros for static and dynamic initialization.  */
 #define __GTHREAD_ONCE_INIT  __MCF_0_INIT
@@ -246,9 +247,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_recursive_mutex_init(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
-    __rmtx->__owner = 0;
-    __rmtx->__depth = 0;
-    _MCF_mutex_init(&(__rmtx->__mutex));
+    __MCF_gthr_rc_mutex_init(__rmtx);
     return 0;
   }
 
@@ -278,25 +277,12 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
-    uint32_t __my_tid = _MCF_thread_self_tid();
-    int __err;
-
-    /* Check whether the mutex has already been owned.  */
-    if(_MCF_atomic_load_32_rlx(&(__rmtx->__owner)) == (int32_t) __my_tid) {
-      __MCF_ASSERT(__rmtx->__depth < __INT32_MAX__);
-      __rmtx->__depth ++;
+    int __err = __MCF_gthr_rc_mutex_enter(__rmtx);
+    if(__err == 0)
       return 0;
-    }
 
-    /* Attempt to take ownership.  */
-    __err = _MCF_mutex_lock(&(__rmtx->__mutex), NULL);
+    __err = __MCF_gthr_rc_mutex_wait(__rmtx, NULL);
     __MCF_ASSERT(__err == 0);
-
-    /* The calling thread owns the mutex now.  */
-    __MCF_ASSERT(__rmtx->__owner == 0);
-    _MCF_atomic_store_32_rlx(&(__rmtx->__owner), (int32_t) __my_tid);
-    __MCF_ASSERT(__rmtx->__depth == 0);
-    __rmtx->__depth = 1;
     return 0;
   }
 
@@ -312,27 +298,14 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
-    uint32_t __my_tid = _MCF_thread_self_tid();
-    int64_t __timeout = 0;
-    int __err;
-
-    /* Check whether the mutex has already been owned.  */
-    if(_MCF_atomic_load_32_rlx(&(__rmtx->__owner)) == (int32_t) __my_tid) {
-      __MCF_ASSERT(__rmtx->__depth < __INT32_MAX__);
-      __rmtx->__depth ++;
+    int64_t __timeout;
+    int __err = __MCF_gthr_rc_mutex_enter(__rmtx);
+    if(__err == 0)
       return 0;
-    }
 
-    /* Attempt to take ownership.  */
-    __err = _MCF_mutex_lock(&(__rmtx->__mutex), &__timeout);
-    if(__err != 0)
-      return -1;
-
-    /* The calling thread owns the mutex now.  */
-    __MCF_ASSERT(__rmtx->__owner == 0);
-    _MCF_atomic_store_32_rlx(&(__rmtx->__owner), (int32_t) __my_tid);
-    __MCF_ASSERT(__rmtx->__depth == 0);
-    __rmtx->__depth = 1;
+    __timeout = 0;
+    __err = __MCF_gthr_rc_mutex_wait(__rmtx, &__timeout);
+    __MCF_ASSERT(__err == 0);
     return 0;
   }
 
@@ -348,28 +321,14 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
   {
-    uint32_t __my_tid = _MCF_thread_self_tid();
-    int64_t __timeout = 0;
-    int __err;
-
-    /* Check whether the mutex has already been owned.  */
-    if(_MCF_atomic_load_32_rlx(&(__rmtx->__owner)) == (int32_t) __my_tid) {
-      __MCF_ASSERT(__rmtx->__depth < __INT32_MAX__);
-      __rmtx->__depth ++;
+    int64_t __timeout;
+    int __err = __MCF_gthr_rc_mutex_enter(__rmtx);
+    if(__err == 0)
       return 0;
-    }
 
-    /* Attempt to take ownership.  */
     __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
-    __err = _MCF_mutex_lock(&(__rmtx->__mutex), &__timeout);
-    if(__err != 0)
-      return -1;
-
-    /* The calling thread owns the mutex now.  */
-    __MCF_ASSERT(__rmtx->__owner == 0);
-    _MCF_atomic_store_32_rlx(&(__rmtx->__owner), (int32_t) __my_tid);
-    __MCF_ASSERT(__rmtx->__depth == 0);
-    __rmtx->__depth = 1;
+    __err = __MCF_gthr_rc_mutex_wait(__rmtx, &__timeout);
+    __MCF_ASSERT(__err == 0);
     return 0;
   }
 
@@ -384,18 +343,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
-    uint32_t __my_tid = _MCF_thread_self_tid();
-
-    /* Reduce a level of recursion.  */
-    __MCF_ASSERT(__rmtx->__owner == __my_tid);
-    __MCF_ASSERT(__rmtx->__depth > 0);
-    __rmtx->__depth --;
-    if(__rmtx->__depth != 0)
-      return 0;
-
-    /* Give up ownership now.  */
-    _MCF_atomic_store_32_rlx(&(__rmtx->__owner), 0);
-    _MCF_mutex_unlock(&(__rmtx->__mutex));
+    __MCF_gthr_rc_mutex_leave(__rmtx);
     return 0;
   }
 
