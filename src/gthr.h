@@ -7,7 +7,6 @@
 
 #include "fwd.h"
 #include "gthr_aux.h"
-#include <errno.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -93,7 +92,7 @@ __MCF_gthr_key_create(__gthread_key_t* __keyp, void __dtor_opt(void*)) __MCF_NOE
   {
     _MCF_tls_key* __key = _MCF_tls_key_new(__dtor_opt);
     *__keyp = __key;
-    return (__key == NULL) ? ENOMEM : 0;
+    return (__key == NULL) ? -1 : 0;
   }
 
 /* Destroys a thread-specific key, like `pthread_key_delete()`.  */
@@ -138,7 +137,7 @@ int
 __MCF_gthr_setspecific(__gthread_key_t __key, const void* __val_opt) __MCF_NOEXCEPT
   {
     int __err = _MCF_tls_set(__key, __val_opt);
-    return (__err != 0) ? ENOMEM : 0;
+    return (__err != 0) ? -1 : 0;
   }
 
 /* Initializes a mutex, like `pthread_mutex_init()`.  */
@@ -201,7 +200,7 @@ __MCF_gthr_mutex_trylock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
   {
     int64_t __timeout = 0;
     int __err = _MCF_mutex_lock(__mtx, &__timeout);
-    return (__err != 0) ? EBUSY : 0;
+    return (__err != 0) ? -1 : 0;
   }
 
 /* Tries locking a mutex until a time point, like `pthread_mutex_timedlock()`.  */
@@ -217,7 +216,7 @@ __MCF_gthr_mutex_timedlock(__gthread_mutex_t* __mtx, const __gthread_time_t* __a
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
     int __err = _MCF_mutex_lock(__mtx, &__timeout);
-    return (__err != 0) ? ETIMEDOUT : 0;
+    return (__err != 0) ? -1 : 0;
   }
 
 /* Unlocks a mutex, like `pthread_mutex_unlock()`.  */
@@ -327,7 +326,7 @@ __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NO
     /* Attempt to take ownership.  */
     __err = _MCF_mutex_lock(&(__rmtx->__mutex), &__timeout);
     if(__err != 0)
-      return EBUSY;
+      return -1;
 
     /* The calling thread owns the mutex now.  */
     __MCF_ASSERT(__rmtx->__owner == 0);
@@ -364,7 +363,7 @@ __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const 
     __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
     __err = _MCF_mutex_lock(&(__rmtx->__mutex), &__timeout);
     if(__err != 0)
-      return ETIMEDOUT;
+      return -1;
 
     /* The calling thread owns the mutex now.  */
     __MCF_ASSERT(__rmtx->__owner == 0);
@@ -479,7 +478,7 @@ __MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx, co
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
     int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback, __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx, &__timeout);
-    return (__err != 0) ? ETIMEDOUT : 0;
+    return (__err != 0) ? -1 : 0;
   }
 
 /* Signals at most one thread that is waiting on the condition variable, like
@@ -534,7 +533,7 @@ __MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, 
 
     __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk_v2, __rec, sizeof(*__rec));
     *__thrdp = __thrd;
-    return (__thrd == NULL) ? EAGAIN : 0;  /* as specified by POSIX  */
+    return (__thrd == NULL) ? -1 : 0;  /* as specified by POSIX  */
   }
 
 /* Awaits a thread to terminate and gets its result, like `pthread_join()`.  */
@@ -554,17 +553,17 @@ __MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
     if(__thrd->__proc != __MCF_gthr_thread_thunk_v2)
-      return EINVAL;
+      return -1;
 
     __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
 
     /* Fail if the thread has already been detached.  */
     if(_MCF_atomic_xchg_8_rlx(&(__rec->__joinable), 0) == 0)
-      return EINVAL;
+      return -1;
 
     /* Wait for it.  */
     if(__thrd == _MCF_thread_self())
-      return EDEADLK;
+      return -2;
 
     __err = _MCF_thread_wait(__thrd, NULL);
     __MCF_ASSERT(__err == 0);
@@ -593,13 +592,13 @@ __MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_NOEXCEPT
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
     if(__thrd->__proc != __MCF_gthr_thread_thunk_v2)
-      return EINVAL;
+      return -1;
 
     __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
 
     /* Fail if the thread has already been detached.  */
     if(_MCF_atomic_xchg_8_rlx(&(__rec->__joinable), 0) == 0)
-      return EINVAL;
+      return -1;
 
     /* Free the thread.  */
     _MCF_thread_drop_ref(__thrd);
