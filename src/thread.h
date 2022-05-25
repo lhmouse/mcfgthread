@@ -67,7 +67,7 @@ _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
 
 #ifdef __cplusplus
 extern "C++"
-__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE) __MCF_CXX11(constexpr)
+inline __MCF_CXX11(constexpr)
 void*
 _MCF_thread_get_data(_MCF_thread* __thrd) __MCF_NOEXCEPT
   {
