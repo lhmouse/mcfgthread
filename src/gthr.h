@@ -32,6 +32,7 @@ typedef _MCF_tls_key* __gthread_key_t;
 typedef _MCF_once __gthread_once_t;
 typedef _MCF_cond __gthread_cond_t;
 typedef _MCF_mutex __gthread_mutex_t;
+typedef __MCF_gthr_recursive_mutex __gthread_recursive_mutex_t;
 
 /* Define macros for static and dynamic initialization.  */
 #define __GTHREAD_ONCE_INIT   __MCF_0_INIT

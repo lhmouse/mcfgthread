@@ -21,11 +21,11 @@ extern "C" {
 #endif
 
 /* Define reusable types.  */
-typedef struct __MCF_gthr_recursive_mutex_t __gthread_recursive_mutex_t;
+typedef struct __MCF_gthr_recursive_mutex __MCF_gthr_recursive_mutex;
 typedef struct __MCF_gthr_thread_record __MCF_gthr_thread_record;
 typedef void* __MCF_gthr_thread_procedure(void* __arg);
 
-struct __MCF_gthr_recursive_mutex_t
+struct __MCF_gthr_recursive_mutex
   {
     uint32_t __owner;  /* owner thread ID  */
     int __depth;  /* recursion depth  */
@@ -74,7 +74,7 @@ void
 __MCF_gthr_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
 
 /* These are auxiliary functions for condition variables. The argument is a
- * pointer to a `__gthread_recursive_mutex_t`.  */
+ * pointer to a `__MCF_gthr_recursive_mutex`.  */
 __MCF_DECLSPEC_GTHR_AUX()
 intptr_t
 __MCF_gthr_recursive_mutex_unlock_callback(intptr_t __arg) __MCF_NOEXCEPT;
