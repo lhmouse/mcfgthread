@@ -33,7 +33,7 @@ main(void)
     timeout.tv_sec = time(NULL) + 1;
     timeout.tv_nsec = 100000000;
     r = __gthread_mutex_timedlock(&mutex, &timeout);
-    assert(r == ETIMEDOUT);
+    assert(r == -1);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
     assert(delta >= 1000);

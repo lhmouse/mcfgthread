@@ -18,7 +18,7 @@ main(void)
     assert(r == 0);
 
     r = __gthread_mutex_trylock(&mutex);
-    assert(r == EBUSY);
+    assert(r == -1);
 
     r = __gthread_mutex_unlock(&mutex);
     assert(r == 0);
