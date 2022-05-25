@@ -30,16 +30,6 @@ extern "C" {
 typedef struct __MCF_c11_thread_record __MCF_c11_thread_record;
 typedef int __MCF_c11_thread_procedure(void* __arg);
 
-typedef _MCF_thread* thrd_t;
-typedef _MCF_tls_key* tss_t;
-typedef _MCF_tls_dtor* tss_dtor_t;
-
-typedef _MCF_once once_flag;
-typedef _MCF_cond cnd_t;
-typedef struct __MCF_c11_mutex mtx_t;
-
-typedef __MCF_c11_thread_procedure* thrd_start_t;
-
 struct __MCF_c11_mutex
   {
     uint8_t __type;  /* bit mask of `__MCF_mtx_type`  */
@@ -58,6 +48,15 @@ struct __MCF_c11_thread_record
     uint8_t __joinable;
     intptr_t __reserved[2];
   };
+
+typedef __MCF_c11_thread_procedure* thrd_start_t;
+typedef _MCF_thread* thrd_t;
+typedef _MCF_tls_key* tss_t;
+typedef _MCF_tls_dtor* tss_dtor_t;
+
+typedef _MCF_once once_flag;
+typedef _MCF_cond cnd_t;
+typedef struct __MCF_c11_mutex mtx_t;
 
 /* These are auxiliary functions for condition variables. The argument is a
  * pointer to a `mtx_t`.  */
