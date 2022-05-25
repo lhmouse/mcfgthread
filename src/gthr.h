@@ -6,11 +6,6 @@
 #define __MCFGTHREAD_GTHR_
 
 #include "fwd.h"
-#include "tls.h"
-#include "once.h"
-#include "mutex.h"
-#include "cond.h"
-#include "thread.h"
 #include "gthr_aux.h"
 #include <errno.h>
 
@@ -38,27 +33,6 @@ typedef _MCF_once __gthread_once_t;
 typedef _MCF_cond __gthread_cond_t;
 typedef _MCF_mutex __gthread_mutex_t;
 
-typedef struct __MCF_gthr_recursive_mutex_t __gthread_recursive_mutex_t;
-typedef struct __MCF_gthr_thread_record __MCF_gthr_thread_record;
-
-typedef void* __MCF_gthr_thread_procedure(void* __arg);
-
-struct __MCF_gthr_recursive_mutex_t
-  {
-    uint32_t __owner;  /* owner thread ID  */
-    int __depth;  /* recursion depth  */
-    _MCF_mutex __mutex;
-  };
-
-struct __MCF_gthr_thread_record
-  {
-    void* __result;
-    __MCF_gthr_thread_procedure* __proc;
-    void* __arg;
-    uint8_t __joinable;
-    intptr_t __reserved[2];
-  };
-
 /* Define macros for static and dynamic initialization.  */
 #define __GTHREAD_ONCE_INIT  __MCF_0_INIT
 #define __GTHREAD_COND_INIT  __MCF_0_INIT
@@ -81,21 +55,6 @@ __MCF_gthr_active_p(void) __MCF_NOEXCEPT
   {
     return 1;
   }
-
-/* These are auxiliary functions for condition variables. The argument is a
- * pointer to a `__gthread_recursive_mutex_t`.  */
-__MCF_DECLSPEC_GTHR()
-intptr_t
-__MCF_gthr_recursive_mutex_unlock_callback(intptr_t __arg) __MCF_NOEXCEPT;
-
-__MCF_DECLSPEC_GTHR()
-void
-__MCF_gthr_recursive_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
-
-/* This is the actual thread function for a gthread.  */
-__MCF_DECLSPEC_GTHR()
-void
-__MCF_gthr_thread_thunk_v2(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 
 /* Performs one-time initialization, like `pthread_once()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
