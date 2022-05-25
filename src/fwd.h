@@ -118,14 +118,14 @@ typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __this);
 typedef void __MCF_atexit_callback(void);
 
 /* Define some helper functions.  */
-__MCF_CXX11(constexpr) __MCF_ALWAYS_INLINE
+__MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
 _MCF_minz(size_t __x, size_t __y) __MCF_NOEXCEPT
   {
     return (__y < __x) ? __y : __x;
   }
 
-__MCF_CXX11(constexpr) __MCF_ALWAYS_INLINE
+__MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
 _MCF_maxz(size_t __x, size_t __y) __MCF_NOEXCEPT
   {

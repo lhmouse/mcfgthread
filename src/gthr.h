@@ -625,16 +625,14 @@ __MCF_gthr_self(void) __MCF_NOEXCEPT
   }
 
 /* Checks whether two thread IDs compare equal, like `pthread_equal()`.  */
-__MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
-__MCF_CXX11(constexpr)
+__MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE) __MCF_CXX11(constexpr)
 int
 __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
 #define __gthread_equal  __MCF_thrd_equal
 
-__MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
-__MCF_CXX11(constexpr)
+__MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE) __MCF_CXX11(constexpr)
 int
 __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT
   {
