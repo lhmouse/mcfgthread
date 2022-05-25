@@ -367,10 +367,6 @@ __MCF_c11_mtx_trylock(mtx_t* __mtx) __MCF_NOEXCEPT
     int64_t __timeout;
     int __err;
 
-    /* If the mutex does not support timeout, fail.  */
-    if(!(__mtx->__type & mtx_timed))
-      return thrd_error;
-
     /* Check for recursion.  */
     __err = __MCF_gthr_rc_mutex_recurse(&(__mtx->__rc_mtx));
     if(__err == 0) {
