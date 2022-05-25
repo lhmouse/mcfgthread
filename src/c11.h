@@ -35,9 +35,7 @@ struct __MCF_c11_mutex
     uint8_t __type;  /* bit mask of `__MCF_mtx_type`  */
     uint8_t __reserved_1;
     uint16_t __reserved_2;
-    uint32_t __owner;  /* owner thread ID  */
-    int __depth;  /* recursion depth  */
-    _MCF_mutex __mutex;
+    __MCF_gthr_rc_mutex __rc_mtx;
   };
 
 struct __MCF_c11_thread_record
@@ -57,16 +55,6 @@ typedef _MCF_tls_dtor* tss_dtor_t;
 typedef _MCF_once once_flag;
 typedef _MCF_cond cnd_t;
 typedef struct __MCF_c11_mutex mtx_t;
-
-/* These are auxiliary functions for condition variables. The argument is a
- * pointer to a `mtx_t`.  */
-__MCF_DECLSPEC_C11()
-intptr_t
-__MCF_c11_mutex_unlock_callback(intptr_t __arg) __MCF_NOEXCEPT;
-
-__MCF_DECLSPEC_C11()
-void
-__MCF_c11_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
 
 /* This is the actual thread function for a C11 thread.  */
 __MCF_DECLSPEC_C11()
@@ -209,7 +197,7 @@ int
 __MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEPT
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__ts);
-    int __err = _MCF_cond_wait(__cond, __MCF_c11_mutex_unlock_callback, __MCF_c11_mutex_relock_callback, (intptr_t) __mtx, &__timeout);
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) &(__mtx->__rc_mtx), &__timeout);
     return (__err != 0) ? thrd_timedout : thrd_success;
   }
 
@@ -229,7 +217,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_cnd_wait(cnd_t* __cond, mtx_t* __mtx) __MCF_NOEXCEPT
   {
-    int __err = _MCF_cond_wait(__cond, __MCF_c11_mutex_unlock_callback, __MCF_c11_mutex_relock_callback, (intptr_t) __mtx, NULL);
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) &(__mtx->__rc_mtx), NULL);
     __MCF_ASSERT(__err == 0);
     return thrd_success;
   }
@@ -280,9 +268,7 @@ __MCF_c11_mtx_init(mtx_t* __mtx, int __type) __MCF_NOEXCEPT
       case mtx_timed | mtx_recursive:
         /* Initialize an unowned mutex.  */
         __mtx->__type = (uint8_t) __type;
-        __mtx->__owner = 0;
-        __mtx->__depth = 0;
-        _MCF_mutex_init(&(__mtx->__mutex));
+        __MCF_gthr_rc_mutex_init(&(__mtx->__rc_mtx));
         return thrd_success;
     }
   }
@@ -303,30 +289,21 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_mtx_lock(mtx_t* __mtx) __MCF_NOEXCEPT
   {
-    uint32_t __my_tid = _MCF_thread_self_tid();
-    int __err;
-
-    /* Check whether the mutex has already been owned.  */
-    if(_MCF_atomic_load_32_rlx(&(__mtx->__owner)) == (int32_t) __my_tid) {
-      /* Fail if the mutex is not recursive.  */
-      if(!(__mtx->__type & mtx_recursive))
+    /* Check for recursion.  */
+    int __err = __MCF_gthr_rc_mutex_recurse(&(__mtx->__rc_mtx));
+    if(__err == 0) {
+      /* If the mutex is not recursive, perform error checking: If recursion
+       * has happened, undo the operation, and fail.  */
+      if(!(__mtx->__type & mtx_recursive)) {
+        __mtx->__rc_mtx.__depth --;
         return thrd_error;
-
-      /* Update the recursion count.  */
-      __MCF_ASSERT(__mtx->__depth < __INT32_MAX__);
-      __mtx->__depth ++;
-      return thrd_success;
+      }
+      else
+        return thrd_success;
     }
 
-    /* Attempt to take ownership.  */
-    __err = _MCF_mutex_lock(&(__mtx->__mutex), NULL);
+    __err = __MCF_gthr_rc_mutex_wait(&(__mtx->__rc_mtx), NULL);
     __MCF_ASSERT(__err == 0);
-
-    /* The calling thread owns the mutex now.  */
-    __MCF_ASSERT(__mtx->__owner == 0);
-    _MCF_atomic_store_32_rlx(&(__mtx->__owner), (int32_t) __my_tid);
-    __MCF_ASSERT(__mtx->__depth == 0);
-    __mtx->__depth = 1;
     return thrd_success;
   }
 
@@ -346,38 +323,29 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_mtx_timedlock(mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEPT
   {
-    uint32_t __my_tid = _MCF_thread_self_tid();
-    int64_t __timeout = 0;
+    int64_t __timeout;
     int __err;
 
-    /* Fail if the mutex does not support timeout.  */
+    /* If the mutex does not support timeout, fail.  */
     if(!(__mtx->__type & mtx_timed))
       return thrd_error;
 
-    /* Check whether the mutex has already been owned.  */
-    if(_MCF_atomic_load_32_rlx(&(__mtx->__owner)) == (int32_t) __my_tid) {
-      /* Fail if the mutex is not recursive.  */
-      if(!(__mtx->__type & mtx_recursive))
+    /* Check for recursion.  */
+    __err = __MCF_gthr_rc_mutex_recurse(&(__mtx->__rc_mtx));
+    if(__err == 0) {
+      /* If the mutex is not recursive, perform error checking: If recursion
+       * has happened, undo the operation, and fail.  */
+      if(!(__mtx->__type & mtx_recursive)) {
+        __mtx->__rc_mtx.__depth --;
         return thrd_error;
-
-      /* Update the recursion count.  */
-      __MCF_ASSERT(__mtx->__depth < __INT32_MAX__);
-      __mtx->__depth ++;
-      return thrd_success;
+      }
+      else
+        return thrd_success;
     }
 
-    /* Attempt to take ownership.  */
     __timeout = __MCF_gthr_timeout_from_timespec(__ts);
-    __err = _MCF_mutex_lock(&(__mtx->__mutex), &__timeout);
-    if(__err != 0)
-      return thrd_timedout;
-
-    /* The calling thread owns the mutex now.  */
-    __MCF_ASSERT(__mtx->__owner == 0);
-    _MCF_atomic_store_32_rlx(&(__mtx->__owner), (int32_t) __my_tid);
-    __MCF_ASSERT(__mtx->__depth == 0);
-    __mtx->__depth = 1;
-    return thrd_success;
+    __err = __MCF_gthr_rc_mutex_wait(&(__mtx->__rc_mtx), &__timeout);
+    return (__err != 0) ? thrd_timedout : thrd_success;
   }
 
 static __inline__
@@ -396,33 +364,29 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_mtx_trylock(mtx_t* __mtx) __MCF_NOEXCEPT
   {
-    uint32_t __my_tid = _MCF_thread_self_tid();
-    int64_t __timeout = 0;
+    int64_t __timeout;
     int __err;
 
-    /* Check whether the mutex has already been owned.  */
-    if(_MCF_atomic_load_32_rlx(&(__mtx->__owner)) == (int32_t) __my_tid) {
-      /* Fail if the mutex is not recursive.  */
-      if(!(__mtx->__type & mtx_recursive))
-        return thrd_error;
+    /* If the mutex does not support timeout, fail.  */
+    if(!(__mtx->__type & mtx_timed))
+      return thrd_error;
 
-      /* Update the recursion count.  */
-      __MCF_ASSERT(__mtx->__depth < __INT32_MAX__);
-      __mtx->__depth ++;
-      return thrd_success;
+    /* Check for recursion.  */
+    __err = __MCF_gthr_rc_mutex_recurse(&(__mtx->__rc_mtx));
+    if(__err == 0) {
+      /* If the mutex is not recursive, perform error checking: If recursion
+       * has happened, undo the operation, and fail.  */
+      if(!(__mtx->__type & mtx_recursive)) {
+        __mtx->__rc_mtx.__depth --;
+        return thrd_error;
+      }
+      else
+        return thrd_success;
     }
 
-    /* Attempt to take ownership.  */
-    __err = _MCF_mutex_lock(&(__mtx->__mutex), &__timeout);
-    if(__err != 0)
-      return thrd_busy;
-
-    /* The calling thread owns the mutex now.  */
-    __MCF_ASSERT(__mtx->__owner == 0);
-    _MCF_atomic_store_32_rlx(&(__mtx->__owner), (int32_t) __my_tid);
-    __MCF_ASSERT(__mtx->__depth == 0);
-    __mtx->__depth = 1;
-    return thrd_success;
+    __timeout = 0;
+    __err = __MCF_gthr_rc_mutex_wait(&(__mtx->__rc_mtx), &__timeout);
+    return (__err != 0) ? thrd_busy : thrd_success;
   }
 
 static __inline__
@@ -441,24 +405,8 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_mtx_unlock(mtx_t* __mtx) __MCF_NOEXCEPT
   {
-    uint32_t __my_tid = _MCF_thread_self_tid();
-
-    /* Check for errors.  */
-    if(__mtx->__owner != __my_tid)
-      return thrd_error;
-
-    if(__mtx->__depth <= 0)
-      return thrd_error;
-
-    /* Reduce a level of recursion.  */
-    __mtx->__depth --;
-    if(__mtx->__depth != 0)
-      return thrd_success;
-
-    /* Give up ownership now.  */
-    _MCF_atomic_store_32_rlx(&(__mtx->__owner), 0);
-    _MCF_mutex_unlock(&(__mtx->__mutex));
-    return thrd_success;
+    __MCF_gthr_rc_mutex_release(&(__mtx->__rc_mtx));
+    return 0;
   }
 
 static __inline__

@@ -8,36 +8,6 @@
 #include "clock.h"
 
 __MCF_DLLEXPORT
-intptr_t
-__MCF_c11_mutex_unlock_callback(intptr_t arg)
-  {
-    mtx_t* mtx = (mtx_t*) arg;
-
-    /* Clear the depth counter and return it.  */
-    intptr_t unlocked = mtx->__depth;
-    mtx->__depth = 0;
-    _MCF_atomic_store_32_rlx(&(mtx->__owner), 0);
-    _MCF_mutex_unlock(&(mtx->__mutex));
-
-    __MCF_ASSERT(unlocked > 0);
-    return unlocked;
-  }
-
-__MCF_DLLEXPORT
-void
-__MCF_c11_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
-  {
-    __MCF_ASSERT(unlocked > 0);
-    mtx_t* mtx = (mtx_t*) arg;
-
-    /* Relock the mutex and restore the depth counter.  */
-    _MCF_mutex_lock(&(mtx->__mutex), NULL);
-    __MCF_ASSERT(mtx->__owner == 0);
-    _MCF_atomic_store_32_rlx(&(mtx->__owner), (int32_t) _MCF_thread_self_tid());
-    mtx->__depth = (int32_t) unlocked;
-  }
-
-__MCF_DLLEXPORT
 void
 __MCF_c11_thread_thunk_v2(_MCF_thread* thrd)
   {
