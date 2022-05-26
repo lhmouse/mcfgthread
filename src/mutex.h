@@ -83,11 +83,10 @@ __MCF_DECLSPEC_MUTEX(__MCF_GNU_INLINE)
 int
 _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
-    _MCF_mutex __old = __MCF_0_INIT;
-    _MCF_mutex __new = __MCF_0_INIT;
+    _MCF_mutex __old = { 0, 0, 0, 0 };
+    _MCF_mutex __new = { 1, 0, 0, 0 };
 
     /* This is optimized solely for single-thread code.  */
-    __new.__locked = 1;
     if(_MCF_atomic_cmpxchg_weak_pptr_acq(__mutex, &__old, &__new))
       return 0;
 
@@ -112,11 +111,10 @@ __MCF_DECLSPEC_MUTEX(__MCF_GNU_INLINE)
 void
 _MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_NOEXCEPT
   {
-    _MCF_mutex __old = __MCF_0_INIT;
-    _MCF_mutex __new = __MCF_0_INIT;
+    _MCF_mutex __old = { 1, 0, 0, 0 };
+    _MCF_mutex __new = { 0, 0, 0, 0 };
 
     /* This is optimized solely for single-thread code.  */
-    __old.__locked = 1;
     if(_MCF_atomic_cmpxchg_weak_pptr_rel(__mutex, &__old, &__new))
       return;
 
