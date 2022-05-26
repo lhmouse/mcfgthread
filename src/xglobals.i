@@ -126,8 +126,8 @@ typedef struct __MCF_i386_seh_node __MCF_i386_seh_node;
 
 struct __MCF_i386_seh_node
   {
-    DWORD __next;  /* `__MCF_i386_seh_node*`  */
-    DWORD __filter;  /* `typeof(__MCF_seh_top)*`  */
+    DWORD __next;
+    DWORD __filter;
   };
 
 __MCF_ALWAYS_INLINE
@@ -218,7 +218,7 @@ __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
     uintptr_t __cx = __size;
 
     __asm__ (
-      __MCF_XASM_BYTES(F3,A4)  /* rep movsb  */
+      __MCF_XASM_BYTES(F3,A4)  // rep movsb
 
       : "+D"(__di), "+S"(__si), "+c"(__cx), "=m"(*(__bytes*) __dst)
       : "m"(*(const __bytes*) __src)
@@ -249,9 +249,9 @@ __MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCE
     uintptr_t __cx = __size;
 
     __asm__ (
-      __MCF_XASM_BYTES(FD)     /* std  */
-      __MCF_XASM_BYTES(F3,A4)  /* rep movsb  */
-      __MCF_XASM_BYTES(FC)     /* cld  */
+      __MCF_XASM_BYTES(FD)     // std
+      __MCF_XASM_BYTES(F3,A4)  // rep movsb
+      __MCF_XASM_BYTES(FC)     // cld
 
       : "+D"(__di), "+S"(__si), "+c"(__cx), "=m"(*(__bytes*) __dst)
       : "m"(*(const __bytes*) __src)
@@ -293,7 +293,7 @@ __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
     uintptr_t __cx = __size;
 
     __asm__ (
-      __MCF_XASM_BYTES(F3,AA)  /* rep stosb  */
+      __MCF_XASM_BYTES(F3,AA)  // rep stosb
 
       : "+D"(__di), "+c"(__cx), "=m"(*(__bytes*) __dst)
       : "a"(__val)
@@ -321,7 +321,7 @@ __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
     uintptr_t __cx = __size;
 
     __asm__ (
-      __MCF_XASM_BYTES(F3,AA)  /* rep stosb  */
+      __MCF_XASM_BYTES(F3,AA)  // rep stosb
 
       : "+D"(__di), "+c"(__cx), "=m"(*(__bytes*) __dst)
       : "a"(0)
@@ -352,10 +352,10 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
     uintptr_t __cx = __size;
 
     __asm__ (
-      __MCF_XASM_BYTES(31,C0)     /* xor eax, eax  */
-      __MCF_XASM_BYTES(F3,A6)     /* repz cmpsb  */
-      __MCF_XASM_BYTES(0F,95,C0)  /* setnz al  */
-      __MCF_XASM_BYTES(19,C9)     /* sbb ecx, ecx  */
+      __MCF_XASM_BYTES(31,C0)     // xor eax, eax
+      __MCF_XASM_BYTES(F3,A6)     // repz cmpsb
+      __MCF_XASM_BYTES(0F,95,C0)  // setnz al
+      __MCF_XASM_BYTES(19,C9)     // sbb ecx, ecx
 
       : "=a"(__result), "+S"(__si), "+D"(__di), "+c"(__cx)
       : "m"(*(const __bytes*) __src), "m"(*(const __bytes*) __cmp)
@@ -395,8 +395,8 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
     uintptr_t __cx = __size;
 
     __asm__ (
-      __MCF_XASM_BYTES(31,C0)  /* xor eax, eax  */
-      __MCF_XASM_BYTES(F3,A6)  /* repz cmpsb  */
+      __MCF_XASM_BYTES(31,C0)  // xor eax, eax
+      __MCF_XASM_BYTES(F3,A6)  // repz cmpsb
 
       : "=@ccz"(__result), "+S"(__si), "+D"(__di), "+c"(__cx)
       : "m"(*(const __bytes*) __src), "m"(*(const __bytes*) __cmp)
