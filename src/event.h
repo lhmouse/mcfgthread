@@ -35,7 +35,7 @@ struct __MCF_event
 #define __MCF_EVENT_INIT(__value_init)  \
     { __MCF_STATIC_ASSERT((__value_init) >= 0) +  \
       __MCF_STATIC_ASSERT((__value_init) <= __MCF_EVENT_VALUE_MAX) +  \
-      (__value_init), 0  }
+      (__value_init), 0, 0 }
 
 /* Initializes an event dynamically. The argument is the initial value of
  * the event, which shall not be negative.
