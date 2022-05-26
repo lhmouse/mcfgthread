@@ -280,6 +280,28 @@ mtx_init(mtx_t* __mtx, int __type) __MCF_NOEXCEPT
     return __MCF_c11_mtx_init(__mtx, __type);
   }
 
+/* This is an auxiliary function that checks the type of its argument in
+ * addition to `__MCF_gthr_rc_mutex_recurse()`.  */
+__MCF_ALWAYS_INLINE
+int
+__MCF_c11_mtx_check_recursion(mtx_t* __mtx) __MCF_NOEXCEPT
+  {
+    /* Check for recursion.  */
+    int __err = __MCF_gthr_rc_mutex_recurse(&(__mtx->__rc_mtx));
+    if(__err != 0)
+      return thrd_busy;
+
+    /* If the mutex is not recursive, perform error checking: If recursion
+     * has happened, undo the operation, and fail.  */
+    if(!(__mtx->__type & mtx_recursive)) {
+      __mtx->__rc_mtx.__depth --;
+      return thrd_error;
+    }
+
+    /* Accept the recursion.  */
+    return thrd_success;
+  }
+
 /* 7.26.4.3 The mtx_lock function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
@@ -289,18 +311,9 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_mtx_lock(mtx_t* __mtx) __MCF_NOEXCEPT
   {
-    /* Check for recursion.  */
-    int __err = __MCF_gthr_rc_mutex_recurse(&(__mtx->__rc_mtx));
-    if(__err == 0) {
-      /* If the mutex is not recursive, perform error checking: If recursion
-       * has happened, undo the operation, and fail.  */
-      if(!(__mtx->__type & mtx_recursive)) {
-        __mtx->__rc_mtx.__depth --;
-        return thrd_error;
-      }
-      else
-        return thrd_success;
-    }
+    int __err = __MCF_c11_mtx_check_recursion(__mtx);
+    if(__err != thrd_busy)
+      return __err;
 
     __err = __MCF_gthr_rc_mutex_wait(&(__mtx->__rc_mtx), NULL);
     __MCF_ASSERT(__err == 0);
@@ -326,22 +339,12 @@ __MCF_c11_mtx_timedlock(mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEP
     int64_t __timeout;
     int __err;
 
-    /* If the mutex does not support timeout, fail.  */
     if(!(__mtx->__type & mtx_timed))
       return thrd_error;
 
-    /* Check for recursion.  */
-    __err = __MCF_gthr_rc_mutex_recurse(&(__mtx->__rc_mtx));
-    if(__err == 0) {
-      /* If the mutex is not recursive, perform error checking: If recursion
-       * has happened, undo the operation, and fail.  */
-      if(!(__mtx->__type & mtx_recursive)) {
-        __mtx->__rc_mtx.__depth --;
-        return thrd_error;
-      }
-      else
-        return thrd_success;
-    }
+    __err = __MCF_c11_mtx_check_recursion(__mtx);
+    if(__err != thrd_busy)
+      return __err;
 
     __timeout = __MCF_gthr_timeout_from_timespec(__ts);
     __err = __MCF_gthr_rc_mutex_wait(&(__mtx->__rc_mtx), &__timeout);
@@ -365,20 +368,9 @@ int
 __MCF_c11_mtx_trylock(mtx_t* __mtx) __MCF_NOEXCEPT
   {
     int64_t __timeout;
-    int __err;
-
-    /* Check for recursion.  */
-    __err = __MCF_gthr_rc_mutex_recurse(&(__mtx->__rc_mtx));
-    if(__err == 0) {
-      /* If the mutex is not recursive, perform error checking: If recursion
-       * has happened, undo the operation, and fail.  */
-      if(!(__mtx->__type & mtx_recursive)) {
-        __mtx->__rc_mtx.__depth --;
-        return thrd_error;
-      }
-      else
-        return thrd_success;
-    }
+    int __err = __MCF_c11_mtx_check_recursion(__mtx);
+    if(__err != thrd_busy)
+      return __err;
 
     __timeout = 0;
     __err = __MCF_gthr_rc_mutex_wait(&(__mtx->__rc_mtx), &__timeout);
