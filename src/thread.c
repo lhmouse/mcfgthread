@@ -137,17 +137,22 @@ do_handle_interrupt(DWORD type)
     return false;
   }
 
+static inline
+void
+do_handler_cleanup(BOOL* added)
+  {
+    if(*added)
+      SetConsoleCtrlHandler(do_handle_interrupt, false);
+  }
+
 __MCF_DLLEXPORT
 int
 _MCF_sleep(const int64_t* timeout_opt)
   {
     /* Set a handler to receive Ctrl-C notifications.  */
-    if(!SetConsoleCtrlHandler(do_handle_interrupt, true))
-      return -1;
+    BOOL added __attribute__((__cleanup__(do_handler_cleanup))) = false;
+    added = SetConsoleCtrlHandler(do_handle_interrupt, true);
 
-    /* Await notifications.
-     * The handler shall be removed when this thread wakes up.  */
     int err = _MCF_cond_wait(&__MCF_interrupt_cond, NULL, NULL, 0, timeout_opt);
-    SetConsoleCtrlHandler(do_handle_interrupt, false);
-    return ~err;
+    return err ^ -1;
   }
