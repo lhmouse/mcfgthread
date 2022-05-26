@@ -21,9 +21,10 @@ extern "C" {
 struct __MCF_event
   {
     uintptr_t __value : 8;
+    uintptr_t __reserved : 1;
 
-    uintptr_t __nsleep : __MCF_PTR_BITS - 8;  /* number of sleeping threads  */
-#define __MCF_EVENT_NSLEEP_M   (__UINTPTR_MAX__ >> 8)
+    uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
+#define __MCF_EVENT_NSLEEP_M   (__UINTPTR_MAX__ >> 9)
   };
 
 /* This is the maximum value of an event.  */
@@ -53,7 +54,7 @@ _MCF_event_init(_MCF_event* __event, int __value_init) __MCF_NOEXCEPT
     if((__value_init < 0) || (__value_init > __MCF_EVENT_VALUE_MAX))
       return -1;
 
-    _MCF_event __temp = { (uint8_t) __value_init, 0 };
+    _MCF_event __temp = { (uint8_t) __value_init, 0, 0 };
     _MCF_atomic_store_pptr_rel(__event, &__temp);
     return 0;
   }
