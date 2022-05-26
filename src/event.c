@@ -73,7 +73,7 @@ _MCF_event_set_slow(_MCF_event* event, int value)
 
     /* Set the `__value` field and release all threads.  */
     _MCF_event old;
-    _MCF_event new = { (uint8_t) value, 0 };
+    _MCF_event new = { (uint8_t) value, 0, 0 };
     _MCF_atomic_xchg_pptr_arl(&old, event, &new);
 
     __MCF_batch_release_common(event, old.__nsleep);
