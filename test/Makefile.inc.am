@@ -57,5 +57,5 @@ check_PROGRAMS +=  \
   ${END}
 
 test_gthr_c89_pedantic_test_CFLAGS =  \
-  ${AM_CFLAGS} -std=c89 -W{no-error=,}pedantic  \
-  -Werror=declaration-after-statement -Wno-{long-long,variadic-macros}
+  ${AM_CFLAGS} -std=c89 -Wpedantic  \
+  -Wno-{long-long,variadic-macros,declaration-after-statement}
