@@ -89,15 +89,12 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void
 __MCF_c11_call_once(once_flag* __flag, void __init_func(void))
   {
-    _MCF_once* __cleanup __attribute__((__cleanup__(__MCF_gthr_unonce))) = NULL;
-
     if(_MCF_once_wait(__flag, NULL) == 0)
       return;
 
-    __cleanup = __flag;
+    _MCF_once* __cleanup __attribute__((__cleanup__(__MCF_gthr_unonce))) = __flag;
     __init_func();
     __cleanup = NULL;
-
     _MCF_once_release(__flag);
   }
 
@@ -291,8 +288,8 @@ __MCF_c11_mtx_check_recursion(mtx_t* __mtx) __MCF_NOEXCEPT
     if(__err != 0)
       return thrd_busy;
 
-    /* If the mutex is not recursive, perform error checking: If recursion
-     * has happened, undo the operation, and fail.  */
+    /* If recursion has happened but the mutex is not recursive, undo the
+     * operation, and fail.  */
     if(!(__mtx->__type & mtx_recursive)) {
       __mtx->__rc_mtx.__depth --;
       return thrd_error;
@@ -336,17 +333,14 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_mtx_timedlock(mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEPT
   {
-    int64_t __timeout;
-    int __err;
-
     if(!(__mtx->__type & mtx_timed))
       return thrd_error;
 
-    __err = __MCF_c11_mtx_check_recursion(__mtx);
+    int __err = __MCF_c11_mtx_check_recursion(__mtx);
     if(__err != thrd_busy)
       return __err;
 
-    __timeout = __MCF_gthr_timeout_from_timespec(__ts);
+    int64_t __timeout = __MCF_gthr_timeout_from_timespec(__ts);
     __err = __MCF_gthr_rc_mutex_wait(&(__mtx->__rc_mtx), &__timeout);
     return (__err != 0) ? thrd_timedout : thrd_success;
   }
@@ -367,12 +361,11 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_mtx_trylock(mtx_t* __mtx) __MCF_NOEXCEPT
   {
-    int64_t __timeout;
     int __err = __MCF_c11_mtx_check_recursion(__mtx);
     if(__err != thrd_busy)
       return __err;
 
-    __timeout = 0;
+    int64_t __timeout = 0;
     __err = __MCF_gthr_rc_mutex_wait(&(__mtx->__rc_mtx), &__timeout);
     return (__err != 0) ? thrd_busy : thrd_success;
   }
@@ -414,13 +407,11 @@ int
 __MCF_c11_thrd_create(thrd_t* __thrdp, thrd_start_t __proc, void* __arg) __MCF_NOEXCEPT
   {
     __MCF_c11_thread_record __rec[1];
-    _MCF_thread* __thrd;
-
     __rec->__proc = __proc;
     __rec->__arg = __arg;
     __rec->__joinable = true;
 
-    __thrd = _MCF_thread_new(__MCF_c11_thread_thunk_v2, __rec, sizeof(*__rec));
+    _MCF_thread* __thrd = _MCF_thread_new(__MCF_c11_thread_thunk_v2, __rec, sizeof(*__rec));
     *__thrdp = __thrd;
     return (__thrd == NULL) ? thrd_nomem : thrd_success;
   }
@@ -463,16 +454,13 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_thrd_detach(thrd_t __thrd) __MCF_NOEXCEPT
   {
-    __MCF_c11_thread_record* __rec;
-
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
     if(__thrd->__proc != __MCF_c11_thread_thunk_v2)
       return thrd_error;
 
-    __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__thrd);
-
     /* Fail if the thread has already been detached.  */
+    __MCF_c11_thread_record* __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__thrd);
     if(_MCF_atomic_xchg_8_rlx(&(__rec->__joinable), 0) == 0)
       return thrd_error;
 
@@ -518,15 +506,14 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void
 __MCF_c11_thrd_exit(int __result) __MCF_NOEXCEPT
   {
-    __MCF_c11_thread_record* __rec = NULL;
-
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
+    __MCF_c11_thread_record* __rec = NULL;
+
     _MCF_thread* __self = _MCF_thread_self();
     if(__self && (__self->__proc == __MCF_c11_thread_thunk_v2))
       __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__self);
 
-    /* Set the result.  */
     if(__rec)
       __rec->__result = __result;
 
@@ -551,17 +538,13 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_NOEXCEPT
   {
-    __MCF_c11_thread_record* __rec;
-    int __err;
-
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
     if(__thrd->__proc != __MCF_c11_thread_thunk_v2)
       return thrd_error;
 
-    __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__thrd);
-
     /* Fail if the thread has already been detached.  */
+    __MCF_c11_thread_record* __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__thrd);
     if(_MCF_atomic_xchg_8_rlx(&(__rec->__joinable), 0) == 0)
       return thrd_error;
 
@@ -569,7 +552,7 @@ __MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_NOEXCEPT
     if(__thrd == _MCF_thread_self())
       return thrd_error;
 
-    __err = _MCF_thread_wait(__thrd, NULL);
+    int __err = _MCF_thread_wait(__thrd, NULL);
     __MCF_ASSERT(__err == 0);
 
     if(__resp_opt)
