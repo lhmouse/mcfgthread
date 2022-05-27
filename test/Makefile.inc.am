@@ -65,6 +65,7 @@ check_PROGRAMS +=  \
   %reldir%/c11_tss_deleted_key.test  \
   %reldir%/c11_tss_many.test  \
   %reldir%/c11_thrd_return.test  \
+  %reldir%/c11_thrd_equal.test  \
   %reldir%/atexit_thread_self.test  \
   %reldir%/atexit_order.test  \
   %reldir%/atexit_ignored_on_quick_exit.test  \
