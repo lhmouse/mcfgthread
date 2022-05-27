@@ -644,7 +644,8 @@ tss_delete(tss_t __key) __MCF_NOEXCEPT
 /* 7.26.6.3 The tss_get function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void*
-__MCF_c11_tss_get(tss_t __key) __MCF_NOEXCEPT;
+__MCF_c11_tss_get(tss_t __key) __MCF_NOEXCEPT
+  __attribute__((__pure__));
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void*
