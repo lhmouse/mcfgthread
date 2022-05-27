@@ -25,7 +25,7 @@ extern "C" {
 /* Rename symbols to prevent DLL hells.  */
 #define __MCF_GTHR_INLINE_ALIAS(RETURN, func, params, ...)  \
   __MCF_ALWAYS_INLINE RETURN __gthread_##func params  \
-    __asm__(__MINGW64_STRINGIFY(__MINGW_USYMBOL(__MCF_gthr_##func)));  \
+    __asm__(__MCF_PPSTR(__USER_LABEL_PREFIX__) "__MCF_gthr_" #func);  \
   __MCF_ALWAYS_INLINE RETURN __gthread_##func params  \
     { __VA_ARGS__ }
 

@@ -20,7 +20,7 @@ extern "C" {
 /* Rename symbols to prevent DLL hells.  */
 #define __MCF_C11_INLINE_ALIAS(RETURN, func, params, ...)  \
   __MCF_ALWAYS_INLINE RETURN func params  \
-    __asm__(__MINGW64_STRINGIFY(__MINGW_USYMBOL(__MCF_c11_##func)));  \
+    __asm__(__MCF_PPSTR(__USER_LABEL_PREFIX__) "__MCF_c11_" #func);  \
   __MCF_ALWAYS_INLINE RETURN func params  \
     { __VA_ARGS__ }
 
