@@ -22,6 +22,13 @@ extern "C" {
 #define __GTHREADS_CXX0X  1
 #define __GTHREAD_HAS_COND  1
 
+/* Rename symbols to prevent DLL hells.  */
+#define __MCF_GTHR_INLINE_ALIAS(RETURN, func, params, ...)  \
+  __MCF_ALWAYS_INLINE RETURN __gthread_##func params  \
+    __asm__(__MINGW64_STRINGIFY(__MINGW_USYMBOL(__MCF_gthr_##func)));  \
+  __MCF_ALWAYS_INLINE RETURN __gthread_##func params  \
+    { __VA_ARGS__ }
+
 /* Define gthread types. These usually map to our APIs directly, except
  * the recursive mutex.  */
 typedef struct timespec __gthread_time_t;
@@ -57,12 +64,9 @@ __MCF_gthr_active_p(void) __MCF_NOEXCEPT
     return 1;
   }
 
-static __inline__
-int
-__gthread_active_p(void) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_active_p();
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, active_p, (void) __MCF_NOEXCEPT,
+    return __MCF_gthr_active_p();  )
 
 /* Performs one-time initialization, like `pthread_once()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -84,12 +88,9 @@ __MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void))
     return 0;
   }
 
-static __inline__
-int
-__gthread_once(__gthread_once_t* __once, void __init_proc(void))
-  {
-    return __MCF_gthr_once(__once, __init_proc);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, once, (__gthread_once_t* __once, void __init_proc(void)),
+    return __MCF_gthr_once(__once, __init_proc);  )
 
 /* Allocates a thread-specific key, like `pthread_key_create()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -105,12 +106,9 @@ __MCF_gthr_key_create(__gthread_key_t* __keyp, void __dtor_opt(void*)) __MCF_NOE
     return (__key == NULL) ? -1 : 0;
   }
 
-static __inline__
-int
-__gthread_key_create(__gthread_key_t* __keyp, void __dtor_opt(void*)) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_key_create(__keyp, __dtor_opt);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, key_create, (__gthread_key_t* __keyp, void __dtor_opt(void*)) __MCF_NOEXCEPT,
+    return __MCF_gthr_key_create(__keyp, __dtor_opt);  )
 
 /* Destroys a thread-specific key, like `pthread_key_delete()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -125,12 +123,9 @@ __MCF_gthr_key_delete(__gthread_key_t __key) __MCF_NOEXCEPT
     return 0;
   }
 
-static __inline__
-int
-__gthread_key_delete(__gthread_key_t __key) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_key_delete(__key);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, key_delete, (__gthread_key_t __key) __MCF_NOEXCEPT,
+    return __MCF_gthr_key_delete(__key);  )
 
 /* Gets a thread-specific value, like `pthread_getspecific()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -145,12 +140,9 @@ __MCF_gthr_getspecific(__gthread_key_t __key) __MCF_NOEXCEPT
     return _MCF_tls_get(__key);
   }
 
-static __inline__
-void*
-__gthread_getspecific(__gthread_key_t __key) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_getspecific(__key);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  void*, getspecific, (__gthread_key_t __key) __MCF_NOEXCEPT,
+    return __MCF_gthr_getspecific(__key);  )
 
 /* Sets a thread-specific value, like `pthread_setspecific()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -165,12 +157,9 @@ __MCF_gthr_setspecific(__gthread_key_t __key, const void* __val_opt) __MCF_NOEXC
     return (__err != 0) ? -1 : 0;
   }
 
-static __inline__
-int
-__gthread_setspecific(__gthread_key_t __key, const void* __val_opt) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_setspecific(__key, __val_opt);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, setspecific, (__gthread_key_t __key, const void* __val_opt) __MCF_NOEXCEPT,
+    return __MCF_gthr_setspecific(__key, __val_opt);  )
 
 /* Initializes a mutex, like `pthread_mutex_init()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -185,12 +174,9 @@ __MCF_gthr_mutex_init(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
     return 0;
   }
 
-static __inline__
-int
-__gthread_mutex_init(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_mutex_init(__mtx);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, mutex_init, (__gthread_mutex_t* __mtx) __MCF_NOEXCEPT,
+    return __MCF_gthr_mutex_init(__mtx);  )
 
 /* Destroys a mutex. This function does nothing.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -205,12 +191,9 @@ __MCF_gthr_mutex_destroy(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
     return 0;
   }
 
-static __inline__
-int
-__gthread_mutex_destroy(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_mutex_destroy(__mtx);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, mutex_destroy, (__gthread_mutex_t* __mtx) __MCF_NOEXCEPT,
+    return __MCF_gthr_mutex_destroy(__mtx);  )
 
 /* Locks a mutex, like `pthread_mutex_lock()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -226,12 +209,9 @@ __MCF_gthr_mutex_lock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
     return 0;
   }
 
-static __inline__
-int
-__gthread_mutex_lock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_mutex_lock(__mtx);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, mutex_lock, (__gthread_mutex_t* __mtx) __MCF_NOEXCEPT,
+    return __MCF_gthr_mutex_lock(__mtx);  )
 
 /* Tries locking a mutex without blocking, like `pthread_mutex_trylock()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -247,12 +227,9 @@ __MCF_gthr_mutex_trylock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
     return (__err != 0) ? -1 : 0;
   }
 
-static __inline__
-int
-__gthread_mutex_trylock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_mutex_trylock(__mtx);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, mutex_trylock, (__gthread_mutex_t* __mtx) __MCF_NOEXCEPT,
+    return __MCF_gthr_mutex_trylock(__mtx);  )
 
 /* Tries locking a mutex until a time point, like `pthread_mutex_timedlock()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -268,12 +245,9 @@ __MCF_gthr_mutex_timedlock(__gthread_mutex_t* __mtx, const __gthread_time_t* __a
     return (__err != 0) ? -1 : 0;
   }
 
-static __inline__
-int
-__gthread_mutex_timedlock(__gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_mutex_timedlock(__mtx, __abs_time);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, mutex_timedlock, (__gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT,
+    return __MCF_gthr_mutex_timedlock(__mtx, __abs_time);  )
 
 /* Unlocks a mutex, like `pthread_mutex_unlock()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -288,12 +262,9 @@ __MCF_gthr_mutex_unlock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
     return 0;
   }
 
-static __inline__
-int
-__gthread_mutex_unlock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_mutex_unlock(__mtx);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, mutex_unlock, (__gthread_mutex_t* __mtx) __MCF_NOEXCEPT,
+    return __MCF_gthr_mutex_unlock(__mtx);  )
 
 /* Initializes a recursive mutex, like `pthread_mutex_init()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -308,12 +279,9 @@ __MCF_gthr_recursive_mutex_init(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXC
     return 0;
   }
 
-static __inline__
-int
-__gthread_recursive_mutex_init(__gthread_recursive_mutex_t* __mtx) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_recursive_mutex_init(__mtx);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, recursive_mutex_init, (__gthread_recursive_mutex_t* __mtx) __MCF_NOEXCEPT,
+    return __MCF_gthr_recursive_mutex_init(__mtx);  )
 
 /* Destroys a recursive mutex. This function does nothing.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -328,12 +296,9 @@ __MCF_gthr_recursive_mutex_destroy(__gthread_recursive_mutex_t* __rmtx) __MCF_NO
     return 0;
   }
 
-static __inline__
-int
-__gthread_recursive_mutex_destroy(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_recursive_mutex_destroy(__rmtx);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, recursive_mutex_destroy, (__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT,
+    return __MCF_gthr_recursive_mutex_destroy(__rmtx);  )
 
 /* Locks a recursive mutex, like `pthread_mutex_lock()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -353,12 +318,9 @@ __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXC
     return 0;
   }
 
-static __inline__
-int
-__gthread_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_recursive_mutex_lock(__rmtx);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, recursive_mutex_lock, (__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT,
+    return __MCF_gthr_recursive_mutex_lock(__rmtx);  )
 
 /* Tries locking a recursive mutex without blocking, like
  * `pthread_mutex_trylock()`.  */
@@ -380,12 +342,9 @@ __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NO
     return 0;
   }
 
-static __inline__
-int
-__gthread_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_recursive_mutex_trylock(__rmtx);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, recursive_mutex_trylock, (__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT,
+    return __MCF_gthr_recursive_mutex_trylock(__rmtx);  )
 
 /* Tries locking a recursive mutex until a time point, like
  * `pthread_mutex_timedlock()`.  */
@@ -407,12 +366,9 @@ __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const 
     return 0;
   }
 
-static __inline__
-int
-__gthread_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_recursive_mutex_timedlock(__rmtx, __abs_time);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, recursive_mutex_timedlock, (__gthread_recursive_mutex_t* __rmtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT,
+    return __MCF_gthr_recursive_mutex_timedlock(__rmtx, __abs_time);  )
 
 /* Unlocks a recursive mutex, like `pthread_mutex_unlock()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -427,12 +383,9 @@ __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOE
     return 0;
   }
 
-static __inline__
-int
-__gthread_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_recursive_mutex_unlock(__rmtx);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, recursive_mutex_unlock, (__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT,
+    return __MCF_gthr_recursive_mutex_unlock(__rmtx);  )
 
 /* Initializes a condition variable, like `pthread_cond_init()`.
  * This function exists not in GCC's 'gthr.h' but in 'gthr-posix.h'.  */
@@ -448,12 +401,9 @@ __MCF_gthr_cond_init(__gthread_cond_t* __cond) __MCF_NOEXCEPT
     return 0;
   }
 
-static __inline__
-int
-__gthread_cond_init(__gthread_cond_t* __cond) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_cond_init(__cond);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, cond_init, (__gthread_cond_t* __cond) __MCF_NOEXCEPT,
+    return __MCF_gthr_cond_init(__cond);  )
 
 /* Destroys a condition variable. This function does nothing.
  * This function exists not in GCC's 'gthr.h' but in 'gthr-posix.h'.  */
@@ -469,12 +419,9 @@ __MCF_gthr_cond_destroy(__gthread_cond_t* __cond) __MCF_NOEXCEPT
     return 0;
   }
 
-static __inline__
-int
-__gthread_cond_destroy(__gthread_cond_t* __cond) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_cond_destroy(__cond);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, cond_destroy, (__gthread_cond_t* __cond) __MCF_NOEXCEPT,
+    return __MCF_gthr_cond_destroy(__cond);  )
 
 /* Waits for a condition variable, like `pthread_cond_wait()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -490,12 +437,9 @@ __MCF_gthr_cond_wait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx) __MCF_N
     return 0;
   }
 
-static __inline__
-int
-__gthread_cond_wait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_cond_wait(__cond, __mtx);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, cond_wait, (__gthread_cond_t* __cond, __gthread_mutex_t* __mtx) __MCF_NOEXCEPT,
+    return __MCF_gthr_cond_wait(__cond, __mtx);  )
 
 /* Waits for a condition variable, like `pthread_cond_wait()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -511,12 +455,9 @@ __MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mut
     return 0;
   }
 
-static __inline__
-int
-__gthread_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_cond_wait_recursive(__cond, __rmtx);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, cond_wait_recursive, (__gthread_cond_t* __cond, __gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT,
+    return __MCF_gthr_cond_wait_recursive(__cond, __rmtx);  )
 
 /* Waits for a condition variable until a time point, like
  * `pthread_cond_timedwait()`.  */
@@ -533,12 +474,9 @@ __MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx, co
     return (__err != 0) ? -1 : 0;
   }
 
-static __inline__
-int
-__gthread_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_cond_timedwait(__cond, __mtx, __abs_time);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, cond_timedwait, (__gthread_cond_t* __cond, __gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT,
+    return __MCF_gthr_cond_timedwait(__cond, __mtx, __abs_time);  )
 
 /* Signals at most one thread that is waiting on the condition variable, like
  * `pthread_cond_signal()`.  */
@@ -554,12 +492,9 @@ __MCF_gthr_cond_signal(__gthread_cond_t* __cond) __MCF_NOEXCEPT
     return 0;
   }
 
-static __inline__
-int
-__gthread_cond_signal(__gthread_cond_t* __cond) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_cond_signal(__cond);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, cond_signal, (__gthread_cond_t* __cond) __MCF_NOEXCEPT,
+    return __MCF_gthr_cond_signal(__cond);  )
 
 /* Signals all threads that are waiting on the condition variable, like
  * `pthread_cond_broadcast()`.  */
@@ -575,12 +510,9 @@ __MCF_gthr_cond_broadcast(__gthread_cond_t* __cond) __MCF_NOEXCEPT
     return 0;
   }
 
-static __inline__
-int
-__gthread_cond_broadcast(__gthread_cond_t* __cond) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_cond_broadcast(__cond);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, cond_broadcast, (__gthread_cond_t* __cond) __MCF_NOEXCEPT,
+    return __MCF_gthr_cond_broadcast(__cond);  )
 
 /* Creates a thread, like `pthread_create()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -601,12 +533,9 @@ __MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, 
     return (__thrd == NULL) ? -1 : 0;  /* as specified by POSIX  */
   }
 
-static __inline__
-int
-__gthread_create(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_create_v2(__thrdp, __proc, __arg);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, create, (__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT,
+    return __MCF_gthr_create_v2(__thrdp, __proc, __arg);  )
 
 /* Awaits a thread to terminate and gets its result, like `pthread_join()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -642,12 +571,9 @@ __MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
     return 0;
   }
 
-static __inline__
-int
-__gthread_join(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_join_v2(__thrd, __resp_opt);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, join, (__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT,
+    return __MCF_gthr_join_v2(__thrd, __resp_opt);  )
 
 /* Detaches a thread, like `pthread_detach()`  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -673,12 +599,9 @@ __MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_NOEXCEPT
     return 0;
   }
 
-static __inline__
-int
-__gthread_detach(__gthread_t __thrd) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_detach_v2(__thrd);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, detach, (__gthread_t __thrd) __MCF_NOEXCEPT,
+    return __MCF_gthr_detach_v2(__thrd);  )
 
 /* Gets a thread itself, like `pthread_self()`.
  * The thread shall be the main thread, or shall have been created by
@@ -697,12 +620,9 @@ __MCF_gthr_self(void) __MCF_NOEXCEPT
     return __self;
   }
 
-static __inline__
-__gthread_t
-__gthread_self(void) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_self();
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  __gthread_t, __gthread_self, (void) __MCF_NOEXCEPT,
+    return __MCF_gthr_self();  )
 
 /* Checks whether two thread IDs compare equal, like `pthread_equal()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE) __MCF_CXX11(constexpr)
@@ -717,12 +637,9 @@ __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT
     return __t1 == __t2;
   }
 
-static __inline__
-int
-__gthread_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT
-  {
-    return __MCF_gthr_equal(__t1, __t2);
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  int, equal, (__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT,
+    return __MCF_gthr_equal(__t1, __t2);  )
 
 /* Gives up the current time slice, like `sched_yield()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
@@ -736,12 +653,9 @@ __MCF_gthr_yield(void) __MCF_NOEXCEPT
     _MCF_yield();
   }
 
-static __inline__
-void
-__gthread_yield(void) __MCF_NOEXCEPT
-  {
-    __MCF_gthr_yield();
-  }
+__MCF_GTHR_INLINE_ALIAS(
+  void, __gthread_yield, (void) __MCF_NOEXCEPT,
+    __MCF_gthr_yield();  )
 
 #ifdef __cplusplus
 }
