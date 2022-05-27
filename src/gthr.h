@@ -621,7 +621,7 @@ __MCF_gthr_self(void) __MCF_NOEXCEPT
   }
 
 __MCF_GTHR_INLINE_ALIAS(
-  __gthread_t, __gthread_self, (void) __MCF_NOEXCEPT,
+  __gthread_t, self, (void) __MCF_NOEXCEPT,
     return __MCF_gthr_self();  )
 
 /* Checks whether two thread IDs compare equal, like `pthread_equal()`.  */
@@ -654,7 +654,7 @@ __MCF_gthr_yield(void) __MCF_NOEXCEPT
   }
 
 __MCF_GTHR_INLINE_ALIAS(
-  void, __gthread_yield, (void) __MCF_NOEXCEPT,
+  void, yield, (void) __MCF_NOEXCEPT,
     __MCF_gthr_yield();  )
 
 #ifdef __cplusplus
