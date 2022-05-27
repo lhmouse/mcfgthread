@@ -47,6 +47,7 @@ check_PROGRAMS +=  \
   %reldir%/gthr_tls_deleted_key.test  \
   %reldir%/gthr_tls_many.test  \
   %reldir%/gthr_thread_return.test  \
+  %reldir%/gthr_equal.test  \
   %reldir%/atexit_thread_self.test  \
   %reldir%/atexit_order.test  \
   %reldir%/atexit_ignored_on_quick_exit.test  \
