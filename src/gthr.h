@@ -24,9 +24,8 @@ extern "C" {
 
 /* Rename symbols to prevent DLL hells.  */
 #define __MCF_GTHR_INLINE_ALIAS(RETURN, func, params, ...)  \
-  __MCF_ALWAYS_INLINE RETURN __gthread_##func params  \
-    __asm__(__MCF_PPLAZY(__MCF_PPSTR, __MCF_PPCAT2(  \
-              __USER_LABEL_PREFIX__, __MCF_gthr_)) #func);  \
+  __MCF_ALWAYS_INLINE RETURN __gthread_##func params __asm__(  \
+     __MCF_PPSTR(__USER_LABEL_PREFIX__) "__MCF_gthr_" #func);  \
   __MCF_ALWAYS_INLINE RETURN __gthread_##func params { __VA_ARGS__ }
 
 /* Define gthread types. These usually map to our APIs directly, except
