@@ -20,9 +20,9 @@ extern "C" {
 /* Rename symbols to prevent DLL hells.  */
 #define __MCF_C11_INLINE_ALIAS(RETURN, func, params, ...)  \
   __MCF_ALWAYS_INLINE RETURN func params  \
-    __asm__(__MCF_PPSTR(__USER_LABEL_PREFIX__) "__MCF_c11_" #func);  \
-  __MCF_ALWAYS_INLINE RETURN func params  \
-    { __VA_ARGS__ }
+    __asm__(__MCF_PPLAZY(__MCF_PPSTR, __MCF_PPCAT2(  \
+              __USER_LABEL_PREFIX__, __MCF_c11_)) #func);  \
+  __MCF_ALWAYS_INLINE RETURN func params { __VA_ARGS__ }
 
 /* N1570 7.26.1 Introduction  */
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201103L)
