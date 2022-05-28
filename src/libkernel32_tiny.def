@@ -2,7 +2,7 @@
 ;; See LICENSE.TXT for licensing information.
 ;; Copyleft 2022, LH_Mouse. All wrongs reserved.
 
-LIBRARY "KERNELBASE.DLL"
+LIBRARY "KERNEL32.DLL"
 
 EXPORTS
   GetLastError
