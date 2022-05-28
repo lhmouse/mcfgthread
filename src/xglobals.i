@@ -65,7 +65,7 @@ extern BYTE __MCF_mutex_spin_field[2048];
   RETURN __stdcall function(__VA_ARGS__)  \
     __asm__(#function) __attribute__((__dllimport__, __nothrow__))
 
-/* Declare KERNELBASE APIs here.  */
+/* Declare KERNEL32 APIs here.  */
 __MCF_WINAPI(DWORD, GetLastError, void) __attribute__((__pure__));
 __MCF_WINAPI(void, SetLastError, DWORD);
 
