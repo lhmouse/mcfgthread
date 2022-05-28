@@ -74,7 +74,6 @@ extern "C" {
 
 #define __MCF_PPCAT2(x,y)     x##y
 #define __MCF_PPCAT3(x,y,z)   x##y##z
-#define __MCF_PPLAZY(f,...)   f(__VA_ARGS__)
 #define __MCF_PPSTR_NX(...)   #__VA_ARGS__
 #define __MCF_PPSTR(...)      __MCF_PPSTR_NX(__VA_ARGS__)
 
