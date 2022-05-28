@@ -70,11 +70,11 @@ __MCF_GTHR_INLINE_ALIAS(
 /* Performs one-time initialization, like `pthread_once()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
-__MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void));
+__MCF_gthr_once(__gthread_once_t* __once, __MCF_once_callback* __init_proc);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
-__MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void))
+__MCF_gthr_once(__gthread_once_t* __once, __MCF_once_callback* __init_proc)
   {
     if(_MCF_once_wait(__once, NULL) == 0)
       return 0;
@@ -88,17 +88,17 @@ __MCF_gthr_once(__gthread_once_t* __once, void __init_proc(void))
   }
 
 __MCF_GTHR_INLINE_ALIAS(
-  int, once, (__gthread_once_t* __once, void __init_proc(void)),
+  int, once, (__gthread_once_t* __once, __MCF_once_callback* __init_proc),
     return __MCF_gthr_once(__once, __init_proc);  )
 
 /* Allocates a thread-specific key, like `pthread_key_create()`.  */
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
-__MCF_gthr_key_create(__gthread_key_t* __keyp, void __dtor_opt(void*)) __MCF_NOEXCEPT;
+__MCF_gthr_key_create(__gthread_key_t* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT;
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
-__MCF_gthr_key_create(__gthread_key_t* __keyp, void __dtor_opt(void*)) __MCF_NOEXCEPT
+__MCF_gthr_key_create(__gthread_key_t* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT
   {
     _MCF_tls_key* __key = _MCF_tls_key_new(__dtor_opt);
     *__keyp = __key;
@@ -106,7 +106,7 @@ __MCF_gthr_key_create(__gthread_key_t* __keyp, void __dtor_opt(void*)) __MCF_NOE
   }
 
 __MCF_GTHR_INLINE_ALIAS(
-  int, key_create, (__gthread_key_t* __keyp, void __dtor_opt(void*)) __MCF_NOEXCEPT,
+  int, key_create, (__gthread_key_t* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT,
     return __MCF_gthr_key_create(__keyp, __dtor_opt);  )
 
 /* Destroys a thread-specific key, like `pthread_key_delete()`.  */
