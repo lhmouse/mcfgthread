@@ -17,12 +17,6 @@ extern "C" {
 #  define __MCF_DECLSPEC_C11(...)  __VA_ARGS__
 #endif
 
-/* Rename symbols to prevent DLL hells.  */
-#define __MCF_C11_INLINE_ALIAS(RETURN, func, params, ...)  \
-  __MCF_ALWAYS_INLINE RETURN func params __asm__(  \
-     __MCF_PPSTR(__USER_LABEL_PREFIX__) "__MCF_c11_" #func);  \
-  __MCF_ALWAYS_INLINE RETURN func params { __VA_ARGS__ }
-
 /* N1570 7.26.1 Introduction  */
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201103L)
 #  define thread_local  _Thread_local
@@ -104,9 +98,9 @@ __MCF_c11_call_once(once_flag* __flag, __MCF_once_callback* __init_func)
     _MCF_once_release(__flag);
   }
 
-__MCF_C11_INLINE_ALIAS(
-  void, call_once, (once_flag* __flag, __MCF_once_callback* __init_func),
-    __MCF_c11_call_once(__flag, __init_func);  )
+__MCF_GTHR_INLINE_ALIAS(call_once,
+void,
+__MCF_c11_call_once, (once_flag*, __MCF_once_callback*));
 
 /* 7.26.3.1 The cnd_broadcast function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -121,9 +115,9 @@ __MCF_c11_cnd_broadcast(cnd_t* __cond) __MCF_NOEXCEPT
     return thrd_success;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  int, cnd_broadcast, (cnd_t* __cond) __MCF_NOEXCEPT,
-    return __MCF_c11_cnd_broadcast(__cond);  )
+__MCF_GTHR_INLINE_ALIAS(cnd_broadcast,
+int,
+__MCF_c11_cnd_broadcast, (cnd_t*), __MCF_NOEXCEPT);
 
 /* 7.26.3.2 The cnd_destroy function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -137,9 +131,9 @@ __MCF_c11_cnd_destroy(cnd_t* __cond) __MCF_NOEXCEPT
     (void) __cond;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  void, cnd_destroy, (cnd_t* __cond) __MCF_NOEXCEPT,
-    __MCF_c11_cnd_destroy(__cond);  )
+__MCF_GTHR_INLINE_ALIAS(cnd_destroy,
+void,
+__MCF_c11_cnd_destroy, (cnd_t*), __MCF_NOEXCEPT);
 
 /* 7.26.3.3 The cnd_init function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -154,9 +148,9 @@ __MCF_c11_cnd_init(cnd_t* __cond) __MCF_NOEXCEPT
     return thrd_success;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  int, cnd_init, (cnd_t* __cond) __MCF_NOEXCEPT,
-    return __MCF_c11_cnd_init(__cond);  )
+__MCF_GTHR_INLINE_ALIAS(cnd_init,
+int,
+__MCF_c11_cnd_init, (cnd_t*), __MCF_NOEXCEPT);
 
 /* 7.26.3.4 The cnd_signal function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -171,9 +165,9 @@ __MCF_c11_cnd_signal(cnd_t* __cond) __MCF_NOEXCEPT
     return thrd_success;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  int, cnd_signal, (cnd_t* __cond) __MCF_NOEXCEPT,
-    return __MCF_c11_cnd_signal(__cond);  )
+__MCF_GTHR_INLINE_ALIAS(cnd_signal,
+int,
+__MCF_c11_cnd_signal, (cnd_t*), __MCF_NOEXCEPT);
 
 /* 7.26.3.5 The cnd_timedwait function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -189,9 +183,9 @@ __MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const struct timespec* __ts
     return (__err != 0) ? thrd_timedout : thrd_success;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  int, cnd_timedwait, (cnd_t* __cond, mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEPT,
-    return __MCF_c11_cnd_timedwait(__cond, __mtx, __ts);  )
+__MCF_GTHR_INLINE_ALIAS(cnd_timedwait,
+int,
+__MCF_c11_cnd_timedwait, (cnd_t*, mtx_t*, const struct timespec*), __MCF_NOEXCEPT);
 
 /* 7.26.3.6 The cnd_wait function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -207,9 +201,9 @@ __MCF_c11_cnd_wait(cnd_t* __cond, mtx_t* __mtx) __MCF_NOEXCEPT
     return thrd_success;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  int, cnd_wait, (cnd_t* __cond, mtx_t* __mtx) __MCF_NOEXCEPT,
-    return __MCF_c11_cnd_wait(__cond, __mtx);  )
+__MCF_GTHR_INLINE_ALIAS(cnd_wait,
+int,
+__MCF_c11_cnd_wait, (cnd_t*, mtx_t*), __MCF_NOEXCEPT);
 
 /* 7.26.4.1 The mtx_destroy function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -223,9 +217,9 @@ __MCF_c11_mtx_destroy(mtx_t* __mtx) __MCF_NOEXCEPT
     (void) __mtx;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  void, mtx_destroy, (mtx_t* __mtx) __MCF_NOEXCEPT,
-    __MCF_c11_mtx_destroy(__mtx);  )
+__MCF_GTHR_INLINE_ALIAS(mtx_destroy,
+void,
+__MCF_c11_mtx_destroy, (mtx_t*), __MCF_NOEXCEPT);
 
 /* 7.26.4.2 The mtx_init function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -252,9 +246,9 @@ __MCF_c11_mtx_init(mtx_t* __mtx, int __type) __MCF_NOEXCEPT
     }
   }
 
-__MCF_C11_INLINE_ALIAS(
-  int, mtx_init, (mtx_t* __mtx, int __type) __MCF_NOEXCEPT,
-    return __MCF_c11_mtx_init(__mtx, __type);  )
+__MCF_GTHR_INLINE_ALIAS(mtx_init,
+int,
+__MCF_c11_mtx_init, (mtx_t*, int), __MCF_NOEXCEPT);
 
 /* This is an auxiliary function that checks the type of its argument in
  * addition to `__MCF_gthr_rc_mutex_recurse()`.  */
@@ -296,9 +290,9 @@ __MCF_c11_mtx_lock(mtx_t* __mtx) __MCF_NOEXCEPT
     return thrd_success;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  int, mtx_lock, (mtx_t* __mtx) __MCF_NOEXCEPT,
-    return __MCF_c11_mtx_lock(__mtx);  )
+__MCF_GTHR_INLINE_ALIAS(mtx_lock,
+int,
+__MCF_c11_mtx_lock, (mtx_t*), __MCF_NOEXCEPT);
 
 /* 7.26.4.4 The mtx_timedlock function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -321,9 +315,9 @@ __MCF_c11_mtx_timedlock(mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEP
     return (__err != 0) ? thrd_timedout : thrd_success;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  int, mtx_timedlock, (mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEPT,
-    return __MCF_c11_mtx_timedlock(__mtx, __ts);  )
+__MCF_GTHR_INLINE_ALIAS(mtx_timedlock,
+int,
+__MCF_c11_mtx_timedlock, (mtx_t*, const struct timespec*), __MCF_NOEXCEPT);
 
 /* 7.26.4.5 The mtx_trylock function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -343,9 +337,9 @@ __MCF_c11_mtx_trylock(mtx_t* __mtx) __MCF_NOEXCEPT
     return (__err != 0) ? thrd_busy : thrd_success;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  int, mtx_trylock, (mtx_t* __mtx) __MCF_NOEXCEPT,
-    return __MCF_c11_mtx_trylock(__mtx);  )
+__MCF_GTHR_INLINE_ALIAS(mtx_trylock,
+int,
+__MCF_c11_mtx_trylock, (mtx_t*), __MCF_NOEXCEPT);
 
 /* 7.26.4.6 The mtx_unlock function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -360,9 +354,9 @@ __MCF_c11_mtx_unlock(mtx_t* __mtx) __MCF_NOEXCEPT
     return 0;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  int, mtx_unlock, (mtx_t* __mtx) __MCF_NOEXCEPT,
-    return __MCF_c11_mtx_unlock(__mtx);  )
+__MCF_GTHR_INLINE_ALIAS(mtx_unlock,
+int,
+__MCF_c11_mtx_unlock, (mtx_t*), __MCF_NOEXCEPT);
 
 /* 7.26.5.1 The thrd_create function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -383,9 +377,9 @@ __MCF_c11_thrd_create(thrd_t* __thrdp, thrd_start_t __proc, void* __arg) __MCF_N
     return (__thrd == NULL) ? thrd_nomem : thrd_success;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  int, thrd_create, (thrd_t* __thrd, thrd_start_t __proc, void* __arg) __MCF_NOEXCEPT,
-    return __MCF_c11_thrd_create(__thrd, __proc, __arg);  )
+__MCF_GTHR_INLINE_ALIAS(thrd_create,
+int,
+__MCF_c11_thrd_create, (thrd_t*, thrd_start_t, void*), __MCF_NOEXCEPT);
 
 /* 7.26.5.2 The thrd_current function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -402,9 +396,9 @@ __MCF_c11_thrd_current(void) __MCF_NOEXCEPT
     return __self;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  thrd_t, thrd_current, (void) __MCF_NOEXCEPT,
-    return __MCF_c11_thrd_current();  )
+__MCF_GTHR_INLINE_ALIAS(thrd_current,
+thrd_t,
+__MCF_c11_thrd_current, (void), __MCF_NOEXCEPT);
 
 /* 7.26.5.3 The thrd_detach function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -430,9 +424,9 @@ __MCF_c11_thrd_detach(thrd_t __thrd) __MCF_NOEXCEPT
     return thrd_success;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  int, thrd_detach, (thrd_t __thrd) __MCF_NOEXCEPT,
-    return __MCF_c11_thrd_detach(__thrd);  )
+__MCF_GTHR_INLINE_ALIAS(thrd_detach,
+int,
+__MCF_c11_thrd_detach, (thrd_t), __MCF_NOEXCEPT);
 
 /* 7.26.5.4 The thrd_equal function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE) __MCF_CXX11(constexpr)
@@ -447,9 +441,9 @@ __MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_NOEXCEPT
     return __t1 == __t2;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  int, thrd_equal, (thrd_t __t1, thrd_t __t2) __MCF_NOEXCEPT,
-    return __MCF_c11_thrd_equal(__t1, __t2);  )
+__MCF_GTHR_INLINE_ALIAS(thrd_equal,
+int,
+__MCF_c11_thrd_equal, (thrd_t, thrd_t), __MCF_NOEXCEPT);
 
 /* 7.26.5.5 The thrd_exit function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -477,9 +471,9 @@ __MCF_c11_thrd_exit(int __result) __MCF_NOEXCEPT
     _MCF_thread_exit();
   }
 
-__MCF_C11_INLINE_ALIAS(
-  void, thrd_exit, (int __res) __MCF_NOEXCEPT,
-    __MCF_c11_thrd_exit(__res);  )
+__MCF_GTHR_INLINE_ALIAS(thrd_exit,
+void,
+__MCF_c11_thrd_exit, (int), __MCF_NOEXCEPT);
 
 /* 7.26.5.6 The thrd_join function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -515,18 +509,18 @@ __MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_NOEXCEPT
     return thrd_success;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  int, thrd_join, (thrd_t __thrd, int* __resp_opt) __MCF_NOEXCEPT,
-    return __MCF_c11_thrd_join(__thrd, __resp_opt);  )
+__MCF_GTHR_INLINE_ALIAS(thrd_join,
+int,
+__MCF_c11_thrd_join, (thrd_t, int*), __MCF_NOEXCEPT);
 
 /* 7.26.5.7 The thrd_sleep function  */
 __MCF_DECLSPEC_C11()
 int
 __MCF_c11_thrd_sleep(const struct timespec* __dur, struct timespec* __rem_opt) __MCF_NOEXCEPT;
 
-__MCF_C11_INLINE_ALIAS(
-  int, thrd_sleep, (const struct timespec* __dur, struct timespec* __rem_opt) __MCF_NOEXCEPT,
-    return __MCF_c11_thrd_sleep(__dur, __rem_opt);  )
+__MCF_GTHR_INLINE_ALIAS(thrd_sleep,
+int,
+__MCF_c11_thrd_sleep, (const struct timespec*, struct timespec*), __MCF_NOEXCEPT);
 
 /* 7.26.5.8 The thrd_yield function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -540,27 +534,27 @@ __MCF_c11_thrd_yield(void) __MCF_NOEXCEPT
     _MCF_yield();
   }
 
-__MCF_C11_INLINE_ALIAS(
-  void, thrd_yield, (void) __MCF_NOEXCEPT,
-    __MCF_c11_thrd_yield();  )
+__MCF_GTHR_INLINE_ALIAS(thrd_yield,
+void,
+__MCF_c11_thrd_yield, (void), __MCF_NOEXCEPT);
 
 /* 7.26.6.1 The tss_create function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
-__MCF_c11_tss_create(tss_t* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT;
+__MCF_c11_tss_create(tss_t* __keyp, tss_dtor_t __dtor_opt) __MCF_NOEXCEPT;
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
-__MCF_c11_tss_create(tss_t* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT
+__MCF_c11_tss_create(tss_t* __keyp, tss_dtor_t __dtor_opt) __MCF_NOEXCEPT
   {
     _MCF_tls_key* __key = _MCF_tls_key_new(__dtor_opt);
     *__keyp = __key;
     return (__key == NULL) ? thrd_nomem : thrd_success;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  int, tss_create, (tss_t* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT,
-    return __MCF_c11_tss_create(__keyp, __dtor_opt);  )
+__MCF_GTHR_INLINE_ALIAS(tss_create,
+int,
+__MCF_c11_tss_create, (tss_t*, tss_dtor_t), __MCF_NOEXCEPT);
 
 /* 7.26.6.2 The tss_delete function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -574,9 +568,9 @@ __MCF_c11_tss_delete(tss_t __key) __MCF_NOEXCEPT
     _MCF_tls_key_delete(__key);
   }
 
-__MCF_C11_INLINE_ALIAS(
-  void, tss_delete, (tss_t __key) __MCF_NOEXCEPT,
-    __MCF_c11_tss_delete(__key);  )
+__MCF_GTHR_INLINE_ALIAS(tss_delete,
+void,
+__MCF_c11_tss_delete, (tss_t), __MCF_NOEXCEPT);
 
 /* 7.26.6.3 The tss_get function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -591,9 +585,9 @@ __MCF_c11_tss_get(tss_t __key) __MCF_NOEXCEPT
     return _MCF_tls_get(__key);
   }
 
-__MCF_C11_INLINE_ALIAS(
-  void*, tss_get, (tss_t __key) __MCF_NOEXCEPT,
-    return __MCF_c11_tss_get(__key);  )
+__MCF_GTHR_INLINE_ALIAS(tss_get,
+void*,
+__MCF_c11_tss_get, (tss_t), __MCF_NOEXCEPT);
 
 /* 7.26.6.4 The tss_set function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
@@ -608,9 +602,9 @@ __MCF_c11_tss_set(tss_t __key, void* __val_opt) __MCF_NOEXCEPT
     return (__err != 0) ? thrd_error : thrd_success;
   }
 
-__MCF_C11_INLINE_ALIAS(
-  int, tss_set, (tss_t __key, void* __val_opt) __MCF_NOEXCEPT,
-    return __MCF_c11_tss_set(__key, __val_opt);  )
+__MCF_GTHR_INLINE_ALIAS(tss_set,
+int,
+__MCF_c11_tss_set, (tss_t, void*), __MCF_NOEXCEPT);
 
 #ifdef __cplusplus
 }

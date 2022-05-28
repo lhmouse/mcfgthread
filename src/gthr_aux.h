@@ -20,6 +20,47 @@ extern "C" {
 #  define __MCF_DECLSPEC_GTHR_AUX(...)  __VA_ARGS__
 #endif
 
+/* Define macros for remaining symbols, in order to prevent DLL hells.  */
+#define __MCF_GTHR_DECLARE_0(a)           (void)
+#define __MCF_GTHR_DECLARE_1(a)           (a __a)
+#define __MCF_GTHR_DECLARE_2(a,b)         (a __a, b __b)
+#define __MCF_GTHR_DECLARE_3(a,b,c)       (a __a, b __b, c __c)
+#define __MCF_GTHR_DECLARE_4(a,b,c,d)     (a __a, b __b, c __c, d __d)
+#define __MCF_GTHR_DECLARE_5(a,b,c,d,e)   (a __a, b __b, c __c, d __d, e __e)
+
+#define __MCF_GTHR_FORWARD_0(a)           ()
+#define __MCF_GTHR_FORWARD_1(a)           (__a)
+#define __MCF_GTHR_FORWARD_2(a,b)         (__a, __b)
+#define __MCF_GTHR_FORWARD_3(a,b,c)       (__a, __b, __c)
+#define __MCF_GTHR_FORWARD_4(a,b,c,d)     (__a, __b, __c, __d)
+#define __MCF_GTHR_FORWARD_5(a,b,c,d,e)   (__a, __b, __c, __d, __e)
+
+#define __MCF_GTHR_1st_NX(a,...)   a
+#define __MCF_GTHR_1st(...)   __MCF_GTHR_1st_NX(__VA_ARGS__)
+#define __MCF_GTHR_6th_NX(a,b,c,d,e,f,...)   f
+#define __MCF_GTHR_6th(...)   __MCF_GTHR_6th_NX(__VA_ARGS__)
+#define __MCF_GTHR_COUNT(...)   __MCF_GTHR_6th(__VA_ARGS__, 5, 4, 3, 2, 1)
+#define __MCF_GTHR_xvoid   ,
+#define __MCF_GTHR_SELECT_void(tok,t,f)   __MCF_GTHR_6th(__MCF_GTHR_x##tok, 2, 3, 4, t, f)
+#define __MCF_GTHR_PARAMS_SELECT_NX(f,n,ps)   f##_##n ps
+#define __MCF_GTHR_PARAMS_SELECT(f,n,ps)   __MCF_GTHR_PARAMS_SELECT_NX(f,n, ps)
+#define __MCF_GTHR_PARAMS_NX(f,n,t,ps)   __MCF_GTHR_PARAMS_SELECT(f,__MCF_GTHR_SELECT_void(t, 0, n), ps)
+#define __MCF_GTHR_PARAMS(f,ps)   __MCF_GTHR_PARAMS_NX(f,__MCF_GTHR_COUNT ps, __MCF_GTHR_1st ps, ps)
+
+#define __MCF_GTHR_INLINE_ALIAS(alias, RETURN, target, params, ...)  \
+  __MCF_ALWAYS_INLINE  \
+  RETURN  \
+  alias __MCF_GTHR_PARAMS(__MCF_GTHR_DECLARE, params) __VA_ARGS__  \
+      __asm__(__MCF_PPSTR(__USER_LABEL_PREFIX__) #target);  \
+  \
+  __MCF_ALWAYS_INLINE  \
+  RETURN  \
+  alias __MCF_GTHR_PARAMS(__MCF_GTHR_DECLARE, params) __VA_ARGS__  \
+    {  \
+      __MCF_GTHR_SELECT_void(__MCF_GTHR_1st params, ,  \
+         return) target __MCF_GTHR_PARAMS(__MCF_GTHR_FORWARD, params);  \
+    }
+
 /* Define reusable types.  */
 typedef struct __MCF_gthr_rc_mutex __MCF_gthr_rc_mutex;
 typedef struct __MCF_gthr_thread_record __MCF_gthr_thread_record;
