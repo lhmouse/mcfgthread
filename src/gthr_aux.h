@@ -43,7 +43,7 @@ extern "C" {
 #define __MCF_GTHR_xvoid   ,
 #define __MCF_GTHR_SELECT_void(tok,t,f)   __MCF_GTHR_6th(__MCF_GTHR_x##tok, 2, 3, 4, t, f)
 #define __MCF_GTHR_PARAMS_SELECT_NX(f,n,ps)   f##_##n ps
-#define __MCF_GTHR_PARAMS_SELECT(f,n,ps)   __MCF_GTHR_PARAMS_SELECT_NX(f,n, ps)
+#define __MCF_GTHR_PARAMS_SELECT(f,n,ps)   __MCF_GTHR_PARAMS_SELECT_NX(f, n, ps)
 #define __MCF_GTHR_PARAMS_NX(f,n,t,ps)   __MCF_GTHR_PARAMS_SELECT(f,__MCF_GTHR_SELECT_void(t, 0, n), ps)
 #define __MCF_GTHR_PARAMS(f,ps)   __MCF_GTHR_PARAMS_NX(f,__MCF_GTHR_COUNT ps, __MCF_GTHR_1st ps, ps)
 
