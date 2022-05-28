@@ -145,6 +145,9 @@ typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __this);
 /* Define the prototype for `atexit()` and `at_quick_exit()`.  */
 typedef void __MCF_atexit_callback(void);
 
+/* Define the prototype for `call_once()`.  */
+typedef void __MCF_once_callback(void);
+
 /* Define some helper functions.  */
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
