@@ -20,7 +20,7 @@ extern "C" {
 #  define __MCF_DECLSPEC_GTHR_AUX(...)  __VA_ARGS__
 #endif
 
-/* Define macros for remaining symbols, in order to prevent DLL hells.  */
+/* Define macros for renaming symbols, in order to prevent DLL hells.  */
 #define __MCF_GTHR_DECLARE_0(a)           (void)
 #define __MCF_GTHR_DECLARE_1(a)           (a __a)
 #define __MCF_GTHR_DECLARE_2(a,b)         (a __a, b __b)
