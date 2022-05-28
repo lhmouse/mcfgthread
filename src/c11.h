@@ -89,11 +89,11 @@ enum __MCF_thrd_error
 /* 7.26.2.1 The call_once function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void
-__MCF_c11_call_once(once_flag* __flag, void __init_func(void));
+__MCF_c11_call_once(once_flag* __flag, __MCF_once_callback* __init_func);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void
-__MCF_c11_call_once(once_flag* __flag, void __init_func(void))
+__MCF_c11_call_once(once_flag* __flag, __MCF_once_callback* __init_func)
   {
     if(_MCF_once_wait(__flag, NULL) == 0)
       return;
@@ -105,7 +105,7 @@ __MCF_c11_call_once(once_flag* __flag, void __init_func(void))
   }
 
 __MCF_C11_INLINE_ALIAS(
-  void, call_once, (once_flag* __flag, void __init_func(void)),
+  void, call_once, (once_flag* __flag, __MCF_once_callback* __init_func),
     __MCF_c11_call_once(__flag, __init_func);  )
 
 /* 7.26.3.1 The cnd_broadcast function  */
@@ -547,11 +547,11 @@ __MCF_C11_INLINE_ALIAS(
 /* 7.26.6.1 The tss_create function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
-__MCF_c11_tss_create(tss_t* __keyp, tss_dtor_t __dtor_opt) __MCF_NOEXCEPT;
+__MCF_c11_tss_create(tss_t* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT;
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
-__MCF_c11_tss_create(tss_t* __keyp, tss_dtor_t __dtor_opt) __MCF_NOEXCEPT
+__MCF_c11_tss_create(tss_t* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT
   {
     _MCF_tls_key* __key = _MCF_tls_key_new(__dtor_opt);
     *__keyp = __key;
@@ -559,7 +559,7 @@ __MCF_c11_tss_create(tss_t* __keyp, tss_dtor_t __dtor_opt) __MCF_NOEXCEPT
   }
 
 __MCF_C11_INLINE_ALIAS(
-  int, tss_create, (tss_t* __keyp, tss_dtor_t __dtor_opt) __MCF_NOEXCEPT,
+  int, tss_create, (tss_t* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT,
     return __MCF_c11_tss_create(__keyp, __dtor_opt);  )
 
 /* 7.26.6.2 The tss_delete function  */
