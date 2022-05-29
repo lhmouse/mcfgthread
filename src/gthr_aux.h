@@ -35,30 +35,28 @@ extern "C" {
 #define __MCF_GTHR_FORWARD_4(a,b,c,d)     (__a, __b, __c, __d)
 #define __MCF_GTHR_FORWARD_5(a,b,c,d,e)   (__a, __b, __c, __d, __e)
 
-#define __MCF_GTHR_1st_NX(a,...)   a
-#define __MCF_GTHR_1st(...)   __MCF_GTHR_1st_NX(__VA_ARGS__)
 #define __MCF_GTHR_6th_NX(a,b,c,d,e,f,...)   f
 #define __MCF_GTHR_6th(...)   __MCF_GTHR_6th_NX(__VA_ARGS__)
+#define __MCF_GTHR_1st(...)   __MCF_GTHR_6th_NX(1, 2, 3, 4, 5, __VA_ARGS__)
 #define __MCF_GTHR_COUNT(...)   __MCF_GTHR_6th(__VA_ARGS__, 5, 4, 3, 2, 1)
-#define __MCF_GTHR_xvoid   ,
-#define __MCF_GTHR_SELECT_void(tok,t,f)   __MCF_GTHR_6th(__MCF_GTHR_x##tok, 2, 3, 4, t, f)
-#define __MCF_GTHR_PARAMS_SELECT_NX(f,n,ps)   f##_##n ps
-#define __MCF_GTHR_PARAMS_SELECT(f,n,ps)   __MCF_GTHR_PARAMS_SELECT_NX(f, n, ps)
-#define __MCF_GTHR_PARAMS_NX(f,n,t,ps)   __MCF_GTHR_PARAMS_SELECT(f,__MCF_GTHR_SELECT_void(t, 0, n), ps)
-#define __MCF_GTHR_PARAMS(f,ps)   __MCF_GTHR_PARAMS_NX(f,__MCF_GTHR_COUNT ps, __MCF_GTHR_1st ps, ps)
+#define __MCF_GTHR_t_void   ,
+#define __MCF_GTHR_SELECT_void(tok,t,f)   __MCF_GTHR_6th(__MCF_GTHR_t_##tok, 2, 3, 4, t, f)
+#define __MCF_GTHR_PARAMS_INVOKE(f,n,ps)   __MCF_PPCAT2(f, n) ps
+#define __MCF_GTHR_PARAMS_N_T(f,n,t,ps)   __MCF_GTHR_PARAMS_INVOKE(f, __MCF_GTHR_SELECT_void(t, 0, n), ps)
+#define __MCF_GTHR_PARAMS(f,ps)   __MCF_GTHR_PARAMS_N_T(f, __MCF_GTHR_COUNT ps, __MCF_GTHR_1st ps, ps)
 
 #define __MCF_GTHR_INLINE_ALIAS(alias, RETURN, target, params, ...)  \
   __MCF_ALWAYS_INLINE  \
   RETURN  \
-  alias __MCF_GTHR_PARAMS(__MCF_GTHR_DECLARE, params) __VA_ARGS__  \
+  alias __MCF_GTHR_PARAMS(__MCF_GTHR_DECLARE_, params) __VA_ARGS__  \
       __asm__(__MCF_PPSTR(__USER_LABEL_PREFIX__) #target);  \
   \
   __MCF_ALWAYS_INLINE  \
   RETURN  \
-  alias __MCF_GTHR_PARAMS(__MCF_GTHR_DECLARE, params) __VA_ARGS__  \
+  alias __MCF_GTHR_PARAMS(__MCF_GTHR_DECLARE_, params) __VA_ARGS__  \
     {  \
       __MCF_GTHR_SELECT_void(__MCF_GTHR_1st params, ,  \
-         return) target __MCF_GTHR_PARAMS(__MCF_GTHR_FORWARD, params);  \
+         return) target __MCF_GTHR_PARAMS(__MCF_GTHR_FORWARD_, params);  \
     }
 
 /* Define reusable types.  */
