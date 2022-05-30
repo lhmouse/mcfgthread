@@ -32,7 +32,7 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
 
     /* Try waiting.  */
     status = __MCF_keyed_event_wait(event, nt_timeout.__li);
-    while(status == STATUS_TIMEOUT) {
+    while(status != STATUS_WAIT_0) {
       /* Tell another thread which is going to signal this flag that an old
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */

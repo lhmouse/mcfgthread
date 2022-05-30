@@ -27,7 +27,7 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
 
     /* Try waiting.  */
     status = __MCF_keyed_event_wait(sem, nt_timeout.__li);
-    while(status == STATUS_TIMEOUT) {
+    while(status != STATUS_WAIT_0) {
       /* Remove myself from the wait queue. But see below...  */
       _MCF_atomic_load_pptr_rlx(&old, sem);
       do {
