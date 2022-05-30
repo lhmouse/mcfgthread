@@ -53,7 +53,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
 
     /* Try waiting.  */
     status = __MCF_keyed_event_wait(cond, nt_timeout.__li);
-    while(status == STATUS_TIMEOUT) {
+    while(status != STATUS_WAIT_0) {
       /* Tell another thread which is going to signal this condition variable
        * that an old waiter has left by decrementing the number of sleeping
        * threads. But see below...  */
