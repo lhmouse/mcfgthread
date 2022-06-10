@@ -114,12 +114,14 @@ _MCF_thread_self(void)
     return TlsGetValue(__MCF_win32_tls_index);
   }
 
+#if !defined(__i386__) && !defined(__amd64__)
 __MCF_DLLEXPORT
 uint32_t
 _MCF_thread_self_tid(void)
   {
     return GetCurrentThreadId();
   }
+#endif  /* x86  */
 
 __MCF_DLLEXPORT
 void

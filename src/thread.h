@@ -170,6 +170,19 @@ uint32_t
 _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   __attribute__((__const__));
 
+#if defined(__i386__) || defined(__amd64__)
+__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
+uint32_t
+_MCF_thread_self_tid(void) __MCF_NOEXCEPT
+  {
+#  ifdef __amd64__
+    return __readgsdword(0x48);
+#  else
+    return __readfsdword(0x24);
+#  endif
+  }
+#endif  /* x86  */
+
 /* Gives up the current time slice.  */
 __MCF_DECLSPEC_THREAD()
 void

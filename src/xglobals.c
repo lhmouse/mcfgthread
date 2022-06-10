@@ -168,7 +168,7 @@ do_on_process_attach(void)
     __MCF_perf_frequency_reciprocal = 1000 / (double) freq.QuadPart;
 
     /* Attach the main thread.  */
-    __MCF_main_thread.__tid = GetCurrentThreadId();
+    __MCF_main_thread.__tid = _MCF_thread_self_tid();
     __MCF_CHECK(NT_SUCCESS(NtDuplicateObject(GetCurrentProcess(),
          GetCurrentThread(), GetCurrentProcess(), &(__MCF_main_thread.__handle),
          0, 0, DUPLICATE_SAME_ACCESS)));
