@@ -44,27 +44,21 @@ lib_libmcfgthread_la_SOURCES =  \
   %reldir%/tls.c  \
   %reldir%/gthr_aux.c  \
   %reldir%/gthr.c  \
-  %reldir%/libkernel32_tiny.def  \
-  %reldir%/libntdll_tiny.def  \
   ${END}
 
 .rc.lo:
 	${AM_V_GEN}${LIBTOOL} ${AM_V_lt} --tag=RC --mode=compile ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
 
-BUILT_SOURCES += %reldir%/libkernel32_tiny.a %reldir%/libntdll_tiny.a
-CLEANFILES += %reldir%/libkernel32_tiny.a %reldir%/libntdll_tiny.a
-
-.def.a:
-	${AM_V_GEN}${DLLTOOL} ${AM_DLLTOOLFLAGS} -k -d $< -l $@
-
 lib_libmcfgthread_la_CFLAGS =  \
   ${AM_CFLAGS} -nostdlib -f{freestanding,unwind-tables}
 
+lib_libmcfgthread_la_LIBADD =  \
+  -lkernel32 -lntdll
+
 lib_libmcfgthread_la_LDFLAGS =  \
-  -Wc,-nostdlib,%reldir%/lib{kernel32,ntdll}_tiny.a  \
   -Wl,--subsystem,windows:6.1,--entry,__MCF_dll_startup@@Z  \
   -Wl,--exclude-all-symbols,--kill-at,--enable-auto-image-base  \
-  -no-undefined -version-info @abi_major@:@abi_minor@
+  -Wc,-nostdlib -no-undefined -version-info @abi_major@:@abi_minor@
 
 if enable_pch
 lib_libmcfgthread_la_CFLAGS += -include %reldir%/precompiled.xi

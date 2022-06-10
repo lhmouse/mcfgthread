@@ -58,12 +58,9 @@ extern BYTE __MCF_mutex_spin_field[2048];
 #undef RtlCompareMemory
 #undef RtlEqualMemory
 
-/* Despite the stdcall calling convention, names of Windows APIs in export
- * tables are not decorated. This macro forces symbol names in assembly, so
- * they will not end up in undefined references.  */
 #define __MCF_WINAPI(RETURN, function, ...)  \
   RETURN __stdcall function(__VA_ARGS__)  \
-    __asm__(#function) __attribute__((__dllimport__, __nothrow__))
+    __attribute__((__dllimport__, __nothrow__))
 
 /* Declare KERNEL32 APIs here.  */
 __MCF_WINAPI(DWORD, GetLastError, void) __attribute__((__pure__));
