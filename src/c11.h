@@ -85,7 +85,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void
 __MCF_c11_call_once(once_flag* __flag, __MCF_once_callback* __init_func);
 
-__MCF_GTHR_ALIAS(call_once, __MCF_c11_call_once)
+__MCF_GTHR_ALIAS(call_once, __MCF_c11_call_once);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void
@@ -105,7 +105,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_cnd_broadcast(cnd_t* __cond) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(cnd_broadcast, __MCF_c11_cnd_broadcast)
+__MCF_GTHR_ALIAS(cnd_broadcast, __MCF_c11_cnd_broadcast);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
@@ -120,7 +120,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void
 __MCF_c11_cnd_destroy(cnd_t* __cond) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(cnd_destroy, __MCF_c11_cnd_destroy)
+__MCF_GTHR_ALIAS(cnd_destroy, __MCF_c11_cnd_destroy);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void
@@ -134,7 +134,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_cnd_init(cnd_t* __cond) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(cnd_init, __MCF_c11_cnd_init)
+__MCF_GTHR_ALIAS(cnd_init, __MCF_c11_cnd_init);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
@@ -149,7 +149,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_cnd_signal(cnd_t* __cond) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(cnd_signal, __MCF_c11_cnd_signal)
+__MCF_GTHR_ALIAS(cnd_signal, __MCF_c11_cnd_signal);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
@@ -164,7 +164,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(cnd_timedwait, __MCF_c11_cnd_timedwait)
+__MCF_GTHR_ALIAS(cnd_timedwait, __MCF_c11_cnd_timedwait);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
@@ -180,7 +180,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_cnd_wait(cnd_t* __cond, mtx_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(cnd_wait, __MCF_c11_cnd_wait)
+__MCF_GTHR_ALIAS(cnd_wait, __MCF_c11_cnd_wait);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
@@ -196,7 +196,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void
 __MCF_c11_mtx_destroy(mtx_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(mtx_destroy, __MCF_c11_mtx_destroy)
+__MCF_GTHR_ALIAS(mtx_destroy, __MCF_c11_mtx_destroy);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void
@@ -210,7 +210,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_mtx_init(mtx_t* __mtx, int __type) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(mtx_init, __MCF_c11_mtx_init)
+__MCF_GTHR_ALIAS(mtx_init, __MCF_c11_mtx_init);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
@@ -259,7 +259,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_mtx_lock(mtx_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(mtx_lock, __MCF_c11_mtx_lock)
+__MCF_GTHR_ALIAS(mtx_lock, __MCF_c11_mtx_lock);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
@@ -279,7 +279,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_mtx_timedlock(mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(mtx_timedlock, __MCF_c11_mtx_timedlock)
+__MCF_GTHR_ALIAS(mtx_timedlock, __MCF_c11_mtx_timedlock);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
@@ -302,7 +302,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_mtx_trylock(mtx_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(mtx_trylock, __MCF_c11_mtx_trylock)
+__MCF_GTHR_ALIAS(mtx_trylock, __MCF_c11_mtx_trylock);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
@@ -322,7 +322,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_mtx_unlock(mtx_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(mtx_unlock, __MCF_c11_mtx_unlock)
+__MCF_GTHR_ALIAS(mtx_unlock, __MCF_c11_mtx_unlock);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
@@ -337,7 +337,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_thrd_create(thrd_t* __thrd, thrd_start_t __proc, void* __arg) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(thrd_create, __MCF_c11_thrd_create)
+__MCF_GTHR_ALIAS(thrd_create, __MCF_c11_thrd_create);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
@@ -359,7 +359,7 @@ thrd_t
 __MCF_c11_thrd_current(void) __MCF_NOEXCEPT
   __attribute__((__const__, __returns_nonnull__));
 
-__MCF_GTHR_ALIAS(thrd_current, __MCF_c11_thrd_current)
+__MCF_GTHR_ALIAS(thrd_current, __MCF_c11_thrd_current);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 thrd_t
@@ -375,7 +375,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_thrd_detach(thrd_t __thrd) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(thrd_detach, __MCF_c11_thrd_detach)
+__MCF_GTHR_ALIAS(thrd_detach, __MCF_c11_thrd_detach);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
@@ -402,7 +402,7 @@ int
 __MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_GTHR_ALIAS(thrd_equal, __MCF_c11_thrd_equal)
+__MCF_GTHR_ALIAS(thrd_equal, __MCF_c11_thrd_equal);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE) __MCF_CXX11(constexpr)
 int
@@ -417,7 +417,7 @@ void
 __MCF_c11_thrd_exit(int __res) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
 
-__MCF_GTHR_ALIAS(thrd_exit, __MCF_c11_thrd_exit)
+__MCF_GTHR_ALIAS(thrd_exit, __MCF_c11_thrd_exit);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void
@@ -444,7 +444,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(thrd_join, __MCF_c11_thrd_join)
+__MCF_GTHR_ALIAS(thrd_join, __MCF_c11_thrd_join);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
@@ -480,14 +480,14 @@ __MCF_DECLSPEC_C11()
 int
 __MCF_c11_thrd_sleep(const struct timespec* __dur, struct timespec* __rem_opt) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(thrd_sleep, __MCF_c11_thrd_sleep)
+__MCF_GTHR_ALIAS(thrd_sleep, __MCF_c11_thrd_sleep);
 
 /* 7.26.5.8 The thrd_yield function  */
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void
 __MCF_c11_thrd_yield(void) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(thrd_yield, __MCF_c11_thrd_yield)
+__MCF_GTHR_ALIAS(thrd_yield, __MCF_c11_thrd_yield);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void
@@ -501,7 +501,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_tss_create(tss_t* __keyp, tss_dtor_t __dtor_opt) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(tss_create, __MCF_c11_tss_create)
+__MCF_GTHR_ALIAS(tss_create, __MCF_c11_tss_create);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
@@ -517,7 +517,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void
 __MCF_c11_tss_delete(tss_t __key) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(tss_delete, __MCF_c11_tss_delete)
+__MCF_GTHR_ALIAS(tss_delete, __MCF_c11_tss_delete);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void
@@ -532,7 +532,7 @@ void*
 __MCF_c11_tss_get(tss_t __key) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_GTHR_ALIAS(tss_get, __MCF_c11_tss_get)
+__MCF_GTHR_ALIAS(tss_get, __MCF_c11_tss_get);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void*
@@ -546,7 +546,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_tss_set(tss_t __key, void* __val_opt) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(tss_set, __MCF_c11_tss_set)
+__MCF_GTHR_ALIAS(tss_set, __MCF_c11_tss_set);
 
 __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int

@@ -50,7 +50,7 @@ int
 __MCF_gthr_active_p(void) __MCF_NOEXCEPT
   __attribute__((__const__));
 
-__MCF_GTHR_ALIAS(__gthread_active_p, __MCF_gthr_active_p)
+__MCF_GTHR_ALIAS(__gthread_active_p, __MCF_gthr_active_p);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -64,7 +64,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_once(__gthread_once_t* __once, __MCF_once_callback* __init_proc);
 
-__MCF_GTHR_ALIAS(__gthread_once, __MCF_gthr_once)
+__MCF_GTHR_ALIAS(__gthread_once, __MCF_gthr_once);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -86,7 +86,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_key_create(__gthread_key_t* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_key_create, __MCF_gthr_key_create)
+__MCF_GTHR_ALIAS(__gthread_key_create, __MCF_gthr_key_create);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -102,7 +102,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_key_delete(__gthread_key_t __key) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_key_delete, __MCF_gthr_key_delete)
+__MCF_GTHR_ALIAS(__gthread_key_delete, __MCF_gthr_key_delete);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -118,7 +118,7 @@ void*
 __MCF_gthr_getspecific(__gthread_key_t __key) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_GTHR_ALIAS(__gthread_getspecific, __MCF_gthr_getspecific)
+__MCF_GTHR_ALIAS(__gthread_getspecific, __MCF_gthr_getspecific);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 void*
@@ -132,7 +132,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_setspecific(__gthread_key_t __key, const void* __val_opt) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_setspecific, __MCF_gthr_setspecific)
+__MCF_GTHR_ALIAS(__gthread_setspecific, __MCF_gthr_setspecific);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -147,7 +147,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_mutex_init(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_mutex_init, __MCF_gthr_mutex_init)
+__MCF_GTHR_ALIAS(__gthread_mutex_init, __MCF_gthr_mutex_init);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -162,7 +162,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_mutex_destroy(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_mutex_destroy, __MCF_gthr_mutex_destroy)
+__MCF_GTHR_ALIAS(__gthread_mutex_destroy, __MCF_gthr_mutex_destroy);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -177,7 +177,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_mutex_lock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_mutex_lock, __MCF_gthr_mutex_lock)
+__MCF_GTHR_ALIAS(__gthread_mutex_lock, __MCF_gthr_mutex_lock);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -193,7 +193,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_mutex_trylock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_mutex_trylock, __MCF_gthr_mutex_trylock)
+__MCF_GTHR_ALIAS(__gthread_mutex_trylock, __MCF_gthr_mutex_trylock);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -209,7 +209,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_mutex_timedlock(__gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_mutex_timedlock, __MCF_gthr_mutex_timedlock)
+__MCF_GTHR_ALIAS(__gthread_mutex_timedlock, __MCF_gthr_mutex_timedlock);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -225,7 +225,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_mutex_unlock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_mutex_unlock, __MCF_gthr_mutex_unlock)
+__MCF_GTHR_ALIAS(__gthread_mutex_unlock, __MCF_gthr_mutex_unlock);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -240,7 +240,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_recursive_mutex_init(__gthread_recursive_mutex_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_recursive_mutex_init, __MCF_gthr_recursive_mutex_init)
+__MCF_GTHR_ALIAS(__gthread_recursive_mutex_init, __MCF_gthr_recursive_mutex_init);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -255,7 +255,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_recursive_mutex_destroy(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_recursive_mutex_destroy, __MCF_gthr_recursive_mutex_destroy)
+__MCF_GTHR_ALIAS(__gthread_recursive_mutex_destroy, __MCF_gthr_recursive_mutex_destroy);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -270,7 +270,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_recursive_mutex_lock, __MCF_gthr_recursive_mutex_lock)
+__MCF_GTHR_ALIAS(__gthread_recursive_mutex_lock, __MCF_gthr_recursive_mutex_lock);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -291,7 +291,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_recursive_mutex_trylock, __MCF_gthr_recursive_mutex_trylock)
+__MCF_GTHR_ALIAS(__gthread_recursive_mutex_trylock, __MCF_gthr_recursive_mutex_trylock);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -313,7 +313,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_recursive_mutex_timedlock, __MCF_gthr_recursive_mutex_timedlock)
+__MCF_GTHR_ALIAS(__gthread_recursive_mutex_timedlock, __MCF_gthr_recursive_mutex_timedlock);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -334,7 +334,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_recursive_mutex_unlock, __MCF_gthr_recursive_mutex_unlock)
+__MCF_GTHR_ALIAS(__gthread_recursive_mutex_unlock, __MCF_gthr_recursive_mutex_unlock);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -350,7 +350,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_cond_init(__gthread_cond_t* __cond) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_cond_init, __MCF_gthr_cond_init)
+__MCF_GTHR_ALIAS(__gthread_cond_init, __MCF_gthr_cond_init);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -366,7 +366,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_cond_destroy(__gthread_cond_t* __cond) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_cond_destroy, __MCF_gthr_cond_destroy)
+__MCF_GTHR_ALIAS(__gthread_cond_destroy, __MCF_gthr_cond_destroy);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -381,7 +381,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_cond_wait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_cond_wait, __MCF_gthr_cond_wait)
+__MCF_GTHR_ALIAS(__gthread_cond_wait, __MCF_gthr_cond_wait);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -397,7 +397,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_cond_wait_recursive, __MCF_gthr_cond_wait_recursive)
+__MCF_GTHR_ALIAS(__gthread_cond_wait_recursive, __MCF_gthr_cond_wait_recursive);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -414,7 +414,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_cond_timedwait, __MCF_gthr_cond_timedwait)
+__MCF_GTHR_ALIAS(__gthread_cond_timedwait, __MCF_gthr_cond_timedwait);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -431,7 +431,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_cond_signal(__gthread_cond_t* __cond) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_cond_signal, __MCF_gthr_cond_signal)
+__MCF_GTHR_ALIAS(__gthread_cond_signal, __MCF_gthr_cond_signal);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -447,7 +447,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_cond_broadcast(__gthread_cond_t* __cond) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_cond_broadcast, __MCF_gthr_cond_broadcast)
+__MCF_GTHR_ALIAS(__gthread_cond_broadcast, __MCF_gthr_cond_broadcast);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -462,7 +462,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_create, __MCF_gthr_create_v2)
+__MCF_GTHR_ALIAS(__gthread_create, __MCF_gthr_create_v2);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -483,7 +483,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_join, __MCF_gthr_join_v2)
+__MCF_GTHR_ALIAS(__gthread_join, __MCF_gthr_join_v2);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -519,7 +519,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_detach, __MCF_gthr_detach_v2)
+__MCF_GTHR_ALIAS(__gthread_detach, __MCF_gthr_detach_v2);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
@@ -548,7 +548,7 @@ __gthread_t
 __MCF_gthr_self(void) __MCF_NOEXCEPT
   __attribute__((__const__, __returns_nonnull__));
 
-__MCF_GTHR_ALIAS(__gthread_self, __MCF_gthr_self)
+__MCF_GTHR_ALIAS(__gthread_self, __MCF_gthr_self);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 __gthread_t
@@ -565,7 +565,7 @@ int
 __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_GTHR_ALIAS(__gthread_equal, __MCF_gthr_equal)
+__MCF_GTHR_ALIAS(__gthread_equal, __MCF_gthr_equal);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE) __MCF_CXX11(constexpr)
 int
@@ -579,7 +579,7 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 void
 __MCF_gthr_yield(void) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_yield, __MCF_gthr_yield)
+__MCF_GTHR_ALIAS(__gthread_yield, __MCF_gthr_yield);
 
 __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 void
