@@ -21,8 +21,11 @@ extern "C" {
 #endif
 
 /* Define macros for renaming symbols, in order to prevent DLL hells.  */
-#define __MCF_GTHR_ALIAS(alias, target)  \
-  static __MCF_CXX11(constexpr) __typeof__(target)* const alias = (target)  /* no semicolon  */
+#ifdef __cplusplus
+#  define __MCF_GTHR_ALIAS(alias, target)  static __MCF_CXX11(constexpr) __typeof__(target)& alias = (target)  /* no semicolon  */
+#else
+#  define __MCF_GTHR_ALIAS(alias, target)  static __typeof__(target)* const alias = (target)  /* no semicolon  */
+#endif
 
 /* Define reusable types.  */
 typedef struct __MCF_gthr_rc_mutex __MCF_gthr_rc_mutex;
