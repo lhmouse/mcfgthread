@@ -7,6 +7,7 @@
 void* __cdecl
 __MCF_mmove(void* dst, const void* src, size_t size);
 
+__MCF_DLLEXPORT
 void* __cdecl
 memmove(void* dst, const void* src, size_t size);
 
