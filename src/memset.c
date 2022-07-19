@@ -7,6 +7,7 @@
 void* __cdecl
 __MCF_mfill(void* dst, int val, size_t size);
 
+__MCF_DLLEXPORT
 void* __cdecl
 memset(void* dst, int val, size_t size);
 
