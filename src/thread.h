@@ -170,18 +170,42 @@ uint32_t
 _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   __attribute__((__const__));
 
-#if defined(__i386__) || defined(__amd64__)
 __MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
 uint32_t
 _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   {
-#  ifdef __amd64__
-    return __readgsdword(0x48);
-#  else
-    return __readfsdword(0x24);
-#  endif
+    uint32_t __tid;
+#if defined(__amd64__)
+    __asm__ (
+      /*  AT&T Barking      |  Genuine Intel    */
+      "{ movl %%gs:0x48, %0 | mov %0, gs:[0x48] }"
+      : "=r"(__tid)
+    );
+#elif defined(__i386__)
+    __asm__ (
+      /*  AT&T Barking      |  Genuine Intel    */
+      "{ movl %%fs:0x24, %0 | mov %0, fs:[0x24] }"
+      : "=r"(__tid)
+    );
+#elif defined(__aarch64__)
+    __asm__ (
+      /* TODO: untested  */
+      "ldr %0, [x0, #0x48]"
+      : "=r"(__tid)
+    );
+#elif defined(__arm__)
+    char* __my_teb;
+    __asm__ (
+      /* TODO: untested  */
+      "mrc p15, 0, %0, c13, c0, 2"
+      : "=r"(__my_teb)
+    );
+    __tid = *(uint32_t*) (__my_teb + 0x24);
+#else
+#  error This CPU is not supported.
+#endif
+    return __tid;
   }
-#endif  /* x86  */
 
 /* Gives up the current time slice.  */
 __MCF_DECLSPEC_THREAD()

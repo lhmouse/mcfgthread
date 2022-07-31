@@ -66,9 +66,6 @@ extern BYTE __MCF_mutex_spin_field[2048];
 __MCF_WINAPI(DWORD, GetLastError, void) __attribute__((__pure__));
 __MCF_WINAPI(void, SetLastError, DWORD);
 
-__MCF_WINAPI(DWORD, GetCurrentThreadId, void) __attribute__((__const__));
-__MCF_WINAPI(DWORD, GetCurrentProcessId, void) __attribute__((__const__));
-
 __MCF_WINAPI(DWORD, TlsAlloc, void);
 __MCF_WINAPI(BOOL, TlsFree, DWORD);
 __MCF_WINAPI(LPVOID, TlsGetValue, DWORD) __attribute__((__pure__));

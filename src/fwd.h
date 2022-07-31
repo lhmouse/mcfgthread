@@ -11,7 +11,6 @@
 #include <stdbool.h>
 #include <stdalign.h>
 #include <limits.h>
-#include <intrin.h>
 
 #ifdef __cplusplus
 extern "C" {
