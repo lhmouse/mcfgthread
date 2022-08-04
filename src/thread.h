@@ -189,14 +189,14 @@ _MCF_thread_self_tid(void) __MCF_NOEXCEPT
     );
 #elif defined(__aarch64__)
     __asm__ (
-      /* TODO: untested  */
+#  error TODO: untested
       "ldr %0, [x18, #0x48]"
       : "=r"(__tid)
     );
 #elif defined(__arm__)
     char* __my_teb;
     __asm__ (
-      /* TODO: untested  */
+#  error TODO: untested
       "mrc p15, 0, %0, c13, c0, 2"
       : "=r"(__my_teb)
     );
