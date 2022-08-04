@@ -190,7 +190,7 @@ _MCF_thread_self_tid(void) __MCF_NOEXCEPT
 #elif defined(__aarch64__)
     __asm__ (
       /* TODO: untested  */
-      "ldr %0, [x0, #0x48]"
+      "ldr %0, [x18, #0x48]"
       : "=r"(__tid)
     );
 #elif defined(__arm__)
