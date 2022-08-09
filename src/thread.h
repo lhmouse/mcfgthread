@@ -177,12 +177,12 @@ _MCF_thread_self_tid(void) __MCF_NOEXCEPT
     uint32_t __tid;
     __asm__ (
 #if defined(__amd64__)
-      /*  AT&T Barking         |  Genuine Intel    */
+        /* AT&T Barking        |  Genuine Intel */
       __MCF_PPSTR(
         { movl %%gs:0x48, %0;  | mov %0, gs:[0x48];  }
       )
 #elif defined(__i386__)
-      /*  AT&T Barking         |  Genuine Intel    */
+        /* AT&T Barking        |  Genuine Intel */
       __MCF_PPSTR(
         { movl %%fs:0x24, %0;  | mov %0, fs:[0x24];  }
       )
