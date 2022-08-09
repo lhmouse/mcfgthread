@@ -175,35 +175,33 @@ uint32_t
 _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   {
     uint32_t __tid;
+    __asm__ (
 #if defined(__amd64__)
-    __asm__ (
-      /*  AT&T Barking      |  Genuine Intel    */
-      "{ movl %%gs:0x48, %0 | mov %0, gs:[0x48] }"
-      : "=r"(__tid)
-    );
+      /*  AT&T Barking         |  Genuine Intel    */
+      __MCF_PPSTR(
+        { movl %%gs:0x48, %0;  | mov %0, gs:[0x48];  }
+      )
 #elif defined(__i386__)
-    __asm__ (
-      /*  AT&T Barking      |  Genuine Intel    */
-      "{ movl %%fs:0x24, %0 | mov %0, fs:[0x24] }"
-      : "=r"(__tid)
-    );
+      /*  AT&T Barking         |  Genuine Intel    */
+      __MCF_PPSTR(
+        { movl %%fs:0x24, %0;  | mov %0, fs:[0x24];  }
+      )
 #elif defined(__aarch64__)
-    __asm__ (
 #  error TODO: untested
-      "ldr %0, [x18, #0x48]"
-      : "=r"(__tid)
-    );
+      __MCF_PPSTR(
+        ldr %0, [x18, #0x48];
+      )
 #elif defined(__arm__)
-    char* __my_teb;
-    __asm__ (
 #  error TODO: untested
-      "mrc p15, 0, %0, c13, c0, 2"
-      : "=r"(__my_teb)
-    );
-    __tid = *(uint32_t*) (__my_teb + 0x24);
+      __MCF_PPSTR(
+        mrc p15, 0, %0, c13, c0, 2;
+        ldr %0, [%0, #0x24];
+      )
 #else
 #  error This CPU is not supported.
 #endif
+      : "=r"(__tid)
+    );
     return __tid;
   }
 
