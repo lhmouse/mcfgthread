@@ -352,11 +352,11 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
     uintptr_t __cx = __size;
 
     __asm__ (
-      /*  AT&T Barking        |  Genuine Intel    */
+      /*   AT&T Barking       |  Genuine Intel    */
       __MCF_PPSTR(
         { xorl %%eax, %%eax;  | xor eax, eax;  }
           repz cmpsb;
-        { setnzb %%al;        | setnz al;  }
+        { setnzb %%al;        | setnz al;      }
         { sbbl %%ecx, %%ecx;  | sbb ecx, ecx;  }
       )
       : "=a"(__result), "+S"(__si), "+D"(__di), "+c"(__cx)
@@ -397,7 +397,7 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
     uintptr_t __cx = __size;
 
     __asm__ (
-      /*  AT&T Barking        |  Genuine Intel    */
+      /*   AT&T Barking       |  Genuine Intel    */
       __MCF_PPSTR(
         { xorl %%eax, %%eax;  | xor eax, eax;  }
           repz cmpsb;
