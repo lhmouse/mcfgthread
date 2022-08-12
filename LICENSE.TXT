@@ -1,23 +1,25 @@
-Files that are conventionally called 'headers', whose names shall end with the
-extended regular expression `\.[hci](pp)?`, are placed into the public domain,
-without any warranty. The other files are licensed under LGPL. This guarantees
-most developers enough freedom to do whatever they want with these headers.
+Files that are conventionally called 'headers', whose names shall end with
+the extended regular expression `\.[hci](pp)?`, are placed into the public
+domain, without any warranty. The other files are licensed under LGPL. This
+guarantees most developers enough freedom to do whatever they want with
+these headers.
 
-===============================================================================
+============================================================================
 
 MCF Gthread is free software: you can redistribute it and/or modify it under
-the terms of the GNU General Public License as published by the Free Software
-Foundation, either version 3 of the License, or (at your option) any later
-version.
+the terms of the GNU Lesser General Public License as published by the Free
+Software Foundation, either version 3 of the License, or (at your option)
+any later version.
 
-MCF Gthread is distributed in the hope that it will be useful, but WITHOUT ANY
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+MCF Gthread is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
+for more details.
 
-You should have received a copy of the GNU General Public License along with
-MCF Gthread. If not, see <https://www.gnu.org/licenses/>.
+You should have received a copy of the GNU Lesser General Public License
+along with MCF Gthread. If not, see <https://www.gnu.org/licenses/>.
 
-===============================================================================
+============================================================================
 
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
