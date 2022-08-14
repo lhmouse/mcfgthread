@@ -15,6 +15,7 @@ void
 thread_proc(_MCF_thread* self)
   {
     assert(_MCF_thread_self_tid() == GetCurrentThreadId());
+    assert(self->__tid == GetCurrentThreadId());
     printf("thread %d quitting\n", self->__tid);
   }
 
