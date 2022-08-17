@@ -32,6 +32,7 @@ check_PROGRAMS +=  \
   %reldir%/tls_dtor_ignored_on_exit.test  \
   %reldir%/tls_dtor_ignored_on_quick_exit.test  \
   %reldir%/tls_dtor_ignored_on__Exit.test  \
+  %reldir%/thread_self_id.test  \
   %reldir%/gthr_c89_pedantic.test  \
   %reldir%/gthr_inline_alias.test  \
   %reldir%/gthr_once.test  \
