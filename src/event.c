@@ -51,11 +51,11 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
 
       /* ... It is possible that a second thread has already decremented the
        * counter. If this does take place, it is going to release the keyed
-       * event soon. We must wait again, otherwise we get a deadlock in the
-       * second thread. Again, a third thread could start waiting for this
+       * event soon. We must still wait, otherwise we get a deadlock in the
+       * second thread. However, a third thread could start waiting for this
        * keyed event before us, so we set the timeout to zero. If we time out
-       * again, the third thread will have incremented the number of sleeping
-       * threads and we can try decrementing it again.  */
+       * once more, the third thread will have incremented the number of
+       * sleeping threads and we can try decrementing it again.  */
       status = __MCF_keyed_event_signal(event, (LARGE_INTEGER[]) { 0 });
     }
 
