@@ -112,9 +112,9 @@ __MCF_DECLSPEC_XGLOBALS()
 EXCEPTION_DISPOSITION __cdecl
 __MCF_seh_top(EXCEPTION_RECORD* __rec, void* __estab_frame, CONTEXT* __ctx, void* __disp_ctx) __MCF_NOEXCEPT;
 
-#ifdef __i386__
+#if defined(__i386__)
 
-/* SEH is stack-based.  */
+/* On x86, SEH is stack-based.  */
 typedef struct __MCF_i386_seh_node __MCF_i386_seh_node;
 
 struct __MCF_i386_seh_node
@@ -145,9 +145,15 @@ __MCF_i386_seh_cleanup(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
     __MCF_i386_seh_install(  \
           &(__MCF_PPCAT2(__MCF_seh_node_, __LINE__)))  /* no semicolon  */
 
+#elif defined(__arm__)
+
+/* On ARM, SEH is table-based.  */
+#  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
+    __asm__ volatile (".seh_handler __MCF_seh_top, %except;")  /* no semicolon  */
+
 #else
 
-/* SEH is table-based.  */
+/* On x86_64 and AArch64, SEH is table-based.  */
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
     __asm__ volatile (".seh_handler __MCF_seh_top, @except;")  /* no semicolon  */
 
