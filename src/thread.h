@@ -187,12 +187,10 @@ _MCF_thread_self_tid(void) __MCF_NOEXCEPT
         { movl %%fs:0x24, %0;  | mov %0, fs:[0x24];  }
       )
 #elif defined(__aarch64__)
-#  error TODO: untested
       __MCF_PPSTR(
         ldr %w0, [x18, #0x48];
       )
 #elif defined(__arm__)
-#  error TODO: untested
       __MCF_PPSTR(
         mrc p15, 0, %0, c13, c0, 2;
         ldr %0, [%0, #0x24];
