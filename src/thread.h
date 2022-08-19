@@ -189,7 +189,7 @@ _MCF_thread_self_tid(void) __MCF_NOEXCEPT
 #elif defined(__aarch64__)
 #  error TODO: untested
       __MCF_PPSTR(
-        ldr %0, [x18, #0x48];
+        ldr %w0, [x18, #0x48];
       )
 #elif defined(__arm__)
 #  error TODO: untested
