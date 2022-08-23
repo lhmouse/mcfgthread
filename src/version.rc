@@ -21,12 +21,12 @@ VS_VERSION_INFO VERSIONINFO
   {
     BLOCK "VarFileInfo"
     {
-      VALUE "Translation", 0x0409, 0x04B0  /* English (US), UTF-16 */
+      VALUE "Translation", 0x0409, 0x04B0  /* English (US), UTF-16  */
     }
 
     BLOCK "StringFileInfo"
     {
-      BLOCK "040904B0"  /* English (US), UTF-16 */
+      BLOCK "040904B0"  /* English (US), UTF-16  */
       {
         VALUE "ProductName",      "The MCF Gthread Library"
         VALUE "InternalName",     "libmcfgthread"
