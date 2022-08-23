@@ -20,7 +20,7 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, void* estab_frame, CONTEXT* ctx, void* disp
 
     /* Check for uncaught C++ exceptions.  */
     DWORD r = rec->ExceptionFlags & EXCEPTION_NONCONTINUABLE;
-    r |= (rec->ExceptionCode & 0x20FFFFFFU) - 0x20474343U;  /* (1 << 29) | 'GCC' */
+    r |= (rec->ExceptionCode & 0x20FFFFFFU) - 0x20474343U;  /* (1 << 29) | 'GCC'  */
     return r ? ExceptionContinueSearch : ExceptionContinueExecution;
   }
 
