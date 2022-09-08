@@ -67,6 +67,7 @@ check_PROGRAMS +=  \
   %reldir%/c11_tss_many.test  \
   %reldir%/c11_thrd_return.test  \
   %reldir%/c11_thrd_equal.test  \
+  %reldir%/c11_c89_pedantic.test  \
   %reldir%/atexit_thread_self.test  \
   %reldir%/atexit_order.test  \
   %reldir%/atexit_ignored_on_quick_exit.test  \
@@ -77,5 +78,9 @@ check_PROGRAMS +=  \
   ${END}
 
 test_gthr_c89_pedantic_test_CFLAGS =  \
-  ${AM_CFLAGS} -std=c89 -Wpedantic  \
-  -Wno-{long-long,variadic-macros,declaration-after-statement}
+  ${AM_CFLAGS} -std=c89 -Wpedantic -Wno-{long-long,variadic-macros}  \
+  -Werror=declaration-after-statement
+
+test_c11_c89_pedantic_test_CFLAGS =  \
+  ${AM_CFLAGS} -std=c89 -Wpedantic -Wno-{long-long,variadic-macros}  \
+  -Werror=declaration-after-statement
