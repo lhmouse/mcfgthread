@@ -70,10 +70,12 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_once(__gthread_once_t* __once, __MCF_once_callback* __init_proc)
   {
+    _MCF_once* __cleanup __attribute__((__cleanup__(__MCF_gthr_unonce))) = NULL;
+
     if(_MCF_once_wait(__once, NULL) == 0)
       return 0;
 
-    _MCF_once* __cleanup __attribute__((__cleanup__(__MCF_gthr_unonce))) = __once;
+    __cleanup = __once;
     __init_proc();
     __cleanup = NULL;
 
@@ -297,11 +299,12 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
+    int64_t __timeout;
     int __err = __MCF_gthr_rc_mutex_recurse(__rmtx);
     if(__err == 0)
       return 0;
 
-    int64_t __timeout = 0;
+    __timeout = 0;
     __err = __MCF_gthr_rc_mutex_wait(__rmtx, &__timeout);
     __MCF_ASSERT(__err == 0);
     return 0;
@@ -319,11 +322,12 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
   {
+    int64_t __timeout;
     int __err = __MCF_gthr_rc_mutex_recurse(__rmtx);
     if(__err == 0)
       return 0;
 
-    int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
+    __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
     __err = __MCF_gthr_rc_mutex_wait(__rmtx, &__timeout);
     __MCF_ASSERT(__err == 0);
     return 0;
@@ -469,11 +473,13 @@ int
 __MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT
   {
     __MCF_gthr_thread_record __rec[1];
+    _MCF_thread* __thrd;
+
     __rec->__proc = __proc;
     __rec->__arg = __arg;
     __rec->__joinable = 1;
 
-    _MCF_thread* __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk_v2, __rec, sizeof(*__rec));
+    __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk_v2, __rec, sizeof(*__rec));
     *__thrdp = __thrd;
     return (__thrd == NULL) ? -1 : 0;  /* as specified by POSIX  */
   }
@@ -489,13 +495,16 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
   {
+    __MCF_gthr_thread_record* __rec;
+    int __err;
+
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
     if(__thrd->__proc != __MCF_gthr_thread_thunk_v2)
       return -1;
 
     /* Fail if the thread has already been detached.  */
-    __MCF_gthr_thread_record* __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
+    __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
     if(_MCF_atomic_xchg_8_rlx(&(__rec->__joinable), 0) == 0)
       return -1;
 
@@ -503,7 +512,7 @@ __MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
     if(__thrd == _MCF_thread_self())
       return -2;
 
-    int __err = _MCF_thread_wait(__thrd, NULL);
+    __err = _MCF_thread_wait(__thrd, NULL);
     __MCF_ASSERT(__err == 0);
 
     if(__resp_opt)
@@ -525,13 +534,15 @@ __MCF_DECLSPEC_GTHR(__MCF_GNU_INLINE)
 int
 __MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_NOEXCEPT
   {
+    __MCF_gthr_thread_record* __rec;
+
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
     if(__thrd->__proc != __MCF_gthr_thread_thunk_v2)
       return -1;
 
     /* Fail if the thread has already been detached.  */
-    __MCF_gthr_thread_record* __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
+    __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
     if(_MCF_atomic_xchg_8_rlx(&(__rec->__joinable), 0) == 0)
       return -1;
 
