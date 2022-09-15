@@ -35,7 +35,7 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
     if(!proc)
       return __MCF_win32_error_p(ERROR_INVALID_PARAMETER, NULL);
 
-    if(size > SIZE_MAX / 4 - sizeof(_MCF_thread))
+    if(size > PTRDIFF_MAX - 0x100000)  /* max offsettable memory - 1 MiB  */
       return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, NULL);
 
     /* Allocate and initialize the thread control structure.  */
