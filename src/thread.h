@@ -62,7 +62,7 @@ __MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE) __MCF_CXX11(constexpr)
 __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
-    return __thrd->__data_ptr;
+    return __builtin_assume_aligned(__thrd->__data_ptr, __alignof__(__thrd->__data_storage));
   }
 
 #ifdef __cplusplus
@@ -71,7 +71,7 @@ inline __MCF_CXX11(constexpr)
 void*
 _MCF_thread_get_data(_MCF_thread* __thrd) __MCF_NOEXCEPT
   {
-    return __thrd->__data_ptr;
+    return __builtin_assume_aligned(__thrd->__data_ptr, __alignof__(__thrd->__data_storage));
   }
 #endif  /* __cplusplus  */
 
