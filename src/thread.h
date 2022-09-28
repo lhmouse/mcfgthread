@@ -165,7 +165,7 @@ _MCF_thread_self(void) __MCF_NOEXCEPT
   __attribute__((__const__));
 
 /* Gets the thread ID of the current thread.  */
-__MCF_DECLSPEC_THREAD()
+__MCF_DECLSPEC_THREAD(__MCF_GNU_INLINE)
 uint32_t
 _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   __attribute__((__const__));
