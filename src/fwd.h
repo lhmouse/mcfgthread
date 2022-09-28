@@ -99,7 +99,7 @@ extern "C++" template<> struct __MCF_static_assert<true> { char __unused;  };
 #endif
 
 #ifdef __MCF_DEBUG
-#  define __MCF_UNREACHABLE   __MCF_runtime_failure(__func__)
+#  define __MCF_UNREACHABLE   __MCF_runtime_failure(__FUNCTION__)
 #else
 #  define __MCF_UNREACHABLE   __builtin_unreachable()
 #endif
@@ -108,7 +108,7 @@ extern "C++" template<> struct __MCF_static_assert<true> { char __unused;  };
  * an argument yields false, `__MCF_ASSERT()` results in undefined behavior,
  * and `__MCF_CHECK()` effects abnormal termination of the current program.  */
 #define __MCF_ASSERT(...)     ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
-#define __MCF_CHECK(...)      ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__func__))
+#define __MCF_CHECK(...)      ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__FUNCTION__))
 
 /* Make some forward declarations.  */
 typedef struct __MCF_dtor_element __MCF_dtor_element;
