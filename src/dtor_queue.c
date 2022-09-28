@@ -3,7 +3,8 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_DECLSPEC_DTOR_QUEUE(...)  __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_DTOR_QUEUE         __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_DTOR_QUEUE_INLINE  __MCF_DLLEXPORT
 #include "dtor_queue.h"
 #include "mutex.h"
 #include "xglobals.i"

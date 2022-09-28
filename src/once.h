@@ -13,7 +13,8 @@ extern "C" {
 #endif
 
 #ifndef __MCF_DECLSPEC_ONCE
-#  define __MCF_DECLSPEC_ONCE(...)  __VA_ARGS__
+#  define __MCF_DECLSPEC_ONCE
+#  define __MCF_DECLSPEC_ONCE_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* Define the once flag struct.
@@ -33,7 +34,7 @@ struct __MCF_once
  * Each once-initialization flag can be in any of the three states: UNLOCKED,
  * LOCKED and READY. An once-initialization flag is initialized to the UNLOCKED
  * state.  */
-__MCF_DECLSPEC_ONCE(__MCF_GNU_INLINE)
+__MCF_DECLSPEC_ONCE_INLINE
 void
 _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT;
 
@@ -54,11 +55,11 @@ _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT;
  * thread releases the lock, or returns -1 if the operation has timed out. If
  * the once flag is already in the READY state, this function does nothing and
  * returns 0 immediately.  */
-__MCF_DECLSPEC_ONCE()
+__MCF_DECLSPEC_ONCE
 int
 _MCF_once_wait_slow(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_ONCE(__MCF_GNU_INLINE)
+__MCF_DECLSPEC_ONCE_INLINE
 int
 _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
@@ -68,7 +69,7 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
  * This function changes it into the UNLOCKED state and wakes up the next
  * threads that is sleeping on this flag, whose calls to `_MCF_once_wait()`
  * will return 1.  */
-__MCF_DECLSPEC_ONCE()
+__MCF_DECLSPEC_ONCE
 void
 _MCF_once_abort(_MCF_once* __once) __MCF_NOEXCEPT;
 
@@ -77,7 +78,7 @@ _MCF_once_abort(_MCF_once* __once) __MCF_NOEXCEPT;
  *
  * This function changes it into the READY state and wakes up all threads that
  * are sleeping on this flag, whose calls to `_MCF_once_wait()` will return 0.  */
-__MCF_DECLSPEC_ONCE()
+__MCF_DECLSPEC_ONCE
 void
 _MCF_once_release(_MCF_once* __once) __MCF_NOEXCEPT;
 
@@ -86,7 +87,7 @@ _MCF_once_release(_MCF_once* __once) __MCF_NOEXCEPT;
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
-__MCF_DECLSPEC_ONCE(__MCF_GNU_INLINE)
+__MCF_DECLSPEC_ONCE_INLINE
 void
 _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT
   {
@@ -94,7 +95,7 @@ _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT
     _MCF_atomic_store_pptr_rel(__once, &__temp);
   }
 
-__MCF_DECLSPEC_ONCE(__MCF_GNU_INLINE)
+__MCF_DECLSPEC_ONCE_INLINE
 int
 _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {

@@ -3,7 +3,8 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_DECLSPEC_TLS(...)  __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_TLS         __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_TLS_INLINE  __MCF_DLLEXPORT
 #include "tls.h"
 #include "atomic.h"
 #include "xglobals.i"

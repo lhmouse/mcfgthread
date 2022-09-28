@@ -12,21 +12,22 @@ extern "C" {
 #endif
 
 #ifndef __MCF_DECLSPEC_EXIT
-#  define __MCF_DECLSPEC_EXIT(...)  __VA_ARGS__
+#  define __MCF_DECLSPEC_EXIT
+#  define __MCF_DECLSPEC_EXIT_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* Declare 'real' functions here.  */
-__MCF_DECLSPEC_EXIT()
+__MCF_DECLSPEC_EXIT
 void
 __MCF__Exit(int __status) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
 
-__MCF_DECLSPEC_EXIT()
+__MCF_DECLSPEC_EXIT
 void
 __MCF_quick_exit(int __status) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
 
-__MCF_DECLSPEC_EXIT()
+__MCF_DECLSPEC_EXIT
 void
 __MCF_exit(int __status) __MCF_NOEXCEPT
   __attribute__((__noreturn__));

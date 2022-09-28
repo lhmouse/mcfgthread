@@ -13,7 +13,8 @@ extern "C" {
 #endif
 
 #ifndef __MCF_DECLSPEC_SEM
-#  define __MCF_DECLSPEC_SEM(...)  __VA_ARGS__
+#  define __MCF_DECLSPEC_SEM
+#  define __MCF_DECLSPEC_SEM_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* Define the semaphore struct.
@@ -39,7 +40,7 @@ struct __MCF_sem
  *
  * Returns 0 if the initialization is successful, or -1 in case of invalid
  * arguments.  */
-__MCF_DECLSPEC_SEM(__MCF_GNU_INLINE)
+__MCF_DECLSPEC_SEM_INLINE
 int
 _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init) __MCF_NOEXCEPT;
 
@@ -48,7 +49,7 @@ _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init) __MCF_NOEXCEPT;
  * Returns the current value as a signed integer. If the value is negative, its
  * absolute value denotes the number of threads that have been suspended on
  * this semaphore.  */
-__MCF_DECLSPEC_SEM(__MCF_GNU_INLINE)
+__MCF_DECLSPEC_SEM_INLINE
 intptr_t
 _MCF_sem_get(const _MCF_sem* __sem) __MCF_NOEXCEPT;
 
@@ -63,7 +64,7 @@ _MCF_sem_get(const _MCF_sem* __sem) __MCF_NOEXCEPT;
  *
  * Returns 0 if the value had been decremented and the calling thread has been
  * woken up by another thread, or -1 if the operation has timed out.  */
-__MCF_DECLSPEC_SEM()
+__MCF_DECLSPEC_SEM
 int
 _MCF_sem_wait(_MCF_sem* __sem, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
@@ -73,11 +74,11 @@ _MCF_sem_wait(_MCF_sem* __sem, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
  *
  * Returns 0 if the value has been updated successfully, or -1 in case of
  * invalid arguments, or -2 if the result would overflow.  */
-__MCF_DECLSPEC_SEM()
+__MCF_DECLSPEC_SEM
 int
 _MCF_sem_signal_some(_MCF_sem* __sem, intptr_t __value_add) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_SEM(__MCF_GNU_INLINE)
+__MCF_DECLSPEC_SEM_INLINE
 int
 _MCF_sem_signal(_MCF_sem* __sem) __MCF_NOEXCEPT;
 
@@ -86,7 +87,7 @@ _MCF_sem_signal(_MCF_sem* __sem) __MCF_NOEXCEPT;
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
-__MCF_DECLSPEC_SEM(__MCF_GNU_INLINE)
+__MCF_DECLSPEC_SEM_INLINE
 int
 _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init) __MCF_NOEXCEPT
   {
@@ -98,7 +99,7 @@ _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init) __MCF_NOEXCEPT
     return 0;
   }
 
-__MCF_DECLSPEC_SEM(__MCF_GNU_INLINE)
+__MCF_DECLSPEC_SEM_INLINE
 intptr_t
 _MCF_sem_get(const _MCF_sem* __sem) __MCF_NOEXCEPT
   {
@@ -107,7 +108,7 @@ _MCF_sem_get(const _MCF_sem* __sem) __MCF_NOEXCEPT
     return __temp.__value;
   }
 
-__MCF_DECLSPEC_SEM(__MCF_GNU_INLINE)
+__MCF_DECLSPEC_SEM_INLINE
 int
 _MCF_sem_signal(_MCF_sem* __sem) __MCF_NOEXCEPT
   {

@@ -3,7 +3,8 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_DECLSPEC_FWD(...)  __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_FWD         __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_FWD_INLINE  __MCF_DLLEXPORT
 #include "fwd.h"
 #include "xglobals.i"
 

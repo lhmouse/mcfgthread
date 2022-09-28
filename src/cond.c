@@ -3,7 +3,8 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_DECLSPEC_COND(...)  __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_COND         __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_COND_INLINE  __MCF_DLLEXPORT
 #include "cond.h"
 #include "xglobals.i"
 

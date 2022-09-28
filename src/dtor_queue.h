@@ -12,7 +12,8 @@ extern "C" {
 #endif
 
 #ifndef __MCF_DECLSPEC_DTOR_QUEUE
-#  define __MCF_DECLSPEC_DTOR_QUEUE(...)  __VA_ARGS__
+#  define __MCF_DECLSPEC_DTOR_QUEUE
+#  define __MCF_DECLSPEC_DTOR_QUEUE_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* Define the cxa_atexit queue structure.  */
@@ -37,7 +38,7 @@ struct __MCF_dtor_queue
  * ABI for details about DSO handles.
  *
  * Returns 0 if an element has been pushed, or -1 if out of memory.  */
-__MCF_DECLSPEC_DTOR_QUEUE()
+__MCF_DECLSPEC_DTOR_QUEUE
 int
 __MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtor_element* __elem) __MCF_NOEXCEPT;
 
@@ -47,7 +48,7 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtor_element* __ele
  * DSO handles.
  *
  * Returns 0 if an element has been popped, or -1 if the queue is empty.  */
-__MCF_DECLSPEC_DTOR_QUEUE()
+__MCF_DECLSPEC_DTOR_QUEUE
 int
 __MCF_dtor_queue_pop(__MCF_dtor_element* __elem, __MCF_dtor_queue* __queue, void* __dso) __MCF_NOEXCEPT;
 
@@ -56,7 +57,7 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* __elem, __MCF_dtor_queue* __queue, void
  * details about DSO handles.
  *
  * Returns the number of elements that have been removed.  */
-__MCF_DECLSPEC_DTOR_QUEUE()
+__MCF_DECLSPEC_DTOR_QUEUE
 size_t
 __MCF_dtor_queue_remove(__MCF_dtor_queue* __queue, void* __dso) __MCF_NOEXCEPT;
 
@@ -64,7 +65,7 @@ __MCF_dtor_queue_remove(__MCF_dtor_queue* __queue, void* __dso) __MCF_NOEXCEPT;
  * null, then all elements are considered matches. This function is used to
  * implement `__cxa_finalize()`. Refer to the Itanium C++ ABI for details about
  * DSO handles.  */
-__MCF_DECLSPEC_DTOR_QUEUE()
+__MCF_DECLSPEC_DTOR_QUEUE
 void
 __MCF_dtor_queue_finalize(__MCF_dtor_queue* __queue, _MCF_mutex* __mutex_opt, void* __dso) __MCF_NOEXCEPT;
 

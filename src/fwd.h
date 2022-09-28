@@ -85,7 +85,8 @@ extern "C" {
 #define __MCF_PTR_BITS        (__SIZEOF_POINTER__ * 8U)
 
 #ifndef __MCF_DECLSPEC_FWD
-#  define __MCF_DECLSPEC_FWD(...)  __VA_ARGS__
+#  define __MCF_DECLSPEC_FWD
+#  define __MCF_DECLSPEC_FWD_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* The `__MCF_STATIC_ASSERT()` macro is an expression that yields zero if it
@@ -164,12 +165,12 @@ _MCF_maxz(size_t __x, size_t __y) __MCF_NOEXCEPT
     return (__x < __y) ? __y : __x;
   }
 
-__MCF_DECLSPEC_FWD()
+__MCF_DECLSPEC_FWD
 void
 __MCF_runtime_failure(const char* __where)
   __attribute__((__noreturn__, __noinline__, __cold__));
 
-__MCF_DECLSPEC_FWD()
+__MCF_DECLSPEC_FWD
 uint32_t
 _MCF_get_win32_error(void) __MCF_NOEXCEPT
   __attribute__((__pure__));
