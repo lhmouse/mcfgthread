@@ -14,8 +14,8 @@
 extern "C" {
 #endif
 
-#ifndef __MCF_DECLSPEC_THREAD
-#  define __MCF_DECLSPEC_THREAD
+#ifndef __MCF_DECLSPEC_THREAD_IMPORT
+#  define __MCF_DECLSPEC_THREAD_IMPORT
 #  define __MCF_DECLSPEC_THREAD_INLINE  __MCF_GNU_INLINE
 #endif
 
@@ -49,7 +49,7 @@ struct __MCF_thread
  * `_MCF_thread_drop_ref()` when it is no longer needed. If the thread cannot
  * be created, a null pointer is returned and an error code can be obtained
  * via `_MCF_get_win32_error()`.  */
-__MCF_DECLSPEC_THREAD
+__MCF_DECLSPEC_THREAD_IMPORT
 _MCF_thread*
 _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __size) __MCF_NOEXCEPT;
 
@@ -68,7 +68,7 @@ _MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 /* Drops a reference count of a thread structure. An active thread owns a
  * reference count of itself and `_MCF_thread_new()` returns another one. When
  * the reference count is reduced to zero, the structure is deallocated.  */
-__MCF_DECLSPEC_THREAD
+__MCF_DECLSPEC_THREAD_IMPORT
 void
 _MCF_thread_drop_ref_nonnull(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 
@@ -89,7 +89,7 @@ _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
 /* Exits from a thread.  */
-__MCF_DECLSPEC_THREAD
+__MCF_DECLSPEC_THREAD_IMPORT
 void
 _MCF_thread_exit(void) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
@@ -104,7 +104,7 @@ _MCF_thread_exit(void) __MCF_NOEXCEPT
  *
  * Returns 0 if the thread has terminated, or -1 if the wait operation has
  * timed out.  */
-__MCF_DECLSPEC_THREAD
+__MCF_DECLSPEC_THREAD_IMPORT
 int
 _MCF_thread_wait(const _MCF_thread* __thrd, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
@@ -112,7 +112,7 @@ _MCF_thread_wait(const _MCF_thread* __thrd, const int64_t* __timeout_opt) __MCF_
  *
  * IMPORTANT! This function is only meaningful for the main thread and threads
  * that were created by `_MCF_thread_new()`.  */
-__MCF_DECLSPEC_THREAD
+__MCF_DECLSPEC_THREAD_IMPORT
 _MCF_thread*
 _MCF_thread_self(void) __MCF_NOEXCEPT
   __attribute__((__const__));
@@ -124,7 +124,7 @@ _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   __attribute__((__const__));
 
 /* Gives up the current time slice.  */
-__MCF_DECLSPEC_THREAD
+__MCF_DECLSPEC_THREAD_IMPORT
 void
 _MCF_yield(void) __MCF_NOEXCEPT;
 
@@ -137,7 +137,7 @@ _MCF_yield(void) __MCF_NOEXCEPT;
  * immediately. If it is null, the function sleeps indefinitely.
  *
  * Returns 0 if the operation has timed out, or -1 if an interrupt occurred.  */
-__MCF_DECLSPEC_THREAD
+__MCF_DECLSPEC_THREAD_IMPORT
 int
 _MCF_sleep(const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 

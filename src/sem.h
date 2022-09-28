@@ -12,8 +12,8 @@
 extern "C" {
 #endif
 
-#ifndef __MCF_DECLSPEC_SEM
-#  define __MCF_DECLSPEC_SEM
+#ifndef __MCF_DECLSPEC_SEM_IMPORT
+#  define __MCF_DECLSPEC_SEM_IMPORT
 #  define __MCF_DECLSPEC_SEM_INLINE  __MCF_GNU_INLINE
 #endif
 
@@ -64,7 +64,7 @@ _MCF_sem_get(const _MCF_sem* __sem) __MCF_NOEXCEPT;
  *
  * Returns 0 if the value had been decremented and the calling thread has been
  * woken up by another thread, or -1 if the operation has timed out.  */
-__MCF_DECLSPEC_SEM
+__MCF_DECLSPEC_SEM_IMPORT
 int
 _MCF_sem_wait(_MCF_sem* __sem, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
@@ -74,7 +74,7 @@ _MCF_sem_wait(_MCF_sem* __sem, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
  *
  * Returns 0 if the value has been updated successfully, or -1 in case of
  * invalid arguments, or -2 if the result would overflow.  */
-__MCF_DECLSPEC_SEM
+__MCF_DECLSPEC_SEM_IMPORT
 int
 _MCF_sem_signal_some(_MCF_sem* __sem, intptr_t __value_add) __MCF_NOEXCEPT;
 

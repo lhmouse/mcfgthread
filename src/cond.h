@@ -12,8 +12,8 @@
 extern "C" {
 #endif
 
-#ifndef __MCF_DECLSPEC_COND
-#  define __MCF_DECLSPEC_COND
+#ifndef __MCF_DECLSPEC_COND_IMPORT
+#  define __MCF_DECLSPEC_COND_IMPORT
 #  define __MCF_DECLSPEC_COND_INLINE  __MCF_GNU_INLINE
 #endif
 
@@ -51,7 +51,7 @@ _MCF_cond_init(_MCF_cond* __cond) __MCF_NOEXCEPT;
  *
  * Returns 0 if the condition variable has been signaled or there is a spurious
  * wakeup, or -1 if the wait operation has timed out.  */
-__MCF_DECLSPEC_COND
+__MCF_DECLSPEC_COND_IMPORT
 int
 _MCF_cond_wait(_MCF_cond* __cond, _MCF_cond_unlock_callback* __unlock_opt, _MCF_cond_relock_callback* __relock_opt, intptr_t __lock_arg, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
@@ -59,7 +59,7 @@ _MCF_cond_wait(_MCF_cond* __cond, _MCF_cond_unlock_callback* __unlock_opt, _MCF_
  * variable.
  *
  * Returns the number of threads that have been woken up.  */
-__MCF_DECLSPEC_COND
+__MCF_DECLSPEC_COND_IMPORT
 size_t
 _MCF_cond_signal_some_slow(_MCF_cond* __cond, size_t __max) __MCF_NOEXCEPT;
 

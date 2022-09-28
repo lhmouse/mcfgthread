@@ -3,7 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_DECLSPEC_C11         __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_C11_IMPORT  __MCF_DLLEXPORT
 #define __MCF_DECLSPEC_C11_INLINE  __MCF_DLLEXPORT
 #include "c11.h"
 #include "clock.h"

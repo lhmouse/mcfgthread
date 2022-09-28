@@ -3,7 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_DECLSPEC_XGLOBALS         __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_XGLOBALS_IMPORT  __MCF_DLLEXPORT
 #define __MCF_DECLSPEC_XGLOBALS_INLINE  __MCF_DLLEXPORT
 #include "xglobals.i"
 #include "thread.h"

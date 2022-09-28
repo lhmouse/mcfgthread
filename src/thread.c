@@ -3,7 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_DECLSPEC_THREAD         __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_THREAD_IMPORT  __MCF_DLLEXPORT
 #define __MCF_DECLSPEC_THREAD_INLINE  __MCF_DLLEXPORT
 #include "thread.h"
 #include "mutex.h"

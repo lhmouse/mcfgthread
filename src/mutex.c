@@ -3,7 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_DECLSPEC_MUTEX         __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_MUTEX_IMPORT  __MCF_DLLEXPORT
 #define __MCF_DECLSPEC_MUTEX_INLINE  __MCF_DLLEXPORT
 #include "mutex.h"
 #include "xglobals.i"

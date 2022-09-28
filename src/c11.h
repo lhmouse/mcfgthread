@@ -13,8 +13,8 @@ extern "C" {
 #endif
 
 /* Define wrappers as required by the ISO/IEC C11 standard.  */
-#ifndef __MCF_DECLSPEC_C11
-#  define __MCF_DECLSPEC_C11
+#ifndef __MCF_DECLSPEC_C11_IMPORT
+#  define __MCF_DECLSPEC_C11_IMPORT
 #  define __MCF_DECLSPEC_C11_INLINE  __MCF_GNU_INLINE
 #endif
 
@@ -58,7 +58,7 @@ typedef _MCF_cond cnd_t;
 typedef struct __MCF_c11_mutex mtx_t;
 
 /* This is the actual thread function for a C11 thread.  */
-__MCF_DECLSPEC_C11
+__MCF_DECLSPEC_C11_IMPORT
 void
 __MCF_c11_thread_thunk_v2(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 
@@ -218,7 +218,7 @@ __MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_NOEXCEPT;
 __MCF_GTHR_ALIAS(thrd_join, __MCF_c11_thrd_join);
 
 /* 7.26.5.7 The thrd_sleep function  */
-__MCF_DECLSPEC_C11
+__MCF_DECLSPEC_C11_IMPORT
 int
 __MCF_c11_thrd_sleep(const struct timespec* __dur, struct timespec* __rem_opt) __MCF_NOEXCEPT;
 

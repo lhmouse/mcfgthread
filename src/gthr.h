@@ -13,8 +13,8 @@ extern "C" {
 #endif
 
 /* Define wrappers as required by 'gthr-default.h'.  */
-#ifndef __MCF_DECLSPEC_GTHR
-#  define __MCF_DECLSPEC_GTHR
+#ifndef __MCF_DECLSPEC_GTHR_IMPORT
+#  define __MCF_DECLSPEC_GTHR_IMPORT
 #  define __MCF_DECLSPEC_GTHR_INLINE  __MCF_GNU_INLINE
 #endif
 

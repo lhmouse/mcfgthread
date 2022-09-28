@@ -12,8 +12,8 @@
 extern "C" {
 #endif
 
-#ifndef __MCF_DECLSPEC_EVENT
-#  define __MCF_DECLSPEC_EVENT
+#ifndef __MCF_DECLSPEC_EVENT_IMPORT
+#  define __MCF_DECLSPEC_EVENT_IMPORT
 #  define __MCF_DECLSPEC_EVENT_INLINE  __MCF_GNU_INLINE
 #endif
 
@@ -67,7 +67,7 @@ _MCF_event_get(const _MCF_event* __event) __MCF_NOEXCEPT;
  *
  * Returns 0 if the value does not equal the lowest byte of `__undesired`, or
  * -1 if the operation has timed out, or -2 in case of invalid arguments.  */
-__MCF_DECLSPEC_EVENT
+__MCF_DECLSPEC_EVENT_IMPORT
 int
 _MCF_event_await_change_slow(_MCF_event* __event, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
@@ -80,7 +80,7 @@ _MCF_event_await_change(_MCF_event* __event, int __undesired, const int64_t* __t
  *
  * Returns 0 if the value has been updated successfully, or -1 in case of
  * invalid arguments.  */
-__MCF_DECLSPEC_EVENT
+__MCF_DECLSPEC_EVENT_IMPORT
 int
 _MCF_event_set_slow(_MCF_event* __event, int __value) __MCF_NOEXCEPT;
 

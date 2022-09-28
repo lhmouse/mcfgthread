@@ -12,8 +12,8 @@
 extern "C" {
 #endif
 
-#ifndef __MCF_DECLSPEC_MUTEX
-#  define __MCF_DECLSPEC_MUTEX
+#ifndef __MCF_DECLSPEC_MUTEX_IMPORT
+#  define __MCF_DECLSPEC_MUTEX_IMPORT
 #  define __MCF_DECLSPEC_MUTEX_INLINE  __MCF_GNU_INLINE
 #endif
 
@@ -64,7 +64,7 @@ _MCF_mutex_init(_MCF_mutex* __mutex) __MCF_NOEXCEPT;
  *
  * Returns 0 if the mutex has been locked by the caller, or -1 if the operation
  * has timed out.  */
-__MCF_DECLSPEC_MUTEX
+__MCF_DECLSPEC_MUTEX_IMPORT
 int
 _MCF_mutex_lock_slow(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
@@ -75,7 +75,7 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEP
 /* Releases a mutex. This function may be called by a different thread from
  * which locked the same mutex. If the mutex has not been locked, the behavior
  * is undefined.  */
-__MCF_DECLSPEC_MUTEX
+__MCF_DECLSPEC_MUTEX_IMPORT
 void
 _MCF_mutex_unlock_slow(_MCF_mutex* __mutex) __MCF_NOEXCEPT;
 

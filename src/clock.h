@@ -11,29 +11,29 @@
 extern "C" {
 #endif
 
-#ifndef __MCF_DECLSPEC_CLOCK
-#  define __MCF_DECLSPEC_CLOCK
+#ifndef __MCF_DECLSPEC_CLOCK_IMPORT
+#  define __MCF_DECLSPEC_CLOCK_IMPORT
 #  define __MCF_DECLSPEC_CLOCK_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* Get the number of milliseconds since 1970-01-01T00:00:00Z.  */
-__MCF_DECLSPEC_CLOCK
+__MCF_DECLSPEC_CLOCK_IMPORT
 int64_t
 _MCF_utc_now(void) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_CLOCK
+__MCF_DECLSPEC_CLOCK_IMPORT
 double
 _MCF_hires_utc_now(void) __MCF_NOEXCEPT;
 
 /* Get the number of milliseconds since system startup.
  * This value is monotonic.  */
-__MCF_DECLSPEC_CLOCK
+__MCF_DECLSPEC_CLOCK_IMPORT
 int64_t
 _MCF_tick_count(void) __MCF_NOEXCEPT;
 
 /* Get the value of the performance counter in milliseconds.
  * This value is monotonic.  */
-__MCF_DECLSPEC_CLOCK
+__MCF_DECLSPEC_CLOCK_IMPORT
 double
 _MCF_perf_counter(void) __MCF_NOEXCEPT;
 
