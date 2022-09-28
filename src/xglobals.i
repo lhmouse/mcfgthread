@@ -112,7 +112,8 @@ __MCF_WINAPI(NTSTATUS, NtReleaseKeyedEvent, HANDLE, PVOID, BOOLEAN, PLARGE_INTEG
 
 /* Declare helper functions here.  */
 __MCF_DECLSPEC_XGLOBALS()
-EXCEPTION_DISPOSITION __cdecl
+EXCEPTION_DISPOSITION
+__cdecl
 __MCF_seh_top(EXCEPTION_RECORD* __rec, void* __estab_frame, CONTEXT* __ctx, void* __disp_ctx) __MCF_NOEXCEPT;
 
 #ifdef __i386__
@@ -198,11 +199,13 @@ __MCF_batch_release_common(const void* __key, size_t __count) __MCF_NOEXCEPT;
 
 /* Copy a block of memory forward, like `memcpy()`.  */
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void* __cdecl
+void*
+__cdecl
 __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
 
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void* __cdecl
+void*
+__cdecl
 __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
     __MCF_ASSERT((uintptr_t) __dst - (uintptr_t) __src >= __size);
@@ -230,11 +233,13 @@ __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
 
 /* Copy a block of memory backward.  */
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void* __cdecl
+void*
+__cdecl
 __MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
 
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void* __cdecl
+void*
+__cdecl
 __MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
     __MCF_ASSERT((uintptr_t) __src - (uintptr_t) __dst >= __size);
@@ -263,11 +268,13 @@ __MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCE
 
 /* Copy a block of potentially overlapped memory, like `memmove()`.  */
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void* __cdecl
+void*
+__cdecl
 __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
 
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void* __cdecl
+void*
+__cdecl
 __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
     return ((uintptr_t) __dst - (uintptr_t) __src >= __size)
@@ -277,11 +284,13 @@ __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
 
 /* Fill a block of memory with the given byte, like `memset()`.  */
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void* __cdecl
+void*
+__cdecl
 __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT;
 
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void* __cdecl
+void*
+__cdecl
 __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
@@ -306,11 +315,13 @@ __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
 
 /* Fill a block of memory with zeroes, like `bzero()`.  */
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void* __cdecl
+void*
+__cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT;
 
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void* __cdecl
+void*
+__cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
   {
 #if defined(__i386__) || defined(__amd64__)
@@ -335,12 +346,14 @@ __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
 
 /* Compare two blocks of memory, like `memcmp()`.  */
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-int __cdecl
+int
+__cdecl
 __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-int __cdecl
+int
+__cdecl
 __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
     int __result;
@@ -380,12 +393,14 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
 /* Check whether two blocks of memory compare equal, like `memcmp() == 0`.
  * The result is a boolean value.  */
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-bool __cdecl
+bool
+__cdecl
 __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-bool __cdecl
+bool
+__cdecl
 __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
   {
     bool __result;

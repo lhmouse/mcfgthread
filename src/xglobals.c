@@ -11,7 +11,8 @@
 #include "dtor_queue.h"
 
 __MCF_DLLEXPORT
-EXCEPTION_DISPOSITION __cdecl
+EXCEPTION_DISPOSITION
+__cdecl
 __MCF_seh_top(EXCEPTION_RECORD* rec, void* estab_frame, CONTEXT* ctx, void* disp_ctx)
   {
     (void) estab_frame;
@@ -197,7 +198,8 @@ do_on_thread_detach(void)
   }
 
 static
-void __stdcall
+void
+__stdcall
 do_image_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
   {
     (void) module;
@@ -219,11 +221,13 @@ do_image_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
 /* When building the shared library, invoke the common routine from the DLL
  * entry point callback. The decorated name is fabricated such that it remains
  * the same on both x86 and x86-64.  */
-int __stdcall
+int
+__stdcall
 __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
   __asm__("__MCF_dll_startup@@Z");
 
-int __stdcall
+int
+__stdcall
 __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
   {
     /* Prevent this DLL from being unloaded.  */

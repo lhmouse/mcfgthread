@@ -10,7 +10,8 @@
 #include "xglobals.i"
 
 static __attribute__((__force_align_arg_pointer__))
-DWORD __stdcall
+DWORD
+__stdcall
 do_win32_thread_thunk(LPVOID param)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
@@ -131,7 +132,8 @@ _MCF_yield(void)
   }
 
 static
-BOOL __stdcall
+BOOL
+__stdcall
 do_handle_interrupt(DWORD type)
   {
     (void) type;

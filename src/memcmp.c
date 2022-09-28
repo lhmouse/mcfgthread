@@ -4,15 +4,18 @@
 
 #include "precompiled.i"
 
-int __cdecl
+int
+__cdecl
 __MCF_mcomp(const void* src, const void* cmp, size_t size);
 
 __MCF_DLLEXPORT
-int __cdecl
+int
+__cdecl
 memcmp(const void* src, const void* cmp, size_t size);
 
 __MCF_DLLEXPORT
-int __cdecl
+int
+__cdecl
 memcmp(const void* src, const void* cmp, size_t size)
   {
     return __MCF_mcomp(src, cmp, size);
