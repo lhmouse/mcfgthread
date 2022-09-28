@@ -43,18 +43,6 @@ __MCF_DECLSPEC_SEM(__MCF_GNU_INLINE)
 int
 _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_SEM(__MCF_GNU_INLINE)
-int
-_MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init) __MCF_NOEXCEPT
-  {
-    if((__value_init < 0) || (__value_init > __MCF_SEM_VALUE_MAX))
-      return -1;
-
-    _MCF_sem __temp = { __value_init };
-    _MCF_atomic_store_pptr_rel(__sem, &__temp);
-    return 0;
-  }
-
 /* Gets the current value of a semaphore.
  *
  * Returns the current value as a signed integer. If the value is negative, its
@@ -63,15 +51,6 @@ _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init) __MCF_NOEXCEPT
 __MCF_DECLSPEC_SEM(__MCF_GNU_INLINE)
 intptr_t
 _MCF_sem_get(const _MCF_sem* __sem) __MCF_NOEXCEPT;
-
-__MCF_DECLSPEC_SEM(__MCF_GNU_INLINE)
-intptr_t
-_MCF_sem_get(const _MCF_sem* __sem) __MCF_NOEXCEPT
-  {
-    _MCF_sem __temp;
-    _MCF_atomic_load_pptr_rlx(&__temp, __sem);
-    return __temp.__value;
-  }
 
 /* Decrements the value of a semaphore. If the result is negative, the calling
  * thread will be suspended.
@@ -101,6 +80,32 @@ _MCF_sem_signal_some(_MCF_sem* __sem, intptr_t __value_add) __MCF_NOEXCEPT;
 __MCF_DECLSPEC_SEM(__MCF_GNU_INLINE)
 int
 _MCF_sem_signal(_MCF_sem* __sem) __MCF_NOEXCEPT;
+
+/* Define inline functions after all declarations.
+ * We would like to keep them away from declarations for conciseness, which also
+ * matches the disposition of non-inline functions. Note that however, unlike C++
+ * inline functions, they have to have consistent inline specifiers throughout
+ * this file.  */
+__MCF_DECLSPEC_SEM(__MCF_GNU_INLINE)
+int
+_MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init) __MCF_NOEXCEPT
+  {
+    if((__value_init < 0) || (__value_init > __MCF_SEM_VALUE_MAX))
+      return -1;
+
+    _MCF_sem __temp = { __value_init };
+    _MCF_atomic_store_pptr_rel(__sem, &__temp);
+    return 0;
+  }
+
+__MCF_DECLSPEC_SEM(__MCF_GNU_INLINE)
+intptr_t
+_MCF_sem_get(const _MCF_sem* __sem) __MCF_NOEXCEPT
+  {
+    _MCF_sem __temp;
+    _MCF_atomic_load_pptr_rlx(&__temp, __sem);
+    return __temp.__value;
+  }
 
 __MCF_DECLSPEC_SEM(__MCF_GNU_INLINE)
 int

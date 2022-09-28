@@ -32,14 +32,6 @@ __MCF_DECLSPEC_COND(__MCF_GNU_INLINE)
 void
 _MCF_cond_init(_MCF_cond* __cond) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_COND(__MCF_GNU_INLINE)
-void
-_MCF_cond_init(_MCF_cond* __cond) __MCF_NOEXCEPT
-  {
-    _MCF_cond __temp = __MCF_0_INIT;
-    _MCF_atomic_store_pptr_rel(__cond, &__temp);
-  }
-
 /* Puts the current thread to sleep on a condition variable.
  *
  * The calling thread invokes the unlock callback before it goes to sleep on
@@ -76,6 +68,27 @@ _MCF_cond_signal_some(_MCF_cond* __cond, size_t __max) __MCF_NOEXCEPT;
 
 __MCF_DECLSPEC_COND(__MCF_GNU_INLINE)
 size_t
+_MCF_cond_signal(_MCF_cond* __cond) __MCF_NOEXCEPT;
+
+__MCF_DECLSPEC_COND(__MCF_GNU_INLINE)
+size_t
+_MCF_cond_signal_all(_MCF_cond* __cond) __MCF_NOEXCEPT;
+
+/* Define inline functions after all declarations.
+ * We would like to keep them away from declarations for conciseness, which also
+ * matches the disposition of non-inline functions. Note that however, unlike C++
+ * inline functions, they have to have consistent inline specifiers throughout
+ * this file.  */
+__MCF_DECLSPEC_COND(__MCF_GNU_INLINE)
+void
+_MCF_cond_init(_MCF_cond* __cond) __MCF_NOEXCEPT
+  {
+    _MCF_cond __temp = __MCF_0_INIT;
+    _MCF_atomic_store_pptr_rel(__cond, &__temp);
+  }
+
+__MCF_DECLSPEC_COND(__MCF_GNU_INLINE)
+size_t
 _MCF_cond_signal_some(_MCF_cond* __cond, size_t __max) __MCF_NOEXCEPT
   {
     _MCF_cond __old;
@@ -89,18 +102,10 @@ _MCF_cond_signal_some(_MCF_cond* __cond, size_t __max) __MCF_NOEXCEPT
 
 __MCF_DECLSPEC_COND(__MCF_GNU_INLINE)
 size_t
-_MCF_cond_signal(_MCF_cond* __cond) __MCF_NOEXCEPT;
-
-__MCF_DECLSPEC_COND(__MCF_GNU_INLINE)
-size_t
 _MCF_cond_signal(_MCF_cond* __cond) __MCF_NOEXCEPT
   {
     return _MCF_cond_signal_some(__cond, 1);
   }
-
-__MCF_DECLSPEC_COND(__MCF_GNU_INLINE)
-size_t
-_MCF_cond_signal_all(_MCF_cond* __cond) __MCF_NOEXCEPT;
 
 __MCF_DECLSPEC_COND(__MCF_GNU_INLINE)
 size_t

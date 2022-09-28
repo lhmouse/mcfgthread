@@ -37,14 +37,6 @@ __MCF_DECLSPEC_ONCE(__MCF_GNU_INLINE)
 void
 _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_ONCE(__MCF_GNU_INLINE)
-void
-_MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT
-  {
-    _MCF_once __temp = __MCF_0_INIT;
-    _MCF_atomic_store_pptr_rel(__once, &__temp);
-  }
-
 /* Attempts to lock a once-initialization flag.
  * The return value of this function has the same semantics with the
  * `__cxa_guard_acquire()` function from the Itanium C++ ABI; see
@@ -70,24 +62,6 @@ __MCF_DECLSPEC_ONCE(__MCF_GNU_INLINE)
 int
 _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_ONCE(__MCF_GNU_INLINE)
-int
-_MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
-  {
-    _MCF_once __old;
-    _MCF_atomic_load_pptr_acq(&__old, __once);
-
-    /* Check the first byte to see whether initialization has been completed,
-     * and if that's the case, don't do anything.  */
-    if(__builtin_expect(__old.__ready, 1))
-      return 0;
-
-    if(__timeout_opt && (*__timeout_opt == 0) && __old.__locked)
-      return -1;
-
-    return _MCF_once_wait_slow(__once, __timeout_opt);
-  }
-
 /* Cancels a once-initialization flag which shall be in the LOCKED state. If
  * the flag has not been locked already, the behavior is undefined.
  *
@@ -106,6 +80,37 @@ _MCF_once_abort(_MCF_once* __once) __MCF_NOEXCEPT;
 __MCF_DECLSPEC_ONCE()
 void
 _MCF_once_release(_MCF_once* __once) __MCF_NOEXCEPT;
+
+/* Define inline functions after all declarations.
+ * We would like to keep them away from declarations for conciseness, which also
+ * matches the disposition of non-inline functions. Note that however, unlike C++
+ * inline functions, they have to have consistent inline specifiers throughout
+ * this file.  */
+__MCF_DECLSPEC_ONCE(__MCF_GNU_INLINE)
+void
+_MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT
+  {
+    _MCF_once __temp = __MCF_0_INIT;
+    _MCF_atomic_store_pptr_rel(__once, &__temp);
+  }
+
+__MCF_DECLSPEC_ONCE(__MCF_GNU_INLINE)
+int
+_MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
+  {
+    _MCF_once __old;
+    _MCF_atomic_load_pptr_acq(&__old, __once);
+
+    /* Check the first byte to see whether initialization has been completed,
+     * and if that's the case, don't do anything.  */
+    if(__builtin_expect(__old.__ready, 1))
+      return 0;
+
+    if(__timeout_opt && (*__timeout_opt == 0) && __old.__locked)
+      return -1;
+
+    return _MCF_once_wait_slow(__once, __timeout_opt);
+  }
 
 #ifdef __cplusplus
 }

@@ -160,24 +160,6 @@ __MCF_i386_seh_cleanup(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
 
 #endif
 
-__MCF_ALWAYS_INLINE
-NTSTATUS
-__MCF_keyed_event_wait(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
-  {
-    NTSTATUS __status = NtWaitForKeyedEvent(NULL, (PVOID) __key, 0, (PLARGE_INTEGER) __timeout);
-    __MCF_ASSERT(NT_SUCCESS(__status));
-    return __status;
-  }
-
-__MCF_ALWAYS_INLINE
-NTSTATUS
-__MCF_keyed_event_signal(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
-  {
-    NTSTATUS __status = NtReleaseKeyedEvent(NULL, (PVOID) __key, 0, (PLARGE_INTEGER) __timeout);
-    __MCF_ASSERT(NT_SUCCESS(__status));
-    return __status;
-  }
-
 /* This structure contains timeout values that will be passed to NT syscalls.  */
 typedef struct __MCF_winnt_timeout __MCF_winnt_timeout;
 
@@ -206,6 +188,123 @@ void*
 __cdecl
 __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
 
+/* Copy a block of memory backward.  */
+__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
+void*
+__cdecl
+__MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
+
+/* Copy a block of potentially overlapped memory, like `memmove()`.  */
+__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
+void*
+__cdecl
+__MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
+
+/* Fill a block of memory with the given byte, like `memset()`.  */
+__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
+void*
+__cdecl
+__MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT;
+
+/* Fill a block of memory with zeroes, like `bzero()`.  */
+__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
+void*
+__cdecl
+__MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT;
+
+/* Compare two blocks of memory, like `memcmp()`.  */
+__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
+int
+__cdecl
+__MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
+  __attribute__((__pure__));
+
+/* Check whether two blocks of memory compare equal, like `memcmp() == 0`.
+ * The result is a boolean value.  */
+__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
+bool
+__cdecl
+__MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
+  __attribute__((__pure__));
+
+/* Allocate a block of zeroed memory, like `calloc()`.  */
+__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
+void*
+__MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
+  __attribute__((__warn_unused_result__, __malloc__, __alloc_size__(1)));
+
+/* Re-allocate a block of memory, like `realloc()`. If the existent
+ * block should be extended, vacuum bytes are filled with zeroes.  */
+__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
+void*
+__MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT
+  __attribute__((__warn_unused_result__, __alloc_size__(2)));
+
+/* Allocate a copy of a block of memory, like `malloc()` followed by
+ * `memcpy()`.  */
+__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
+void*
+__MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
+  __attribute__((__warn_unused_result__, __alloc_size__(2)));
+
+/* Get the size of an allocated block, like `malloc_usable_size()`.  */
+__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
+size_t
+__MCF_msize(const void* __ptr) __MCF_NOEXCEPT
+  __attribute__((__pure__));
+
+/* Free a block of memory, like `free()`.  */
+__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
+void
+__MCF_mfree(void* __ptr) __MCF_NOEXCEPT;
+
+/* These functions set the last error code and return the second argument.
+ * They should be subject to tail-call optimization.  */
+__MCF_DECLSPEC_XGLOBALS()
+int
+__MCF_win32_error_i(DWORD __code, int __val) __MCF_NOEXCEPT;
+
+__MCF_DECLSPEC_XGLOBALS()
+void*
+__MCF_win32_error_p(DWORD __code, void* __ptr) __MCF_NOEXCEPT;
+
+/* These functions are declared here for the sake of completeness, and are not
+ * meant to be called directly.  */
+__MCF_DECLSPEC_XGLOBALS()
+void
+__MCF_run_dtors_at_quick_exit(void) __MCF_NOEXCEPT;
+
+__MCF_DECLSPEC_XGLOBALS()
+void
+__MCF_run_dtors_atexit(void) __MCF_NOEXCEPT;
+
+__MCF_DECLSPEC_XGLOBALS()
+void
+__MCF_finalize_on_exit(void) __MCF_NOEXCEPT;
+
+/* Define inline functions after all declarations.
+ * We would like to keep them away from declarations for conciseness, which also
+ * matches the disposition of non-inline functions. Note that however, unlike C++
+ * inline functions, they have to have consistent inline specifiers throughout
+ * this file.  */
+__MCF_ALWAYS_INLINE
+NTSTATUS
+__MCF_keyed_event_wait(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
+  {
+    NTSTATUS __status = NtWaitForKeyedEvent(NULL, (PVOID) __key, 0, (PLARGE_INTEGER) __timeout);
+    __MCF_ASSERT(NT_SUCCESS(__status));
+    return __status;
+  }
+
+__MCF_ALWAYS_INLINE
+NTSTATUS
+__MCF_keyed_event_signal(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
+  {
+    NTSTATUS __status = NtReleaseKeyedEvent(NULL, (PVOID) __key, 0, (PLARGE_INTEGER) __timeout);
+    __MCF_ASSERT(NT_SUCCESS(__status));
+    return __status;
+  }
+
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void*
 __cdecl
@@ -233,12 +332,6 @@ __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
 #endif
     return __dst;
   }
-
-/* Copy a block of memory backward.  */
-__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void*
-__cdecl
-__MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
 
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void*
@@ -269,12 +362,6 @@ __MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCE
     return __dst;
   }
 
-/* Copy a block of potentially overlapped memory, like `memmove()`.  */
-__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void*
-__cdecl
-__MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
-
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void*
 __cdecl
@@ -284,12 +371,6 @@ __MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
                ? __MCF_mcopy(__dst, __src, __size)
                : __MCF_mcopy_backward(__dst, __src, __size);
   }
-
-/* Fill a block of memory with the given byte, like `memset()`.  */
-__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void*
-__cdecl
-__MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT;
 
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void*
@@ -316,12 +397,6 @@ __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
     return __dst;
   }
 
-/* Fill a block of memory with zeroes, like `bzero()`.  */
-__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void*
-__cdecl
-__MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT;
-
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void*
 __cdecl
@@ -346,13 +421,6 @@ __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
 #endif
     return __dst;
   }
-
-/* Compare two blocks of memory, like `memcmp()`.  */
-__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-int
-__cdecl
-__MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
-  __attribute__((__pure__));
 
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 int
@@ -393,14 +461,6 @@ __MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
     return __result;
   }
 
-/* Check whether two blocks of memory compare equal, like `memcmp() == 0`.
- * The result is a boolean value.  */
-__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-bool
-__cdecl
-__MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
-  __attribute__((__pure__));
-
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 bool
 __cdecl
@@ -432,12 +492,6 @@ __MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
     return __result;
   }
 
-/* Allocate a block of zeroed memory, like `calloc()`.  */
-__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void*
-__MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
-  __attribute__((__warn_unused_result__, __malloc__, __alloc_size__(1)));
-
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void*
 __MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
@@ -445,13 +499,6 @@ __MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
     void* __ptr = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, __size);
     return __ptr;
   }
-
-/* Re-allocate a block of memory, like `realloc()`. If the existent
- * block should be extended, vacuum bytes are filled with zeroes.  */
-__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void*
-__MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT
-  __attribute__((__warn_unused_result__, __alloc_size__(2)));
 
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void*
@@ -461,13 +508,6 @@ __MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT
     return !__ptr ? NULL : (*__pptr = __ptr);
   }
 
-/* Allocate a copy of a block of memory, like `malloc()` followed by
- * `memcpy()`.  */
-__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void*
-__MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
-  __attribute__((__warn_unused_result__, __alloc_size__(2)));
-
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void*
 __MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
@@ -475,12 +515,6 @@ __MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
     void* __ptr = HeapAlloc(GetProcessHeap(), 0, __size);
     return !__ptr ? NULL : __MCF_mcopy(__ptr, __data, __size);
   }
-
-/* Get the size of an allocated block, like `malloc_usable_size()`.  */
-__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-size_t
-__MCF_msize(const void* __ptr) __MCF_NOEXCEPT
-  __attribute__((__pure__));
 
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 size_t
@@ -490,11 +524,6 @@ __MCF_msize(const void* __ptr) __MCF_NOEXCEPT
     __MCF_ASSERT(__size != (size_t)-1);
     return __size;
   }
-
-/* Free a block of memory, like `free()`.  */
-__MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
-void
-__MCF_mfree(void* __ptr) __MCF_NOEXCEPT;
 
 __MCF_DECLSPEC_XGLOBALS(__MCF_GNU_INLINE)
 void
@@ -509,30 +538,6 @@ __MCF_mfree(void* __ptr) __MCF_NOEXCEPT
     int __succ = HeapFree(GetProcessHeap(), 0, __ptr);
     __MCF_ASSERT(__succ);
   }
-
-/* These functions set the last error code and return the second argument.
- * They should be subject to tail-call optimization.  */
-__MCF_DECLSPEC_XGLOBALS()
-int
-__MCF_win32_error_i(DWORD __code, int __val) __MCF_NOEXCEPT;
-
-__MCF_DECLSPEC_XGLOBALS()
-void*
-__MCF_win32_error_p(DWORD __code, void* __ptr) __MCF_NOEXCEPT;
-
-/* These functions are declared here for the sake of completeness, and are not
- * meant to be called directly.  */
-__MCF_DECLSPEC_XGLOBALS()
-void
-__MCF_run_dtors_at_quick_exit(void) __MCF_NOEXCEPT;
-
-__MCF_DECLSPEC_XGLOBALS()
-void
-__MCF_run_dtors_atexit(void) __MCF_NOEXCEPT;
-
-__MCF_DECLSPEC_XGLOBALS()
-void
-__MCF_finalize_on_exit(void) __MCF_NOEXCEPT;
 
 #ifdef __cplusplus
 }

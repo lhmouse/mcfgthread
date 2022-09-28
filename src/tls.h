@@ -68,14 +68,6 @@ __MCF_DECLSPEC_TLS(__MCF_GNU_INLINE)
 void
 _MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_TLS(__MCF_GNU_INLINE)
-void
-_MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT
-  {
-    if(__key_opt)
-      _MCF_tls_key_delete_nonnull(__key_opt);
-  }
-
 /* Gets a value from the table.
  *
  * Returns the thread-local value if one has been set, or a null pointer
@@ -98,6 +90,19 @@ __MCF_tls_table_set(__MCF_tls_table* __table, _MCF_tls_key* __key, const void* _
 __MCF_DECLSPEC_TLS()
 void
 __MCF_tls_table_finalize(__MCF_tls_table* __table) __MCF_NOEXCEPT;
+
+/* Define inline functions after all declarations.
+ * We would like to keep them away from declarations for conciseness, which also
+ * matches the disposition of non-inline functions. Note that however, unlike C++
+ * inline functions, they have to have consistent inline specifiers throughout
+ * this file.  */
+__MCF_DECLSPEC_TLS(__MCF_GNU_INLINE)
+void
+_MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT
+  {
+    if(__key_opt)
+      _MCF_tls_key_delete_nonnull(__key_opt);
+  }
 
 #ifdef __cplusplus
 }

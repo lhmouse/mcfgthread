@@ -55,14 +55,6 @@ __MCF_DECLSPEC_GTHR_AUX(__MCF_GNU_INLINE)
 void
 __MCF_gthr_unonce(_MCF_once** __oncep) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_GTHR_AUX(__MCF_GNU_INLINE)
-void
-__MCF_gthr_unonce(_MCF_once** __oncep) __MCF_NOEXCEPT
-  {
-    if(*__oncep)
-      _MCF_once_abort(*__oncep);
-  }
-
 /* This is an auxiliary function for converting a `struct timespec` to the
  * number of milliseconds since the Unix epoch, with boundary checking.  */
 __MCF_DECLSPEC_GTHR_AUX()
@@ -80,7 +72,34 @@ __MCF_DECLSPEC_GTHR_AUX()
 void
 __MCF_gthr_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
 
-/* These internal functions for shared mutexes.  */
+/* These are auxiliary functions for condition variables. The argument is a
+ * pointer to a `__MCF_gthr_rc_mutex`.  */
+__MCF_DECLSPEC_GTHR_AUX()
+intptr_t
+__MCF_gthr_recursive_mutex_unlock_callback(intptr_t __arg) __MCF_NOEXCEPT;
+
+__MCF_DECLSPEC_GTHR_AUX()
+void
+__MCF_gthr_recursive_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
+
+/* This is the actual thread function for a gthread.  */
+__MCF_DECLSPEC_GTHR_AUX()
+void
+__MCF_gthr_thread_thunk_v2(_MCF_thread* __thrd) __MCF_NOEXCEPT;
+
+/* Define inline functions after all declarations.
+ * We would like to keep them away from declarations for conciseness, which also
+ * matches the disposition of non-inline functions. Note that however, unlike C++
+ * inline functions, they have to have consistent inline specifiers throughout
+ * this file.  */
+__MCF_DECLSPEC_GTHR_AUX(__MCF_GNU_INLINE)
+void
+__MCF_gthr_unonce(_MCF_once** __oncep) __MCF_NOEXCEPT
+  {
+    if(*__oncep)
+      _MCF_once_abort(*__oncep);
+  }
+
 __MCF_ALWAYS_INLINE
 void
 __MCF_gthr_rc_mutex_init(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
@@ -135,21 +154,6 @@ __MCF_gthr_rc_mutex_release(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
     _MCF_atomic_store_32_rlx(&(__rmtx->__owner), 0);
     _MCF_mutex_unlock(&(__rmtx->__mutex));
   }
-
-/* These are auxiliary functions for condition variables. The argument is a
- * pointer to a `__MCF_gthr_rc_mutex`.  */
-__MCF_DECLSPEC_GTHR_AUX()
-intptr_t
-__MCF_gthr_recursive_mutex_unlock_callback(intptr_t __arg) __MCF_NOEXCEPT;
-
-__MCF_DECLSPEC_GTHR_AUX()
-void
-__MCF_gthr_recursive_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
-
-/* This is the actual thread function for a gthread.  */
-__MCF_DECLSPEC_GTHR_AUX()
-void
-__MCF_gthr_thread_thunk_v2(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 
 #ifdef __cplusplus
 }
