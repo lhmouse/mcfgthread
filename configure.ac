@@ -16,7 +16,7 @@ AM_INIT_AUTOMAKE([foreign subdir-objects])
 
 ## Define ABI information
 AS_VAR_SET([abi_major], [1])
-AS_VAR_SET([abi_minor], [2])
+AS_VAR_SET([abi_minor], [3])
 AS_VAR_SET([abi_suffix], [alpha.1])
 
 ## Check for assertions
