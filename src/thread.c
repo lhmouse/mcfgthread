@@ -18,6 +18,11 @@ do_win32_thread_thunk(LPVOID param)
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     _MCF_thread* self = param;
 
+#if defined(__i386__) || defined(__amd64__)
+    /* Set x87 precision to 80 bits.  */
+    __asm__ volatile ("fninit");
+#endif  /* x86  */
+
     /* Wait until the structure has been fully initialized.  */
     DWORD cmp = 0;
     if(_MCF_atomic_cmpxchg_32_rlx(&(self->__tid), &cmp, -1))
