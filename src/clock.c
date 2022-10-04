@@ -65,5 +65,5 @@ _MCF_perf_counter(void)
   {
     LARGE_INTEGER li;
     QueryPerformanceCounter(&li);
-    return (double) li.QuadPart * __MCF_perf_frequency_reciprocal;
+    return (double) li.QuadPart * __MCF_g->__perf_frequency_reciprocal;
   }

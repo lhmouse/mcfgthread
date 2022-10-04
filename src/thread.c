@@ -29,7 +29,7 @@ do_win32_thread_thunk(LPVOID param)
       __MCF_keyed_event_wait(self, NULL);
 
     /* Attach the thread and execute the user-defined procedure.  */
-    TlsSetValue(__MCF_win32_tls_index, self);
+    TlsSetValue(__MCF_g->__win32_tls_index, self);
     self->__proc(self);
     return 0;
   }
@@ -86,7 +86,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
       return;
 
     /* The main thread structure is allocated statically and must not be freed.  */
-    if(thrd == &__MCF_main_thread)
+    if(thrd == &(__MCF_g->__main_thread))
       return;
 
     NTSTATUS status = NtClose(thrd->__handle);
@@ -118,7 +118,7 @@ __MCF_DLLEXPORT
 _MCF_thread*
 _MCF_thread_self(void)
   {
-    return TlsGetValue(__MCF_win32_tls_index);
+    return TlsGetValue(__MCF_g->__win32_tls_index);
   }
 
 __MCF_DLLEXPORT
@@ -134,7 +134,7 @@ __stdcall
 do_handle_interrupt(DWORD type)
   {
     (void) type;
-    _MCF_cond_signal_all(&__MCF_interrupt_cond);
+    _MCF_cond_signal_all(&(__MCF_g->__interrupt_cond));
     return false;
   }
 
@@ -154,6 +154,6 @@ _MCF_sleep(const int64_t* timeout_opt)
     BOOL added __attribute__((__cleanup__(do_handler_cleanup))) = false;
     added = SetConsoleCtrlHandler(do_handle_interrupt, true);
 
-    int err = _MCF_cond_wait(&__MCF_interrupt_cond, NULL, NULL, 0, timeout_opt);
+    int err = _MCF_cond_wait(&(__MCF_g->__interrupt_cond), NULL, NULL, 0, timeout_opt);
     return err ^ -1;
   }

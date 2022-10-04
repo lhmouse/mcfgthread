@@ -6,6 +6,10 @@
 #define __MCFGTHREAD_XGLOBALS_
 
 #include "fwd.h"
+#include "thread.h"
+#include "mutex.h"
+#include "cond.h"
+#include "dtor_queue.h"
 #include <minwindef.h>
 #include <minwinbase.h>
 #include <winternl.h>
@@ -31,19 +35,8 @@ extern "C" {
 #ifndef __MCF_DECLSPEC_XGLOBALS_IMPORT
 #  define __MCF_DECLSPEC_XGLOBALS_IMPORT
 #  define __MCF_DECLSPEC_XGLOBALS_INLINE  __MCF_GNU_INLINE
+#  define __MCF_DECLSPEC_XGLOBALS_CONST   const
 #endif
-
-/* Declare global data.  */
-extern DWORD __MCF_win32_tls_index;
-extern double __MCF_perf_frequency_reciprocal;
-extern _MCF_thread __MCF_main_thread;
-
-extern _MCF_mutex __MCF_cxa_atexit_mutex;
-extern __MCF_dtor_queue __MCF_cxa_atexit_queue;
-extern _MCF_mutex __MCF_cxa_at_quick_exit_mutex;
-extern __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
-extern _MCF_cond __MCF_interrupt_cond;
-extern BYTE __MCF_mutex_spin_field[2048];
 
 /* Hard-code these.  */
 #define GetCurrentProcess()  ((HANDLE) -1)
@@ -66,6 +59,9 @@ extern BYTE __MCF_mutex_spin_field[2048];
 __MCF_WINAPI(DWORD, GetLastError, void) __attribute__((__pure__));
 __MCF_WINAPI(void, SetLastError, DWORD);
 
+__MCF_WINAPI(PVOID, EncodePointer, PVOID) __attribute__((__const__));
+__MCF_WINAPI(PVOID, DecodePointer, PVOID) __attribute__((__const__));
+
 __MCF_WINAPI(DWORD, TlsAlloc, void);
 __MCF_WINAPI(BOOL, TlsFree, DWORD);
 __MCF_WINAPI(LPVOID, TlsGetValue, DWORD) __attribute__((__pure__));
@@ -76,6 +72,9 @@ __MCF_WINAPI(LPVOID, HeapAlloc, HANDLE, DWORD, SIZE_T) __attribute__((__alloc_si
 __MCF_WINAPI(LPVOID, HeapReAlloc, HANDLE, DWORD, LPVOID, SIZE_T) __attribute__((__alloc_size__(4)));
 __MCF_WINAPI(SIZE_T, HeapSize, HANDLE, DWORD, LPCVOID) __attribute__((__pure__));
 __MCF_WINAPI(BOOL, HeapFree, HANDLE, DWORD, LPVOID);
+
+__MCF_WINAPI(HANDLE, CreateFileMappingW, HANDLE, LPSECURITY_ATTRIBUTES, DWORD, DWORD, DWORD, LPCWSTR);
+__MCF_WINAPI(LPVOID, MapViewOfFile, HANDLE, DWORD, DWORD, DWORD, SIZE_T);
 
 __MCF_WINAPI(void, GetSystemTimeAsFileTime, LPFILETIME);
 #if _WIN32_WINNT >= 0x0602
@@ -282,6 +281,27 @@ __MCF_run_dtors_atexit(void) __MCF_NOEXCEPT;
 __MCF_DECLSPEC_XGLOBALS_IMPORT
 void
 __MCF_finalize_on_exit(void) __MCF_NOEXCEPT;
+
+/* Declare global data.  */
+typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
+extern __MCF_crt_xglobals* __MCF_DECLSPEC_XGLOBALS_CONST __MCF_g;
+
+struct __MCF_crt_xglobals
+  {
+    WORD __abi_major;
+    WORD __abi_minor;
+
+    DWORD __win32_tls_index;
+    double __perf_frequency_reciprocal;
+    _MCF_thread __main_thread;
+
+    _MCF_mutex __cxa_atexit_mutex;
+    __MCF_dtor_queue __cxa_atexit_queue;
+    _MCF_mutex __cxa_at_quick_exit_mutex;
+    __MCF_dtor_queue __cxa_at_quick_exit_queue;
+    _MCF_cond __interrupt_cond;
+    BYTE __mutex_spin_field[2048];
+  };
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also

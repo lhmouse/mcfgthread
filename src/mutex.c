@@ -16,7 +16,7 @@ do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
      * this byte hold a value of zero, it continues spinning; otherwise, it
      * makes an attempt to lock the mutex where it is spinning. As the number
      * of spinning iterations is limited, this mechanism need not be reliable.  */
-    static const uint32_t table_size = sizeof(__MCF_mutex_spin_field);
+    static const uint32_t table_size = sizeof(__MCF_g->__mutex_spin_field);
     static const uint32_t block_size = table_size / __builtin_ctz(__MCF_MUTEX_SP_MASK_M + 1U);
     static const uint32_t table_size_reciprocal = 0x100000000U / table_size;
 
@@ -33,7 +33,7 @@ do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
     DWORD index;
     _BitScanForward(&index, sp_mask);
 
-    return __MCF_mutex_spin_field + (base + index * block_size) % table_size;
+    return __MCF_g->__mutex_spin_field + (base + index * block_size) % table_size;
   }
 
 __MCF_DLLEXPORT

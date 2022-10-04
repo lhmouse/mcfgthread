@@ -5,11 +5,8 @@
 #include "precompiled.i"
 #define __MCF_DECLSPEC_XGLOBALS_IMPORT  __MCF_DLLEXPORT
 #define __MCF_DECLSPEC_XGLOBALS_INLINE  __MCF_DLLEXPORT
+#define __MCF_DECLSPEC_XGLOBALS_CONST
 #include "xglobals.i"
-#include "thread.h"
-#include "mutex.h"
-#include "cond.h"
-#include "dtor_queue.h"
 
 __MCF_DLLEXPORT
 EXCEPTION_DISPOSITION
@@ -115,21 +112,21 @@ __MCF_DLLEXPORT
 void
 __MCF_run_dtors_at_quick_exit(void)
   {
-    __MCF_dtor_queue_finalize(&__MCF_cxa_at_quick_exit_queue, &__MCF_cxa_at_quick_exit_mutex, NULL);
+    __MCF_dtor_queue_finalize(&(__MCF_g->__cxa_at_quick_exit_queue), &(__MCF_g->__cxa_at_quick_exit_mutex), NULL);
   }
 
 __MCF_DLLEXPORT
 void
 __MCF_run_dtors_atexit(void)
   {
-    __MCF_dtor_queue_finalize(&__MCF_cxa_atexit_queue, &__MCF_cxa_atexit_mutex, NULL);
+    __MCF_dtor_queue_finalize(&(__MCF_g->__cxa_atexit_queue), &(__MCF_g->__cxa_atexit_mutex), NULL);
   }
 
 __MCF_DLLEXPORT
 void
 __MCF_finalize_on_exit(void)
   {
-    _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
+    _MCF_thread* self = TlsGetValue(__MCF_g->__win32_tls_index);
     if(!self)
       return __MCF_run_dtors_atexit();
 
@@ -139,45 +136,63 @@ __MCF_finalize_on_exit(void)
     __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
     __MCF_run_dtors_atexit();
 
-    TlsSetValue(__MCF_win32_tls_index, NULL);
+    TlsSetValue(__MCF_g->__win32_tls_index, NULL);
     _MCF_thread_drop_ref_nonnull(self);
   }
-
-/* Define global data last to ensure that all of them have all been
- * forward-declared properly.  */
-DWORD __MCF_win32_tls_index;
-double __MCF_perf_frequency_reciprocal;
-_MCF_thread __MCF_main_thread;
-
-_MCF_mutex __MCF_cxa_atexit_mutex;
-__MCF_dtor_queue __MCF_cxa_atexit_queue;
-_MCF_mutex __MCF_cxa_at_quick_exit_mutex;
-__MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
-_MCF_cond __MCF_interrupt_cond;
-BYTE __MCF_mutex_spin_field[];
 
 static
 void
 do_on_process_attach(void)
   {
+    /* Generate the unique name for this process.  */
+    wchar_t globals_name[64];
+    wchar_t* gnptr = globals_name;
+    uintptr_t gncookie = (uintptr_t) EncodePointer((void*)(uintptr_t) 0xDEADBEEFDEADBEEFU);
+
+    for(const wchar_t* ps = L"Local\\__MCF_crt_xglobals_";  *ps;  ++ps)
+      *(gnptr++) = *ps;
+
+    for(size_t bc = sizeof(uintptr_t) * 2 - 1;  bc != SIZE_MAX;  --bc)
+      *(gnptr++) = (wchar_t) (L'K' + (gncookie >> bc * 4) % 16);
+
+    *gnptr = 0;
+    __MCF_ASSERT(gnptr <= globals_name + sizeof(globals_name) / sizeof(wchar_t));
+
+    /* Allocate or open storage for global data.
+     * We are in the DLL main routine, so locking is unnecessary.  */
+    HANDLE globals_file = CreateFileMappingW((HANDLE) -1, NULL,
+        PAGE_READWRITE | SEC_COMMIT, 0, sizeof(__MCF_crt_xglobals), globals_name);
+    __MCF_CHECK(globals_file != NULL);
+    __MCF_g = MapViewOfFile(globals_file, SECTION_ALL_ACCESS, 0, 0, 0);
+    __MCF_CHECK(__MCF_g);
+
+    if(__MCF_g->__abi_major == 0) {
+      /* Initialize ABI information if this memory looks uninitialized.  */
+      __MCF_g->__abi_major = _MCF_ABI_VERSION_MAJOR;
+      __MCF_g->__abi_minor = _MCF_ABI_VERSION_MINOR;
+    }
+    else {
+      __MCF_CHECK(__MCF_g->__abi_major == _MCF_ABI_VERSION_MAJOR);
+      __MCF_CHECK(__MCF_g->__abi_minor >= _MCF_ABI_VERSION_MINOR);
+    }
+
     /* Allocate a TLS slot for this library.  */
-    __MCF_win32_tls_index = TlsAlloc();
-    __MCF_CHECK(__MCF_win32_tls_index != UINT32_MAX);
+    __MCF_g->__win32_tls_index = TlsAlloc();
+    __MCF_CHECK(__MCF_g->__win32_tls_index != UINT32_MAX);
 
     /* Get the performance counter resolution.  */
     LARGE_INTEGER freq;
     __MCF_CHECK(QueryPerformanceFrequency(&freq));
-    __MCF_perf_frequency_reciprocal = 1000 / (double) freq.QuadPart;
+    __MCF_g->__perf_frequency_reciprocal = 1000 / (double) freq.QuadPart;
 
     /* Attach the main thread.  */
-    __MCF_main_thread.__tid = _MCF_thread_self_tid();
+    __MCF_g->__main_thread.__tid = _MCF_thread_self_tid();
     __MCF_CHECK(NT_SUCCESS(NtDuplicateObject(GetCurrentProcess(),
-         GetCurrentThread(), GetCurrentProcess(), &(__MCF_main_thread.__handle),
+         GetCurrentThread(), GetCurrentProcess(), &(__MCF_g->__main_thread.__handle),
          0, 0, DUPLICATE_SAME_ACCESS)));
-
-    __MCF_CHECK(__MCF_main_thread.__handle);
-    _MCF_atomic_store_32_rel(__MCF_main_thread.__nref, 1);
-    __MCF_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
+    __MCF_CHECK(__MCF_g->__main_thread.__handle);
+    _MCF_atomic_store_32_rel(__MCF_g->__main_thread.__nref, 1);
+    __MCF_CHECK(TlsSetValue(__MCF_g->__win32_tls_index, &(__MCF_g->__main_thread)));
   }
 
 static
@@ -185,7 +200,7 @@ void
 do_on_thread_detach(void)
   {
     /* Ignore foreign threads.  */
-    _MCF_thread* self = TlsGetValue(__MCF_win32_tls_index);
+    _MCF_thread* self = TlsGetValue(__MCF_g->__win32_tls_index);
     if(!self)
       return;
 
@@ -194,7 +209,7 @@ do_on_thread_detach(void)
     __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
     __MCF_tls_table_finalize(&(self->__tls_table));
 
-    TlsSetValue(__MCF_win32_tls_index, NULL);
+    TlsSetValue(__MCF_g->__win32_tls_index, NULL);
     _MCF_thread_drop_ref_nonnull(self);
   }
 
@@ -251,3 +266,8 @@ const PIMAGE_TLS_CALLBACK __MCF_xl_e
   __attribute__((__section__(".CRT$XLE"), __used__)) = do_image_tls_callback;
 
 #endif  /* DLL_EXPORT  */
+
+/* This is a pointer to global data. If this library is linked statically,
+ * all instances of this pointer in the same process should point to the
+ * same memory.  */
+__MCF_crt_xglobals* __MCF_g;
