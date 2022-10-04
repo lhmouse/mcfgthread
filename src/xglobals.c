@@ -150,14 +150,14 @@ do_on_process_attach(void)
     for(const wchar_t* ps = L"Local\\__MCF_crt_xglobals";  *ps;  ++ps)
       *(gnptr++) = *ps;
 
-    uintptr_t gncookie = GetCurrentProcessId();
+    uint64_t gncookie = GetCurrentProcessId();
     *(gnptr++) = L'_';
-    for(size_t bc = sizeof(uintptr_t) * 2 - 1;  bc != SIZE_MAX;  --bc)
+    for(int bc = 7;  bc >= 0;  --bc)
       *(gnptr++) = (wchar_t) (L'A' + (gncookie >> bc * 4) % 16);
 
-    gncookie = (uintptr_t) EncodePointer((void*)(uintptr_t) 0xDEADBEEFDEADBEEFU);
+    gncookie = (uintptr_t) EncodePointer((void*) -42) * 0x9E3779B97F4A7C15ULL;
     *(gnptr++) = L'_';
-    for(size_t bc = sizeof(uintptr_t) * 2 - 1;  bc != SIZE_MAX;  --bc)
+    for(int bc = 15;  bc >= 0;  --bc)
       *(gnptr++) = (wchar_t) (L'K' + (gncookie >> bc * 4) % 16);
 
     *gnptr = 0;
