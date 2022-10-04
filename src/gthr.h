@@ -46,19 +46,12 @@ typedef __MCF_gthr_rc_mutex __gthread_recursive_mutex_t;
 /* Informs the runtime that threading support is active.
  * Windows creates new threads for console control handlers, so threading
  * cannot be disabled.  */
-__MCF_DECLSPEC_GTHR_INLINE
+__MCF_DECLSPEC_GTHR_INLINE __MCF_CXX11(constexpr)
 int
 __MCF_gthr_active_p(void) __MCF_NOEXCEPT
   __attribute__((__const__));
 
 __MCF_GTHR_ALIAS(__gthread_active_p, __MCF_gthr_active_p);
-
-__MCF_DECLSPEC_GTHR_INLINE
-int
-__MCF_gthr_active_p(void) __MCF_NOEXCEPT
-  {
-    return 1;
-  }
 
 /* Performs one-time initialization, like `pthread_once()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
@@ -287,6 +280,13 @@ __MCF_GTHR_ALIAS(__gthread_yield, __MCF_gthr_yield);
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
+__MCF_DECLSPEC_GTHR_INLINE __MCF_CXX11(constexpr)
+int
+__MCF_gthr_active_p(void) __MCF_NOEXCEPT
+  {
+    return 1;
+  }
+
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_once(__gthread_once_t* __once, __MCF_once_callback* __init_proc)
