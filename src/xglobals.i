@@ -87,6 +87,8 @@ __MCF_WINAPI(BOOL, QueryPerformanceCounter, LARGE_INTEGER*);
 __MCF_WINAPI(HANDLE, CreateThread, LPSECURITY_ATTRIBUTES, SIZE_T, LPTHREAD_START_ROUTINE, LPVOID, DWORD, LPDWORD);
 __MCF_WINAPI(void, ExitThread, DWORD) __attribute__((__noreturn__));
 __MCF_WINAPI(BOOL, SwitchToThread, void);
+
+__MCF_WINAPI(DWORD, GetCurrentProcessId, void);
 __MCF_WINAPI(BOOL, TerminateProcess, HANDLE, UINT);
 
 typedef BOOL __stdcall HANDLER_ROUTINE(DWORD CtrlType);

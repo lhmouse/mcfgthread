@@ -145,18 +145,23 @@ void
 do_on_process_attach(void)
   {
     /* Generate the unique name for this process.  */
-    wchar_t globals_name[64];
+    wchar_t globals_name[80];
     wchar_t* gnptr = globals_name;
-    uintptr_t gncookie = (uintptr_t) EncodePointer((void*)(uintptr_t) 0xDEADBEEFDEADBEEFU);
-
-    for(const wchar_t* ps = L"Local\\__MCF_crt_xglobals_";  *ps;  ++ps)
+    for(const wchar_t* ps = L"Local\\__MCF_crt_xglobals";  *ps;  ++ps)
       *(gnptr++) = *ps;
 
+    uintptr_t gncookie = GetCurrentProcessId();
+    *(gnptr++) = L'_';
+    for(size_t bc = sizeof(uintptr_t) * 2 - 1;  bc != SIZE_MAX;  --bc)
+      *(gnptr++) = (wchar_t) (L'A' + (gncookie >> bc * 4) % 16);
+
+    gncookie = (uintptr_t) EncodePointer((void*)(uintptr_t) 0xDEADBEEFDEADBEEFU);
+    *(gnptr++) = L'_';
     for(size_t bc = sizeof(uintptr_t) * 2 - 1;  bc != SIZE_MAX;  --bc)
       *(gnptr++) = (wchar_t) (L'K' + (gncookie >> bc * 4) % 16);
 
     *gnptr = 0;
-    __MCF_ASSERT(gnptr <= globals_name + sizeof(globals_name) / sizeof(wchar_t));
+    __MCF_CHECK(gnptr <= globals_name + sizeof(globals_name) / sizeof(wchar_t));
 
     /* Allocate or open storage for global data.
      * We are in the DLL main routine, so locking is unnecessary.  */
