@@ -172,8 +172,7 @@ do_on_process_attach(void)
 
     if(globals_ptr->__self_ptr != NULL) {
       /* If it has already been initialized, reuse it.  */
-      __MCF_CHECK(globals_ptr->__abi_major == _MCF_ABI_VERSION_MAJOR);
-      __MCF_CHECK(globals_ptr->__abi_minor >= _MCF_ABI_VERSION_MINOR);
+      __MCF_CHECK(globals_ptr->__self_size >= sizeof(__MCF_crt_xglobals));
       __MCF_g = globals_ptr->__self_ptr;
 
       /* Close duplicate handles to existent data.  */
@@ -184,8 +183,7 @@ do_on_process_attach(void)
 
     /* Initialize ABI information if this memory looks uninitialized.  */
     globals_ptr->__self_ptr = globals_ptr;
-    globals_ptr->__abi_major = _MCF_ABI_VERSION_MAJOR;
-    globals_ptr->__abi_minor = _MCF_ABI_VERSION_MINOR;
+    globals_ptr->__self_size = sizeof(__MCF_crt_xglobals);
     __MCF_g = globals_ptr;
 
     /* Allocate a TLS slot for this library.  */

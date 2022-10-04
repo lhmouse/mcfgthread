@@ -293,8 +293,7 @@ extern __MCF_crt_xglobals* __MCF_DECLSPEC_XGLOBALS_CONST __MCF_g;
 struct __MCF_crt_xglobals
   {
     __MCF_crt_xglobals* __self_ptr;
-    WORD __abi_major;
-    WORD __abi_minor;
+    DWORD __self_size;
 
     DWORD __win32_tls_index;
     double __perf_frequency_reciprocal;
