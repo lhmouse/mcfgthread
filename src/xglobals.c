@@ -165,21 +165,24 @@ do_on_process_attach(void)
 
     /* Allocate or open storage for global data.
      * We are in the DLL main routine, so locking is unnecessary.  */
-    HANDLE globals_file = CreateFileMappingW((HANDLE) -1, NULL,
-        PAGE_READWRITE | SEC_COMMIT, 0, sizeof(__MCF_crt_xglobals), globals_name);
+    HANDLE globals_file = CreateFileMappingW((HANDLE) -1, NULL, PAGE_READWRITE | SEC_COMMIT, 0, sizeof(__MCF_crt_xglobals), globals_name);
     __MCF_CHECK(globals_file != NULL);
-    __MCF_g = MapViewOfFile(globals_file, SECTION_ALL_ACCESS, 0, 0, 0);
-    __MCF_CHECK(__MCF_g);
+    __MCF_crt_xglobals* globals_ptr = MapViewOfFile(globals_file, SECTION_ALL_ACCESS, 0, 0, 0);
+    __MCF_CHECK(globals_ptr);
 
-    if(__MCF_g->__abi_major == 0) {
-      /* Initialize ABI information if this memory looks uninitialized.  */
-      __MCF_g->__abi_major = _MCF_ABI_VERSION_MAJOR;
-      __MCF_g->__abi_minor = _MCF_ABI_VERSION_MINOR;
+    if(globals_ptr->__self_ptr != NULL) {
+      /* If it has already been initialized, reuse it.  */
+      __MCF_CHECK(globals_ptr->__abi_major == _MCF_ABI_VERSION_MAJOR);
+      __MCF_CHECK(globals_ptr->__abi_minor >= _MCF_ABI_VERSION_MINOR);
+      __MCF_g = globals_ptr->__self_ptr;
+      UnmapViewOfFile(globals_ptr);
+      return;
     }
-    else {
-      __MCF_CHECK(__MCF_g->__abi_major == _MCF_ABI_VERSION_MAJOR);
-      __MCF_CHECK(__MCF_g->__abi_minor >= _MCF_ABI_VERSION_MINOR);
-    }
+
+    /* Initialize ABI information if this memory looks uninitialized.  */
+    globals_ptr->__abi_major = _MCF_ABI_VERSION_MAJOR;
+    globals_ptr->__abi_minor = _MCF_ABI_VERSION_MINOR;
+    __MCF_g = globals_ptr;
 
     /* Allocate a TLS slot for this library.  */
     __MCF_g->__win32_tls_index = TlsAlloc();
@@ -192,9 +195,7 @@ do_on_process_attach(void)
 
     /* Attach the main thread.  */
     __MCF_g->__main_thread.__tid = _MCF_thread_self_tid();
-    __MCF_CHECK(NT_SUCCESS(NtDuplicateObject(GetCurrentProcess(),
-         GetCurrentThread(), GetCurrentProcess(), &(__MCF_g->__main_thread.__handle),
-         0, 0, DUPLICATE_SAME_ACCESS)));
+    __MCF_CHECK(NT_SUCCESS(NtDuplicateObject(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &(__MCF_g->__main_thread.__handle), 0, 0, DUPLICATE_SAME_ACCESS)));
     __MCF_CHECK(__MCF_g->__main_thread.__handle);
     _MCF_atomic_store_32_rel(__MCF_g->__main_thread.__nref, 1);
     __MCF_CHECK(TlsSetValue(__MCF_g->__win32_tls_index, &(__MCF_g->__main_thread)));

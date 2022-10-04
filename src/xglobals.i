@@ -75,6 +75,7 @@ __MCF_WINAPI(BOOL, HeapFree, HANDLE, DWORD, LPVOID);
 
 __MCF_WINAPI(HANDLE, CreateFileMappingW, HANDLE, LPSECURITY_ATTRIBUTES, DWORD, DWORD, DWORD, LPCWSTR);
 __MCF_WINAPI(LPVOID, MapViewOfFile, HANDLE, DWORD, DWORD, DWORD, SIZE_T);
+__MCF_WINAPI(BOOL, UnmapViewOfFile, LPCVOID);
 
 __MCF_WINAPI(void, GetSystemTimeAsFileTime, LPFILETIME);
 #if _WIN32_WINNT >= 0x0602
@@ -106,6 +107,7 @@ __MCF_WINAPI(SIZE_T, RtlCompareMemory, const void*, const void*, SIZE_T) __attri
 __MCF_WINAPI(NTSTATUS, NtDuplicateObject, HANDLE, HANDLE, HANDLE, PHANDLE, ACCESS_MASK, ULONG, ULONG);
 __MCF_WINAPI(NTSTATUS, NtClose, HANDLE);
 __MCF_WINAPI(NTSTATUS, NtWaitForSingleObject, HANDLE, BOOLEAN, PLARGE_INTEGER);
+
 __MCF_WINAPI(NTSTATUS, NtWaitForKeyedEvent, HANDLE, PVOID, BOOLEAN, PLARGE_INTEGER);
 __MCF_WINAPI(NTSTATUS, NtReleaseKeyedEvent, HANDLE, PVOID, BOOLEAN, PLARGE_INTEGER);
 
@@ -290,6 +292,7 @@ extern __MCF_crt_xglobals* __MCF_DECLSPEC_XGLOBALS_CONST __MCF_g;
 
 struct __MCF_crt_xglobals
   {
+    __MCF_crt_xglobals* __self_ptr;
     WORD __abi_major;
     WORD __abi_minor;
 
