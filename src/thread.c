@@ -95,7 +95,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
 
 __MCF_DLLEXPORT
 void
-_MCF_thread_exit()
+_MCF_thread_exit(void)
   {
     ExitThread(0);
     __MCF_UNREACHABLE;
