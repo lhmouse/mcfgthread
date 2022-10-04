@@ -27,4 +27,5 @@ main(void)
     static int value = 42;
     __MCF_cxa_at_quick_exit(atexit_second, &value, NULL);
     __MCF_cxa_at_quick_exit(atexit_first, &value, NULL);
+    __MCF_quick_exit(1);
   }
