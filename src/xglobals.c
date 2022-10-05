@@ -161,7 +161,7 @@ do_on_process_attach(void)
       *(gnptr++) = (wchar_t) (L'K' + (gncookie >> bc * 4) % 16);
 
     *gnptr = 0;
-    __MCF_CHECK(gnptr <= gnbuffer + sizeof(gnbuffer) / sizeof(wchar_t));
+    __MCF_CHECK(gnptr <= gnbuffer + sizeof(gnbuffer) / sizeof(wchar_t) - 1);
 
     /* Allocate or open storage for global data.
      * We are in the DLL main routine, so locking is unnecessary.  */
