@@ -140,33 +140,33 @@ __MCF_finalize_on_exit(void)
     _MCF_thread_drop_ref_nonnull(self);
   }
 
+static inline
+void
+do_encode_numeric_field(wchar_t* ptr, size_t width, uint64_t value)
+  {
+    for(size_t k = 0;  k != width;  ++k)
+      ptr[k] = (wchar_t) (L'k' + (value >> (width + ~k) * 4) % 16U);
+  }
+
 static
 void
 do_on_process_attach(void)
   {
     /* Generate the unique name for this process.  */
-    wchar_t gnbuffer[80];
-    wchar_t* gnptr = gnbuffer;
-    for(const wchar_t* ps = L"Local\\__MCF_crt_xglobals";  *ps;  ++ps)
-      *(gnptr++) = *ps;
+    uint64_t pid = GetCurrentProcessId();
+    uint64_t cookie = (uintptr_t) EncodePointer((PVOID)(uintptr_t) (pid << 32 | pid)) * 0x9E3779B97F4A7C15ULL;
 
-    uint64_t gncookie = GetCurrentProcessId();
-    *(gnptr++) = L'_';
-    for(int bc = 7;  bc >= 0;  --bc)
-      *(gnptr++) = (wchar_t) (L'A' + (gncookie >> bc * 4) % 16);
-
-    gncookie = (uintptr_t) EncodePointer((void*) -42) * 0x9E3779B97F4A7C15ULL;
-    *(gnptr++) = L'_';
-    for(int bc = 15;  bc >= 0;  --bc)
-      *(gnptr++) = (wchar_t) (L'K' + (gncookie >> bc * 4) % 16);
-
-    *gnptr = 0;
-    __MCF_CHECK(gnptr <= gnbuffer + sizeof(gnbuffer) / sizeof(wchar_t) - 1);
+    wchar_t gnbuffer[] __MCF_ALIGN(4) = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
+    __MCF_ASSERT(gnbuffer[25] == L'*');
+    do_encode_numeric_field(gnbuffer + 25, 8, pid);
+    __MCF_ASSERT(gnbuffer[34] == L'#');
+    do_encode_numeric_field(gnbuffer + 34, 16, cookie);
+    __MCF_ASSERT(gnbuffer[50] == 0);
 
     /* Allocate or open storage for global data.
      * We are in the DLL main routine, so locking is unnecessary.  */
     UNICODE_STRING gname;
-    gname.Length = (USHORT) ((char*) gnptr - (char*) gnbuffer);
+    gname.Length = (USHORT) (sizeof(gnbuffer) - sizeof(wchar_t));
     gname.MaximumLength = (USHORT) sizeof(gnbuffer);
     gname.Buffer = gnbuffer;
 
