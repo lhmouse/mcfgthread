@@ -171,7 +171,7 @@ do_on_process_attach(void)
     gname.Buffer = gnbuffer;
 
     OBJECT_ATTRIBUTES gattrs;
-    InitializeObjectAttributes(&gattrs, &gname, OBJ_OPENIF, NULL, NULL);
+    InitializeObjectAttributes(&gattrs, &gname, OBJ_OPENIF | OBJ_EXCLUSIVE, NULL, NULL);
     __MCF_CHECK(NT_SUCCESS(BaseGetNamedObjectDirectory(&(gattrs.RootDirectory))));
     __MCF_ASSERT(gattrs.RootDirectory);
 
