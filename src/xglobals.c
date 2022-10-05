@@ -184,8 +184,8 @@ do_on_process_attach(void)
 
     /* Get a pointer to this named region. Unlike `CreateFileMappingW()`,
      * the view shall not be inherited by child processes.  */
-    void* gmem_base = NULL;
-    size_t gmem_size = 0;
+    PVOID gmem_base = NULL;
+    SIZE_T gmem_size = 0;
     __MCF_CHECK(NT_SUCCESS(NtMapViewOfSection(gfile, GetCurrentProcess(), &gmem_base, 0, 0, NULL, &gmem_size, 2, 0, PAGE_READWRITE)));
     __MCF_ASSERT(gmem_base);
     __MCF_ASSERT(gmem_size >= sizeof(__MCF_crt_xglobals));
