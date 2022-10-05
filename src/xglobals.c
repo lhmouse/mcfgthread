@@ -145,8 +145,8 @@ void
 do_on_process_attach(void)
   {
     /* Generate the unique name for this process.  */
-    wchar_t globals_name[80];
-    wchar_t* gnptr = globals_name;
+    wchar_t gnbuffer[80];
+    wchar_t* gnptr = gnbuffer;
     for(const wchar_t* ps = L"Local\\__MCF_crt_xglobals";  *ps;  ++ps)
       *(gnptr++) = *ps;
 
@@ -161,30 +161,49 @@ do_on_process_attach(void)
       *(gnptr++) = (wchar_t) (L'K' + (gncookie >> bc * 4) % 16);
 
     *gnptr = 0;
-    __MCF_CHECK(gnptr <= globals_name + sizeof(globals_name) / sizeof(wchar_t));
+    __MCF_CHECK(gnptr <= gnbuffer + sizeof(gnbuffer) / sizeof(wchar_t));
 
     /* Allocate or open storage for global data.
      * We are in the DLL main routine, so locking is unnecessary.  */
-    HANDLE globals_file = CreateFileMappingW((HANDLE) -1, NULL, PAGE_READWRITE | SEC_COMMIT, 0, sizeof(__MCF_crt_xglobals), globals_name);
-    __MCF_CHECK(globals_file != NULL);
-    __MCF_crt_xglobals* globals_ptr = MapViewOfFile(globals_file, SECTION_ALL_ACCESS, 0, 0, 0);
-    __MCF_CHECK(globals_ptr);
+    UNICODE_STRING gname;
+    gname.Length = (USHORT) ((char*) gnptr - (char*) gnbuffer);
+    gname.MaximumLength = (USHORT) sizeof(gnbuffer);
+    gname.Buffer = gnbuffer;
 
-    if(globals_ptr->__self_ptr != NULL) {
-      /* If it has already been initialized, reuse it.  */
-      __MCF_CHECK(globals_ptr->__self_size >= sizeof(__MCF_crt_xglobals));
-      __MCF_g = globals_ptr->__self_ptr;
+    OBJECT_ATTRIBUTES gattrs;
+    InitializeObjectAttributes(&gattrs, &gname, OBJ_OPENIF, NULL, NULL);
+    __MCF_CHECK(NT_SUCCESS(BaseGetNamedObjectDirectory(&(gattrs.RootDirectory))));
+    __MCF_ASSERT(gattrs.RootDirectory);
 
-      /* Close duplicate handles to existent data.  */
-      UnmapViewOfFile(globals_ptr);
-      NtClose(globals_file);
+    LARGE_INTEGER gsize;
+    gsize.QuadPart = sizeof(__MCF_crt_xglobals);
+
+    HANDLE gfile;
+    __MCF_CHECK(NT_SUCCESS(NtCreateSection(&gfile, STANDARD_RIGHTS_REQUIRED | SECTION_MAP_READ | SECTION_MAP_WRITE, &gattrs, &gsize, PAGE_READWRITE, SEC_COMMIT, NULL)));
+    __MCF_ASSERT(gfile);
+
+    /* Get a pointer to this named region. Unlike `CreateFileMappingW()`,
+     * the view shall not be inherited by child processes.  */
+    void* gmem_base = NULL;
+    size_t gmem_size = 0;
+    __MCF_CHECK(NT_SUCCESS(NtMapViewOfSection(gfile, GetCurrentProcess(), &gmem_base, 0, 0, NULL, &gmem_size, 2, 0, PAGE_READWRITE)));
+    __MCF_ASSERT(gmem_base);
+    __MCF_ASSERT(gmem_size >= sizeof(__MCF_crt_xglobals));
+
+    __MCF_g = gmem_base;
+    if(__MCF_g->__self_ptr) {
+      __MCF_g = __MCF_g->__self_ptr;
+      __MCF_CHECK(__MCF_g->__self_size >= sizeof(__MCF_crt_xglobals));
+
+      /* Reuse the existent region and close excess handles.  */
+      NtUnmapViewOfSection(GetCurrentProcess(), gmem_base);
+      NtClose(gfile);
       return;
     }
 
-    /* Initialize ABI information if this memory looks uninitialized.  */
-    globals_ptr->__self_ptr = globals_ptr;
-    globals_ptr->__self_size = sizeof(__MCF_crt_xglobals);
-    __MCF_g = globals_ptr;
+    /* Initialize it.  */
+    __MCF_g->__self_ptr = __MCF_g;
+    __MCF_g->__self_size = sizeof(__MCF_crt_xglobals);
 
     /* Allocate a TLS slot for this library.  */
     __MCF_g->__win32_tls_index = TlsAlloc();

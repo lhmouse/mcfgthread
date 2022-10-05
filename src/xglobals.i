@@ -73,10 +73,6 @@ __MCF_WINAPI(LPVOID, HeapReAlloc, HANDLE, DWORD, LPVOID, SIZE_T) __attribute__((
 __MCF_WINAPI(SIZE_T, HeapSize, HANDLE, DWORD, LPCVOID) __attribute__((__pure__));
 __MCF_WINAPI(BOOL, HeapFree, HANDLE, DWORD, LPVOID);
 
-__MCF_WINAPI(HANDLE, CreateFileMappingW, HANDLE, LPSECURITY_ATTRIBUTES, DWORD, DWORD, DWORD, LPCWSTR);
-__MCF_WINAPI(LPVOID, MapViewOfFile, HANDLE, DWORD, DWORD, DWORD, SIZE_T);
-__MCF_WINAPI(BOOL, UnmapViewOfFile, LPCVOID);
-
 __MCF_WINAPI(void, GetSystemTimeAsFileTime, LPFILETIME);
 #if _WIN32_WINNT >= 0x0602
 __MCF_WINAPI(void, GetSystemTimePreciseAsFileTime, LPFILETIME);
@@ -95,6 +91,8 @@ __MCF_WINAPI(BOOL, TerminateProcess, HANDLE, UINT);
 typedef BOOL __stdcall HANDLER_ROUTINE(DWORD CtrlType);
 __MCF_WINAPI(BOOL, SetConsoleCtrlHandler, HANDLER_ROUTINE*, BOOL);
 
+__MCF_WINAPI(NTSTATUS, BaseGetNamedObjectDirectory, PHANDLE);
+
 /* Declare NTDLL (driver) APIs here.  */
 __MCF_WINAPI(NTSTATUS, LdrAddRefDll, ULONG, PVOID);
 __MCF_WINAPI(BOOLEAN, RtlDllShutdownInProgress, void);
@@ -103,6 +101,10 @@ __MCF_WINAPI(void, RtlMoveMemory, void*, const void*, SIZE_T);
 __MCF_WINAPI(void, RtlFillMemory, void*, SIZE_T, int);
 __MCF_WINAPI(void, RtlZeroMemory, void*, SIZE_T);
 __MCF_WINAPI(SIZE_T, RtlCompareMemory, const void*, const void*, SIZE_T) __attribute__((__pure__));
+
+__MCF_WINAPI(NTSTATUS, NtCreateSection, PHANDLE, ACCESS_MASK, POBJECT_ATTRIBUTES, PLARGE_INTEGER, ULONG, ULONG, HANDLE);
+__MCF_WINAPI(NTSTATUS, NtMapViewOfSection, HANDLE, HANDLE, PVOID, ULONG_PTR, SIZE_T, PLARGE_INTEGER, PSIZE_T, ULONG, ULONG, ULONG);
+__MCF_WINAPI(NTSTATUS, NtUnmapViewOfSection, HANDLE, PVOID);
 
 __MCF_WINAPI(NTSTATUS, NtDuplicateObject, HANDLE, HANDLE, HANDLE, PHANDLE, ACCESS_MASK, ULONG, ULONG);
 __MCF_WINAPI(NTSTATUS, NtClose, HANDLE);
