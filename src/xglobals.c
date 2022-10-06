@@ -241,10 +241,10 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
 
 /* When building the static library, invoke the common routine from a TLS
  * callback. This requires the main executable be linked with 'tlssup.o'.
- * `__xl_d` is being used by mingw-w64, so we use `__xl_e` here.  */
-extern const PIMAGE_TLS_CALLBACK __MCF_xl_e;
+ * Such initialization should happen as early as possible.  */
+extern const PIMAGE_TLS_CALLBACK __MCF_xl_b;
 
-const PIMAGE_TLS_CALLBACK __MCF_xl_e
-  __attribute__((__section__(".CRT$XLE"), __used__)) = do_image_tls_callback;
+const PIMAGE_TLS_CALLBACK __MCF_xl_b
+  __attribute__((__section__(".CRT$XLB"), __used__)) = do_image_tls_callback;
 
 #endif  /* DLL_EXPORT  */
