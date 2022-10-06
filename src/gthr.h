@@ -522,7 +522,7 @@ __MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, 
 
     __rec->__proc = __proc;
     __rec->__arg = __arg;
-    __rec->__joinable = 1;
+    __rec->__joinable[0] = 1;
 
     __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk_v2, __rec, sizeof(*__rec));
     *__thrdp = __thrd;
@@ -543,7 +543,7 @@ __MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
 
     /* Fail if the thread has already been detached.  */
     __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
-    if(_MCF_atomic_xchg_8_rlx(&(__rec->__joinable), 0) == 0)
+    if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
       return -1;
 
     /* Wait for it.  */
@@ -574,7 +574,7 @@ __MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_NOEXCEPT
 
     /* Fail if the thread has already been detached.  */
     __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
-    if(_MCF_atomic_xchg_8_rlx(&(__rec->__joinable), 0) == 0)
+    if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
       return -1;
 
     /* Free the thread.  */

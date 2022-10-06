@@ -133,7 +133,7 @@ __MCF_finalize_on_exit(void)
     /* Call destructors for thread-local objects before static ones, in
      * accordance with the C++ standard. See [basic.start.term]/2.
      * Thread-local destructors are not called according to POSIX.  */
-    __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
+    __MCF_dtor_queue_finalize(self->__atexit_queue, NULL, NULL);
     __MCF_run_dtors_atexit();
 
     TlsSetValue(__MCF_g->__win32_tls_index, NULL);
@@ -233,8 +233,8 @@ do_on_thread_detach(void)
 
     /* Per-thread atexit callbacks may use TLS, so call them before
      * destructors of thread-local objects.  */
-    __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, NULL);
-    __MCF_tls_table_finalize(&(self->__tls_table));
+    __MCF_dtor_queue_finalize(self->__atexit_queue, NULL, NULL);
+    __MCF_tls_table_finalize(self->__tls_table);
 
     TlsSetValue(__MCF_g->__win32_tls_index, NULL);
     _MCF_thread_drop_ref_nonnull(self);

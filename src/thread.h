@@ -29,8 +29,8 @@ struct __MCF_thread
     _MCF_thread_procedure* __proc;  /* user-defined thread procedure  */
     void* __data_ptr;  /* pointer to user-defined data.  */
 
-    __MCF_dtor_queue __atexit_queue;  /* for `__cxa_thread_atexit()`  */
-    __MCF_tls_table __tls_table;  /* for `_MCF_tls_get()` and `_MCF_tls_set()`  */
+    __MCF_dtor_queue __atexit_queue[1];  /* for `__cxa_thread_atexit()`  */
+    __MCF_tls_table __tls_table[1];  /* for `_MCF_tls_get()` and `_MCF_tls_set()`  */
 
     /* `__data_ptr` shall always point to `__data_storage` below. The space
      * preceding it is reserved for future use. It is not safe to assume the
@@ -251,7 +251,7 @@ _MCF_tls_get(const _MCF_tls_key* __key) __MCF_NOEXCEPT
   {
     _MCF_thread* __self = _MCF_thread_self();
     return (__self == NULL) ? NULL
-               : __MCF_tls_table_get(&(__self->__tls_table), __key);
+               : __MCF_tls_table_get(__self->__tls_table, __key);
   }
 
 __MCF_DECLSPEC_THREAD_INLINE
@@ -260,7 +260,7 @@ _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt) __MCF_NOEXCEPT
   {
     _MCF_thread* __self = _MCF_thread_self();
     return (__self == NULL) ? -1
-               : __MCF_tls_table_set(&(__self->__tls_table), __key, __value_opt);
+               : __MCF_tls_table_set(__self->__tls_table, __key, __value_opt);
   }
 
 #ifdef __cplusplus

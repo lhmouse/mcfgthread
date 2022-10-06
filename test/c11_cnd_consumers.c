@@ -29,8 +29,8 @@ thread_proc(void* param)
       while(value == 0) {
         err = cnd_wait(&cond_produced, &mutex);
         assert(err == thrd_success);
-        assert(mutex.__rc_mtx.__owner == _MCF_thread_self_tid());
-        assert(mutex.__rc_mtx.__depth == 1);
+        assert(mutex.__rc_mtx[0].__owner[0] == _MCF_thread_self_tid());
+        assert(mutex.__rc_mtx[0].__depth == 1);
       }
 
       /* Consume it  */
@@ -82,8 +82,8 @@ main(void)
       while(value != 0) {
         err = cnd_wait(&cond_consumed, &mutex);
         assert(err == thrd_success);
-        assert(mutex.__rc_mtx.__owner == _MCF_thread_self_tid());
-        assert(mutex.__rc_mtx.__depth == 1);
+        assert(mutex.__rc_mtx[0].__owner[0] == _MCF_thread_self_tid());
+        assert(mutex.__rc_mtx[0].__depth == 1);
       }
 
       /* Produce one  */
@@ -97,8 +97,8 @@ main(void)
     while(value != 0) {
       err = cnd_wait(&cond_consumed, &mutex);
       assert(err == thrd_success);
-      assert(mutex.__rc_mtx.__owner == _MCF_thread_self_tid());
-      assert(mutex.__rc_mtx.__depth == 1);
+      assert(mutex.__rc_mtx[0].__owner[0] == _MCF_thread_self_tid());
+      assert(mutex.__rc_mtx[0].__depth == 1);
     }
 
     /* Inform end of input  */
