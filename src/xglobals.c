@@ -170,10 +170,7 @@ do_on_process_attach(void)
 
     /* Attach the main thread.  */
     __MCF_main_thread.__tid = GetCurrentThreadId();
-    __MCF_CHECK(NT_SUCCESS(NtDuplicateObject(GetCurrentProcess(),
-         GetCurrentThread(), GetCurrentProcess(), &(__MCF_main_thread.__handle),
-         0, 0, DUPLICATE_SAME_ACCESS)));
-
+    __MCF_CHECK_NT(NtDuplicateObject(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &(__MCF_main_thread.__handle), 0, 0, DUPLICATE_SAME_ACCESS));
     __MCF_CHECK(__MCF_main_thread.__handle);
     _MCF_atomic_store_32_rel(__MCF_main_thread.__nref, 1);
     __MCF_CHECK(TlsSetValue(__MCF_win32_tls_index, &__MCF_main_thread));
@@ -232,7 +229,7 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
   {
     /* Prevent this DLL from being unloaded.  */
     if(reason == DLL_PROCESS_ATTACH)
-      __MCF_CHECK(NT_SUCCESS(LdrAddRefDll(1, instance)));
+      __MCF_CHECK_NT(LdrAddRefDll(1, instance));
 
     /* Call the common routine. This will not fail.  */
     do_image_tls_callback(instance, reason, reserved);
