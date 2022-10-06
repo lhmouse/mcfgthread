@@ -33,9 +33,7 @@ typedef int __MCF_c11_thread_procedure(void* __arg);
 struct __MCF_c11_mutex
   {
     uint8_t __type;  /* bit mask of `__MCF_mtx_type`  */
-    uint8_t __reserved_1;
-    uint16_t __reserved_2;
-    __MCF_gthr_rc_mutex __rc_mtx;
+    __MCF_gthr_rc_mutex __rc_mtx[1];
   };
 
 struct __MCF_c11_thread_record
@@ -43,8 +41,9 @@ struct __MCF_c11_thread_record
     int __result;
     __MCF_c11_thread_procedure* __proc;
     void* __arg;
-    uint8_t __joinable;
-    intptr_t __reserved[2];
+    uint8_t __joinable[1];
+    uintptr_t __reserved_low;
+    uintptr_t __reserved_high;
   };
 
 typedef __MCF_c11_thread_procedure* thrd_start_t;
@@ -173,7 +172,7 @@ int
 __MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEPT
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__ts);
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) &(__mtx->__rc_mtx), &__timeout);
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) __mtx->__rc_mtx, &__timeout);
     return (__err != 0) ? thrd_timedout : thrd_success;
   }
 
@@ -188,7 +187,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_cnd_wait(cnd_t* __cond, mtx_t* __mtx) __MCF_NOEXCEPT
   {
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) &(__mtx->__rc_mtx), NULL);
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) __mtx->__rc_mtx, NULL);
     __MCF_ASSERT(__err == 0);
     return thrd_success;
   }
@@ -229,7 +228,7 @@ __MCF_c11_mtx_init(mtx_t* __mtx, int __type) __MCF_NOEXCEPT
       case mtx_timed | mtx_recursive:
         /* Initialize an unowned mutex.  */
         __mtx->__type = (uint8_t) __type;
-        __MCF_gthr_rc_mutex_init(&(__mtx->__rc_mtx));
+        __MCF_gthr_rc_mutex_init(__mtx->__rc_mtx);
         return thrd_success;
     }
   }
@@ -241,14 +240,14 @@ int
 __MCF_c11_mtx_check_recursion(mtx_t* __mtx) __MCF_NOEXCEPT
   {
     /* Check for recursion.  */
-    int __err = __MCF_gthr_rc_mutex_recurse(&(__mtx->__rc_mtx));
+    int __err = __MCF_gthr_rc_mutex_recurse(__mtx->__rc_mtx);
     if(__err != 0)
       return thrd_busy;
 
     /* If recursion has happened but the mutex is not recursive, undo the
      * operation, and fail.  */
     if(!(__mtx->__type & mtx_recursive)) {
-      __mtx->__rc_mtx.__depth --;
+      __mtx->__rc_mtx[0].__depth --;
       return thrd_error;
     }
 
@@ -271,7 +270,7 @@ __MCF_c11_mtx_lock(mtx_t* __mtx) __MCF_NOEXCEPT
     if(__err != thrd_busy)
       return __err;
 
-    __err = __MCF_gthr_rc_mutex_wait(&(__mtx->__rc_mtx), NULL);
+    __err = __MCF_gthr_rc_mutex_wait(__mtx->__rc_mtx, NULL);
     __MCF_ASSERT(__err == 0);
     return thrd_success;
   }
@@ -298,7 +297,7 @@ __MCF_c11_mtx_timedlock(mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEP
       return __err;
 
     __timeout = __MCF_gthr_timeout_from_timespec(__ts);
-    __err = __MCF_gthr_rc_mutex_wait(&(__mtx->__rc_mtx), &__timeout);
+    __err = __MCF_gthr_rc_mutex_wait(__mtx->__rc_mtx, &__timeout);
     return (__err != 0) ? thrd_timedout : thrd_success;
   }
 
@@ -321,7 +320,7 @@ __MCF_c11_mtx_trylock(mtx_t* __mtx) __MCF_NOEXCEPT
       return __err;
 
     __timeout = 0;
-    __err = __MCF_gthr_rc_mutex_wait(&(__mtx->__rc_mtx), &__timeout);
+    __err = __MCF_gthr_rc_mutex_wait(__mtx->__rc_mtx, &__timeout);
     return (__err != 0) ? thrd_busy : thrd_success;
   }
 
@@ -336,7 +335,7 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 int
 __MCF_c11_mtx_unlock(mtx_t* __mtx) __MCF_NOEXCEPT
   {
-    __MCF_gthr_rc_mutex_release(&(__mtx->__rc_mtx));
+    __MCF_gthr_rc_mutex_release(__mtx->__rc_mtx);
     return 0;
   }
 
@@ -356,7 +355,7 @@ __MCF_c11_thrd_create(thrd_t* __thrdp, thrd_start_t __proc, void* __arg) __MCF_N
 
     __rec->__proc = __proc;
     __rec->__arg = __arg;
-    __rec->__joinable = true;
+    __rec->__joinable[0] = 1;
 
     __thrd = _MCF_thread_new(__MCF_c11_thread_thunk_v2, __rec, sizeof(*__rec));
     *__thrdp = __thrd;
@@ -400,7 +399,7 @@ __MCF_c11_thrd_detach(thrd_t __thrd) __MCF_NOEXCEPT
 
     /* Fail if the thread has already been detached.  */
     __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__thrd);
-    if(_MCF_atomic_xchg_8_rlx(&(__rec->__joinable), 0) == 0)
+    if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
       return thrd_error;
 
     /* Free the thread.  */
@@ -472,7 +471,7 @@ __MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_NOEXCEPT
 
     /* Fail if the thread has already been detached.  */
     __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__thrd);
-    if(_MCF_atomic_xchg_8_rlx(&(__rec->__joinable), 0) == 0)
+    if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
       return thrd_error;
 
     /* Wait for it.  */

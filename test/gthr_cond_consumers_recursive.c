@@ -33,9 +33,9 @@ thread_proc(void* param)
       while(value == 0) {
         err = __gthread_cond_wait_recursive(&cond_produced, &mutex);
         assert(err == 0);
-        assert(mutex.__mutex.__locked);
+        assert(mutex.__mutex[0].__locked);
         assert(mutex.__depth == 3);
-        assert(mutex.__owner == _MCF_thread_self_tid());
+        assert(mutex.__owner[0] == _MCF_thread_self_tid());
       }
 
       /* Consume it  */
@@ -88,9 +88,9 @@ main(void)
       while(value != 0) {
         err = __gthread_cond_wait_recursive(&cond_consumed, &mutex);
         assert(err == 0);
-        assert(mutex.__mutex.__locked);
+        assert(mutex.__mutex[0].__locked);
         assert(mutex.__depth == 3);
-        assert(mutex.__owner == _MCF_thread_self_tid());
+        assert(mutex.__owner[0] == _MCF_thread_self_tid());
       }
 
       /* Produce one  */
@@ -104,9 +104,9 @@ main(void)
     while(value != 0) {
       err = __gthread_cond_wait_recursive(&cond_consumed, &mutex);
       assert(err == 0);
-      assert(mutex.__mutex.__locked);
+      assert(mutex.__mutex[0].__locked);
       assert(mutex.__depth == 3);
-      assert(mutex.__owner == _MCF_thread_self_tid());
+      assert(mutex.__owner[0] == _MCF_thread_self_tid());
     }
 
     /* Inform end of input  */

@@ -34,9 +34,9 @@ typedef void* __MCF_gthr_thread_procedure(void* __arg);
 
 struct __MCF_gthr_rc_mutex
   {
-    uint32_t __owner;  /* owner thread ID  */
+    uint32_t __owner[1];  /* owner thread ID  */
     int __depth;  /* recursion depth  */
-    _MCF_mutex __mutex;
+    _MCF_mutex __mutex[1];
   };
 
 struct __MCF_gthr_thread_record
@@ -44,8 +44,9 @@ struct __MCF_gthr_thread_record
     void* __result;
     __MCF_gthr_thread_procedure* __proc;
     void* __arg;
-    uint8_t __joinable;
-    intptr_t __reserved[2];
+    uint8_t __joinable[1];
+    uintptr_t __reserved_low;
+    uintptr_t __reserved_high;
   };
 
 /* This is an auxiliary function for exception handling in `__gthread_once()`.
@@ -85,9 +86,9 @@ __MCF_ALWAYS_INLINE
 void
 __MCF_gthr_rc_mutex_init(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
   {
-    __rmtx->__owner = 0;
+    __rmtx->__owner[0] = 0;
     __rmtx->__depth = 0;
-    _MCF_mutex_init(&(__rmtx->__mutex));
+    _MCF_mutex_init(__rmtx->__mutex);
   }
 
 __MCF_ALWAYS_INLINE
@@ -95,7 +96,7 @@ int
 __MCF_gthr_rc_mutex_recurse(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
   {
     /* Check whether the mutex has already been owned.  */
-    if(_MCF_atomic_load_32_rlx(&(__rmtx->__owner)) != (int32_t) _MCF_thread_self_tid())
+    if(_MCF_atomic_load_32_rlx(__rmtx->__owner) != (int32_t) _MCF_thread_self_tid())
       return -1;
 
     /* Increment the recursion count.  */
@@ -109,13 +110,13 @@ int
 __MCF_gthr_rc_mutex_wait(__MCF_gthr_rc_mutex* __rmtx, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
     /* Attempt to take ownership.  */
-    int __err = _MCF_mutex_lock(&(__rmtx->__mutex), __timeout_opt);
+    int __err = _MCF_mutex_lock(__rmtx->__mutex, __timeout_opt);
     if(__err != 0)
       return __err;
 
     /* The calling thread owns the mutex now.  */
-    __MCF_ASSERT(__rmtx->__owner == 0);
-    _MCF_atomic_store_32_rlx(&(__rmtx->__owner), (int32_t) _MCF_thread_self_tid());
+    __MCF_ASSERT(__rmtx->__owner[0] == 0);
+    _MCF_atomic_store_32_rlx(__rmtx->__owner, (int32_t) _MCF_thread_self_tid());
     __MCF_ASSERT(__rmtx->__depth == 0);
     __rmtx->__depth = 1;
     return 0;
@@ -132,8 +133,8 @@ __MCF_gthr_rc_mutex_release(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
       return;
 
     /* Give up ownership now.  */
-    _MCF_atomic_store_32_rlx(&(__rmtx->__owner), 0);
-    _MCF_mutex_unlock(&(__rmtx->__mutex));
+    _MCF_atomic_store_32_rlx(__rmtx->__owner, 0);
+    _MCF_mutex_unlock(__rmtx->__mutex);
   }
 
 /* These are auxiliary functions for condition variables. The argument is a
