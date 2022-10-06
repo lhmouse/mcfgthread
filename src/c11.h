@@ -435,7 +435,7 @@ __MCF_DECLSPEC_C11_INLINE
 int
 __MCF_c11_thrd_create(thrd_t* __thrdp, thrd_start_t __proc, void* __arg) __MCF_NOEXCEPT
   {
-    __MCF_c11_thread_record __rec[1];
+    __MCF_c11_thread_record __rec[1] = __MCF_0_INIT;
     _MCF_thread* __thrd;
 
     __rec->__proc = __proc;

@@ -517,7 +517,7 @@ __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT
   {
-    __MCF_gthr_thread_record __rec[1];
+    __MCF_gthr_thread_record __rec[1] = __MCF_0_INIT;
     _MCF_thread* __thrd;
 
     __rec->__proc = __proc;
