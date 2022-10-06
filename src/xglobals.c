@@ -274,7 +274,7 @@ __stdcall
 __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
   {
     /* Prevent this DLL from being unloaded.  */
-    if(__builtin_expect((long) reason, 3) == DLL_PROCESS_ATTACH)
+    if(reason == DLL_PROCESS_ATTACH)
       __MCF_CHECK(NT_SUCCESS(LdrAddRefDll(1, instance)));
 
     /* Call the common routine. This will not fail.  */
