@@ -293,7 +293,6 @@ __MCF_finalize_on_exit(void) __MCF_NOEXCEPT;
 
 /* Declare global data.  */
 typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
-extern __MCF_crt_xglobals* __MCF_DECLSPEC_XGLOBALS_CONST __MCF_g;
 
 struct __MCF_crt_xglobals
   {
@@ -301,24 +300,33 @@ struct __MCF_crt_xglobals
     DWORD __self_size;
 
     /* global resources  */
-    DWORD __win32_tls_index;
-    double __perf_frequency_reciprocal;
-    _MCF_thread __main_thread;
+    DWORD __tls_index;
+    double __performance_frequency_reciprocal;
+    _MCF_thread __main_thread[1];
 
     /* `atexit()` support  */
-    _MCF_mutex __cxa_atexit_mutex;
-    __MCF_dtor_queue __cxa_atexit_queue;
+    _MCF_mutex __cxa_atexit_mutex[1];
+    __MCF_dtor_queue __cxa_atexit_queue[1];
 
     /* `at_quick_exit()` support  */
-    _MCF_mutex __cxa_at_quick_exit_mutex;
-    __MCF_dtor_queue __cxa_at_quick_exit_queue;
+    _MCF_mutex __cxa_at_quick_exit_mutex[1];
+    __MCF_dtor_queue __cxa_at_quick_exit_queue[1];
 
     /* thread suspension support  */
-    _MCF_cond __interrupt_cond;
+    _MCF_cond __interrupt_cond[1];
 
     /* mutex support  */
     BYTE __mutex_spin_field[2048];
   };
+
+/* This is a pointer to the process-specific data.
+ * As mcfgthread may be linked statically by user DLLs, we must ensure that, in
+ * the same process, all instances of this pointer point to the same object. This
+ * is achieved by having them point to a named file mapping, which is created
+ * by the current process with exclusive access, and whose name is generated from
+ * its process ID. Additional randomness is introduced to prevent the name from
+ * being predicted.  */
+extern __MCF_crt_xglobals* __MCF_DECLSPEC_XGLOBALS_CONST __MCF_g;
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also

@@ -112,21 +112,21 @@ __MCF_DLLEXPORT
 void
 __MCF_run_dtors_at_quick_exit(void)
   {
-    __MCF_dtor_queue_finalize(&(__MCF_g->__cxa_at_quick_exit_queue), &(__MCF_g->__cxa_at_quick_exit_mutex), NULL);
+    __MCF_dtor_queue_finalize(__MCF_g->__cxa_at_quick_exit_queue, __MCF_g->__cxa_at_quick_exit_mutex, NULL);
   }
 
 __MCF_DLLEXPORT
 void
 __MCF_run_dtors_atexit(void)
   {
-    __MCF_dtor_queue_finalize(&(__MCF_g->__cxa_atexit_queue), &(__MCF_g->__cxa_atexit_mutex), NULL);
+    __MCF_dtor_queue_finalize(__MCF_g->__cxa_atexit_queue, __MCF_g->__cxa_atexit_mutex, NULL);
   }
 
 __MCF_DLLEXPORT
 void
 __MCF_finalize_on_exit(void)
   {
-    _MCF_thread* self = TlsGetValue(__MCF_g->__win32_tls_index);
+    _MCF_thread* self = TlsGetValue(__MCF_g->__tls_index);
     if(!self)
       return __MCF_run_dtors_atexit();
 
@@ -136,7 +136,7 @@ __MCF_finalize_on_exit(void)
     __MCF_dtor_queue_finalize(self->__atexit_queue, NULL, NULL);
     __MCF_run_dtors_atexit();
 
-    TlsSetValue(__MCF_g->__win32_tls_index, NULL);
+    TlsSetValue(__MCF_g->__tls_index, NULL);
     _MCF_thread_drop_ref_nonnull(self);
   }
 
@@ -206,20 +206,20 @@ do_on_process_attach(void)
     __MCF_g->__self_size = sizeof(__MCF_crt_xglobals);
 
     /* Allocate a TLS slot for this library.  */
-    __MCF_g->__win32_tls_index = TlsAlloc();
-    __MCF_CHECK(__MCF_g->__win32_tls_index != UINT32_MAX);
+    __MCF_g->__tls_index = TlsAlloc();
+    __MCF_CHECK(__MCF_g->__tls_index != UINT32_MAX);
 
     /* Get the performance counter resolution.  */
     LARGE_INTEGER freq;
     __MCF_CHECK(QueryPerformanceFrequency(&freq));
-    __MCF_g->__perf_frequency_reciprocal = 1000 / (double) freq.QuadPart;
+    __MCF_g->__performance_frequency_reciprocal = 1000 / (double) freq.QuadPart;
 
     /* Attach the main thread.  */
-    __MCF_g->__main_thread.__tid = _MCF_thread_self_tid();
-    __MCF_CHECK_NT(NtDuplicateObject(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &(__MCF_g->__main_thread.__handle), 0, 0, DUPLICATE_SAME_ACCESS));
-    __MCF_CHECK(__MCF_g->__main_thread.__handle);
-    _MCF_atomic_store_32_rel(__MCF_g->__main_thread.__nref, 1);
-    __MCF_CHECK(TlsSetValue(__MCF_g->__win32_tls_index, &(__MCF_g->__main_thread)));
+    __MCF_g->__main_thread[0].__tid = _MCF_thread_self_tid();
+    __MCF_CHECK_NT(NtDuplicateObject(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &(__MCF_g->__main_thread[0].__handle), 0, 0, DUPLICATE_SAME_ACCESS));
+    __MCF_CHECK(__MCF_g->__main_thread[0].__handle);
+    _MCF_atomic_store_32_rel(__MCF_g->__main_thread[0].__nref, 1);
+    __MCF_CHECK(TlsSetValue(__MCF_g->__tls_index, __MCF_g->__main_thread));
   }
 
 static
@@ -227,7 +227,7 @@ void
 do_on_thread_detach(void)
   {
     /* Ignore foreign threads.  */
-    _MCF_thread* self = TlsGetValue(__MCF_g->__win32_tls_index);
+    _MCF_thread* self = TlsGetValue(__MCF_g->__tls_index);
     if(!self)
       return;
 
@@ -236,7 +236,7 @@ do_on_thread_detach(void)
     __MCF_dtor_queue_finalize(self->__atexit_queue, NULL, NULL);
     __MCF_tls_table_finalize(self->__tls_table);
 
-    TlsSetValue(__MCF_g->__win32_tls_index, NULL);
+    TlsSetValue(__MCF_g->__tls_index, NULL);
     _MCF_thread_drop_ref_nonnull(self);
   }
 
