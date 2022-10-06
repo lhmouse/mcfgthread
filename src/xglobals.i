@@ -300,15 +300,23 @@ struct __MCF_crt_xglobals
     __MCF_crt_xglobals* __self_ptr;
     DWORD __self_size;
 
+    /* global resources  */
     DWORD __win32_tls_index;
     double __perf_frequency_reciprocal;
     _MCF_thread __main_thread;
 
+    /* `atexit()` support  */
     _MCF_mutex __cxa_atexit_mutex;
     __MCF_dtor_queue __cxa_atexit_queue;
+
+    /* `at_quick_exit()` support  */
     _MCF_mutex __cxa_at_quick_exit_mutex;
     __MCF_dtor_queue __cxa_at_quick_exit_queue;
+
+    /* thread suspension support  */
     _MCF_cond __interrupt_cond;
+
+    /* mutex support  */
     BYTE __mutex_spin_field[2048];
   };
 
