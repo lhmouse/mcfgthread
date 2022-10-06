@@ -172,21 +172,21 @@ do_on_process_attach(void)
 
     OBJECT_ATTRIBUTES gattrs;
     InitializeObjectAttributes(&gattrs, &gname, OBJ_OPENIF | OBJ_EXCLUSIVE, NULL, NULL);
-    __MCF_CHECK(NT_SUCCESS(BaseGetNamedObjectDirectory(&(gattrs.RootDirectory))));
+    __MCF_CHECK_NT(BaseGetNamedObjectDirectory(&(gattrs.RootDirectory)));
     __MCF_ASSERT(gattrs.RootDirectory);
 
     LARGE_INTEGER gsize;
     gsize.QuadPart = sizeof(__MCF_crt_xglobals);
 
     HANDLE gfile;
-    __MCF_CHECK(NT_SUCCESS(NtCreateSection(&gfile, STANDARD_RIGHTS_REQUIRED | SECTION_MAP_READ | SECTION_MAP_WRITE, &gattrs, &gsize, PAGE_READWRITE, SEC_COMMIT, NULL)));
+    __MCF_CHECK_NT(NtCreateSection(&gfile, STANDARD_RIGHTS_REQUIRED | SECTION_MAP_READ | SECTION_MAP_WRITE, &gattrs, &gsize, PAGE_READWRITE, SEC_COMMIT, NULL));
     __MCF_ASSERT(gfile);
 
     /* Get a pointer to this named region. Unlike `CreateFileMappingW()`,
      * the view shall not be inherited by child processes.  */
     PVOID gmem_base = NULL;
     SIZE_T gmem_size = 0;
-    __MCF_CHECK(NT_SUCCESS(NtMapViewOfSection(gfile, GetCurrentProcess(), &gmem_base, 0, 0, NULL, &gmem_size, 2, 0, PAGE_READWRITE)));
+    __MCF_CHECK_NT(NtMapViewOfSection(gfile, GetCurrentProcess(), &gmem_base, 0, 0, NULL, &gmem_size, 2, 0, PAGE_READWRITE));
     __MCF_ASSERT(gmem_base);
     __MCF_ASSERT(gmem_size >= sizeof(__MCF_crt_xglobals));
 
@@ -216,7 +216,7 @@ do_on_process_attach(void)
 
     /* Attach the main thread.  */
     __MCF_g->__main_thread.__tid = _MCF_thread_self_tid();
-    __MCF_CHECK(NT_SUCCESS(NtDuplicateObject(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &(__MCF_g->__main_thread.__handle), 0, 0, DUPLICATE_SAME_ACCESS)));
+    __MCF_CHECK_NT(NtDuplicateObject(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &(__MCF_g->__main_thread.__handle), 0, 0, DUPLICATE_SAME_ACCESS));
     __MCF_CHECK(__MCF_g->__main_thread.__handle);
     _MCF_atomic_store_32_rel(__MCF_g->__main_thread.__nref, 1);
     __MCF_CHECK(TlsSetValue(__MCF_g->__win32_tls_index, &(__MCF_g->__main_thread)));
@@ -275,7 +275,7 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
   {
     /* Prevent this DLL from being unloaded.  */
     if(reason == DLL_PROCESS_ATTACH)
-      __MCF_CHECK(NT_SUCCESS(LdrAddRefDll(1, instance)));
+      __MCF_CHECK_NT(LdrAddRefDll(1, instance));
 
     /* Call the common routine. This will not fail.  */
     do_image_tls_callback(instance, reason, reserved);

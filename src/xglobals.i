@@ -55,6 +55,9 @@ extern "C" {
   RETURN __stdcall function(__VA_ARGS__)  \
     __attribute__((__dllimport__, __nothrow__))
 
+#define __MCF_CHECK_NT(...)  \
+  __MCF_CHECK(NT_SUCCESS(__VA_ARGS__))
+
 /* Declare KERNEL32 APIs here.  */
 __MCF_WINAPI(DWORD, GetLastError, void) __attribute__((__pure__));
 __MCF_WINAPI(void, SetLastError, DWORD);
