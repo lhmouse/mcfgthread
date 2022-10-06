@@ -84,7 +84,7 @@ __MCF_cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
 
     /* Push the element to the thread-specific queue.  */
     __MCF_dtor_element elem = { dtor.__cdecl_ptr, this, dso };
-    int err = __MCF_dtor_queue_push(&(self->__atexit_queue), &elem);
+    int err = __MCF_dtor_queue_push(self->__atexit_queue, &elem);
     return err;
   }
 
@@ -112,7 +112,7 @@ __MCF_cxa_finalize(void* dso)
      * accordance with the C++ standard. See [basic.start.term]/2.  */
     _MCF_thread* self = _MCF_thread_self();
     if(self)
-      __MCF_dtor_queue_finalize(&(self->__atexit_queue), NULL, dso);
+      __MCF_dtor_queue_finalize(self->__atexit_queue, NULL, dso);
 
     /* Call destructors and callbacks registered with `__cxa_atexit()`.  */
     __MCF_dtor_queue_finalize(&__MCF_cxa_atexit_queue, &__MCF_cxa_atexit_mutex, dso);
