@@ -83,7 +83,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       spin *= (int) (__MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_SP_NFAIL_THRESHOLD);
 
       while(--spin >= 0) {
-        __builtin_ia32_pause();
+        YieldProcessor();
 
         /* Wait for my turn.  */
         uint8_t cmp = 1;
