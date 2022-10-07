@@ -18,7 +18,7 @@ do_win32_thread_thunk(LPVOID param)
     _MCF_thread* self = param;
 
 #if defined(__i386__) || defined(__amd64__)
-    /* Set x87 precision to 80 bits.  */
+    /* Set x87 precision to 64-bit mantissa (GNU `long double` format).  */
     __asm__ volatile ("fninit");
 #endif  /* x86  */
 
