@@ -103,11 +103,6 @@ __MCF_cxa_finalize(void* dso)
     if(!dso)
       return __MCF_finalize_on_exit();
 
-    /* Remove quick exit callbacks that will expire.  */
-    _MCF_mutex_lock(__MCF_g->__cxa_at_quick_exit_mutex, NULL);
-    __MCF_dtor_queue_remove(__MCF_g->__cxa_at_quick_exit_queue, dso);
-    _MCF_mutex_unlock(__MCF_g->__cxa_at_quick_exit_mutex);
-
     /* Call destructors for thread-local objects before static ones in
      * accordance with the C++ standard. See [basic.start.term]/2.  */
     _MCF_thread* self = _MCF_thread_self();
@@ -116,4 +111,9 @@ __MCF_cxa_finalize(void* dso)
 
     /* Call destructors and callbacks registered with `__cxa_atexit()`.  */
     __MCF_dtor_queue_finalize(__MCF_g->__cxa_atexit_queue, __MCF_g->__cxa_atexit_mutex, dso);
+
+    /* Remove quick exit callbacks that will expire.  */
+    _MCF_mutex_lock(__MCF_g->__cxa_at_quick_exit_mutex, NULL);
+    __MCF_dtor_queue_remove(__MCF_g->__cxa_at_quick_exit_queue, dso);
+    _MCF_mutex_unlock(__MCF_g->__cxa_at_quick_exit_mutex);
   }
