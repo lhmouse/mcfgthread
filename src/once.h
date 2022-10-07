@@ -92,8 +92,8 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
  * the flag has not been locked already, the behavior is undefined.
  *
  * This function changes it into the UNLOCKED state and wakes up the next
- * threads that is sleeping on this flag, whose calls to `_MCF_once_wait()`
- * will return 1.  */
+ * thread that is sleeping on this flag, whose call to `_MCF_once_wait()` will
+ * return 1.  */
 __MCF_DECLSPEC_ONCE()
 void
 _MCF_once_abort(_MCF_once* __once) __MCF_NOEXCEPT;
