@@ -142,18 +142,18 @@ __MCF_finalize_on_exit(void)
 
 static inline
 void
-do_encode_numeric_field(wchar_t* ptr, size_t width, uint64_t value)
+do_encode_numeric_field(WCHAR* ptr, size_t width, uint64_t value)
   {
     for(size_t k = 0;  k != width;  ++k)
-      ptr[k] = (wchar_t) (L'k' + (value >> (width + ~k) * 4) % 16U);
+      ptr[k] = (WCHAR) (L'k' + (value >> (width + ~k) * 4) % 16U);
   }
 
 static
 void
 do_on_process_attach(void)
   {
-    static wchar_t gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
-    static UNICODE_STRING gname = { .Buffer = gnbuffer, .Length = sizeof(gnbuffer) - sizeof(wchar_t), .MaximumLength = sizeof(gnbuffer) };
+    static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
+    static UNICODE_STRING gname = { .Buffer = gnbuffer, .Length = sizeof(gnbuffer) - sizeof(WCHAR), .MaximumLength = sizeof(gnbuffer) };
     static OBJECT_ATTRIBUTES gattrs = { .Length = sizeof(OBJECT_ATTRIBUTES), .ObjectName = &gname, .Attributes = OBJ_OPENIF | OBJ_EXCLUSIVE };
     static LARGE_INTEGER gsize = { .QuadPart = sizeof(__MCF_crt_xglobals) };
 
