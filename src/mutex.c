@@ -81,7 +81,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       __MCF_ASSERT(spin > 0);
       spin *= (int) (__MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_SP_NFAIL_THRESHOLD);
 
-      while(--spin >= 0) {
+      while(__builtin_expect(spin, 100) > 0) {
+        spin --;
         YieldProcessor();
 
         /* Wait for my turn.  */
