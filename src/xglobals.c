@@ -152,11 +152,15 @@ static
 void
 do_on_process_attach(void)
   {
+    static wchar_t gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
+    static UNICODE_STRING gname = { .Buffer = gnbuffer, .Length = sizeof(gnbuffer) - sizeof(wchar_t), .MaximumLength = sizeof(gnbuffer) };
+    static OBJECT_ATTRIBUTES gattrs = { .Length = sizeof(OBJECT_ATTRIBUTES), .ObjectName = &gname, .Attributes = OBJ_OPENIF | OBJ_EXCLUSIVE };
+    static LARGE_INTEGER gsize = { .QuadPart = sizeof(__MCF_crt_xglobals) };
+
     /* Generate the unique name for this process.  */
     uint64_t pid = GetCurrentProcessId();
     uint64_t cookie = (uintptr_t) EncodePointer((PVOID)(uintptr_t) (pid << 32 | pid)) * 0x9E3779B97F4A7C15ULL;
 
-    wchar_t gnbuffer[] __MCF_ALIGN(4) = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
     __MCF_ASSERT(gnbuffer[25] == L'*');
     do_encode_numeric_field(gnbuffer + 25, 8, pid);
     __MCF_ASSERT(gnbuffer[34] == L'#');
@@ -165,21 +169,11 @@ do_on_process_attach(void)
 
     /* Allocate or open storage for global data.
      * We are in the DLL main routine, so locking is unnecessary.  */
-    UNICODE_STRING gname;
-    gname.Length = (USHORT) (sizeof(gnbuffer) - sizeof(wchar_t));
-    gname.MaximumLength = (USHORT) sizeof(gnbuffer);
-    gname.Buffer = gnbuffer;
-
-    OBJECT_ATTRIBUTES gattrs;
-    InitializeObjectAttributes(&gattrs, &gname, OBJ_OPENIF | OBJ_EXCLUSIVE, NULL, NULL);
     __MCF_CHECK_NT(BaseGetNamedObjectDirectory(&(gattrs.RootDirectory)));
     __MCF_ASSERT(gattrs.RootDirectory);
 
-    LARGE_INTEGER gsize;
-    gsize.QuadPart = sizeof(__MCF_crt_xglobals);
-
     HANDLE gfile;
-    __MCF_CHECK_NT(NtCreateSection(&gfile, STANDARD_RIGHTS_REQUIRED | SECTION_MAP_READ | SECTION_MAP_WRITE, &gattrs, &gsize, PAGE_READWRITE, SEC_COMMIT, NULL));
+    __MCF_CHECK_NT(NtCreateSection(&gfile, 0xF0006U, &gattrs, &gsize, PAGE_READWRITE, SEC_COMMIT, NULL));
     __MCF_ASSERT(gfile);
 
     /* Get a pointer to this named region. Unlike `CreateFileMappingW()`,
@@ -210,9 +204,8 @@ do_on_process_attach(void)
     __MCF_CHECK(__MCF_g->__tls_index != UINT32_MAX);
 
     /* Get the performance counter resolution.  */
-    LARGE_INTEGER freq;
-    __MCF_CHECK(QueryPerformanceFrequency(&freq));
-    __MCF_g->__performance_frequency_reciprocal = 1000 / (double) freq.QuadPart;
+    __MCF_CHECK(QueryPerformanceFrequency(&gsize));
+    __MCF_g->__performance_frequency_reciprocal = 1000 / (double) gsize.QuadPart;
 
     /* Attach the main thread.  */
     __MCF_g->__main_thread[0].__tid = _MCF_thread_self_tid();
@@ -296,5 +289,6 @@ const PIMAGE_TLS_CALLBACK __MCF_xl_b
 
 /* This is a pointer to global data. If this library is linked statically,
  * all instances of this pointer in the same process should point to the
- * same memory.  */
-__MCF_crt_xglobals* __MCF_g;
+ * same memory. The initializer prevents it from being placed into the
+ * `.bss` section.  */
+__MCF_crt_xglobals* __MCF_g = (void*) -1;
