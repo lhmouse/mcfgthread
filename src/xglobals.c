@@ -158,8 +158,8 @@ do_on_process_attach(void)
     static LARGE_INTEGER gsize = { .QuadPart = sizeof(__MCF_crt_xglobals) };
 
     /* Generate the unique name for this process.  */
-    uint64_t pid = GetCurrentProcessId();
-    uint64_t cookie = (uintptr_t) EncodePointer((PVOID)(uintptr_t) (pid << 32 | pid)) * 0x9E3779B97F4A7C15ULL;
+    DWORD pid = GetCurrentProcessId();
+    UINT64 cookie = (UINT_PTR) EncodePointer((PVOID) ~(UINT_PTR) (pid * 0x100000001ULL)) * 0x9E3779B97F4A7C15ULL;
 
     __MCF_ASSERT(gnbuffer[25] == L'*');
     do_encode_numeric_field(gnbuffer + 25, 8, pid);
