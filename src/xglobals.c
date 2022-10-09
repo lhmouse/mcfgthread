@@ -155,6 +155,7 @@ do_on_process_attach(void)
     static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
     static UNICODE_STRING gname = { .Buffer = gnbuffer, .Length = sizeof(gnbuffer) - sizeof(WCHAR), .MaximumLength = sizeof(gnbuffer) };
     static OBJECT_ATTRIBUTES gattrs = { .Length = sizeof(OBJECT_ATTRIBUTES), .ObjectName = &gname, .Attributes = OBJ_OPENIF | OBJ_EXCLUSIVE };
+    static DWORD gaccess = STANDARD_RIGHTS_REQUIRED | SECTION_MAP_READ | SECTION_MAP_WRITE;
     static LARGE_INTEGER gsize = { .QuadPart = sizeof(__MCF_crt_xglobals) };
 
     /* Generate the unique name for this process.  */
@@ -173,7 +174,7 @@ do_on_process_attach(void)
     __MCF_ASSERT(gattrs.RootDirectory);
 
     HANDLE gfile;
-    __MCF_CHECK_NT(NtCreateSection(&gfile, 0xF0006U, &gattrs, &gsize, PAGE_READWRITE, SEC_COMMIT, NULL));
+    __MCF_CHECK_NT(NtCreateSection(&gfile, gaccess, &gattrs, &gsize, PAGE_READWRITE, SEC_COMMIT, NULL));
     __MCF_ASSERT(gfile);
 
     /* Get a pointer to this named region. Unlike `CreateFileMappingW()`,
@@ -217,8 +218,7 @@ do_on_process_attach(void)
     /* Freeze .data section.  */
     gmem_base = &__MCF_g;
     gmem_size = sizeof(__MCF_g);
-    DWORD dummy;
-    __MCF_CHECK_NT(NtProtectVirtualMemory(GetCurrentProcess(), &gmem_base, &gmem_size, PAGE_READONLY, &dummy));
+    __MCF_CHECK_NT(NtProtectVirtualMemory(GetCurrentProcess(), &gmem_base, &gmem_size, PAGE_READONLY, &gaccess));
   }
 
 static
