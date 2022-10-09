@@ -101,10 +101,10 @@ __MCF_WINAPI(NTSTATUS, BaseGetNamedObjectDirectory, HANDLE*);
 __MCF_WINAPI(NTSTATUS, LdrAddRefDll, ULONG, PVOID);
 __MCF_WINAPI(BOOLEAN, RtlDllShutdownInProgress, void);
 
-__MCF_WINAPI(void, RtlMoveMemory, void*, const void*, size_t);
-__MCF_WINAPI(void, RtlFillMemory, void*, size_t, int);
-__MCF_WINAPI(void, RtlZeroMemory, void*, size_t);
-__MCF_WINAPI(size_t, RtlCompareMemory, const void*, const void*, size_t) __attribute__((__pure__));
+__MCF_WINAPI(void, RtlMoveMemory, void*, const void*, SIZE_T);
+__MCF_WINAPI(void, RtlFillMemory, void*, SIZE_T, int);
+__MCF_WINAPI(void, RtlZeroMemory, void*, SIZE_T);
+__MCF_WINAPI(SIZE_T, RtlCompareMemory, const void*, const void*, SIZE_T) __attribute__((__pure__));
 
 __MCF_WINAPI(NTSTATUS, NtCreateSection, HANDLE*, ACCESS_MASK, OBJECT_ATTRIBUTES*, LARGE_INTEGER*, ULONG, ULONG, HANDLE);
 __MCF_WINAPI(NTSTATUS, NtMapViewOfSection, HANDLE, HANDLE, PVOID*, ULONG_PTR, SIZE_T, LARGE_INTEGER*, SIZE_T*, ULONG, ULONG, ULONG);
