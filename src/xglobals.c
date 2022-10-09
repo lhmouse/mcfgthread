@@ -213,6 +213,12 @@ do_on_process_attach(void)
     __MCF_CHECK(__MCF_g->__main_thread[0].__handle);
     _MCF_atomic_store_32_rel(__MCF_g->__main_thread[0].__nref, 1);
     __MCF_CHECK(TlsSetValue(__MCF_g->__tls_index, __MCF_g->__main_thread));
+
+    /* Freeze .data section.  */
+    gmem_base = &__MCF_g;
+    gmem_size = sizeof(__MCF_g);
+    DWORD dummy;
+    __MCF_CHECK_NT(NtProtectVirtualMemory(GetCurrentProcess(), &gmem_base, &gmem_size, PAGE_READONLY, &dummy));
   }
 
 static
