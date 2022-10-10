@@ -218,7 +218,7 @@ do_on_process_attach(void)
     /* Freeze .data section.  */
     gmem_base = &__MCF_g;
     gmem_size = sizeof(__MCF_g);
-    __MCF_CHECK_NT(NtProtectVirtualMemory(GetCurrentProcess(), &gmem_base, &gmem_size, PAGE_READONLY, &gaccess));
+    __MCF_CHECK_NT(NtProtectVirtualMemory(GetCurrentProcess(), &gmem_base, &gmem_size, PAGE_READONLY, &pid));
   }
 
 static
