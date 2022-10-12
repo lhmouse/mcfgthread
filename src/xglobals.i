@@ -200,12 +200,6 @@ void*
 __cdecl
 __MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
 
-/* Copy a block of potentially overlapped memory, like `memmove()`.  */
-__MCF_DECLSPEC_XGLOBALS_INLINE
-void*
-__cdecl
-__MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
-
 /* Fill a block of memory with the given byte, like `memset()`.  */
 __MCF_DECLSPEC_XGLOBALS_INLINE
 void*
@@ -366,16 +360,6 @@ __MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCE
     RtlMoveMemory(__dst, __src, __size);
 #endif
     return __dst;
-  }
-
-__MCF_DECLSPEC_XGLOBALS_INLINE
-void*
-__cdecl
-__MCF_mmove(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
-  {
-    return ((uintptr_t) __dst - (uintptr_t) __src >= __size)
-               ? __MCF_mcopy(__dst, __src, __size)
-               : __MCF_mcopy_backward(__dst, __src, __size);
   }
 
 __MCF_DECLSPEC_XGLOBALS_INLINE
