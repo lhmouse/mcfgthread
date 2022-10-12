@@ -66,34 +66,19 @@ main(void)
     SystemFunction036(comp, sizeof(comp));
     pmemmove(data, comp, sizeof(comp));
 
-    pmemmove(comp + 10, comp + 80, 20);
-    ptr = __MCF_mmove(data + 10, data + 80, 20);
-    assert(ptr == data + 10);
-
-    pmemmove(comp + 70, comp + 10, 30);
-    ptr = __MCF_mmove(data + 70, data + 10, 30);
-    assert(ptr == data + 70);
-
-    assert(pmemcmp(comp, data, sizeof(comp)) == 0);
-    assert(__MCF_mequal(comp, data, sizeof(comp)) != 0);
-
-    // __MCF_mmove (forward)
-    SystemFunction036(comp, sizeof(comp));
-    pmemmove(data, comp, sizeof(comp));
-
     pmemmove(comp + 10, comp + 20, 40);
-    ptr = __MCF_mmove(data + 10, data + 20, 40);
+    ptr = __MCF_mcopy(data + 10, data + 20, 40);
     assert(ptr == data + 10);
 
     assert(pmemcmp(comp, data, sizeof(comp)) == 0);
     assert(__MCF_mequal(comp, data, sizeof(comp)) != 0);
 
-    // __MCF_mmove (backward)
+    // __MCF_mcopy_backward
     SystemFunction036(comp, sizeof(comp));
     pmemmove(data, comp, sizeof(comp));
 
     pmemmove(comp + 20, comp + 10, 40);
-    ptr = __MCF_mmove(data + 20, data + 10, 40);
+    ptr = __MCF_mcopy_backward(data + 20, data + 10, 40);
     assert(ptr == data + 20);
 
     assert(pmemcmp(comp, data, sizeof(comp)) == 0);
