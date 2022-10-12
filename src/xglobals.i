@@ -297,7 +297,7 @@ struct __MCF_crt_xglobals
 
     /* global resources  */
     DWORD __tls_index;
-    double __performance_frequency_reciprocal;
+    UINT64 __reserved_1;
     _MCF_thread __main_thread[1];
 
     /* `atexit()` support  */
@@ -314,6 +314,10 @@ struct __MCF_crt_xglobals
     /* mutex support  */
     BYTE __mutex_spin_field[2048];
   };
+
+/* These are constants that have to be initialized at load time.  */
+extern HANDLE __MCF_DECLSPEC_XGLOBALS_CONST __MCF_crt_heap;
+extern double __MCF_DECLSPEC_XGLOBALS_CONST __MCF_crt_pfc_freq;
 
 /* This is a pointer to the process-specific data.
  * As mcfgthread may be linked statically by user DLLs, we must ensure that, in
@@ -528,7 +532,7 @@ __MCF_DECLSPEC_XGLOBALS_INLINE
 void*
 __MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
   {
-    void* __ptr = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, __size);
+    void* __ptr = HeapAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY, __size);
     return __ptr;
   }
 
@@ -536,7 +540,7 @@ __MCF_DECLSPEC_XGLOBALS_INLINE
 void*
 __MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT
   {
-    void* __ptr = HeapReAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, *__pptr, __size);
+    void* __ptr = HeapReAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY, *__pptr, __size);
     return !__ptr ? NULL : (*__pptr = __ptr);
   }
 
@@ -544,7 +548,7 @@ __MCF_DECLSPEC_XGLOBALS_INLINE
 void*
 __MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
   {
-    void* __ptr = HeapAlloc(GetProcessHeap(), 0, __size);
+    void* __ptr = HeapAlloc(__MCF_crt_heap, 0, __size);
     return !__ptr ? NULL : __MCF_mcopy(__ptr, __data, __size);
   }
 
@@ -552,7 +556,7 @@ __MCF_DECLSPEC_XGLOBALS_INLINE
 size_t
 __MCF_msize(const void* __ptr) __MCF_NOEXCEPT
   {
-    size_t __size = HeapSize(GetProcessHeap(), 0, __ptr);
+    size_t __size = HeapSize(__MCF_crt_heap, 0, __ptr);
     __MCF_ASSERT(__size != (size_t)-1);
     return __size;
   }
@@ -565,9 +569,9 @@ __MCF_mfree(void* __ptr) __MCF_NOEXCEPT
       return;
 
 #ifdef __MCF_DEBUG
-    __MCF_mfill(__ptr, 0xFE, HeapSize(GetProcessHeap(), 0, __ptr));
+    __MCF_mfill(__ptr, 0xFE, HeapSize(__MCF_crt_heap, 0, __ptr));
 #endif
-    int __succ = HeapFree(GetProcessHeap(), 0, __ptr);
+    int __succ = HeapFree(__MCF_crt_heap, 0, __ptr);
     __MCF_ASSERT(__succ);
   }
 

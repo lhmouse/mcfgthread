@@ -196,17 +196,20 @@ do_on_process_attach(void)
       return;
     }
 
-    /* Initialize it.  */
+    /* Initialize static global constants.  */
+    __MCF_crt_heap = GetProcessHeap();
+    __MCF_CHECK(__MCF_crt_heap);
+
+    __MCF_CHECK(QueryPerformanceFrequency(&gsize));
+    __MCF_crt_pfc_freq = 1000 / (double) gsize.QuadPart;
+
+    /* Initialize dynamic global shared data.  */
     __MCF_g->__self_ptr = __MCF_g;
     __MCF_g->__self_size = sizeof(__MCF_crt_xglobals);
 
     /* Allocate a TLS slot for this library.  */
     __MCF_g->__tls_index = TlsAlloc();
     __MCF_CHECK(__MCF_g->__tls_index != UINT32_MAX);
-
-    /* Get the performance counter resolution.  */
-    __MCF_CHECK(QueryPerformanceFrequency(&gsize));
-    __MCF_g->__performance_frequency_reciprocal = 1000 / (double) gsize.QuadPart;
 
     /* Attach the main thread.  */
     __MCF_g->__main_thread[0].__tid = _MCF_thread_self_tid();
@@ -292,6 +295,10 @@ const PIMAGE_TLS_CALLBACK __MCF_xl_b
   __attribute__((__section__(".CRT$XLB"), __used__)) = do_image_tls_callback;
 
 #endif  /* DLL_EXPORT  */
+
+/* These are constants that have to be initialized at load time.  */
+HANDLE __MCF_crt_heap;
+double __MCF_crt_pfc_freq;
 
 /* This is a pointer to global data. If this library is linked statically,
  * all instances of this pointer in the same process should point to the
