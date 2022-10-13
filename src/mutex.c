@@ -94,16 +94,20 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         /* If this mutex has not been locked, lock it and decrement the
          * failure counter. Otherwise, do nothing.  */
         _MCF_atomic_load_pptr_rlx(&old, mutex);
-        if(old.__locked != 0)
-          continue;
+        do {
+          if(old.__locked != 0)
+            break;
 
-        new = old;
-        new.__locked = 1;
+          new = old;
+          new.__locked = 1;
 
-        uint32_t temp = old.__sp_nfail - 1U;
-        new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
+          uint32_t temp = old.__sp_nfail - 1U;
+          new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
+        }
+        while(!_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new));
 
-        if(_MCF_atomic_cmpxchg_pptr_acq(mutex, &old, &new))
+        /* If this mutex has been locked by the current thread, succeed.  */
+        if(old.__locked == 0)
           return 0;
       }
 
