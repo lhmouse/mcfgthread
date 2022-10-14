@@ -87,7 +87,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         YieldProcessor();
 
         /* Wait for my turn.  */
-        uint8_t cmp = 1;
+        BYTE cmp = 1;
         if(!_MCF_atomic_cmpxchg_weak_8_rlx(do_spin_byte_ptr(mutex, my_mask), &cmp, 0))
           continue;
 
