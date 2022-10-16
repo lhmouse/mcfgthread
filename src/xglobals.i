@@ -312,7 +312,7 @@ struct __MCF_crt_xglobals
     _MCF_cond __interrupt_cond[1];
 
     /* mutex support  */
-    BYTE __mutex_spin_field[2048];
+    BYTE __mutex_spin_field[2048] __MCF_ALIGN(64);
   };
 
 /* These are constants that have to be initialized at load time.  */
