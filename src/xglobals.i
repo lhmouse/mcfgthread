@@ -297,7 +297,6 @@ struct __MCF_crt_xglobals
 
     /* global resources  */
     DWORD __tls_index;
-    UINT64 __reserved_1;
     _MCF_thread __main_thread[1];
 
     /* `atexit()` support  */
@@ -308,11 +307,11 @@ struct __MCF_crt_xglobals
     _MCF_mutex __cxa_at_quick_exit_mutex[1];
     __MCF_dtor_queue __cxa_at_quick_exit_queue[1];
 
-    /* thread suspension support  */
-    _MCF_cond __interrupt_cond[1];
-
     /* mutex support  */
     BYTE __mutex_spin_field[2048] __MCF_ALIGN(64);
+
+    /* thread suspension support  */
+    _MCF_cond __interrupt_cond[1];
   };
 
 /* These are constants that have to be initialized at load time.  */
