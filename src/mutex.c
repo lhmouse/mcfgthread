@@ -71,10 +71,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     if(old.__locked == 0)
       return 0;
 
-    if(old.__sp_mask != new.__sp_mask) {
-      /* The current thread shall spin now.  */
-      uint32_t my_mask = (uint32_t) new.__sp_mask ^ old.__sp_mask;
-      __MCF_ASSERT((my_mask & (my_mask - 1)) == 0);
+    uint32_t my_mask = (uint32_t) old.__sp_mask ^ new.__sp_mask;
+    if(my_mask != 0) {
+      __MCF_ASSERT((my_mask & (my_mask - 1U)) == 0);
 
       /* Calculate the spin count for this loop.  */
       register int spin = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
