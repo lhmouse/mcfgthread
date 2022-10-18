@@ -8,7 +8,9 @@
 #include "cond.h"
 #include "xglobals.i"
 
-struct unlock_result
+typedef struct __MCF_cond_unlock_result __MCF_cond_unlock_result;
+
+struct __MCF_cond_unlock_result
   {
     _MCF_cond_relock_callback* relock_opt;
     intptr_t lock_arg;
@@ -17,7 +19,7 @@ struct unlock_result
 
 static inline
 void
-do_unlock_cleanup(struct unlock_result* res)
+do_unlock_cleanup(__MCF_cond_unlock_result* res)
   {
     if(res->relock_opt)
       res->relock_opt(res->lock_arg, res->unlocked);
@@ -28,7 +30,7 @@ int
 _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, const int64_t* timeout_opt)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
-    struct unlock_result ul_res __attribute__((__cleanup__(do_unlock_cleanup))) = __MCF_0_INIT;
+    __MCF_cond_unlock_result ul_res __attribute__((__cleanup__(do_unlock_cleanup))) = __MCF_0_INIT;
 
     _MCF_cond old, new;
     NTSTATUS status;
