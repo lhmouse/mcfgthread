@@ -4,10 +4,6 @@
 
 #include "precompiled.i"
 
-int
-__cdecl
-__MCF_mcomp(const void* src, const void* cmp, size_t size);
-
 __MCF_DLLEXPORT
 int
 __cdecl
@@ -18,5 +14,14 @@ int
 __cdecl
 memcmp(const void* src, const void* cmp, size_t size)
   {
-    return __MCF_mcomp(src, cmp, size);
+    const uint8_t* psrc = src;
+    const uint8_t* pcmp = cmp;
+
+    /* Get the number of matching bytes.  */
+    SIZE_T mlen = RtlCompareMemory(psrc, pcmp, size);
+    if(mlen == size)
+      return 0;
+
+    /* Return the difference between mismatching bytes.  */
+    return psrc[mlen] - pcmp[mlen];
   }

@@ -45,7 +45,7 @@ main(void)
     assert(ptr == data + 50);
 
     assert(pmemcmp(comp, data, sizeof(comp)) == 0);
-    assert(__MCF_mequal(comp, data, sizeof(comp)) != 0);
+    assert(memcmp(comp, data, sizeof(comp)) == 0);
 
     // __MCF_mzero
     SystemFunction036(comp, sizeof(comp));
@@ -60,7 +60,7 @@ main(void)
     assert(ptr == data + 50);
 
     assert(pmemcmp(comp, data, sizeof(comp)) == 0);
-    assert(__MCF_mequal(comp, data, sizeof(comp)) != 0);
+    assert(memcmp(comp, data, sizeof(comp)) == 0);
 
     // __MCF_mcopy
     SystemFunction036(comp, sizeof(comp));
@@ -71,7 +71,7 @@ main(void)
     assert(ptr == data + 10);
 
     assert(pmemcmp(comp, data, sizeof(comp)) == 0);
-    assert(__MCF_mequal(comp, data, sizeof(comp)) != 0);
+    assert(memcmp(comp, data, sizeof(comp)) == 0);
 
     // __MCF_mcopy_backward
     SystemFunction036(comp, sizeof(comp));
@@ -82,40 +82,40 @@ main(void)
     assert(ptr == data + 20);
 
     assert(pmemcmp(comp, data, sizeof(comp)) == 0);
-    assert(__MCF_mequal(comp, data, sizeof(comp)) != 0);
+    assert(memcmp(comp, data, sizeof(comp)) == 0);
 
     // __MCF_mcomp (equal)
     SystemFunction036(comp, sizeof(comp));
     pmemmove(data, comp, sizeof(comp));
 
     assert(pmemcmp(comp, data, sizeof(comp)) == 0);
-    assert(__MCF_mcomp(comp, data, sizeof(comp)) == 0);
+    assert(memcmp(comp, data, sizeof(comp)) == 0);
 
     // __MCF_mcomp (less 2)
     comp[72] = '1';
     data[72] = '2';
 
     assert(pmemcmp(comp, data, sizeof(comp)) < 0);
-    assert(__MCF_mcomp(comp, data, sizeof(comp)) < 0);
+    assert(memcmp(comp, data, sizeof(comp)) < 0);
 
     // __MCF_mcomp (greater 1)
     comp[71] = '\x80';
     data[71] = '\x7F';
 
     assert(pmemcmp(comp, data, sizeof(comp)) > 0);
-    assert(__MCF_mcomp(comp, data, sizeof(comp)) > 0);
+    assert(memcmp(comp, data, sizeof(comp)) > 0);
 
     // __MCF_mcomp (greater 2)
     comp[45] = '2';
     data[45] = '1';
 
     assert(pmemcmp(comp, data, sizeof(comp)) > 0);
-    assert(__MCF_mcomp(comp, data, sizeof(comp)) > 0);
+    assert(memcmp(comp, data, sizeof(comp)) > 0);
 
     // __MCF_mcomp (less 1)
     comp[44] = '\x7F';
     data[44] = '\x80';
 
     assert(pmemcmp(comp, data, sizeof(comp)) < 0);
-    assert(__MCF_mcomp(comp, data, sizeof(comp)) < 0);
+    assert(memcmp(comp, data, sizeof(comp)) < 0);
   }
