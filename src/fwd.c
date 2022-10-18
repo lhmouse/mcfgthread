@@ -9,10 +9,10 @@
 
 __MCF_DLLEXPORT
 void
-__MCF_runtime_failure(const char* __where)
+__MCF_runtime_failure(const char* where)
   {
-    /* The argument can be examined with a debugger.  */
-    __asm__ volatile ("" : : "r"(__where) : "memory");
+    /* `where` can be examined with a debugger.  */
+    __asm__ volatile ("" : : "m"(where) : "memory");
     __builtin_trap();
   }
 
