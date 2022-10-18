@@ -125,11 +125,8 @@ __cdecl
 __MCF_seh_top(EXCEPTION_RECORD* __rec, PVOID __estab_frame, CONTEXT* __ctx, PVOID __disp_ctx) __MCF_NOEXCEPT;
 
 #if defined(__i386__)
-
 /* On x86, SEH is stack-based.  */
-typedef struct __MCF_i386_seh_node __MCF_i386_seh_node;
-
-struct __MCF_i386_seh_node
+struct __MCF_seh_i386_node
   {
     DWORD __next;
     DWORD __filter;
@@ -137,38 +134,38 @@ struct __MCF_i386_seh_node
 
 __MCF_ALWAYS_INLINE
 void
-__MCF_i386_seh_install(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
+__MCF_seh_i386_install(struct __MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
   {
-    __seh_node->__next = __readfsdword(0U);
+    __asm__ volatile ("{ movl %%fs:0, %0 | mov %0, fs:[0] }" : "=r"(__seh_node->__next));
     __seh_node->__filter = (DWORD) __MCF_seh_top;
-    __writefsdword(0U, (DWORD) __seh_node);
+    __asm__ volatile ("{ movl %0, %%fs:0 | mov fs:[0], %0 }" : : "r"(__seh_node));
   }
 
 __MCF_ALWAYS_INLINE
 void
-__MCF_i386_seh_cleanup(__MCF_i386_seh_node* __seh_node) __MCF_NOEXCEPT
+__MCF_seh_i386_cleanup(struct __MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
   {
-    __writefsdword(0U, __seh_node->__next);
+    __asm__ volatile ("{ movl %0, %%fs:0 | mov fs:[0], %0 }" : : "r"(__seh_node->__next));
   }
 
+#  define __MCF_SEH_I386_NODE_NX(n)  __MCF_seh_i386_node_##n
+#  define __MCF_SEH_I386_NODE_NAME   __MCF_SEH_I386_NODE_NX(__LINE__)
+
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
-    __MCF_i386_seh_node __MCF_PPCAT2(__MCF_seh_node_, __LINE__)  \
-        __attribute__((__cleanup__(__MCF_i386_seh_cleanup)));  \
-    __MCF_i386_seh_install(  \
-          &(__MCF_PPCAT2(__MCF_seh_node_, __LINE__)))  /* no semicolon  */
-
-#elif defined(__arm__)
-
-/* On ARM, SEH is table-based.  */
-#  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
-    __asm__ volatile (".seh_handler __MCF_seh_top, %except;")  /* no semicolon  */
-
+    struct __MCF_seh_i386_node __MCF_SEH_I386_NODE_NAME  \
+        __attribute__((__cleanup__(__MCF_seh_i386_cleanup)));  \
+          __MCF_seh_i386_install(&__MCF_SEH_I386_NODE_NAME)  /* no semicolon  */
 #else
+/* Otherwise, SEH is table-based.  */
+#  ifdef __arm__
+#    define __MCF_SEH_FLAG_PREFIX   "%"
+#  else
+#    define __MCF_SEH_FLAG_PREFIX   "@"
+#  endif
 
-/* On x86_64 and AArch64, SEH is table-based.  */
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
-    __asm__ volatile (".seh_handler __MCF_seh_top, @except;")  /* no semicolon  */
-
+    __asm__ volatile (".seh_handler __MCF_seh_top, "  \
+          __MCF_SEH_FLAG_PREFIX "except")  /* no semicolon  */
 #endif
 
 /* This structure contains timeout values that will be passed to NT syscalls.  */
