@@ -287,29 +287,39 @@ __MCF_keyed_event_signal(const void* __key, const LARGE_INTEGER* __timeout) __MC
     return __status;
   }
 
+#if defined(__i386__) || defined(__amd64__)
+/* Define macros for string operations for reducing code size.  */
+#  define __MCF_X86_REP_STOSB(di, cx, ax)  \
+    __asm__ volatile (  \
+        "rep stosb"  \
+          : "+D"(*(di)), "+c"(*(cx)) : "a"(ax)  \
+          : "memory")  /* no semicolon  */
+
+#  define __MCF_X86_REP_MOVSB(di, si, cx)  \
+    __asm__ volatile (  \
+        "rep movsb"  \
+          : "+D"(*(di)), "+S"(*(si)), "+c"(*(cx)) :  \
+          : "memory")  /* no semicolon  */
+
+#  define __MCF_X86_REP_MOVSB_R(di, si, cx)  \
+    __asm__ volatile (  \
+        "std; rep movsb; cld"  \
+          : "+D"(*(di)), "+S"(*(si)), "+c"(*(cx)) :  \
+          : "memory")  /* no semicolon  */
+#endif
+
 __MCF_DECLSPEC_XGLOBALS_INLINE
 void*
 __cdecl
 __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
     __MCF_ASSERT((uintptr_t) __dst - (uintptr_t) __src >= __size);
-#if defined(__i386__) || defined(__amd64__)
-    /* Use inline assembly to reduce code size.  */
-    typedef char __bytes[__size];
-    uintptr_t __di = (uintptr_t) __dst;
-    uintptr_t __si = (uintptr_t) __src;
-    uintptr_t __cx = __size;
-
-    __asm__ (
-      __MCF_PPSTR(
-        rep movsb;
-      )
-      : "+D"(__di), "+S"(__si), "+c"(__cx), "=m"(*(__bytes*) __dst)
-      : "m"(*(const __bytes*) __src)
-    );
+#ifdef __MCF_X86_REP_MOVSB
+    char* __di = (char*) __dst;
+    char* __si = (char*) __src;
+    size_t __cx = __size;
+    __MCF_X86_REP_MOVSB(&__di, &__si, &__cx);
 #else
-    /* Call the generic but slower version in NTDLL. We have to call
-     * `RtlMoveMemory()` because `RtlCopyMemory()` isn't always exported.  */
     RtlMoveMemory(__dst, __src, __size);
 #endif
     return __dst;
@@ -321,24 +331,12 @@ __cdecl
 __MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
     __MCF_ASSERT((uintptr_t) __src - (uintptr_t) __dst >= __size);
-#if defined(__i386__) || defined(__amd64__)
-    /* Use inline assembly to reduce code size.  */
-    typedef char __bytes[__size];
-    uintptr_t __di = (uintptr_t) __dst + __size - 1;
-    uintptr_t __si = (uintptr_t) __src + __size - 1;
-    uintptr_t __cx = __size;
-
-    __asm__ (
-      __MCF_PPSTR(
-        std;
-        rep movsb;
-        cld;
-      )
-      : "+D"(__di), "+S"(__si), "+c"(__cx), "=m"(*(__bytes*) __dst)
-      : "m"(*(const __bytes*) __src)
-    );
+#ifdef __MCF_X86_REP_MOVSB_R
+    char* __di = (char*) __dst + __size - 1;
+    char* __si = (char*) __src + __size - 1;
+    size_t __cx = __size;
+    __MCF_X86_REP_MOVSB_R(&__di, &__si, &__cx);
 #else
-    /* Call the generic but slower version in NTDLL.  */
     RtlMoveMemory(__dst, __src, __size);
 #endif
     return __dst;
@@ -349,21 +347,11 @@ void*
 __cdecl
 __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
   {
-#if defined(__i386__) || defined(__amd64__)
-    /* Use inline assembly to reduce code size.  */
-    typedef char __bytes[__size];
-    uintptr_t __di = (uintptr_t) __dst;
-    uintptr_t __cx = __size;
-
-    __asm__ (
-      __MCF_PPSTR(
-        rep stosb;
-      )
-      : "+D"(__di), "+c"(__cx), "=m"(*(__bytes*) __dst)
-      : "a"(__val)
-    );
+#ifdef __MCF_X86_REP_STOSB
+    char* __di = (char*) __dst;
+    size_t __cx = __size;
+    __MCF_X86_REP_STOSB(&__di, &__cx, __val);
 #else
-    /* Call the generic but slower version in NTDLL.  */
     RtlFillMemory(__dst, __size, __val);
 #endif
     return __dst;
@@ -374,21 +362,11 @@ void*
 __cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
   {
-#if defined(__i386__) || defined(__amd64__)
-    /* Use inline assembly to reduce code size.  */
-    typedef char __bytes[__size];
-    uintptr_t __di = (uintptr_t) __dst;
-    uintptr_t __cx = __size;
-
-    __asm__ (
-      __MCF_PPSTR(
-        rep stosb;
-      )
-      : "+D"(__di), "+c"(__cx), "=m"(*(__bytes*) __dst)
-      : "a"(0)
-    );
+#ifdef __MCF_X86_REP_STOSB
+    char* __di = (char*) __dst;
+    size_t __cx = __size;
+    __MCF_X86_REP_STOSB(&__di, &__cx, 0);
 #else
-    /* Call the generic but slower version in NTDLL.  */
     RtlZeroMemory(__dst, __size);
 #endif
     return __dst;
