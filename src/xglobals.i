@@ -214,21 +214,6 @@ void*
 __cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT;
 
-/* Compare two blocks of memory, like `memcmp()`.  */
-__MCF_DECLSPEC_XGLOBALS_INLINE
-int
-__cdecl
-__MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
-  __attribute__((__pure__));
-
-/* Check whether two blocks of memory compare equal, like `memcmp() == 0`.
- * The result is a boolean value.  */
-__MCF_DECLSPEC_XGLOBALS_INLINE
-bool
-__cdecl
-__MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
-  __attribute__((__pure__));
-
 /* Allocate a block of zeroed memory, like `calloc()`.  */
 __MCF_DECLSPEC_XGLOBALS_INLINE
 void*
@@ -452,76 +437,6 @@ __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
     RtlZeroMemory(__dst, __size);
 #endif
     return __dst;
-  }
-
-__MCF_DECLSPEC_XGLOBALS_INLINE
-int
-__cdecl
-__MCF_mcomp(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
-  {
-    int __result;
-#if defined(__i386__) || defined(__amd64__)
-    /* Use inline assembly to reduce code size.  */
-    typedef char __bytes[__size];
-    uintptr_t __si = (uintptr_t) __src;
-    uintptr_t __di = (uintptr_t) __cmp;
-    uintptr_t __cx = __size;
-
-    __asm__ (
-        /* AT&T Barking       |  Genuine Intel  */
-      __MCF_PPSTR(
-        { xorl %%eax, %%eax;  | xor eax, eax;  }
-        { repz cmpsb;         | repz cmpsb;    }
-        { setnzb %%al;        | setnz al;      }
-        { sbbl %%ecx, %%ecx;  | sbb ecx, ecx;  }
-      )
-      : "=a"(__result), "+S"(__si), "+D"(__di), "+c"(__cx)
-      : "m"(*(const __bytes*) __src), "m"(*(const __bytes*) __cmp)
-      : "cc"
-    );
-    __result |= (int) __cx;
-#else
-    /* Call the generic but slower version in NTDLL.  */
-    SIZE_T __n = RtlCompareMemory(__src, __cmp, __size);
-    if(__n != __size) {
-      __result = *((const uint8_t*)__src + __n) - *((const uint8_t*)__cmp + __n);
-      __MCF_ASSERT(__result != 0);
-    }
-    else
-      __result = 0;
-#endif
-    return __result;
-  }
-
-__MCF_DECLSPEC_XGLOBALS_INLINE
-bool
-__cdecl
-__MCF_mequal(const void* __src, const void* __cmp, size_t __size) __MCF_NOEXCEPT
-  {
-    bool __result;
-#if defined(__i386__) || defined(__amd64__)
-    /* Use inline assembly to reduce code size.  */
-    typedef char __bytes[__size];
-    uintptr_t __si = (uintptr_t) __src;
-    uintptr_t __di = (uintptr_t) __cmp;
-    uintptr_t __cx = __size;
-
-    __asm__ (
-        /* AT&T Barking       |  Genuine Intel  */
-      __MCF_PPSTR(
-        { xorl %%eax, %%eax;  | xor eax, eax;  }
-        { repz cmpsb;         | repz cmpsb;    }
-      )
-      : "=@ccz"(__result), "+S"(__si), "+D"(__di), "+c"(__cx)
-      : "m"(*(const __bytes*) __src), "m"(*(const __bytes*) __cmp)
-      : "ax"
-    );
-#else
-    /* Call the generic but slower version in NTDLL.  */
-    SIZE_T __n = RtlCompareMemory(__src, __cmp, __size);
-    __result = __n == __size;
-#endif
-    return __result;
   }
 
 __MCF_DECLSPEC_XGLOBALS_INLINE
