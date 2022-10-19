@@ -18,10 +18,10 @@ memcmp(const void* src, const void* cmp, size_t size)
     const uint8_t* pcmp = cmp;
 
     /* Get the number of matching bytes.  */
-    SIZE_T mlen = RtlCompareMemory(psrc, pcmp, size);
-    if(mlen == size)
+    SIZE_T mp = RtlCompareMemory(psrc, pcmp, size);
+    if(mp == size)
       return 0;
 
     /* Return the difference between mismatching bytes.  */
-    return psrc[mlen] - pcmp[mlen];
+    return psrc[mp] - pcmp[mp];
   }
