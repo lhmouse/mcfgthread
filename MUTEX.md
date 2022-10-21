@@ -5,7 +5,7 @@
 The `_MCF_mutex` type in MCF Gthread is a one-pointer-size structure with fields like follows:
 
 ```c
-typedef __MCF_mutex _MCF_mutex;
+typedef struct __MCF_mutex _MCF_mutex;
 
 struct __MCF_mutex
   {
