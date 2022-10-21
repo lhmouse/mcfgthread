@@ -309,6 +309,14 @@ extern double __MCF_DECLSPEC_XGLOBALS_CONST __MCF_crt_pfc_freq;
  * being predicted.  */
 extern __MCF_crt_xglobals* __MCF_DECLSPEC_XGLOBALS_CONST __MCF_g;
 
+/* As `__MCF_crt_xglobals` is shared between all instances of static and shared
+ * instances of this library within a single process, we have to add sort of
+ * versioning.  */
+#define __MCF_G_FIELD_OPT(field)  \
+    (((unsigned long) __builtin_expect((long) __MCF_g->__self_size, sizeof(__MCF_crt_xglobals))  \
+           >= __builtin_offsetof(__MCF_crt_xglobals, field) + sizeof(__MCF_g->field))  \
+        ? &(__MCF_g->field) : NULL)
+
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++
