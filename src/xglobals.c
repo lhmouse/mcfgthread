@@ -142,10 +142,21 @@ __MCF_finalize_on_exit(void)
 
 static inline
 void
-do_encode_numeric_field(WCHAR* ptr, size_t width, uint64_t value)
+do_encode_numeric_field(wchar_t* ptr, size_t width, uint64_t value, const wchar_t* digits)
   {
-    for(size_t k = 0;  k != width;  ++k)
-      ptr[k] = (WCHAR) (L'k' + (value >> (width + ~k) * 4) % 16U);
+    wchar_t* eptr = ptr + width;
+    uint64_t reg = value;
+
+    /* Write significant figures backwards.  */
+    while((ptr != eptr) && (reg != 0)) {
+      uint32_t d = reg & 0x0F;
+      reg >>= 4;
+      *--eptr = digits[d];
+    }
+
+    /* Fill the rest with zeroes.  */
+    while(ptr != eptr)
+      *--eptr = digits[0];
   }
 
 static
@@ -163,9 +174,9 @@ do_on_process_attach(void)
     UINT64 cookie = (UINT_PTR) EncodePointer((PVOID) ~(UINT_PTR) (pid * 0x100000001ULL)) * 0x9E3779B97F4A7C15ULL;
 
     __MCF_ASSERT(gnbuffer[25] == L'*');
-    do_encode_numeric_field(gnbuffer + 25, 8, pid);
+    do_encode_numeric_field(gnbuffer + 25, 8, pid, L"0123456789ABCDEF");
     __MCF_ASSERT(gnbuffer[34] == L'#');
-    do_encode_numeric_field(gnbuffer + 34, 16, cookie);
+    do_encode_numeric_field(gnbuffer + 34, 16, cookie, L"GHJKLMNPQRSTUVWY");
     __MCF_ASSERT(gnbuffer[50] == 0);
 
     /* Allocate or open storage for global data.
