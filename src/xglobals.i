@@ -294,6 +294,9 @@ struct __MCF_crt_xglobals
 
     /* thread suspension support  */
     _MCF_cond __interrupt_cond[1];
+
+    /* libobjc support  */
+    void* __libobjc_tls_data;
   };
 
 /* These are constants that have to be initialized at load time.  */
