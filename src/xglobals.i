@@ -127,6 +127,8 @@ __MCF_seh_top(EXCEPTION_RECORD* __rec, PVOID __estab_frame, CONTEXT* __ctx, PVOI
 
 #if defined(__i386__)
 /* On x86, SEH is stack-based.  */
+typedef struct __MCF_seh_i386_node __MCF_seh_i386_node;
+
 struct __MCF_seh_i386_node
   {
     DWORD __next;
@@ -135,7 +137,7 @@ struct __MCF_seh_i386_node
 
 __MCF_ALWAYS_INLINE
 void
-__MCF_seh_i386_install(struct __MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
+__MCF_seh_i386_install(__MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
   {
     __asm__ volatile ("{ movl %%fs:0, %0 | mov %0, fs:[0] }" : "=r"(__seh_node->__next));
     __seh_node->__filter = (DWORD) __MCF_seh_top;
@@ -144,7 +146,7 @@ __MCF_seh_i386_install(struct __MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
 
 __MCF_ALWAYS_INLINE
 void
-__MCF_seh_i386_cleanup(struct __MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
+__MCF_seh_i386_cleanup(__MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
   {
     __asm__ volatile ("{ movl %0, %%fs:0 | mov fs:[0], %0 }" : : "r"(__seh_node->__next));
   }
@@ -153,7 +155,7 @@ __MCF_seh_i386_cleanup(struct __MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
 #  define __MCF_SEH_I386_NODE_NAME   __MCF_SEH_I386_NODE_NX(__LINE__)
 
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
-    struct __MCF_seh_i386_node __MCF_SEH_I386_NODE_NAME  \
+    __MCF_seh_i386_node __MCF_SEH_I386_NODE_NAME  \
         __attribute__((__cleanup__(__MCF_seh_i386_cleanup)));  \
           __MCF_seh_i386_install(&__MCF_SEH_I386_NODE_NAME)  /* no semicolon  */
 #else
