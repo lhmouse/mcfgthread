@@ -16,7 +16,7 @@ __stdcall
 do_win32_thread_thunk(LPVOID param)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
-    _MCF_thread* self = param;
+    _MCF_thread* const self = param;
 
 #if defined(__i386__) || defined(__amd64__)
     /* Set x87 precision to 64-bit mantissa (GNU `long double` format).  */
@@ -106,6 +106,9 @@ __MCF_DLLEXPORT
 int
 _MCF_thread_wait(const _MCF_thread* thrd, const int64_t* timeout_opt)
   {
+    if(!thrd)
+      return -1;
+
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
 
