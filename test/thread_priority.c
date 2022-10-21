@@ -11,38 +11,26 @@ void
 thread_proc(_MCF_thread* self)
   {
     int current = _MCF_thread_get_priority(NULL);
-    assert(current >= -15);
-    assert(current <= +15);
+    assert(current >= _MCF_thread_priority_idle);
+    assert(current <= _MCF_thread_priority_realtime);
 
-    if(_MCF_thread_priority_idle <= current) {
-      assert(_MCF_thread_set_priority(self, _MCF_thread_priority_idle) == 0);
-      assert(_MCF_thread_get_priority(NULL) == _MCF_thread_priority_idle);
-    }
+    assert(_MCF_thread_set_priority(self, _MCF_thread_priority_idle) == 0);
+    assert(_MCF_thread_get_priority(NULL) == _MCF_thread_priority_idle);
 
-    if(_MCF_thread_priority_low <= current) {
-      assert(_MCF_thread_set_priority(self, _MCF_thread_priority_low) == 0);
-      assert(_MCF_thread_get_priority(NULL) == _MCF_thread_priority_low);
-    }
+    assert(_MCF_thread_set_priority(self, _MCF_thread_priority_low) == 0);
+    assert(_MCF_thread_get_priority(NULL) == _MCF_thread_priority_low);
 
-    if(_MCF_thread_priority_below_normal <= current) {
-      assert(_MCF_thread_set_priority(self, _MCF_thread_priority_below_normal) == 0);
-      assert(_MCF_thread_get_priority(NULL) == _MCF_thread_priority_below_normal);
-    }
+    assert(_MCF_thread_set_priority(self, _MCF_thread_priority_below_normal) == 0);
+    assert(_MCF_thread_get_priority(NULL) == _MCF_thread_priority_below_normal);
 
-    if(_MCF_thread_priority_normal <= current) {
-      assert(_MCF_thread_set_priority(self, _MCF_thread_priority_normal) == 0);
-      assert(_MCF_thread_get_priority(NULL) == _MCF_thread_priority_normal);
-    }
+    assert(_MCF_thread_set_priority(self, _MCF_thread_priority_normal) == 0);
+    assert(_MCF_thread_get_priority(NULL) == _MCF_thread_priority_normal);
 
-    if(_MCF_thread_priority_above_normal <= current) {
-      assert(_MCF_thread_set_priority(self, _MCF_thread_priority_above_normal) == 0);
-      assert(_MCF_thread_get_priority(NULL) == _MCF_thread_priority_above_normal);
-    }
+    assert(_MCF_thread_set_priority(self, _MCF_thread_priority_above_normal) == 0);
+    assert(_MCF_thread_get_priority(NULL) == _MCF_thread_priority_above_normal);
 
-    if(_MCF_thread_priority_high <= current) {
-      assert(_MCF_thread_set_priority(self, _MCF_thread_priority_high) == 0);
-      assert(_MCF_thread_get_priority(NULL) == _MCF_thread_priority_high);
-    }
+    assert(_MCF_thread_set_priority(self, _MCF_thread_priority_high) == 0);
+    assert(_MCF_thread_get_priority(NULL) == _MCF_thread_priority_high);
   }
 
 int
