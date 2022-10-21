@@ -108,6 +108,32 @@ __MCF_DECLSPEC_THREAD_IMPORT
 int
 _MCF_thread_wait(const _MCF_thread* __thrd, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
+/* Gets the priority of a thread.
+ *
+ * If the `__thrd_opt` argument is null, the priority of the current thread is
+ * returned. If `__thrd_opt` is not null but doesn't point to a valid thread
+ * object, the behavior is undefined.
+ *
+ * Returns the thread priority as an enumerator. No value has been reserved to
+ * indicate an error.  */
+__MCF_DECLSPEC_THREAD_IMPORT
+_MCF_thread_priority
+_MCF_thread_get_priority(const _MCF_thread* __thrd_opt) __MCF_NOEXCEPT;
+
+/* Sets the priority of a thread.
+ *
+ * The `__priority` argument may be an arbitrary integer within -15 and +15, but
+ * specifying an `_MCF_thread_priority_*` constant is recommended. Setting high
+ * priority values may require certain priviledges. If the `__thrd_opt` argument
+ * is null, the priority of the current thread will be set. If `__thrd_opt` is
+ * not null but doesn't point to a valid thread object, the behavior of this
+ * function is undefined.
+ *
+ * Returns 0 upon success and -1 upon failure.  */
+__MCF_DECLSPEC_THREAD_IMPORT
+int
+_MCF_thread_set_priority(_MCF_thread* __thrd_opt, _MCF_thread_priority __priority) __MCF_NOEXCEPT;
+
 /* Gets a non-owning pointer to the current thread object.
  *
  * IMPORTANT! This function is only meaningful for the main thread and threads

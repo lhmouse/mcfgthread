@@ -115,6 +115,23 @@ _MCF_thread_wait(const _MCF_thread* thrd, const int64_t* timeout_opt)
   }
 
 __MCF_DLLEXPORT
+_MCF_thread_priority
+_MCF_thread_get_priority(const _MCF_thread* thrd_opt)
+  {
+    HANDLE handle = thrd_opt ? thrd_opt->__handle : GetCurrentThread();
+    return (_MCF_thread_priority) GetThreadPriority(handle);
+  }
+
+__MCF_DLLEXPORT
+int
+_MCF_thread_set_priority(_MCF_thread* thrd_opt, _MCF_thread_priority priority)
+  {
+    HANDLE handle = thrd_opt ? thrd_opt->__handle : GetCurrentThread();
+    BOOL succ = SetThreadPriority(handle, (int8_t) priority);
+    return !succ ? -1 : 0;
+  }
+
+__MCF_DLLEXPORT
 _MCF_thread*
 _MCF_thread_self(void)
   {

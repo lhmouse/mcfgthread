@@ -88,7 +88,8 @@ typedef DWORD __stdcall THREAD_START_ROUTINE(LPVOID);
 __MCF_WINAPI(HANDLE, CreateThread, SECURITY_ATTRIBUTES*, SIZE_T, THREAD_START_ROUTINE*, LPVOID, DWORD, DWORD*);
 __MCF_WINAPI(void, ExitThread, DWORD) __attribute__((__noreturn__));
 __MCF_WINAPI(BOOL, SwitchToThread, void);
-
+__MCF_WINAPI(int, GetThreadPriority, HANDLE) __attribute__((__pure__));
+__MCF_WINAPI(BOOL, SetThreadPriority, HANDLE, int);
 __MCF_WINAPI(DWORD, GetCurrentProcessId, void);
 __MCF_WINAPI(BOOL, TerminateProcess, HANDLE, UINT);
 

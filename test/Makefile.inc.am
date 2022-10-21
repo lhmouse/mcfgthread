@@ -35,6 +35,7 @@ check_PROGRAMS +=  \
   %reldir%/thread_self_id.test  \
   %reldir%/thread_overlarge.test  \
   %reldir%/thread_x87_precision.test  \
+  %reldir%/thread_priority.test  \
   %reldir%/gthr_c89_pedantic.test  \
   %reldir%/gthr_inline_alias.test  \
   %reldir%/gthr_once.test  \
