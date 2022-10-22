@@ -17,11 +17,14 @@
 #  define __MCF_DLLEXPORT
 #endif
 
+#define __objc_INCLUDE_GNU
+#define BOOL int
 #include <minwindef.h>
 #include <minwinbase.h>
 #include <winternl.h>
 #include <winerror.h>
 #include <ntstatus.h>
+#undef BOOL
 
 #include <stddef.h>
 #include <stdint.h>
