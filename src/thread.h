@@ -32,6 +32,8 @@ struct __MCF_thread
     __MCF_dtor_queue __atexit_queue[1];  /* for `__cxa_thread_atexit()`  */
     __MCF_tls_table __tls_table[1];  /* for `_MCF_tls_get()` and `_MCF_tls_set()`  */
 
+    void* __libobjc_tls_data;  /* for GCC libobjc  */
+
     /* `__data_ptr` shall always point to `__data_storage` below. The space
      * preceding it is reserved for future use. It is not safe to assume the
      * offset of `__data_storage` to be a constant.  */
