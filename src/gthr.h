@@ -8,10 +8,6 @@
 #include "fwd.h"
 #include "gthr_aux.h"
 
-#ifdef _LIBOBJC
-#  include "gthr_libobjc.h"
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
