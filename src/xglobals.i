@@ -10,14 +10,11 @@
 #include "mutex.h"
 #include "cond.h"
 #include "dtor_queue.h"
-#define __objc_INCLUDE_GNU
-#define BOOL int
 #include <minwindef.h>
 #include <minwinbase.h>
 #include <winternl.h>
 #include <winerror.h>
 #include <ntstatus.h>
-#undef BOOL
 
 #ifdef __cplusplus
 extern "C" {
@@ -69,35 +66,35 @@ __MCF_WINAPI(PVOID, EncodePointer, PVOID) __attribute__((__const__));
 __MCF_WINAPI(PVOID, DecodePointer, PVOID) __attribute__((__const__));
 
 __MCF_WINAPI(DWORD, TlsAlloc, void);
-__MCF_WINAPI(int, TlsFree, DWORD);
+__MCF_WINAPI(BOOL, TlsFree, DWORD);
 __MCF_WINAPI(LPVOID, TlsGetValue, DWORD) __attribute__((__pure__));
-__MCF_WINAPI(int, TlsSetValue, DWORD, LPVOID);
+__MCF_WINAPI(BOOL, TlsSetValue, DWORD, LPVOID);
 
 __MCF_WINAPI(HANDLE, GetProcessHeap, void) __attribute__((__const__));
 __MCF_WINAPI(LPVOID, HeapAlloc, HANDLE, DWORD, SIZE_T) __attribute__((__alloc_size__(3)));
 __MCF_WINAPI(LPVOID, HeapReAlloc, HANDLE, DWORD, LPVOID, SIZE_T) __attribute__((__alloc_size__(4)));
 __MCF_WINAPI(SIZE_T, HeapSize, HANDLE, DWORD, LPCVOID) __attribute__((__pure__));
-__MCF_WINAPI(int, HeapFree, HANDLE, DWORD, LPVOID);
+__MCF_WINAPI(BOOL, HeapFree, HANDLE, DWORD, LPVOID);
 
 __MCF_WINAPI(void, GetSystemTimeAsFileTime, FILETIME*);
 #if _WIN32_WINNT >= 0x0602
 __MCF_WINAPI(void, GetSystemTimePreciseAsFileTime, FILETIME*);
 #endif
 __MCF_WINAPI(ULONGLONG, GetTickCount64, void);
-__MCF_WINAPI(int, QueryPerformanceFrequency, LARGE_INTEGER*);
-__MCF_WINAPI(int, QueryPerformanceCounter, LARGE_INTEGER*);
+__MCF_WINAPI(BOOL, QueryPerformanceFrequency, LARGE_INTEGER*);
+__MCF_WINAPI(BOOL, QueryPerformanceCounter, LARGE_INTEGER*);
 
 typedef DWORD __stdcall THREAD_START_ROUTINE(LPVOID);
 __MCF_WINAPI(HANDLE, CreateThread, SECURITY_ATTRIBUTES*, SIZE_T, THREAD_START_ROUTINE*, LPVOID, DWORD, DWORD*);
 __MCF_WINAPI(void, ExitThread, DWORD) __attribute__((__noreturn__));
-__MCF_WINAPI(int, SwitchToThread, void);
+__MCF_WINAPI(BOOL, SwitchToThread, void);
 __MCF_WINAPI(int, GetThreadPriority, HANDLE) __attribute__((__pure__));
-__MCF_WINAPI(int, SetThreadPriority, HANDLE, int);
+__MCF_WINAPI(BOOL, SetThreadPriority, HANDLE, int);
 __MCF_WINAPI(DWORD, GetCurrentProcessId, void);
-__MCF_WINAPI(int, TerminateProcess, HANDLE, UINT);
+__MCF_WINAPI(BOOL, TerminateProcess, HANDLE, UINT);
 
-typedef int __stdcall HANDLER_ROUTINE(DWORD CtrlType);
-__MCF_WINAPI(int, SetConsoleCtrlHandler, HANDLER_ROUTINE*, int);
+typedef BOOL __stdcall HANDLER_ROUTINE(DWORD CtrlType);
+__MCF_WINAPI(BOOL, SetConsoleCtrlHandler, HANDLER_ROUTINE*, BOOL);
 
 __MCF_WINAPI(NTSTATUS, BaseGetNamedObjectDirectory, HANDLE*);
 

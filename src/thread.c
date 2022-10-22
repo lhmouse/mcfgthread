@@ -130,7 +130,7 @@ int
 _MCF_thread_set_priority(_MCF_thread* thrd_opt, _MCF_thread_priority priority)
   {
     HANDLE handle = thrd_opt ? thrd_opt->__handle : GetCurrentThread();
-    int succ = SetThreadPriority(handle, (int8_t) priority);
+    BOOL succ = SetThreadPriority(handle, (int8_t) priority);
     return !succ ? -1 : 0;
   }
 
@@ -149,7 +149,7 @@ _MCF_yield(void)
   }
 
 static
-int
+BOOL
 __stdcall
 do_handle_interrupt(DWORD type)
   {
@@ -160,7 +160,7 @@ do_handle_interrupt(DWORD type)
 
 static inline
 void
-do_handler_cleanup(int* added)
+do_handler_cleanup(BOOL* added)
   {
     if(*added)
       SetConsoleCtrlHandler(do_handle_interrupt, false);
@@ -171,7 +171,7 @@ int
 _MCF_sleep(const int64_t* timeout_opt)
   {
     /* Set a handler to receive Ctrl-C notifications.  */
-    int added __attribute__((__cleanup__(do_handler_cleanup))) = false;
+    BOOL added __attribute__((__cleanup__(do_handler_cleanup))) = false;
     added = SetConsoleCtrlHandler(do_handle_interrupt, true);
 
     int err = _MCF_cond_wait(__MCF_g->__interrupt_cond, NULL, NULL, 0, timeout_opt);
