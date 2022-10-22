@@ -37,7 +37,7 @@ __gthread_objc_thread_detach(__MCF_gthr_thread_procedure* __proc, void* __arg) _
   {
     __MCF_gthr_thread_record __rec[1] = __MCF_0_INIT;
     _MCF_thread* __thrd;
-    uint32_t __nt_tid;
+    uint32_t __tid;
 
     __rec->__proc = __proc;
     __rec->__arg = __arg;
@@ -46,9 +46,9 @@ __gthread_objc_thread_detach(__MCF_gthr_thread_procedure* __proc, void* __arg) _
     if(!__thrd)
       return NULL;
 
-    __nt_tid = _MCF_thread_get_tid(__thrd);
+    __tid = __thrd->__tid;
     _MCF_thread_drop_ref_nonnull(__thrd);
-    return (objc_thread_t)(uintptr_t) __nt_tid;
+    return (objc_thread_t)(uintptr_t) __tid;
   }
 
 /* Set the current thread's priority.  */
