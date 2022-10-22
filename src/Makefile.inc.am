@@ -16,6 +16,7 @@ include_mcfgthread_HEADERS =  \
   %reldir%/tls.h  \
   %reldir%/gthr_aux.h  \
   %reldir%/gthr.h  \
+  %reldir%/gthr_libobjc.h  \
   %reldir%/c11.h  \
   ${END}
 
