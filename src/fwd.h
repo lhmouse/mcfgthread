@@ -107,7 +107,7 @@ extern "C++" template<> struct __MCF_static_assert<true> { char __unused;  };
 #define __MCF_CHECK(...)      ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__FUNCTION__))
 
 /* Define thread priority constants, from lowest to highest.
- * These values match NT syscalls and can be passed around as such, but we
+ * These values match Windows APIs and can be passed around as such, but we
  * define only what we find necessary at the moment.  */
 enum __MCF_thread_priority __MCF_CXX11(: int)
   {
