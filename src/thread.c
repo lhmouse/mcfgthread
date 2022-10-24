@@ -18,15 +18,14 @@ do_win32_thread_thunk(LPVOID param)
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     _MCF_thread* const self = param;
 
+    /* `__tid` has to be set in case that this thread begins execution before
+     * `CreateThread()` returns from the other thread.  */
+    self->__tid = _MCF_thread_self_tid();
+
 #if defined(__i386__) || defined(__amd64__)
     /* Set x87 precision to 64-bit mantissa (GNU `long double` format).  */
     __asm__ volatile ("fninit");
 #endif  /* x86  */
-
-    /* Wait until the structure has been fully initialized.  */
-    DWORD cmp = 0;
-    if(_MCF_atomic_cmpxchg_32_rlx(&(self->__tid), &cmp, -1))
-      __MCF_keyed_event_wait(self, NULL);
 
     /* Attach the thread and execute the user-defined procedure.  */
     TlsSetValue(__MCF_g->__tls_index, self);
@@ -54,8 +53,10 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
     thrd->__proc = proc;
     thrd->__data_ptr = thrd->__data_storage;
 
-    /* Create the thread. The new thread will wait until `__tid` contains a
-     * valid thread ID.  */
+    if(data_opt)
+      __MCF_mcopy(thrd->__data_storage, data_opt, size);
+
+    /* Create the thread now.  */
     DWORD tid;
     thrd->__handle = CreateThread(NULL, 0, do_win32_thread_thunk, thrd, 0, &tid);
     if(thrd->__handle == NULL) {
@@ -63,16 +64,9 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
       return NULL;
     }
 
-    /* Copy user-defined data in, before setting the `__tid` field.  */
-    if(data_opt)
-      __MCF_mcopy(thrd->__data_storage, data_opt, size);
-
-    /* Set the thread ID. If its old value is not zero, the new thread should
-     * have been waiting, so notify it.  */
-    if(_MCF_atomic_xchg_32_rlx(&(thrd->__tid), (int32_t) tid) != 0)
-      __MCF_keyed_event_signal(thrd, NULL);
-
-    __MCF_ASSERT(thrd->__tid == tid);
+    /* Set `__tid` in case `CreateThread()` returns before the new thread begins
+     * execution. It may be overwritten by the new thread with the same value.  */
+    thrd->__tid = tid;
     return thrd;
   }
 
