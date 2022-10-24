@@ -19,7 +19,7 @@ do_win32_thread_thunk(LPVOID param)
 
     /* `__tid` has to be set in case that this thread begins execution before
      * `CreateThread()` returns from the other thread.  */
-    self->__tid = _MCF_thread_self_tid();
+    _MCF_atomic_store_32_rlx(&(self->__tid), (int32_t) _MCF_thread_self_tid());
 
 #if defined(__i386__) || defined(__amd64__)
     /* Set x87 precision to 64-bit mantissa (GNU `long double` format).  */
@@ -65,7 +65,7 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
 
     /* Set `__tid` in case `CreateThread()` returns before the new thread begins
      * execution. It may be overwritten by the new thread with the same value.  */
-    thrd->__tid = tid;
+    _MCF_atomic_store_32_rlx(&(thrd->__tid), (int32_t) tid);
     return thrd;
   }
 
