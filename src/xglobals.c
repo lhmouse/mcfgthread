@@ -176,7 +176,7 @@ do_on_process_attach(void)
     __MCF_ASSERT(gnbuffer[25] == L'*');
     do_encode_numeric_field(gnbuffer + 25, 8, pid, L"0123456789ABCDEF");
     __MCF_ASSERT(gnbuffer[34] == L'#');
-    do_encode_numeric_field(gnbuffer + 34, 16, cookie, L"GHJKLMNPQRSTUVWY");
+    do_encode_numeric_field(gnbuffer + 34, 16, cookie, L"GHJKLMNPQRSTUWXY");
     __MCF_ASSERT(gnbuffer[50] == 0);
 
     /* Allocate or open storage for global data.
