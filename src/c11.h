@@ -8,11 +8,7 @@
 #include "fwd.h"
 #include "gthr_aux.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/* Define wrappers as required by the ISO/IEC C11 standard.  */
+__MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_C11_IMPORT
 #  define __MCF_DECLSPEC_C11_IMPORT
 #  define __MCF_DECLSPEC_C11_INLINE  __MCF_GNU_INLINE
@@ -574,8 +570,5 @@ __MCF_c11_tss_set(tss_t __key, void* __val_opt) __MCF_NOEXCEPT
     return (__err != 0) ? thrd_error : thrd_success;
   }
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_C11_  */

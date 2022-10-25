@@ -8,10 +8,7 @@
 #include "fwd.h"
 #include "atomic.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+__MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_MUTEX_IMPORT
 #  define __MCF_DECLSPEC_MUTEX_IMPORT
 #  define __MCF_DECLSPEC_MUTEX_INLINE  __MCF_GNU_INLINE
@@ -127,8 +124,5 @@ _MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_NOEXCEPT
     _MCF_mutex_unlock_slow(__mutex);
   }
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_MUTEX_  */

@@ -7,10 +7,7 @@
 
 #include "fwd.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+__MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_TLS_IMPORT
 #  define __MCF_DECLSPEC_TLS_IMPORT
 #  define __MCF_DECLSPEC_TLS_INLINE  __MCF_GNU_INLINE
@@ -105,8 +102,5 @@ _MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT
       _MCF_tls_key_delete_nonnull(__key_opt);
   }
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_TLS_  */

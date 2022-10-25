@@ -8,10 +8,7 @@
 #include "fwd.h"
 #include "atomic.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+__MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_ONCE_IMPORT
 #  define __MCF_DECLSPEC_ONCE_IMPORT
 #  define __MCF_DECLSPEC_ONCE_INLINE  __MCF_GNU_INLINE
@@ -113,8 +110,5 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
     return _MCF_once_wait_slow(__once, __timeout_opt);
   }
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_ONCE_  */

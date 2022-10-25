@@ -8,11 +8,7 @@
 #include "fwd.h"
 #include "gthr_aux.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-/* Define wrappers as required by 'gthr-default.h'.  */
+__MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_GTHR_IMPORT
 #  define __MCF_DECLSPEC_GTHR_IMPORT
 #  define __MCF_DECLSPEC_GTHR_INLINE  __MCF_GNU_INLINE
@@ -605,8 +601,5 @@ __MCF_gthr_yield(void) __MCF_NOEXCEPT
     _MCF_yield();
   }
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_GTHR_  */

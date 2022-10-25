@@ -10,10 +10,7 @@
 #include "tls.h"
 #include "atomic.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+__MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_THREAD_IMPORT
 #  define __MCF_DECLSPEC_THREAD_IMPORT
 #  define __MCF_DECLSPEC_THREAD_INLINE  __MCF_GNU_INLINE
@@ -255,8 +252,5 @@ _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt) __MCF_NOEXCEPT
                : __MCF_tls_table_set(__self->__tls_table, __key, __value_opt);
   }
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_THREAD_  */
