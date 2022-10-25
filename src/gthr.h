@@ -248,7 +248,7 @@ __MCF_ALIAS(__gthread_detach, __MCF_gthr_detach_v2);
 
 /* Gets a thread itself, like `pthread_self()`.
  * The thread shall be the main thread, or shall have been created by
- * `__gthr_create()`. Otherwise the behavior is undefined.  */
+ * `__gthread_create()`. Otherwise the behavior is undefined.  */
 __MCF_DECLSPEC_GTHR_INLINE
 __gthread_t
 __MCF_gthr_self(void) __MCF_NOEXCEPT
