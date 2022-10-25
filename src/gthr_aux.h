@@ -18,13 +18,6 @@ __MCF_C_DECLARATIONS_BEGIN
 #  define __MCF_DECLSPEC_GTHR_AUX_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Define macros for renaming symbols, in order to prevent DLL hells.  */
-#ifdef __cplusplus
-#  define __MCF_GTHR_ALIAS(alias, target)  static __MCF_CXX11(constexpr) __typeof__(target)& alias = (target)  /* no semicolon  */
-#else
-#  define __MCF_GTHR_ALIAS(alias, target)  static __typeof__(target)* const alias = (target)  /* no semicolon  */
-#endif
-
 /* Define reusable types.  */
 typedef struct __MCF_gthr_rc_mutex __MCF_gthr_rc_mutex;
 typedef struct __MCF_gthr_thread_record __MCF_gthr_thread_record;

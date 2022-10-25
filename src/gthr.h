@@ -47,28 +47,28 @@ int
 __MCF_gthr_active_p(void) __MCF_NOEXCEPT
   __attribute__((__const__));
 
-__MCF_GTHR_ALIAS(__gthread_active_p, __MCF_gthr_active_p);
+__MCF_ALIAS(__gthread_active_p, __MCF_gthr_active_p);
 
 /* Performs one-time initialization, like `pthread_once()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_once(__gthread_once_t* __once, __MCF_once_callback* __init_proc);
 
-__MCF_GTHR_ALIAS(__gthread_once, __MCF_gthr_once);
+__MCF_ALIAS(__gthread_once, __MCF_gthr_once);
 
 /* Allocates a thread-specific key, like `pthread_key_create()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_key_create(__gthread_key_t* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_key_create, __MCF_gthr_key_create);
+__MCF_ALIAS(__gthread_key_create, __MCF_gthr_key_create);
 
 /* Destroys a thread-specific key, like `pthread_key_delete()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_key_delete(__gthread_key_t __key) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_key_delete, __MCF_gthr_key_delete);
+__MCF_ALIAS(__gthread_key_delete, __MCF_gthr_key_delete);
 
 /* Gets a thread-specific value, like `pthread_getspecific()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
@@ -76,77 +76,77 @@ void*
 __MCF_gthr_getspecific(__gthread_key_t __key) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_GTHR_ALIAS(__gthread_getspecific, __MCF_gthr_getspecific);
+__MCF_ALIAS(__gthread_getspecific, __MCF_gthr_getspecific);
 
 /* Sets a thread-specific value, like `pthread_setspecific()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_setspecific(__gthread_key_t __key, const void* __val_opt) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_setspecific, __MCF_gthr_setspecific);
+__MCF_ALIAS(__gthread_setspecific, __MCF_gthr_setspecific);
 
 /* Initializes a mutex, like `pthread_mutex_init()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_mutex_init(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_mutex_init, __MCF_gthr_mutex_init);
+__MCF_ALIAS(__gthread_mutex_init, __MCF_gthr_mutex_init);
 
 /* Destroys a mutex. This function does nothing.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_mutex_destroy(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_mutex_destroy, __MCF_gthr_mutex_destroy);
+__MCF_ALIAS(__gthread_mutex_destroy, __MCF_gthr_mutex_destroy);
 
 /* Locks a mutex, like `pthread_mutex_lock()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_mutex_lock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_mutex_lock, __MCF_gthr_mutex_lock);
+__MCF_ALIAS(__gthread_mutex_lock, __MCF_gthr_mutex_lock);
 
 /* Tries locking a mutex without blocking, like `pthread_mutex_trylock()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_mutex_trylock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_mutex_trylock, __MCF_gthr_mutex_trylock);
+__MCF_ALIAS(__gthread_mutex_trylock, __MCF_gthr_mutex_trylock);
 
 /* Tries locking a mutex until a time point, like `pthread_mutex_timedlock()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_mutex_timedlock(__gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_mutex_timedlock, __MCF_gthr_mutex_timedlock);
+__MCF_ALIAS(__gthread_mutex_timedlock, __MCF_gthr_mutex_timedlock);
 
 /* Unlocks a mutex, like `pthread_mutex_unlock()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_mutex_unlock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_mutex_unlock, __MCF_gthr_mutex_unlock);
+__MCF_ALIAS(__gthread_mutex_unlock, __MCF_gthr_mutex_unlock);
 
 /* Initializes a recursive mutex, like `pthread_mutex_init()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_recursive_mutex_init(__gthread_recursive_mutex_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_recursive_mutex_init, __MCF_gthr_recursive_mutex_init);
+__MCF_ALIAS(__gthread_recursive_mutex_init, __MCF_gthr_recursive_mutex_init);
 
 /* Destroys a recursive mutex. This function does nothing.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_recursive_mutex_destroy(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_recursive_mutex_destroy, __MCF_gthr_recursive_mutex_destroy);
+__MCF_ALIAS(__gthread_recursive_mutex_destroy, __MCF_gthr_recursive_mutex_destroy);
 
 /* Locks a recursive mutex, like `pthread_mutex_lock()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_recursive_mutex_lock, __MCF_gthr_recursive_mutex_lock);
+__MCF_ALIAS(__gthread_recursive_mutex_lock, __MCF_gthr_recursive_mutex_lock);
 
 /* Tries locking a recursive mutex without blocking, like
  * `pthread_mutex_trylock()`.  */
@@ -154,7 +154,7 @@ __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_recursive_mutex_trylock, __MCF_gthr_recursive_mutex_trylock);
+__MCF_ALIAS(__gthread_recursive_mutex_trylock, __MCF_gthr_recursive_mutex_trylock);
 
 /* Tries locking a recursive mutex until a time point, like
  * `pthread_mutex_timedlock()`.  */
@@ -162,14 +162,14 @@ __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_recursive_mutex_timedlock, __MCF_gthr_recursive_mutex_timedlock);
+__MCF_ALIAS(__gthread_recursive_mutex_timedlock, __MCF_gthr_recursive_mutex_timedlock);
 
 /* Unlocks a recursive mutex, like `pthread_mutex_unlock()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_recursive_mutex_unlock, __MCF_gthr_recursive_mutex_unlock);
+__MCF_ALIAS(__gthread_recursive_mutex_unlock, __MCF_gthr_recursive_mutex_unlock);
 
 /* Initializes a condition variable, like `pthread_cond_init()`.
  * This function exists not in GCC's 'gthr.h' but in 'gthr-posix.h'.  */
@@ -177,7 +177,7 @@ __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_cond_init(__gthread_cond_t* __cond) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_cond_init, __MCF_gthr_cond_init);
+__MCF_ALIAS(__gthread_cond_init, __MCF_gthr_cond_init);
 
 /* Destroys a condition variable. This function does nothing.
  * This function exists not in GCC's 'gthr.h' but in 'gthr-posix.h'.  */
@@ -185,21 +185,21 @@ __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_cond_destroy(__gthread_cond_t* __cond) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_cond_destroy, __MCF_gthr_cond_destroy);
+__MCF_ALIAS(__gthread_cond_destroy, __MCF_gthr_cond_destroy);
 
 /* Waits for a condition variable, like `pthread_cond_wait()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_cond_wait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_cond_wait, __MCF_gthr_cond_wait);
+__MCF_ALIAS(__gthread_cond_wait, __MCF_gthr_cond_wait);
 
 /* Waits for a condition variable, like `pthread_cond_wait()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_cond_wait_recursive, __MCF_gthr_cond_wait_recursive);
+__MCF_ALIAS(__gthread_cond_wait_recursive, __MCF_gthr_cond_wait_recursive);
 
 /* Waits for a condition variable until a time point, like
  * `pthread_cond_timedwait()`.  */
@@ -207,7 +207,7 @@ __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_cond_timedwait, __MCF_gthr_cond_timedwait);
+__MCF_ALIAS(__gthread_cond_timedwait, __MCF_gthr_cond_timedwait);
 
 /* Signals at most one thread that is waiting on the condition variable, like
  * `pthread_cond_signal()`.  */
@@ -215,7 +215,7 @@ __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_cond_signal(__gthread_cond_t* __cond) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_cond_signal, __MCF_gthr_cond_signal);
+__MCF_ALIAS(__gthread_cond_signal, __MCF_gthr_cond_signal);
 
 /* Signals all threads that are waiting on the condition variable, like
  * `pthread_cond_broadcast()`.  */
@@ -223,28 +223,28 @@ __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_cond_broadcast(__gthread_cond_t* __cond) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_cond_broadcast, __MCF_gthr_cond_broadcast);
+__MCF_ALIAS(__gthread_cond_broadcast, __MCF_gthr_cond_broadcast);
 
 /* Creates a thread, like `pthread_create()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_create, __MCF_gthr_create_v2);
+__MCF_ALIAS(__gthread_create, __MCF_gthr_create_v2);
 
 /* Awaits a thread to terminate and gets its result, like `pthread_join()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_join, __MCF_gthr_join_v2);
+__MCF_ALIAS(__gthread_join, __MCF_gthr_join_v2);
 
 /* Detaches a thread, like `pthread_detach()`  */
 __MCF_DECLSPEC_GTHR_INLINE
 int
 __MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_detach, __MCF_gthr_detach_v2);
+__MCF_ALIAS(__gthread_detach, __MCF_gthr_detach_v2);
 
 /* Gets a thread itself, like `pthread_self()`.
  * The thread shall be the main thread, or shall have been created by
@@ -254,7 +254,7 @@ __gthread_t
 __MCF_gthr_self(void) __MCF_NOEXCEPT
   __attribute__((__const__, __returns_nonnull__));
 
-__MCF_GTHR_ALIAS(__gthread_self, __MCF_gthr_self);
+__MCF_ALIAS(__gthread_self, __MCF_gthr_self);
 
 /* Checks whether two thread IDs compare equal, like `pthread_equal()`.  */
 __MCF_DECLSPEC_GTHR_INLINE __MCF_CXX11(constexpr)
@@ -262,14 +262,14 @@ int
 __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_GTHR_ALIAS(__gthread_equal, __MCF_gthr_equal);
+__MCF_ALIAS(__gthread_equal, __MCF_gthr_equal);
 
 /* Gives up the current time slice, like `sched_yield()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 void
 __MCF_gthr_yield(void) __MCF_NOEXCEPT;
 
-__MCF_GTHR_ALIAS(__gthread_yield, __MCF_gthr_yield);
+__MCF_ALIAS(__gthread_yield, __MCF_gthr_yield);
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
