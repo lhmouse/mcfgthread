@@ -8,10 +8,7 @@
 #include "fwd.h"
 #include "atomic.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+__MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_SEM_IMPORT
 #  define __MCF_DECLSPEC_SEM_IMPORT
 #  define __MCF_DECLSPEC_SEM_INLINE  __MCF_GNU_INLINE
@@ -115,8 +112,5 @@ _MCF_sem_signal(_MCF_sem* __sem) __MCF_NOEXCEPT
     return _MCF_sem_signal_some(__sem, 1);
   }
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_SEM_  */

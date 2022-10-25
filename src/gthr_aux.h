@@ -12,10 +12,7 @@
 #include "thread.h"
 #include <time.h>  /* struct timespec  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+__MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_GTHR_AUX
 #  define __MCF_DECLSPEC_GTHR_AUX
 #  define __MCF_DECLSPEC_GTHR_AUX_INLINE  __MCF_GNU_INLINE
@@ -157,8 +154,5 @@ __MCF_gthr_rc_mutex_release(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
     _MCF_mutex_unlock(__rmtx->__mutex);
   }
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_GTHR_AUX_  */

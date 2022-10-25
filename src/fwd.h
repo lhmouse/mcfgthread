@@ -11,10 +11,6 @@
 #include <stdbool.h>
 #include <limits.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifndef _WIN32_WINNT
 #  error Only Windows platforms are supported.
 #endif
@@ -79,6 +75,10 @@ extern "C" {
 #define __MCF_PTR_BITS         (__SIZEOF_POINTER__ * 8U)
 #define __MCF_ALIGN(...)       __attribute__((__aligned__(__VA_ARGS__)))
 
+#define __MCF_C_DECLARATIONS_BEGIN   __MCF_CXX(extern "C" {)
+#define __MCF_C_DECLARATIONS_END     __MCF_CXX(})
+
+__MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_FWD_IMPORT
 #  define __MCF_DECLSPEC_FWD_IMPORT
 #  define __MCF_DECLSPEC_FWD_INLINE  __MCF_GNU_INLINE
@@ -186,8 +186,5 @@ uint32_t
 _MCF_get_win32_error(void) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_FWD_  */

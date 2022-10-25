@@ -7,10 +7,7 @@
 
 #include "fwd.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+__MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_EXIT_IMPORT
 #  define __MCF_DECLSPEC_EXIT_IMPORT
 #  define __MCF_DECLSPEC_EXIT_INLINE  __MCF_GNU_INLINE
@@ -32,8 +29,5 @@ void
 __MCF_exit(int __status) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_EXIT_  */

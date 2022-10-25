@@ -8,10 +8,7 @@
 #include "fwd.h"
 #include "atomic.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+__MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_COND_IMPORT
 #  define __MCF_DECLSPEC_COND_IMPORT
 #  define __MCF_DECLSPEC_COND_INLINE  __MCF_GNU_INLINE
@@ -115,8 +112,5 @@ _MCF_cond_signal_all(_MCF_cond* __cond) __MCF_NOEXCEPT
     return _MCF_cond_signal_some(__cond, SIZE_MAX);
   }
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_COND_  */

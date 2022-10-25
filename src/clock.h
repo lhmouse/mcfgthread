@@ -7,10 +7,7 @@
 
 #include "fwd.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+__MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_CLOCK_IMPORT
 #  define __MCF_DECLSPEC_CLOCK_IMPORT
 #  define __MCF_DECLSPEC_CLOCK_INLINE  __MCF_GNU_INLINE
@@ -37,8 +34,5 @@ __MCF_DECLSPEC_CLOCK_IMPORT
 double
 _MCF_perf_counter(void) __MCF_NOEXCEPT;
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_CLOCK_  */

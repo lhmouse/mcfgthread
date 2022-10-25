@@ -8,10 +8,7 @@
 #include "fwd.h"
 #include "atomic.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+__MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_EVENT_IMPORT
 #  define __MCF_DECLSPEC_EVENT_IMPORT
 #  define __MCF_DECLSPEC_EVENT_INLINE  __MCF_GNU_INLINE
@@ -153,8 +150,5 @@ _MCF_event_set(_MCF_event* __event, int __value) __MCF_NOEXCEPT
     return _MCF_event_set_slow(__event, __value);
   }
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_EVENT_  */

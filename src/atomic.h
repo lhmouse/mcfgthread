@@ -7,6 +7,12 @@
 
 #include "fwd.h"
 
+__MCF_C_DECLARATIONS_BEGIN
+#ifndef __MCF_DECLSPEC_ATOMIC_IMPORT
+#  define __MCF_DECLSPEC_ATOMIC_IMPORT
+#  define __MCF_DECLSPEC_ATOMIC_INLINE  __MCF_GNU_INLINE
+#endif
+
 /* We don't use the generic builtins due to a GCC bug.
  * See <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105495> for details.
  *
@@ -271,4 +277,5 @@ __MCF_ATOMIC_FUNCTIONS(__MCF_ATOMIC_xsub_, rel)
 __MCF_ATOMIC_FUNCTIONS(__MCF_ATOMIC_xsub_, arl)
 __MCF_ATOMIC_FUNCTIONS(__MCF_ATOMIC_xsub_, cst)
 
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_ATOMIC_  */

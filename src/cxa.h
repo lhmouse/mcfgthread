@@ -7,10 +7,7 @@
 
 #include "fwd.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+__MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_CXA_IMPORT
 #  define __MCF_DECLSPEC_CXA_IMPORT
 #  define __MCF_DECLSPEC_CXA_INLINE  __MCF_GNU_INLINE
@@ -79,8 +76,5 @@ __MCF_DECLSPEC_CXA_IMPORT
 void
 __MCF_cxa_finalize(void* __dso) __MCF_NOEXCEPT;
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_CXA_  */

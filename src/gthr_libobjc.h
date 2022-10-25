@@ -9,8 +9,10 @@
 #include "gthr_aux.h"
 #include <objc/thr.h>
 
-#ifdef __cplusplus
-extern "C" {
+__MCF_C_DECLARATIONS_BEGIN
+#ifndef __MCF_DECLSPEC_GTHR_LIBOBJC_IMPORT
+#  define __MCF_DECLSPEC_GTHR_LIBOBJC_IMPORT
+#  define __MCF_DECLSPEC_GTHR_LIBOBJC_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* Initialize the threads subsystem.  */
@@ -240,8 +242,5 @@ __gthread_objc_condition_signal(objc_condition_t __objc_cond) __MCF_NOEXCEPT
     return 0;
   }
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_GTHR_LIBOBJC_  */

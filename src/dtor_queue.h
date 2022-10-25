@@ -7,10 +7,7 @@
 
 #include "fwd.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
+__MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_DTOR_QUEUE
 #  define __MCF_DECLSPEC_DTOR_QUEUE
 #  define __MCF_DECLSPEC_DTOR_QUEUE_INLINE  __MCF_GNU_INLINE
@@ -69,8 +66,5 @@ __MCF_DECLSPEC_DTOR_QUEUE
 void
 __MCF_dtor_queue_finalize(__MCF_dtor_queue* __queue, _MCF_mutex* __mutex_opt, void* __dso) __MCF_NOEXCEPT;
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_DTOR_QUEUE_  */
