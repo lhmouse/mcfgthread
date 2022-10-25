@@ -16,8 +16,11 @@
 #include <winerror.h>
 #include <ntstatus.h>
 
-#ifdef __cplusplus
-extern "C" {
+__MCF_C_DECLARATIONS_BEGIN
+#ifndef __MCF_DECLSPEC_XGLOBALS_IMPORT
+#  define __MCF_DECLSPEC_XGLOBALS_IMPORT
+#  define __MCF_DECLSPEC_XGLOBALS_INLINE  __MCF_GNU_INLINE
+#  define __MCF_DECLSPEC_XGLOBALS_CONST   const
 #endif
 
 #ifndef _WIN32_WINNT
@@ -30,12 +33,6 @@ extern "C" {
 
 #if __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
 #  error Windows platforms are assumed to be little-endian.
-#endif
-
-#ifndef __MCF_DECLSPEC_XGLOBALS_IMPORT
-#  define __MCF_DECLSPEC_XGLOBALS_IMPORT
-#  define __MCF_DECLSPEC_XGLOBALS_INLINE  __MCF_GNU_INLINE
-#  define __MCF_DECLSPEC_XGLOBALS_CONST   const
 #endif
 
 /* Hard-code these.  */
@@ -474,8 +471,5 @@ __MCF_mfree(void* __ptr) __MCF_NOEXCEPT
     __MCF_ASSERT(__succ);
   }
 
-#ifdef __cplusplus
-}
-#endif
-
+__MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_XGLOBALS_  */
