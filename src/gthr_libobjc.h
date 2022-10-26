@@ -159,19 +159,19 @@ __MCF_ALWAYS_INLINE
 int
 __gthread_objc_thread_set_priority(int __priority) __MCF_NOEXCEPT
   {
-    _MCF_thread_priority __nt_prio;
+    _MCF_thread_priority __win32_prio;
     int __err;
 
     if(__priority == OBJC_THREAD_INTERACTIVE_PRIORITY)
-      __nt_prio = _MCF_thread_priority_normal;
+      __win32_prio = _MCF_thread_priority_normal;
     else if(__priority == OBJC_THREAD_BACKGROUND_PRIORITY)
-      __nt_prio = _MCF_thread_priority_below_normal;
+      __win32_prio = _MCF_thread_priority_below_normal;
     else if(__priority == OBJC_THREAD_LOW_PRIORITY)
-      __nt_prio = _MCF_thread_priority_low;
+      __win32_prio = _MCF_thread_priority_low;
     else
       return -1;
 
-    __err = _MCF_thread_set_priority(NULL, __nt_prio);
+    __err = _MCF_thread_set_priority(NULL, __win32_prio);
     return __err;
   }
 
@@ -179,11 +179,11 @@ __MCF_ALWAYS_INLINE
 int
 __gthread_objc_thread_get_priority(void) __MCF_NOEXCEPT
   {
-   _MCF_thread_priority __nt_prio = _MCF_thread_get_priority(NULL);
+   _MCF_thread_priority __win32_prio = _MCF_thread_get_priority(NULL);
 
-   if(__nt_prio >= _MCF_thread_priority_normal)
+   if(__win32_prio >= _MCF_thread_priority_normal)
      return OBJC_THREAD_INTERACTIVE_PRIORITY;
-   else if(__nt_prio >= _MCF_thread_priority_below_normal)
+   else if(__win32_prio >= _MCF_thread_priority_below_normal)
      return OBJC_THREAD_BACKGROUND_PRIORITY;
    else
      return OBJC_THREAD_LOW_PRIORITY;
