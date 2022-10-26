@@ -42,7 +42,9 @@ check_PROGRAMS +=  \
   %reldir%/gthr_mutex_timeout.test  \
   %reldir%/gthr_mutex.test  \
   %reldir%/gthr_mutex_nonrecursive.test  \
-  %reldir%/gthr_recursive_mutex.test  \
+  %reldir%/gthr_rc_mutex_trylock.test  \
+  %reldir%/gthr_rc_mutex_timeout.test  \
+  %reldir%/gthr_rc_mutex.test  \
   %reldir%/gthr_cond_timeout.test  \
   %reldir%/gthr_cond_consumers.test  \
   %reldir%/gthr_cond_consumers_recursive.test  \

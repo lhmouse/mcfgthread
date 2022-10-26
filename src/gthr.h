@@ -199,7 +199,7 @@ __MCF_gthr_mutex_trylock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
   {
     int64_t __timeout = 0;
     int __err = _MCF_mutex_lock(__mtx, &__timeout);
-    return (__err != 0) ? -1 : 0;
+    return __err;
   }
 
 /* Tries locking a mutex until a time point, like `pthread_mutex_timedlock()`.  */
@@ -215,7 +215,7 @@ __MCF_gthr_mutex_timedlock(__gthread_mutex_t* __mtx, const __gthread_time_t* __a
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
     int __err = _MCF_mutex_lock(__mtx, &__timeout);
-    return (__err != 0) ? -1 : 0;
+    return __err;
   }
 
 /* Unlocks a mutex, like `pthread_mutex_unlock()`.  */
@@ -302,8 +302,7 @@ __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NO
 
     int64_t __timeout = 0;
     __err = __MCF_gthr_rc_mutex_wait(__rmtx, &__timeout);
-    __MCF_ASSERT(__err == 0);
-    return 0;
+    return __err;
   }
 
 /* Tries locking a recursive mutex until a time point, like
@@ -324,8 +323,7 @@ __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const 
 
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
     __err = __MCF_gthr_rc_mutex_wait(__rmtx, &__timeout);
-    __MCF_ASSERT(__err == 0);
-    return 0;
+    return __err;
   }
 
 /* Unlocks a recursive mutex, like `pthread_mutex_unlock()`.  */
