@@ -283,7 +283,8 @@ int
 __gthread_objc_thread_get_priority(void) __MCF_NOEXCEPT
   {
     int __wprio = (int) _MCF_thread_get_priority(NULL);
-    return (__wprio < -2) ? 0 : (__wprio + 2);
+    int __priority = (__wprio < -2) ? 0 : (__wprio + 2);
+    return __priority;
   }
 
 __MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
