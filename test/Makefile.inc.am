@@ -73,6 +73,7 @@ check_PROGRAMS +=  \
   %reldir%/c11_tss_many.test  \
   %reldir%/c11_thrd_return.test  \
   %reldir%/c11_thrd_equal.test  \
+  %reldir%/c11_thrd_sleep.test  \
   %reldir%/c11_c89_pedantic.test  \
   %reldir%/atexit_thread_self.test  \
   %reldir%/atexit_order.test  \
