@@ -43,7 +43,9 @@ check_PROGRAMS +=  \
   %reldir%/gthr_mutex_timeout.test  \
   %reldir%/gthr_mutex.test  \
   %reldir%/gthr_mutex_nonrecursive.test  \
-  %reldir%/gthr_recursive_mutex.test  \
+  %reldir%/gthr_rc_mutex_trylock.test  \
+  %reldir%/gthr_rc_mutex_timeout.test  \
+  %reldir%/gthr_rc_mutex.test  \
   %reldir%/gthr_cond_timeout.test  \
   %reldir%/gthr_cond_consumers.test  \
   %reldir%/gthr_cond_consumers_recursive.test  \
@@ -61,6 +63,8 @@ check_PROGRAMS +=  \
   %reldir%/c11_mtx.test  \
   %reldir%/c11_mtx_nonrecursive.test  \
   %reldir%/c11_mtx_recursive.test  \
+  %reldir%/c11_mtx_recursive_trylock.test  \
+  %reldir%/c11_mtx_recursive_timeout.test  \
   %reldir%/c11_cnd_timeout.test  \
   %reldir%/c11_cnd_consumers.test  \
   %reldir%/c11_cnd_consumers_recursive.test  \

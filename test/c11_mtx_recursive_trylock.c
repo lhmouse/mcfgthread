@@ -25,17 +25,10 @@ thread_proc(void* param)
       if(r == thrd_success) {
         printf("thread %d got %d\n", (int) _MCF_thread_self_tid(), r);
 
-        r = mtx_lock(&mutex);
-        assert(r == 0);
-        r = mtx_trylock(&mutex);
-        assert(r == 0);
-
         /* Add a resource.  */
         int old = resource;
         _MCF_sleep((const int64_t[]) { -10 });
         resource = old + 1;
-        mtx_unlock(&mutex);
-        mtx_unlock(&mutex);
         mtx_unlock(&mutex);
         break;
       }
@@ -55,7 +48,7 @@ thread_proc(void* param)
 int
 main(void)
   {
-    int err = mtx_init(&mutex, mtx_recursive);
+    int err = mtx_init(&mutex, mtx_plain);
     assert(err == thrd_success);
 
     for(size_t k = 0;  k < NTHREADS;  ++k) {
