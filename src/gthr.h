@@ -473,7 +473,7 @@ __MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, 
 
     _MCF_thread* __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk_v2, __rec, sizeof(*__rec));
     *__thrdp = __thrd;
-    return (__thrd == NULL) ? -1 : 0;  /* as specified by POSIX  */
+    return (__thrd == NULL) ? -1 : 0;
   }
 
 /* Awaits a thread to terminate and gets its result, like `pthread_join()`.  */
