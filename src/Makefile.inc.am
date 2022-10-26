@@ -18,6 +18,7 @@ include_mcfgthread_HEADERS =  \
   %reldir%/gthr.h  \
   %reldir%/gthr_libobjc.h  \
   %reldir%/c11.h  \
+  %reldir%/libcxx.h  \
   ${END}
 
 lib_LTLIBRARIES += lib/libmcfgthread.la
@@ -47,6 +48,7 @@ lib_libmcfgthread_la_SOURCES =  \
   %reldir%/gthr.c  \
   %reldir%/gthr_libobjc.c  \
   %reldir%/c11.c  \
+  %reldir%/libcxx.c  \
   ${END}
 
 .rc.lo:

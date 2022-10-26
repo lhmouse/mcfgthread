@@ -56,6 +56,22 @@ check_PROGRAMS +=  \
   %reldir%/gthr_tls_many.test  \
   %reldir%/gthr_thread_return.test  \
   %reldir%/gthr_equal.test  \
+  %reldir%/libcxx_inline_alias.test  \
+  %reldir%/libcxx_once.test  \
+  %reldir%/libcxx_mutex_trylock.test  \
+  %reldir%/libcxx_mutex.test  \
+  %reldir%/libcxx_mutex_nonrecursive.test  \
+  %reldir%/libcxx_rc_mutex_trylock.test  \
+  %reldir%/libcxx_rc_mutex.test  \
+  %reldir%/libcxx_condvar_timeout.test  \
+  %reldir%/libcxx_condvar_consumers.test  \
+  %reldir%/libcxx_tls_dtor.test  \
+  %reldir%/libcxx_tls_set.test  \
+  %reldir%/libcxx_tls_deleted_key.test  \
+  %reldir%/libcxx_tls_many.test  \
+  %reldir%/libcxx_thread_return.test  \
+  %reldir%/libcxx_thread_id_equal.test  \
+  %reldir%/libcxx_sleep.test  \
   %reldir%/c11_inline_alias.test  \
   %reldir%/c11_call_once.test  \
   %reldir%/c11_mtx_trylock.test  \
