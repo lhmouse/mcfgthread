@@ -172,7 +172,7 @@ __gthread_objc_thread_set_priority(int __priority) __MCF_NOEXCEPT
       return -1;
 
     __err = _MCF_thread_set_priority(NULL, __nt_prio);
-    return (__err != 0) ? -1 : 0;
+    return __err;
   }
 
 __MCF_ALWAYS_INLINE
@@ -269,7 +269,7 @@ __gthread_objc_mutex_trylock(objc_mutex_t __objc_mutex) __MCF_NOEXCEPT
     _MCF_mutex* __mtx = (_MCF_mutex*)(void*) &(__objc_mutex->backend);
     int64_t __timeout = 0;
     int __err = _MCF_mutex_lock(__mtx, &__timeout);
-    return (__err != 0) ? -1 : 0;
+    return __err;
   }
 
 __MCF_ALWAYS_INLINE
