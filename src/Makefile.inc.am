@@ -45,6 +45,7 @@ lib_libmcfgthread_la_SOURCES =  \
   %reldir%/tls.c  \
   %reldir%/gthr_aux.c  \
   %reldir%/gthr.c  \
+  %reldir%/gthr_libobjc.c  \
   %reldir%/c11.c  \
   ${END}
 

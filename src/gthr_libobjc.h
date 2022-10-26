@@ -7,7 +7,9 @@
 
 #include "fwd.h"
 #include "gthr_aux.h"
-#include <objc/thr.h>
+#ifdef _LIBOBJC
+#  include <objc/thr.h>
+#endif
 
 __MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_GTHR_LIBOBJC_IMPORT
@@ -15,56 +17,68 @@ __MCF_C_DECLARATIONS_BEGIN
 #  define __MCF_DECLSPEC_GTHR_LIBOBJC_INLINE  __MCF_GNU_INLINE
 #endif
 
+/* Copy this declaration from GCC libobjc here.  */
+typedef void* objc_thread_t;
+
 /* Initialize the threads subsystem.  */
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE __MCF_CXX11(constexpr)
 int
 __gthread_objc_init_thread_system(void) __MCF_NOEXCEPT;
 
 /* Close the threads subsystem.  */
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE __MCF_CXX11(constexpr)
 int
 __gthread_objc_close_thread_system(void) __MCF_NOEXCEPT;
 
 /* Create a new thread of execution.
  * This function creates a detached thread.  */
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 objc_thread_t
 __gthread_objc_thread_detach(__MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT;
 
 /* Set the current thread's priority.  */
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 int
 __gthread_objc_thread_set_priority(int __priority) __MCF_NOEXCEPT;
 
 /* Return the current thread's priority.  */
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 int
-__gthread_objc_thread_get_priority(void) __MCF_NOEXCEPT;
+__gthread_objc_thread_get_priority(void) __MCF_NOEXCEPT
+  __attribute__((__pure__));
 
 /* Yield our process time to another thread.  */
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 void
 __gthread_objc_thread_yield(void) __MCF_NOEXCEPT;
 
 /* Terminate the current thread.  */
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 int
-__gthread_objc_thread_exit(void) __MCF_NOEXCEPT;
+__gthread_objc_thread_exit(void) __MCF_NOEXCEPT
+  __attribute__((__noreturn__));
 
 /* Returns an integer value which uniquely describes a thread.  */
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 objc_thread_t
-__gthread_objc_thread_id(void) __MCF_NOEXCEPT;
+__gthread_objc_thread_id(void) __MCF_NOEXCEPT
+  __attribute__((__const__));
+
+/* Returns the thread's local storage pointer.  */
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
+void*
+__gthread_objc_thread_get_data(void) __MCF_NOEXCEPT
+  __attribute__((__pure__));
 
 /* Sets the thread's local storage pointer.  */
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 int
 __gthread_objc_thread_set_data(void* __value) __MCF_NOEXCEPT;
 
-/* Returns the thread's local storage pointer.  */
-__MCF_ALWAYS_INLINE
-void*
-__gthread_objc_thread_get_data(void) __MCF_NOEXCEPT;
+/* Below are functions that depend on libobjc types and are thus
+ * provided static inline only. Nevertheless, it is still possible to
+ * compile these functions by defining `_LIBOBJC`.  */
+#ifdef _LIBOBJC
 
 /* Allocate a mutex.  */
 __MCF_ALWAYS_INLINE
@@ -116,26 +130,28 @@ __MCF_ALWAYS_INLINE
 int
 __gthread_objc_condition_signal(objc_condition_t __objc_cond) __MCF_NOEXCEPT;
 
+#endif  /* _LIBOBJC  */
+
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE __MCF_CXX11(constexpr)
 int
 __gthread_objc_init_thread_system(void) __MCF_NOEXCEPT
   {
     return 0;
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE __MCF_CXX11(constexpr)
 int
 __gthread_objc_close_thread_system(void) __MCF_NOEXCEPT
   {
     return 0;
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 objc_thread_t
 __gthread_objc_thread_detach(__MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT
   {
@@ -155,62 +171,56 @@ __gthread_objc_thread_detach(__MCF_gthr_thread_procedure* __proc, void* __arg) _
     return (objc_thread_t)(uintptr_t) __tid;
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 int
 __gthread_objc_thread_set_priority(int __priority) __MCF_NOEXCEPT
   {
-    _MCF_thread_priority __win32_prio;
-    int __err;
-
-    if(__priority == OBJC_THREAD_INTERACTIVE_PRIORITY)
-      __win32_prio = _MCF_thread_priority_normal;
-    else if(__priority == OBJC_THREAD_BACKGROUND_PRIORITY)
-      __win32_prio = _MCF_thread_priority_below_normal;
-    else if(__priority == OBJC_THREAD_LOW_PRIORITY)
-      __win32_prio = _MCF_thread_priority_low;
-    else
-      return -1;
-
-    __err = _MCF_thread_set_priority(NULL, __win32_prio);
+    int __wprio = (__priority < 0) ? -2 : (__priority - 2);
+    int __err = _MCF_thread_set_priority(NULL, (_MCF_thread_priority) __wprio);
     return __err;
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 int
 __gthread_objc_thread_get_priority(void) __MCF_NOEXCEPT
   {
-   _MCF_thread_priority __win32_prio = _MCF_thread_get_priority(NULL);
-
-   if(__win32_prio >= _MCF_thread_priority_normal)
-     return OBJC_THREAD_INTERACTIVE_PRIORITY;
-   else if(__win32_prio >= _MCF_thread_priority_below_normal)
-     return OBJC_THREAD_BACKGROUND_PRIORITY;
-   else
-     return OBJC_THREAD_LOW_PRIORITY;
+    int __wprio = (int) _MCF_thread_get_priority(NULL);
+    return (__wprio < -2) ? 0 : (__wprio + 2);
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 void
 __gthread_objc_thread_yield(void) __MCF_NOEXCEPT
   {
     _MCF_yield();
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 int
 __gthread_objc_thread_exit(void) __MCF_NOEXCEPT
   {
     _MCF_thread_exit();
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 objc_thread_t
 __gthread_objc_thread_id(void) __MCF_NOEXCEPT
   {
     return (objc_thread_t)(uintptr_t) _MCF_thread_self_tid();
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
+void*
+__gthread_objc_thread_get_data(void) __MCF_NOEXCEPT
+  {
+    _MCF_thread* __self = _MCF_thread_self();
+    if(!__self)
+      return NULL;
+
+    return __self->__libobjc_tls_data;
+  }
+
+__MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 int
 __gthread_objc_thread_set_data(void* __value) __MCF_NOEXCEPT
   {
@@ -222,16 +232,7 @@ __gthread_objc_thread_set_data(void* __value) __MCF_NOEXCEPT
     return 0;
   }
 
-__MCF_ALWAYS_INLINE
-void*
-__gthread_objc_thread_get_data(void) __MCF_NOEXCEPT
-  {
-    _MCF_thread* __self = _MCF_thread_self();
-    if(!__self)
-      return NULL;
-
-    return __self->__libobjc_tls_data;
-  }
+#ifdef _LIBOBJC
 
 __MCF_ALWAYS_INLINE
 int
@@ -326,6 +327,8 @@ __gthread_objc_condition_signal(objc_condition_t __objc_cond) __MCF_NOEXCEPT
     _MCF_cond_signal(__cond);
     return 0;
   }
+
+#endif  /* _LIBOBJC  */
 
 __MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_GTHR_LIBOBJC_  */
