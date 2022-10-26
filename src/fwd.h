@@ -17,66 +17,78 @@
 
 #ifdef __cplusplus
 #  /* C++  */
-#  define __MCF_C(...)         /* nothing  */
-#  define __MCF_C99(...)       /* nothing  */
-#  define __MCF_C11(...)       /* nothing  */
+#  define __MCF_C(...)    /* nothing  */
+#  define __MCF_C99(...)  /* nothing  */
+#  define __MCF_C11(...)  /* nothing  */
 #
 #elif !defined(__STDC_VERSION__) || (__STDC_VERSION__ < 199901L)
 #  /* C89  */
-#  define __MCF_C(...)         __VA_ARGS__
-#  define __MCF_C99(...)       /* nothing  */
-#  define __MCF_C11(...)       /* nothing  */
+#  define __MCF_C(...)    __VA_ARGS__
+#  define __MCF_C99(...)  /* nothing  */
+#  define __MCF_C11(...)  /* nothing  */
 #
 #elif __STDC_VERSION__ < 201103L
 #  /* C99  */
-#  define __MCF_C(...)         __VA_ARGS__
-#  define __MCF_C99(...)       __VA_ARGS__
-#  define __MCF_C11(...)       /* nothing  */
+#  define __MCF_C(...)    __VA_ARGS__
+#  define __MCF_C99(...)  __VA_ARGS__
+#  define __MCF_C11(...)  /* nothing  */
 #
 #else
 #  /* C11  */
-#  define __MCF_C(...)         __VA_ARGS__
-#  define __MCF_C99(...)       __VA_ARGS__
-#  define __MCF_C11(...)       __VA_ARGS__
+#  define __MCF_C(...)    __VA_ARGS__
+#  define __MCF_C99(...)  __VA_ARGS__
+#  define __MCF_C11(...)  __VA_ARGS__
 #
 #endif  /* __STDC_VERSION__  */
 
 #ifndef __cplusplus
 #  /* C  */
-#  define __MCF_CXX(...)       /* nothing  */
-#  define __MCF_CXX11(...)     /* nothing  */
-#  define __MCF_CXX14(...)     /* nothing  */
+#  define __MCF_CXX(...)    /* nothing  */
+#  define __MCF_CXX11(...)  /* nothing  */
+#  define __MCF_CXX14(...)  /* nothing  */
 #
 #elif __cplusplus < 201103L
 #  /* C++98  */
-#  define __MCF_CXX(...)       __VA_ARGS__
-#  define __MCF_CXX11(...)     /* nothing  */
-#  define __MCF_CXX14(...)     /* nothing  */
+#  define __MCF_CXX(...)    __VA_ARGS__
+#  define __MCF_CXX11(...)  /* nothing  */
+#  define __MCF_CXX14(...)  /* nothing  */
 #
 #elif __cplusplus < 201402L
 #  /* C++11  */
-#  define __MCF_CXX(...)       __VA_ARGS__
-#  define __MCF_CXX11(...)     __VA_ARGS__
-#  define __MCF_CXX14(...)     /* nothing  */
+#  define __MCF_CXX(...)    __VA_ARGS__
+#  define __MCF_CXX11(...)  __VA_ARGS__
+#  define __MCF_CXX14(...)  /* nothing  */
 #
 #else
 #  /* C++14  */
-#  define __MCF_CXX(...)       __VA_ARGS__
-#  define __MCF_CXX11(...)     __VA_ARGS__
-#  define __MCF_CXX14(...)     __VA_ARGS__
+#  define __MCF_CXX(...)    __VA_ARGS__
+#  define __MCF_CXX11(...)  __VA_ARGS__
+#  define __MCF_CXX14(...)  __VA_ARGS__
 #
 #endif  /* __cplusplus  */
 
-#define __MCF_GNU_INLINE       extern __inline__ __attribute__((__gnu_inline__))
-#define __MCF_ALWAYS_INLINE    __MCF_GNU_INLINE __attribute__((__always_inline__, __artificial__))
-#define __MCF_NEVER_INLINE     __attribute__((__noinline__))
-#define __MCF_NOEXCEPT         __MCF_CXX(throw())
-#define __MCF_0_INIT           { __MCF_C(0) }
-#define __MCF_PTR_BITS         (__SIZEOF_POINTER__ * 8U)
-#define __MCF_ALIGN(...)       __attribute__((__aligned__(__VA_ARGS__)))
+#define __MCF_GNU_INLINE   extern __inline__ __attribute__((__gnu_inline__))
+#define __MCF_ALWAYS_INLINE   __MCF_GNU_INLINE __attribute__((__always_inline__, __artificial__))
+#define __MCF_NEVER_INLINE   __attribute__((__noinline__))
+#define __MCF_0_INIT   {__MCF_C(0)}
+#define __MCF_PTR_BITS   (__SIZEOF_POINTER__ * __CHAR_BIT__)
+#define __MCF_ALIGN(...)   __attribute__((__aligned__(__VA_ARGS__)))
 
-#define __MCF_C_DECLARATIONS_BEGIN   __MCF_CXX(extern "C" {)
-#define __MCF_C_DECLARATIONS_END     __MCF_CXX(})
+#ifndef __cplusplus
+#  define __MCF_NOEXCEPT
+#elif __cplusplus < 201103L
+#  define __MCF_NOEXCEPT   throw()
+#else
+#  define __MCF_NOEXCEPT   noexcept
+#endif
+
+#ifndef __cplusplus
+#  define __MCF_C_DECLARATIONS_BEGIN
+#  define __MCF_C_DECLARATIONS_END
+#else
+#  define __MCF_C_DECLARATIONS_BEGIN   extern "C" {
+#  define __MCF_C_DECLARATIONS_END     }  /* extern "C"  */
+#endif
 
 __MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_FWD_IMPORT
