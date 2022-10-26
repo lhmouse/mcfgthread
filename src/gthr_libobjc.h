@@ -75,15 +75,15 @@ __MCF_ALWAYS_INLINE
 int
 __gthread_objc_condition_wait(objc_condition_t __objc_cond, objc_mutex_t __objc_mutex) __MCF_NOEXCEPT;
 
-/* Wake up all threads waiting on this condition.  */
-__MCF_ALWAYS_INLINE
-int
-__gthread_objc_condition_broadcast(objc_condition_t __objc_cond) __MCF_NOEXCEPT;
-
 /* Wake up one thread waiting on this condition.  */
 __MCF_ALWAYS_INLINE
 int
 __gthread_objc_condition_signal(objc_condition_t __objc_cond) __MCF_NOEXCEPT;
+
+/* Wake up all threads waiting on this condition.  */
+__MCF_ALWAYS_INLINE
+int
+__gthread_objc_condition_broadcast(objc_condition_t __objc_cond) __MCF_NOEXCEPT;
 
 #endif  /* _LIBOBJC  */
 
@@ -231,19 +231,19 @@ __gthread_objc_condition_wait(objc_condition_t __objc_cond, objc_mutex_t __objc_
 
 __MCF_ALWAYS_INLINE
 int
-__gthread_objc_condition_broadcast(objc_condition_t __objc_cond) __MCF_NOEXCEPT
+__gthread_objc_condition_signal(objc_condition_t __objc_cond) __MCF_NOEXCEPT
   {
     _MCF_cond* __cond = (_MCF_cond*)(void*) &(__objc_cond->backend);
-    _MCF_cond_signal_all(__cond);
+    _MCF_cond_signal(__cond);
     return 0;
   }
 
 __MCF_ALWAYS_INLINE
 int
-__gthread_objc_condition_signal(objc_condition_t __objc_cond) __MCF_NOEXCEPT
+__gthread_objc_condition_broadcast(objc_condition_t __objc_cond) __MCF_NOEXCEPT
   {
     _MCF_cond* __cond = (_MCF_cond*)(void*) &(__objc_cond->backend);
-    _MCF_cond_signal(__cond);
+    _MCF_cond_signal_all(__cond);
     return 0;
   }
 
