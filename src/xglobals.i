@@ -7,7 +7,6 @@
 
 #include "fwd.h"
 #include <minwindef.h>
-#include <minwinbase.h>
 #include <ntdef.h>
 #include <winerror.h>
 #include <ntstatus.h>
@@ -88,6 +87,7 @@ __MCF_WINAPI(ULONGLONG, GetTickCount64, void);
 __MCF_WINAPI(BOOL, QueryPerformanceFrequency, LARGE_INTEGER*);
 __MCF_WINAPI(BOOL, QueryPerformanceCounter, LARGE_INTEGER*);
 
+typedef struct _SECURITY_ATTRIBUTES SECURITY_ATTRIBUTES;
 typedef DWORD __stdcall THREAD_START_ROUTINE(LPVOID);
 __MCF_WINAPI(HANDLE, CreateThread, SECURITY_ATTRIBUTES*, SIZE_T, THREAD_START_ROUTINE*, LPVOID, DWORD, DWORD*);
 __MCF_WINAPI(void, ExitThread, DWORD) __attribute__((__noreturn__));
