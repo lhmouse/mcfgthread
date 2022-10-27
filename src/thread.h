@@ -159,12 +159,24 @@ _MCF_yield(void) __MCF_NOEXCEPT;
  * expiration time in number of milliseconds since 1970-01-01T00:00:00Z. If it
  * points to a negative integer, the absolute value of it denotes the number of
  * milliseconds to sleep. If it points to a value of zero, the function returns
- * immediately. If it is null, the function sleeps indefinitely.
+ * immediately. If it is null, the function sleeps indefinitely. This operation
+ * can be interrupted by Ctrl-C events.
  *
  * Returns 0 if the operation has timed out, or -1 if an interrupt occurred.  */
 __MCF_DECLSPEC_THREAD_IMPORT
 int
 _MCF_sleep(const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+
+/* Suspends the calling thread for a given amount of time.
+ *
+ * If the `__timeout_opt` argument points to a positive integer, it denotes the
+ * expiration time in number of milliseconds since 1970-01-01T00:00:00Z. If it
+ * points to a negative integer, the absolute value of it denotes the number of
+ * milliseconds to sleep. If it points to a value of zero, the function returns
+ * immediately. If it is null, the function sleeps indefinitely.  */
+__MCF_DECLSPEC_THREAD_IMPORT
+void
+_MCF_sleep_noninterruptible(const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
 /* Gets a thread-local value. The calling thread shall have been created by
  * `_MCF_thread_new()`, or shall be the main thread.

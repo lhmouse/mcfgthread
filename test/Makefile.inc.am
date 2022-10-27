@@ -36,6 +36,7 @@ check_PROGRAMS +=  \
   %reldir%/thread_overlarge.test  \
   %reldir%/thread_x87_precision.test  \
   %reldir%/thread_priority.test  \
+  %reldir%/thread_sleep.test  \
   %reldir%/gthr_c89_pedantic.test  \
   %reldir%/gthr_inline_alias.test  \
   %reldir%/gthr_once.test  \

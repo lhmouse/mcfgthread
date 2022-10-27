@@ -171,3 +171,14 @@ _MCF_sleep(const int64_t* timeout_opt)
     int err = _MCF_cond_wait(__MCF_g->__interrupt_cond, NULL, NULL, 0, timeout_opt);
     return err ^ -1;
   }
+
+__MCF_DLLEXPORT
+void
+_MCF_sleep_noninterruptible(const int64_t* timeout_opt)
+  {
+    __MCF_winnt_timeout nt_timeout;
+    __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
+
+    NTSTATUS status = NtDelayExecution(false, nt_timeout.__li);
+    __MCF_ASSERT(NT_SUCCESS(status));
+  }
