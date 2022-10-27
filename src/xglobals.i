@@ -9,7 +9,7 @@
 #include "xasm.i"
 #include <minwindef.h>
 #include <minwinbase.h>
-#include <winternl.h>
+#include <ntdef.h>
 #include <winerror.h>
 #include <ntstatus.h>
 
