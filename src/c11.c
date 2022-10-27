@@ -52,3 +52,22 @@ __MCF_c11_thrd_sleep(const struct timespec* dur, struct timespec* rem_opt)
     /* Return 0 in case of timeouts, and -1 in case of interrupts.  */
     return err;
   }
+
+__MCF_DLLEXPORT
+int
+__MCF_c11_thrd_sleep_until(const struct timespec* ts)
+  {
+    double value = 0.0009999;
+    value += (double) ts->tv_nsec * 0.000001;
+    value += (double) ts->tv_sec * 1000;
+
+    /* Clamp the timestamp.  */
+    value = __builtin_fmax(value, 0);
+    value = __builtin_fmin(value, 0x1p63 - 0x1p10);
+
+    int64_t timeout = (int64_t) value;
+    int err = _MCF_sleep(&timeout);
+
+    /* Return 0 in case of timeouts, and -1 in case of interrupts.  */
+    return err;
+  }

@@ -11,7 +11,7 @@ int
 main(void)
   {
     double now, delta;
-    struct timespec timeout, rem;
+    struct timespec timeout;
     int r;
 
     /* Round the time up.  */
@@ -19,29 +19,21 @@ main(void)
     _MCF_sleep(&sleep_until);
 
     now = _MCF_perf_counter();
-    timeout.tv_sec = 1;  /* relative  */
+    timeout.tv_sec = time(NULL) + 1;
     timeout.tv_nsec = 300000000;
-    rem.tv_sec = 5;
-    rem.tv_nsec = 5;
-    r = thrd_sleep(&timeout, &rem);
+    r = _thrd_sleep_until(&timeout);
     assert(r == 0);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
     assert(delta >= 1200);
     assert(delta <= 1400);
-    assert(rem.tv_sec == 0);
-    assert(rem.tv_nsec == 0);
 
     now = _MCF_perf_counter();
     timeout.tv_sec = 0;
     timeout.tv_nsec = 0;
-    rem.tv_sec = 5;
-    rem.tv_nsec = 5;
-    r = thrd_sleep(&timeout, &rem);
+    r = _thrd_sleep_until(&timeout);
     assert(r == 0);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
     assert(delta <= 100);
-    assert(rem.tv_sec == 0);
-    assert(rem.tv_nsec == 0);
   }
