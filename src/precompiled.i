@@ -18,7 +18,6 @@
 #endif
 
 #include <minwindef.h>
-#include <minwinbase.h>
 #include <ntdef.h>
 #include <winerror.h>
 #include <ntstatus.h>
