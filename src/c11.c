@@ -55,7 +55,7 @@ __MCF_c11_thrd_sleep(const struct timespec* dur, struct timespec* rem_opt)
 
 __MCF_DLLEXPORT
 int
-__MCF_c11_thrd_sleep_until(const struct timespec* ts)
+__MCF_c11__thrd_sleep_until(const struct timespec* ts)
   {
     double value = 0.0009999;
     value += (double) ts->tv_nsec * 0.000001;

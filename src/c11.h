@@ -223,9 +223,9 @@ __MCF_ALIAS(thrd_sleep, __MCF_c11_thrd_sleep);
  * duration. No remaining time is returned.  */
 __MCF_DECLSPEC_C11_IMPORT
 int
-__MCF_c11_thrd_sleep_until(const struct timespec* __ts) __MCF_NOEXCEPT;
+__MCF_c11__thrd_sleep_until(const struct timespec* __ts) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(_thrd_sleep_until, __MCF_c11_thrd_sleep_until);
+__MCF_ALIAS(_thrd_sleep_until, __MCF_c11__thrd_sleep_until);
 
 /* 7.26.5.8 The thrd_yield function  */
 __MCF_DECLSPEC_C11_INLINE
