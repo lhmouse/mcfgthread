@@ -238,7 +238,7 @@ __MCF_msize(const void* __ptr) __MCF_NOEXCEPT
 /* Free a block of memory, like `free()`.  */
 __MCF_DECLSPEC_XGLOBALS_INLINE
 void
-__MCF_mfree(void* __ptr) __MCF_NOEXCEPT;
+__MCF_mfree(void* __ptr_opt) __MCF_NOEXCEPT;
 
 /* These functions set the last error code and return the second argument.
  * They should be subject to tail-call optimization.  */
@@ -407,15 +407,15 @@ __MCF_msize(const void* __ptr) __MCF_NOEXCEPT
 
 __MCF_DECLSPEC_XGLOBALS_INLINE
 void
-__MCF_mfree(void* __ptr) __MCF_NOEXCEPT
+__MCF_mfree(void* __ptr_opt) __MCF_NOEXCEPT
   {
-    if(!__ptr)
+    if(!__ptr_opt)
       return;
 
 #ifdef __MCF_DEBUG
-    __MCF_mfill(__ptr, 0xFE, HeapSize(GetProcessHeap(), 0, __ptr));
+    __MCF_mfill(__ptr_opt, 0xFE, HeapSize(GetProcessHeap(), 0, __ptr_opt));
 #endif
-    int __succ = HeapFree(GetProcessHeap(), 0, __ptr);
+    int __succ = HeapFree(GetProcessHeap(), 0, __ptr_opt);
     __MCF_ASSERT(__succ);
   }
 
