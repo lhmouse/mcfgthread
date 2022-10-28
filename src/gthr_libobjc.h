@@ -264,7 +264,7 @@ __MCF_gthr_objc_condition_wait(objc_condition_t __objc_cond, objc_mutex_t __objc
   {
     _MCF_cond* __cond = (_MCF_cond*)(void*) &(__objc_cond->backend);
     _MCF_mutex* __mtx = (_MCF_mutex*)(void*) &(__objc_mtx->backend);
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_objc_mutex_unlock_callback, __MCF_gthr_objc_mutex_relock_callback, (intptr_t) __mtx, NULL);
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback, __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx, NULL);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
