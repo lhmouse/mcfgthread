@@ -104,8 +104,7 @@ __MCF_C_DECLARATIONS_BEGIN
 
 /* Define a macro to alias functions, in order to prevent DLL hells.  */
 #define __MCF_ALIAS(alias, target)  \
-  extern __typeof__(target) alias  \
-      __asm__(__MINGW64_STRINGIFY(__MINGW_USYMBOL(target)))  \
+  extern __typeof__(target) alias __MINGW_ASM_CALL(target)  \
       __attribute__((__copy__(target)))  /* no semicolon  */
 
 /* The `__MCF_STATIC_ASSERT()` macro is an expression that yields zero if it
