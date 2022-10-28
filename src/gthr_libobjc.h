@@ -25,14 +25,14 @@ __MCF_DECLSPEC_GTHR_LIBOBJC_INLINE __MCF_CXX11(constexpr)
 int
 __MCF_gthr_objc_init_thread_system(void) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_init_thread_system, __MCF_gthr_objc_init_thread_system);
+#define __gthread_objc_init_thread_system  __MCF_gthr_objc_init_thread_system
 
 /* Close the threads subsystem.  */
 __MCF_DECLSPEC_GTHR_LIBOBJC_INLINE __MCF_CXX11(constexpr)
 int
 __MCF_gthr_objc_close_thread_system(void) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_close_thread_system, __MCF_gthr_objc_close_thread_system);
+#define __gthread_objc_close_thread_system  __MCF_gthr_objc_close_thread_system
 
 /* Below are functions that depend on libobjc types and are thus
  * provided static inline only. Nevertheless, it is still possible to
@@ -44,70 +44,70 @@ __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_mutex_allocate(objc_mutex_t __objc_mtx) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_mutex_allocate, __MCF_gthr_objc_mutex_allocate);
+#define __gthread_objc_mutex_allocate  __MCF_gthr_objc_mutex_allocate
 
 /* Deallocate a mutex.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_mutex_deallocate(objc_mutex_t __objc_mtx) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_mutex_deallocate, __MCF_gthr_objc_mutex_deallocate);
+#define __gthread_objc_mutex_deallocate  __MCF_gthr_objc_mutex_deallocate
 
 /* Grab a lock on a mutex.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_mutex_lock(objc_mutex_t __objc_mtx) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_mutex_lock, __MCF_gthr_objc_mutex_lock);
+#define __gthread_objc_mutex_lock  __MCF_gthr_objc_mutex_lock
 
 /* Try to grab a lock on a mutex.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_mutex_trylock(objc_mutex_t __objc_mtx) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_mutex_trylock, __MCF_gthr_objc_mutex_trylock);
+#define __gthread_objc_mutex_trylock  __MCF_gthr_objc_mutex_trylock
 
 /* Unlock the mutex.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_mutex_unlock(objc_mutex_t __objc_mtx) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_mutex_unlock, __MCF_gthr_objc_mutex_unlock);
+#define __gthread_objc_mutex_unlock  __MCF_gthr_objc_mutex_unlock
 
 /* Allocate a condition.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_condition_allocate(objc_condition_t __objc_cond) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_condition_allocate, __MCF_gthr_objc_condition_allocate);
+#define __gthread_objc_condition_allocate  __MCF_gthr_objc_condition_allocate
 
 /* Deallocate a condition.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_condition_deallocate(objc_condition_t __objc_cond) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_condition_deallocate, __MCF_gthr_objc_condition_deallocate);
+#define __gthread_objc_condition_deallocate  __MCF_gthr_objc_condition_deallocate
 
 /* Wait on the condition.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_condition_wait(objc_condition_t __objc_cond, objc_mutex_t __objc_mtx) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_condition_wait, __MCF_gthr_objc_condition_wait);
+#define __gthread_objc_condition_wait  __MCF_gthr_objc_condition_wait
 
 /* Wake up one thread waiting on this condition.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_condition_signal(objc_condition_t __objc_cond) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_condition_signal, __MCF_gthr_objc_condition_signal);
+#define __gthread_objc_condition_signal  __MCF_gthr_objc_condition_signal
 
 /* Wake up all threads waiting on this condition.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_condition_broadcast(objc_condition_t __objc_cond) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_condition_broadcast, __MCF_gthr_objc_condition_broadcast);
+#define __gthread_objc_condition_broadcast  __MCF_gthr_objc_condition_broadcast
 
 #endif  /* _LIBOBJC  */
 
@@ -117,14 +117,14 @@ __MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 objc_thread_t
 __MCF_gthr_objc_thread_detach(__MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_thread_detach, __MCF_gthr_objc_thread_detach);
+#define __gthread_objc_thread_detach  __MCF_gthr_objc_thread_detach
 
 /* Set the current thread's priority.  */
 __MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_thread_set_priority(int __priority) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_thread_set_priority, __MCF_gthr_objc_thread_set_priority);
+#define __gthread_objc_thread_set_priority  __MCF_gthr_objc_thread_set_priority
 
 /* Return the current thread's priority.  */
 __MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
@@ -132,14 +132,14 @@ int
 __MCF_gthr_objc_thread_get_priority(void) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_ALIAS(__gthread_objc_thread_get_priority, __MCF_gthr_objc_thread_get_priority);
+#define __gthread_objc_thread_get_priority  __MCF_gthr_objc_thread_get_priority
 
 /* Yield our process time to another thread.  */
 __MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 void
 __MCF_gthr_objc_thread_yield(void) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_thread_yield, __MCF_gthr_objc_thread_yield);
+#define __gthread_objc_thread_yield  __MCF_gthr_objc_thread_yield
 
 /* Terminate the current thread.  */
 __MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
@@ -147,7 +147,7 @@ int
 __MCF_gthr_objc_thread_exit(void) __MCF_NOEXCEPT
   __attribute__((__noreturn__));
 
-__MCF_ALIAS(__gthread_objc_thread_exit, __MCF_gthr_objc_thread_exit);
+#define __gthread_objc_thread_exit  __MCF_gthr_objc_thread_exit
 
 /* Returns an integer value which uniquely describes a thread.  */
 __MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
@@ -155,7 +155,7 @@ objc_thread_t
 __MCF_gthr_objc_thread_id(void) __MCF_NOEXCEPT
   __attribute__((__const__));
 
-__MCF_ALIAS(__gthread_objc_thread_id, __MCF_gthr_objc_thread_id);
+#define __gthread_objc_thread_id  __MCF_gthr_objc_thread_id
 
 /* Returns the thread's local storage pointer.  */
 __MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
@@ -163,14 +163,14 @@ void*
 __MCF_gthr_objc_thread_get_data(void) __MCF_NOEXCEPT
   __attribute__((__pure__));
 
-__MCF_ALIAS(__gthread_objc_thread_get_data, __MCF_gthr_objc_thread_get_data);
+#define __gthread_objc_thread_get_data  __MCF_gthr_objc_thread_get_data
 
 /* Sets the thread's local storage pointer.  */
 __MCF_DECLSPEC_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_thread_set_data(void* __value) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_thread_set_data, __MCF_gthr_objc_thread_set_data);
+#define __gthread_objc_thread_set_data  __MCF_gthr_objc_thread_set_data
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
