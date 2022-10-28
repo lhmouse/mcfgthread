@@ -90,6 +90,12 @@
 #  define __MCF_C_DECLARATIONS_END     }  /* extern "C"  */
 #endif
 
+#ifdef __MCF_DEBUG
+#  define __MCF_UNREACHABLE   __MCF_runtime_failure(__FUNCTION__)
+#else
+#  define __MCF_UNREACHABLE   __builtin_unreachable()
+#endif
+
 __MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_FWD_IMPORT
 #  define __MCF_DECLSPEC_FWD_IMPORT
@@ -111,12 +117,6 @@ extern "C++" template<> struct __MCF_static_assert<true> { char __unused;  };
 #  define __MCF_STATIC_ASSERT(...)   ((int) sizeof(__MCF_static_assert<(__VA_ARGS__)>) - 1)
 #else
 #  define __MCF_STATIC_ASSERT(...)   ((int) sizeof(struct { char: 1|-!(__VA_ARGS__); }) - 1)
-#endif
-
-#ifdef __MCF_DEBUG
-#  define __MCF_UNREACHABLE   __MCF_runtime_failure(__FUNCTION__)
-#else
-#  define __MCF_UNREACHABLE   __builtin_unreachable()
 #endif
 
 /* The `__MCF_ASSERT()` and `__MCF_CHECK()` macros perform run-time checks. If
