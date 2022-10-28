@@ -105,7 +105,7 @@ _MCF_thread_exit(void) __MCF_NOEXCEPT
  * timed out.  */
 __MCF_DECLSPEC_THREAD_IMPORT
 int
-_MCF_thread_wait(const _MCF_thread* __thrd, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+_MCF_thread_wait(const _MCF_thread* __thrd_opt, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
 /* Gets the priority of a thread.
  *
