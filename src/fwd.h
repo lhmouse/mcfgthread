@@ -73,6 +73,8 @@
 #define __MCF_0_INIT   {__MCF_C(0)}
 #define __MCF_PTR_BITS   (__SIZEOF_POINTER__ * __CHAR_BIT__)
 #define __MCF_ALIGN(...)   __attribute__((__aligned__(__VA_ARGS__)))
+#define __MCF_SX(...)  #__VA_ARGS__
+#define __MCF_S(...)  __MCF_SX(__VA_ARGS__)
 
 #ifndef __cplusplus
 #  define __MCF_NOEXCEPT
@@ -104,8 +106,8 @@ __MCF_C_DECLARATIONS_BEGIN
 
 /* Define a macro to alias functions, in order to prevent DLL hells.  */
 #define __MCF_ALIAS(alias, target)  \
-  extern __typeof__(target) alias __MINGW_ASM_CALL(target)  \
-      __attribute__((__copy__(target)))  /* no semicolon  */
+  extern __typeof__(target) alias __asm__(__MCF_S(__USER_LABEL_PREFIX__) #target)  \
+     __attribute__((__copy__(target)))  /* no semicolon  */
 
 /* The `__MCF_STATIC_ASSERT()` macro is an expression that yields zero if it
  * compiles anyway. Its argument must be a constant expression.  */
