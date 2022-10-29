@@ -43,10 +43,6 @@ extern __MCF_dtor_queue __MCF_cxa_at_quick_exit_queue;
 extern _MCF_cond __MCF_interrupt_cond;
 extern BYTE __MCF_mutex_spin_field[2048];
 
-/* Hard-code these.  */
-#define GetCurrentProcess()  ((HANDLE) -1)
-#define GetCurrentThread()   ((HANDLE) -2)
-
 /* Undefine macros that redirect to standard functions.
  * This ensures we call the ones from KERNEL32.  */
 #undef RtlCopyMemory
@@ -56,12 +52,14 @@ extern BYTE __MCF_mutex_spin_field[2048];
 #undef RtlCompareMemory
 #undef RtlEqualMemory
 
-#define __MCF_WINAPI(RETURN, function, ...)  \
-  RETURN __stdcall function(__VA_ARGS__)  \
-    __attribute__((__dllimport__, __nothrow__))
+/* Hard-code these.  */
+#define GetCurrentProcess()  ((HANDLE) -1)
+#define GetCurrentThread()   ((HANDLE) -2)
 
-#define __MCF_CHECK_NT(...)  \
-  __MCF_CHECK(NT_SUCCESS(__VA_ARGS__))
+#define __MCF_CHECK_NT(...)  __MCF_CHECK(NT_SUCCESS(__VA_ARGS__))
+
+#define __MCF_WINAPI(RETURN, function, ...)  \
+  RETURN __stdcall function(__VA_ARGS__) __attribute__((__dllimport__, __nothrow__))
 
 /* Declare KERNEL32 APIs here.  */
 __MCF_WINAPI(DWORD, GetLastError, void) __attribute__((__pure__));
