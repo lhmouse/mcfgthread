@@ -177,8 +177,7 @@ __MCF_ALIAS(thrd_create, __MCF_c11_thrd_create);
 /* 7.26.5.2 The thrd_current function  */
 __MCF_DECLSPEC_C11_INLINE
 thrd_t
-__MCF_c11_thrd_current(void) __MCF_NOEXCEPT
-  __attribute__((__const__, __returns_nonnull__));
+__MCF_c11_thrd_current(void) __MCF_NOEXCEPT __attribute__((__const__, __returns_nonnull__));
 
 __MCF_ALIAS(thrd_current, __MCF_c11_thrd_current);
 
@@ -192,16 +191,14 @@ __MCF_ALIAS(thrd_detach, __MCF_c11_thrd_detach);
 /* 7.26.5.4 The thrd_equal function  */
 __MCF_DECLSPEC_C11_INLINE __MCF_CXX11(constexpr)
 int
-__MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_NOEXCEPT
-  __attribute__((__pure__));
+__MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_NOEXCEPT __attribute__((__pure__));
 
 __MCF_ALIAS(thrd_equal, __MCF_c11_thrd_equal);
 
 /* 7.26.5.5 The thrd_exit function  */
 __MCF_DECLSPEC_C11_INLINE
 void
-__MCF_c11_thrd_exit(int __res) __MCF_NOEXCEPT
-  __attribute__((__noreturn__));
+__MCF_c11_thrd_exit(int __res) __MCF_NOEXCEPT __attribute__((__noreturn__));
 
 __MCF_ALIAS(thrd_exit, __MCF_c11_thrd_exit);
 
@@ -251,8 +248,7 @@ __MCF_ALIAS(tss_delete, __MCF_c11_tss_delete);
 /* 7.26.6.3 The tss_get function  */
 __MCF_DECLSPEC_C11_INLINE
 void*
-__MCF_c11_tss_get(tss_t __key) __MCF_NOEXCEPT
-  __attribute__((__pure__));
+__MCF_c11_tss_get(tss_t __key) __MCF_NOEXCEPT __attribute__((__pure__));
 
 __MCF_ALIAS(tss_get, __MCF_c11_tss_get);
 

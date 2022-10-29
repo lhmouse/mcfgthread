@@ -72,8 +72,7 @@ _MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT;
  * otherwise. No return value is reserved to indicate errors.  */
 __MCF_DECLSPEC_TLS_IMPORT
 void*
-__MCF_tls_table_get(const __MCF_tls_table* __table, const _MCF_tls_key* __key) __MCF_NOEXCEPT
-  __attribute__((__pure__));
+__MCF_tls_table_get(const __MCF_tls_table* __table, const _MCF_tls_key* __key) __MCF_NOEXCEPT __attribute__((__pure__));
 
 /* Sets a value into the table.
  *
