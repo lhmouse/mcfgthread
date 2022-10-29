@@ -27,9 +27,9 @@ extern "C" {
 #  error Windows platforms are assumed to be little-endian.
 #endif
 
-#ifndef __MCF_DECLSPEC_XGLOBALS_IMPORT
-#  define __MCF_DECLSPEC_XGLOBALS_IMPORT
-#  define __MCF_DECLSPEC_XGLOBALS_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_XGLOBALS_IMPORT
+#  define __MCF_XGLOBALS_IMPORT
+#  define __MCF_XGLOBALS_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* Declare global data.  */
@@ -112,7 +112,7 @@ __MCF_WINAPI(NTSTATUS, NtWaitForKeyedEvent, HANDLE, PVOID, BOOLEAN, LARGE_INTEGE
 __MCF_WINAPI(NTSTATUS, NtReleaseKeyedEvent, HANDLE, PVOID, BOOLEAN, LARGE_INTEGER*);
 
 /* Declare helper functions here.  */
-__MCF_DECLSPEC_XGLOBALS_IMPORT
+__MCF_XGLOBALS_IMPORT
 EXCEPTION_DISPOSITION
 __cdecl
 __MCF_seh_top(EXCEPTION_RECORD* __rec, PVOID __estab_frame, CONTEXT* __ctx, PVOID __disp_ctx) __MCF_NOEXCEPT;
@@ -170,91 +170,91 @@ struct __MCF_winnt_timeout
     uint64_t __since;
   };
 
-__MCF_DECLSPEC_XGLOBALS_IMPORT
+__MCF_XGLOBALS_IMPORT
 void
 __MCF_initialize_winnt_timeout_v2(__MCF_winnt_timeout* __to, const int64_t* __int64_opt) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_XGLOBALS_IMPORT
+__MCF_XGLOBALS_IMPORT
 void
 __MCF_adjust_winnt_timeout_v2(__MCF_winnt_timeout* __to) __MCF_NOEXCEPT;
 
 /* Note this function is subject to tail-call optimization.  */
-__MCF_DECLSPEC_XGLOBALS_IMPORT
+__MCF_XGLOBALS_IMPORT
 size_t
 __MCF_batch_release_common(const void* __key, size_t __count) __MCF_NOEXCEPT;
 
 /* Copy a block of memory forward, like `memcpy()`.  */
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 void*
 __cdecl
 __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
 
 /* Copy a block of memory backward.  */
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 void*
 __cdecl
 __MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
 
 /* Fill a block of memory with the given byte, like `memset()`.  */
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 void*
 __cdecl
 __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT;
 
 /* Fill a block of memory with zeroes, like `bzero()`.  */
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 void*
 __cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT;
 
 /* Allocate a block of zeroed memory, like `calloc()`.  */
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 void*
 __MCF_malloc_0(size_t __size) __MCF_NOEXCEPT __attribute__((__warn_unused_result__, __malloc__, __alloc_size__(1)));
 
 /* Re-allocate a block of memory, like `realloc()`. If the existent
  * block should be extended, vacuum bytes are filled with zeroes.  */
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 void*
 __MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT __attribute__((__warn_unused_result__, __alloc_size__(2)));
 
 /* Allocate a copy of a block of memory, like `malloc()` followed by
  * `memcpy()`.  */
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 void*
 __MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT __attribute__((__warn_unused_result__, __alloc_size__(2)));
 
 /* Get the size of an allocated block, like `malloc_usable_size()`.  */
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 size_t
 __MCF_msize(const void* __ptr) __MCF_NOEXCEPT __attribute__((__pure__));
 
 /* Free a block of memory, like `free()`.  */
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 void
 __MCF_mfree(void* __ptr_opt) __MCF_NOEXCEPT;
 
 /* These functions set the last error code and return the second argument.
  * They should be subject to tail-call optimization.  */
-__MCF_DECLSPEC_XGLOBALS_IMPORT
+__MCF_XGLOBALS_IMPORT
 int
 __MCF_win32_error_i(DWORD __code, int __val) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_XGLOBALS_IMPORT
+__MCF_XGLOBALS_IMPORT
 void*
 __MCF_win32_error_p(DWORD __code, void* __ptr) __MCF_NOEXCEPT;
 
 /* These functions are declared here for the sake of completeness, and are not
  * meant to be called directly.  */
-__MCF_DECLSPEC_XGLOBALS_IMPORT
+__MCF_XGLOBALS_IMPORT
 void
 __MCF_run_dtors_at_quick_exit(void) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_XGLOBALS_IMPORT
+__MCF_XGLOBALS_IMPORT
 void
 __MCF_run_dtors_atexit(void) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_XGLOBALS_IMPORT
+__MCF_XGLOBALS_IMPORT
 void
 __MCF_finalize_on_exit(void) __MCF_NOEXCEPT;
 
@@ -302,7 +302,7 @@ __MCF_keyed_event_signal(const void* __key, const LARGE_INTEGER* __timeout) __MC
           : "memory")  /* no semicolon  */
 #endif
 
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 void*
 __cdecl
 __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
@@ -319,7 +319,7 @@ __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
     return __dst;
   }
 
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 void*
 __cdecl
 __MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
@@ -336,7 +336,7 @@ __MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCE
     return __dst;
   }
 
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 void*
 __cdecl
 __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
@@ -351,7 +351,7 @@ __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
     return __dst;
   }
 
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 void*
 __cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
@@ -366,7 +366,7 @@ __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
     return __dst;
   }
 
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 void*
 __MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
   {
@@ -374,7 +374,7 @@ __MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
     return __ptr;
   }
 
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 void*
 __MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT
   {
@@ -382,7 +382,7 @@ __MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT
     return !__ptr ? NULL : (*__pptr = __ptr);
   }
 
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 void*
 __MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
   {
@@ -390,7 +390,7 @@ __MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
     return !__ptr ? NULL : __MCF_mcopy(__ptr, __data, __size);
   }
 
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 size_t
 __MCF_msize(const void* __ptr) __MCF_NOEXCEPT
   {
@@ -399,7 +399,7 @@ __MCF_msize(const void* __ptr) __MCF_NOEXCEPT
     return __size;
   }
 
-__MCF_DECLSPEC_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE
 void
 __MCF_mfree(void* __ptr_opt) __MCF_NOEXCEPT
   {

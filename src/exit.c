@@ -3,8 +3,8 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_DECLSPEC_EXIT_IMPORT  __MCF_DLLEXPORT
-#define __MCF_DECLSPEC_EXIT_INLINE  __MCF_DLLEXPORT
+#define __MCF_EXIT_IMPORT  __MCF_DLLEXPORT
+#define __MCF_EXIT_INLINE  __MCF_DLLEXPORT
 #include "exit.h"
 #include "xglobals.i"
 

@@ -3,8 +3,8 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_DECLSPEC_EVENT_IMPORT  __MCF_DLLEXPORT
-#define __MCF_DECLSPEC_EVENT_INLINE  __MCF_DLLEXPORT
+#define __MCF_EVENT_IMPORT  __MCF_DLLEXPORT
+#define __MCF_EVENT_INLINE  __MCF_DLLEXPORT
 #include "event.h"
 #include "xglobals.i"
 

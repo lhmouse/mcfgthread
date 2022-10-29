@@ -8,21 +8,21 @@
 #include "fwd.h"
 
 __MCF_C_DECLARATIONS_BEGIN
-#ifndef __MCF_DECLSPEC_EXIT_IMPORT
-#  define __MCF_DECLSPEC_EXIT_IMPORT
-#  define __MCF_DECLSPEC_EXIT_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_EXIT_IMPORT
+#  define __MCF_EXIT_IMPORT
+#  define __MCF_EXIT_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* Declare 'real' functions here.  */
-__MCF_DECLSPEC_EXIT_IMPORT
+__MCF_EXIT_IMPORT
 void
 __MCF__Exit(int __status) __MCF_NOEXCEPT __attribute__((__noreturn__));
 
-__MCF_DECLSPEC_EXIT_IMPORT
+__MCF_EXIT_IMPORT
 void
 __MCF_quick_exit(int __status) __MCF_NOEXCEPT __attribute__((__noreturn__));
 
-__MCF_DECLSPEC_EXIT_IMPORT
+__MCF_EXIT_IMPORT
 void
 __MCF_exit(int __status) __MCF_NOEXCEPT __attribute__((__noreturn__));
 

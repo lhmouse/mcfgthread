@@ -3,8 +3,8 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_DECLSPEC_ONCE_IMPORT  __MCF_DLLEXPORT
-#define __MCF_DECLSPEC_ONCE_INLINE  __MCF_DLLEXPORT
+#define __MCF_ONCE_IMPORT  __MCF_DLLEXPORT
+#define __MCF_ONCE_INLINE  __MCF_DLLEXPORT
 #include "once.h"
 #include "xglobals.i"
 
