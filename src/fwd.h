@@ -67,14 +67,15 @@
 #
 #endif  /* __cplusplus  */
 
-#define __MCF_ALWAYS_INLINE   __MCF_GNU_INLINE __attribute__((__always_inline__, __artificial__))
-#define __MCF_NEVER_INLINE   __attribute__((__noinline__))
-#define __MCF_GNU_INLINE    extern __inline__ __attribute__((__gnu_inline__))
 #define __MCF_ALIGN(...)  __attribute__((__aligned__(__VA_ARGS__)))
 #define __MCF_PTR_BITS   (__SIZEOF_POINTER__ * __CHAR_BIT__)
 #define __MCF_0_INIT    {__MCF_C(0)}
 #define __MCF_SX(...)   #__VA_ARGS__
 #define __MCF_S(...)   __MCF_SX(__VA_ARGS__)
+
+#define __MCF_ALWAYS_INLINE   __MCF_GNU_INLINE __attribute__((__always_inline__, __artificial__))
+#define __MCF_NEVER_INLINE   __attribute__((__noinline__))
+#define __MCF_GNU_INLINE    extern __inline__ __attribute__((__gnu_inline__))
 
 #ifndef __cplusplus
 #  define __MCF_NOEXCEPT
