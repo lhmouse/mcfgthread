@@ -44,70 +44,70 @@ __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_mutex_allocate(objc_mutex_t __objc_mtx) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_mutex_allocate, __MCF_gthr_objc_mutex_allocate);
+#define __gthread_objc_mutex_allocate  __MCF_gthr_objc_mutex_allocate
 
 /* Deallocate a mutex.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_mutex_deallocate(objc_mutex_t __objc_mtx) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_mutex_deallocate, __MCF_gthr_objc_mutex_deallocate);
+#define __gthread_objc_mutex_deallocate  __MCF_gthr_objc_mutex_deallocate
 
 /* Grab a lock on a mutex.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_mutex_lock(objc_mutex_t __objc_mtx) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_mutex_lock, __MCF_gthr_objc_mutex_lock);
+#define __gthread_objc_mutex_lock  __MCF_gthr_objc_mutex_lock
 
 /* Try to grab a lock on a mutex.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_mutex_trylock(objc_mutex_t __objc_mtx) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_mutex_trylock, __MCF_gthr_objc_mutex_trylock);
+#define __gthread_objc_mutex_trylock  __MCF_gthr_objc_mutex_trylock
 
 /* Unlock the mutex.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_mutex_unlock(objc_mutex_t __objc_mtx) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_mutex_unlock, __MCF_gthr_objc_mutex_unlock);
+#define __gthread_objc_mutex_unlock  __MCF_gthr_objc_mutex_unlock
 
 /* Allocate a condition.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_condition_allocate(objc_condition_t __objc_cond) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_condition_allocate, __MCF_gthr_objc_condition_allocate);
+#define __gthread_objc_condition_allocate  __MCF_gthr_objc_condition_allocate
 
 /* Deallocate a condition.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_condition_deallocate(objc_condition_t __objc_cond) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_condition_deallocate, __MCF_gthr_objc_condition_deallocate);
+#define __gthread_objc_condition_deallocate  __MCF_gthr_objc_condition_deallocate
 
 /* Wait on the condition.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_condition_wait(objc_condition_t __objc_cond, objc_mutex_t __objc_mtx) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_condition_wait, __MCF_gthr_objc_condition_wait);
+#define __gthread_objc_condition_wait  __MCF_gthr_objc_condition_wait
 
 /* Wake up one thread waiting on this condition.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_condition_signal(objc_condition_t __objc_cond) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_condition_signal, __MCF_gthr_objc_condition_signal);
+#define __gthread_objc_condition_signal  __MCF_gthr_objc_condition_signal
 
 /* Wake up all threads waiting on this condition.  */
 __MCF_ALWAYS_INLINE
 int
 __MCF_gthr_objc_condition_broadcast(objc_condition_t __objc_cond) __MCF_NOEXCEPT;
 
-__MCF_ALIAS(__gthread_objc_condition_broadcast, __MCF_gthr_objc_condition_broadcast);
+#define __gthread_objc_condition_broadcast  __MCF_gthr_objc_condition_broadcast
 
 #endif  /* _LIBOBJC  */
 
