@@ -91,9 +91,9 @@ extern "C" {
 #ifdef __cplusplus
 extern "C++" template<bool __value> struct __MCF_static_assert;
 extern "C++" template<> struct __MCF_static_assert<true> { char __unused;  };
-#  define __MCF_STATIC_ASSERT(...)   ((int) sizeof(__MCF_static_assert<(__VA_ARGS__)>) - 1)
+#  define __MCF_STATIC_ASSERT(...)   ((int) sizeof(::__MCF_static_assert<(__VA_ARGS__)>)-1)
 #else
-#  define __MCF_STATIC_ASSERT(...)   ((int) sizeof(struct { char: 1|-!(__VA_ARGS__); }) - 1)
+#  define __MCF_STATIC_ASSERT(...)   ((int) sizeof(struct{char:1|-!(__VA_ARGS__);})-1)
 #endif
 
 #ifdef __MCF_DEBUG
