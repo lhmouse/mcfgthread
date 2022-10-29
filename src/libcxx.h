@@ -64,8 +64,7 @@ __MCF_ALIAS(__libcpp_tls_delete, __MCF_libcxx_tls_delete);
 /* Gets a thread-specific value, like `pthread_getspecific()`.  */
 __MCF_DECLSPEC_LIBCXX_INLINE
 void*
-__MCF_libcxx_tls_get(__libcpp_tls_key __key) __MCF_NOEXCEPT
-  __attribute__((__pure__));
+__MCF_libcxx_tls_get(__libcpp_tls_key __key) __MCF_NOEXCEPT __attribute__((__pure__));
 
 __MCF_ALIAS(__libcpp_tls_get, __MCF_libcxx_tls_get);
 
@@ -218,8 +217,7 @@ __MCF_ALIAS(__libcpp_thread_detach, __MCF_libcxx_thread_detach);
 /* Checks whether a thread object is null.  */
 __MCF_DECLSPEC_LIBCXX_INLINE __MCF_CXX11(constexpr)
 bool
-__MCF_libcxx_thread_isnull(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT
-  __attribute__((__pure__));
+__MCF_libcxx_thread_isnull(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT __attribute__((__pure__));
 
 __MCF_ALIAS(__libcpp_thread_isnull, __MCF_libcxx_thread_isnull);
 
@@ -228,32 +226,28 @@ __MCF_ALIAS(__libcpp_thread_isnull, __MCF_libcxx_thread_isnull);
  * `__libcpp_thread_create()`. Otherwise the behavior is undefined.  */
 __MCF_DECLSPEC_LIBCXX_INLINE
 __libcpp_thread_id
-__MCF_libcxx_thread_get_current_id(void) __MCF_NOEXCEPT
-  __attribute__((__const__));
+__MCF_libcxx_thread_get_current_id(void) __MCF_NOEXCEPT __attribute__((__const__));
 
 __MCF_ALIAS(__libcpp_thread_get_current_id, __MCF_libcxx_thread_get_current_id);
 
 /* Gets the ID of another thread.  */
 __MCF_DECLSPEC_LIBCXX_INLINE __MCF_CXX11(constexpr)
 __libcpp_thread_id
-__MCF_libcxx_thread_get_id(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT
-  __attribute__((__pure__));
+__MCF_libcxx_thread_get_id(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT __attribute__((__pure__));
 
 __MCF_ALIAS(__libcpp_thread_get_id, __MCF_libcxx_thread_get_id);
 
 /* Checks whether two thread IDs compare equal, like `pthread_equal()`.  */
 __MCF_DECLSPEC_LIBCXX_INLINE __MCF_CXX11(constexpr)
 bool
-__MCF_libcxx_thread_id_equal(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_NOEXCEPT
-  __attribute__((__pure__));
+__MCF_libcxx_thread_id_equal(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_NOEXCEPT __attribute__((__pure__));
 
 __MCF_ALIAS(__libcpp_thread_id_equal, __MCF_libcxx_thread_id_equal);
 
 /* Checks whether two thread IDs compare less, for standard containers.  */
 __MCF_DECLSPEC_LIBCXX_INLINE __MCF_CXX11(constexpr)
 bool
-__MCF_libcxx_thread_id_less(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_NOEXCEPT
-  __attribute__((__pure__));
+__MCF_libcxx_thread_id_less(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_NOEXCEPT __attribute__((__pure__));
 
 __MCF_ALIAS(__libcpp_thread_id_less, __MCF_libcxx_thread_id_less);
 

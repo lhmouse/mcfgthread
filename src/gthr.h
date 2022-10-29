@@ -44,8 +44,7 @@ typedef __MCF_gthr_rc_mutex __gthread_recursive_mutex_t;
  * cannot be disabled.  */
 __MCF_DECLSPEC_GTHR_INLINE __MCF_CXX11(constexpr)
 int
-__MCF_gthr_active_p(void) __MCF_NOEXCEPT
-  __attribute__((__const__));
+__MCF_gthr_active_p(void) __MCF_NOEXCEPT __attribute__((__const__));
 
 __MCF_ALIAS(__gthread_active_p, __MCF_gthr_active_p);
 
@@ -73,8 +72,7 @@ __MCF_ALIAS(__gthread_key_delete, __MCF_gthr_key_delete);
 /* Gets a thread-specific value, like `pthread_getspecific()`.  */
 __MCF_DECLSPEC_GTHR_INLINE
 void*
-__MCF_gthr_getspecific(__gthread_key_t __key) __MCF_NOEXCEPT
-  __attribute__((__pure__));
+__MCF_gthr_getspecific(__gthread_key_t __key) __MCF_NOEXCEPT __attribute__((__pure__));
 
 __MCF_ALIAS(__gthread_getspecific, __MCF_gthr_getspecific);
 
@@ -251,16 +249,14 @@ __MCF_ALIAS(__gthread_detach, __MCF_gthr_detach_v2);
  * `__gthread_create()`. Otherwise the behavior is undefined.  */
 __MCF_DECLSPEC_GTHR_INLINE
 __gthread_t
-__MCF_gthr_self(void) __MCF_NOEXCEPT
-  __attribute__((__const__, __returns_nonnull__));
+__MCF_gthr_self(void) __MCF_NOEXCEPT __attribute__((__const__, __returns_nonnull__));
 
 __MCF_ALIAS(__gthread_self, __MCF_gthr_self);
 
 /* Checks whether two thread IDs compare equal, like `pthread_equal()`.  */
 __MCF_DECLSPEC_GTHR_INLINE __MCF_CXX11(constexpr)
 int
-__MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT
-  __attribute__((__pure__));
+__MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT __attribute__((__pure__));
 
 __MCF_ALIAS(__gthread_equal, __MCF_gthr_equal);
 

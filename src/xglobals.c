@@ -302,8 +302,7 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
  * Such initialization should happen as early as possible.  */
 extern const PIMAGE_TLS_CALLBACK __MCF_xl_b;
 
-const PIMAGE_TLS_CALLBACK __MCF_xl_b
-  __attribute__((__section__(".CRT$XLB"), __used__)) = do_image_tls_callback;
+const PIMAGE_TLS_CALLBACK __MCF_xl_b __attribute__((__section__(".CRT$XLB"), __used__)) = do_image_tls_callback;
 
 #endif  /* DLL_EXPORT  */
 
