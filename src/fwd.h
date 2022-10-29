@@ -114,14 +114,14 @@ __MCF_C_DECLARATIONS_BEGIN
 #  define __MCF_ALIAS(alias, target)   static __typeof__(target)* const alias = (target)
 #endif
 
-/* The `__MCF_STATIC_ASSERT()` macro is an expression that yields zero if it
+/* The `__MCF_STATIC_ASSERT_0()` macro is an expression that yields zero if it
  * compiles anyway. Its argument must be a constant expression.  */
 #ifdef __cplusplus
 extern "C++" template<bool> struct __MCF_static_assert;
 extern "C++" template<> struct __MCF_static_assert<true> { };
-#  define __MCF_STATIC_ASSERT(...)   (0 & (int) sizeof(::__MCF_static_assert<(__VA_ARGS__)>))
+#  define __MCF_STATIC_ASSERT_0(...)   (0 & (int) sizeof(::__MCF_static_assert<(__VA_ARGS__)>))
 #else
-#  define __MCF_STATIC_ASSERT(...)   (0 & (int) sizeof(struct{ int: 1|-!(__VA_ARGS__); }))
+#  define __MCF_STATIC_ASSERT_0(...)   (0 & (int) sizeof(struct{ int: 1|-!(__VA_ARGS__); }))
 #endif
 
 /* The `__MCF_ASSERT()` and `__MCF_CHECK()` macros perform run-time checks. If
