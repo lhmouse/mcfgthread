@@ -105,10 +105,14 @@ __MCF_C_DECLARATIONS_BEGIN
 #  define __MCF_DECLSPEC_FWD_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Define a macro to alias functions, in order to prevent DLL hells.  */
-#define __MCF_ALIAS(alias, target)  \
-  extern __typeof__(target) alias __asm__(__MCF_S(__USER_LABEL_PREFIX__) #target)  \
-     __attribute__((__copy__(target)))  /* no semicolon  */
+/* Define a macro for aliasing functions, in order to prevent DLL hells. This
+ * is probably not a perfect solution for C, but at least it allows aliases to
+ * be inlined.  */
+#ifdef __cplusplus
+#  define __MCF_ALIAS(alias, target)   static __typeof__(target)& alias = (target)
+#else
+#  define __MCF_ALIAS(alias, target)   static __typeof__(target)* const alias = (target)
+#endif
 
 /* The `__MCF_STATIC_ASSERT()` macro is an expression that yields zero if it
  * compiles anyway. Its argument must be a constant expression.  */
