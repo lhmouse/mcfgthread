@@ -34,10 +34,6 @@ __MCF_C_DECLARATIONS_BEGIN
 #  error Windows platforms are assumed to be little-endian.
 #endif
 
-/* Hard-code these.  */
-#define GetCurrentProcess()  ((HANDLE) -1)
-#define GetCurrentThread()   ((HANDLE) -2)
-
 /* Undefine macros that redirect to standard functions.
  * This ensures we call the ones from KERNEL32.  */
 #undef RtlCopyMemory
@@ -47,12 +43,14 @@ __MCF_C_DECLARATIONS_BEGIN
 #undef RtlCompareMemory
 #undef RtlEqualMemory
 
-#define __MCF_WINAPI(RETURN, function, ...)  \
-  RETURN __stdcall function(__VA_ARGS__)  \
-    __attribute__((__dllimport__, __nothrow__))
+/* Hard-code these.  */
+#define GetCurrentProcess()  ((HANDLE) -1)
+#define GetCurrentThread()   ((HANDLE) -2)
 
-#define __MCF_CHECK_NT(...)  \
-  __MCF_CHECK(NT_SUCCESS(__VA_ARGS__))
+#define __MCF_CHECK_NT(...)  __MCF_CHECK(NT_SUCCESS(__VA_ARGS__))
+
+#define __MCF_WINAPI(RETURN, function, ...)  \
+  RETURN __stdcall function(__VA_ARGS__) __attribute__((__dllimport__, __nothrow__))
 
 /* Declare KERNEL32 APIs here.  */
 __MCF_WINAPI(DWORD, GetLastError, void) __attribute__((__pure__));
