@@ -27,8 +27,8 @@ struct __MCF_sem
 /* Define a macro for static initialization of semaphores. The argument is the
  * initial value of the semaphore, which shall not be negative.  */
 #define __MCF_SEM_INIT(__value_init)  \
-    { __MCF_STATIC_ASSERT((__value_init) >= 0) +  \
-      __MCF_STATIC_ASSERT((__value_init) <= __MCF_SEM_VALUE_MAX) +  \
+    { __MCF_STATIC_ASSERT_0((__value_init) >= 0) +  \
+      __MCF_STATIC_ASSERT_0((__value_init) <= __MCF_SEM_VALUE_MAX) +  \
       (__value_init)  }
 
 /* Initializes a semaphore dynamically. The argument is the initial value of
