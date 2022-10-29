@@ -19,7 +19,7 @@ __MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_XGLOBALS_IMPORT
 #  define __MCF_DECLSPEC_XGLOBALS_IMPORT
 #  define __MCF_DECLSPEC_XGLOBALS_INLINE  __MCF_GNU_INLINE
-#  define __MCF_DECLSPEC_XGLOBALS_CONST   const
+#  define __MCF_XGLOBALS_READONLY   const
 #endif
 
 #ifndef _WIN32_WINNT
@@ -298,8 +298,8 @@ struct __MCF_crt_xglobals
   };
 
 /* These are constants that have to be initialized at load time.  */
-extern HANDLE __MCF_DECLSPEC_XGLOBALS_CONST __MCF_crt_heap;
-extern double __MCF_DECLSPEC_XGLOBALS_CONST __MCF_crt_pfc_freq;
+extern HANDLE __MCF_XGLOBALS_READONLY __MCF_crt_heap;
+extern double __MCF_XGLOBALS_READONLY __MCF_crt_pfc_freq;
 
 /* This is a pointer to the process-specific data.
  * As mcfgthread may be linked statically by user DLLs, we must ensure that, in
@@ -308,7 +308,7 @@ extern double __MCF_DECLSPEC_XGLOBALS_CONST __MCF_crt_pfc_freq;
  * by the current process with exclusive access, and whose name is generated from
  * its process ID. Additional randomness is introduced to prevent the name from
  * being predicted.  */
-extern __MCF_crt_xglobals* __MCF_DECLSPEC_XGLOBALS_CONST __MCF_g;
+extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY __MCF_g;
 
 /* As `__MCF_crt_xglobals` is shared between all static and shared instances of
  * this library within a single process, we have to involve sort of versioning.  */

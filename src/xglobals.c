@@ -5,7 +5,7 @@
 #include "precompiled.i"
 #define __MCF_DECLSPEC_XGLOBALS_IMPORT  __MCF_DLLEXPORT
 #define __MCF_DECLSPEC_XGLOBALS_INLINE  __MCF_DLLEXPORT
-#define __MCF_DECLSPEC_XGLOBALS_CONST
+#define __MCF_XGLOBALS_READONLY
 #include "xglobals.i"
 
 __MCF_DLLEXPORT
