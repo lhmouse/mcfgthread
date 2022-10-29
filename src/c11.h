@@ -60,20 +60,20 @@ __MCF_c11_thread_thunk_v2(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 /* Define enumeration constants.  */
 enum __MCF_mtx_type
   {
-    mtx_plain       = 0,
-    mtx_recursive   = 1,
-    mtx_timed       = 2,
-    __MCF_mtx_end
+    mtx_plain           = 0,
+    mtx_recursive       = 1,
+    mtx_timed           = 2,
+    __MCF_mtx_type_end
   };
 
 enum __MCF_thrd_error
   {
-    thrd_success    = 0,
-    thrd_busy       = 1,
-    thrd_error      = 2,
-    thrd_nomem      = 3,
-    thrd_timedout   = 4,
-    __MCF_thrd_end
+    thrd_success          = 0,
+    thrd_busy             = 1,
+    thrd_error            = 2,
+    thrd_nomem            = 3,
+    thrd_timedout         = 4,
+    __MCF_thrd_error_end
   };
 
 /* 7.26.2.1 The call_once function  */
