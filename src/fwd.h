@@ -119,16 +119,19 @@ __MCF_C_DECLARATIONS_BEGIN
 #ifdef __cplusplus
 extern "C++" template<bool> struct __MCF_static_assert;
 extern "C++" template<> struct __MCF_static_assert<true> { };
-#  define __MCF_STATIC_ASSERT_0(...)   (0 & (int) sizeof(::__MCF_static_assert<(__VA_ARGS__)>))
+#  define __MCF_STATIC_ASSERT_T(...)   ::__MCF_static_assert<(__VA_ARGS__)>
 #else
-#  define __MCF_STATIC_ASSERT_0(...)   (0 & (int) sizeof(struct{ int: 1|-!(__VA_ARGS__); }))
+#  define __MCF_STATIC_ASSERT_T(...)   struct { int: 1|-!(__VA_ARGS__); }
 #endif
+
+#define __MCF_STATIC_ASSERT_0(...)   (0 & (int) sizeof(__MCF_STATIC_ASSERT_T(__VA_ARGS__)))
+#define __MCF_STATIC_ASSERT(...)    ((void) sizeof(__MCF_STATIC_ASSERT_T(__VA_ARGS__)))
 
 /* The `__MCF_ASSERT()` and `__MCF_CHECK()` macros perform run-time checks. If
  * an argument yields false, `__MCF_ASSERT()` results in undefined behavior,
  * and `__MCF_CHECK()` effects abnormal termination of the current program.  */
-#define __MCF_ASSERT(...)     ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
-#define __MCF_CHECK(...)      ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__FUNCTION__))
+#define __MCF_ASSERT(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
+#define __MCF_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__FUNCTION__))
 
 /* Define thread priority constants, from lowest to highest.
  * These values match Windows APIs and can be passed around as such, but we
