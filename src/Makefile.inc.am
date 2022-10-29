@@ -50,7 +50,7 @@ lib_libmcfgthread_la_SOURCES =  \
 	${AM_V_GEN}${LIBTOOL} ${AM_V_lt} --tag=RC --mode=compile ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
 
 lib_libmcfgthread_la_CFLAGS =  \
-  ${AM_CFLAGS} -nostdlib -f{freestanding,unwind-tables}
+  ${AM_CFLAGS} -nostdlib -f{freestanding,asynchronous-unwind-tables}
 
 lib_libmcfgthread_la_LIBADD =  \
   -lkernel32 -lntdll
