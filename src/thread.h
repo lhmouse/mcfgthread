@@ -53,8 +53,7 @@ _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __
 /* Gets a pointer to user-defined data of a thread.  */
 __MCF_DECLSPEC_THREAD_INLINE __MCF_CXX11(constexpr)
 __MCF_CXX(const) void*
-_MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
-  __attribute__((__pure__));
+_MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT __attribute__((__pure__));
 
 /* Adds a reference count of a thread structure. This may be useful if you
  * wish to pass a pointer to other code.  */
@@ -76,20 +75,17 @@ _MCF_thread_drop_ref(_MCF_thread* __thrd_opt) __MCF_NOEXCEPT;
 /* Gets the ID of a thread.  */
 __MCF_DECLSPEC_THREAD_INLINE __MCF_CXX11(constexpr)
 uint32_t
-_MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT
-  __attribute__((__pure__));
+_MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT __attribute__((__pure__));
 
 /* Gets the handle of a thread.  */
 __MCF_DECLSPEC_THREAD_INLINE __MCF_CXX11(constexpr)
 __MCF_HANDLE
-_MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
-  __attribute__((__pure__));
+_MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT __attribute__((__pure__));
 
 /* Exits from a thread.  */
 __MCF_DECLSPEC_THREAD_IMPORT
 void
-_MCF_thread_exit(void) __MCF_NOEXCEPT
-  __attribute__((__noreturn__));
+_MCF_thread_exit(void) __MCF_NOEXCEPT __attribute__((__noreturn__));
 
 /* Waits for a thread to finish execution.
  *
@@ -111,14 +107,12 @@ _MCF_thread_wait(const _MCF_thread* __thrd_opt, const int64_t* __timeout_opt) __
  * that were created by `_MCF_thread_new()`.  */
 __MCF_DECLSPEC_THREAD_IMPORT
 _MCF_thread*
-_MCF_thread_self(void) __MCF_NOEXCEPT
-  __attribute__((__const__));
+_MCF_thread_self(void) __MCF_NOEXCEPT __attribute__((__const__));
 
 /* Gets the thread ID of the current thread.  */
 __MCF_DECLSPEC_THREAD_INLINE
 uint32_t
-_MCF_thread_self_tid(void) __MCF_NOEXCEPT
-  __attribute__((__const__));
+_MCF_thread_self_tid(void) __MCF_NOEXCEPT __attribute__((__const__));
 
 /* Gives up the current time slice.  */
 __MCF_DECLSPEC_THREAD_IMPORT
@@ -145,8 +139,7 @@ _MCF_sleep(const int64_t* __timeout_opt) __MCF_NOEXCEPT;
  * a null pointer otherwise. No return value is reserved to indicate errors.  */
 __MCF_DECLSPEC_THREAD_INLINE
 void*
-_MCF_tls_get(const _MCF_tls_key* __key) __MCF_NOEXCEPT
-  __attribute__((__pure__));
+_MCF_tls_get(const _MCF_tls_key* __key) __MCF_NOEXCEPT __attribute__((__pure__));
 
 /* Sets a thread-local value. The calling thread shall have been created by
  * `_MCF_thread_new()`, or shall be the main thread.

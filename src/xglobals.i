@@ -212,28 +212,24 @@ __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT;
 /* Allocate a block of zeroed memory, like `calloc()`.  */
 __MCF_DECLSPEC_XGLOBALS_INLINE
 void*
-__MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
-  __attribute__((__warn_unused_result__, __malloc__, __alloc_size__(1)));
+__MCF_malloc_0(size_t __size) __MCF_NOEXCEPT __attribute__((__warn_unused_result__, __malloc__, __alloc_size__(1)));
 
 /* Re-allocate a block of memory, like `realloc()`. If the existent
  * block should be extended, vacuum bytes are filled with zeroes.  */
 __MCF_DECLSPEC_XGLOBALS_INLINE
 void*
-__MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT
-  __attribute__((__warn_unused_result__, __alloc_size__(2)));
+__MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT __attribute__((__warn_unused_result__, __alloc_size__(2)));
 
 /* Allocate a copy of a block of memory, like `malloc()` followed by
  * `memcpy()`.  */
 __MCF_DECLSPEC_XGLOBALS_INLINE
 void*
-__MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
-  __attribute__((__warn_unused_result__, __alloc_size__(2)));
+__MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT __attribute__((__warn_unused_result__, __alloc_size__(2)));
 
 /* Get the size of an allocated block, like `malloc_usable_size()`.  */
 __MCF_DECLSPEC_XGLOBALS_INLINE
 size_t
-__MCF_msize(const void* __ptr) __MCF_NOEXCEPT
-  __attribute__((__pure__));
+__MCF_msize(const void* __ptr) __MCF_NOEXCEPT __attribute__((__pure__));
 
 /* Free a block of memory, like `free()`.  */
 __MCF_DECLSPEC_XGLOBALS_INLINE
