@@ -4,7 +4,7 @@
 
 #include "precompiled.i"
 #define __MCF_DECLSPEC_GTHR_AUX         __MCF_DLLEXPORT
-#define __MCF_DECLSPEC_GTHR_AUX_INLINE  __MCF_DLLEXPORT
+#define __MCF_GTHR_AUX_INLINE  __MCF_DLLEXPORT
 #include "gthr_aux.h"
 
 __MCF_DLLEXPORT

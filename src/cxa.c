@@ -3,8 +3,8 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_DECLSPEC_CXA_IMPORT  __MCF_DLLEXPORT
-#define __MCF_DECLSPEC_CXA_INLINE  __MCF_DLLEXPORT
+#define __MCF_CXA_IMPORT  __MCF_DLLEXPORT
+#define __MCF_CXA_INLINE  __MCF_DLLEXPORT
 #include "cxa.h"
 #include "once.h"
 #include "mutex.h"

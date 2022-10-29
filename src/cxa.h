@@ -8,9 +8,9 @@
 #include "fwd.h"
 
 __MCF_C_DECLARATIONS_BEGIN
-#ifndef __MCF_DECLSPEC_CXA_IMPORT
-#  define __MCF_DECLSPEC_CXA_IMPORT
-#  define __MCF_DECLSPEC_CXA_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_CXA_IMPORT
+#  define __MCF_CXA_IMPORT
+#  define __MCF_CXA_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* See <https://itanium-cxx-abi.github.io/cxx-abi/abi.html> for details about
@@ -36,43 +36,43 @@ union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
   };
 
 /* Declare 'real' functions here.  */
-__MCF_DECLSPEC_CXA_IMPORT
+__MCF_CXA_IMPORT
 int
 __MCF_cxa_guard_acquire(int64_t* __guard) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_CXA_IMPORT
+__MCF_CXA_IMPORT
 void
 __MCF_cxa_guard_release(int64_t* __guard) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_CXA_IMPORT
+__MCF_CXA_IMPORT
 void
 __MCF_cxa_guard_abort(int64_t* __guard) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_CXA_IMPORT
+__MCF_CXA_IMPORT
 int
 __MCF_cxa_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_CXA_IMPORT
+__MCF_CXA_IMPORT
 int
 __MCF_atexit(__MCF_atexit_callback __atfn) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_CXA_IMPORT
+__MCF_CXA_IMPORT
 int
 __MCF_cxa_at_quick_exit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_CXA_IMPORT
+__MCF_CXA_IMPORT
 int
 __MCF_at_quick_exit(__MCF_atexit_callback __atfn) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_CXA_IMPORT
+__MCF_CXA_IMPORT
 int
 __MCF_cxa_thread_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_CXA_IMPORT
+__MCF_CXA_IMPORT
 int
 __MCF_thread_atexit(__MCF_atexit_callback __atfn) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_CXA_IMPORT
+__MCF_CXA_IMPORT
 void
 __MCF_cxa_finalize(void* __dso) __MCF_NOEXCEPT;
 

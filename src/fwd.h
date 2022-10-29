@@ -100,9 +100,9 @@
 #endif
 
 __MCF_C_DECLARATIONS_BEGIN
-#ifndef __MCF_DECLSPEC_FWD_IMPORT
-#  define __MCF_DECLSPEC_FWD_IMPORT
-#  define __MCF_DECLSPEC_FWD_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_FWD_IMPORT
+#  define __MCF_FWD_IMPORT
+#  define __MCF_FWD_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* Define a macro for aliasing functions, in order to prevent DLL hells. This
@@ -200,11 +200,11 @@ _MCF_maxz(size_t __x, size_t __y) __MCF_NOEXCEPT
     return (__x < __y) ? __y : __x;
   }
 
-__MCF_DECLSPEC_FWD_IMPORT
+__MCF_FWD_IMPORT
 void
 __MCF_runtime_failure(const char* __where) __attribute__((__noreturn__, __noinline__, __cold__));
 
-__MCF_DECLSPEC_FWD_IMPORT
+__MCF_FWD_IMPORT
 uint32_t
 _MCF_get_win32_error(void) __MCF_NOEXCEPT __attribute__((__pure__));
 
