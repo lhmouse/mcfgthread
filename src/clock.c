@@ -3,8 +3,8 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_DECLSPEC_CLOCK_IMPORT  __MCF_DLLEXPORT
-#define __MCF_DECLSPEC_CLOCK_INLINE  __MCF_DLLEXPORT
+#define __MCF_CLOCK_IMPORT  __MCF_DLLEXPORT
+#define __MCF_CLOCK_INLINE  __MCF_DLLEXPORT
 #include "clock.h"
 #include "xglobals.i"
 

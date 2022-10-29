@@ -8,9 +8,9 @@
 #include "fwd.h"
 
 __MCF_C_DECLARATIONS_BEGIN
-#ifndef __MCF_DECLSPEC_TLS_IMPORT
-#  define __MCF_DECLSPEC_TLS_IMPORT
-#  define __MCF_DECLSPEC_TLS_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_TLS_IMPORT
+#  define __MCF_TLS_IMPORT
+#  define __MCF_TLS_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* Define the table structure that manages all thread-local objects.  */
@@ -48,7 +48,7 @@ struct __MCF_tls_key
  * `_MCF_tls_key_delete()` when it is no longer needed. If the thread-local key
  * cannot be created, a null pointer is returned and an error code can be
  * obtained via `_MCF_get_win32_error()`.  */
-__MCF_DECLSPEC_TLS_IMPORT
+__MCF_TLS_IMPORT
 _MCF_tls_key*
 _MCF_tls_key_new(_MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT;
 
@@ -58,11 +58,11 @@ _MCF_tls_key_new(_MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT;
  * the application's responsibility to ensure that all resources about values
  * that are attached to this key are deallocated. Passing a deleted key to
  * other functions results in undefined behavior.  */
-__MCF_DECLSPEC_TLS_IMPORT
+__MCF_TLS_IMPORT
 void
 _MCF_tls_key_delete_nonnull(_MCF_tls_key* __key) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_TLS_INLINE
+__MCF_TLS_INLINE
 void
 _MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT;
 
@@ -70,21 +70,21 @@ _MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT;
  *
  * Returns the thread-local value if one has been set, or a null pointer
  * otherwise. No return value is reserved to indicate errors.  */
-__MCF_DECLSPEC_TLS_IMPORT
+__MCF_TLS_IMPORT
 void*
 __MCF_tls_table_get(const __MCF_tls_table* __table, const _MCF_tls_key* __key) __MCF_NOEXCEPT __attribute__((__pure__));
 
 /* Sets a value into the table.
  *
  * Returns 0 upon success and -1 upon failure.  */
-__MCF_DECLSPEC_TLS_IMPORT
+__MCF_TLS_IMPORT
 int
 __MCF_tls_table_set(__MCF_tls_table* __table, _MCF_tls_key* __key, const void* __value_opt) __MCF_NOEXCEPT;
 
 /* Executes all destructors in the table, and frees dynamic storage if any. It
  * is declared here for the sake of completeness, and is not meant to be call
  * directly.  */
-__MCF_DECLSPEC_TLS_IMPORT
+__MCF_TLS_IMPORT
 void
 __MCF_tls_table_finalize(__MCF_tls_table* __table) __MCF_NOEXCEPT;
 
@@ -93,7 +93,7 @@ __MCF_tls_table_finalize(__MCF_tls_table* __table) __MCF_NOEXCEPT;
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
-__MCF_DECLSPEC_TLS_INLINE
+__MCF_TLS_INLINE
 void
 _MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT
   {

@@ -8,9 +8,9 @@
 #include "fwd.h"
 
 __MCF_C_DECLARATIONS_BEGIN
-#ifndef __MCF_DECLSPEC_ATOMIC_IMPORT
-#  define __MCF_DECLSPEC_ATOMIC_IMPORT
-#  define __MCF_DECLSPEC_ATOMIC_INLINE  __MCF_GNU_INLINE
+#ifndef __MCF_ATOMIC_IMPORT
+#  define __MCF_ATOMIC_IMPORT
+#  define __MCF_ATOMIC_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* We don't use the generic builtins due to a GCC bug.

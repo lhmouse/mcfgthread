@@ -10,7 +10,7 @@
 __MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_DTOR_QUEUE
 #  define __MCF_DECLSPEC_DTOR_QUEUE
-#  define __MCF_DECLSPEC_DTOR_QUEUE_INLINE  __MCF_GNU_INLINE
+#  define __MCF_DTOR_QUEUE_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* Define the cxa_atexit queue structure.  */

@@ -15,7 +15,7 @@
 __MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_DECLSPEC_GTHR_AUX
 #  define __MCF_DECLSPEC_GTHR_AUX
-#  define __MCF_DECLSPEC_GTHR_AUX_INLINE  __MCF_GNU_INLINE
+#  define __MCF_GTHR_AUX_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* Define reusable types.  */
@@ -43,7 +43,7 @@ struct __MCF_gthr_thread_record
 /* This is an auxiliary function for exception handling in `__gthread_once()`.
  * Ideally, if the target function throws exception we would like to allow
  * attempts to retry. Sadly this is not possible in standard C.  */
-__MCF_DECLSPEC_GTHR_AUX_INLINE
+__MCF_GTHR_AUX_INLINE
 void
 __MCF_gthr_unonce(_MCF_once** __oncep) __MCF_NOEXCEPT;
 
@@ -83,7 +83,7 @@ __MCF_gthr_thread_thunk_v2(_MCF_thread* __thrd) __MCF_NOEXCEPT;
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
-__MCF_DECLSPEC_GTHR_AUX_INLINE
+__MCF_GTHR_AUX_INLINE
 void
 __MCF_gthr_unonce(_MCF_once** __oncep) __MCF_NOEXCEPT
   {

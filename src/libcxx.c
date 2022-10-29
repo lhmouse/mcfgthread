@@ -3,8 +3,8 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
-#define __MCF_DECLSPEC_LIBCXX_IMPORT  __MCF_DLLEXPORT
-#define __MCF_DECLSPEC_LIBCXX_INLINE  __MCF_DLLEXPORT
+#define __MCF_LIBCXX_IMPORT  __MCF_DLLEXPORT
+#define __MCF_LIBCXX_INLINE  __MCF_DLLEXPORT
 #include "libcxx.h"
 
 __MCF_DLLEXPORT
