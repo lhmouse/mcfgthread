@@ -2,7 +2,7 @@
 
 # setup
 export CC=${CC:-"gcc"}
-export CCFLAGS='-O2 -g0'
+export CFLAGS='-O2 -g0'
 
 # build
 ${CC} --version
