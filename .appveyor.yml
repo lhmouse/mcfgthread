@@ -4,17 +4,17 @@ image:
 environment:
   matrix:
     - PATH: C:\msys64\mingw64\bin;C:\msys64\usr\bin
-      CXX: x86_64-w64-mingw32-g++
-      CONFIGURE_OPTIONS: --disable-static
+      CONFIGURE_HOST: x86_64-w64-mingw32
+      CONFIGURE_OPTS: --disable-static
     - PATH: C:\msys64\mingw64\bin;C:\msys64\usr\bin
-      CXX: x86_64-w64-mingw32-g++
-      CONFIGURE_OPTIONS: --disable-shared
+      CONFIGURE_HOST: x86_64-w64-mingw32
+      CONFIGURE_OPTS: --disable-shared
     - PATH: C:\msys64\mingw32\bin;C:\msys64\usr\bin
-      CXX: i686-w64-mingw32-g++
-      CONFIGURE_OPTIONS: --disable-static
+      CONFIGURE_HOST: i686-w64-mingw32
+      CONFIGURE_OPTS: --disable-static
     - PATH: C:\msys64\mingw32\bin;C:\msys64\usr\bin
-      CXX: i686-w64-mingw32-g++
-      CONFIGURE_OPTIONS: --disable-shared
+      CONFIGURE_HOST: i686-w64-mingw32
+      CONFIGURE_OPTS: --disable-shared
 
 install:
   - cmd: pacman -S --noconfirm autoconf automake libtool make mingw-w64-{x86_64,i686}-gcc
