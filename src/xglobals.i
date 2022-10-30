@@ -293,7 +293,7 @@ struct __MCF_crt_xglobals
 
 /* These are constants that have to be initialized at load time.  */
 extern HANDLE __MCF_XGLOBALS_READONLY __MCF_crt_heap;
-extern double __MCF_XGLOBALS_READONLY __MCF_crt_pfc_freq;
+extern double __MCF_XGLOBALS_READONLY __MCF_crt_pf_recip;
 
 /* This is a pointer to the process-specific data.
  * As mcfgthread may be linked statically by user DLLs, we must ensure that, in
