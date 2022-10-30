@@ -212,7 +212,7 @@ do_on_process_attach(void)
     __MCF_CHECK(__MCF_crt_heap);
 
     __MCF_CHECK(QueryPerformanceFrequency(&gsize));
-    __MCF_crt_pfc_freq = 1000 / (double) gsize.QuadPart;
+    __MCF_crt_pf_recip = 1000 / (double) gsize.QuadPart;
 
     /* Initialize dynamic global shared data.  */
     __MCF_g->__self_ptr = __MCF_g;
@@ -311,7 +311,7 @@ const PIMAGE_TLS_CALLBACK __MCF_xl_b __attribute__((__section__(".CRT$XLB"), __u
 /* These are constants that have to be initialized at load time. The
  * initializers prevent them from being placed into the`.bss` section.  */
 HANDLE __MCF_crt_heap = (void*) -1;
-double __MCF_crt_pfc_freq = 1;
+double __MCF_crt_pf_recip = 1;
 
 /* This is a pointer to global data. If this library is linked statically,
  * all instances of this pointer in the same process should point to the
