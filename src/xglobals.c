@@ -163,6 +163,15 @@ static
 void
 do_on_process_attach(void)
   {
+    /* Initialize static global constants.  */
+    __MCF_crt_heap = GetProcessHeap();
+    __MCF_CHECK(__MCF_crt_heap);
+
+    LARGE_INTEGER pfreq;
+    __MCF_CHECK(QueryPerformanceFrequency(&pfreq));
+    __MCF_crt_pf_recip = 1000 / (double) pfreq.QuadPart;
+
+    /* Initialize dynamic global shared data.  */
     static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
     static UNICODE_STRING gname = { .Buffer = gnbuffer, .Length = sizeof(gnbuffer) - sizeof(WCHAR), .MaximumLength = sizeof(gnbuffer) };
     static OBJECT_ATTRIBUTES gattrs = { .Length = sizeof(OBJECT_ATTRIBUTES), .ObjectName = &gname, .Attributes = OBJ_OPENIF | OBJ_EXCLUSIVE };
@@ -195,26 +204,18 @@ do_on_process_attach(void)
     __MCF_CHECK_NT(NtMapViewOfSection(gfile, GetCurrentProcess(), &gmem_base, 0, 0, NULL, &gmem_size, 2, 0, PAGE_READWRITE));
     __MCF_ASSERT(gmem_base);
     __MCF_ASSERT(gmem_size >= sizeof(__MCF_crt_xglobals));
-
     __MCF_g = gmem_base;
+
     if(__MCF_g->__self_ptr) {
+      /* Reuse the existent region and close excess handles.  */
       __MCF_g = __MCF_g->__self_ptr;
       __MCF_CHECK(__MCF_g->__self_size >= sizeof(__MCF_crt_xglobals));
 
-      /* Reuse the existent region and close excess handles.  */
       NtUnmapViewOfSection(GetCurrentProcess(), gmem_base);
       NtClose(gfile);
       return;
     }
 
-    /* Initialize static global constants.  */
-    __MCF_crt_heap = GetProcessHeap();
-    __MCF_CHECK(__MCF_crt_heap);
-
-    __MCF_CHECK(QueryPerformanceFrequency(&gsize));
-    __MCF_crt_pf_recip = 1000 / (double) gsize.QuadPart;
-
-    /* Initialize dynamic global shared data.  */
     __MCF_g->__self_ptr = __MCF_g;
     __MCF_g->__self_size = sizeof(__MCF_crt_xglobals);
 
