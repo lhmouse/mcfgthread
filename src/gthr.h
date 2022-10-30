@@ -152,7 +152,7 @@ __MCF_ALIAS(__gthread_mutex_unlock, __MCF_gthr_mutex_unlock);
 /* Initializes a recursive mutex, like `pthread_mutex_init()`.  */
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_recursive_mutex_init(__gthread_recursive_mutex_t* __mtx) __MCF_NOEXCEPT;
+__MCF_gthr_recursive_mutex_init(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
 #ifndef __MCF_GTHR_NO_ALIASES
 __MCF_ALIAS(__gthread_recursive_mutex_init, __MCF_gthr_recursive_mutex_init);
