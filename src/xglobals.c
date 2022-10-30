@@ -228,11 +228,6 @@ do_on_process_attach(void)
     __MCF_CHECK(__MCF_g->__main_thread[0].__handle);
     _MCF_atomic_store_32_rel(__MCF_g->__main_thread[0].__nref, 1);
     __MCF_CHECK(TlsSetValue(__MCF_g->__tls_index, __MCF_g->__main_thread));
-
-    /* Freeze .data section.  */
-    gmem_base = &__MCF_g;
-    gmem_size = sizeof(__MCF_g);
-    __MCF_CHECK_NT(NtProtectVirtualMemory(GetCurrentProcess(), &gmem_base, &gmem_size, PAGE_READONLY, &pid));
   }
 
 static
@@ -286,12 +281,19 @@ int
 __stdcall
 __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
   {
-    /* Prevent this DLL from being unloaded.  */
-    if(reason == DLL_PROCESS_ATTACH)
-      __MCF_CHECK_NT(LdrAddRefDll(1, instance));
-
     /* Call the common routine. This will not fail.  */
     do_image_tls_callback(instance, reason, reserved);
+
+    if(reason == DLL_PROCESS_ATTACH) {
+      /* Freeze the `.data` section.  */
+      PVOID gmem_base = &__MCF_g;
+      SIZE_T gmem_size = sizeof(__MCF_g);
+      DWORD dummy;
+      __MCF_CHECK_NT(NtProtectVirtualMemory(GetCurrentProcess(), &gmem_base, &gmem_size, PAGE_READONLY, &dummy));
+
+      /* Prevent this DLL from being unloaded.  */
+      __MCF_CHECK_NT(LdrAddRefDll(1, instance));
+    }
     return 1;
   }
 
