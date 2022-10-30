@@ -5,7 +5,6 @@ export CC=${CC:-"gcc"}
 export CFLAGS='-O2 -g0'
 
 # build
-printenv
 ${CC} --version
 mkdir -p m4
 autoreconf -ifv
