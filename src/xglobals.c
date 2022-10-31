@@ -285,16 +285,17 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
     /* Call the common routine. This will not fail.  */
     do_image_tls_callback(instance, reason, reserved);
 
-    if(reason == DLL_PROCESS_ATTACH) {
-      /* Freeze the `.data` section.  */
-      PVOID gmem_base = &__MCF_g;
-      SIZE_T gmem_size = sizeof(__MCF_g);
-      DWORD dummy;
-      __MCF_CHECK_NT(NtProtectVirtualMemory(GetCurrentProcess(), &gmem_base, &gmem_size, PAGE_READONLY, &dummy));
+    if(reason != DLL_PROCESS_ATTACH)
+      return 1;
 
-      /* Prevent this DLL from being unloaded.  */
-      __MCF_CHECK_NT(LdrAddRefDll(1, instance));
-    }
+    /* Freeze the `.data` section.  */
+    PVOID base = &__MCF_g;
+    SIZE_T size = sizeof(__MCF_g);
+    DWORD dummy;
+    __MCF_CHECK_NT(NtProtectVirtualMemory(GetCurrentProcess(), &base, &size, PAGE_READONLY, &dummy));
+
+    /* Prevent this DLL from being unloaded.  */
+    __MCF_CHECK_NT(LdrAddRefDll(1, instance));
     return 1;
   }
 
