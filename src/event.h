@@ -23,8 +23,8 @@ struct __MCF_event
     uintptr_t __value : 8;
     uintptr_t __reserved : 1;
 
-    uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
 #define __MCF_EVENT_NSLEEP_M   (__UINTPTR_MAX__ >> 9)
+    uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
 /* This is the maximum value of an event.  */
