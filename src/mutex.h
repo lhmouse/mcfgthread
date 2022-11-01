@@ -22,14 +22,14 @@ struct __MCF_mutex
   {
     uintptr_t __locked : 1;
 
-    uintptr_t __sp_mask : 4;  /* mask of spinning threads; 1b/thread  */
 #define __MCF_MUTEX_SP_MASK_M  15U
+    uintptr_t __sp_mask : 4;  /* mask of spinning threads; 1b/thread  */
 
-    uintptr_t __sp_nfail : 4;  /* number of timeouts after spinning  */
 #define __MCF_MUTEX_SP_NFAIL_M  15U
+    uintptr_t __sp_nfail : 4;  /* number of timeouts after spinning  */
 
-    uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
 #define __MCF_MUTEX_NSLEEP_M  (__UINTPTR_MAX__ >> 9)
+    uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
 /* If the spinning failure counter has reached this number, newcomers will not
