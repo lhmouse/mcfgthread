@@ -9,4 +9,4 @@
 #define _MCF_ABI_VERSION_MINOR    @abi_minor@
 #define _MCF_ABI_VERSION_STRING   "@abi_major@.@abi_minor@-@abi_suffix@"
 
-#endif
+#endif  /* __MCFGTHREAD_VERSION_  */
