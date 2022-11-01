@@ -20,8 +20,8 @@ struct __MCF_cond
   {
     uintptr_t __reserved : 9;
 
-    uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
 #define __MCF_COND_NSLEEP_M   (__UINTPTR_MAX__ >> 9)
+    uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
 /* Initializes a condition variable dynamically.

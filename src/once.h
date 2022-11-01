@@ -21,8 +21,8 @@ struct __MCF_once
     uintptr_t __ready : 8;  /* this conforms to the Itanium C++ ABI  */
     uintptr_t __locked : 1;
 
-    uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
 #define __MCF_ONCE_NSLEEP_M  (__UINTPTR_MAX__ >> 9)
+    uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
 /* Initializes a once-initialization flag dynamically.
