@@ -13,8 +13,8 @@
 #include <time.h>  /* struct timespec  */
 
 __MCF_C_DECLARATIONS_BEGIN
-#ifndef __MCF_DECLSPEC_GTHR_AUX
-#  define __MCF_DECLSPEC_GTHR_AUX
+#ifndef __MCF_GTHR_AUX_IMPORT
+#  define __MCF_GTHR_AUX_IMPORT
 #  define __MCF_GTHR_AUX_INLINE  __MCF_GNU_INLINE
 #endif
 
@@ -49,32 +49,32 @@ __MCF_gthr_unonce(_MCF_once** __oncep) __MCF_NOEXCEPT;
 
 /* This is an auxiliary function for converting a `struct timespec` to the
  * number of milliseconds since the Unix epoch, with boundary checking.  */
-__MCF_DECLSPEC_GTHR_AUX
+__MCF_GTHR_AUX_IMPORT
 int64_t
 __MCF_gthr_timeout_from_timespec(const struct timespec* __abs_time) __MCF_NOEXCEPT __attribute__((__pure__));
 
 /* These are auxiliary functions for condition variables. The argument is a
  * pointer to a plain `_MCF_mutex`.  */
-__MCF_DECLSPEC_GTHR_AUX
+__MCF_GTHR_AUX_IMPORT
 intptr_t
 __MCF_gthr_mutex_unlock_callback(intptr_t __arg) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_GTHR_AUX
+__MCF_GTHR_AUX_IMPORT
 void
 __MCF_gthr_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
 
 /* These are auxiliary functions for condition variables. The argument is a
  * pointer to a `__MCF_gthr_rc_mutex`.  */
-__MCF_DECLSPEC_GTHR_AUX
+__MCF_GTHR_AUX_IMPORT
 intptr_t
 __MCF_gthr_recursive_mutex_unlock_callback(intptr_t __arg) __MCF_NOEXCEPT;
 
-__MCF_DECLSPEC_GTHR_AUX
+__MCF_GTHR_AUX_IMPORT
 void
 __MCF_gthr_recursive_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
 
 /* This is the actual thread function for a gthread.  */
-__MCF_DECLSPEC_GTHR_AUX
+__MCF_GTHR_AUX_IMPORT
 void
 __MCF_gthr_thread_thunk_v2(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 
