@@ -92,7 +92,7 @@ __MCF_WINAPI(void, ExitThread, DWORD) __attribute__((__noreturn__));
 __MCF_WINAPI(BOOL, SwitchToThread, void);
 __MCF_WINAPI(BOOL, TerminateProcess, HANDLE, UINT);
 
-typedef BOOL __stdcall HANDLER_ROUTINE(DWORD CtrlType);
+typedef BOOL __stdcall HANDLER_ROUTINE(DWORD);
 __MCF_WINAPI(BOOL, SetConsoleCtrlHandler, HANDLER_ROUTINE*, BOOL);
 
 /* Declare NTDLL (driver) APIs here.  */
