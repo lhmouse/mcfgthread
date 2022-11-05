@@ -26,7 +26,7 @@ struct __MCF_thread
     __MCF_HANDLE __handle;  /* win32 thread handle  */
 
     _MCF_thread_procedure* __proc;  /* user-defined thread procedure  */
-    void* __data_ptr;  /* pointer to user-defined data.  */
+    void* __data_ptr;  /* pointer to user-defined data  */
 
     __MCF_dtor_queue __atexit_queue;  /* for `__cxa_thread_atexit()`  */
     __MCF_tls_table __tls_table;  /* for `_MCF_tls_get()` and `_MCF_tls_set()`  */
