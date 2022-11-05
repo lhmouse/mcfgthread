@@ -88,7 +88,7 @@ __MCF_WINAPI(BOOL, SetThreadPriority, HANDLE, int);
 __MCF_WINAPI(DWORD, GetCurrentProcessId, void);
 __MCF_WINAPI(BOOL, TerminateProcess, HANDLE, UINT);
 
-typedef BOOL __stdcall HANDLER_ROUTINE(DWORD CtrlType);
+typedef BOOL __stdcall HANDLER_ROUTINE(DWORD);
 __MCF_WINAPI(BOOL, SetConsoleCtrlHandler, HANDLER_ROUTINE*, BOOL);
 
 __MCF_WINAPI(NTSTATUS, BaseGetNamedObjectDirectory, HANDLE*);
