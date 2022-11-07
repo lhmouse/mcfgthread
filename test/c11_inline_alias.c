@@ -8,6 +8,10 @@
 int
 main(void)
   {
+// FIXME: We need to figure out how to simulate this first...
+// See https://github.com/lhmouse/mcfgthread/issues/73.
+return 77;
+
     volatile intptr_t mcfp, gthp;
 
     mcfp = (intptr_t) __MCF_c11_call_once;
