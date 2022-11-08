@@ -146,12 +146,12 @@ __MCF_seh_i386_cleanup(__MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
 
 #  define __MCF_SEH_I386_NODE_NY(n)  __MCF_seh_i386_node_##n
 #  define __MCF_SEH_I386_NODE_NX(n)  __MCF_SEH_I386_NODE_NY(n)
-#  define __MCF_SEH_I386_NODE_NAME   __MCF_SEH_I386_NODE_NX(__LINE__)
+#  define __MCF_SEH_I386_NODE_NAME_HERE   __MCF_SEH_I386_NODE_NX(__LINE__)
 
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
-    __MCF_seh_i386_node __MCF_SEH_I386_NODE_NAME  \
+    __MCF_seh_i386_node __MCF_SEH_I386_NODE_NAME_HERE  \
         __attribute__((__cleanup__(__MCF_seh_i386_cleanup)))  \
-        = *__MCF_seh_i386_install(&__MCF_SEH_I386_NODE_NAME)  /* no semicolon  */
+        = *__MCF_seh_i386_install(&__MCF_SEH_I386_NODE_NAME_HERE)  /* no semicolon  */
 #else
 /* Otherwise, SEH is table-based.  */
 #  ifdef __arm__
