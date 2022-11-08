@@ -148,6 +148,7 @@ typedef struct __MCF_event _MCF_event;
 typedef struct __MCF_thread _MCF_thread;
 typedef struct __MCF_tls_key _MCF_tls_key;
 
+typedef struct timespec __MCF_timespec;
 typedef void* __MCF_HANDLE;
 
 /* See `_MCF_cond_wait()` for details about these callbacks.  */

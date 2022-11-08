@@ -20,7 +20,7 @@ __MCF_c11_thread_thunk_v2(_MCF_thread* thrd)
 
 __MCF_DLLEXPORT
 int
-__MCF_c11_thrd_sleep(const struct timespec* dur, struct timespec* rem_opt)
+__MCF_c11_thrd_sleep(const __MCF_timespec* dur, __MCF_timespec* rem_opt)
   {
     double value = 0.0009999;
     value += (double) dur->tv_nsec * 0.000001;
@@ -47,7 +47,7 @@ __MCF_c11_thrd_sleep(const struct timespec* dur, struct timespec* rem_opt)
       rem_opt->tv_nsec = (long) ((value - (double) rem_opt->tv_sec) * 1000000000);
     }
     else if(rem_opt)
-      *rem_opt = (struct timespec) __MCF_0_INIT;
+      *rem_opt = (__MCF_timespec) __MCF_0_INIT;
 
     /* Return 0 in case of timeouts, and -1 in case of interrupts.  */
     return err;
