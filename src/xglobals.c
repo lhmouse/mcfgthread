@@ -212,7 +212,7 @@ do_on_process_attach(void)
       __MCF_CHECK(__MCF_g->__self_size >= sizeof(__MCF_crt_xglobals));
 
       NtUnmapViewOfSection(GetCurrentProcess(), gmem_base);
-      NtClose(gfile);
+      __MCF_close_handle(gfile);
       return;
     }
 
