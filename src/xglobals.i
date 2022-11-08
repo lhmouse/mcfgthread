@@ -47,7 +47,8 @@ __MCF_C_DECLARATIONS_BEGIN
 #define GetCurrentProcess()  ((HANDLE) -1)
 #define GetCurrentThread()   ((HANDLE) -2)
 
-#define __MCF_CHECK_NT(...)  __MCF_CHECK(NT_SUCCESS(__VA_ARGS__))
+#define __MCF_ASSERT_NT(...)  __MCF_ASSERT(NT_SUCCESS(__VA_ARGS__))
+#define __MCF_CHECK_NT(...)   __MCF_CHECK(NT_SUCCESS(__VA_ARGS__))
 
 #define __MCF_WINAPI(RETURN, function, ...)  \
   RETURN __stdcall function(__VA_ARGS__) __attribute__((__dllimport__, __nothrow__))
@@ -323,7 +324,7 @@ NTSTATUS
 __MCF_keyed_event_wait(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
   {
     NTSTATUS __status = NtWaitForKeyedEvent(NULL, (PVOID) __key, 0, (LARGE_INTEGER*) __timeout);
-    __MCF_ASSERT(NT_SUCCESS(__status));
+    __MCF_ASSERT_NT(__status);
     return __status;
   }
 
@@ -332,7 +333,7 @@ NTSTATUS
 __MCF_keyed_event_signal(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
   {
     NTSTATUS __status = NtReleaseKeyedEvent(NULL, (PVOID) __key, 0, (LARGE_INTEGER*) __timeout);
-    __MCF_ASSERT(NT_SUCCESS(__status));
+    __MCF_ASSERT_NT(__status);
     return __status;
   }
 
@@ -341,7 +342,7 @@ void
 __MCF_close_handle(__MCF_HANDLE __handle) __MCF_NOEXCEPT
   {
     NTSTATUS __status = NtClose(__handle);
-    __MCF_ASSERT(NT_SUCCESS(__status));
+    __MCF_ASSERT_NT(__status);
   }
 
 #if defined(__i386__) || defined(__amd64__)
