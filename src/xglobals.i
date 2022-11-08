@@ -165,8 +165,8 @@ __MCF_seh_i386_cleanup(__MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
 #  endif
 
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
-    __asm__ volatile (".seh_handler __MCF_seh_top, "  \
-          __MCF_SEH_FLAG_PREFIX "except")  /* no semicolon  */
+    __asm__ volatile (".seh_handler "  \
+        " __MCF_seh_top, " __MCF_SEH_FLAG_PREFIX "except")  /* no semicolon  */
 #endif
 
 /* This structure contains timeout values that will be passed to NT syscalls.  */
