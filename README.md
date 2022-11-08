@@ -31,7 +31,7 @@ make -j$(nproc)
 
 # Notes
 
-In order for `__cxa_atexit()` (and the non-standard `__cxa_at_quick_exit()`) to conform to the Itanium C++ ABI, it is required 1) for a process to call `__cxa_finalize(NULL)` when exiting, and 2) for a DLL to call `__cxa_finalize(&__dso_handle)` when it is unloaded dynamically. This requires [hacking the CRT](https://github.com/lhmouse/MINGW-packages/blob/master/mingw-w64-crt-git/9000-crt-Remove-stuff-that-has-been-provided-by-mcfgthrea.patch). If you don't have the modified CRT, you may still get standard compliance by 1) calling `__MCF_exit()` instead of `exit()` from your program, and 2) calling `__cxa_finalize(&__dso_handle)` followed by `fflush(NULL)` upon receipt of `DLL_PROCESS_DETACH` in your `DllMain()`.
+In order for `__cxa_atexit()` (and the non-standard `__cxa_at_quick_exit()`) to conform to the Itanium C++ ABI, it is required 1) for a process to call `__cxa_finalize(NULL)` when exiting, and 2) for a DLL to call `__cxa_finalize(&__dso_handle)` when it is unloaded dynamically. This requires [hacking the CRT](https://github.com/lhmouse/MINGW-packages/blob/0274a6e7e0da258cf5e32efe6e4427454741fa32/mingw-w64-crt-git/9003-crt-Implement-standard-conforming-termination-suppor.patch). If you don't have the modified CRT, you may still get standard compliance by 1) calling `__MCF_exit()` instead of `exit()` from your program, and 2) calling `__cxa_finalize(&__dso_handle)` followed by `fflush(NULL)` upon receipt of `DLL_PROCESS_DETACH` in your `DllMain()`.
 
 This project is developed and tested on x86 and x64 and hasn't been tested on other CPU architectures.
 
