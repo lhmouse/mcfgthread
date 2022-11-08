@@ -285,6 +285,14 @@ __MCF_keyed_event_signal(const void* __key, const LARGE_INTEGER* __timeout) __MC
     return __status;
   }
 
+__MCF_ALWAYS_INLINE
+void
+__MCF_close_handle(__MCF_HANDLE __handle) __MCF_NOEXCEPT
+  {
+    NTSTATUS __status = NtClose(__handle);
+    __MCF_ASSERT(NT_SUCCESS(__status));
+  }
+
 #if defined(__i386__) || defined(__amd64__)
 /* Define macros for string operations for reducing code size.  */
 #  define __MCF_X86_REP_STOSB(di, cx, ax)  \
