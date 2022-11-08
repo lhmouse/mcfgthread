@@ -22,7 +22,7 @@ __MCF_C_DECLARATIONS_BEGIN
 #endif
 
 /* Define threading support types for libc++.  */
-typedef struct timespec __libcpp_timespec_t;
+typedef __MCF_timespec __libcpp_timespec_t;
 typedef _MCF_thread* __libcpp_thread_t;
 typedef uint32_t __libcpp_thread_id;
 typedef _MCF_tls_key* __libcpp_tls_key;

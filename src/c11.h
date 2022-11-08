@@ -149,12 +149,12 @@ cnd_signal(cnd_t* __cond) __MCF_NOEXCEPT
 /* 7.26.3.5 The cnd_timedwait function  */
 __MCF_C11_INLINE
 int
-__MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEPT;
+__MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const __MCF_timespec* __ts) __MCF_NOEXCEPT;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_ALWAYS_INLINE
 int
-cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEPT
+cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const __MCF_timespec* __ts) __MCF_NOEXCEPT
   {
     return __MCF_c11_cnd_timedwait(__cond, __mtx, __ts);
   }
@@ -219,12 +219,12 @@ mtx_lock(mtx_t* __mtx) __MCF_NOEXCEPT
 /* 7.26.4.4 The mtx_timedlock function  */
 __MCF_C11_INLINE
 int
-__MCF_c11_mtx_timedlock(mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEPT;
+__MCF_c11_mtx_timedlock(mtx_t* __mtx, const __MCF_timespec* __ts) __MCF_NOEXCEPT;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_ALWAYS_INLINE
 int
-mtx_timedlock(mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEPT
+mtx_timedlock(mtx_t* __mtx, const __MCF_timespec* __ts) __MCF_NOEXCEPT
   {
     return __MCF_c11_mtx_timedlock(__mtx, __ts);
   }
@@ -345,12 +345,12 @@ thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_NOEXCEPT
 /* 7.26.5.7 The thrd_sleep function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_thrd_sleep(const struct timespec* __dur, struct timespec* __rem_opt) __MCF_NOEXCEPT;
+__MCF_c11_thrd_sleep(const __MCF_timespec* __dur, __MCF_timespec* __rem_opt) __MCF_NOEXCEPT;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_ALWAYS_INLINE
 int
-thrd_sleep(const struct timespec* __dur, struct timespec* __rem_opt) __MCF_NOEXCEPT
+thrd_sleep(const __MCF_timespec* __dur, __MCF_timespec* __rem_opt) __MCF_NOEXCEPT
   {
     return __MCF_c11_thrd_sleep(__dur, __rem_opt);
   }
@@ -360,12 +360,12 @@ thrd_sleep(const struct timespec* __dur, struct timespec* __rem_opt) __MCF_NOEXC
  * duration. No remaining time is returned.  */
 __MCF_C11_IMPORT
 int
-__MCF_c11__thrd_sleep_until(const struct timespec* __ts) __MCF_NOEXCEPT;
+__MCF_c11__thrd_sleep_until(const __MCF_timespec* __ts) __MCF_NOEXCEPT;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_ALWAYS_INLINE
 int
-_thrd_sleep_until(const struct timespec* __ts) __MCF_NOEXCEPT
+_thrd_sleep_until(const __MCF_timespec* __ts) __MCF_NOEXCEPT
   {
     return __MCF_c11__thrd_sleep_until(__ts);
   }
@@ -494,7 +494,7 @@ __MCF_c11_cnd_signal(cnd_t* __cond) __MCF_NOEXCEPT
 
 __MCF_C11_INLINE
 int
-__MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEPT
+__MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const __MCF_timespec* __ts) __MCF_NOEXCEPT
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__ts);
     int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) __mtx->__rc_mtx, &__timeout);
@@ -572,7 +572,7 @@ __MCF_c11_mtx_lock(mtx_t* __mtx) __MCF_NOEXCEPT
 
 __MCF_C11_INLINE
 int
-__MCF_c11_mtx_timedlock(mtx_t* __mtx, const struct timespec* __ts) __MCF_NOEXCEPT
+__MCF_c11_mtx_timedlock(mtx_t* __mtx, const __MCF_timespec* __ts) __MCF_NOEXCEPT
   {
     int64_t __timeout;
     int __err;

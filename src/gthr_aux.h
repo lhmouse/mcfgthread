@@ -47,11 +47,11 @@ __MCF_GTHR_AUX_INLINE
 void
 __MCF_gthr_unonce(_MCF_once** __oncep) __MCF_NOEXCEPT;
 
-/* This is an auxiliary function for converting a `struct timespec` to the
+/* This is an auxiliary function for converting a `__MCF_timespec` to the
  * number of milliseconds since the Unix epoch, with boundary checking.  */
 __MCF_GTHR_AUX_IMPORT
 int64_t
-__MCF_gthr_timeout_from_timespec(const struct timespec* __abs_time) __MCF_NOEXCEPT __attribute__((__pure__));
+__MCF_gthr_timeout_from_timespec(const __MCF_timespec* __abs_time) __MCF_NOEXCEPT __attribute__((__pure__));
 
 /* These are auxiliary functions for condition variables. The argument is a
  * pointer to a plain `_MCF_mutex`.  */

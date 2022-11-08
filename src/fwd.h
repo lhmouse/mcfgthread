@@ -155,6 +155,7 @@ typedef struct __MCF_thread _MCF_thread;
 typedef enum __MCF_thread_priority _MCF_thread_priority;
 typedef struct __MCF_tls_key _MCF_tls_key;
 
+typedef struct timespec __MCF_timespec;
 typedef void* __MCF_HANDLE;
 
 /* See `_MCF_cond_wait()` for details about these callbacks.  */

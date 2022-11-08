@@ -21,7 +21,7 @@ __MCF_C_DECLARATIONS_BEGIN
 
 /* Define gthread types. These usually map to our APIs directly, except
  * the recursive mutex.  */
-typedef struct timespec __gthread_time_t;
+typedef __MCF_timespec __gthread_time_t;
 typedef _MCF_thread* __gthread_t;
 typedef _MCF_tls_key* __gthread_key_t;
 
