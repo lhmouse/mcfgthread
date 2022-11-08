@@ -106,7 +106,7 @@ _MCF_thread_wait(const _MCF_thread* thrd_opt, const int64_t* timeout_opt)
     __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
 
     NTSTATUS status = NtWaitForSingleObject(thrd_opt->__handle, false, nt_timeout.__li);
-    __MCF_ASSERT(NT_SUCCESS(status));
+    __MCF_ASSERT_NT(status);
     return (status != STATUS_WAIT_0) ? -1 : 0;
   }
 
@@ -179,5 +179,5 @@ _MCF_sleep_noninterruptible(const int64_t* timeout_opt)
     __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
 
     NTSTATUS status = NtDelayExecution(false, nt_timeout.__li);
-    __MCF_ASSERT(NT_SUCCESS(status));
+    __MCF_ASSERT_NT(status);
   }
