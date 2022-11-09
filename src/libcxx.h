@@ -143,7 +143,7 @@ __MCF_ALIAS(__libcpp_recursive_mutex_init, __MCF_libcxx_recursive_mutex_init);
 /* Destroys a recursive mutex. This function does nothing.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_recursive_mutex_destroy(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
+__MCF_libcxx_recursive_mutex_destroy(__libcpp_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 __MCF_ALIAS(__libcpp_recursive_mutex_destroy, __MCF_libcxx_recursive_mutex_destroy);
@@ -152,7 +152,7 @@ __MCF_ALIAS(__libcpp_recursive_mutex_destroy, __MCF_libcxx_recursive_mutex_destr
 /* Locks a recursive mutex, like `pthread_mutex_lock()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_recursive_mutex_lock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
+__MCF_libcxx_recursive_mutex_lock(__libcpp_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 __MCF_ALIAS(__libcpp_recursive_mutex_lock, __MCF_libcxx_recursive_mutex_lock);
@@ -162,7 +162,7 @@ __MCF_ALIAS(__libcpp_recursive_mutex_lock, __MCF_libcxx_recursive_mutex_lock);
  * `pthread_mutex_trylock()`.  */
 __MCF_LIBCXX_INLINE
 bool
-__MCF_libcxx_recursive_mutex_trylock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
+__MCF_libcxx_recursive_mutex_trylock(__libcpp_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 __MCF_ALIAS(__libcpp_recursive_mutex_trylock, __MCF_libcxx_recursive_mutex_trylock);
@@ -171,7 +171,7 @@ __MCF_ALIAS(__libcpp_recursive_mutex_trylock, __MCF_libcxx_recursive_mutex_trylo
 /* Unlocks a recursive mutex, like `pthread_mutex_unlock()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_recursive_mutex_unlock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
+__MCF_libcxx_recursive_mutex_unlock(__libcpp_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 __MCF_ALIAS(__libcpp_recursive_mutex_unlock, __MCF_libcxx_recursive_mutex_unlock);
@@ -430,52 +430,52 @@ __MCF_libcxx_mutex_unlock(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_recursive_mutex_init(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
+__MCF_libcxx_recursive_mutex_init(__libcpp_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT
   {
-    __MCF_gthr_rc_mutex_init(__rmtx);
+    __MCF_gthr_rc_mutex_init(__rmutex);
     return 0;
   }
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_recursive_mutex_destroy(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
+__MCF_libcxx_recursive_mutex_destroy(__libcpp_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT
   {
-    (void) __rmtx;
+    (void) __rmutex;
     return 0;
   }
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_recursive_mutex_lock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
+__MCF_libcxx_recursive_mutex_lock(__libcpp_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT
   {
-    int __err = __MCF_gthr_rc_mutex_recurse(__rmtx);
+    int __err = __MCF_gthr_rc_mutex_recurse(__rmutex);
     if(__err == 0)
       return 0;
 
-    __err = __MCF_gthr_rc_mutex_wait(__rmtx, NULL);
+    __err = __MCF_gthr_rc_mutex_wait(__rmutex, NULL);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
 
 __MCF_LIBCXX_INLINE
 bool
-__MCF_libcxx_recursive_mutex_trylock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
+__MCF_libcxx_recursive_mutex_trylock(__libcpp_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT
   {
     int64_t __timeout;
-    int __err = __MCF_gthr_rc_mutex_recurse(__rmtx);
+    int __err = __MCF_gthr_rc_mutex_recurse(__rmutex);
     if(__err == 0)
       return true;
 
     __timeout = 0;
-    __err = __MCF_gthr_rc_mutex_wait(__rmtx, &__timeout);
+    __err = __MCF_gthr_rc_mutex_wait(__rmutex, &__timeout);
     return __err == 0;
   }
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_recursive_mutex_unlock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
+__MCF_libcxx_recursive_mutex_unlock(__libcpp_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT
   {
-    __MCF_gthr_rc_mutex_release(__rmtx);
+    __MCF_gthr_rc_mutex_release(__rmutex);
     return 0;
   }
 
