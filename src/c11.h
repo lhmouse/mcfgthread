@@ -24,6 +24,7 @@ __MCF_C_DECLARATIONS_BEGIN
 
 /* Define <threads.h> types. These usually map to our APIs directly, except
  * the mutex.  */
+typedef struct __MCF_c11_mutex __MCF_c11_mutex;
 typedef struct __MCF_c11_thread_record __MCF_c11_thread_record;
 typedef int __MCF_c11_thread_procedure(void* __arg);
 
@@ -50,7 +51,7 @@ typedef _MCF_tls_dtor* tss_dtor_t;
 
 typedef _MCF_once once_flag;
 typedef _MCF_cond cnd_t;
-typedef struct __MCF_c11_mutex mtx_t;
+typedef __MCF_c11_mutex mtx_t;
 
 /* This is the actual thread function for a C11 thread.  */
 __MCF_C11_IMPORT
