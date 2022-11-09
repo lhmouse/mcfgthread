@@ -76,6 +76,7 @@
 #define __MCF_ALWAYS_INLINE   __MCF_GNU_INLINE __attribute__((__always_inline__, __artificial__))
 #define __MCF_NEVER_INLINE   __attribute__((__noinline__))
 #define __MCF_GNU_INLINE    extern __inline__ __attribute__((__gnu_inline__))
+#define __MCF_ASM_CALL(x)  __asm__(__MCF_S(__USER_LABEL_PREFIX__) #x)
 
 #ifndef __cplusplus
 #  define __MCF_NOEXCEPT
