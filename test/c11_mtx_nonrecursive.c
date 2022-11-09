@@ -20,11 +20,11 @@ main(void)
     r = mtx_trylock(&mutex);
     assert(r == thrd_success);
 
-    mutex.__rc_mtx[0].__owner[0] = 42;  /* don't expose the deadlock  */
+    mutex.__rc_mutex[0].__owner[0] = 42;  /* don't expose the deadlock  */
     r = mtx_trylock(&mutex);
     assert(r == thrd_busy);
 
-    mutex.__rc_mtx[0].__owner[0] = _MCF_thread_self_tid();
+    mutex.__rc_mutex[0].__owner[0] = _MCF_thread_self_tid();
     r = mtx_unlock(&mutex);
     assert(r == thrd_success);
 
