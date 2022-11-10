@@ -37,17 +37,16 @@ __MCF_c11_thrd_sleep(const __MCF_timespec* dur, __MCF_timespec* rem_opt)
     int64_t timeout = (int64_t) value;
     int err = _MCF_sleep(&timeout);
 
-    if(err && rem_opt) {
-      /* Calculate the remaining time if the operation was interrupted.  */
-      value -= _MCF_hires_utc_now();
-      value = __builtin_fmax(value, 0);
-
-      value *= 0.001;
-      rem_opt->tv_sec = (time_t) value;
-      rem_opt->tv_nsec = (long) ((value - (double) rem_opt->tv_sec) * 1000000000);
-    }
-    else if(rem_opt)
+    if(rem_opt) {
       *rem_opt = (__MCF_timespec) __MCF_0_INIT;
+
+      if(err) {
+        /* Calculate the remaining time if the operation was interrupted.  */
+        double rem = __builtin_fmax(value - _MCF_hires_utc_now(), 0) * 0.001;
+        rem_opt->tv_sec = (time_t) rem;
+        rem_opt->tv_nsec = (long) ((rem - (double) rem_opt->tv_sec) * 1000000000);
+      }
+    }
 
     /* Return 0 in case of timeouts, and -1 in case of interrupts.  */
     return err;
