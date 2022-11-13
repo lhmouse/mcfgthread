@@ -36,12 +36,23 @@ do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
     return __MCF_g->__mutex_spin_field + (base + index * block_size) % table_size;
   }
 
+static inline
+uintptr_t
+do_adjust_sp_nfail(uintptr_t old, int add)
+  {
+    /* Adjust the value using saturation arithmetic.  */
+    __MCF_ASSERT((-1 <= add) && (add <= +1));
+    uintptr_t temp = old + (uint32_t) add;
+    return temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U);
+  }
+
 __MCF_DLLEXPORT
 int
 _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
   {
     _MCF_mutex old, new;
     NTSTATUS status;
+    uint32_t spinnable, my_mask;
 
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
@@ -56,15 +67,11 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     _MCF_atomic_load_pptr_rlx(&old, mutex);
     do {
       new = old;
-      if(old.__locked == 0)
-        new.__locked = 1;
-      else if((old.__sp_mask == __MCF_MUTEX_SP_MASK_M) || (old.__sp_nfail >= __MCF_MUTEX_SP_NFAIL_THRESHOLD))
-        new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
-      else
-        new.__sp_mask = (old.__sp_mask | (old.__sp_mask + 1U)) & __MCF_MUTEX_SP_MASK_M;
-
-      uint32_t temp = old.__sp_nfail - 1U + old.__locked * 2U;
-      new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
+      new.__locked = 1;
+      spinnable = (uint32_t) ((old.__sp_mask - __MCF_MUTEX_SP_MASK_M) & (old.__sp_nfail - __MCF_MUTEX_SP_NFAIL_THRESHOLD)) >> 31;
+      new.__sp_mask = (old.__sp_mask | (old.__sp_mask + (old.__locked & spinnable))) & __MCF_MUTEX_SP_MASK_M;
+      new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked * 2 - 1) & __MCF_MUTEX_SP_NFAIL_M;
+      new.__nsleep = (old.__nsleep + (old.__locked & ~spinnable)) & __MCF_MUTEX_NSLEEP_M;
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(mutex, &old, &new));
 
@@ -72,7 +79,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     if(old.__locked == 0)
       return 0;
 
-    uint32_t my_mask = (uint32_t) old.__sp_mask ^ new.__sp_mask;
+    my_mask = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
     if(my_mask != 0) {
       __MCF_ASSERT((my_mask & (my_mask - 1U)) == 0);
 
@@ -99,9 +106,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 
           new = old;
           new.__locked = 1;
-
-          uint32_t temp = old.__sp_nfail - 1U;
-          new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
+          new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, -1) & __MCF_MUTEX_SP_NFAIL_M;
         }
         while(!_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new));
 
@@ -118,13 +123,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       _MCF_atomic_load_pptr_rlx(&old, mutex);
       do {
         new = old;
-        if(old.__locked == 0)
-          new.__locked = 1;
-        else
-          new.__nsleep = (old.__nsleep + 1U) & __MCF_MUTEX_NSLEEP_M;
-
-        uint32_t temp = old.__sp_nfail - 1U + old.__locked;
-        new.__sp_nfail = (temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U)) & __MCF_MUTEX_SP_NFAIL_M;
+        new.__locked = 1;
+        new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked - 1) & __MCF_MUTEX_SP_NFAIL_M;
+        new.__nsleep = (old.__nsleep + old.__locked) & __MCF_MUTEX_NSLEEP_M;
       }
       while(!_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new));
 
