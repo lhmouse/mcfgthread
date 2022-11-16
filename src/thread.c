@@ -45,16 +45,23 @@ _MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
       return __MCF_win32_error_p(ERROR_ARITHMETIC_OVERFLOW, NULL);
 
     /* Allocate and initialize the thread control structure.  */
-    _MCF_thread* thrd = __MCF_malloc_0(sizeof(_MCF_thread) + size);
+    uint32_t align_fixup = 0;
+    if(__MCF_THREAD_DATA_ALIGNMENT > MEMORY_ALLOCATION_ALIGNMENT)
+      align_fixup = __MCF_THREAD_DATA_ALIGNMENT - MEMORY_ALLOCATION_ALIGNMENT;
+
+    _MCF_thread* thrd = __MCF_malloc_0(sizeof(_MCF_thread) + size + align_fixup);
     if(!thrd)
       return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, NULL);
 
     _MCF_atomic_store_32_rlx(thrd->__nref, 2);
     thrd->__proc = proc;
+
     thrd->__data_ptr = thrd->__data_storage;
+    if(align_fixup != 0)
+      thrd->__data_ptr = (char*) ((uintptr_t) (thrd->__data_ptr - 1) | (__MCF_THREAD_DATA_ALIGNMENT - 1)) + 1;
 
     if(data_opt)
-      __MCF_mcopy(thrd->__data_storage, data_opt, size);
+      __MCF_mcopy(thrd->__data_ptr, data_opt, size);
 
     /* Create the thread now.  */
     DWORD tid;

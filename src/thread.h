@@ -32,8 +32,11 @@ struct __MCF_thread
     /* `__data_ptr` shall always point to `__data_storage` below. The space
      * preceding it is reserved for future use. It is not safe to assume the
      * offset of `__data_storage` to be a constant.  */
-    __extension__ char __data_storage[0] __MCF_ALIGN(16);
+    __extension__ char __data_storage[0];
   };
+
+/* This is the default alignment for user-defined data.  */
+#define __MCF_THREAD_DATA_ALIGNMENT   16U
 
 /* Creates a thread. The `__nref` member is initialized to 2, because a running
  * thread holds a reference to itself.
@@ -158,7 +161,7 @@ __MCF_THREAD_INLINE __MCF_CXX11(constexpr)
 __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
-    return __builtin_assume_aligned(__thrd->__data_ptr, __alignof__(__thrd->__data_storage));
+    return __builtin_assume_aligned(__thrd->__data_ptr, __MCF_THREAD_DATA_ALIGNMENT);
   }
 
 #ifdef __cplusplus
@@ -167,7 +170,7 @@ inline __MCF_CXX11(constexpr)
 void*
 _MCF_thread_get_data(_MCF_thread* __thrd) __MCF_NOEXCEPT
   {
-    return __builtin_assume_aligned(__thrd->__data_ptr, __alignof__(__thrd->__data_storage));
+    return __builtin_assume_aligned(__thrd->__data_ptr, __MCF_THREAD_DATA_ALIGNMENT);
   }
 #endif  /* __cplusplus  */
 

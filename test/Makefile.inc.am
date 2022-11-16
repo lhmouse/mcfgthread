@@ -33,6 +33,7 @@ check_PROGRAMS +=  \
   %reldir%/tls_dtor_ignored_on_quick_exit.test  \
   %reldir%/tls_dtor_ignored_on__Exit.test  \
   %reldir%/thread_self_id.test  \
+  %reldir%/thread_new_alignment.test  \
   %reldir%/thread_overlarge.test  \
   %reldir%/thread_x87_precision.test  \
   %reldir%/gthr_c89_pedantic.test  \
