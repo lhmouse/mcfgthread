@@ -67,7 +67,6 @@
 #
 #endif  /* __cplusplus  */
 
-#define __MCF_ALIGN(...)  __attribute__((__aligned__(__VA_ARGS__)))
 #define __MCF_PTR_BITS   (__SIZEOF_POINTER__ * __CHAR_BIT__)
 #define __MCF_0_INIT    {__MCF_C(0)}
 #define __MCF_SX(...)   #__VA_ARGS__
