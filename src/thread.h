@@ -34,11 +34,9 @@ struct __MCF_thread
     /* `__data_ptr` shall always point to `__data_storage` below. The space
      * preceding it is reserved for future use. It is not safe to assume the
      * offset of `__data_storage` to be a constant.  */
-    __extension__ char __data_storage[0];
-  };
-
-/* This is the default alignment for user-defined data.  */
 #define __MCF_THREAD_DATA_ALIGNMENT   16U
+    __extension__ char __data_storage[0] __attribute__((__aligned__(__MCF_THREAD_DATA_ALIGNMENT)));
+  };
 
 /* Creates a thread. The `__nref` member is initialized to 2, because a running
  * thread holds a reference to itself.
