@@ -18,5 +18,5 @@ int
 main(void)
   {
     assert(_MCF_thread_new(thread_proc, NULL, PTRDIFF_MAX) == NULL);
-    assert(GetLastError() == ERROR_NOT_ENOUGH_MEMORY);
+    assert(GetLastError() == ERROR_ARITHMETIC_OVERFLOW);
   }
