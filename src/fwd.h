@@ -80,7 +80,6 @@ extern "C" {
 #define __MCF_NOEXCEPT        __MCF_CXX(throw())
 #define __MCF_0_INIT          { __MCF_C(0) }
 #define __MCF_PTR_BITS        (__SIZEOF_POINTER__ * 8U)
-#define __MCF_ALIGN(...)      __attribute__((__aligned__(__VA_ARGS__)))
 
 #ifndef __MCF_DECLSPEC_FWD
 #  define __MCF_DECLSPEC_FWD(...)  __VA_ARGS__
