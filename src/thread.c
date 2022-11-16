@@ -35,31 +35,47 @@ do_win32_thread_thunk(LPVOID param)
 
 __MCF_DLLEXPORT
 _MCF_thread*
-_MCF_thread_new(_MCF_thread_procedure* proc, const void* data_opt, size_t size)
+_MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* data_opt, size_t size)
   {
     /* Validate arguments.  */
     if(!proc)
       return __MCF_win32_error_p(ERROR_INVALID_PARAMETER, NULL);
 
+    if(align & (align - 1))
+      return __MCF_win32_error_p(ERROR_NOT_SUPPORTED, NULL);
+
+    if(align >= 0x10000000U)
+      return __MCF_win32_error_p(ERROR_NOT_SUPPORTED, NULL);
+
     if(size >= 0x7FF00000U)
       return __MCF_win32_error_p(ERROR_ARITHMETIC_OVERFLOW, NULL);
 
-    /* Allocate and initialize the thread control structure.  */
-    uint32_t align_fixup = 0;
-    if(__MCF_THREAD_DATA_ALIGNMENT > MEMORY_ALLOCATION_ALIGNMENT)
-      align_fixup = __MCF_THREAD_DATA_ALIGNMENT - MEMORY_ALLOCATION_ALIGNMENT;
+    /* Calculate the number of bytes to allocate.  */
+    size_t real_alignment = _MCF_maxz(__MCF_THREAD_DATA_ALIGNMENT, align);
+    size_t size_need = sizeof(_MCF_thread) + size;
+    size_t size_request = size_need + real_alignment - MEMORY_ALLOCATION_ALIGNMENT;
+    __MCF_ASSERT(size_need <= size_request);
 
-    _MCF_thread* thrd = __MCF_malloc_0(sizeof(_MCF_thread) + size + align_fixup);
+    /* Allocate and initialize the thread control structure.  */
+    _MCF_thread* thrd = __MCF_malloc_0(size_request);
     if(!thrd)
       return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, NULL);
 
     _MCF_atomic_store_32_rlx(thrd->__nref, 2);
     thrd->__proc = proc;
-
     thrd->__data_ptr = thrd->__data_storage;
-    if(align_fixup != 0)
-      thrd->__data_ptr = (char*) ((uintptr_t) (thrd->__data_ptr - 1) | (__MCF_THREAD_DATA_ALIGNMENT - 1)) + 1;
 
+    /* Adjust `__data_ptr` for over-aligned types. If we have over-allocated
+     * memory, give back some. Errors are ignored.  */
+    if(size_need != size_request) {
+      thrd->__data_ptr = (void*) ((((uintptr_t) thrd->__data_ptr - 1) | (real_alignment - 1)) + 1);
+
+      size_need = (uintptr_t) thrd->__data_ptr + size - (uintptr_t) thrd;
+      __MCF_ASSERT(size_need <= size_request);
+      HeapReAlloc(__MCF_crt_heap, HEAP_REALLOC_IN_PLACE_ONLY, thrd, size_need);
+    }
+
+    /* Copy user-defined data. If this doesn't happen, they are implicit zeroes.  */
     if(data_opt)
       __MCF_mcopy(thrd->__data_ptr, data_opt, size);
 

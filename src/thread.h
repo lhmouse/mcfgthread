@@ -44,12 +44,19 @@ struct __MCF_thread
  * If `__size` is specified as non-zero, storage for user-defined data is
  * reserved. The storage is initialized to zeroes. If `__data_opt` is non-null,
  * it is used to initialize the storage before the new thread begins execution.
+ * The `__align` parameter specifies the alignment of user-defined data. If it
+ * is not zero, then it must be a power of two; otherwise this function fails
+ * with `ERROR_NOT_SUPPORTED`.
  *
  * Returns a new thread control structure. The caller is required to call
  * `_MCF_thread_drop_ref()` when it is no longer needed. If the thread cannot
  * be created, a null pointer is returned and an error code can be obtained
  * via `_MCF_get_win32_error()`.  */
 __MCF_THREAD_IMPORT
+_MCF_thread*
+_MCF_thread_new_aligned(_MCF_thread_procedure* __proc, size_t __align, const void* __data_opt, size_t __size) __MCF_NOEXCEPT;
+
+__MCF_THREAD_INLINE
 _MCF_thread*
 _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __size) __MCF_NOEXCEPT;
 
@@ -195,6 +202,13 @@ _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt) __MCF_NOEXCEPT;
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
+__MCF_THREAD_INLINE
+_MCF_thread*
+_MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __size) __MCF_NOEXCEPT
+  {
+    return _MCF_thread_new_aligned(__proc, 0, __data_opt, __size);
+  }
+
 __MCF_THREAD_INLINE __MCF_CXX11(constexpr)
 __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
