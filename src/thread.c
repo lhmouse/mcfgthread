@@ -169,7 +169,7 @@ do_handle_interrupt(DWORD type)
   {
     (void) type;
     uintptr_t old = (uintptr_t) _MCF_atomic_xchg_ptr_rlx(__MCF_g->__sleeping_threads, 0);
-    __MCF_batch_release_common(__MCF_g->__sleeping_threads, old);
+    __MCF_batch_release_common(__MCF_g->__sleeping_threads, old / 0x200);
     return false;
   }
 
