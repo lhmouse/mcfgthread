@@ -6,8 +6,6 @@
 #define __MCF_THREAD_IMPORT  __MCF_DLLEXPORT
 #define __MCF_THREAD_INLINE  __MCF_DLLEXPORT
 #include "thread.h"
-#include "mutex.h"
-#include "cond.h"
 #include "xglobals.i"
 
 static __attribute__((__force_align_arg_pointer__))
@@ -170,7 +168,8 @@ __stdcall
 do_handle_interrupt(DWORD type)
   {
     (void) type;
-    _MCF_cond_signal_all(__MCF_g->__interrupt_cond);
+    uintptr_t old = (uintptr_t) _MCF_atomic_xchg_ptr_rlx(__MCF_g->__sleeping_threads, 0);
+    __MCF_batch_release_common(__MCF_g->__sleeping_threads, old);
     return false;
   }
 
@@ -186,12 +185,51 @@ __MCF_DLLEXPORT
 int
 _MCF_sleep(const int64_t* timeout_opt)
   {
+    uintptr_t old, new;
+    NTSTATUS status;
+
+    __MCF_winnt_timeout nt_timeout;
+    __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
+
     /* Set a handler to receive Ctrl-C notifications.  */
     BOOL added __attribute__((__cleanup__(do_handler_cleanup))) = false;
     added = SetConsoleCtrlHandler(do_handle_interrupt, true);
 
-    int err = _MCF_cond_wait(__MCF_g->__interrupt_cond, NULL, NULL, 0, timeout_opt);
-    return err ^ -1;
+    /* Allocate a count for the current thread. The addend is for backward
+     * compatibility, because this used to be an `_MCF_cond`.  */
+    _MCF_atomic_xadd_ptr_rlx(__MCF_g->__sleeping_threads, 0x200);
+
+    /* Try waiting.  */
+    status = __MCF_keyed_event_wait(__MCF_g->__sleeping_threads, nt_timeout.__li);
+    while(status != STATUS_WAIT_0) {
+      /* Tell another thread which is going to signal this condition variable
+       * that an old waiter has left by decrementing the number of sleeping
+       * threads. But see below...  */
+      _MCF_atomic_load_pptr_rlx(&old, __MCF_g->__sleeping_threads);
+      do {
+        if(old == 0)
+          break;
+
+        __MCF_ASSERT(old % 0x200 == 0);
+        new = old - 0x200;
+      }
+      while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(__MCF_g->__sleeping_threads, &old, &new));
+
+      if(old != 0)
+        return 0;  /* timed out  */
+
+      /* ... It is possible that a second thread has already decremented the
+       * counter. If this does take place, it is going to release the keyed
+       * event soon. We must still wait, otherwise we get a deadlock in the
+       * second thread. However, a third thread could start waiting for this
+       * keyed event before us, so we set the timeout to zero. If we time out
+       * once more, the third thread will have incremented the number of
+       * sleeping threads and we can try decrementing it again.  */
+      status = __MCF_keyed_event_signal(__MCF_g->__sleeping_threads, (LARGE_INTEGER[]) { 0 });
+    }
+
+    /* We have got interrupted.  */
+    return -1;
   }
 
 __MCF_DLLEXPORT
@@ -201,6 +239,7 @@ _MCF_sleep_noninterruptible(const int64_t* timeout_opt)
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
 
+    /* Just sleep.  */
     NTSTATUS status = NtDelayExecution(false, nt_timeout.__li);
     __MCF_ASSERT_NT(status);
   }

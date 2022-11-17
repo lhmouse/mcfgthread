@@ -291,7 +291,7 @@ struct __MCF_crt_xglobals
     BYTE __mutex_spin_field[2048] __attribute__((__aligned__(64)));
 
     /* thread suspension support  */
-    _MCF_cond __interrupt_cond[1];
+    uintptr_t __sleeping_threads[1];
   };
 
 /* These are constants that have to be initialized at load time.  */
