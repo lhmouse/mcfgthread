@@ -13,6 +13,7 @@ main(void)
     for(size_t k = 0;  k != NKEYS;  ++k) {
       keys[k] = _MCF_tls_key_new(NULL);
       assert(keys[k]);
+      assert(_MCF_tls_get_destructor(keys[k]) == NULL);
     }
 
 #define NVALS  10000U

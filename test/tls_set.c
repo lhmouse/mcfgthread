@@ -38,6 +38,7 @@ main(void)
 
     key = _MCF_tls_key_new(NULL);
     assert(key);
+    assert(_MCF_tls_get_destructor(key) == NULL);
 
     p = _MCF_tls_get(key);
     assert(p == NULL);
