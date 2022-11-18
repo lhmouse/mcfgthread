@@ -6,6 +6,7 @@
 #define __MCFGTHREAD_TLS_
 
 #include "fwd.h"
+#include "atomic.h"
 
 __MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_TLS_IMPORT
@@ -52,13 +53,28 @@ __MCF_TLS_IMPORT
 _MCF_tls_key*
 _MCF_tls_key_new(_MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT;
 
-/* Deletes a thread-local key.
- *
- * Deleting a key prevents the destructor from being invoked thereafter. It is
- * the application's responsibility to ensure that all resources about values
- * that are attached to this key are deallocated. Passing a deleted key to
- * other functions results in undefined behavior.  */
+/* Adds a reference count of a thread-local key. This may be useful if you
+ * wish to pass a pointer to other code.  */
+__MCF_TLS_INLINE
+void
+_MCF_tls_key_add_ref(_MCF_tls_key* __key) __MCF_NOEXCEPT;
+
+/* Drops a reference count of a thread-local key. When the reference count is
+ * reduced to zero, the structure is deallocated.  */
 __MCF_TLS_IMPORT
+void
+_MCF_tls_key_drop_ref_nonnull(_MCF_tls_key* __key) __MCF_NOEXCEPT;
+
+__MCF_TLS_INLINE
+void
+_MCF_tls_key_drop_ref(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT;
+
+/* Marks a thread-local key as deleted. This prevents the destructor from
+ * being invoked thereafter. It is the application's responsibility to ensure
+ * that all resources about resources that are associated with this key are
+ * deallocated. This function sets the `__deleted` flag and calls
+ * `_MCF_tls_drop_ref()`.  */
+__MCF_TLS_INLINE
 void
 _MCF_tls_key_delete_nonnull(_MCF_tls_key* __key) __MCF_NOEXCEPT;
 
@@ -105,6 +121,31 @@ __MCF_tls_table_finalize(__MCF_tls_table* __table) __MCF_NOEXCEPT;
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
+__MCF_TLS_INLINE
+void
+_MCF_tls_key_add_ref(_MCF_tls_key* __key) __MCF_NOEXCEPT
+  {
+    int32_t __old_ref = _MCF_atomic_xadd_32_rlx(__key->__nref, 1);
+    __MCF_ASSERT(__old_ref < __INT32_MAX__);
+    __MCF_ASSERT(__old_ref > 0);
+  }
+
+__MCF_TLS_INLINE
+void
+_MCF_tls_key_drop_ref(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT
+  {
+    if(__key_opt)
+      _MCF_tls_key_drop_ref_nonnull(__key_opt);
+  }
+
+__MCF_TLS_INLINE
+void
+_MCF_tls_key_delete_nonnull(_MCF_tls_key* __key) __MCF_NOEXCEPT
+  {
+    _MCF_atomic_store_8_rlx(__key->__deleted, 1);
+    _MCF_tls_key_drop_ref_nonnull(__key);
+  }
+
 __MCF_TLS_INLINE
 void
 _MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT

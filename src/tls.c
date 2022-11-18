@@ -24,28 +24,16 @@ _MCF_tls_key_new(_MCF_tls_dtor* dtor_opt)
     return key;
   }
 
-static
+__MCF_DLLEXPORT
 void
-do_tls_key_drop_ref_nonnull(_MCF_tls_key* key)
+_MCF_tls_key_drop_ref_nonnull(_MCF_tls_key* key)
   {
     int32_t old_ref = _MCF_atomic_xsub_32_arl(key->__nref, 1);
     __MCF_ASSERT(old_ref > 0);
     if(old_ref != 1)
       return;
 
-    /* Deallocate its storage now.  */
-    __MCF_ASSERT(key->__deleted[0] == 1);
     __MCF_mfree(key);
-  }
-
-__MCF_DLLEXPORT
-void
-_MCF_tls_key_delete_nonnull(_MCF_tls_key* key)
-  {
-    __MCF_ASSERT(key->__deleted[0] == 0);
-    _MCF_atomic_store_8_rlx(key->__deleted, 1);
-
-    do_tls_key_drop_ref_nonnull(key);
   }
 
 static inline
@@ -123,7 +111,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
 
           if(_MCF_atomic_load_8_rlx(tkey->__deleted) != 0) {
             /* If the key has been deleted, don't relocate it; free it instead.  */
-            do_tls_key_drop_ref_nonnull(tkey);
+            _MCF_tls_key_drop_ref_nonnull(tkey);
             continue;
           }
 
@@ -188,7 +176,7 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
             dtor(temp.__end->__value_opt);
         }
 
-        do_tls_key_drop_ref_nonnull(tkey);
+        _MCF_tls_key_drop_ref_nonnull(tkey);
       }
 
       /* Deallocate the table which should be empty now.  */
