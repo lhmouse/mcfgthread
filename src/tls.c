@@ -110,7 +110,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
           if(!tkey)
             continue;
 
-          if(_MCF_atomic_load_8_rlx(tkey->__deleted) != 0) {
+          if(_MCF_atomic_load_8_rlx(tkey->__deleted)) {
             /* If the key has been deleted, don't relocate it; free it instead.  */
             _MCF_tls_key_drop_ref_nonnull(tkey);
             continue;
@@ -166,16 +166,15 @@ __MCF_tls_table_finalize(__MCF_tls_table* table)
         if(!tkey)
           continue;
 
-        if(temp.__end->__value_opt) {
-          /* Invoke the destructor if there is a value and a destructor, and
-           * the key has not been deleted.  */
-          _MCF_tls_dtor* dtor = NULL;
-          if(_MCF_atomic_load_8_rlx(tkey->__deleted) == 0)
-            dtor = tkey->__dtor_opt;
-
-          if(dtor)
-            dtor(temp.__end->__value_opt);
+        if(_MCF_atomic_load_8_rlx(tkey->__deleted)) {
+          /* If the key has been deleted, free it directly.  */
+          _MCF_tls_key_drop_ref_nonnull(tkey);
+          continue;
         }
+
+        /* Call the destructor, if any.  */
+        if(tkey->__dtor_opt && temp.__end->__value_opt)
+          tkey->__dtor_opt(temp.__end->__value_opt);
 
         _MCF_tls_key_drop_ref_nonnull(tkey);
       }
