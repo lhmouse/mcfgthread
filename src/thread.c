@@ -160,7 +160,8 @@ __MCF_DLLEXPORT
 void
 _MCF_yield(void)
   {
-    SwitchToThread();
+    NTSTATUS status = NtYieldExecution();
+    __MCF_ASSERT_NT(status);
   }
 
 static
