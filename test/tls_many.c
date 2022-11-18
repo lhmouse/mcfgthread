@@ -9,23 +9,37 @@ int
 main(void)
   {
 #define NKEYS  1000U
+#define NVALS  10000U
     _MCF_tls_key* keys[NKEYS];
+
     for(size_t k = 0;  k != NKEYS;  ++k) {
       keys[k] = _MCF_tls_key_new(NULL);
       assert(keys[k]);
       assert(_MCF_tls_key_get_destructor(keys[k]) == NULL);
     }
 
-#define NVALS  10000U
+    for(size_t k = 0;  k != NKEYS;  ++k) {
+      void* p = _MCF_tls_get(keys[k]);
+      assert(p == NULL);
+
+      for(size_t v = 0;  v != NVALS;  ++v) {
+        int r = _MCF_tls_set(keys[k], (void*) (v + k));
+        assert(r == 0);
+
+        p = _MCF_tls_get(keys[k]);
+        assert(p == (void*) (v + k));
+      }
+    }
+
     for(size_t v = 0;  v != NVALS;  ++v) {
       for(size_t k = 0;  k != NKEYS;  ++k) {
-        int r = _MCF_tls_set(keys[k], (void*) v);
+        int r = _MCF_tls_set(keys[k], (void*) (v + k));
         assert(r == 0);
       }
 
       for(size_t k = 0;  k != NKEYS;  ++k) {
-        size_t p = (size_t) _MCF_tls_get(keys[k]);
-        assert(p == v);
+        void* p = _MCF_tls_get(keys[k]);
+        assert(p == (void*) (v + k));
       }
     }
   }
