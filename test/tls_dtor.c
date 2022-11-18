@@ -38,7 +38,7 @@ main(void)
   {
     key = _MCF_tls_key_new(tls_destructor);
     assert(key);
-    assert(_MCF_tls_get_destructor(key) == tls_destructor);
+    assert(_MCF_tls_key_get_destructor(key) == tls_destructor);
 
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       threads[k] = _MCF_thread_new(thread_proc, NULL, 0);

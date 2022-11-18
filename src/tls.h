@@ -69,7 +69,7 @@ _MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT;
 /* Gets the destructor, which may be null if none has been given.  */
 __MCF_TLS_INLINE __MCF_CXX11(constexpr)
 _MCF_tls_dtor*
-_MCF_tls_get_destructor(const _MCF_tls_key* __key) __MCF_NOEXCEPT __attribute__((__pure__));
+_MCF_tls_key_get_destructor(const _MCF_tls_key* __key) __MCF_NOEXCEPT __attribute__((__pure__));
 
 /* Gets a value from the table.
  *
@@ -115,7 +115,7 @@ _MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT
 
 __MCF_TLS_INLINE __MCF_CXX11(constexpr)
 _MCF_tls_dtor*
-_MCF_tls_get_destructor(const _MCF_tls_key* __key) __MCF_NOEXCEPT
+_MCF_tls_key_get_destructor(const _MCF_tls_key* __key) __MCF_NOEXCEPT
   {
     return __key->__dtor_opt;
   }
