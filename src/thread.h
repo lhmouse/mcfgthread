@@ -65,6 +65,11 @@ __MCF_THREAD_INLINE __MCF_CXX11(constexpr)
 __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT __attribute__((__pure__));
 
+/* Gets the number of references of a thread struct.  */
+__MCF_THREAD_INLINE
+int32_t
+_MCF_thread_get_ref(const _MCF_thread* __thrd) __MCF_NOEXCEPT __attribute__((__pure__));
+
 /* Adds a reference count of a thread structure. This may be useful if you
  * wish to pass a pointer to other code.  */
 __MCF_THREAD_INLINE
@@ -232,6 +237,13 @@ _MCF_thread_get_data(_MCF_thread* __thrd) __MCF_NOEXCEPT
     return __builtin_assume_aligned(__thrd->__data_ptr, __MCF_THREAD_DATA_ALIGNMENT);
   }
 #endif  /* __cplusplus  */
+
+__MCF_THREAD_INLINE
+int32_t
+_MCF_thread_get_ref(const _MCF_thread* __thrd) __MCF_NOEXCEPT
+  {
+    return _MCF_atomic_load_32_rlx(__thrd->__nref);
+  }
 
 __MCF_THREAD_INLINE
 void

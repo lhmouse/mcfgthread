@@ -53,6 +53,11 @@ __MCF_TLS_IMPORT
 _MCF_tls_key*
 _MCF_tls_key_new(_MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT;
 
+/* Get the number of references of a thread-local key.  */
+__MCF_TLS_INLINE
+int32_t
+_MCF_tls_key_get_ref(const _MCF_tls_key* __key) __MCF_NOEXCEPT __attribute__((__pure__));
+
 /* Adds a reference count of a thread-local key. This may be useful if you
  * wish to pass a pointer to other code.  */
 __MCF_TLS_INLINE
@@ -121,6 +126,13 @@ __MCF_tls_table_finalize(__MCF_tls_table* __table) __MCF_NOEXCEPT;
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
+__MCF_TLS_INLINE
+int32_t
+_MCF_tls_key_get_ref(const _MCF_tls_key* __key) __MCF_NOEXCEPT
+  {
+    return _MCF_atomic_load_32_rlx(__key->__nref);
+  }
+
 __MCF_TLS_INLINE
 void
 _MCF_tls_key_add_ref(_MCF_tls_key* __key) __MCF_NOEXCEPT
