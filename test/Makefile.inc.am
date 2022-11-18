@@ -25,7 +25,7 @@ check_PROGRAMS +=  \
   %reldir%/cxa_thread_atexit.test  \
   %reldir%/cxa_thread_atexit_exit.test  \
   %reldir%/tls_dtor.test  \
-  %reldir%/tls_set.test  \
+  %reldir%/tls_xset.test  \
   %reldir%/tls_deleted_key.test  \
   %reldir%/tls_many.test  \
   %reldir%/tls_dtor_thread_exit.test  \

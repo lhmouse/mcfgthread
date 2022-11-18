@@ -20,10 +20,17 @@ thread_proc(_MCF_thread* self)
     p = _MCF_tls_get(key);
     assert(p == NULL);
 
-    r = _MCF_tls_set(key, &dso_2);
+    p = &r;
+    r = _MCF_tls_xset(key, &p, &dso_2);
     assert(r == 0);
+    assert(p == NULL);
 
     p = _MCF_tls_get(key);
+    assert(p == &dso_2);
+
+    p = &r;
+    r = _MCF_tls_xset(key, &p, NULL);
+    assert(r == 0);
     assert(p == &dso_2);
 
     _MCF_sleep((const int64_t[]) { -1000 });
@@ -43,10 +50,17 @@ main(void)
     p = _MCF_tls_get(key);
     assert(p == NULL);
 
-    r = _MCF_tls_set(key, &dso_1);
+    p = &r;
+    r = _MCF_tls_xset(key, &p, &dso_1);
     assert(r == 0);
+    assert(p == NULL);
 
     p = _MCF_tls_get(key);
+    assert(p == &dso_1);
+
+    p = &r;
+    r = _MCF_tls_xset(key, &p, &dso_2);
+    assert(r == 0);
     assert(p == &dso_1);
 
     thrd = _MCF_thread_new(thread_proc, NULL, sizeof(int));
@@ -57,5 +71,5 @@ main(void)
     printf("main wait finished\n");
 
     p = _MCF_tls_get(key);
-    assert(p == &dso_1);
+    assert(p == &dso_2);
   }

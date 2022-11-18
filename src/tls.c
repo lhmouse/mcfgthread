@@ -97,7 +97,7 @@ __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
 
 __MCF_DLLEXPORT
 int
-__MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value_opt)
+__MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value_opt, const void* value_opt)
   {
     size_t capacity = (size_t) (table->__end - table->__begin);
     if(table->__size >= capacity / 2) {
@@ -148,6 +148,9 @@ __MCF_tls_table_set(__MCF_tls_table* table, _MCF_tls_key* key, const void* value
       elem->__key_opt = key;
       table->__size ++;
     }
+
+    if(old_value_opt)
+      *old_value_opt = elem->__value_opt;
 
     __MCF_ASSERT(elem->__key_opt == key);
     elem->__value_opt = (void*) value_opt;

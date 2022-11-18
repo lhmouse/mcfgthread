@@ -81,8 +81,15 @@ __MCF_tls_table_get(const __MCF_tls_table* __table, const _MCF_tls_key* __key) _
 
 /* Sets a value into the table.
  *
+ * If `__old_value_opt` is not a null pointer and the new value has been set,
+ * its old value is stored into `*__old_value_opt`.
+ *
  * Returns 0 upon success and -1 upon failure.  */
 __MCF_TLS_IMPORT
+int
+__MCF_tls_table_xset(__MCF_tls_table* __table, _MCF_tls_key* __key, void** __old_value_opt, const void* __value_opt) __MCF_NOEXCEPT;
+
+__MCF_TLS_INLINE
 int
 __MCF_tls_table_set(__MCF_tls_table* __table, _MCF_tls_key* __key, const void* __value_opt) __MCF_NOEXCEPT;
 
@@ -111,6 +118,13 @@ _MCF_tls_dtor*
 _MCF_tls_get_destructor(const _MCF_tls_key* __key) __MCF_NOEXCEPT
   {
     return __key->__dtor_opt;
+  }
+
+__MCF_TLS_INLINE
+int
+__MCF_tls_table_set(__MCF_tls_table* __table, _MCF_tls_key* __key, const void* __value_opt) __MCF_NOEXCEPT
+  {
+    return __MCF_tls_table_xset(__table, __key, NULL, __value_opt);
   }
 
 __MCF_C_DECLARATIONS_END
