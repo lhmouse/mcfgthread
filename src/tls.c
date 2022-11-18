@@ -33,6 +33,7 @@ _MCF_tls_key_drop_ref_nonnull(_MCF_tls_key* key)
     if(old_ref != 1)
       return;
 
+    /* Deallocate all associated resources.  */
     __MCF_mfree(key);
   }
 

@@ -104,6 +104,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
     if(thrd == __MCF_g->__main_thread)
       return;
 
+    /* Deallocate all associated resources.  */
     __MCF_close_handle(thrd->__handle);
     __MCF_mfree(thrd);
   }
