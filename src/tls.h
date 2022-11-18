@@ -74,11 +74,10 @@ __MCF_TLS_INLINE
 void
 _MCF_tls_key_drop_ref(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT;
 
-/* Marks a thread-local key as deleted. This prevents the destructor from
- * being invoked thereafter. It is the application's responsibility to ensure
- * that all resources about resources that are associated with this key are
- * deallocated. This function sets the `__deleted` flag and calls
- * `_MCF_tls_drop_ref()`.  */
+/* Marks a thread-local key as deleted and drops a reference count of it. This
+ * prevents the destructor from being invoked thereafter. Users should ensure
+ * that all resources associated with this key will eventually be deallocated.
+ * This function makes a call to `_MCF_tls_key_drop_ref_nonnull()` implicitly.  */
 __MCF_TLS_INLINE
 void
 _MCF_tls_key_delete_nonnull(_MCF_tls_key* __key) __MCF_NOEXCEPT;

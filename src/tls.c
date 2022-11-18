@@ -71,6 +71,9 @@ __MCF_DLLEXPORT
 void*
 __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
   {
+    if(_MCF_atomic_load_8_rlx(key->__deleted))
+      return NULL;
+
     if(!table->__begin)
       return NULL;
 
@@ -88,6 +91,9 @@ __MCF_DLLEXPORT
 int
 __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value_opt, const void* value_opt)
   {
+    if(_MCF_atomic_load_8_rlx(key->__deleted))
+      return -1;
+
     size_t capacity = (size_t) (table->__end - table->__begin);
     if(table->__size >= capacity / 2) {
       /* Allocate a larger table. The number of elements is not changed.  */

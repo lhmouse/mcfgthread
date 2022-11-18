@@ -27,6 +27,7 @@ check_PROGRAMS +=  \
   %reldir%/tls_dtor.test  \
   %reldir%/tls_xset.test  \
   %reldir%/tls_deleted_key.test  \
+  %reldir%/tls_deleted_key_get_set.test  \
   %reldir%/tls_many.test  \
   %reldir%/tls_dtor_thread_exit.test  \
   %reldir%/tls_dtor_ignored_on_exit.test  \
