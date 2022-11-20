@@ -175,7 +175,6 @@ do_on_process_attach(void)
     static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
     static UNICODE_STRING gname = { .Buffer = gnbuffer, .Length = sizeof(gnbuffer) - sizeof(WCHAR), .MaximumLength = sizeof(gnbuffer) };
     static OBJECT_ATTRIBUTES gattrs = { .Length = sizeof(OBJECT_ATTRIBUTES), .ObjectName = &gname, .Attributes = OBJ_OPENIF | OBJ_EXCLUSIVE };
-    static DWORD gaccess = STANDARD_RIGHTS_REQUIRED | SECTION_MAP_READ | SECTION_MAP_WRITE;
     static LARGE_INTEGER gsize = { .QuadPart = sizeof(__MCF_crt_xglobals) };
 
     /* Generate the unique name for this process.  */
@@ -188,13 +187,13 @@ do_on_process_attach(void)
     do_encode_numeric_field(gnbuffer + 34, 16, cookie, L"GHJKLMNPQRSTUWXY");
     __MCF_ASSERT(gnbuffer[50] == 0);
 
-    /* Allocate or open storage for global data.
-     * We are in the DLL main routine, so locking is unnecessary.  */
     __MCF_CHECK_NT(BaseGetNamedObjectDirectory(&(gattrs.RootDirectory)));
     __MCF_ASSERT(gattrs.RootDirectory);
 
+    /* Allocate or open storage for global data.
+     * We are in the DLL main routine, so locking is unnecessary.  */
     HANDLE gfile;
-    __MCF_CHECK_NT(NtCreateSection(&gfile, gaccess, &gattrs, &gsize, PAGE_READWRITE, SEC_COMMIT, NULL));
+    __MCF_CHECK_NT(NtCreateSection(&gfile, STANDARD_RIGHTS_REQUIRED | SECTION_MAP_READ | SECTION_MAP_WRITE, &gattrs, &gsize, PAGE_READWRITE, SEC_COMMIT, NULL));
     __MCF_ASSERT(gfile);
 
     /* Get a pointer to this named region. Unlike `CreateFileMappingW()`,
