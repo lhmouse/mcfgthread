@@ -83,6 +83,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     my_mask = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
     if(my_mask != 0) {
       __MCF_ASSERT((my_mask & (my_mask - 1U)) == 0);
+      register BYTE* my_spin_byte = do_spin_byte_ptr(mutex, my_mask);
 
       /* Calculate the spin count for this loop.  */
       register int spin = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
@@ -94,8 +95,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         YieldProcessor();
 
         /* Wait for my turn.  */
-        BYTE cmp = 1;
-        if(!_MCF_atomic_cmpxchg_weak_8_rlx(do_spin_byte_ptr(mutex, my_mask), &cmp, 0))
+        if(!(_MCF_atomic_load_8_rlx(my_spin_byte) && _MCF_atomic_xchg_8_rlx(my_spin_byte, 0)))
           continue;
 
         /* If this mutex has not been locked, lock it and decrement the
