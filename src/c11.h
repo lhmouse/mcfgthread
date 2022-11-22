@@ -435,18 +435,22 @@ __MCF_DECLSPEC_C11(__MCF_GNU_INLINE)
 void
 __MCF_c11_thrd_exit(int __result) __MCF_NOEXCEPT
   {
-    /* As there is no type information, we examine the thread procedure to
-     * ensure we don't mistake a thread of a wrong type.  */
-    __MCF_c11_thread_record* __rec = NULL;
+    __MCF_c11_thread_record* __rec;
     _MCF_thread* __self = _MCF_thread_self();
 
-    if(__self && (__self->__proc == __MCF_c11_thread_thunk_v2)) {
-      __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__self);
-      __rec->__result = __result;
-    }
+    if(!__self)
+      _MCF_thread_exit();
 
-    /* Exit, even in the case of a foreign thread. Unlike `ExitThread()`, if
-     * the last thread exits, the current process exits with zero.  */
+    /* As there is no type information, we examine the thread procedure to
+     * ensure we don't mistake a thread of a wrong type. The current thread
+     * shall terminate even if it is foreign. Unlike `ExitThread()`, if the
+     * last thread exits, the current process exits with zero.  */
+    if(__self->__proc != __MCF_c11_thread_thunk_v2)
+      _MCF_thread_exit();
+
+    /* Set the exit status and exit.  */
+    __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__self);
+    __rec->__result = __result;
     _MCF_thread_exit();
   }
 
