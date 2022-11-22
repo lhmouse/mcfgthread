@@ -552,6 +552,9 @@ __MCF_libcxx_thread_join(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT
     __MCF_gthr_thread_record* __rec;
     int __err;
 
+    if(*__thrdp == _MCF_thread_self())
+      return EDEADLK;
+
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
     if((*__thrdp)->__proc != __MCF_gthr_thread_thunk_v2)
@@ -563,9 +566,6 @@ __MCF_libcxx_thread_join(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT
       return EINVAL;
 
     /* Wait for it.  */
-    if(*__thrdp == _MCF_thread_self())
-      return EDEADLK;
-
     __err = _MCF_thread_wait(*__thrdp, NULL);
     __MCF_ASSERT(__err == 0);
 

@@ -588,6 +588,9 @@ __MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
     __MCF_gthr_thread_record* __rec;
     int __err;
 
+    if(__thrd == _MCF_thread_self())
+      return -2;
+
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
     if(__thrd->__proc != __MCF_gthr_thread_thunk_v2)
@@ -596,12 +599,9 @@ __MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
     /* Fail if the thread has already been detached.  */
     __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
     if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
-      return -1;
+      return -3;
 
     /* Wait for it.  */
-    if(__thrd == _MCF_thread_self())
-      return -2;
-
     __err = _MCF_thread_wait(__thrd, NULL);
     __MCF_ASSERT(__err == 0);
 
