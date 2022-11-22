@@ -560,12 +560,12 @@ __MCF_libcxx_thread_join(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT
     if((*__thrdp)->__proc != __MCF_gthr_thread_thunk_v2)
       return EINVAL;
 
-    /* Fail if the thread has already been detached.  */
     __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(*__thrdp);
+
+    /* Fail if the thread has already been detached.  */
     if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
       return EINVAL;
 
-    /* Wait for it.  */
     __err = _MCF_thread_wait(*__thrdp, NULL);
     __MCF_ASSERT(__err == 0);
 
@@ -585,8 +585,9 @@ __MCF_libcxx_thread_detach(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT
     if((*__thrdp)->__proc != __MCF_gthr_thread_thunk_v2)
       return EINVAL;
 
-    /* Fail if the thread has already been detached.  */
     __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(*__thrdp);
+
+    /* Fail if the thread has already been detached.  */
     if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
       return EINVAL;
 
