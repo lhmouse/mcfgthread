@@ -544,13 +544,12 @@ __MCF_c11_thrd_exit(int __result) __MCF_NOEXCEPT
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
     __MCF_c11_thread_record* __rec = NULL;
-
     _MCF_thread* __self = _MCF_thread_self();
-    if(__self && (__self->__proc == __MCF_c11_thread_thunk_v2))
-      __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__self);
 
-    if(__rec)
+    if(__self && (__self->__proc == __MCF_c11_thread_thunk_v2)) {
+      __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__self);
       __rec->__result = __result;
+    }
 
     /* Exit, even in the case of a foreign thread. Unlike `ExitThread()`, if
      * the last thread exits, the current process exits with zero.  */
@@ -564,6 +563,9 @@ __MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_NOEXCEPT
     __MCF_c11_thread_record* __rec;
     int __err;
 
+    if(__thrd == _MCF_thread_self())
+      return thrd_error;
+
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type.  */
     if(__thrd->__proc != __MCF_c11_thread_thunk_v2)
@@ -575,9 +577,6 @@ __MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_NOEXCEPT
       return thrd_error;
 
     /* Wait for it.  */
-    if(__thrd == _MCF_thread_self())
-      return thrd_error;
-
     __err = _MCF_thread_wait(__thrd, NULL);
     __MCF_ASSERT(__err == 0);
 
