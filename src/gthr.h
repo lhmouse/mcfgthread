@@ -504,12 +504,12 @@ __MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
     if(__thrd->__proc != __MCF_gthr_thread_thunk_v2)
       return -1;
 
-    /* Fail if the thread has already been detached.  */
     __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
+
+    /* Fail if the thread has already been detached.  */
     if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
       return -3;
 
-    /* Wait for it.  */
     __err = _MCF_thread_wait(__thrd, NULL);
     __MCF_ASSERT(__err == 0);
 
@@ -539,8 +539,9 @@ __MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_NOEXCEPT
     if(__thrd->__proc != __MCF_gthr_thread_thunk_v2)
       return -1;
 
-    /* Fail if the thread has already been detached.  */
     __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
+
+    /* Fail if the thread has already been detached.  */
     if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
       return -1;
 

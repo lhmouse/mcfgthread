@@ -398,8 +398,9 @@ __MCF_c11_thrd_detach(thrd_t __thrd) __MCF_NOEXCEPT
     if(__thrd->__proc != __MCF_c11_thread_thunk_v2)
       return thrd_error;
 
-    /* Fail if the thread has already been detached.  */
     __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__thrd);
+
+    /* Fail if the thread has already been detached.  */
     if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
       return thrd_error;
 
@@ -443,12 +444,12 @@ __MCF_c11_thrd_exit(int __result) __MCF_NOEXCEPT
 
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type. The current thread
-     * shall terminate even if it is foreign. Unlike `ExitThread()`, if the
-     * last thread exits, the current process exits with zero.  */
+     * shall terminate even if it is foreign.  */
     if(__self->__proc != __MCF_c11_thread_thunk_v2)
       _MCF_thread_exit();
 
-    /* Set the exit status and exit.  */
+    /* Set the exit status and exit. Unlike `ExitThread()`, if the last
+     * thread exits, the current process exits with zero.  */
     __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__self);
     __rec->__result = __result;
     _MCF_thread_exit();
@@ -476,12 +477,12 @@ __MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_NOEXCEPT
     if(__thrd->__proc != __MCF_c11_thread_thunk_v2)
       return thrd_error;
 
-    /* Fail if the thread has already been detached.  */
     __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__thrd);
+
+    /* Fail if the thread has already been detached.  */
     if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
       return thrd_error;
 
-    /* Wait for it.  */
     __err = _MCF_thread_wait(__thrd, NULL);
     __MCF_ASSERT(__err == 0);
 
