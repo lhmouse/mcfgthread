@@ -24,14 +24,14 @@ struct __MCF_thread
     __MCF_HANDLE __handle;  /* win32 thread handle  */
 
     _MCF_thread_procedure* __proc;  /* user-defined thread procedure  */
-    void* __data_ptr;  /* pointer to user-defined data  */
+    void* __data_opt;  /* pointer to user-defined data  */
 
     __MCF_dtor_queue __atexit_queue[1];  /* for `__cxa_thread_atexit()`  */
     __MCF_tls_table __tls_table[1];  /* for `_MCF_tls_get()` and `_MCF_tls_set()`  */
 
     void* __libobjc_tls_data;  /* for GCC libobjc  */
 
-    /* `__data_ptr` shall always point to `__data_storage` below. The space
+    /* `__data_opt` shall always point to `__data_storage` below. The space
      * preceding it is reserved for future use. It is not safe to assume the
      * offset of `__data_storage` to be a constant.  */
 #define __MCF_THREAD_DATA_ALIGNMENT   16U
@@ -60,7 +60,9 @@ __MCF_THREAD_INLINE
 _MCF_thread*
 _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __size) __MCF_NOEXCEPT;
 
-/* Gets a pointer to user-defined data of a thread.  */
+/* Gets a pointer to user-defined data of a thread. If the thread does not have
+ * user-defined data, because zero was specified for the `__size` parameter to
+ * `_MCF_thread_new()`, a null pointer is returned.  */
 __MCF_THREAD_INLINE __MCF_CXX11(constexpr)
 __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT __attribute__((__pure__));
@@ -225,7 +227,7 @@ __MCF_THREAD_INLINE __MCF_CXX11(constexpr)
 __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
-    return __builtin_assume_aligned(__thrd->__data_ptr, __MCF_THREAD_DATA_ALIGNMENT);
+    return __builtin_assume_aligned(__thrd->__data_opt, __MCF_THREAD_DATA_ALIGNMENT);
   }
 
 #ifdef __cplusplus
@@ -234,7 +236,7 @@ inline __MCF_CXX11(constexpr)
 void*
 _MCF_thread_get_data(_MCF_thread* __thrd) __MCF_NOEXCEPT
   {
-    return __builtin_assume_aligned(__thrd->__data_ptr, __MCF_THREAD_DATA_ALIGNMENT);
+    return __builtin_assume_aligned(__thrd->__data_opt, __MCF_THREAD_DATA_ALIGNMENT);
   }
 #endif  /* __cplusplus  */
 

@@ -61,21 +61,24 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
 
     _MCF_atomic_store_32_rlx(thrd->__nref, 2);
     thrd->__proc = proc;
-    thrd->__data_ptr = thrd->__data_storage;
 
-    /* Adjust `__data_ptr` for over-aligned types. If we have over-allocated
-     * memory, give back some. Errors are ignored.  */
-    if(size_need != size_request) {
-      thrd->__data_ptr = (void*) ((((uintptr_t) thrd->__data_ptr - 1) | (real_alignment - 1)) + 1);
+    if(size != 0) {
+      thrd->__data_opt = thrd->__data_storage;
 
-      size_need = (uintptr_t) thrd->__data_ptr + size - (uintptr_t) thrd;
-      __MCF_ASSERT(size_need <= size_request);
-      HeapReAlloc(__MCF_crt_heap, HEAP_REALLOC_IN_PLACE_ONLY, thrd, size_need);
+      /* Adjust `__data_opt` for over-aligned types. If we have over-allocated
+       * memory, give back some. Errors are ignored.  */
+      if(size_need != size_request) {
+        thrd->__data_opt = (void*) ((((uintptr_t) thrd->__data_opt - 1) | (real_alignment - 1)) + 1);
+
+        size_need = (uintptr_t) thrd->__data_opt + size - (uintptr_t) thrd;
+        __MCF_ASSERT(size_need <= size_request);
+        HeapReAlloc(__MCF_crt_heap, HEAP_REALLOC_IN_PLACE_ONLY, thrd, size_need);
+      }
+
+      /* Copy user-defined data. If this doesn't happen, they are implicit zeroes.  */
+      if(data_opt)
+        __MCF_mcopy(thrd->__data_opt, data_opt, size);
     }
-
-    /* Copy user-defined data. If this doesn't happen, they are implicit zeroes.  */
-    if(data_opt)
-      __MCF_mcopy(thrd->__data_ptr, data_opt, size);
 
     /* Create the thread now.  */
     DWORD tid;
