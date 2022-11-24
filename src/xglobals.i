@@ -273,10 +273,10 @@ typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
 struct __MCF_crt_xglobals
   {
     __MCF_crt_xglobals* __self_ptr;
-    DWORD __self_size;
+    uint32_t __self_size;
+    uint32_t __tls_index;
 
-    /* global resources  */
-    DWORD __tls_index;
+    /* the static thread object  */
     _MCF_thread __main_thread[1];
 
     /* `atexit()` support  */
