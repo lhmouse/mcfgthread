@@ -16,13 +16,13 @@ do
   ${CC} ${CPPFLAGS} ${CFLAGS} -x c++-header -std=c++98 -fsyntax-only -DHAVE_CONFIG_H -I. ${_file}
 done
 
-for _file in $(find -L "src" -name "*.h")
+for _file in $(find -L "src" -name "*.h" -or -name "*.hpp")
 do
   echo "Checking header as C++11:  ${_cmd}  \"${_file}\""
   ${CC} ${CPPFLAGS} ${CFLAGS} -x c++-header -std=c++11 -fsyntax-only -DHAVE_CONFIG_H -I. ${_file}
 done
 
-for _file in $(find -L "src" -name "*.h")
+for _file in $(find -L "src" -name "*.h" -or -name "*.hpp")
 do
   echo "Checking header as C++14:  ${_cmd}  \"${_file}\""
   ${CC} ${CPPFLAGS} ${CFLAGS} -x c++-header -std=c++14 -fsyntax-only -DHAVE_CONFIG_H -I. ${_file}
