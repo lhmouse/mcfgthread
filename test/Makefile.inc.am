@@ -14,6 +14,7 @@ check_PROGRAMS +=  \
   %reldir%/sem_init.test  \
   %reldir%/sem_timeout.test  \
   %reldir%/sem_value.test  \
+  %reldir%/sem_overflow.test  \
   %reldir%/event_init.test  \
   %reldir%/event_timeout.test  \
   %reldir%/event_value.test  \
