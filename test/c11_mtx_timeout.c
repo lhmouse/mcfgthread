@@ -35,7 +35,7 @@ main(void)
     now = _MCF_perf_counter();
     timeout.tv_sec = time(NULL) + 1;
     timeout.tv_nsec = 100000000;
-    mutex.__rc_mutex[0].__owner[0] = 42;
+    mutex.__rc_mtx[0].__owner[0] = 42;
     r = mtx_timedlock(&mutex, &timeout);
     assert(r == thrd_timedout);
     delta = _MCF_perf_counter() - now;

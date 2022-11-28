@@ -31,7 +31,7 @@ typedef int __MCF_c11_thread_procedure(void* __arg);
 struct __MCF_c11_mutex
   {
     uint8_t __type;  /* bit mask of `__MCF_mtx_type`  */
-    __MCF_gthr_rc_mutex __rc_mutex[1];
+    __MCF_gthr_rc_mutex __rc_mtx[1];
   };
 
 struct __MCF_c11_thread_record
@@ -358,7 +358,7 @@ int
 __MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const __MCF_timespec* __ts) __MCF_NOEXCEPT
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__ts);
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) __mtx->__rc_mutex, &__timeout);
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) __mtx->__rc_mtx, &__timeout);
     return (__err != 0) ? thrd_timedout : thrd_success;
   }
 
@@ -366,7 +366,7 @@ __MCF_C11_INLINE
 int
 __MCF_c11_cnd_wait(cnd_t* __cond, mtx_t* __mtx) __MCF_NOEXCEPT
   {
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) __mtx->__rc_mutex, NULL);
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) __mtx->__rc_mtx, NULL);
     __MCF_ASSERT(__err == 0);
     return thrd_success;
   }
@@ -393,7 +393,7 @@ __MCF_c11_mtx_init(mtx_t* __mtx, int __type) __MCF_NOEXCEPT
       case mtx_timed | mtx_recursive:
         /* Initialize an unowned mutex.  */
         __mtx->__type = (uint8_t) __type;
-        __MCF_gthr_rc_mutex_init(__mtx->__rc_mutex);
+        __MCF_gthr_rc_mutex_init(__mtx->__rc_mtx);
         return thrd_success;
     }
   }
@@ -403,14 +403,14 @@ int
 __MCF_c11_mtx_check_recursion(mtx_t* __mtx) __MCF_NOEXCEPT
   {
     /* Check for recursion.  */
-    int __err = __MCF_gthr_rc_mutex_recurse(__mtx->__rc_mutex);
+    int __err = __MCF_gthr_rc_mutex_recurse(__mtx->__rc_mtx);
     if(__err != 0)
       return thrd_busy;
 
     /* If recursion has happened but the mutex is not recursive, undo the
      * operation, and fail.  */
     if(!(__mtx->__type & mtx_recursive)) {
-      __mtx->__rc_mutex[0].__depth --;
+      __mtx->__rc_mtx[0].__depth --;
       return thrd_error;
     }
 
@@ -426,7 +426,7 @@ __MCF_c11_mtx_lock(mtx_t* __mtx) __MCF_NOEXCEPT
     if(__err != thrd_busy)
       return __err;
 
-    __err = __MCF_gthr_rc_mutex_wait(__mtx->__rc_mutex, NULL);
+    __err = __MCF_gthr_rc_mutex_wait(__mtx->__rc_mtx, NULL);
     __MCF_ASSERT(__err == 0);
     return thrd_success;
   }
@@ -446,7 +446,7 @@ __MCF_c11_mtx_timedlock(mtx_t* __mtx, const __MCF_timespec* __ts) __MCF_NOEXCEPT
       return __err;
 
     __timeout = __MCF_gthr_timeout_from_timespec(__ts);
-    __err = __MCF_gthr_rc_mutex_wait(__mtx->__rc_mutex, &__timeout);
+    __err = __MCF_gthr_rc_mutex_wait(__mtx->__rc_mtx, &__timeout);
     return (__err != 0) ? thrd_timedout : thrd_success;
   }
 
@@ -462,7 +462,7 @@ __MCF_c11_mtx_trylock(mtx_t* __mtx) __MCF_NOEXCEPT
       return __err;
 
     __timeout = 0;
-    __err = __MCF_gthr_rc_mutex_wait(__mtx->__rc_mutex, &__timeout);
+    __err = __MCF_gthr_rc_mutex_wait(__mtx->__rc_mtx, &__timeout);
     return (__err != 0) ? thrd_busy : thrd_success;
   }
 
@@ -470,7 +470,7 @@ __MCF_C11_INLINE
 int
 __MCF_c11_mtx_unlock(mtx_t* __mtx) __MCF_NOEXCEPT
   {
-    __MCF_gthr_rc_mutex_release(__mtx->__rc_mutex);
+    __MCF_gthr_rc_mutex_release(__mtx->__rc_mtx);
     return 0;
   }
 

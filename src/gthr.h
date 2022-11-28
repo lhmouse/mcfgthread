@@ -152,7 +152,7 @@ __MCF_ALIAS(__gthread_mutex_unlock, __MCF_gthr_mutex_unlock);
 /* Initializes a recursive mutex, like `pthread_mutex_init()`.  */
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_recursive_mutex_init(__gthread_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT;
+__MCF_gthr_recursive_mutex_init(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
 #ifndef __MCF_GTHR_NO_ALIASES
 __MCF_ALIAS(__gthread_recursive_mutex_init, __MCF_gthr_recursive_mutex_init);
@@ -161,7 +161,7 @@ __MCF_ALIAS(__gthread_recursive_mutex_init, __MCF_gthr_recursive_mutex_init);
 /* Destroys a recursive mutex. This function does nothing.  */
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_recursive_mutex_destroy(__gthread_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT;
+__MCF_gthr_recursive_mutex_destroy(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
 #ifndef __MCF_GTHR_NO_ALIASES
 __MCF_ALIAS(__gthread_recursive_mutex_destroy, __MCF_gthr_recursive_mutex_destroy);
@@ -170,7 +170,7 @@ __MCF_ALIAS(__gthread_recursive_mutex_destroy, __MCF_gthr_recursive_mutex_destro
 /* Locks a recursive mutex, like `pthread_mutex_lock()`.  */
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT;
+__MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
 #ifndef __MCF_GTHR_NO_ALIASES
 __MCF_ALIAS(__gthread_recursive_mutex_lock, __MCF_gthr_recursive_mutex_lock);
@@ -180,7 +180,7 @@ __MCF_ALIAS(__gthread_recursive_mutex_lock, __MCF_gthr_recursive_mutex_lock);
  * `pthread_mutex_trylock()`.  */
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT;
+__MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
 #ifndef __MCF_GTHR_NO_ALIASES
 __MCF_ALIAS(__gthread_recursive_mutex_trylock, __MCF_gthr_recursive_mutex_trylock);
@@ -190,7 +190,7 @@ __MCF_ALIAS(__gthread_recursive_mutex_trylock, __MCF_gthr_recursive_mutex_tryloc
  * `pthread_mutex_timedlock()`.  */
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmutex, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT;
+__MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT;
 
 #ifndef __MCF_GTHR_NO_ALIASES
 __MCF_ALIAS(__gthread_recursive_mutex_timedlock, __MCF_gthr_recursive_mutex_timedlock);
@@ -199,7 +199,7 @@ __MCF_ALIAS(__gthread_recursive_mutex_timedlock, __MCF_gthr_recursive_mutex_time
 /* Unlocks a recursive mutex, like `pthread_mutex_unlock()`.  */
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT;
+__MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
 #ifndef __MCF_GTHR_NO_ALIASES
 __MCF_ALIAS(__gthread_recursive_mutex_unlock, __MCF_gthr_recursive_mutex_unlock);
@@ -237,7 +237,7 @@ __MCF_ALIAS(__gthread_cond_wait, __MCF_gthr_cond_wait);
 /* Waits for a condition variable, like `pthread_cond_wait()`.  */
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT;
+__MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
 
 #ifndef __MCF_GTHR_NO_ALIASES
 __MCF_ALIAS(__gthread_cond_wait_recursive, __MCF_gthr_cond_wait_recursive);
@@ -443,66 +443,66 @@ __MCF_gthr_mutex_unlock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_recursive_mutex_init(__gthread_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT
+__MCF_gthr_recursive_mutex_init(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
-    __MCF_gthr_rc_mutex_init(__rmutex);
+    __MCF_gthr_rc_mutex_init(__rmtx);
     return 0;
   }
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_recursive_mutex_destroy(__gthread_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT
+__MCF_gthr_recursive_mutex_destroy(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
-    (void) __rmutex;
+    (void) __rmtx;
     return 0;
   }
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT
+__MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
-    int __err = __MCF_gthr_rc_mutex_recurse(__rmutex);
+    int __err = __MCF_gthr_rc_mutex_recurse(__rmtx);
     if(__err == 0)
       return 0;
 
-    __err = __MCF_gthr_rc_mutex_wait(__rmutex, NULL);
+    __err = __MCF_gthr_rc_mutex_wait(__rmtx, NULL);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT
+__MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
     int64_t __timeout;
-    int __err = __MCF_gthr_rc_mutex_recurse(__rmutex);
+    int __err = __MCF_gthr_rc_mutex_recurse(__rmtx);
     if(__err == 0)
       return 0;
 
     __timeout = 0;
-    __err = __MCF_gthr_rc_mutex_wait(__rmutex, &__timeout);
+    __err = __MCF_gthr_rc_mutex_wait(__rmtx, &__timeout);
     return __err;
   }
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmutex, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
+__MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const __gthread_time_t* __abs_time) __MCF_NOEXCEPT
   {
     int64_t __timeout;
-    int __err = __MCF_gthr_rc_mutex_recurse(__rmutex);
+    int __err = __MCF_gthr_rc_mutex_recurse(__rmtx);
     if(__err == 0)
       return 0;
 
     __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
-    __err = __MCF_gthr_rc_mutex_wait(__rmutex, &__timeout);
+    __err = __MCF_gthr_rc_mutex_wait(__rmtx, &__timeout);
     return __err;
   }
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT
+__MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
-    __MCF_gthr_rc_mutex_release(__rmutex);
+    __MCF_gthr_rc_mutex_release(__rmtx);
     return 0;
   }
 
@@ -533,9 +533,9 @@ __MCF_gthr_cond_wait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx) __MCF_N
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mutex_t* __rmutex) __MCF_NOEXCEPT
+__MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) __rmutex, NULL);
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) __rmtx, NULL);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
