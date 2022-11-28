@@ -62,11 +62,8 @@ int
 _MCF_sem_signal_some(_MCF_sem* sem, intptr_t value_add)
   {
     /* Validate arguments.  */
-    if(value_add == 0)
-      return 0;
-
-    if(value_add < 0)
-      return -1;
+    if(value_add <= 0)
+      return (int) (value_add >> (__MCF_PTR_BITS - 1));  /* value_add ? -1 : 0  */
 
     /* Get the number of threads to wake up.  */
     size_t wake_num;
