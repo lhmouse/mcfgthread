@@ -112,14 +112,14 @@ __MCF_DLLEXPORT
 void
 __MCF_run_dtors_at_quick_exit(void)
   {
-    __MCF_dtor_queue_finalize(__MCF_g->__cxa_at_quick_exit_queue, __MCF_g->__cxa_at_quick_exit_mutex, NULL);
+    __MCF_dtor_queue_finalize(__MCF_g->__cxa_at_quick_exit_queue, __MCF_g->__cxa_at_quick_exit_mtx, NULL);
   }
 
 __MCF_DLLEXPORT
 void
 __MCF_run_dtors_atexit(void)
   {
-    __MCF_dtor_queue_finalize(__MCF_g->__cxa_atexit_queue, __MCF_g->__cxa_atexit_mutex, NULL);
+    __MCF_dtor_queue_finalize(__MCF_g->__cxa_atexit_queue, __MCF_g->__cxa_atexit_mtx, NULL);
   }
 
 __MCF_DLLEXPORT
