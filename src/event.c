@@ -24,7 +24,7 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
     _MCF_atomic_load_pptr_acq(&old, event);
     do {
       if(old.__value != (uint8_t) undesired)
-        return 0;
+        return old.__value;
 
       new = old;
       new.__nsleep = (old.__nsleep + 1U) & __MCF_EVENT_NSLEEP_M;
