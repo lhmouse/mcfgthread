@@ -176,6 +176,24 @@ extern "C" void* __dso_handle;
 
 enum { _Thread_starting, _Thread_constructed, _Thread_cancelled };
 
+#if !defined(__cpp_lib_invoke)
+  template<typename _Callable, typename... _Args,
+      ::std::enable_if<::std::is_class<_Callable>::value || ::std::is_union<_Callable>::value, int>::type = 0>
+  void
+  __do_invoke(_Callable&& __func, _Args&&... __args)
+    {
+      static_cast<_Callable&&>(__func)(static_cast<_Args&&>(__args)...);
+    }
+
+  template<typename _Callable, typename... _Args,
+      ::std::enable_if<!::std::is_class<_Callable>::value && !::std::is_union<_Callable>::value, int>::type = 0>
+  void
+  __do_invoke(_Callable&& __func, _Args&&... __args)
+    {
+      ::std::ref(__func) (static_cast<_Args&&>(__args)...);
+    }
+#endif
+
 template<typename _Callable, typename... _Args>
 struct _Thread_launcher;
 
@@ -197,7 +215,7 @@ struct _Thread_launcher<_Callable>
 #if defined(__cpp_lib_invoke)
         ::std::invoke(static_cast<_Callable&&>(this->__func), static_cast<_Args&&>(__args)...);
 #else
-        ::std::ref(this->__func) (static_cast<_Args&&>(__args)...);
+        _Noadl::__do_invoke(static_cast<_Callable&&>(this->__func), static_cast<_Args&&>(__args)...);
 #endif
       }
   };
@@ -245,7 +263,7 @@ call_once(once_flag& __flag, _Callable&& __func, _Args&&... __args)
 #if defined(__cpp_lib_invoke)
       ::std::invoke(static_cast<_Callable&&>(__func), static_cast<_Args&&>(__args)...);
 #else
-      ::std::ref(__func) (static_cast<_Args&&>(__args)...);
+      _Noadl::__do_invoke(static_cast<_Callable&&>(__func), static_cast<_Args&&>(__args)...);
 #endif
     }
     __MCF_CXX11_CATCH(...) {
@@ -540,7 +558,11 @@ class thread
       }
 
     template<typename _Callable, typename... _Args,
+#if defined(__cpp_lib_is_invocable)
+        typename = typename ::std::enable_if<::std::is_invocable<_Callable, _Args...>::value>::type>
+#else
         typename = typename ::std::result_of<_Callable&& (_Args&&...)>::type>
+#endif
     explicit
     thread(_Callable& __func, _Args&&... __args)
       {
