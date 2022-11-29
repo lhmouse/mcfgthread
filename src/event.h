@@ -50,7 +50,7 @@ __MCF_EVENT_INLINE
 uint8_t
 _MCF_event_get(const _MCF_event* __event) __MCF_NOEXCEPT;
 
-/* Wait for an event until it does NOT contain an undesired value.
+/* Waits for an event until it does NOT contain an undesired value.
  *
  * If the `__timeout_opt` argument points to a positive integer, it denotes the
  * expiration time in number of milliseconds since 1970-01-01T00:00:00Z. If it
@@ -59,11 +59,11 @@ _MCF_event_get(const _MCF_event* __event) __MCF_NOEXCEPT;
  * without waiting. If it is null, the function waits indefinitely.
  *
  * If this event contains the undesired value, this function blocks until
- * some other value has been stored. Otherwise, this function returns 0
+ * some other value has been stored. Otherwise, this function returns its value
  * immediately.
  *
- * Returns 0 if the value does not equal the lowest byte of `__undesired`, or
- * -1 if the operation has timed out, or -2 in case of invalid arguments.  */
+ * Returns a desired value which never equals the lowest byte of `__undesired`,
+ * or -1 if the operation has timed out, or -2 in case of invalid arguments.  */
 __MCF_EVENT_IMPORT
 int
 _MCF_event_await_change_slow(_MCF_event* __event, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
@@ -124,7 +124,7 @@ _MCF_event_await_change(_MCF_event* __event, int __undesired, const int64_t* __t
     /* Check whether the event does not contain the undesired value. If so,
      * don't block at all.  */
     if(__old.__value != (uint8_t) __undesired)
-      return 0;
+      return __old.__value;
 
     if(__timeout_opt && (*__timeout_opt == 0))
       return -1;
