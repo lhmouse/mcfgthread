@@ -23,14 +23,14 @@ main(void)
 
     now = _MCF_perf_counter();
     r = _MCF_event_await_change(&event, 52, (const int64_t[]){ _MCF_utc_now() + 1100 });  /* absolute  */
-    assert(r == 0);
+    assert(r == 42);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
     assert(delta <= 100);
 
     now = _MCF_perf_counter();
     r = _MCF_event_await_change(&event, __MCF_EVENT_VALUE_MAX, (const int64_t[]){ _MCF_utc_now() + 1100 });  /* absolute  */
-    assert(r == 0);
+    assert(r == 42);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
     assert(delta <= 100);
