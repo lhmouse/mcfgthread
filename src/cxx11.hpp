@@ -8,12 +8,14 @@
 #include "fwd.h"
 #include "gthr_aux.h"
 #include "cxa.h"
+#include "event.h"
 #include <mutex>  // lock_guard, unique_lock
 #include <chrono>  // duration, time_point
 #include <functional>  // ref(), invoke()
 #include <system_error>  // system_error, errc, error_code
 #include <cmath>  // isfinite
 #include <type_traits>
+#include <new>
 
 namespace MCF {
 namespace _Noadl = ::MCF;
@@ -172,6 +174,54 @@ __wait_for(const _Duration& __rel_time, _Callable __func, _Args... __args)
 
 extern "C" void* __dso_handle;
 
+enum { _Thread_starting, _Thread_constructed, _Thread_cancelled };
+
+template<typename _Callable, typename... _Args>
+struct _Thread_launcher;
+
+template<typename _Callable>
+struct _Thread_launcher<_Callable>
+  {
+    ::_MCF_event __evn[1] = { __MCF_EVENT_INIT(_Thread_starting) };
+    typename ::std::decay<_Callable>::type __func;
+
+    constexpr
+    _Thread_launcher(_Callable& __xfunc)
+      : __func(static_cast<_Callable&&>(__xfunc))
+      { }
+
+    template<typename... _Args>
+    void
+    __do_it(_Args&&... __args)
+      {
+#if defined(__cpp_lib_invoke)
+        ::std::invoke(static_cast<_Callable&&>(this->__func), static_cast<_Args&&>(__args)...);
+#else
+        ::std::ref(this->__func) (static_cast<_Args&&>(__args)...);
+#endif
+      }
+  };
+
+template<typename _Callable, typename _First, typename... _Rest>
+struct _Thread_launcher<_Callable, _First, _Rest...>
+  : _Thread_launcher<_Callable, _Rest...>
+  {
+    using _Next = _Thread_launcher<_Callable, _Rest...>;
+    typename ::std::decay<_First>::type __first;
+
+    constexpr
+    _Thread_launcher(_Callable& __func, _First& __xfirst, _Rest&... __xrest)
+      : _Next(__func, __xrest...), __first(static_cast<_First&&>(__xfirst))
+      { }
+
+    template<typename... _Args>
+    void
+    __do_it(_Args&&... __args)
+      {
+        this->_Next::__do_it(static_cast<_Args&&>(__args)..., static_cast<_First&&>(this->__first));
+      }
+  };
+
 // Reference implementation for [thread.once.onceflag]
 struct once_flag
   {
@@ -193,9 +243,9 @@ call_once(once_flag& __flag, _Callable&& __func, _Args&&... __args)
 
     __MCF_CXX11_TRY {
 #if defined(__cpp_lib_invoke)
-      ::std::invoke(::std::forward<_Callable>(__func), ::std::forward<_Args>(__args)...);
+      ::std::invoke(static_cast<_Callable&&>(__func), static_cast<_Args&&>(__args)...);
 #else
-      ::std::ref(__func)(::std::forward<_Args>(__args)...);
+      ::std::ref(__func) (static_cast<_Args&&>(__args)...);
 #endif
     }
     __MCF_CXX11_CATCH(...) {
@@ -430,7 +480,7 @@ class condition_variable
              _Predicate __pred)
       {
         return this->wait_until(__lock, chrono::steady_clock::now() + __rel_time,
-                                ::std::move(__pred));
+                                static_cast<_Predicate&&>(__pred));
       }
 
     using native_handle_type = ::_MCF_cond*;
@@ -471,8 +521,103 @@ class thread
     thread(const thread&) = delete;
     thread& operator=(const thread&) = delete;
 
-    
+    thread(thread&& __other) noexcept
+      {
+        this->_M_thrd = __other._M_thrd;
+        __other._M_thrd = nullptr;
+      }
+
+    thread&
+    operator=(thread&& __other) noexcept
+      {
+        if(this->_M_thrd)
+          ::std::terminate();
+
+        this->_M_thrd = __other._M_thrd;
+        __other._M_thrd = nullptr;
+
+        return *this;
+      }
+
+    template<typename _Callable, typename... _Args,
+        typename = typename ::std::result_of<_Callable&& (_Args&&...)>::type>
+    explicit
+    thread(_Callable& __func, _Args&&... __args)
+      {
+        using _Launcher = _Thread_launcher<_Callable, _Args...>;
+
+        this->_M_thrd = ::_MCF_thread_new_aligned(
+            +[](::_MCF_thread* __thrd) {
+              auto __lch = (_Launcher*) ::_MCF_thread_get_data(__thrd);
+
+              // Await initialization.
+              int __state = ::_MCF_event_await_change(__lch->__evn, _Thread_starting, nullptr);
+              __MCF_ASSERT(__state >= 0);
+              if(__state != _Thread_constructed)
+                return;
+
+              __lch->__do_it();
+              __lch->~_Launcher();
+            },
+            alignof(_Launcher), nullptr, sizeof(_Launcher));
+
+        if(!this->_M_thrd)
+          __MCF_CXX11_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_thread_new_aligned");
+
+        // Get uninitialized storage. `__evn` is initially zero.
+        auto __lch = (_Launcher*) ::_MCF_thread_get_data(this->_M_thrd);
+
+        __MCF_CXX11_TRY {
+          __lch = ::new((void*) __lch) _Launcher(__func, __args...);
+        }
+        __MCF_CXX11_CATCH(...) {
+          ::_MCF_event_set(__lch->__evn, _Thread_cancelled);
+          ::_MCF_thread_drop_ref(this->_M_thrd);
+          __MCF_CXX11_THROW();
+        }
+        ::_MCF_event_set(__lch->__evn, _Thread_constructed);
+      }
+
+    void
+    swap(thread& __other) noexcept
+      {
+        auto __thrd = this->_M_thrd;
+        this->_M_thrd = __other._M_thrd;
+        __other._M_thrd = __thrd;
+      }
+
+    bool
+    joinable() const noexcept
+      {
+        return this->_M_thrd != nullptr;
+      }
+
+    void
+    join()
+      {
+        __MCF_ASSERT(this->_M_thrd);  // must be joinable
+
+        int __err = ::_MCF_thread_wait(this->_M_thrd, nullptr);
+        if(__err != 0)
+          __MCF_CXX11_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_thread_new_aligned");
+      }
   };
+
+inline
+void
+swap(thread& __lhs, thread& __rhs) noexcept
+  {
+    __lhs.swap(__rhs);
+  }
 
 }  /* namespace MCF  */
 #endif  /* __MCFGTHREAD_CXX11_  */
+
+
+int
+main()
+  {
+    MCF::thread thr(printf, (const char*) "%d %p %g", 123, (void*) 0x456, 78.9);
+    thr.join();
+  }
+  
