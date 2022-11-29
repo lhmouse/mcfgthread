@@ -14,6 +14,7 @@
 #include <ntdef.h>
 #include <winerror.h>
 #include <ntstatus.h>
+#include <sysinfoapi.h>
 
 __MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_XGLOBALS_IMPORT
@@ -295,6 +296,7 @@ struct __MCF_crt_xglobals
   };
 
 /* These are constants that have to be initialized at load time.  */
+extern SYSTEM_INFO __MCF_XGLOBALS_READONLY __MCF_crt_sysinfo;
 extern HANDLE __MCF_XGLOBALS_READONLY __MCF_crt_heap;
 extern double __MCF_XGLOBALS_READONLY __MCF_crt_pf_recip;
 

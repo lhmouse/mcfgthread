@@ -23,3 +23,24 @@ _MCF_get_win32_error(void)
   {
     return GetLastError();
   }
+
+__MCF_DLLEXPORT
+size_t
+_MCF_get_page_size(void)
+  {
+    return __MCF_crt_sysinfo.dwPageSize;
+  }
+
+__MCF_DLLEXPORT
+size_t
+_MCF_get_processor_count(void)
+  {
+    return __MCF_crt_sysinfo.dwNumberOfProcessors;
+  }
+
+__MCF_DLLEXPORT
+uintptr_t
+_MCF_get_active_processor_mask(void)
+  {
+    return __MCF_crt_sysinfo.dwActiveProcessorMask;
+  }

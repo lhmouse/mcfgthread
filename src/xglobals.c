@@ -164,6 +164,8 @@ void
 do_on_process_attach(void)
   {
     /* Initialize static global constants.  */
+    GetSystemInfo(&__MCF_crt_sysinfo);
+
     __MCF_crt_heap = GetProcessHeap();
     __MCF_CHECK(__MCF_crt_heap);
 
@@ -313,6 +315,7 @@ const PIMAGE_TLS_CALLBACK __MCF_xl_b __attribute__((__section__(".CRT$XLB"), __u
  * initializers prevent them from being placed into the`.bss` section.  */
 HANDLE __MCF_crt_heap = (void*) -1;
 double __MCF_crt_pf_recip = 1;
+SYSTEM_INFO __MCF_crt_sysinfo = { .dwPageSize = 1 };
 
 /* This is a pointer to global data. If this library is linked statically,
  * all instances of this pointer in the same process should point to the

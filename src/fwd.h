@@ -199,9 +199,26 @@ __MCF_FWD_IMPORT
 void
 __MCF_runtime_failure(const char* __where) __attribute__((__noreturn__, __noinline__, __cold__));
 
+/* Gets the last error number, like `GetLastError()`.  */
 __MCF_FWD_IMPORT
 uint32_t
 _MCF_get_win32_error(void) __MCF_NOEXCEPT __attribute__((__pure__));
+
+/* Gets the system page size, which is usually 4KiB or 8KiB.  */
+__MCF_FWD_IMPORT
+size_t
+_MCF_get_page_size(void) __MCF_NOEXCEPT __attribute__((__const__));
+
+/* Gets the number of logical processors in the current group.  */
+__MCF_FWD_IMPORT
+size_t
+_MCF_get_processor_count(void) __MCF_NOEXCEPT __attribute__((__const__));
+
+/* Gets the mask of active processors. Each bit 1 denotes a processor that
+ * has been configured into the system.  */
+__MCF_FWD_IMPORT
+uintptr_t
+_MCF_get_active_processor_mask(void) __MCF_NOEXCEPT __attribute__((__const__));
 
 __MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_FWD_  */
