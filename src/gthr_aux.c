@@ -11,7 +11,7 @@ __MCF_DLLEXPORT
 int64_t
 __MCF_gthr_timeout_from_timespec(const __MCF_timespec* abs_time)
   {
-    double value = 0.0009999;
+    double value = 0.9999999;
     value += (double) abs_time->tv_nsec * 0.000001;
     value += (double) abs_time->tv_sec * 1000;
 
