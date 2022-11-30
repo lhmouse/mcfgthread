@@ -88,6 +88,28 @@ __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
   }
 
 __MCF_DLLEXPORT
+void*
+__MCF_tls_table_release(__MCF_tls_table* table, _MCF_tls_key* key)
+  {
+    if(_MCF_atomic_load_8_rlx(key->__deleted))
+      return NULL;
+
+    if(!table->__begin)
+      return NULL;
+
+    /* Search for the given key.
+     * Note `do_linear_probe_nonempty()` may return an empty element.  */
+    __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
+    if(!elem->__key_opt)
+      return NULL;
+
+    __MCF_ASSERT(elem->__key_opt == key);
+    void* old = elem->__value_opt;
+    elem->__value_opt = NULL;
+    return old;
+  }
+
+__MCF_DLLEXPORT
 int
 __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value_opt, const void* value_opt)
   {

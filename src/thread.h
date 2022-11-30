@@ -308,8 +308,10 @@ void*
 _MCF_tls_get(const _MCF_tls_key* __key) __MCF_NOEXCEPT
   {
     _MCF_thread* __self = _MCF_thread_self();
-    return (__self == NULL) ? NULL
-               : __MCF_tls_table_get(__self->__tls_table, __key);
+    if(!__self)
+      return NULL;
+
+    return __MCF_tls_table_get(__self->__tls_table, __key);
   }
 
 __MCF_THREAD_INLINE
@@ -317,17 +319,24 @@ int
 _MCF_tls_xset(_MCF_tls_key* __key, void** __old_value_opt, const void* __value_opt) __MCF_NOEXCEPT
   {
     _MCF_thread* __self = _MCF_thread_self();
-    return (__self == NULL) ? -1
-               : __MCF_tls_table_xset(__self->__tls_table, __key, __old_value_opt, __value_opt);
+    if(!__self)
+      return -1;
+
+    if(!__value_opt) {
+      /* Set the value to null. This will not fail.  */
+      void* __old_value = __MCF_tls_table_release(__self->__tls_table, __key);
+      __MCF_SET_IF(__old_value_opt, __old_value);
+      return 0;
+    }
+
+    return __MCF_tls_table_xset(__self->__tls_table, __key, __old_value_opt, __value_opt);
   }
 
 __MCF_THREAD_INLINE
 int
 _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt) __MCF_NOEXCEPT
   {
-    _MCF_thread* __self = _MCF_thread_self();
-    return (__self == NULL) ? -1
-               : __MCF_tls_table_set(__self->__tls_table, __key, __value_opt);
+    return _MCF_tls_xset(__key, NULL, __value_opt);
   }
 
 __MCF_C_DECLARATIONS_END

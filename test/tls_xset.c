@@ -51,6 +51,11 @@ main(void)
     assert(p == NULL);
 
     p = &r;
+    r = _MCF_tls_xset(key, &p, NULL);
+    assert(r == 0);
+    assert(p == NULL);
+
+    p = &r;
     r = _MCF_tls_xset(key, &p, &dso_1);
     assert(r == 0);
     assert(p == NULL);
@@ -71,5 +76,10 @@ main(void)
     printf("main wait finished\n");
 
     p = _MCF_tls_get(key);
+    assert(p == &dso_2);
+
+    p = &r;
+    r = _MCF_tls_xset(key, &p, NULL);
+    assert(r == 0);
     assert(p == &dso_2);
   }
