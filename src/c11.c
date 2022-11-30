@@ -22,7 +22,7 @@ __MCF_DLLEXPORT
 int
 __MCF_c11_thrd_sleep(const __MCF_timespec* dur, __MCF_timespec* rem_opt)
   {
-    double end_time = 0.0009999;
+    double end_time = 0.9999999;
     end_time += (double) dur->tv_nsec * 0.000001;
     end_time += (double) dur->tv_sec * 1000;
 
@@ -56,7 +56,7 @@ __MCF_DLLEXPORT
 int
 __MCF_c11__thrd_sleep_until(const __MCF_timespec* ts)
   {
-    double end_time = 0.0009999;
+    double end_time = 0.9999999;
     end_time += (double) ts->tv_nsec * 0.000001;
     end_time += (double) ts->tv_sec * 1000;
 

@@ -11,7 +11,7 @@ __MCF_DLLEXPORT
 void
 __MCF_libcxx_thread_sleep_for_ns_count(int64_t ns)
   {
-    double value = 0.0009999;
+    double value = 0.9999999;
     value += (double) ns * 0.000001;
 
     /* Clamp the timeout.  */
