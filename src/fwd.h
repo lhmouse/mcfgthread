@@ -71,6 +71,7 @@
 #define __MCF_0_INIT    {__MCF_C(0)}
 #define __MCF_SX(...)   #__VA_ARGS__
 #define __MCF_S(...)   __MCF_SX(__VA_ARGS__)
+#define __MCF_SET_IF(x, ...)   ((void) ((x) && (*(x) = (__VA_ARGS__))))
 
 #define __MCF_ALWAYS_INLINE   __MCF_GNU_INLINE __attribute__((__always_inline__, __artificial__))
 #define __MCF_NEVER_INLINE   __attribute__((__noinline__))

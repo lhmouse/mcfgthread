@@ -604,9 +604,7 @@ __MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
 
     __err = _MCF_thread_wait(__thrd, NULL);
     __MCF_ASSERT(__err == 0);
-
-    if(__resp_opt)
-      *__resp_opt = __rec->__result;
+    __MCF_SET_IF(__resp_opt, __rec->__result);
 
     /* Free the thread.  */
     _MCF_thread_drop_ref(__thrd);

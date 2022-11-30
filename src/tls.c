@@ -91,6 +91,8 @@ __MCF_DLLEXPORT
 int
 __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value_opt, const void* value_opt)
   {
+    __MCF_SET_IF(old_value_opt, NULL);
+
     if(_MCF_atomic_load_8_rlx(key->__deleted))
       return -1;
 
@@ -144,10 +146,8 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
       table->__size ++;
     }
 
-    if(old_value_opt)
-      *old_value_opt = elem->__value_opt;
-
     __MCF_ASSERT(elem->__key_opt == key);
+    __MCF_SET_IF(old_value_opt, elem->__value_opt);
     elem->__value_opt = (void*) value_opt;
     return 0;
   }
