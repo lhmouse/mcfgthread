@@ -33,5 +33,5 @@ AC_SUBST([abi_major])
 AC_SUBST([abi_minor])
 AC_SUBST([abi_suffix])
 
-AC_CONFIG_FILES([Makefile] [src/version.h])
+AC_CONFIG_FILES([Makefile src/version.h])
 AC_OUTPUT
