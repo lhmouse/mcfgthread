@@ -2,7 +2,7 @@ ACLOCAL_AMFLAGS = -I m4
 END =
 
 ## Compiler options
-AM_CPPFLAGS = -pipe -Wall -Wextra -Wpedantic  \
+AM_CPPFLAGS = -pipe -Wall -Wextra -Wpedantic -I../src  \
   -Werror={conversion,sign-{compare,conversion},write-strings}  \
   -Werror={return-type,double-promotion,missing-declarations}  \
   -W{missing-field-initializers,suggest-attribute=noreturn,shadow}  \
