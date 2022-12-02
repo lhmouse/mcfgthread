@@ -21,17 +21,17 @@ static NS::recursive_timed_mutex mutex;
 int
 main(void)
   {
-   double now, delta;
-   bool r;
+    double now, delta;
+    bool r;
 
-   now = ::_MCF_perf_counter();
-   r = mutex.try_lock_for(NS::chrono::milliseconds(1100));
-   assert(r == true);
-   delta = ::_MCF_perf_counter() - now;
-   ::printf("delta = %.6f\n", delta);
-   assert(delta <= 100);
+    now = ::_MCF_perf_counter();
+    r = mutex.try_lock_for(NS::chrono::milliseconds(1100));
+    assert(r == true);
+    delta = ::_MCF_perf_counter() - now;
+    ::printf("delta = %.6f\n", delta);
+    assert(delta <= 100);
 
-   NS::thread(
+    NS::thread(
      [&] {
        now = ::_MCF_perf_counter();
        r = mutex.try_lock_for(NS::chrono::milliseconds(1100));

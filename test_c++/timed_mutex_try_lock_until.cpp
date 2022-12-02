@@ -21,21 +21,21 @@ static NS::timed_mutex mutex;
 int
 main(void)
   {
-   double now, delta;
-   bool r;
+    double now, delta;
+    bool r;
 
-   // Round the time up.
-   int64_t sleep_until = (int64_t) ::time(NULL) * 1000 + 2000;
-   ::_MCF_sleep(&sleep_until);
+    // Round the time up.
+    int64_t sleep_until = (int64_t) ::time(NULL) * 1000 + 2000;
+    ::_MCF_sleep(&sleep_until);
 
-   now = ::_MCF_perf_counter();
-   r = mutex.try_lock_until(NS::chrono::system_clock::now() + NS::chrono::milliseconds(1100));
-   assert(r == true);
-   delta = ::_MCF_perf_counter() - now;
-   ::printf("delta = %.6f\n", delta);
-   assert(delta <= 100);
+    now = ::_MCF_perf_counter();
+    r = mutex.try_lock_until(NS::chrono::system_clock::now() + NS::chrono::milliseconds(1100));
+    assert(r == true);
+    delta = ::_MCF_perf_counter() - now;
+    ::printf("delta = %.6f\n", delta);
+    assert(delta <= 100);
 
-   NS::thread(
+    NS::thread(
      [&] {
        now = ::_MCF_perf_counter();
        r = mutex.try_lock_until(NS::chrono::system_clock::now() + NS::chrono::milliseconds(1100));
