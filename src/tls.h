@@ -99,14 +99,6 @@ __MCF_TLS_IMPORT
 void*
 __MCF_tls_table_get(const __MCF_tls_table* __table, const _MCF_tls_key* __key) __MCF_NOEXCEPT __attribute__((__pure__));
 
-/* Gets a value from the table and resets it to a null pointer.
- *
- * Returns the thread-local value if one has been set, or a null pointer
- * otherwise. No return value is reserved to indicate errors.  */
-__MCF_TLS_IMPORT
-void*
-__MCF_tls_table_release(__MCF_tls_table* __table, _MCF_tls_key* __key) __MCF_NOEXCEPT;
-
 /* Sets a value into the table.
  *
  * If `__old_value_opt` is not a null pointer and the new value has been set,

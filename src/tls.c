@@ -88,28 +88,6 @@ __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
   }
 
 __MCF_DLLEXPORT
-void*
-__MCF_tls_table_release(__MCF_tls_table* table, _MCF_tls_key* key)
-  {
-    if(_MCF_atomic_load_8_rlx(key->__deleted))
-      return NULL;
-
-    if(!table->__begin)
-      return NULL;
-
-    /* Search for the given key.
-     * Note `do_linear_probe_nonempty()` may return an empty element.  */
-    __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
-    if(!elem->__key_opt)
-      return NULL;
-
-    __MCF_ASSERT(elem->__key_opt == key);
-    void* old = elem->__value_opt;
-    elem->__value_opt = NULL;
-    return old;
-  }
-
-__MCF_DLLEXPORT
 int
 __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value_opt, const void* value_opt)
   {
@@ -118,8 +96,9 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
     if(_MCF_atomic_load_8_rlx(key->__deleted))
       return -1;
 
+    /* Reserve storage for the new key, in case of reallocation.  */
     size_t capacity = (size_t) (table->__end - table->__begin);
-    if(table->__size >= capacity / 2) {
+    if(value_opt && (table->__size >= capacity / 2)) {
       /* Allocate a larger table. The number of elements is not changed.  */
       capacity = capacity + capacity / 2 + 17;
       __MCF_tls_element* elem = __MCF_malloc_0(capacity * sizeof(__MCF_tls_element));
@@ -141,7 +120,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
             continue;
 
           if(_MCF_atomic_load_8_rlx(tkey->__deleted)) {
-            /* If the key has been deleted, don't relocate it; free it instead.  */
+            /* If the key has been deleted, don't relocate it; free it.  */
             _MCF_tls_key_drop_ref_nonnull(tkey);
             continue;
           }
@@ -157,13 +136,20 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
       }
     }
 
+    if(!table->__begin)
+      return 0;
+
     /* Search for the given key.
      * Note `do_linear_probe_nonempty()` may return an empty element.  */
     __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
     if(!elem->__key_opt) {
+      /* If `key` is not found and a null pointer is to be set, don't
+       * actually set it; report success.  */
+      if(!value_opt)
+        return 0;
+
       /* Fill `key` into this element.  */
-      int32_t old_ref = _MCF_atomic_xadd_32_arl(key->__nref, 1);
-      __MCF_ASSERT(old_ref > 0);
+      _MCF_atomic_xadd_32_arl(key->__nref, 1);
       elem->__key_opt = key;
       table->__size ++;
     }
