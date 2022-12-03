@@ -17,7 +17,7 @@ environment:
       CONFIGURE_OPTS: --disable-shared
 
 install:
-  - cmd: pacman -S --noconfirm autoconf automake libtool make mingw-w64-{x86_64,i686}-gcc
+  - cmd: pacman -S --noconfirm autoconf automake libtool
 
 build:
   parallel: true
