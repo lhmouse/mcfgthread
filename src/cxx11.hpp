@@ -12,7 +12,6 @@
 #include <chrono>  // duration, time_point
 #include <functional>  // mem_fn(), invoke()
 #include <system_error>  // system_error, errc, error_code
-#include <cmath>  // isfinite()
 #include <mutex>  // unique_lock, lock_guard
 #include <new>  // operator new()
 #include <type_traits>  // many
@@ -112,70 +111,56 @@ __void_invoke(_Callable&& __callable, _Args&&... __args)
 // everything else, it is necessary to perform calculation using a floating=
 // point type and check for overflows before casting.
 namespace chrono = ::std::chrono;
-using _Std_ms = chrono::milliseconds;
-using _Hires_ms = chrono::duration<double, ::std::milli>;
 using _Sys_clock = chrono::system_clock;
 using _Mono_clock = chrono::steady_clock;
 
-template<typename _Duration>
-__MCF_CXX14(constexpr)
-_Hires_ms
-__hires_ms_from(const _Duration& __dur)
+// This is the maximum integer representable as a `double` exact.
+constexpr int64_t _Max_ms = 0x7FFFFFFFFFFFFC00;
+
+// Convert a `chrono::duration` to the number of milliseconds, represented
+// as a non-negative 64-bit integer.
+__MCF_CXX14(constexpr) inline
+int64_t
+__clamp_duration(const chrono::milliseconds& __ms) noexcept
   {
-    auto __ms_dur = chrono::duration_cast<_Hires_ms>(__dur);
-    if(!::std::isfinite(__ms_dur.count()))
-      __MCF_THROW_SYSTEM_ERROR(
-          argument_out_of_domain, "chrono::duration_cast");
-    return __ms_dur;
+    if(__ms.count() < 0)
+      return 0;
+    else if(__ms.count() > _Max_ms)
+      return _Max_ms;
+    else
+      return __ms.count();
+  }
+
+template<typename _Duration>
+__MCF_CXX14(constexpr) inline
+int64_t
+__clamp_duration(const _Duration& __dur)
+  {
+    chrono::duration<double, ::std::milli> __ms(__dur);
+    if(__ms.count() != __ms.count())
+      __MCF_THROW_SYSTEM_ERROR(argument_out_of_domain,
+             "chrono::duration<double, milli>: argument was NaN");
+
+    if(__ms.count() < 0)
+      return 0;
+    else if(__ms.count() > _Max_ms)
+      return _Max_ms;
+    else
+      return (int64_t) (__ms.count() + 0.9999999);
   }
 
 // Wait an amount of time, or until a time point. The condition function
 // shall return `int`. If it returns zero, this function also returns zero;
 // otherwise it is called repeatedly, until the timeout has been reached,
 // and this function returns its last value.
-template<typename _Cond, typename... _Args>
-inline
-int
-__wait_for(const chrono::milliseconds& __rel_time,
-           _Cond&& __cond, _Args&&... __args)
-  {
-    int64_t __timeout = 0;  // immediate
-
-    if(__rel_time.count() > 0)
-      __timeout = - __rel_time.count();  // relative
-
-    return __cond(__args..., &__timeout);
-  }
-
 template<typename _Rep, typename _Period, typename _Cond, typename... _Args>
 inline
 int
 __wait_for(const chrono::duration<_Rep, _Period>& __rel_time,
            _Cond&& __cond, _Args&&... __args)
   {
-    int64_t __timeout = 0;  // immediate
-    auto __ms_dur = _Noadl::__hires_ms_from(__rel_time);
-
-    if(__ms_dur.count() > 0x7FFFFFFFFFFFFC00)
-      __timeout = INT64_MAX;  // infinite
-    else if(__ms_dur.count() > 0)
-      __timeout = -(int64_t) (__ms_dur.count() + 0.9999999);  // relative
-
-    return __cond(__args..., &__timeout);
-  }
-
-template<typename _Cond, typename... _Args>
-inline
-int
-__wait_until(const chrono::time_point<_Sys_clock, _Std_ms>& __abs_time,
-             _Cond&& __cond, _Args&&... __args)
-  {
-    int64_t __timeout = 0;  // immediate
-    auto __ms_dur = __abs_time.time_since_epoch();
-
-    if(__ms_dur.count() > 0)
-      __timeout = __ms_dur.count();  // absolute
-
+    int64_t __timeout = _Noadl::__clamp_duration(__rel_time);
+    __timeout = -__timeout;
     return __cond(__args..., &__timeout);
   }
 
@@ -185,14 +170,7 @@ int
 __wait_until(const chrono::time_point<_Sys_clock, _Dur>& __abs_time,
              _Cond&& __cond, _Args&&... __args)
   {
-    int64_t __timeout = 0;  // immediate
-    auto __ms_dur = _Noadl::__hires_ms_from(__abs_time.time_since_epoch());
-
-    if(__ms_dur.count() > 0x7FFFFFFFFFFFFC00)
-      __timeout = INT64_MAX;  // infinite
-    else if(__ms_dur.count() > 0)
-      __timeout = (int64_t) (__ms_dur.count() + 0.9999999);  // absolute
-
+    int64_t __timeout = _Noadl::__clamp_duration(__abs_time.time_since_epoch());
     return __cond(__args..., &__timeout);
   }
 
@@ -206,14 +184,8 @@ __wait_until(const chrono::time_point<_Clock, _Dur>& __abs_time,
     int64_t __timeout;
 
     do {
-      __timeout = 0;  // immediate
-      auto __ms_dur = _Noadl::__hires_ms_from(__abs_time - _Clock::now());
-
-      if(__ms_dur.count() > 0x7FFFFFFFFFFFFC00)
-        __timeout = INT64_MAX;  // infinite
-      else if(__ms_dur.count() > 0)
-        __timeout = -(int64_t) (__ms_dur.count() + 0.9999999);  // relative
-
+      __timeout = _Noadl::__clamp_duration(__abs_time - _Clock::now());
+      __timeout = -__timeout;
       __err = __cond(__args..., &__timeout);
     }
     while((__err < 0) && (__timeout != 0));  // loop if timed out
@@ -235,7 +207,7 @@ __check_thread_atexit(_Result __target(_Value*),
                                           __ptr, &__dso_handle);
     if(__err != 0)
       __MCF_THROW_SYSTEM_ERROR(
-          not_enough_memory, "__MCF_cxa_thread_atexit");
+             not_enough_memory, "__MCF_cxa_thread_atexit");
   }
 
 // Create a thread. ISO C++ requires that arguments for the constructor of
@@ -629,7 +601,7 @@ class thread
                                                  nullptr, sizeof(_My_data));
         if(!this->_M_thr)
           __MCF_THROW_SYSTEM_ERROR(
-              resource_unavailable_try_again, "_MCF_thread_new_aligned");
+                 resource_unavailable_try_again, "_MCF_thread_new_aligned");
 
         _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(this->_M_thr);
 
@@ -707,7 +679,7 @@ class thread
 
         if(::_MCF_thread_get_tid(this->_M_thr) == ::_MCF_thread_self_tid())
           __MCF_THROW_SYSTEM_ERROR(
-              resource_deadlock_would_occur, "thread::join");
+                 resource_deadlock_would_occur, "thread::join");
 
         int __err = ::_MCF_thread_wait(this->_M_thr, nullptr);
         __MCF_ASSERT(__err == 0);
@@ -884,7 +856,7 @@ class thread_specific_ptr
         this->_M_key = ::_MCF_tls_key_new((_Native_cleanup*) __cleanup_opt);
         if(!this->_M_key)
           __MCF_THROW_SYSTEM_ERROR(
-              resource_unavailable_try_again, "_MCF_tls_key_new");
+                 resource_unavailable_try_again, "_MCF_tls_key_new");
       }
 
     thread_specific_ptr()
@@ -944,7 +916,7 @@ class thread_specific_ptr
         int __err = ::_MCF_tls_xset(this->_M_key, &__ptr_old, __ptr);
         if(__err < 0)
           __MCF_THROW_SYSTEM_ERROR(
-              not_enough_memory, "_MCF_tls_xset");
+                 not_enough_memory, "_MCF_tls_xset");
 
         if(__ptr_old)
           if(auto __my_cleanup = ::_MCF_tls_key_get_destructor(this->_M_key))
