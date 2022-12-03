@@ -36,6 +36,7 @@ check_PROGRAMS =  \
   %reldir%/thread_move_assign_joined.test  \
   %reldir%/thread_join_deadlock.test  \
   %reldir%/thread_id.test  \
+  %reldir%/thread_decay_copy.test  \
   %reldir%/tls_dtor.test  \
   %reldir%/tls_many.test  \
   %reldir%/tls_set.test  \
