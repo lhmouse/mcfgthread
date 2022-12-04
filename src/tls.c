@@ -114,31 +114,28 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
       table->__begin = elem;
       table->__end = elem + capacity;
 
-      /* Relocate existent elements, if any.  */
-      if(temp.__begin) {
-        while(temp.__begin != temp.__end) {
-          temp.__end --;
+      while(temp.__begin != temp.__end) {
+        temp.__end --;
 
-          /* Skip empty buckets.  */
-          _MCF_tls_key* tkey = temp.__end->__key_opt;
-          if(!tkey)
-            continue;
+        /* Skip empty buckets.  */
+        _MCF_tls_key* tkey = temp.__end->__key_opt;
+        if(!tkey)
+          continue;
 
-          if(_MCF_atomic_load_8_rlx(tkey->__deleted)) {
-            /* If the key has been deleted, don't relocate it; free it.  */
-            _MCF_tls_key_drop_ref_nonnull(tkey);
-            continue;
-          }
-
-          /* Relocate this element into the new storage.  */
-          elem = do_linear_probe_nonempty(table, tkey);
-          __MCF_ASSERT(!elem->__key_opt);
-          *elem = *(temp.__end);
+        if(_MCF_atomic_load_8_rlx(tkey->__deleted)) {
+          /* If the key has been deleted, don't relocate it; free it.  */
+          _MCF_tls_key_drop_ref_nonnull(tkey);
+          continue;
         }
 
-        /* Deallocate the old table which should be empty now.  */
-        __MCF_mfree(temp.__begin);
+        /* Relocate this element into the new storage.  */
+        elem = do_linear_probe_nonempty(table, tkey);
+        __MCF_ASSERT(!elem->__key_opt);
+        *elem = *(temp.__end);
       }
+
+      /* Deallocate the old table which should be empty now.  */
+      __MCF_mfree(temp.__begin);
     }
 
     /* Search for the given key.
