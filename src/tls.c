@@ -96,11 +96,16 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
     if(_MCF_atomic_load_8_rlx(key->__deleted))
       return -1;
 
-    /* Reserve storage for the new key, in case of reallocation.  */
-    size_t capacity = (size_t) (table->__end - table->__begin);
-    if(value_opt && (table->__size >= capacity / 2)) {
-      /* Allocate a larger table. The number of elements is not changed.  */
-      capacity = capacity + capacity / 2 + 17;
+    if(!value_opt) {
+      /* The new value will be effectively unset. If the table is empty, there
+       * can't be a value to unset, so report success anyway.  */
+      if(!table->__begin)
+        return 0;
+    }
+    else if(table->__size >= (size_t) (table->__end - table->__begin) / 2) {
+      /* Allocate a larger table in case that a new value is to be inserted.
+       * The number of elements is unchanged.  */
+      size_t capacity = table->__size * 3 | 17;
       __MCF_tls_element* elem = __MCF_malloc_0(capacity * sizeof(__MCF_tls_element));
       if(!elem)
         return -1;
@@ -135,9 +140,6 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
         __MCF_mfree(temp.__begin);
       }
     }
-
-    if(!table->__begin)
-      return 0;
 
     /* Search for the given key.
      * Note `do_linear_probe_nonempty()` may return an empty element.  */
