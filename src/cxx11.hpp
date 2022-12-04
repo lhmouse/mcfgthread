@@ -137,9 +137,10 @@ int64_t
 __clamp_duration(const _Duration& __dur)
   {
     chrono::duration<double, ::std::milli> __ms(__dur);
+
     if(__ms.count() != __ms.count())
       __MCF_THROW_SYSTEM_ERROR(argument_out_of_domain,
-             "chrono::duration<double, milli>: argument was NaN");
+              "chrono::duration<double, milli>: argument was NaN");
 
     if(__ms.count() < 0)
       return 0;
@@ -206,8 +207,7 @@ __check_thread_atexit(_Result __target(_Value*),
     int __err = ::__MCF_cxa_thread_atexit((__MCF_cxa_dtor_cdecl*)(intptr_t) __target,
                                           __ptr, &__dso_handle);
     if(__err != 0)
-      __MCF_THROW_SYSTEM_ERROR(
-             not_enough_memory, "__MCF_cxa_thread_atexit");
+      __MCF_THROW_SYSTEM_ERROR(not_enough_memory, "__MCF_cxa_thread_atexit");
   }
 
 // Create a thread. ISO C++ requires that arguments for the constructor of
@@ -915,8 +915,7 @@ class thread_specific_ptr
         void* __ptr_old = nullptr;
         int __err = ::_MCF_tls_xset(this->_M_key, &__ptr_old, __ptr);
         if(__err < 0)
-          __MCF_THROW_SYSTEM_ERROR(
-                 not_enough_memory, "_MCF_tls_xset");
+          __MCF_THROW_SYSTEM_ERROR(not_enough_memory, "_MCF_tls_xset");
 
         if(__ptr_old)
           if(auto __my_cleanup = ::_MCF_tls_key_get_destructor(this->_M_key))
