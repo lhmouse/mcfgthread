@@ -2,7 +2,7 @@ ACLOCAL_AMFLAGS = -I m4
 END =
 
 AM_CPPFLAGS = -pipe -Wall -Wextra -Wpedantic -I../src
-AM_CXXFLAGS = -std=c++11
+AM_CXXFLAGS = -std=c++11 -static-libgcc -static-libstdc++
 
 AM_DEFAULT_SOURCE_EXT = .cpp
 LDADD = ../lib/libmcfgthread.la
