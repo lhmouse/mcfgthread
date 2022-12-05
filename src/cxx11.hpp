@@ -581,7 +581,7 @@ class thread
             void
             __thunk(::_MCF_thread* __thr)
               {
-                _My_data* __my = (_My_data*) ::_MCF_thread_get_data(__thr);
+                _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(__thr);
 
                 // Check whether `*_M_invoker` has been constructed. If its
                 // constructor failed, this thread shall exit immediately.
