@@ -57,9 +57,9 @@ __MCF_C_DECLARATIONS_BEGIN
 /* Declare KERNEL32 APIs here.  */
 __MCF_WINAPI(DWORD, GetLastError, void) __attribute__((__pure__));
 __MCF_WINAPI(void, SetLastError, DWORD);
-
 __MCF_WINAPI(PVOID, EncodePointer, PVOID) __attribute__((__const__));
 __MCF_WINAPI(PVOID, DecodePointer, PVOID) __attribute__((__const__));
+__MCF_WINAPI(NTSTATUS, BaseGetNamedObjectDirectory, HANDLE*);
 
 __MCF_WINAPI(DWORD, TlsAlloc, void);
 __MCF_WINAPI(BOOL, TlsFree, DWORD);
@@ -91,8 +91,6 @@ __MCF_WINAPI(BOOL, TerminateProcess, HANDLE, UINT);
 
 typedef BOOL __stdcall HANDLER_ROUTINE(DWORD);
 __MCF_WINAPI(BOOL, SetConsoleCtrlHandler, HANDLER_ROUTINE*, BOOL);
-
-__MCF_WINAPI(NTSTATUS, BaseGetNamedObjectDirectory, HANDLE*);
 
 /* Declare NTDLL (driver) APIs here.  */
 __MCF_WINAPI(NTSTATUS, LdrAddRefDll, ULONG, PVOID);
