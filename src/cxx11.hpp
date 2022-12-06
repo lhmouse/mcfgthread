@@ -58,8 +58,7 @@ class thread_specific_ptr;  // inspired by boost
 #  define __MCF_THROW(...)   throw __VA_ARGS__
 
 #  define __MCF_THROW_SYSTEM_ERROR(_Code, _Msg)  \
-     throw ::std::system_error(  \
-         (int) (::std::errc::_Code), ::std::generic_category(), _Msg)
+     throw ::std::system_error((int) (::std::errc::_Code), ::std::generic_category(), _Msg)
 
 #else  // __EXCEPTIONS
 
@@ -137,12 +136,9 @@ int64_t
 __clamp_duration(const _Duration& __dur)
   {
     chrono::duration<double, ::std::milli> __ms(__dur);
-
     if(__ms.count() != __ms.count())
-      __MCF_THROW_SYSTEM_ERROR(argument_out_of_domain,
-              "chrono::duration<double, milli>: argument was NaN");
-
-    if(__ms.count() < 0)
+      __MCF_THROW_SYSTEM_ERROR(argument_out_of_domain, "chrono::duration: argument was NaN");
+    else if(__ms.count() < 0)
       return 0;
     else if(__ms.count() > _Max_ms)
       return _Max_ms;
@@ -198,14 +194,10 @@ __wait_until(const chrono::time_point<_Clock, _Dur>& __abs_time,
 template<typename _Result, typename _Value>
 inline
 void
-__check_thread_atexit(_Result __target(_Value*),
-                      typename ::std::common_type<_Value*>::type __ptr)
+__check_thread_atexit(_Result __target(_Value*), typename ::std::common_type<_Value*>::type __ptr)
   {
-    static_assert(::std::is_scalar<_Result>::value || ::std::is_void<_Result>::value,
-                  "result not discardable");
-
-    int __err = ::__MCF_cxa_thread_atexit((__MCF_cxa_dtor_cdecl*)(intptr_t) __target,
-                                          __ptr, &__dso_handle);
+    static_assert(::std::is_scalar<_Result>::value || ::std::is_void<_Result>::value, "result not discardable");
+    int __err = ::__MCF_cxa_thread_atexit((__MCF_cxa_dtor_cdecl*)(intptr_t) __target, __ptr, &__dso_handle);
     if(__err != 0)
       __MCF_THROW_SYSTEM_ERROR(not_enough_memory, "__MCF_cxa_thread_atexit");
   }
@@ -279,8 +271,7 @@ call_once(once_flag& __flag, _Callable&& __callable, _Args&&... __args)
 
     __MCF_TRY {
       // active
-      __MCF_VOID_INVOKE(::std::forward<_Callable>(__callable),
-                        ::std::forward<_Args>(__args)...);
+      __MCF_VOID_INVOKE(::std::forward<_Callable>(__callable), ::std::forward<_Args>(__args)...);
     }
     __MCF_CATCH(...) {
       // exceptional
@@ -399,8 +390,7 @@ class recursive_mutex
       {
         int __err = ::__MCF_gthr_rc_mutex_recurse(this->_M_rmtx);
         if(__err != 0)
-          __err = _Noadl::__wait_until(__abs_time, ::__MCF_gthr_rc_mutex_wait,
-                                       this->_M_rmtx);
+          __err = _Noadl::__wait_until(__abs_time, ::__MCF_gthr_rc_mutex_wait, this->_M_rmtx);
         return __err == 0;
       }
 
@@ -410,8 +400,7 @@ class recursive_mutex
       {
         int __err = ::__MCF_gthr_rc_mutex_recurse(this->_M_rmtx);
         if(__err != 0)
-          __err = _Noadl::__wait_for(__rel_time, ::__MCF_gthr_rc_mutex_wait,
-                                     this->_M_rmtx);
+          __err = _Noadl::__wait_for(__rel_time, ::__MCF_gthr_rc_mutex_wait, this->_M_rmtx);
         return __err == 0;
       }
 
@@ -482,8 +471,7 @@ class condition_variable
 
     template<typename _Clock, typename _Dur>
     cv_status
-    wait_until(unique_lock<mutex>& __lock,
-               const chrono::time_point<_Clock, _Dur>& __abs_time)
+    wait_until(unique_lock<mutex>& __lock, const chrono::time_point<_Clock, _Dur>& __abs_time)
       {
         __MCF_ASSERT(__lock.owns_lock());  // must owning a mutex
         __MCF_ASSERT(__lock.mutex() != nullptr);
@@ -501,8 +489,7 @@ class condition_variable
 
     template<typename _Clock, typename _Dur, typename _Predicate>
     bool
-    wait_until(unique_lock<mutex>& __lock,
-               const chrono::time_point<_Clock, _Dur>& __abs_time, _Predicate&& __pred)
+    wait_until(unique_lock<mutex>& __lock, const chrono::time_point<_Clock, _Dur>& __abs_time, _Predicate&& __pred)
       {
         while(!(bool) __pred())
           if(this->wait_until(__lock, __abs_time) == cv_status::timeout)
@@ -564,8 +551,7 @@ class thread
     constexpr thread() noexcept { }
 
     template<typename _Callable, typename... _Args,
-    __MCF_SFINAE_DISABLE_IF(::std::is_same<typename ::std::decay<_Callable>::type,
-                                           thread>::value)>
+    __MCF_SFINAE_DISABLE_IF(::std::is_same<typename ::std::decay<_Callable>::type, thread>::value)>
     explicit
     thread(_Callable&& __callable, _Args&&... __args)
       {
@@ -597,11 +583,9 @@ class thread
           };
 
         // Create the thread. User-defined data are initialized to zeroes.
-        this->_M_thr = ::_MCF_thread_new_aligned(_My_data::__thunk, alignof(_My_data),
-                                                 nullptr, sizeof(_My_data));
+        this->_M_thr = ::_MCF_thread_new_aligned(_My_data::__thunk, alignof(_My_data), nullptr, sizeof(_My_data));
         if(!this->_M_thr)
-          __MCF_THROW_SYSTEM_ERROR(
-                 resource_unavailable_try_again, "_MCF_thread_new_aligned");
+          __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_thread_new_aligned");
 
         _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(this->_M_thr);
 
@@ -678,8 +662,7 @@ class thread
         __MCF_ASSERT(this->_M_thr);  // must be joinable
 
         if(::_MCF_thread_get_tid(this->_M_thr) == ::_MCF_thread_self_tid())
-          __MCF_THROW_SYSTEM_ERROR(
-                 resource_deadlock_would_occur, "thread::join");
+          __MCF_THROW_SYSTEM_ERROR(resource_deadlock_would_occur, "thread::join");
 
         int __err = ::_MCF_thread_wait(this->_M_thr, nullptr);
         __MCF_ASSERT(__err == 0);
@@ -855,8 +838,7 @@ class thread_specific_ptr
       {
         this->_M_key = ::_MCF_tls_key_new((_Native_cleanup*) __cleanup_opt);
         if(!this->_M_key)
-          __MCF_THROW_SYSTEM_ERROR(
-                 resource_unavailable_try_again, "_MCF_tls_key_new");
+          __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_tls_key_new");
       }
 
     thread_specific_ptr()
