@@ -555,35 +555,35 @@ class thread
     explicit
     thread(_Callable&& __callable, _Args&&... __args)
       {
-        enum { __event_0, __event_constructed, __event_cancelled };
         using _My_invoker = _Invoke_decay_copy<_Callable, _Args...>;
+        enum { _St_zero, _St_constructed, _St_cancelled };
 
         struct _My_data
           {
-            ::_MCF_event _M_event[1];
             _My_invoker _M_invoker[1];
+            ::_MCF_event _M_status[1];
 
             static
             void
-            __thunk(::_MCF_thread* __thr)
+            __do_it(::_MCF_thread* __thr)
               {
                 _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(__thr);
 
                 // Check whether `*_M_invoker` has been constructed. If its
                 // constructor failed, this thread shall exit immediately.
-                int __err = ::_MCF_event_await_change(__my->_M_event, 0, nullptr);
-                if(__err == __event_cancelled)
+                int __st = ::_MCF_event_await_change(__my->_M_status, _St_zero, nullptr);
+                if(__st == _St_cancelled)
                   return;
 
                 // Execute the user-defined procedure.
-                __MCF_ASSERT(__err == __event_constructed);
+                __MCF_ASSERT(__st == _St_constructed);
                 __my->_M_invoker->__do_it();
                 __my->_M_invoker->~_My_invoker();
               };
           };
 
         // Create the thread. User-defined data are initialized to zeroes.
-        this->_M_thr = ::_MCF_thread_new_aligned(_My_data::__thunk, alignof(_My_data), nullptr, sizeof(_My_data));
+        this->_M_thr = ::_MCF_thread_new_aligned(_My_data::__do_it, alignof(_My_data), nullptr, sizeof(_My_data));
         if(!this->_M_thr)
           __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_thread_new_aligned");
 
@@ -595,13 +595,13 @@ class thread
         }
         __MCF_CATCH(...) {
           // Cancel the thread.
-          ::_MCF_event_set(__my->_M_event, __event_cancelled);
+          ::_MCF_event_set(__my->_M_status, _St_cancelled);
           ::_MCF_thread_drop_ref(this->_M_thr);
           __MCF_THROW();
         }
 
         // Let the thread go.
-        ::_MCF_event_set(__my->_M_event, __event_constructed);
+        ::_MCF_event_set(__my->_M_status, _St_constructed);
       }
 
     thread(thread&& __other) noexcept
