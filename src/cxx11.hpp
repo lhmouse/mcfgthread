@@ -157,7 +157,7 @@ __wait_for(const chrono::duration<_Rep, _Period>& __rel_time,
            _Cond&& __cond, _Args&&... __args)
   {
     int64_t __timeout = _Noadl::__clamp_duration(__rel_time);
-    __timeout = -__timeout;
+    __timeout *= -1;
     return __cond(__args..., &__timeout);
   }
 
@@ -182,7 +182,7 @@ __wait_until(const chrono::time_point<_Clock, _Dur>& __abs_time,
 
     do {
       __timeout = _Noadl::__clamp_duration(__abs_time - _Clock::now());
-      __timeout = -__timeout;
+      __timeout *= -1;
       __err = __cond(__args..., &__timeout);
     }
     while((__err < 0) && (__timeout != 0));  // loop if timed out
