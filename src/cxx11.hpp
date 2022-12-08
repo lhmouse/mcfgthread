@@ -204,6 +204,7 @@ void
 __check_thread_atexit(_Result __target(_Value*), typename ::std::common_type<_Value*>::type __ptr)
   {
     static_assert(::std::is_scalar<_Result>::value || ::std::is_void<_Result>::value, "result not discardable");
+
     int __err = ::__MCF_cxa_thread_atexit((__MCF_cxa_dtor_cdecl*)(intptr_t) __target, __ptr, &__dso_handle);
     if(__err != 0)
       __MCF_THROW_SYSTEM_ERROR(not_enough_memory, "__MCF_cxa_thread_atexit");
