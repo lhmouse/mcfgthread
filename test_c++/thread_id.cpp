@@ -18,6 +18,7 @@ int
 main(void)
   {
     const auto main_tid = NS::this_thread::get_id();
+    assert(main_tid._M_tid == ::_MCF_thread_self_tid());
 
     NS::thread thr(
       [&] {

@@ -146,6 +146,16 @@ __clamp_duration(const _Duration& __dur)
       return (int64_t) (__ms.count() + 0.9999999);
   }
 
+// Suspend the current thread until the given timeout. The operation is
+// noninterruptible, and this function always returns zero.
+inline
+int
+__sleep_noninterruptible(int64_t* __timeout_opt) noexcept
+  {
+    ::_MCF_sleep_noninterruptible(__timeout_opt);
+    return 0;
+  }
+
 // Wait an amount of time, or until a time point. The condition function
 // shall return `int`. If it returns zero, this function also returns zero;
 // otherwise it is called repeatedly, until the timeout has been reached,
@@ -153,8 +163,7 @@ __clamp_duration(const _Duration& __dur)
 template<typename _Rep, typename _Period, typename _Cond, typename... _Args>
 inline
 int
-__wait_for(const chrono::duration<_Rep, _Period>& __rel_time,
-           _Cond&& __cond, _Args&&... __args)
+__wait_for(const chrono::duration<_Rep, _Period>& __rel_time, _Cond&& __cond, _Args&&... __args)
   {
     int64_t __timeout = _Noadl::__clamp_duration(__rel_time);
     __timeout *= -1;
@@ -164,8 +173,7 @@ __wait_for(const chrono::duration<_Rep, _Period>& __rel_time,
 template<typename _Dur, typename _Cond, typename... _Args>
 inline
 int
-__wait_until(const chrono::time_point<_Sys_clock, _Dur>& __abs_time,
-             _Cond&& __cond, _Args&&... __args)
+__wait_until(const chrono::time_point<_Sys_clock, _Dur>& __abs_time, _Cond&& __cond, _Args&&... __args)
   {
     int64_t __timeout = _Noadl::__clamp_duration(__abs_time.time_since_epoch());
     return __cond(__args..., &__timeout);
@@ -174,8 +182,7 @@ __wait_until(const chrono::time_point<_Sys_clock, _Dur>& __abs_time,
 template<typename _Clock, typename _Dur, typename _Cond, typename... _Args>
 inline
 int
-__wait_until(const chrono::time_point<_Clock, _Dur>& __abs_time,
-             _Cond&& __cond, _Args&&... __args)
+__wait_until(const chrono::time_point<_Clock, _Dur>& __abs_time, _Cond&& __cond, _Args&&... __args)
   {
     int __err;
     int64_t __timeout;
@@ -791,12 +798,7 @@ namespace this_thread
     void
     sleep_until(const chrono::time_point<_Clock, _Dur>& __abs_time)
       {
-        _Noadl::__wait_until(__abs_time,
-            [](int64_t* __timeout) {
-              // The standard says this is immune to interrupts?
-              ::_MCF_sleep_noninterruptible(__timeout);
-              return 0;
-            });
+        _Noadl::__wait_until(__abs_time, _Noadl::__sleep_noninterruptible);
       }
 
     template<typename _Rep, typename _Period>
@@ -804,12 +806,7 @@ namespace this_thread
     void
     sleep_for(const chrono::duration<_Rep, _Period>& __rel_time)
       {
-        _Noadl::__wait_for(__rel_time,
-            [](int64_t* __timeout) {
-              // The standard says this is immune to interrupts?
-              ::_MCF_sleep_noninterruptible(__timeout);
-              return 0;
-            });
+        _Noadl::__wait_for(__rel_time, _Noadl::__sleep_noninterruptible);
       }
   }
 

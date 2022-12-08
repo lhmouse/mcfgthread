@@ -30,6 +30,8 @@ check_PROGRAMS =  \
   %reldir%/thread_join_deadlock.test  \
   %reldir%/thread_id.test  \
   %reldir%/thread_decay_copy.test  \
+  %reldir%/this_thread_sleep_until.test  \
+  %reldir%/this_thread_sleep_for.test  \
   %reldir%/tls_dtor.test  \
   %reldir%/tls_many.test  \
   %reldir%/tls_set.test  \
