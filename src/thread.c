@@ -52,7 +52,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     size_t real_alignment = _MCF_maxz(__MCF_THREAD_DATA_ALIGNMENT, align);
     size_t size_need = sizeof(_MCF_thread) + size;
     size_t size_request = size_need + real_alignment - MEMORY_ALLOCATION_ALIGNMENT;
-    __MCF_ASSERT(size_need <= size_request);
+    __MCF_CHECK(size_need <= size_request);
 
     /* Allocate and initialize the thread control structure.  */
     _MCF_thread* thrd = __MCF_malloc_0(size_request);
@@ -71,7 +71,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
         thrd->__data_opt = (void*) ((((uintptr_t) thrd->__data_opt - 1) | (real_alignment - 1)) + 1);
 
         size_request = (uintptr_t) thrd->__data_opt + size - (uintptr_t) thrd;
-        __MCF_ASSERT(size_need <= size_request);
+        __MCF_CHECK(size_need <= size_request);
         HeapReAlloc(__MCF_crt_heap, HEAP_REALLOC_IN_PLACE_ONLY, thrd, size_request);
       }
 
