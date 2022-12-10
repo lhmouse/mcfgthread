@@ -27,7 +27,7 @@ main(void)
     assert(r == 0);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
-    assert(delta >= 1300 - 10);
+    assert(delta >= 1300 - 20);
     assert(delta <= 1400);
     assert(rem.tv_sec == 0);
     assert(rem.tv_nsec == 0);
