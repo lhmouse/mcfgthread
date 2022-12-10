@@ -15,14 +15,14 @@ main(void)
     double now, delta;
     int r;
 
-    r = _MCF_event_await_change(&event, -1, (const int64_t[]){ _MCF_utc_now() + 1100 });  /* absolute  */
+    r = _MCF_event_await_change(&event, -1, (const int64_t[]){ (int64_t) _MCF_hires_utc_now() + 1100 });  /* absolute  */
     assert(r == -2);
 
-    r = _MCF_event_await_change(&event, __MCF_EVENT_VALUE_MAX + 1, (const int64_t[]){ _MCF_utc_now() + 1100 });  /* absolute  */
+    r = _MCF_event_await_change(&event, __MCF_EVENT_VALUE_MAX + 1, (const int64_t[]){ (int64_t) _MCF_hires_utc_now() + 1100 });  /* absolute  */
     assert(r == -2);
 
     now = _MCF_perf_counter();
-    r = _MCF_event_await_change(&event, 52, (const int64_t[]){ _MCF_utc_now() + 1100 });  /* absolute  */
+    r = _MCF_event_await_change(&event, 52, (const int64_t[]){ (int64_t) _MCF_hires_utc_now() + 1100 });  /* absolute  */
     assert(r == 42);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
@@ -30,7 +30,7 @@ main(void)
     assert(delta <= 100);
 
     now = _MCF_perf_counter();
-    r = _MCF_event_await_change(&event, __MCF_EVENT_VALUE_MAX, (const int64_t[]){ _MCF_utc_now() + 1100 });  /* absolute  */
+    r = _MCF_event_await_change(&event, __MCF_EVENT_VALUE_MAX, (const int64_t[]){ (int64_t) _MCF_hires_utc_now() + 1100 });  /* absolute  */
     assert(r == 42);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
@@ -38,7 +38,7 @@ main(void)
     assert(delta <= 100);
 
     now = _MCF_perf_counter();
-    r = _MCF_event_await_change(&event, 42, (const int64_t[]){ _MCF_utc_now() + 1100 });  /* absolute  */
+    r = _MCF_event_await_change(&event, 42, (const int64_t[]){ (int64_t) _MCF_hires_utc_now() + 1100 });  /* absolute  */
     assert(r == -1);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
