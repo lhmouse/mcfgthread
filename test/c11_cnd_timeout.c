@@ -35,7 +35,7 @@ main(void)
     assert(r == thrd_timedout);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
-    assert(delta >= 1100 - 10);
+    assert(delta >= 1100 - 20);
     assert(delta <= 1200);
 
     r = mtx_trylock(&mutex);
