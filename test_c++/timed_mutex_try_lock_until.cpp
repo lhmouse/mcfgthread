@@ -33,6 +33,7 @@ main(void)
     assert(r == true);
     delta = ::_MCF_perf_counter() - now;
     ::printf("delta = %.6f\n", delta);
+    assert(delta >= 0);
     assert(delta <= 100);
 
     NS::thread(
@@ -42,7 +43,7 @@ main(void)
        assert(r == false);
        delta = ::_MCF_perf_counter() - now;
        ::printf("delta = %.6f\n", delta);
-       assert(delta >= 1000);
+       assert(delta >= 1100);
        assert(delta <= 1200);
      })
      .join();

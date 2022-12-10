@@ -27,6 +27,7 @@ main(void)
     assert(r == 0);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
+    assert(delta >= 0);
     assert(delta <= 100);
 
     now = _MCF_perf_counter();
@@ -36,5 +37,6 @@ main(void)
     assert(r == 0);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
+    assert(delta >= 0);
     assert(delta <= 100);
   }
