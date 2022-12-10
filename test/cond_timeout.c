@@ -16,7 +16,7 @@ main(void)
     int r;
 
     now = _MCF_perf_counter();
-    r = _MCF_cond_wait(&cond, NULL, NULL, 0, (const int64_t[]){ _MCF_utc_now() + 1100 });  /* absolute  */
+    r = _MCF_cond_wait(&cond, NULL, NULL, 0, (const int64_t[]){ (int64_t) _MCF_hires_utc_now() + 1100 });  /* absolute  */
     assert(r == -1);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
