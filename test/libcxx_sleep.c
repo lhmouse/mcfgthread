@@ -20,6 +20,6 @@ main(void)
     __MCF_libcxx_thread_sleep_for_ns_count(1300000000);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
-    assert(delta >= 1300);
+    assert(delta >= 1300 - 10);
     assert(delta <= 1400);
   }

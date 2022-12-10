@@ -34,7 +34,7 @@ main(void)
     r = cond.wait_until(lock, NS::chrono::system_clock::now() + NS::chrono::milliseconds(1100));
     assert(r == NS::cv_status::timeout);
     delta = ::_MCF_perf_counter() - now;
-    assert(delta >= 1100);
+    assert(delta >= 1100 - 10);
     assert(delta <= 1200);
 
     assert(lock);
