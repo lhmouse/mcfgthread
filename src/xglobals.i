@@ -174,7 +174,10 @@ typedef struct __MCF_winnt_timeout __MCF_winnt_timeout;
 
 struct __MCF_winnt_timeout
   {
-    LARGE_INTEGER __li[1];
+    union {
+      int64_t __i64;
+      LARGE_INTEGER __li[1];
+    };
     uint64_t __since;
   };
 
