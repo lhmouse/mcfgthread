@@ -2,7 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "../src/mutex.h"
+#include "../mcfgthread/mutex.h"
 #include <assert.h>
 #include <stdio.h>
 

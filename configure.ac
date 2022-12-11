@@ -1,7 +1,7 @@
 ## AC_INIT(package, version, [bug-report], [tarname], [url])
 AC_INIT([mcfgthread], [master], [lh_mouse@126.com], [mcfgthread], [https://github.com/lhmouse/mcfgthread])
 AC_LANG([C])
-AC_CONFIG_SRCDIR([src/gthr.c])
+AC_CONFIG_SRCDIR([mcfgthread/gthr.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
@@ -33,5 +33,5 @@ AC_SUBST([abi_major])
 AC_SUBST([abi_minor])
 AC_SUBST([abi_suffix])
 
-AC_CONFIG_FILES([Makefile src/version.h])
+AC_CONFIG_FILES([Makefile mcfgthread/version.h])
 AC_OUTPUT

@@ -24,8 +24,8 @@
 /config.status
 /libtool
 /stamp-h1
-/src/version.h
-/src/precompiled.x*
+/mcfgthread/version.h
+/mcfgthread/precompiled.x*
 
 /lib/
 /bin/

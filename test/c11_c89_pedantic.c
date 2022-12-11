@@ -2,7 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "../src/c11.h"
+#include "../mcfgthread/c11.h"
 
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901)
 #  error Please compile this file as C89.
