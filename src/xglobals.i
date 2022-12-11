@@ -63,7 +63,7 @@ __MCF_WINAPI(void, SetLastError, DWORD);
 __MCF_WINAPI(PVOID, EncodePointer, PVOID) __attribute__((__const__));
 __MCF_WINAPI(PVOID, DecodePointer, PVOID) __attribute__((__const__));
 
-__MCF_WINAPI(NTSTATUS, BaseGetNamedObjectDirectory, HANDLE*) __attribute__((__const__));
+__MCF_WINAPI(NTSTATUS, BaseGetNamedObjectDirectory, HANDLE*);
 __MCF_WINAPI(BOOL, SetConsoleCtrlHandler, HANDLER_ROUTINE*, BOOL);
 
 __MCF_WINAPI(DWORD, TlsAlloc, void);
