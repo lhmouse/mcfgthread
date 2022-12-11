@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "../src/sem.h"
-#include "../src/clock.h"
+#include "../mcfgthread/sem.h"
+#include "../mcfgthread/clock.h"
 #include <assert.h>
 #include <stdio.h>
 

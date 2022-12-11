@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "../src/cxx11.hpp"
-#include "../src/exit.h"
+#include "../mcfgthread/cxx11.hpp"
+#include "../mcfgthread/exit.h"
 #include <assert.h>
 #include <stdio.h>
 

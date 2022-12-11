@@ -2,7 +2,7 @@ ACLOCAL_AMFLAGS = -I m4
 END =
 
 ## Compiler options
-AM_CPPFLAGS = -pipe -Wall -Wextra -Isrc  \
+AM_CPPFLAGS = -pipe -Wall -Wextra -Imcfgthread  \
   -U_FORTIFY_SOURCE -D_WIN32_WINNT=0x0601 -D_POSIX_C_SOURCE=200809  \
   -f{strict-{aliasing,overflow},merge-all-constants,fast-math}  \
   -fno-{stack-protector,align-{functions,jumps,loops},ident}  \
@@ -17,7 +17,7 @@ AM_CFLAGS = -std=c99  \
   -Werror={strict-prototypes,int-conversion}  \
   -Werror=implicit-{function-declaration,int}
 
-AM_RCFLAGS = -Isrc -c65001
+AM_RCFLAGS = -Imcfgthread -c65001
 
 AM_DEFAULT_SOURCE_EXT = .c
 SUFFIXES = .rc .def
@@ -27,7 +27,7 @@ LDADD = lib/libmcfgthread.la
 noinst_LIBRARIES =
 noinst_LTLIBRARIES =
 
-include_HEADERS =
+nobase_include_HEADERS =
 lib_LIBRARIES =
 lib_LTLIBRARIES =
 bin_PROGRAMS =
@@ -43,7 +43,7 @@ EXTRA_DIST =
 TESTS = ${check_PROGRAMS}
 
 ## Programs and libraries
-include src/Makefile.inc.am
+include mcfgthread/Makefile.inc.am
 
 ## Tests
 include test/Makefile.inc.am

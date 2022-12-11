@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "../src/gthr.h"
-#include "../src/sem.h"
+#include "../mcfgthread/gthr.h"
+#include "../mcfgthread/sem.h"
 #include <assert.h>
 #include <stdio.h>
 

@@ -2,7 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "../src/cxx11.hpp"
+#include "../mcfgthread/cxx11.hpp"
 #include <assert.h>
 #include <stdio.h>
 

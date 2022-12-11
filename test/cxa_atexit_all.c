@@ -2,7 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "../src/cxa.h"
+#include "../mcfgthread/cxa.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>

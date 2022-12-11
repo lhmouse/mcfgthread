@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "../src/thread.h"
-#include "../src/exit.h"
+#include "../mcfgthread/thread.h"
+#include "../mcfgthread/exit.h"
 #include <assert.h>
 #include <stdio.h>
 

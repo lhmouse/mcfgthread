@@ -1,5 +1,6 @@
-include_mcfgthreaddir = ${includedir}/mcfgthread
-include_mcfgthread_HEADERS =  \
+lib_LTLIBRARIES += lib/libmcfgthread.la
+
+nobase_include_HEADERS +=  \
   %reldir%/version.h  \
   %reldir%/atomic.h  \
   %reldir%/fwd.h  \
@@ -22,7 +23,6 @@ include_mcfgthread_HEADERS =  \
   %reldir%/cxx11.hpp  \
   ${END}
 
-lib_LTLIBRARIES += lib/libmcfgthread.la
 lib_libmcfgthread_la_SOURCES =  \
   %reldir%/version.h.in  \
   %reldir%/precompiled.i  \
@@ -52,9 +52,6 @@ lib_libmcfgthread_la_SOURCES =  \
   %reldir%/libcxx.c  \
   ${END}
 
-.rc.lo:
-	${AM_V_GEN}${LIBTOOL} ${AM_V_lt} --tag=RC --mode=compile ${RC} ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@
-
 lib_libmcfgthread_la_CFLAGS =  \
   ${AM_CFLAGS} -nostdlib -f{freestanding,asynchronous-unwind-tables}
 
@@ -76,10 +73,16 @@ endif
 	  && rm -rf $@.gch  \
 	  && mkdir $@.gch  \
 	  && . $@.lo  \
-	  && (test "$${pic_object}" == none || mv -f %reldir%/$${pic_object} $@.gch/pic)  \
-	  && (test "$${non_pic_object}" == none || mv -f %reldir%/$${non_pic_object} $@.gch/non_pic)  \
+	  && (test "$${pic_object}" == none ||  \
+	      mv -f %reldir%/$${pic_object} $@.gch/pic)  \
+	  && (test "$${non_pic_object}" == none ||  \
+	      mv -f %reldir%/$${non_pic_object} $@.gch/non_pic)  \
 	  && rm -f $@.lo  \
 	  && echo '#error PCH unusable' > $@
 
 clean-local:
 	-rm -rf %reldir%/precompiled.x*
+
+.rc.lo:
+	${AM_V_GEN}${LIBTOOL} ${AM_V_lt} --tag=RC --mode=compile ${RC}  \
+	  ${DEFAULT_INCLUDES} ${AM_RCFLAGS} ${RCFLAGS} $< -o $@

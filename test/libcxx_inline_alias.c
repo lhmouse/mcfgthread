@@ -2,7 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "../src/libcxx.h"
+#include "../mcfgthread/libcxx.h"
 #include <assert.h>
 
 int

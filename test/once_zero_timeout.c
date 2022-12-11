@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "../src/once.h"
-#include "../src/thread.h"
+#include "../mcfgthread/once.h"
+#include "../mcfgthread/thread.h"
 #include <assert.h>
 #include <stdio.h>
 
