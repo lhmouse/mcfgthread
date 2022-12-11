@@ -55,11 +55,17 @@ __MCF_C_DECLARATIONS_BEGIN
   RETURN __stdcall function(__VA_ARGS__) __attribute__((__dllimport__, __nothrow__))
 
 /* Declare KERNEL32 APIs here.  */
+typedef struct _SECURITY_ATTRIBUTES SECURITY_ATTRIBUTES;
+typedef DWORD __stdcall THREAD_START_ROUTINE(LPVOID);
+typedef BOOL __stdcall HANDLER_ROUTINE(DWORD);
+
 __MCF_WINAPI(DWORD, GetLastError, void) __attribute__((__pure__));
 __MCF_WINAPI(void, SetLastError, DWORD);
 __MCF_WINAPI(PVOID, EncodePointer, PVOID) __attribute__((__const__));
 __MCF_WINAPI(PVOID, DecodePointer, PVOID) __attribute__((__const__));
-__MCF_WINAPI(NTSTATUS, BaseGetNamedObjectDirectory, HANDLE*);
+
+__MCF_WINAPI(NTSTATUS, BaseGetNamedObjectDirectory, HANDLE*) __attribute__((__const__));
+__MCF_WINAPI(BOOL, SetConsoleCtrlHandler, HANDLER_ROUTINE*, BOOL);
 
 __MCF_WINAPI(DWORD, TlsAlloc, void);
 __MCF_WINAPI(BOOL, TlsFree, DWORD);
@@ -80,21 +86,16 @@ __MCF_WINAPI(ULONGLONG, GetTickCount64, void);
 __MCF_WINAPI(BOOL, QueryPerformanceFrequency, LARGE_INTEGER*);
 __MCF_WINAPI(BOOL, QueryPerformanceCounter, LARGE_INTEGER*);
 
-typedef struct _SECURITY_ATTRIBUTES SECURITY_ATTRIBUTES;
-typedef DWORD __stdcall THREAD_START_ROUTINE(LPVOID);
 __MCF_WINAPI(HANDLE, CreateThread, SECURITY_ATTRIBUTES*, SIZE_T, THREAD_START_ROUTINE*, LPVOID, DWORD, DWORD*);
 __MCF_WINAPI(void, ExitThread, DWORD) __attribute__((__noreturn__));
 __MCF_WINAPI(int, GetThreadPriority, HANDLE) __attribute__((__pure__));
 __MCF_WINAPI(BOOL, SetThreadPriority, HANDLE, int);
-__MCF_WINAPI(DWORD, GetCurrentProcessId, void);
+__MCF_WINAPI(DWORD, GetCurrentProcessId, void) __attribute__((__const__));
 __MCF_WINAPI(BOOL, TerminateProcess, HANDLE, UINT);
-
-typedef BOOL __stdcall HANDLER_ROUTINE(DWORD);
-__MCF_WINAPI(BOOL, SetConsoleCtrlHandler, HANDLER_ROUTINE*, BOOL);
 
 /* Declare NTDLL (driver) APIs here.  */
 __MCF_WINAPI(NTSTATUS, LdrAddRefDll, ULONG, PVOID);
-__MCF_WINAPI(BOOLEAN, RtlDllShutdownInProgress, void);
+__MCF_WINAPI(BOOLEAN, RtlDllShutdownInProgress, void) __attribute__((__const__));
 
 __MCF_WINAPI(void, RtlMoveMemory, void*, const void*, SIZE_T);
 __MCF_WINAPI(void, RtlFillMemory, void*, SIZE_T, int);
