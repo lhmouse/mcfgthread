@@ -2,7 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "../src/dtor_queue.h"
+#include "../mcfgthread/dtor_queue.h"
 #include <assert.h>
 #include <stdio.h>
 
