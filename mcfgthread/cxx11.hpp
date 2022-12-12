@@ -507,8 +507,7 @@ class condition_variable
 
     template<typename _Rep, typename _Period>
     cv_status
-    wait_for(unique_lock<mutex>& __lock,
-             const chrono::duration<_Rep, _Period>& __rel_time)
+    wait_for(unique_lock<mutex>& __lock, const chrono::duration<_Rep, _Period>& __rel_time)
       {
         __MCF_ASSERT(__lock.owns_lock());  // must owning a mutex
         __MCF_ASSERT(__lock.mutex() != nullptr);
@@ -526,8 +525,7 @@ class condition_variable
 
     template<typename _Rep, typename _Period, typename _Predicate>
     bool
-    wait_for(unique_lock<mutex>& __lock,
-             const chrono::duration<_Rep, _Period>& __rel_time, _Predicate&& __pred)
+    wait_for(unique_lock<mutex>& __lock, const chrono::duration<_Rep, _Period>& __rel_time, _Predicate&& __pred)
       {
         return this->wait_until(__lock, _Mono_clock::now() + __rel_time, __pred);
       }
