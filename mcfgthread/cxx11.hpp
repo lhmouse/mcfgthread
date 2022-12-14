@@ -99,17 +99,13 @@ __void_invoke(_Callable&& __callable, _Args&&... __args)
 #endif  // std::invoke
 
 // Define shortcuts for `enable_if`.
-#define __MCF_SFINAE_ENABLE_IF(...)  \
-    typename ::std::enable_if<(bool) (__VA_ARGS__)>::type* = nullptr
-
-#define __MCF_SFINAE_DISABLE_IF(...)  \
-    typename ::std::enable_if<!(bool) (__VA_ARGS__)>::type* = nullptr
+#define __MCF_SFINAE_ENABLE_IF(...)   typename ::std::enable_if<(bool) (__VA_ARGS__)>::type* = nullptr
+#define __MCF_SFINAE_DISABLE_IF(...)  typename ::std::enable_if<!(bool) (__VA_ARGS__)>::type* = nullptr
 
 // Peform time point and duration calculation.
 // Our native type for durations represents the number of milliseconds. For
 // everything else, it is necessary to perform calculation using a floating=
 // point type and check for overflows before casting.
-namespace chrono = ::std::chrono;
 using _Sys_clock = chrono::system_clock;
 using _Mono_clock = chrono::steady_clock;
 
