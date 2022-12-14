@@ -392,8 +392,7 @@ void*
 __MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT
   {
     void* __ptr = HeapReAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, *__pptr, __size);
-    return !__ptr ? NULL
-        : (*__pptr = __ptr);
+    return !__ptr ? NULL : (*__pptr = __ptr);
   }
 
 __MCF_XGLOBALS_INLINE
@@ -401,8 +400,7 @@ void*
 __MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
   {
     void* __ptr = HeapAlloc(GetProcessHeap(), 0, __size);
-    return !__ptr ? NULL
-        : __MCF_mcopy(__ptr, __data, __size);
+    return !__ptr ? NULL : __MCF_mcopy(__ptr, __data, __size);
   }
 
 __MCF_XGLOBALS_INLINE
