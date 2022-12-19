@@ -102,18 +102,13 @@ __void_invoke(_Callable&& __callable, _Args&&... __args)
 #define __MCF_SFINAE_ENABLE_IF(...)   typename ::std::enable_if<(bool) (__VA_ARGS__)>::type* = nullptr
 #define __MCF_SFINAE_DISABLE_IF(...)  typename ::std::enable_if<!(bool) (__VA_ARGS__)>::type* = nullptr
 
-// Peform time point and duration calculation.
-// Our native type for durations represents the number of milliseconds. For
-// everything else, it is necessary to perform calculation using a floating=
-// point type and check for overflows before casting.
-using _Sys_clock = chrono::system_clock;
-using _Mono_clock = chrono::steady_clock;
-
 // This is the maximum integer representable as a `double` exact.
 constexpr int64_t _Max_ms = 0x7FFFFFFFFFFFFC00;
 
 // Convert a `chrono::duration` to the number of milliseconds, represented
-// as a non-negative 64-bit integer.
+// as a non-negative 64-bit integer. For everything other than milliseconds,
+// it is necessary to perform calculation using a floating-point type and
+// check for overflows before casting.
 __MCF_CXX14(constexpr) inline
 int64_t
 __clamp_duration(const chrono::milliseconds& __ms) noexcept
@@ -169,7 +164,7 @@ __wait_for(const chrono::duration<_Rep, _Period>& __rel_time, _Cond&& __cond, _A
 template<typename _Dur, typename _Cond, typename... _Args>
 inline
 int
-__wait_until(const chrono::time_point<_Sys_clock, _Dur>& __abs_time, _Cond&& __cond, _Args&&... __args)
+__wait_until(const chrono::time_point<chrono::system_clock, _Dur>& __abs_time, _Cond&& __cond, _Args&&... __args)
   {
     int64_t __timeout = _Noadl::__clamp_duration(__abs_time.time_since_epoch());
     return __cond(__args..., &__timeout);
@@ -523,7 +518,7 @@ class condition_variable
     bool
     wait_for(unique_lock<mutex>& __lock, const chrono::duration<_Rep, _Period>& __rel_time, _Predicate&& __pred)
       {
-        return this->wait_until(__lock, _Mono_clock::now() + __rel_time, __pred);
+        return this->wait_until(__lock, chrono::steady_clock::now() + __rel_time, __pred);
       }
   };
 
