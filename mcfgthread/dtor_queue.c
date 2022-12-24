@@ -137,9 +137,11 @@ __MCF_dtor_queue_finalize(__MCF_dtor_queue* queue, _MCF_mutex* mutex_opt, void* 
       /* Note: In the case of i386, the argument is passed both via the ECX
        * register and on the stack, to allow both `__cdecl` and `__thiscall`
        * functions to work properly.
-       * Parameters: EAX, EDX, ECX, ESP[4]  */
-      typedef void __attribute__((__regparm__(3))) i386_dtor(int, int, void*, void*);
-      (*(i386_dtor*)(int) elem.__dtor)(0, 0, elem.__this, elem.__this);
+       * Parameters are `EAX`, `EDX`, `ECX`, `ESP[4]`.  */
+      typedef void i386_dtor(int, int, void*, void*) __attribute__((__regparm__(3)));
+      int eax, edx;
+      __asm__ ("" : "=a"(eax), "=d"(edx));  /* leave them uninitialized.  */
+      (*(i386_dtor*)(int) elem.__dtor)(eax, edx, elem.__this, elem.__this);
 #else
       /* This works on x86_64, and should work on ARM (FIXME: untested).  */
       elem.__dtor(elem.__this);
