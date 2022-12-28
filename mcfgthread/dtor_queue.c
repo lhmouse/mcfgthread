@@ -139,9 +139,11 @@ __MCF_dtor_queue_finalize(__MCF_dtor_queue* queue, _MCF_mutex* mutex_opt, void* 
        * functions to work properly.
        * Parameters are `EAX`, `EDX`, `ECX`, `ESP[4]`.  */
       typedef void i386_dtor(int, int, void*, void*) __attribute__((__regparm__(3)));
+      i386_dtor* asm_dtor = (i386_dtor*)(int) elem.__dtor;
+
       int eax, edx;
       __asm__ ("" : "=a"(eax), "=d"(edx));  /* leave them uninitialized.  */
-      (*(i386_dtor*)(int) elem.__dtor)(eax, edx, elem.__this, elem.__this);
+      asm_dtor(eax, edx, elem.__this, elem.__this);
 #else
       /* This works on x86_64, and should work on ARM (FIXME: untested).  */
       elem.__dtor(elem.__this);
