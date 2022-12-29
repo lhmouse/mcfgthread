@@ -43,13 +43,13 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
       if(old.__value < 0)
         return -1;
 
-      /* ... It is possible that a second thread has already decremented the
+      /* ... It is possible that a second thread has already incremented the
        * counter. If this does take place, it is going to release the keyed
        * event soon. We must still wait, otherwise we get a deadlock in the
        * second thread. However, a third thread could start waiting for this
        * keyed event before us, so we set the timeout to zero. If we time out
-       * once more, the third thread will have incremented the number of
-       * sleeping threads and we can try decrementing it again.  */
+       * once more, the third thread will have decremented the number of
+       * sleeping threads and we can try incrementing it again.  */
       status = __MCF_keyed_event_signal(sem, (LARGE_INTEGER[]) { 0 });
     }
 
