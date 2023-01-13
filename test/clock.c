@@ -25,7 +25,7 @@ main(void)
     tm.tm_sec = st.wSecond;
     tm.tm_isdst = -1;
 
-    time_t ts;
+    __time64_t ts;
 #ifdef _USE_32BIT_TIME_T
     ts = _mktime64(&tm);
 #else
