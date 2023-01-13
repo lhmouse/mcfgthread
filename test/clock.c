@@ -8,12 +8,6 @@
 #include <time.h>
 #include <windows.h>
 
-#ifdef _USE_32BIT_TIME_T
-#  define my_mktime   _mktime64
-#else
-#  define my_mktime   mktime
-#endif
-
 int
 main(void)
   {
@@ -29,11 +23,19 @@ main(void)
     tm.tm_hour = st.wHour;
     tm.tm_min = st.wMinute;
     tm.tm_sec = st.wSecond;
-    int64_t vcrt_now = my_mktime(&tm) * 1000 + st.wMilliseconds;
+    tm.tm_isdst = -1;
+
+    time_t ts;
+#ifdef _USE_32BIT_TIME_T
+    ts = _mktime64(&tm);
+#else
+    ts = mktime(&tm);
+#endif
+    long long vcrt_now = ts * 1000 + st.wMilliseconds;
     printf("vcrt_now = %lld\n", vcrt_now);
 
-    int64_t ms_now = _MCF_utc_now();
-    int64_t ms_delta = ms_now - vcrt_now;
+    long long ms_now = _MCF_utc_now();
+    long long ms_delta = ms_now - vcrt_now;
     printf("_MCF_utc_now() = %lld (delta %+lld)\n", ms_now, ms_delta);
     assert(ms_delta >= -100);
     assert(ms_delta <= +100);
