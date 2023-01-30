@@ -77,7 +77,6 @@ _MCF_sem_signal_some(_MCF_sem* sem, intptr_t value_add)
       new = old;
       wake_num = _MCF_minz(-(size_t) old.__value, (size_t) value_add) & (size_t) (old.__value >> (__MCF_PTR_BITS - 1));
       new.__value = old.__value + value_add;
-
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(sem, &old, &new));
 
