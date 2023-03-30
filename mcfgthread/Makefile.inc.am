@@ -60,7 +60,7 @@ lib_libmcfgthread_la_LIBADD =  \
 lib_libmcfgthread_la_LDFLAGS =  \
   -Wl,--subsystem,windows:6.1,--entry,__MCF_dll_startup@@Z  \
   -Wl,--exclude-all-symbols,--kill-at,--enable-auto-image-base  \
-  -Wc,-nostdlib -no-undefined -version-info @abi_major@:@abi_minor@
+  -Wc,-nostdlib -no-undefined -version-number @abi_major@:@abi_minor@
 
 if enable_pch
 lib_libmcfgthread_la_CFLAGS += -include %reldir%/precompiled.xi
