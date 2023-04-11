@@ -223,12 +223,9 @@ do_on_process_attach(void)
     __MCF_g->__tls_index = TlsAlloc();
     __MCF_CHECK(__MCF_g->__tls_index != UINT32_MAX);
 
-    /* Attach the main thread.  */
-    __MCF_g->__main_thread[0].__tid = _MCF_thread_self_tid();
-    __MCF_CHECK_NT(NtDuplicateObject(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &(__MCF_g->__main_thread[0].__handle), 0, 0, DUPLICATE_SAME_ACCESS));
-    __MCF_CHECK(__MCF_g->__main_thread[0].__handle);
-    _MCF_atomic_store_32_rel(__MCF_g->__main_thread[0].__nref, 1);
-    __MCF_CHECK(TlsSetValue(__MCF_g->__tls_index, __MCF_g->__main_thread));
+    /* Attach the main thread. The structure should be all zeroes so no
+     * initialization is necessary.  */
+    __MCF_thread_attach_foreign(__MCF_g->__main_thread);
   }
 
 static

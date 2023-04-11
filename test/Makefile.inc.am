@@ -35,6 +35,9 @@ check_PROGRAMS +=  \
   %reldir%/tls_dtor_ignored_on_exit.test  \
   %reldir%/tls_dtor_ignored_on_quick_exit.test  \
   %reldir%/tls_dtor_ignored_on__Exit.test  \
+  %reldir%/tls_foreign_dtor.test  \
+  %reldir%/tls_foreign_xset.test  \
+  %reldir%/tls_foreign_dtor_thread_exit.test  \
   %reldir%/thread_self_id.test  \
   %reldir%/thread_new_alignment.test  \
   %reldir%/thread_new_aligned.test  \

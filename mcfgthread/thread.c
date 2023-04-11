@@ -26,7 +26,7 @@ do_win32_thread_thunk(LPVOID param)
 #endif  /* x86  */
 
     /* Attach the thread and execute the user-defined procedure.  */
-    TlsSetValue(__MCF_g->__tls_index, self);
+    __MCF_CHECK(TlsSetValue(__MCF_g->__tls_index, self));
     self->__proc(self);
     return 0;
   }
@@ -95,6 +95,28 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
   }
 
 __MCF_DLLEXPORT
+_MCF_thread*
+__MCF_thread_attach_foreign(_MCF_thread* thrd)
+  {
+    __MCF_ASSERT(thrd->__nref[0] == 0);
+    __MCF_ASSERT(thrd->__tid == 0);
+    __MCF_ASSERT(thrd->__handle == NULL);
+    __MCF_ASSERT(TlsGetValue(__MCF_g->__tls_index) == NULL);
+
+    /* Initialize thread identity fields.  */
+    thrd->__tid = _MCF_thread_self_tid();
+    __MCF_CHECK_NT(NtDuplicateObject(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &(thrd->__handle), 0, 0, DUPLICATE_SAME_ACCESS));
+    __MCF_CHECK(thrd->__handle);
+
+    /* Initialize the reference count to detached state.  */
+    _MCF_atomic_store_32_rel(thrd->__nref, 1);
+
+    /* Attach the thread now.  */
+    __MCF_CHECK(TlsSetValue(__MCF_g->__tls_index, thrd));
+    return thrd;
+  }
+
+__MCF_DLLEXPORT
 void
 _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
   {
@@ -157,6 +179,21 @@ _MCF_thread*
 _MCF_thread_self(void)
   {
     return TlsGetValue(__MCF_g->__tls_index);
+  }
+
+__MCF_DLLEXPORT
+_MCF_thread*
+_MCF_thread_self_maybe_foreign(void)
+  {
+    _MCF_thread* self = TlsGetValue(__MCF_g->__tls_index);
+    if(self)
+      return self;
+
+    self = __MCF_malloc_0(sizeof(_MCF_thread));
+    if(!self)
+      return NULL;
+
+    return __MCF_thread_attach_foreign(self);
   }
 
 __MCF_DLLEXPORT
