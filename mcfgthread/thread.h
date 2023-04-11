@@ -156,17 +156,11 @@ int
 _MCF_thread_set_priority(_MCF_thread* __thrd_opt, _MCF_thread_priority __priority) __MCF_NOEXCEPT;
 
 /* Gets a non-owning pointer to the current thread object. If the calling thread
- * was not created by `_MCF_thread_new_aligned()`, a null poiner is returned.  */
-__MCF_THREAD_IMPORT
-_MCF_thread*
-_MCF_thread_self(void) __MCF_NOEXCEPT __attribute__((__const__));
-
-/* Gets a non-owning pointer to the current thread object. If the calling thread
  * was not created by `_MCF_thread_new_aligned()`, a thread object with no user
  * data is allocated and returned.  */
 __MCF_THREAD_IMPORT
 _MCF_thread*
-_MCF_thread_self_maybe_foreign(void) __MCF_NOEXCEPT __attribute__((__const__));
+_MCF_thread_self(void) __MCF_NOEXCEPT __attribute__((__const__));
 
 /* Gets the thread ID of the current thread.  */
 __MCF_THREAD_INLINE
@@ -333,7 +327,7 @@ __MCF_THREAD_INLINE
 int
 _MCF_tls_xset(_MCF_tls_key* __key, void** __old_value_opt, const void* __value_opt) __MCF_NOEXCEPT
   {
-    _MCF_thread* __self = _MCF_thread_self_maybe_foreign();
+    _MCF_thread* __self = _MCF_thread_self();
     return (__self == NULL)
         ? -1  /* allocation failure  */
         : __MCF_tls_table_xset(__self->__tls_table, __key, __old_value_opt, __value_opt);
@@ -343,7 +337,7 @@ __MCF_THREAD_INLINE
 int
 _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt) __MCF_NOEXCEPT
   {
-    _MCF_thread* __self = _MCF_thread_self_maybe_foreign();
+    _MCF_thread* __self = _MCF_thread_self();
     return (__self == NULL)
         ? -1  /* allocation failure  */
         : __MCF_tls_table_xset(__self->__tls_table, __key, NULL, __value_opt);

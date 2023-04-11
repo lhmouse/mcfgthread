@@ -178,13 +178,6 @@ __MCF_DLLEXPORT
 _MCF_thread*
 _MCF_thread_self(void)
   {
-    return TlsGetValue(__MCF_g->__tls_index);
-  }
-
-__MCF_DLLEXPORT
-_MCF_thread*
-_MCF_thread_self_maybe_foreign(void)
-  {
     _MCF_thread* self = TlsGetValue(__MCF_g->__tls_index);
     if(self)
       return self;
