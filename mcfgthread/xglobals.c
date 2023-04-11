@@ -135,7 +135,8 @@ __MCF_finalize_on_exit(void)
     __MCF_dtor_queue_finalize(self->__atexit_queue, NULL, NULL);
     __MCF_run_dtors_atexit();
 
-    TlsSetValue(__MCF_g->__tls_index, NULL);
+    /* Poison this value.  */
+    TlsSetValue(__MCF_g->__tls_index, (void*) -1);
     _MCF_thread_drop_ref_nonnull(self);
   }
 
@@ -242,7 +243,8 @@ do_on_thread_detach(void)
     __MCF_dtor_queue_finalize(self->__atexit_queue, NULL, NULL);
     __MCF_tls_table_finalize(self->__tls_table);
 
-    TlsSetValue(__MCF_g->__tls_index, NULL);
+    /* Poison this value.  */
+    TlsSetValue(__MCF_g->__tls_index, (void*) -1);
     _MCF_thread_drop_ref_nonnull(self);
   }
 
