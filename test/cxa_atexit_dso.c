@@ -73,4 +73,5 @@ main(void)
     buffer[0] = 0;
     __MCF_cxa_finalize(NULL);
     assert(strcmp(buffer, "pNlNhNdN") == 0);
+    _Exit(0);
   }

@@ -42,5 +42,7 @@ main(void)
     __MCF_cxa_thread_atexit(cleanup_2, (void*) 2, NULL);
     __MCF_cxa_thread_atexit(cleanup_1, (void*) 1, NULL);
     __MCF_cxa_atexit(cleanup_3, (void*) 3, NULL);
+
     __MCF_cxa_finalize(NULL);
+    _Exit(0);
   }
