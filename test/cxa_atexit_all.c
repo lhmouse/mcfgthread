@@ -65,4 +65,5 @@ main(void)
     assert(strcmp(buffer, "") == 0);
     __MCF_cxa_finalize(NULL);
     assert(strcmp(buffer, "pNo2n2m1lNk2j1i1hNg1f1e2dNc1b2a1") == 0);
+    _Exit(0);
   }
