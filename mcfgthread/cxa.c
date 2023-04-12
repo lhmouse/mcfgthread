@@ -111,12 +111,12 @@ __MCF_DLLEXPORT
 void
 __MCF_cxa_finalize(void* dso)
   {
-    /* A null DSO handle indicates that the current process is terminating.  */
-    if(!dso)
-      return __MCF_finalize_on_exit();
-
-    /* Call destructors for thread-local objects before static ones in
-     * accordance with the C++ standard. See [basic.start.term]/2.  */
+    /* A null DSO handle indicates that the current process is terminating. A
+     * non-null DSO handle indicates that a dynamic library is being unloaded.
+     * In either case, destructors for thread-local objects shall be called
+     * before static ones, in accordance with the ISO C++ standard. See
+     * [basic.start.term]/2. Thread-local cleanup callbacks are not called,
+     * according to POSIX.  */
     do_thread_dtor_queue_finalize(dso);
     __MCF_dtor_queue_finalize(__MCF_g->__cxa_atexit_queue, __MCF_g->__cxa_atexit_mtx, dso);
 

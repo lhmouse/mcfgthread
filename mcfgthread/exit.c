@@ -6,13 +6,14 @@
 #define __MCF_EXIT_IMPORT  __MCF_DLLEXPORT
 #define __MCF_EXIT_INLINE  __MCF_DLLEXPORT
 #include "exit.h"
+#include "dtor_queue.h"
+#include "cxa.h"
 #include "xglobals.i"
 
 __MCF_DLLEXPORT
 void
 __MCF__Exit(int status)
   {
-    /* Terminte the current process without invoking TLS callbacks.  */
     TerminateProcess(GetCurrentProcess(), (DWORD) status);
     __MCF_UNREACHABLE;
   }
@@ -21,9 +22,7 @@ __MCF_DLLEXPORT
 void
 __MCF_quick_exit(int status)
   {
-    /* Invoke all callbacks that have been registered by `at_quick_exit()` in
-     * reverse order.  */
-    __MCF_run_dtors_at_quick_exit();
+    __MCF_dtor_queue_finalize(__MCF_g->__cxa_at_quick_exit_queue, __MCF_g->__cxa_at_quick_exit_mtx, NULL);
     __MCF__Exit(status);
   }
 
@@ -31,7 +30,6 @@ __MCF_DLLEXPORT
 void
 __MCF_exit(int status)
   {
-    /* Perform global cleanup like `__cxa_finalize(NULL)`.  */
-    __MCF_finalize_on_exit();
+    __MCF_cxa_finalize(NULL);
     __MCF__Exit(status);
   }
