@@ -44,6 +44,11 @@ __MCF_C_DECLARATIONS_BEGIN
 #undef RtlCompareMemory
 #undef RtlEqualMemory
 
+/* Define a non-zero but invalid value. This can be used to mark a pointer
+ * to freed memory, or to prevent a static pointer from being placed into
+ * the `.bss` section.  */
+#define __MCF_BAD_PTR  ((void*) -127)
+
 /* Hard-code these.  */
 #define GetCurrentProcess()  ((HANDLE) -1)
 #define GetCurrentThread()   ((HANDLE) -2)
