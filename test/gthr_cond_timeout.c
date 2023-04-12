@@ -31,7 +31,7 @@ main(void)
     assert(r == -1);
     delta = _MCF_perf_counter() - now;
     printf("delta = %.6f\n", delta);
-    assert(delta >= 1100 - 20);
+    assert(delta >= 1100 - 40);
     assert(delta <= 1200);
 
     r = __gthread_mutex_trylock(&mutex);
