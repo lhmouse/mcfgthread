@@ -107,39 +107,6 @@ __MCF_win32_error_p(DWORD code, void* ptr)
     return ptr;
   }
 
-__MCF_DLLEXPORT
-void
-__MCF_run_dtors_at_quick_exit(void)
-  {
-    __MCF_dtor_queue_finalize(__MCF_g->__cxa_at_quick_exit_queue, __MCF_g->__cxa_at_quick_exit_mtx, NULL);
-  }
-
-__MCF_DLLEXPORT
-void
-__MCF_run_dtors_atexit(void)
-  {
-    __MCF_dtor_queue_finalize(__MCF_g->__cxa_atexit_queue, __MCF_g->__cxa_atexit_mtx, NULL);
-  }
-
-__MCF_DLLEXPORT
-void
-__MCF_finalize_on_exit(void)
-  {
-    _MCF_thread* self = TlsGetValue(__MCF_g->__tls_index);
-    if(!self)
-      return __MCF_run_dtors_atexit();
-
-    /* Call destructors for thread-local objects before static ones, in
-     * accordance with the C++ standard. See [basic.start.term]/2.
-     * Thread-local destructors are not called according to POSIX.  */
-    __MCF_dtor_queue_finalize(self->__atexit_queue, NULL, NULL);
-    __MCF_run_dtors_atexit();
-
-    /* Poison this value.  */
-    TlsSetValue(__MCF_g->__tls_index, (void*) -1);
-    _MCF_thread_drop_ref_nonnull(self);
-  }
-
 static inline
 void
 do_encode_numeric_field(wchar_t* ptr, size_t width, uint64_t value, const wchar_t* digits)

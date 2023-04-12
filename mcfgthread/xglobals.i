@@ -258,20 +258,6 @@ __MCF_XGLOBALS_IMPORT
 void*
 __MCF_win32_error_p(DWORD __code, void* __ptr) __MCF_NOEXCEPT;
 
-/* These functions are declared here for the sake of completeness, and are not
- * meant to be called directly.  */
-__MCF_XGLOBALS_IMPORT
-void
-__MCF_run_dtors_at_quick_exit(void) __MCF_NOEXCEPT;
-
-__MCF_XGLOBALS_IMPORT
-void
-__MCF_run_dtors_atexit(void) __MCF_NOEXCEPT;
-
-__MCF_XGLOBALS_IMPORT
-void
-__MCF_finalize_on_exit(void) __MCF_NOEXCEPT;
-
 /* Declare global data.  */
 typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
 
