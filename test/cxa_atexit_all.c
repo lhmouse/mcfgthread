@@ -3,6 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "../mcfgthread/cxa.h"
+#include "../mcfgthread/exit.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -65,5 +66,5 @@ main(void)
     assert(strcmp(buffer, "") == 0);
     __MCF_cxa_finalize(NULL);
     assert(strcmp(buffer, "pNo2n2m1lNk2j1i1hNg1f1e2dNc1b2a1") == 0);
-    _Exit(0);
+    __MCF__Exit(0);
   }
