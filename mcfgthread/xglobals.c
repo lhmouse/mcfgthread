@@ -233,7 +233,6 @@ static
 void
 do_on_thread_detach(void)
   {
-    /* Ignore foreign threads.  */
     _MCF_thread* self = TlsGetValue(__MCF_g->__tls_index);
     if(!self)
       return;
