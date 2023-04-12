@@ -210,7 +210,7 @@ do_on_thread_detach(void)
     __MCF_tls_table_finalize(self->__tls_table);
 
     /* Poison this value.  */
-    TlsSetValue(__MCF_g->__tls_index, (void*) -1);
+    TlsSetValue(__MCF_g->__tls_index, __MCF_BAD_PTR);
     _MCF_thread_drop_ref_nonnull(self);
   }
 
@@ -277,7 +277,7 @@ const PIMAGE_TLS_CALLBACK __MCF_xl_b __attribute__((__section__(".CRT$XLB"), __u
 
 /* These are constants that have to be initialized at load time. The
  * initializers prevent them from being placed into the`.bss` section.  */
-HANDLE __MCF_crt_heap = (void*) -1;
+HANDLE __MCF_crt_heap = __MCF_BAD_PTR;
 double __MCF_crt_pf_recip = 1;
 SYSTEM_INFO __MCF_crt_sysinfo = { .dwPageSize = 1 };
 
@@ -285,4 +285,4 @@ SYSTEM_INFO __MCF_crt_sysinfo = { .dwPageSize = 1 };
  * all instances of this pointer in the same process should point to the
  * same memory. The initializer prevents it from being placed into the
  * `.bss` section.  */
-__MCF_crt_xglobals* __MCF_g = (void*) -1;
+__MCF_crt_xglobals* __MCF_g = __MCF_BAD_PTR;
