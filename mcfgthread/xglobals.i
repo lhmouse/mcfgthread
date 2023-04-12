@@ -180,7 +180,7 @@ struct __MCF_winnt_timeout
 
 __MCF_XGLOBALS_IMPORT
 void
-__MCF_initialize_winnt_timeout_v2(__MCF_winnt_timeout* __to, const int64_t* __int64_opt) __MCF_NOEXCEPT;
+__MCF_initialize_winnt_timeout_v2(__MCF_winnt_timeout* __to, const int64_t* __ms_opt) __MCF_NOEXCEPT;
 
 __MCF_XGLOBALS_IMPORT
 void

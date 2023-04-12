@@ -93,7 +93,7 @@
 #endif
 
 #ifdef __MCF_DEBUG
-#  define __MCF_UNREACHABLE   __MCF_runtime_failure(__FUNCTION__)
+#  define __MCF_UNREACHABLE   __MCF_runtime_failure(__func__)
 #else
 #  define __MCF_UNREACHABLE   __builtin_unreachable()
 #endif
@@ -130,7 +130,7 @@ extern "C++" template<> struct __MCF_static_assert<true> { };
  * an argument yields false, `__MCF_ASSERT()` results in undefined behavior,
  * and `__MCF_CHECK()` effects abnormal termination of the current program.  */
 #define __MCF_ASSERT(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
-#define __MCF_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__FUNCTION__))
+#define __MCF_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__func__))
 
 /* Define thread priority constants, from lowest to highest.
  * These values match Windows APIs and can be passed around as such, but we
