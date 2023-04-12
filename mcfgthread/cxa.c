@@ -95,6 +95,18 @@ __MCF_thread_atexit(__MCF_atexit_callback atfn)
     return __MCF_cxa_thread_atexit((__MCF_cxa_dtor_cdecl*)(intptr_t) atfn, NULL, NULL);
   }
 
+static
+void
+do_thread_dtor_queue_finalize(void* dso)
+  {
+    _MCF_thread* self = _MCF_thread_self();
+    if(!self)
+      return;
+
+    /* This queue is specific to the calling thread and requires no locking.  */
+    __MCF_dtor_queue_finalize(self->__atexit_queue, NULL, dso);
+  }
+
 __MCF_DLLEXPORT
 void
 __MCF_cxa_finalize(void* dso)
@@ -105,11 +117,7 @@ __MCF_cxa_finalize(void* dso)
 
     /* Call destructors for thread-local objects before static ones in
      * accordance with the C++ standard. See [basic.start.term]/2.  */
-    _MCF_thread* self = _MCF_thread_self();
-    if(self)
-      __MCF_dtor_queue_finalize(self->__atexit_queue, NULL, dso);
-
-    /* Call destructors and callbacks registered with `__cxa_atexit()`.  */
+    do_thread_dtor_queue_finalize(dso);
     __MCF_dtor_queue_finalize(__MCF_g->__cxa_atexit_queue, __MCF_g->__cxa_atexit_mtx, dso);
 
     /* Remove quick exit callbacks that will expire.  */
