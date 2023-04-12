@@ -99,12 +99,15 @@ static
 void
 do_thread_dtor_queue_finalize(void* dso)
   {
+    __MCF_SEH_DEFINE_TERMINATE_FILTER;
+    __MCF_dtor_element elem;
+
     _MCF_thread* self = _MCF_thread_self();
     if(!self)
       return;
 
-    /* This queue is specific to the calling thread and requires no locking.  */
-    __MCF_dtor_queue_finalize(self->__atexit_queue, NULL, dso);
+    while(__MCF_dtor_queue_pop(&elem, self->__atexit_queue, dso) == 0)
+      __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
   }
 
 __MCF_DLLEXPORT
@@ -114,11 +117,11 @@ __MCF_cxa_finalize(void* dso)
     /* A null DSO handle indicates that the current process is terminating. A
      * non-null DSO handle indicates that a dynamic library is being unloaded.
      * In either case, destructors for thread-local objects shall be called
-     * before static ones, in accordance with the ISO C++ standard. See
-     * [basic.start.term]/2. Thread-local cleanup callbacks are not called,
+     * before static ones, in accordance with the ISO C++ standard. (See
+     * [basic.start.term]/2.) Destructors of thread-local keys are not called,
      * according to POSIX.  */
     do_thread_dtor_queue_finalize(dso);
-    __MCF_dtor_queue_finalize(__MCF_g->__cxa_atexit_queue, __MCF_g->__cxa_atexit_mtx, dso);
+    __MCF_run_dtors_atexit(dso);
 
     /* Remove quick exit callbacks that will expire.  */
     _MCF_mutex_lock(__MCF_g->__cxa_at_quick_exit_mtx, NULL);

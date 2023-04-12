@@ -107,6 +107,50 @@ __MCF_win32_error_p(DWORD code, void* ptr)
     return ptr;
   }
 
+__MCF_DLLEXPORT
+void
+__MCF_run_dtors_at_quick_exit(void* dso)
+  {
+    __MCF_SEH_DEFINE_TERMINATE_FILTER;
+    __MCF_dtor_element elem;
+
+    /* Try popping a destructor.  */
+    _MCF_mutex_lock(__MCF_g->__cxa_at_quick_exit_mtx, NULL);
+    while(__MCF_dtor_queue_pop(&elem, __MCF_g->__cxa_at_quick_exit_queue, dso) == 0) {
+      _MCF_mutex_unlock(__MCF_g->__cxa_at_quick_exit_mtx);
+
+      /* Invoke it. This may register new destructors so the mutex must have
+       * been unlocked.  */
+      __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
+
+      /* Pop the new head.  */
+      _MCF_mutex_lock(__MCF_g->__cxa_at_quick_exit_mtx, NULL);
+    }
+    _MCF_mutex_unlock(__MCF_g->__cxa_at_quick_exit_mtx);
+  }
+
+__MCF_DLLEXPORT
+void
+__MCF_run_dtors_atexit(void* dso)
+  {
+    __MCF_SEH_DEFINE_TERMINATE_FILTER;
+    __MCF_dtor_element elem;
+
+    /* Try popping a destructor.  */
+    _MCF_mutex_lock(__MCF_g->__cxa_atexit_mtx, NULL);
+    while(__MCF_dtor_queue_pop(&elem, __MCF_g->__cxa_atexit_queue, dso) == 0) {
+      _MCF_mutex_unlock(__MCF_g->__cxa_atexit_mtx);
+
+      /* Invoke it. This may register new destructors so the mutex must have
+       * been unlocked.  */
+      __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
+
+      /* Pop the new head.  */
+      _MCF_mutex_lock(__MCF_g->__cxa_atexit_mtx, NULL);
+    }
+    _MCF_mutex_unlock(__MCF_g->__cxa_atexit_mtx);
+  }
+
 static inline
 void
 do_encode_numeric_field(wchar_t* ptr, size_t width, uint64_t value, const wchar_t* digits)
@@ -200,14 +244,43 @@ static
 void
 do_on_thread_detach(void)
   {
+    __MCF_SEH_DEFINE_TERMINATE_FILTER;
+    __MCF_dtor_element elem;
+    __MCF_tls_table tls;
+
     _MCF_thread* self = TlsGetValue(__MCF_g->__tls_index);
     if(!self)
       return;
 
     /* Per-thread atexit callbacks may use TLS, so call them before
      * destructors of thread-local objects.  */
-    __MCF_dtor_queue_finalize(self->__atexit_queue, NULL, NULL);
-    __MCF_tls_table_finalize(self->__tls_table);
+    while(__MCF_dtor_queue_pop(&elem, self->__atexit_queue, NULL) == 0)
+      __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
+
+    /* Call destructors of TLS keys. The TLS table may be modified by
+     * destructors, so swap it out first.  */
+    while(self->__tls_table->__begin) {
+      __builtin_memcpy(&tls, self->__tls_table, sizeof(__MCF_tls_table));
+      __builtin_memset(self->__tls_table, 0, sizeof(__MCF_tls_table));
+
+      while(tls.__begin != tls.__end) {
+        tls.__end --;
+
+        /* Skip empty buckets.  */
+        _MCF_tls_key* tkey = tls.__end->__key_opt;
+        if(!tkey)
+          continue;
+
+        /* Call the destructor only if the value is not a null pointer.  */
+        if(tls.__end->__value_opt && tkey->__dtor_opt && !_MCF_atomic_load_8_rlx(tkey->__deleted))
+          __MCF_invoke_cxa_dtor(tkey->__dtor_opt, tls.__end->__value_opt);
+
+        _MCF_tls_key_drop_ref_nonnull(tkey);
+      }
+
+      /* Deallocate the table which should be empty now.  */
+      __MCF_mfree(tls.__begin);
+    }
 
     /* Poison this value.  */
     TlsSetValue(__MCF_g->__tls_index, __MCF_BAD_PTR);

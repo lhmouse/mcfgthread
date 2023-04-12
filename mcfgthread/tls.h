@@ -109,13 +109,6 @@ __MCF_TLS_IMPORT
 int
 __MCF_tls_table_xset(__MCF_tls_table* __table, _MCF_tls_key* __key, void** __old_value_opt, const void* __value_opt) __MCF_NOEXCEPT;
 
-/* Executes all destructors in the table, and frees dynamic storage if any. It
- * is declared here for the sake of completeness, and is not meant to be called
- * directly.  */
-__MCF_TLS_IMPORT
-void
-__MCF_tls_table_finalize(__MCF_tls_table* __table) __MCF_NOEXCEPT;
-
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++

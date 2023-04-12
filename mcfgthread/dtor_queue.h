@@ -58,13 +58,5 @@ __MCF_DTOR_QUEUE_IMPORT
 size_t
 __MCF_dtor_queue_remove(__MCF_dtor_queue* __queue, void* __dso) __MCF_NOEXCEPT;
 
-/* Executes all destructors which match `__dso` in the queue. If `__dso` is
- * null, then all elements are considered matches. This function is used to
- * implement `__cxa_finalize()`. Refer to the Itanium C++ ABI for details about
- * DSO handles.  */
-__MCF_DTOR_QUEUE_IMPORT
-void
-__MCF_dtor_queue_finalize(__MCF_dtor_queue* __queue, _MCF_mutex* __mutex_opt, void* __dso) __MCF_NOEXCEPT;
-
 __MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_DTOR_QUEUE_  */
