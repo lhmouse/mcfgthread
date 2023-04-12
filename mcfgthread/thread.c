@@ -179,7 +179,7 @@ _MCF_thread*
 _MCF_thread_self(void)
   {
     _MCF_thread* self = TlsGetValue(__MCF_g->__tls_index);
-    if(self)
+    if(__builtin_expect(self != NULL, 1))
       return self;
 
     self = __MCF_malloc_0(sizeof(_MCF_thread));
