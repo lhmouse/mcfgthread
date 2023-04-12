@@ -3,6 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "../mcfgthread/cxa.h"
+#include "../mcfgthread/exit.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -73,5 +74,5 @@ main(void)
     buffer[0] = 0;
     __MCF_cxa_finalize(NULL);
     assert(strcmp(buffer, "pNlNhNdN") == 0);
-    _Exit(0);
+    __MCF__Exit(0);
   }

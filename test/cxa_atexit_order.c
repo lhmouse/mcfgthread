@@ -3,6 +3,7 @@
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
 #include "../mcfgthread/cxa.h"
+#include "../mcfgthread/exit.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -44,5 +45,5 @@ main(void)
     __MCF_cxa_atexit(cleanup_3, (void*) 3, NULL);
 
     __MCF_cxa_finalize(NULL);
-    _Exit(0);
+    __MCF__Exit(0);
   }
