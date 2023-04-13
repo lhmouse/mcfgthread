@@ -249,7 +249,7 @@ do_on_thread_detach(void)
     __MCF_tls_table tls;
 
     _MCF_thread* self = TlsGetValue(__MCF_g->__tls_index);
-    if(!self)
+    if(!self || (self == __MCF_BAD_PTR))
       return;
 
     /* Per-thread atexit callbacks may use TLS, so call them before
