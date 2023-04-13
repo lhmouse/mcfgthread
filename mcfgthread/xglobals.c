@@ -307,7 +307,7 @@ do_image_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
     /* Perform global initialization and per-thread cleanup as needed.
      * Note, upon `DLL_PROCESS_DETACH`, no cleanup is performed, because
      * other DLLs might have been unloaded and we would be referencing
-     * unmapped  memory. User code should call `__cxa_finalize(NULL)` before
+     * unmapped memory. User code should call `__cxa_finalize(NULL)` before
      * exiting from a process.  */
     if(reason == DLL_PROCESS_ATTACH)
       do_on_process_attach();
