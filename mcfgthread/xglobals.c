@@ -249,7 +249,14 @@ do_on_thread_detach(void)
     __MCF_tls_table tls;
 
     _MCF_thread* self = TlsGetValue(__MCF_g->__tls_index);
-    if(!self || (self == __MCF_BAD_PTR))
+    if(!self)
+      return;
+
+    /* When there are multiple statically linked copies, this function can
+     * be called multiple times upon a thread's exit. For subsequent calls,
+     * the thread control structure may have been deallocated, so don't do
+     * anything.  */
+    if(self == __MCF_BAD_PTR)
       return;
 
     /* Per-thread atexit callbacks may use TLS, so call them before
@@ -271,10 +278,12 @@ do_on_thread_detach(void)
         if(!tkey)
           continue;
 
-        /* Call the destructor only if the value is not a null pointer.  */
+        /* Call the destructor only if the value is not a null pointer, as
+         * per POSIX.  */
         if(tls.__end->__value_opt && tkey->__dtor_opt && !_MCF_atomic_load_8_rlx(tkey->__deleted))
           __MCF_invoke_cxa_dtor(tkey->__dtor_opt, tls.__end->__value_opt);
 
+        /* Deallocate the key.  */
         _MCF_tls_key_drop_ref_nonnull(tkey);
       }
 
@@ -295,11 +304,11 @@ do_image_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
     (void) module;
     (void) reserved;
 
-    /* Perform global initialization and per-thread cleanup, as needed.
-     * Note, upon `DLL_PROCESS_DETACH` we don't perform any cleanup, because
-     * other DLLs might have been unloaded and we would be referencing unmapped
-     * memory. User code should call `__cxa_finalize(NULL)` before exiting from
-     * a process.  */
+    /* Perform global initialization and per-thread cleanup as needed.
+     * Note, upon `DLL_PROCESS_DETACH`, no cleanup is performed, because
+     * other DLLs might have been unloaded and we would be referencing
+     * unmapped  memory. User code should call `__cxa_finalize(NULL)` before
+     * exiting from a process.  */
     if(reason == DLL_PROCESS_ATTACH)
       do_on_process_attach();
     else if(reason == DLL_THREAD_DETACH)
@@ -309,8 +318,8 @@ do_image_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
 #ifdef DLL_EXPORT
 
 /* When building the shared library, invoke the common routine from the DLL
- * entry point callback. The decorated name is fabricated such that it remains
- * the same on both x86 and x86-64.  */
+ * entry point callback. The decorated name is fabricated such that it
+ * remains the same on both x86 and x86-64.  */
 int
 __stdcall
 __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
