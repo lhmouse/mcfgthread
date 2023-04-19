@@ -196,25 +196,6 @@ _MCF_maxz(size_t __x, size_t __y) __MCF_NOEXCEPT
     return (__x < __y) ? __y : __x;
   }
 
-__MCF_ALWAYS_INLINE
-void
-__MCF_invoke_cxa_dtor(__MCF_cxa_dtor_cdecl* __dtor, void* __arg)
-  {
-#ifdef __i386__
-    /* Note: In the case of i386, the argument is passed both via the ECX
-     * register and on the stack, to allow both `__cdecl` and `__thiscall`
-     * functions to work properly.
-     * Parameters are `EAX`, `EDX`, `ECX`, `ESP[4]`.  */
-    typedef void __i386_abi_dtor(int, int, void*, void*) __attribute__((__regparm__(3)));
-    int __eax, __edx;
-    __asm__ ("" : "=a"(__eax), "=d"(__edx));  /* uninitialized.  */
-    (*(__i386_abi_dtor*)(int) __dtor) (__eax, __edx, __arg, __arg);
-#else
-    /* This works on x86_64, and should work on ARM (FIXME: untested).  */
-    (*__dtor) (__arg);
-#endif
-  }
-
 __MCF_FWD_IMPORT
 void
 __MCF_runtime_failure(const char* __where) __attribute__((__noreturn__, __noinline__, __cold__));

@@ -162,6 +162,20 @@ __MCF_seh_i386_cleanup(__MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
     __MCF_seh_i386_node __MCF_SEH_I386_NODE_NAME_HERE  \
         __attribute__((__cleanup__(__MCF_seh_i386_cleanup)))  \
         = *__MCF_seh_i386_install(&__MCF_SEH_I386_NODE_NAME_HERE)  /* no semicolon  */
+
+/* In the case of i386, the argument is passed both via the ECX register and
+ * on the stack, to allow both `__cdecl` and `__thiscall` functions to work
+ * properly.  */
+__MCF_ALWAYS_INLINE
+void
+__MCF_invoke_cxa_dtor(__MCF_cxa_dtor_cdecl* __dtor, void* __arg)
+  {
+    /* Parameters are `EAX`, `EDX`, `ECX`, `ESP[4]`.  */
+    typedef void __i386_abi_dtor(int, int, void*, void*) __attribute__((__regparm__(3)));
+    int __eax, __edx;
+    __asm__ ("" : "=a"(__eax), "=d"(__edx));  /* uninitialized.  */
+    (*(__i386_abi_dtor*)(int) __dtor) (__eax, __edx, __arg, __arg);
+  }
 #else
 /* Otherwise, SEH is table-based.  */
 #  ifdef __arm__
@@ -173,6 +187,14 @@ __MCF_seh_i386_cleanup(__MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
     __asm__ volatile (".seh_handler "  \
         " __MCF_seh_top, " __MCF_SEH_FLAG_PREFIX "except")  /* no semicolon  */
+
+/* This works on x86_64, and should work on ARM (FIXME: untested).  */
+__MCF_ALWAYS_INLINE
+void
+__MCF_invoke_cxa_dtor(__MCF_cxa_dtor_cdecl* __dtor, void* __arg)
+  {
+    (*__dtor) (__arg);
+  }
 #endif
 
 /* This structure contains timeout values that will be passed to NT syscalls.  */
