@@ -43,7 +43,7 @@ AC_ARG_ENABLE([pch], AS_HELP_STRING([--disable-pch], [do not use pre-compiled he
 AM_CONDITIONAL([enable_pch], [test "${enable_pch}" != "no"])
 
 # Set host-specific options
-AC_CHECK_DECL([__i386__], AS_VAR_SET([host_asm_opt], [-masm=intel]))
+AC_CHECK_DECL([__i386__], AS_VAR_SET([host_asm_opt], [-masm=intel -msse2 -mfpmath=sse]))
 AC_CHECK_DECL([__amd64__], AS_VAR_SET([host_asm_opt], [-masm=intel]))
 
 ## Finish
