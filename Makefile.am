@@ -16,7 +16,7 @@ ACLOCAL_AMFLAGS = -I m4
 END =
 
 ## Compiler options
-AM_CPPFLAGS = -pipe -Wall -Wextra -Imcfgthread  \
+AM_CPPFLAGS = -pipe -Wall -Wextra @host_asm_opt@ -Imcfgthread  \
   -U_FORTIFY_SOURCE -D_WIN32_WINNT=0x0601 -D_POSIX_C_SOURCE=200809  \
   -f{strict-{aliasing,overflow},merge-all-constants,fast-math}  \
   -fno-{stack-protector,align-{functions,jumps,loops},ident}  \

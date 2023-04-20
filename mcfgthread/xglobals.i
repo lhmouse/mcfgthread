@@ -141,9 +141,9 @@ __MCF_ALWAYS_INLINE
 __MCF_seh_i386_node*
 __MCF_seh_i386_install(__MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
   {
-    __asm__ volatile ("{ movl %%fs:0, %0 | mov %0, fs:[0] }" : "=r"(__seh_node->__next));
+    __asm__ volatile ("mov %0, fs:[0]" : "=r"(__seh_node->__next));
     __seh_node->__filter = (DWORD) __MCF_seh_top;
-    __asm__ volatile ("{ movl %0, %%fs:0 | mov fs:[0], %0 }" : : "r"(__seh_node));
+    __asm__ volatile ("mov fs:[0], %0" : : "r"(__seh_node));
     return __seh_node;
   }
 
@@ -151,7 +151,7 @@ __MCF_ALWAYS_INLINE
 void
 __MCF_seh_i386_cleanup(__MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
   {
-    __asm__ volatile ("{ movl %0, %%fs:0 | mov fs:[0], %0 }" : : "r"(__seh_node->__next));
+    __asm__ volatile ("mov fs:[0], %0" : : "r"(__seh_node->__next));
   }
 
 #  define __MCF_SEH_I386_NODE_NY(n)  __MCF_seh_i386_node_##n

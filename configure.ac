@@ -42,10 +42,15 @@ AM_COND_IF([enable_debug_checks], [AC_DEFINE([__MCF_DEBUG], 1, [Define to 1 to e
 AC_ARG_ENABLE([pch], AS_HELP_STRING([--disable-pch], [do not use pre-compiled headers]))
 AM_CONDITIONAL([enable_pch], [test "${enable_pch}" != "no"])
 
+# Set host-specific options
+AC_CHECK_DECL([__i386__], AS_VAR_SET([host_asm_opt], [-masm=intel]))
+AC_CHECK_DECL([__amd64__], AS_VAR_SET([host_asm_opt], [-masm=intel]))
+
 ## Finish
 AC_SUBST([abi_major])
 AC_SUBST([abi_minor])
 AC_SUBST([abi_suffix])
+AC_SUBST([host_asm_opt])
 
 AC_CONFIG_FILES([Makefile mcfgthread/version.h])
 AC_OUTPUT
