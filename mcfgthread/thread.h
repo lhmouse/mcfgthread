@@ -296,10 +296,10 @@ _MCF_thread_self_tid(void) __MCF_NOEXCEPT
     char* __teb __attribute__((__unused__));
 #if defined(__amd64__)
     /* Current TEB starts at `gs:0`.  */
-    __asm__ ("{ movl %%gs:0x48, %0 | mov %0, gs:[0x48] }" : "=r"(__tid));
+    __asm__ ("{ movl %%gs:0x48, %0 | mov %0, dword ptr gs:[0x48] }" : "=r"(__tid));
 #elif defined(__i386__)
     /* Current TEB starts at `fs:0`.  */
-    __asm__ ("{ movl %%fs:0x24, %0 | mov %0, fs:[0x24] }" : "=r"(__tid));
+    __asm__ ("{ movl %%fs:0x24, %0 | mov %0, dword ptr fs:[0x24] }" : "=r"(__tid));
 #elif defined(__aarch64__)
     /* Current TEB base is `x18`.  */
     __asm__ ("ldr %w0, [x18, #0x48]" : "=r"(__tid));
