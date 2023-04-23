@@ -111,7 +111,7 @@ __MCF_C_DECLARATIONS_BEGIN
 #ifdef __cplusplus
 extern "C++" template<bool> struct __MCF_static_assert;
 extern "C++" template<> struct __MCF_static_assert<true> { };
-#  define __MCF_STATIC_ASSERT_T(...)   ::__MCF_static_assert<(__VA_ARGS__)>
+#  define __MCF_STATIC_ASSERT_T(...)   ::__MCF_static_assert<bool(__VA_ARGS__)>
 #else
 #  define __MCF_STATIC_ASSERT_T(...)   struct { int: 1|-!(__VA_ARGS__); }
 #endif
