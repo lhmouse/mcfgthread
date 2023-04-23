@@ -76,7 +76,7 @@ class thread_specific_ptr;  // inspired by boost
 // type of `void` for simplicity.
 #if defined(__cpp_lib_invoke)
 
-#  define __MCF_VOID_INVOKE(_F, ...)   (::std::invoke(_F, __VA_ARGS__), void())
+#  define __MCF_VOID_INVOKE(_F, ...)   ((void) ::std::invoke(_F, __VA_ARGS__))
 
 #else  // std::invoke
 
