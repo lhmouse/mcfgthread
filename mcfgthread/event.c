@@ -1,6 +1,6 @@
 /* This file is part of MCF Gthread.
  * See LICENSE.TXT for licensing information.
- * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
+ * Copyleft 2022 - 2023, LH_Mouse. All wrongs reserved.  */
 
 #include "precompiled.i"
 #define __MCF_EVENT_IMPORT  __MCF_DLLEXPORT
