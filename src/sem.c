@@ -49,7 +49,7 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
        * keyed event before us, so we set the timeout to zero. If we time out
        * once more, the third thread will have decremented the number of
        * sleeping threads and we can try incrementing it again.  */
-      status = __MCF_keyed_event_signal(sem, (LARGE_INTEGER[]) { 0 });
+      status = __MCF_keyed_event_wait(sem, (LARGE_INTEGER[]) { 0 });
     }
 
     /* We have got notified.  */
