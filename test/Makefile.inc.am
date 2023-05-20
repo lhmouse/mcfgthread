@@ -11,6 +11,7 @@ check_PROGRAMS +=  \
   %reldir%/mutex_timeout.test  \
   %reldir%/mutex.test  \
   %reldir%/cond_timeout.test  \
+  %reldir%/cond_multi_wait.test  \
   %reldir%/sem_init.test  \
   %reldir%/sem_timeout.test  \
   %reldir%/sem_value.test  \
