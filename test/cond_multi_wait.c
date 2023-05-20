@@ -2,9 +2,9 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "../mcfgthread/cond.h"
-#include "../mcfgthread/thread.h"
-#include "../mcfgthread/clock.h"
+#include "../src/cond.h"
+#include "../src/thread.h"
+#include "../src/clock.h"
 #include <assert.h>
 #include <stdio.h>
 
