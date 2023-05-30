@@ -12,13 +12,16 @@
 namespace NS = std;
 #else
 namespace NS = ::_MCF;
+#  define NS_THREAD_IS_MCF
 #endif
 
 int
 main(void)
   {
     const auto main_tid = NS::this_thread::get_id();
+#ifdef NS_THREAD_IS_MCF
     assert(main_tid._M_tid == ::_MCF_thread_self_tid());
+#endif
 
     NS::thread thr(
       [&] {
