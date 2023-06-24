@@ -107,6 +107,16 @@ __MCF_win32_error_p(DWORD code, void* ptr)
     return ptr;
   }
 
+static
+int
+do_static_dtor_queue_pop(__MCF_dtor_element* elem, _MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
+  {
+    _MCF_mutex_lock(mtx, NULL);
+    int err = __MCF_dtor_queue_pop(elem, queue, dso);
+    _MCF_mutex_unlock(mtx);
+    return err;
+  }
+
 __MCF_DLLEXPORT
 void
 __MCF_run_dtors_at_quick_exit(void* dso)
@@ -114,19 +124,8 @@ __MCF_run_dtors_at_quick_exit(void* dso)
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     __MCF_dtor_element elem;
 
-    /* Try popping a destructor.  */
-    _MCF_mutex_lock(__MCF_g->__cxa_at_quick_exit_mtx, NULL);
-    while(__MCF_dtor_queue_pop(&elem, __MCF_g->__cxa_at_quick_exit_queue, dso) == 0) {
-      _MCF_mutex_unlock(__MCF_g->__cxa_at_quick_exit_mtx);
-
-      /* Invoke it. This may register new destructors so the mutex must have
-       * been unlocked.  */
+    while(do_static_dtor_queue_pop(&elem, __MCF_g->__cxa_at_quick_exit_mtx, __MCF_g->__cxa_at_quick_exit_queue, dso) == 0)
       __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
-
-      /* Pop the new head.  */
-      _MCF_mutex_lock(__MCF_g->__cxa_at_quick_exit_mtx, NULL);
-    }
-    _MCF_mutex_unlock(__MCF_g->__cxa_at_quick_exit_mtx);
   }
 
 __MCF_DLLEXPORT
@@ -136,19 +135,8 @@ __MCF_run_dtors_atexit(void* dso)
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     __MCF_dtor_element elem;
 
-    /* Try popping a destructor.  */
-    _MCF_mutex_lock(__MCF_g->__cxa_atexit_mtx, NULL);
-    while(__MCF_dtor_queue_pop(&elem, __MCF_g->__cxa_atexit_queue, dso) == 0) {
-      _MCF_mutex_unlock(__MCF_g->__cxa_atexit_mtx);
-
-      /* Invoke it. This may register new destructors so the mutex must have
-       * been unlocked.  */
+    while(do_static_dtor_queue_pop(&elem, __MCF_g->__cxa_atexit_mtx, __MCF_g->__cxa_atexit_queue, dso) == 0)
       __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
-
-      /* Pop the new head.  */
-      _MCF_mutex_lock(__MCF_g->__cxa_atexit_mtx, NULL);
-    }
-    _MCF_mutex_unlock(__MCF_g->__cxa_atexit_mtx);
   }
 
 static
