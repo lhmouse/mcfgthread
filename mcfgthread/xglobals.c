@@ -151,7 +151,7 @@ __MCF_run_dtors_atexit(void* dso)
     _MCF_mutex_unlock(__MCF_g->__cxa_atexit_mtx);
   }
 
-static inline
+static
 void
 do_encode_numeric_field(wchar_t* ptr, size_t width, uint64_t value, const wchar_t* digits)
   {
