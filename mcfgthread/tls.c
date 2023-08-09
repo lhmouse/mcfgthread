@@ -46,7 +46,7 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
     /* Keep the load factor no more than 0.5.  */
     uint64_t dist = (uintptr_t) (table->__end - table->__begin);
     __MCF_ASSERT(dist != 0);
-    __MCF_ASSERT(table->__size <= dist / 2);
+    __MCF_ASSERT(table->__used <= dist / 2);
 
     /* Make a fixed-point value in the interval [0,1), and then multiply
      * `dist` by it to get an index in the middle.  */
@@ -102,10 +102,10 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
       return 0;
     }
 
-    if(value_opt && (table->__size >= (size_t) (table->__end - table->__begin) / 2)) {
+    if(value_opt && (table->__used >= (size_t) (table->__end - table->__begin) / 2)) {
       /* Allocate a larger table in case that a new value is to be inserted.
        * The number of elements is unchanged.  */
-      size_t capacity = table->__size * 3 | 17;
+      size_t capacity = table->__used * 3 | 17;
       __MCF_tls_element* elem = __MCF_malloc_0(capacity * sizeof(__MCF_tls_element));
       if(!elem)
         return -1;
@@ -113,7 +113,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
       __MCF_tls_table temp = *table;
       table->__begin = elem;
       table->__end = elem + capacity;
-      table->__size = 0;
+      table->__used = 0;
 
       while(temp.__begin != temp.__end) {
         temp.__end --;
@@ -134,7 +134,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
         __MCF_ASSERT(!elem->__key_opt);
         elem->__key_opt = tkey;
         elem->__value_opt = temp.__end->__value_opt;
-        table->__size ++;
+        table->__used ++;
       }
 
       /* Deallocate the old table which should be empty now.  */
@@ -153,7 +153,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
       /* Fill `key` into this element.  */
       _MCF_atomic_xadd_32_arl(key->__nref, 1);
       elem->__key_opt = key;
-      table->__size ++;
+      table->__used ++;
     }
 
     __MCF_ASSERT(elem->__key_opt == key);
