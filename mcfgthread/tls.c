@@ -53,16 +53,17 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
     uint32_t ratio = (uint32_t) ((uintptr_t) key / sizeof(void*)) * 0x9E3779B9U;
     __MCF_tls_element* origin = table->__begin + (ptrdiff_t) (dist * ratio >> 32);
     __MCF_ASSERT(origin < table->__end);
+    __MCF_tls_element* elem;
 
     /* Find an element using linear probing. If the key is not found, a
      * pointer to an empty element is returned.  */
-    for(__MCF_tls_element* cur = origin;  cur != table->__end;  ++cur)
-      if(!cur->__key_opt || (cur->__key_opt == key))
-        return cur;
+    for(elem = origin;  elem != table->__end;  elem ++)
+      if(!elem->__key_opt || (elem->__key_opt == key))
+        return elem;
 
-    for(__MCF_tls_element* cur = table->__begin;  cur != origin;  ++cur)
-      if(!cur->__key_opt || (cur->__key_opt == key))
-        return cur;
+    for(elem = table->__begin;  elem != origin;  elem ++)
+      if(!elem->__key_opt || (elem->__key_opt == key))
+        return elem;
 
     __MCF_UNREACHABLE;
   }
