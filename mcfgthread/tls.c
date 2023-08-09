@@ -54,8 +54,8 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
     __MCF_tls_element* origin = table->__begin + (ptrdiff_t) (dist * ratio >> 32);
     __MCF_ASSERT(origin < table->__end);
 
-    /* Find an element using linear probing.
-     * Note this function may return a pointer to an empty element.  */
+    /* Find an element using linear probing. If the key is not found, a
+     * pointer to an empty element is returned.  */
     for(__MCF_tls_element* cur = origin;  cur != table->__end;  ++cur)
       if(!cur->__key_opt || (cur->__key_opt == key))
         return cur;
@@ -77,8 +77,7 @@ __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
     if(!table->__begin)
       return NULL;
 
-    /* Search for the given key.
-     * Note `do_linear_probe_nonempty()` may return an empty element.  */
+    /* Search for the given key.  */
     __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
     if(!elem->__key_opt)
       return NULL;
@@ -141,8 +140,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
       __MCF_mfree(temp.__begin);
     }
 
-    /* Search for the given key.
-     * Note `do_linear_probe_nonempty()` may return an empty element.  */
+    /* Search for the given key.  */
     __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
     if(!elem->__key_opt) {
       /* If `key` is not found and a null pointer is to be set, don't
