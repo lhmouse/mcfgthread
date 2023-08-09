@@ -104,9 +104,15 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
 
     if(value_opt && (table->__used >= (size_t) (table->__end - table->__begin) / 2)) {
       /* Allocate a larger table in case that a new value is to be inserted.
-       * The number of elements is unchanged.  */
-      size_t capacity = table->__used * 3 | 17;
-      __MCF_tls_element* elem = __MCF_malloc_0(capacity * sizeof(__MCF_tls_element));
+       * First, recalculate the number of active keys.  */
+      size_t capacity = 17;
+      __MCF_tls_element* elem;
+
+      for(elem = table->__begin;  elem != table->__end;  elem ++)
+        if(elem->__key_opt && !_MCF_atomic_load_8_rlx(elem->__key_opt->__deleted))
+          capacity += 3;
+
+      elem = __MCF_malloc_0(capacity * sizeof(__MCF_tls_element));
       if(!elem)
         return -1;
 
