@@ -113,6 +113,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
       __MCF_tls_table temp = *table;
       table->__begin = elem;
       table->__end = elem + capacity;
+      table->__size = 0;
 
       while(temp.__begin != temp.__end) {
         temp.__end --;
@@ -131,7 +132,9 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
         /* Relocate this element into the new storage.  */
         elem = do_linear_probe_nonempty(table, tkey);
         __MCF_ASSERT(!elem->__key_opt);
-        *elem = *(temp.__end);
+        elem->__key_opt = tkey;
+        elem->__value_opt = temp.__end->__value_opt;
+        table->__size ++;
       }
 
       /* Deallocate the old table which should be empty now.  */
