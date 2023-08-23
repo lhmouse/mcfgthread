@@ -25,7 +25,7 @@ struct __MCF_tls_table
   {
     __MCF_tls_element* __begin;  /* beginning of hash table  */
     __MCF_tls_element* __end;  /* end of hash table  */
-    size_t __used;  /* number of non-empty elements  */
+    size_t __size_hint;  /* number of non-empty elements  */
   };
 
 /* Define the structure for thread-local storage keys.  */
