@@ -33,10 +33,10 @@
 
 #elif defined(USE_MCFGTHREAD)
 
-#  define my_mutex_t      __gthread_mutex_t
-#  define my_init(m)      __GTHREAD_MUTEX_INIT_FUNCTION(m)
-#  define my_lock(m)      __gthread_mutex_lock(m)
-#  define my_unlock(m)    __gthread_mutex_unlock(m)
+#  define my_mutex_t      _MCF_mutex
+#  define my_init(m)      __MCF_gthr_mutex_init(m)
+#  define my_lock(m)      __MCF_gthr_mutex_lock(m)
+#  define my_unlock(m)    __MCF_gthr_mutex_unlock(m)
 
 #else
 
