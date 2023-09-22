@@ -46,7 +46,7 @@ This project uses some undocumented NT system calls and might be broken in futur
 * **SRWLOCK**: Windows `SRWLOCK`
 * **CRITICAL_SECTION**: Windows `CRITICAL_SECTION`
 * **WINPTHREAD**: winpthread `pthread_mutex_t`
-* **MCFGTHREAD**: mcfgthread `__gthread_mutex_t` with `-fno-inline`
+* **MCFGTHREAD**: mcfgthread `_MCF_mutex` with `-fno-inline`
 
 | #THREADS | #ITERATIONS |       SRWLOCK | CRITICAL_SECTION |    WINPTHREAD |    MCFGTHREAD |
 |---------:|------------:|--------------:|-----------------:|--------------:|--------------:|
