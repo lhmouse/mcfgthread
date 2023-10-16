@@ -1,0 +1,83 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches:
+    - master
+    - releases/*
+
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  ubuntu-x86-64:
+    name: Ubuntu cross build (x86_64)
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Remove mono runtime
+      run: sudo apt-get purge mono-runtime
+
+    - name: Install dependencies
+      run: >-
+           sudo apt-get install -y --no-install-recommends autoconf automake
+           libtool make wine wine-binfmt mingw-w64-x86-64-dev mingw-w64-tools
+           gcc-mingw-w64-x86-64 binutils-mingw-w64-x86-64
+
+    - name: Run tests
+      run: >-
+           CONFIGURE_BUILD=x86_64-pc-linux
+           CONFIGURE_HOST=x86_64-w64-mingw32
+           CC=x86_64-w64-mingw32-gcc-win32
+           ./ci/build.sh
+
+  msys2-ucrt64:
+    name: MSYS2 native build (x86_64)
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: msys2/setup-msys2@v2
+      with:
+        msystem: UCRT64
+
+    - name: Install dependencies
+      run: >-
+           pacman -S --noconfirm autoconf automake libtool gettext make
+           mingw-w64-ucrt-x86_64-headers-git mingw-w64-ucrt-x86_64-crt-git
+           mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-binutils
+
+    - name: Run tests
+      run: ./ci/build.sh
+
+  msys2-mingw32:
+    name: MSYS2 native build (i686)
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW32
+
+    - name: Install dependencies
+      run: >-
+           pacman -S --noconfirm autoconf automake libtool gettext make
+           mingw-w64-i686-headers-git mingw-w64-i686-crt-git
+           mingw-w64-i686-gcc mingw-w64-i686-binutils
+
+    - name: Run tests
+      run: ./ci/build.sh
