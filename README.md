@@ -1,9 +1,5 @@
 # The MCF Gthread Library
 
-|CI            |Category                   |Host OS         |Build Status     |Remarks          |
-|:-------------|:--------------------------|:---------------|:----------------|:----------------|
-|[**AppVeyor**](https://ci.appveyor.com/project/lhmouse/mcfgthread) |:1st_place_medal:Primary |Windows (MSYS2) |[![Build Status](https://ci.appveyor.com/api/projects/status/github/lhmouse/mcfgthread?branch=master&svg=true)](https://ci.appveyor.com/project/lhmouse/mcfgthread) ||
-
 **MCF Gthread** is a threading support library for **Windows 7** and above that implements the _gthread interface set_, which is used internally both by **GCC** to provide synchronization of initialization of local static objects, and by **libstdc++** to provide C++11 threading facilities.
 
 I decide to recreate everything from scratch. Apologies for the trouble.
