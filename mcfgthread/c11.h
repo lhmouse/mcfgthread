@@ -15,7 +15,7 @@ __MCF_C_DECLARATIONS_BEGIN
 #endif
 
 /* N1570 7.26.1 Introduction  */
-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201103L)
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
 #  define thread_local  _Thread_local
 #endif
 
