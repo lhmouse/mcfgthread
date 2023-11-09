@@ -4,6 +4,7 @@
 
 #include "../mcfgthread/cxx11.hpp"
 #include "../mcfgthread/clock.h"
+#include "../mcfgthread/thread.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -23,6 +24,8 @@ main(void)
   {
     double now, delta;
     bool r;
+
+    ::_MCF_thread_set_priority(nullptr, ::_MCF_thread_priority_above_normal);
 
     // Round the time up.
     int64_t sleep_until = (int64_t) ::time(NULL) * 1000 + 2000;
