@@ -4,6 +4,7 @@
 
 #include "../mcfgthread/sem.h"
 #include "../mcfgthread/clock.h"
+#include "../mcfgthread/thread.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -14,6 +15,8 @@ main(void)
   {
     double now, delta;
     int r;
+
+    _MCF_thread_set_priority(NULL, _MCF_thread_priority_above_normal);
 
     now = _MCF_perf_counter();
     r = _MCF_sem_wait(&sem, (const int64_t[]){ (int64_t) _MCF_hires_utc_now() + 1100 });  /* absolute  */

@@ -4,6 +4,7 @@
 
 #include "../mcfgthread/libcxx.h"
 #include "../mcfgthread/clock.h"
+#include "../mcfgthread/thread.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -16,6 +17,8 @@ main(void)
     double now, delta;
     __libcpp_timespec_t timeout;
     int r;
+
+    _MCF_thread_set_priority(NULL, _MCF_thread_priority_above_normal);
 
     r = __libcpp_mutex_trylock(&mutex);
     assert(r == true);

@@ -4,6 +4,7 @@
 
 #include "../mcfgthread/cxx11.hpp"
 #include "../mcfgthread/clock.h"
+#include "../mcfgthread/thread.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -23,6 +24,8 @@ main(void)
   {
     double now, delta;
     bool r;
+
+    ::_MCF_thread_set_priority(nullptr, ::_MCF_thread_priority_above_normal);
 
     now = ::_MCF_perf_counter();
     r = mutex.try_lock_for(NS::chrono::milliseconds(1100));

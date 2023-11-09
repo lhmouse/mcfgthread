@@ -4,6 +4,7 @@
 
 #include "../mcfgthread/c11.h"
 #include "../mcfgthread/clock.h"
+#include "../mcfgthread/thread.h"
 #include <assert.h>
 #include <stdio.h>
 
@@ -15,6 +16,8 @@ main(void)
     double now, delta;
     struct timespec timeout;
     int r;
+
+    _MCF_thread_set_priority(NULL, _MCF_thread_priority_above_normal);
 
     r = mtx_init(&mutex, mtx_recursive | mtx_timed);
     assert(r == thrd_success);
