@@ -14,7 +14,7 @@ int
 __cdecl
 memcmp(const void* src, const void* cmp, size_t size)
   {
-    int diff;
+    int diff = 0;
     const uint8_t* psrc = src;
     const uint8_t* pcmp = cmp;
     size_t dp = size;
@@ -30,13 +30,11 @@ memcmp(const void* src, const void* cmp, size_t size)
       : "=a"(diff), "+S"(psrc), "+D"(pcmp), "+c"(dp) :
       : "memory");
 #else
-    /* Get the number of matching bytes.  */
+    /* Get the number of matching bytes. If there is a mismatch, get the
+     * difference between the first pair of mismatching bytes.  */
     dp = RtlCompareMemory(psrc, pcmp, dp);
-    if(dp == size)
-      return 0;
-
-    /* Get the difference between the first pair of mismatching bytes.  */
-    diff = psrc[dp] - pcmp[dp];
+    if(dp != size)
+      diff = psrc[dp] - pcmp[dp];
 #endif
     return diff;
   }
