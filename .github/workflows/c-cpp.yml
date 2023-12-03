@@ -12,7 +12,7 @@ on:
 
 jobs:
   ubuntu-x86-64:
-    name: Ubuntu cross build (x86_64)
+    name: Ubuntu cross build (x86-64)
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +35,7 @@ jobs:
            ./ci/build.sh
 
   msys2-ucrt64:
-    name: MSYS2 native build (x86_64)
+    name: MSYS2 native build (x86-64)
     runs-on: windows-latest
 
     defaults:
