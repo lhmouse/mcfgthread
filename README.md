@@ -4,9 +4,9 @@
 
 I decide to recreate everything from scratch. Apologies for the trouble.
 
-# How to build
+## How to Build
 
-You need to run these commands in a native MSYS2 shell (**MINGW32** or **MINGW64** is recommended):
+You need to run these commands in a native MSYS2 shell (**MINGW32** or **UCRT64** is recommended):
 
 ```sh
 autoreconf -i  # requires autoconf, automake and libtool
@@ -25,7 +25,7 @@ autoreconf -i  # requires autoconf, automake and libtool
 make -j$(nproc)
 ```
 
-# Notes
+## Notes
 
 In order for `__cxa_atexit()` (and the non-standard `__cxa_at_quick_exit()`) to conform to the Itanium C++ ABI, it is required 1) for a process to call `__cxa_finalize(NULL)` when exiting, and 2) for a DLL to call `__cxa_finalize(&__dso_handle)` when it is unloaded dynamically. This requires [hacking the CRT](https://github.com/lhmouse/MINGW-packages/blob/0274a6e7e0da258cf5e32efe6e4427454741fa32/mingw-w64-crt-git/9003-crt-Implement-standard-conforming-termination-suppor.patch). If you don't have the modified CRT, you may still get standard compliance by 1) calling `__MCF_exit()` instead of `exit()` from your program, and 2) calling `__cxa_finalize(&__dso_handle)` followed by `fflush(NULL)` upon receipt of `DLL_PROCESS_DETACH` in your `DllMain()`.
 
@@ -33,7 +33,7 @@ This project is developed and tested on x86 and x64 and hasn't been tested on ot
 
 This project uses some undocumented NT system calls and might be broken in future Windows versions. The author gives no warranty for this project. Use it at your own risk.
 
-# Benchmarking
+## Benchmarking
 
 [The test program](mutex_performance.c) was compiled and run on a **Windows 10** machine with a 10-core **Intel i9 10900K** processor.
 
@@ -55,7 +55,7 @@ This project uses some undocumented NT system calls and might be broken in futur
 |       60 |     200,000 |**2831.348 ms**|    10164.012 ms  |  3814.880 ms  |  3299.509 ms  |
 |      200 |      60,000 |**2849.850 ms**|    10544.007 ms  |  3825.518 ms  |  3579.925 ms  |
 
-# Implementation details
+## Implementation details
 
 ### The condition variable
 
