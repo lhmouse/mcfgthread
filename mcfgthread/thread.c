@@ -150,7 +150,7 @@ _MCF_thread_wait(const _MCF_thread* thrd_opt, const int64_t* timeout_opt)
       return -1;
 
     __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
+    __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     NTSTATUS status = NtWaitForSingleObject(thrd_opt->__handle, false, nt_timeout.__li);
     __MCF_ASSERT_NT(status);
@@ -224,7 +224,7 @@ _MCF_sleep(const int64_t* timeout_opt)
     NTSTATUS status;
 
     __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
+    __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     /* Set a handler to receive Ctrl-C notifications.  */
     BOOL added __attribute__((__cleanup__(do_handler_cleanup))) = false;
@@ -272,7 +272,7 @@ void
 _MCF_sleep_noninterruptible(const int64_t* timeout_opt)
   {
     __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
+    __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     /* Just sleep.  */
     NTSTATUS status = NtDelayExecution(false, nt_timeout.__li);

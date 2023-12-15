@@ -203,16 +203,16 @@ typedef struct __MCF_winnt_timeout __MCF_winnt_timeout;
 struct __MCF_winnt_timeout
   {
     LARGE_INTEGER __li[1];
-    uint64_t __since;
+    FILETIME __since[1];
   };
 
 __MCF_XGLOBALS_IMPORT
 void
-__MCF_initialize_winnt_timeout_v2(__MCF_winnt_timeout* __to, const int64_t* __ms_opt) __MCF_NOEXCEPT;
+__MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* __to, const int64_t* __ms_opt) __MCF_NOEXCEPT;
 
 __MCF_XGLOBALS_IMPORT
 void
-__MCF_adjust_winnt_timeout_v2(__MCF_winnt_timeout* __to) __MCF_NOEXCEPT;
+__MCF_adjust_winnt_timeout_v3(__MCF_winnt_timeout* __to) __MCF_NOEXCEPT;
 
 /* Note this function is subject to tail-call optimization.  */
 __MCF_XGLOBALS_IMPORT

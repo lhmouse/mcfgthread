@@ -25,10 +25,12 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
 
 __MCF_DLLEXPORT
 void
-__MCF_initialize_winnt_timeout_v2(__MCF_winnt_timeout* to, const int64_t* ms_opt)
+__MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* to, const int64_t* ms_opt)
   {
     /* Initialize it to an infinite value.  */
     to->__li->QuadPart = INT64_MAX;
+    to->__since->dwLowDateTime = 0;
+    to->__since->dwHighDateTime = 0;
 
     /* If no timeout is given, wait indefinitely.  */
     if(!ms_opt)
@@ -41,7 +43,6 @@ __MCF_initialize_winnt_timeout_v2(__MCF_winnt_timeout* to, const int64_t* ms_opt
       if(*ms_opt > 910692730085477)
         return;
 
-      to->__since = 0;
       to->__li->QuadPart = (11644473600000 + *ms_opt) * 10000;
     }
     else if(*ms_opt < 0) {
@@ -50,8 +51,8 @@ __MCF_initialize_winnt_timeout_v2(__MCF_winnt_timeout* to, const int64_t* ms_opt
       if(*ms_opt < -922337203685477)
         return;
 
-      to->__since = GetTickCount64();
       to->__li->QuadPart = *ms_opt * 10000;
+      GetSystemTimeAsFileTime(to->__since);
     }
     else
       to->__li->QuadPart = 0;
@@ -59,7 +60,7 @@ __MCF_initialize_winnt_timeout_v2(__MCF_winnt_timeout* to, const int64_t* ms_opt
 
 __MCF_DLLEXPORT
 void
-__MCF_adjust_winnt_timeout_v2(__MCF_winnt_timeout* to)
+__MCF_adjust_winnt_timeout_v3(__MCF_winnt_timeout* to)
   {
     /* Absolute timeouts need no adjustment.  */
     if(to->__li->QuadPart >= 0)
@@ -67,9 +68,9 @@ __MCF_adjust_winnt_timeout_v2(__MCF_winnt_timeout* to)
 
     /* Add the number of 100 nanoseconds that have elapsed so far, to the
      * timeout which is negative, using saturation arithmetic.  */
-    uint64_t last_since = to->__since;
-    to->__since = GetTickCount64();
-    to->__li->QuadPart += (int64_t) (to->__since - last_since) * 10000;
+    ULONGLONG old_since = to->__since->dwHighDateTime * 0x100000000ULL + to->__since->dwLowDateTime;
+    GetSystemTimeAsFileTime(to->__since);
+    to->__li->QuadPart += (LONGLONG) (to->__since->dwHighDateTime * 0x100000000ULL + to->__since->dwLowDateTime - old_since);
     to->__li->QuadPart &= to->__li->QuadPart >> 63;
   }
 

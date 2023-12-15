@@ -16,7 +16,7 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
     NTSTATUS status;
 
     __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
+    __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     /* Decrement the counter.  */
     old.__value = _MCF_atomic_xsub_ptr_rlx(&(sem->__value), 1);

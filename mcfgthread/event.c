@@ -16,7 +16,7 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
     NTSTATUS status;
 
     __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
+    __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     /* If this event contains some other value, return immediately.
     *  Otherwise, allocate a count for the current thread.  */
@@ -61,7 +61,7 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
     }
 
     /* We have got notified.  */
-    __MCF_adjust_winnt_timeout_v2(&nt_timeout);
+    __MCF_adjust_winnt_timeout_v3(&nt_timeout);
     goto try_wait_loop;
   }
 

@@ -55,7 +55,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     uint32_t spinnable, my_mask;
 
     __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
+    __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     /* If this mutex has not been locked, lock it; otherwise, if `__sp_mask`
      * is less than `__MCF_MUTEX_SP_MASK_M` and `__sp_nfail` is less than
@@ -165,7 +165,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     }
 
     /* We have got notified.  */
-    __MCF_adjust_winnt_timeout_v2(&nt_timeout);
+    __MCF_adjust_winnt_timeout_v3(&nt_timeout);
     goto try_lock_loop;
   }
 

@@ -36,7 +36,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     NTSTATUS status;
 
     __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
+    __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     /* Allocate a count for the current thread.  */
     _MCF_atomic_load_pptr_rlx(&old, cond);
