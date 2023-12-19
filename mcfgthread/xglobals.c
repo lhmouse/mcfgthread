@@ -29,8 +29,7 @@ __MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* to, const int64_t* ms_opt
   {
     /* Initialize it to an infinite value.  */
     to->__li->QuadPart = INT64_MAX;
-    to->__since->dwLowDateTime = 0;
-    to->__since->dwHighDateTime = 0;
+    to->__since = 0;
 
     /* If no timeout is given, wait indefinitely.  */
     if(!ms_opt)
@@ -52,7 +51,7 @@ __MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* to, const int64_t* ms_opt
         return;
 
       to->__li->QuadPart = *ms_opt * 10000;
-      GetSystemTimeAsFileTime(to->__since);
+      QueryUnbiasedInterruptTime(&(to->__since));
     }
     else
       to->__li->QuadPart = 0;
@@ -68,9 +67,9 @@ __MCF_adjust_winnt_timeout_v3(__MCF_winnt_timeout* to)
 
     /* Add the number of 100 nanoseconds that have elapsed so far, to the
      * timeout which is negative, using saturation arithmetic.  */
-    ULONGLONG old_since = to->__since->dwHighDateTime * 0x100000000ULL + to->__since->dwLowDateTime;
-    GetSystemTimeAsFileTime(to->__since);
-    to->__li->QuadPart += (LONGLONG) (to->__since->dwHighDateTime * 0x100000000ULL + to->__since->dwLowDateTime - old_since);
+    ULONGLONG old_since = to->__since;
+    QueryUnbiasedInterruptTime(&(to->__since));
+    to->__li->QuadPart += (LONGLONG) (to->__since - old_since);
     to->__li->QuadPart &= to->__li->QuadPart >> 63;
   }
 

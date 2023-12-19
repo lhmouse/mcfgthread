@@ -88,6 +88,7 @@ __MCF_WINAPI(void, GetSystemTimeAsFileTime, FILETIME*);
 __MCF_WINAPI(void, GetSystemTimePreciseAsFileTime, FILETIME*);
 #endif
 __MCF_WINAPI(ULONGLONG, GetTickCount64, void);
+__MCF_WINAPI(BOOL, QueryUnbiasedInterruptTime, PULONGLONG);
 __MCF_WINAPI(BOOL, QueryPerformanceFrequency, LARGE_INTEGER*);
 __MCF_WINAPI(BOOL, QueryPerformanceCounter, LARGE_INTEGER*);
 
@@ -203,7 +204,7 @@ typedef struct __MCF_winnt_timeout __MCF_winnt_timeout;
 struct __MCF_winnt_timeout
   {
     LARGE_INTEGER __li[1];
-    FILETIME __since[1];
+    ULONGLONG __since;
   };
 
 __MCF_XGLOBALS_IMPORT
