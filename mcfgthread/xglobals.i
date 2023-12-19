@@ -44,83 +44,82 @@ __MCF_C_DECLARATIONS_BEGIN
 #undef RtlCompareMemory
 #undef RtlEqualMemory
 
+/* Hard-code these.  */
+#define GetCurrentProcess()  ((HANDLE) -1)
+#define GetCurrentThread()   ((HANDLE) -2)
+
 /* Define a non-zero but invalid value. This can be used to mark a pointer
  * to freed memory, or to prevent a static pointer from being placed into
  * the `.bss` section.  */
 #define __MCF_BAD_PTR  ((void*) -127)
 
-/* Hard-code these.  */
-#define GetCurrentProcess()  ((HANDLE) -1)
-#define GetCurrentThread()   ((HANDLE) -2)
-
 #define __MCF_ASSERT_NT(...)  __MCF_ASSERT(NT_SUCCESS(__VA_ARGS__))
 #define __MCF_CHECK_NT(...)   __MCF_CHECK(NT_SUCCESS(__VA_ARGS__))
 
-#define __MCF_WINAPI(RETURN, function, ...)  \
-  RETURN __stdcall function(__VA_ARGS__) __attribute__((__dllimport__, __nothrow__))
+#define __MCF_WINAPI  __attribute__((__dllimport__, __stdcall__, __nothrow__))
 
 /* Declare KERNEL32 APIs here.  */
 typedef struct _SECURITY_ATTRIBUTES SECURITY_ATTRIBUTES;
 typedef DWORD __stdcall THREAD_START_ROUTINE(LPVOID);
 typedef BOOL __stdcall HANDLER_ROUTINE(DWORD);
 
-__MCF_WINAPI(DWORD, GetLastError, void) __attribute__((__pure__));
-__MCF_WINAPI(void, SetLastError, DWORD);
-__MCF_WINAPI(PVOID, EncodePointer, PVOID) __attribute__((__const__));
-__MCF_WINAPI(PVOID, DecodePointer, PVOID) __attribute__((__const__));
+__MCF_WINAPI DWORD GetLastError(void) __attribute__((__pure__));
+__MCF_WINAPI void SetLastError(DWORD);
+__MCF_WINAPI PVOID EncodePointer(PVOID) __attribute__((__const__));
+__MCF_WINAPI PVOID DecodePointer(PVOID) __attribute__((__const__));
 
-__MCF_WINAPI(NTSTATUS, BaseGetNamedObjectDirectory, HANDLE*);
-__MCF_WINAPI(BOOL, SetConsoleCtrlHandler, HANDLER_ROUTINE*, BOOL);
+__MCF_WINAPI NTSTATUS BaseGetNamedObjectDirectory(HANDLE*);
+__MCF_WINAPI BOOL SetConsoleCtrlHandler(HANDLER_ROUTINE*, BOOL);
 
-__MCF_WINAPI(DWORD, TlsAlloc, void);
-__MCF_WINAPI(BOOL, TlsFree, DWORD);
-__MCF_WINAPI(LPVOID, TlsGetValue, DWORD) __attribute__((__pure__));
-__MCF_WINAPI(BOOL, TlsSetValue, DWORD, LPVOID);
+__MCF_WINAPI DWORD TlsAlloc(void);
+__MCF_WINAPI BOOL TlsFree(DWORD);
+__MCF_WINAPI LPVOID TlsGetValue(DWORD) __attribute__((__pure__));
+__MCF_WINAPI BOOL TlsSetValue(DWORD, LPVOID);
 
-__MCF_WINAPI(HANDLE, GetProcessHeap, void) __attribute__((__const__));
-__MCF_WINAPI(LPVOID, HeapAlloc, HANDLE, DWORD, SIZE_T) __attribute__((__alloc_size__(3)));
-__MCF_WINAPI(LPVOID, HeapReAlloc, HANDLE, DWORD, LPVOID, SIZE_T) __attribute__((__alloc_size__(4)));
-__MCF_WINAPI(SIZE_T, HeapSize, HANDLE, DWORD, LPCVOID) __attribute__((__pure__));
-__MCF_WINAPI(BOOL, HeapFree, HANDLE, DWORD, LPVOID);
+__MCF_WINAPI HANDLE GetProcessHeap(void) __attribute__((__const__));
+__MCF_WINAPI LPVOID HeapAlloc(HANDLE, DWORD, SIZE_T) __attribute__((__alloc_size__(3)));
+__MCF_WINAPI LPVOID HeapReAlloc(HANDLE, DWORD, LPVOID, SIZE_T) __attribute__((__alloc_size__(4)));
+__MCF_WINAPI SIZE_T HeapSize(HANDLE, DWORD, LPCVOID) __attribute__((__pure__));
+__MCF_WINAPI BOOL HeapFree(HANDLE, DWORD, LPVOID);
 
-__MCF_WINAPI(void, GetSystemTimeAsFileTime, FILETIME*);
+__MCF_WINAPI void GetSystemTimeAsFileTime(FILETIME*);
 #if _WIN32_WINNT >= 0x0602
-__MCF_WINAPI(void, GetSystemTimePreciseAsFileTime, FILETIME*);
+__MCF_WINAPI void GetSystemTimePreciseAsFileTime(FILETIME*);
 #endif
-__MCF_WINAPI(ULONGLONG, GetTickCount64, void);
-__MCF_WINAPI(BOOL, QueryUnbiasedInterruptTime, PULONGLONG);
-__MCF_WINAPI(BOOL, QueryPerformanceFrequency, LARGE_INTEGER*);
-__MCF_WINAPI(BOOL, QueryPerformanceCounter, LARGE_INTEGER*);
+__MCF_WINAPI ULONGLONG GetTickCount64(void);
+__MCF_WINAPI BOOL QueryUnbiasedInterruptTime(PULONGLONG);
+__MCF_WINAPI BOOL QueryPerformanceFrequency(LARGE_INTEGER*);
+__MCF_WINAPI BOOL QueryPerformanceCounter(LARGE_INTEGER*);
 
-__MCF_WINAPI(HANDLE, CreateThread, SECURITY_ATTRIBUTES*, SIZE_T, THREAD_START_ROUTINE*, LPVOID, DWORD, DWORD*);
-__MCF_WINAPI(void, ExitThread, DWORD) __attribute__((__noreturn__));
-__MCF_WINAPI(int, GetThreadPriority, HANDLE) __attribute__((__pure__));
-__MCF_WINAPI(BOOL, SetThreadPriority, HANDLE, int);
-__MCF_WINAPI(DWORD, GetCurrentProcessId, void) __attribute__((__const__));
-__MCF_WINAPI(BOOL, TerminateProcess, HANDLE, UINT);
+__MCF_WINAPI HANDLE CreateThread(SECURITY_ATTRIBUTES*, SIZE_T, THREAD_START_ROUTINE*, LPVOID, DWORD, DWORD*);
+__MCF_WINAPI void ExitThread(DWORD) __attribute__((__noreturn__));
+__MCF_WINAPI int GetThreadPriority(HANDLE) __attribute__((__pure__));
+__MCF_WINAPI BOOL SetThreadPriority(HANDLE, int);
+__MCF_WINAPI DWORD GetCurrentProcessId(void) __attribute__((__const__));
+__MCF_WINAPI BOOL TerminateProcess(HANDLE, UINT);
 
 /* Declare NTDLL (driver) APIs here.  */
-__MCF_WINAPI(NTSTATUS, LdrAddRefDll, ULONG, PVOID);
-__MCF_WINAPI(BOOLEAN, RtlDllShutdownInProgress, void) __attribute__((__const__));
+__MCF_WINAPI NTSTATUS LdrAddRefDll(ULONG, PVOID);
+__MCF_WINAPI BOOLEAN RtlDllShutdownInProgress(void) __attribute__((__const__));
 
-__MCF_WINAPI(void, RtlMoveMemory, void*, const void*, SIZE_T);
-__MCF_WINAPI(void, RtlFillMemory, void*, SIZE_T, int);
-__MCF_WINAPI(void, RtlZeroMemory, void*, SIZE_T);
-__MCF_WINAPI(SIZE_T, RtlCompareMemory, const void*, const void*, SIZE_T) __attribute__((__pure__));
+__MCF_WINAPI void RtlMoveMemory(void*, const void*, SIZE_T);
+__MCF_WINAPI void RtlFillMemory(void*, SIZE_T, int);
+__MCF_WINAPI void RtlZeroMemory(void*, SIZE_T);
+__MCF_WINAPI SIZE_T RtlCompareMemory(const void*, const void*, SIZE_T) __attribute__((__pure__));
 
-__MCF_WINAPI(NTSTATUS, NtCreateSection, HANDLE*, ACCESS_MASK, OBJECT_ATTRIBUTES*, LARGE_INTEGER*, ULONG, ULONG, HANDLE);
-__MCF_WINAPI(NTSTATUS, NtMapViewOfSection, HANDLE, HANDLE, PVOID*, ULONG_PTR, SIZE_T, LARGE_INTEGER*, SIZE_T*, ULONG, ULONG, ULONG);
-__MCF_WINAPI(NTSTATUS, NtUnmapViewOfSection, HANDLE, PVOID);
-__MCF_WINAPI(NTSTATUS, NtProtectVirtualMemory, HANDLE, PVOID*, SIZE_T*, ULONG, ULONG*);
+__MCF_WINAPI NTSTATUS NtCreateSection(HANDLE*, ACCESS_MASK, OBJECT_ATTRIBUTES*, LARGE_INTEGER*, ULONG, ULONG, HANDLE);
+__MCF_WINAPI NTSTATUS NtMapViewOfSection(HANDLE, HANDLE, PVOID*, ULONG_PTR, SIZE_T, LARGE_INTEGER*, SIZE_T*, ULONG, ULONG, ULONG);
+__MCF_WINAPI NTSTATUS NtUnmapViewOfSection(HANDLE, PVOID);
+__MCF_WINAPI NTSTATUS NtProtectVirtualMemory(HANDLE, PVOID*, SIZE_T*, ULONG, ULONG*);
 
-__MCF_WINAPI(NTSTATUS, NtDuplicateObject, HANDLE, HANDLE, HANDLE, HANDLE*, ACCESS_MASK, ULONG, ULONG);
-__MCF_WINAPI(NTSTATUS, NtClose, HANDLE);
-__MCF_WINAPI(NTSTATUS, NtWaitForSingleObject, HANDLE, BOOLEAN, LARGE_INTEGER*);
-__MCF_WINAPI(NTSTATUS, NtDelayExecution, BOOLEAN, LARGE_INTEGER*);
-__MCF_WINAPI(NTSTATUS, NtYieldExecution, void);
+__MCF_WINAPI NTSTATUS NtDuplicateObject(HANDLE, HANDLE, HANDLE, HANDLE*, ACCESS_MASK, ULONG, ULONG);
+__MCF_WINAPI NTSTATUS NtClose(HANDLE);
+__MCF_WINAPI NTSTATUS NtWaitForSingleObject(HANDLE, BOOLEAN, LARGE_INTEGER*);
+__MCF_WINAPI NTSTATUS NtDelayExecution(BOOLEAN, LARGE_INTEGER*);
+__MCF_WINAPI NTSTATUS NtYieldExecution(void);
 
-__MCF_WINAPI(NTSTATUS, NtWaitForKeyedEvent, HANDLE, PVOID, BOOLEAN, LARGE_INTEGER*);
-__MCF_WINAPI(NTSTATUS, NtReleaseKeyedEvent, HANDLE, PVOID, BOOLEAN, LARGE_INTEGER*);
+__MCF_WINAPI NTSTATUS NtWaitForKeyedEvent(HANDLE, PVOID, BOOLEAN, LARGE_INTEGER*);
+__MCF_WINAPI NTSTATUS NtReleaseKeyedEvent(HANDLE, PVOID, BOOLEAN, LARGE_INTEGER*);
 
 /* Declare helper functions here.  */
 __MCF_XGLOBALS_IMPORT
