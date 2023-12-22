@@ -21,7 +21,7 @@ main(void)
     while(to.__li->QuadPart < 0) {
       // repeat
       printf("  sleep -> %lld\n", to.__li->QuadPart);
-      _MCF_sleep_noninterruptible((const int64_t[]){ -97 });
+      _MCF_sleep_noninterruptible((const int64_t[]){ -37 });
       __MCF_adjust_winnt_timeout_v3(&to);
     }
 
