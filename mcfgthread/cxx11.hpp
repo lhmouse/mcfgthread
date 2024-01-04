@@ -81,6 +81,7 @@ class thread_specific_ptr;  // inspired by boost
 #else  // std::invoke
 
 template<class _Member, class _Class, class... _Args>
+constexpr
 void
 __void_invoke(_Member _Class::* __memp, _Args&&... __args)
   {
@@ -88,6 +89,7 @@ __void_invoke(_Member _Class::* __memp, _Args&&... __args)
   }
 
 template<class _Callable, class... _Args>
+constexpr
 void
 __void_invoke(_Callable&& __callable, _Args&&... __args)
   {
