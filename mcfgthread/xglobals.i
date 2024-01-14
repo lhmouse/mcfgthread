@@ -69,6 +69,8 @@ __MCF_WINAPI(PVOID) DecodePointer(PVOID) __attribute__((__const__));
 
 __MCF_WINAPI(NTSTATUS) BaseGetNamedObjectDirectory(HANDLE*);
 __MCF_WINAPI(BOOL) SetConsoleCtrlHandler(HANDLER_ROUTINE*, BOOL);
+__MCF_WINAPI(HMODULE) GetModuleHandleW(LPCWSTR) __attribute__((__pure__));
+__MCF_WINAPI(FARPROC) GetProcAddress(HMODULE, LPCSTR) __attribute__((__pure__));
 
 __MCF_WINAPI(DWORD) TlsAlloc(void);
 __MCF_WINAPI(BOOL) TlsFree(DWORD);
@@ -82,9 +84,6 @@ __MCF_WINAPI(SIZE_T) HeapSize(HANDLE, DWORD, LPCVOID) __attribute__((__pure__));
 __MCF_WINAPI(BOOL) HeapFree(HANDLE, DWORD, LPVOID);
 
 __MCF_WINAPI(void) GetSystemTimeAsFileTime(FILETIME*);
-#if _WIN32_WINNT >= 0x0602
-__MCF_WINAPI(void) GetSystemTimePreciseAsFileTime(FILETIME*);
-#endif
 __MCF_WINAPI(ULONGLONG) GetTickCount64(void);
 __MCF_WINAPI(BOOL) QueryUnbiasedInterruptTime(PULONGLONG);
 __MCF_WINAPI(BOOL) QueryPerformanceFrequency(LARGE_INTEGER*);
@@ -119,6 +118,11 @@ __MCF_WINAPI(NTSTATUS) NtYieldExecution(void);
 
 __MCF_WINAPI(NTSTATUS) NtWaitForKeyedEvent(HANDLE, PVOID, BOOLEAN, LARGE_INTEGER*);
 __MCF_WINAPI(NTSTATUS) NtReleaseKeyedEvent(HANDLE, PVOID, BOOLEAN, LARGE_INTEGER*);
+
+/* Lazy binding.  */
+#define __MCF_GET_DLL_PROC(dll, proc)  ((decltype_##proc*)(INT_PTR) GetProcAddress(GetModuleHandleW(L##dll), #proc))
+
+typedef void __stdcall decltype_GetSystemTimePreciseAsFileTime(FILETIME*);
 
 /* Declare helper functions here.  */
 __MCF_XGLOBALS_IMPORT
@@ -314,6 +318,9 @@ struct __MCF_crt_xglobals
 
     /* thread suspension support  */
     uintptr_t __sleeping_threads[1];
+
+    /* WARNING: fields hereinafter must be accessed via `__MCF_G_FIELD_OPT`!  */
+    decltype_GetSystemTimePreciseAsFileTime* __f_GetSystemTimePreciseAsFileTime;
   };
 
 /* These are constants that have to be initialized at load time.  */

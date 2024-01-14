@@ -36,11 +36,14 @@ double
 _MCF_hires_utc_now(void)
   {
     FILETIME ft;
-#if _WIN32_WINNT >= 0x0602
-    GetSystemTimePreciseAsFileTime(&ft);
-#else
-    GetSystemTimeAsFileTime(&ft);
-#endif  /* Windows 8  */
+    decltype_GetSystemTimePreciseAsFileTime** pp_GetSystemTimePreciseAsFileTime;
+
+    /* This is available since Windows 8.  */
+    pp_GetSystemTimePreciseAsFileTime = __MCF_G_FIELD_OPT(__f_GetSystemTimePreciseAsFileTime);
+    if(pp_GetSystemTimePreciseAsFileTime && *pp_GetSystemTimePreciseAsFileTime)
+      (**pp_GetSystemTimePreciseAsFileTime) (&ft);
+    else
+      GetSystemTimeAsFileTime(&ft);
 
     /* `t := (low + high * 0x1p32) / 10000`  */
     double t = (double) ft.dwLowDateTime;

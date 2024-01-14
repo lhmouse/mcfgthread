@@ -223,6 +223,10 @@ do_on_process_attach(void)
     __MCF_g->__tls_index = TlsAlloc();
     __MCF_CHECK(__MCF_g->__tls_index != UINT32_MAX);
 
+    /* Perform lazy binding on some functions.  */
+    if(__MCF_G_FIELD_OPT(__f_GetSystemTimePreciseAsFileTime) != NULL)
+      __MCF_g->__f_GetSystemTimePreciseAsFileTime = __MCF_GET_DLL_PROC("KERNEL32", GetSystemTimePreciseAsFileTime);
+
     /* Attach the main thread. The structure should be all zeroes so no
      * initialization is necessary.  */
     __MCF_thread_attach_foreign(__MCF_g->__main_thread);
