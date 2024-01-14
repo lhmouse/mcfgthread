@@ -1,6 +1,6 @@
 /* This file is part of MCF Gthread.
  * See LICENSE.TXT for licensing information.
- * Copyleft 2022 - 2023, LH_Mouse. All wrongs reserved.  */
+ * Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved.  */
 
 #ifndef __MCFGTHREAD_CLOCK_
 #define __MCFGTHREAD_CLOCK_

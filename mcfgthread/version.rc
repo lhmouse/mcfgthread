@@ -1,6 +1,6 @@
 /* This file is part of MCF Gthread.
  * See LICENSE.TXT for licensing information.
- * Copyleft 2022 - 2023, LH_Mouse. All wrongs reserved.  */
+ * Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved.  */
 
 #include "version.h"
 #include <winver.h>
@@ -34,7 +34,7 @@ VS_VERSION_INFO VERSIONINFO
         VALUE "FileVersion",      _MCF_ABI_VERSION_STRING
         VALUE "FileDescription",  "Cornerstone of the MOST efficient std::thread on Windows"
         VALUE "CompanyName",      "LH_Mouse"
-        VALUE "LegalCopyright",   "Copyleft 2022 - 2023, LH_Mouse. All wrongs reserved."
+        VALUE "LegalCopyright",   "Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved."
         VALUE "Comments",         "https://github.com/lhmouse/mcfgthread"
       }
     }
