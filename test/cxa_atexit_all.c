@@ -12,14 +12,16 @@ static char buffer[1000];
 static int dso_1, dso_2;
 
 static
-void __cdecl
+void
+__cdecl
 cleanup_1(void* ptr)
   {
     strcat(buffer, ptr);
   }
 
 static
-void __thiscall
+void
+__thiscall
 cleanup_2(void* ptr)
   {
     strcat(buffer, ptr);
@@ -38,13 +40,13 @@ main(void)
     assert(r == 0);
     r = __MCF_cxa_atexit(cleanup_1, (void*) "dN", NULL);
     assert(r == 0);
-    r = __MCF_cxa_atexit(cleanup_2, (void*) "e2", &dso_2);
+    r = __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*) cleanup_2, (void*) "e2", &dso_2);
     assert(r == 0);
-    r = __MCF_cxa_atexit(cleanup_2, (void*) "f1", &dso_1);
+    r = __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*) cleanup_2, (void*) "f1", &dso_1);
     assert(r == 0);
-    r = __MCF_cxa_atexit(cleanup_2, (void*) "g1", &dso_1);
+    r = __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*) cleanup_2, (void*) "g1", &dso_1);
     assert(r == 0);
-    r = __MCF_cxa_atexit(cleanup_2, (void*) "hN", NULL);
+    r = __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*) cleanup_2, (void*) "hN", NULL);
     assert(r == 0);
     r = __MCF_cxa_atexit(cleanup_1, (void*) "i1", &dso_1);
     assert(r == 0);
@@ -54,13 +56,13 @@ main(void)
     assert(r == 0);
     r = __MCF_cxa_atexit(cleanup_1, (void*) "lN", NULL);
     assert(r == 0);
-    r = __MCF_cxa_atexit(cleanup_2, (void*) "m1", &dso_1);
+    r = __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*) cleanup_2, (void*) "m1", &dso_1);
     assert(r == 0);
-    r = __MCF_cxa_atexit(cleanup_2, (void*) "n2", &dso_2);
+    r = __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*) cleanup_2, (void*) "n2", &dso_2);
     assert(r == 0);
-    r = __MCF_cxa_atexit(cleanup_2, (void*) "o2", &dso_2);
+    r = __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*) cleanup_2, (void*) "o2", &dso_2);
     assert(r == 0);
-    r = __MCF_cxa_atexit(cleanup_2, (void*) "pN", NULL);
+    r = __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*) cleanup_2, (void*) "pN", NULL);
     assert(r == 0);
 
     assert(strcmp(buffer, "") == 0);

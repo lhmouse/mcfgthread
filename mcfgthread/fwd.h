@@ -145,7 +145,6 @@ typedef struct __MCF_dtor_element __MCF_dtor_element;
 typedef struct __MCF_dtor_queue __MCF_dtor_queue;
 typedef struct __MCF_tls_table __MCF_tls_table;
 typedef struct __MCF_tls_element __MCF_tls_element;
-typedef union __MCF_cxa_dtor_union __MCF_cxa_dtor_union;
 
 typedef struct __MCF_cond _MCF_cond;
 typedef struct __MCF_mutex _MCF_mutex;
@@ -172,8 +171,8 @@ typedef void _MCF_tls_dtor(void* __ptr);
 /* Note: In the case of i386, the argument is passed both via the ECX register
  * and on the stack, to allow both `__cdecl` and `__thiscall` functions to work
  * properly. The function prototype is declared for compatibility with GCC.  */
-typedef void __cdecl __MCF_cxa_dtor_cdecl(void* __arg);
-typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __arg);
+typedef void __MCF_cxa_dtor_cdecl(void* __arg);
+typedef __MCF_cxa_dtor_cdecl __MCF_cxa_dtor_union;
 
 /* Define the prototype for `atexit()` and `at_quick_exit()`.  */
 typedef void __MCF_atexit_callback(void);

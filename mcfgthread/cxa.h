@@ -16,26 +16,6 @@ __MCF_C_DECLARATIONS_BEGIN
 /* See <https://itanium-cxx-abi.github.io/cxx-abi/abi.html> for details about
  * individual functions.  */
 
-union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
-  {
-    __MCF_cxa_dtor_cdecl* __cdecl_ptr;
-    __MCF_cxa_dtor_thiscall* __thiscall_ptr;
-
-#ifdef __cplusplus
-    /* GCC ignores `__transparent_union__` attribute so mimic it.  */
-    __MCF_CXX11(constexpr)
-    __MCF_cxa_dtor_union(__MCF_cxa_dtor_cdecl* __arg) __MCF_NOEXCEPT
-      : __cdecl_ptr(__arg)  { }
-
-#  ifdef __i386__
-    __MCF_CXX11(constexpr)
-    __MCF_cxa_dtor_union(__MCF_cxa_dtor_thiscall* __arg) __MCF_NOEXCEPT
-      : __thiscall_ptr(__arg)  { }
-#  endif
-#endif  /* __cplusplus  */
-  };
-
-/* Declare 'real' functions here.  */
 __MCF_CXA_IMPORT
 int
 __MCF_cxa_guard_acquire(int64_t* __guard) __MCF_NOEXCEPT;
