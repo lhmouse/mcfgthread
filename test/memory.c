@@ -10,14 +10,14 @@
 static char comp[100];
 static char data[100];
 
-HMODULE __stdcall LoadLibraryA(LPCSTR);
-FARPROC __stdcall GetProcAddress(HMODULE, LPCSTR);
-BOOLEAN __stdcall SystemFunction036(PVOID, ULONG);  // SystemFunction036
+__MCF_WINAPI(HMODULE) LoadLibraryW(LPCWSTR);
+__MCF_WINAPI(BOOLEAN) SystemFunction036(PVOID, ULONG);
+#define RtlGenRandom  SystemFunction036
 
 int
 main(void)
   {
-    HMODULE msvcrt = LoadLibraryA("msvcrt.dll");
+    HMODULE msvcrt = LoadLibraryW(L"msvcrt.dll");
     assert(msvcrt);
 
     typedef void __cdecl memmove_t(void*, const void*, size_t);
