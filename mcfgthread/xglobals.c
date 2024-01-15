@@ -224,8 +224,20 @@ do_on_process_attach(void)
     __MCF_CHECK(__MCF_g->__tls_index != UINT32_MAX);
 
     /* Perform lazy binding on some functions.  */
-    if(__MCF_G_FIELD_OPT(__f_GetSystemTimePreciseAsFileTime) != NULL)
-      __MCF_g->__f_GetSystemTimePreciseAsFileTime = __MCF_GET_DLL_PROC("KERNEL32", GetSystemTimePreciseAsFileTime);
+#define do_set_lazy_binding_(dll, proc)  \
+    do {  \
+      decltype_##proc** pp_##proc = __MCF_G_FIELD_OPT(__f_##proc);  \
+      if(!pp_##proc)  \
+        break;  \
+      HMODULE mod_##proc = GetModuleHandleW(L##dll ".DLL");  \
+      if(!mod_##proc)  \
+        break;  \
+      *pp_##proc = (decltype_##proc*)(INT_PTR) GetProcAddress(mod_##proc, #proc);  \
+    }  \
+    while(false)  /* no semicolon  */
+
+    /* Window 8  */
+    do_set_lazy_binding_("KERNEL32", GetSystemTimePreciseAsFileTime);
 
     /* Attach the main thread. The structure should be all zeroes so no
      * initialization is necessary.  */

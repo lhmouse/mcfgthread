@@ -120,8 +120,6 @@ __MCF_WINAPI(NTSTATUS) NtWaitForKeyedEvent(HANDLE, PVOID, BOOLEAN, LARGE_INTEGER
 __MCF_WINAPI(NTSTATUS) NtReleaseKeyedEvent(HANDLE, PVOID, BOOLEAN, LARGE_INTEGER*);
 
 /* Lazy binding.  */
-#define __MCF_GET_DLL_PROC(dll, proc)  ((decltype_##proc*)(INT_PTR) GetProcAddress(GetModuleHandleW(L##dll), #proc))
-
 typedef void __stdcall decltype_GetSystemTimePreciseAsFileTime(FILETIME*);
 
 /* Declare helper functions here.  */
