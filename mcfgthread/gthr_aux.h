@@ -109,7 +109,7 @@ __MCF_gthr_rc_mutex_recurse(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
       return -1;
 
     /* Increment the recursion count.  */
-    __MCF_ASSERT(__rmtx->__depth < __INT32_MAX__);
+    __MCF_ASSERT(__rmtx->__depth < 0x7FFFFFFF);
     __rmtx->__depth ++;
     return 0;
   }
