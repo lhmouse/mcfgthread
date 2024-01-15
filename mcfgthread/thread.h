@@ -262,7 +262,7 @@ void
 _MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_NOEXCEPT
   {
     int32_t __old_ref = _MCF_atomic_xadd_32_rlx(__thrd->__nref, 1);
-    __MCF_ASSERT(__old_ref < __INT32_MAX__);
+    __MCF_ASSERT(__old_ref < 0x7FFFFFFF);
     __MCF_ASSERT(__old_ref > 0);
   }
 
