@@ -17,11 +17,10 @@ __MCF_C_DECLARATIONS_BEGIN
  * See <https://gcc.gnu.org/bugzilla/show_bug.cgi?id=105495> for details.
  *
  * These functions are provided as inlined ones only. Hereinafter, `WIDTH` sets
- * `INTEGER` to `intWIDTH_t`. `ORDER` may be `rlx` for relaxed order, `acq` for
- * acquire order, `rel` for release order, `arl` for both acquire and release
- * order, or `cst` for sequentially-consistent order.
- *
- * All memory orders are defined below.  */
+ * `[INTEGER]` to `int[WIDTH]_t`. `[ORDER]` may be `rlx` for relaxed order, `acq`
+ * for acquire order, `rel` for release order, `arl` for both acquire and release
+ * order, or `cst` for sequentially-consistent order.  */
+
 #define __MCF_ATOMIC_SUCC_rlx   __ATOMIC_RELAXED
 #define __MCF_ATOMIC_SUCC_acq   __ATOMIC_ACQUIRE
 #define __MCF_ATOMIC_SUCC_rel   __ATOMIC_RELEASE
@@ -34,18 +33,20 @@ __MCF_C_DECLARATIONS_BEGIN
 #define __MCF_ATOMIC_FAIL_arl   __ATOMIC_ACQUIRE
 #define __MCF_ATOMIC_FAIL_cst   __ATOMIC_SEQ_CST
 
-#define __MCF_ATOMIC_FUNCTIONS(function, o)  \
-  function(   int8_t,   8_##o, __MCF_ATOMIC_SUCC_##o, __MCF_ATOMIC_FAIL_##o)  \
-  function(  int16_t,  16_##o, __MCF_ATOMIC_SUCC_##o, __MCF_ATOMIC_FAIL_##o)  \
-  function(  int32_t,  32_##o, __MCF_ATOMIC_SUCC_##o, __MCF_ATOMIC_FAIL_##o)  \
-  function(  int64_t,  64_##o, __MCF_ATOMIC_SUCC_##o, __MCF_ATOMIC_FAIL_##o)  \
-  function( intptr_t, ptr_##o, __MCF_ATOMIC_SUCC_##o, __MCF_ATOMIC_FAIL_##o)  \
-  function(   size_t,   z_##o, __MCF_ATOMIC_SUCC_##o, __MCF_ATOMIC_FAIL_##o)
+#define __MCF_ATOMIC_FUNCTIONS(fn, o)  \
+  fn(   int8_t,   8_##o, __MCF_ATOMIC_SUCC_##o, __MCF_ATOMIC_FAIL_##o)  \
+  fn(  int16_t,  16_##o, __MCF_ATOMIC_SUCC_##o, __MCF_ATOMIC_FAIL_##o)  \
+  fn(  int32_t,  32_##o, __MCF_ATOMIC_SUCC_##o, __MCF_ATOMIC_FAIL_##o)  \
+  fn(  int64_t,  64_##o, __MCF_ATOMIC_SUCC_##o, __MCF_ATOMIC_FAIL_##o)  \
+  fn( intptr_t, ptr_##o, __MCF_ATOMIC_SUCC_##o, __MCF_ATOMIC_FAIL_##o)  \
+  fn(   size_t,   z_##o, __MCF_ATOMIC_SUCC_##o, __MCF_ATOMIC_FAIL_##o)
 
 /* Performs a scalar atomic load operation.
  * The value that has been read is returned as an integer.
  *
- * `INTEGER _MCF_atomic_load_WIDTH_ORDER(const void* mem);`  */
+ *   [INTEGER]
+ *   _MCF_atomic_load_[WIDTH]_[ORDER](const void* mem);
+ */
 #define __MCF_atomic_load_(INTEGER, SUFFIX, ORDER_SUCC, ORDER_FAIL)  \
   __MCF_ALWAYS_INLINE  \
   INTEGER  \
@@ -61,7 +62,9 @@ __MCF_ATOMIC_FUNCTIONS(__MCF_atomic_load_, cst)
 /* Performs a generic atomic load operation.
  * The value that has been read is returned via the pointer `retp`.
  *
- * `void _MCF_atomic_load_pWIDTH_ORDER(void* retp, const void* mem);`  */
+ *   void
+ *   _MCF_atomic_load_p[WIDTH]_[ORDER](void* retp, const void* mem);
+ */
 #define __MCF_atomic_load_p(INTEGER, SUFFIX, ORDER_SUCC, ORDER_FAIL)  \
   __MCF_ALWAYS_INLINE  \
   void  \
@@ -78,7 +81,9 @@ __MCF_ATOMIC_FUNCTIONS(__MCF_atomic_load_p, cst)
 /* Performs a scalar atomic store operation.
  * The value to write is passed by value as an integer.
  *
- * `INTEGER _MCF_atomic_store_WIDTH_ORDER(void* mem, INTEGER val);`  */
+ *   [INTEGER]
+ *   _MCF_atomic_store_[WIDTH]_[ORDER](void* mem, [INTEGER] val);
+ */
 #define __MCF_atomic_store_(INTEGER, SUFFIX, ORDER_SUCC, ORDER_FAIL)  \
   __MCF_ALWAYS_INLINE  \
   INTEGER  \
@@ -95,7 +100,9 @@ __MCF_ATOMIC_FUNCTIONS(__MCF_atomic_store_, cst)
 /* Performs a generic atomic store operation.
  * The value to write is passed via the pointer `valp`.
  *
- * `void _MCF_atomic_store_pWIDTH_ORDER(void* mem, const void* valp);`  */
+ *   void
+ *   _MCF_atomic_store_p[WIDTH]_[ORDER](void* mem, const void* valp);
+ */
 #define __MCF_atomic_store_p(INTEGER, SUFFIX, ORDER_SUCC, ORDER_FAIL)  \
   __MCF_ALWAYS_INLINE  \
   void  \
@@ -113,7 +120,9 @@ __MCF_ATOMIC_FUNCTIONS(__MCF_atomic_store_p, cst)
  * The previous value is returned as an integer.
  * The value to write is passed by value as an integer.
  *
- * `INTEGER _MCF_atomic_xchg_WIDTH_ORDER(void* mem, INTEGER val);`  */
+ *   [INTEGER]
+ *   _MCF_atomic_xchg_[WIDTH]_[ORDER](void* mem, [INTEGER] val);
+ */
 #define __MCF_atomic_xchg_(INTEGER, SUFFIX, ORDER_SUCC, ORDER_FAIL)  \
   __MCF_ALWAYS_INLINE  \
   INTEGER  \
@@ -132,7 +141,9 @@ __MCF_ATOMIC_FUNCTIONS(__MCF_atomic_xchg_, cst)
  * The previous value is returned via the pointer `retp`.
  * The value to write is passed via the pointer `valp`.
  *
- * `void _MCF_atomic_xchg_pWIDTH_ORDER(void* retp, void* mem, const void* valp);`  */
+ *   void
+ *   _MCF_atomic_xchg_p[WIDTH]_[ORDER](void* retp, void* mem, const void* valp);
+ */
 #define __MCF_atomic_xchg_p(INTEGER, SUFFIX, ORDER_SUCC, ORDER_FAIL)  \
   __MCF_ALWAYS_INLINE  \
   void  \
@@ -153,14 +164,18 @@ __MCF_ATOMIC_FUNCTIONS(__MCF_atomic_xchg_p, cst)
  * The value for comparison is passed via the pointer `cmpp`.
  * The value to write is passed by value as an integer.
  *
- * `bool _MCF_atomic_cmpxchg_WIDTH_ORDER(void* restrict mem, void* restrict cmpp, INTEGER val);`  */
+ *   bool
+ *   _MCF_atomic_cmpxchg_[WIDTH]_[ORDER](void* restrict mem, void* restrict cmpp, [INTEGER] val);
+ */
 #define __MCF_atomic_cmpxchg_(INTEGER, SUFFIX, ORDER_SUCC, ORDER_FAIL)  \
   __MCF_ALWAYS_INLINE  \
   bool  \
-  _MCF_atomic_cmpxchg_##SUFFIX(void* __restrict __mem, void* __restrict __cmpp, INTEGER __val) __MCF_NOEXCEPT  \
+  _MCF_atomic_cmpxchg_##SUFFIX(void* __restrict __mem, void* __restrict __cmpp,  \
+                               INTEGER __val) __MCF_NOEXCEPT  \
     {  \
       INTEGER __cmp = *(INTEGER*) __cmpp;  \
-      bool __r = __atomic_compare_exchange_n((INTEGER*) __mem, &__cmp, __val, 0, ORDER_SUCC, ORDER_FAIL);  \
+      bool __r = __atomic_compare_exchange_n((INTEGER*) __mem, &__cmp, __val, 0,  \
+                                             ORDER_SUCC, ORDER_FAIL);  \
       *(INTEGER*) __cmpp = __cmp;  \
       return __r;  \
     }
@@ -175,15 +190,19 @@ __MCF_ATOMIC_FUNCTIONS(__MCF_atomic_cmpxchg_, cst)
  * The value for comparison is passed via the pointer `cmpp`.
  * The value to write is passed by value as an integer.
  *
- * `bool _MCF_atomic_cmpxchg_pWIDTH_ORDER(void* restrict mem, void* restrict cmpp, const void* val);`  */
+ *   bool
+ *   _MCF_atomic_cmpxchg_p[WIDTH]_[ORDER](void* restrict mem, void* restrict cmpp, const void* val);
+ */
 #define __MCF_atomic_cmpxchg_p(INTEGER, SUFFIX, ORDER_SUCC, ORDER_FAIL)  \
   __MCF_ALWAYS_INLINE  \
   bool  \
-  _MCF_atomic_cmpxchg_p##SUFFIX(void* __restrict __mem, void* __restrict __cmpp, const void* __valp) __MCF_NOEXCEPT  \
+  _MCF_atomic_cmpxchg_p##SUFFIX(void* __restrict __mem, void* __restrict __cmpp,  \
+                                const void* __valp) __MCF_NOEXCEPT  \
     {  \
       INTEGER __val = *(const INTEGER*) __valp;  \
       INTEGER __cmp = *(INTEGER*) __cmpp;  \
-      bool __r = __atomic_compare_exchange_n((INTEGER*) __mem, &__cmp, __val, 0, ORDER_SUCC, ORDER_FAIL);  \
+      bool __r = __atomic_compare_exchange_n((INTEGER*) __mem, &__cmp, __val, 0,  \
+                                             ORDER_SUCC, ORDER_FAIL);  \
       *(INTEGER*) __cmpp = __cmp;  \
       return __r;  \
     }
@@ -198,14 +217,18 @@ __MCF_ATOMIC_FUNCTIONS(__MCF_atomic_cmpxchg_p, cst)
  * The value for comparison is passed via the pointer `cmpp`.
  * The value to write is passed by value as an integer.
  *
- * `bool _MCF_atomic_cmpxchg_weak_WIDTH_ORDER(void* restrict mem, void* restrict cmpp, INTEGER val);`  */
+ *   bool
+ *   _MCF_atomic_cmpxchg_weak_[WIDTH]_[ORDER](void* restrict mem, void* restrict cmpp, [INTEGER] val);
+ */
 #define __MCF_ATOMIC_cmpxchg_weak_(INTEGER, SUFFIX, ORDER_SUCC, ORDER_FAIL)  \
   __MCF_ALWAYS_INLINE  \
   bool  \
-  _MCF_atomic_cmpxchg_weak_##SUFFIX(void* __restrict __mem, void* __restrict __cmpp, INTEGER __val) __MCF_NOEXCEPT  \
+  _MCF_atomic_cmpxchg_weak_##SUFFIX(void* __restrict __mem, void* __restrict __cmpp,  \
+                                    INTEGER __val) __MCF_NOEXCEPT  \
     {  \
       INTEGER __cmp = *(INTEGER*) __cmpp;  \
-      bool __r = __atomic_compare_exchange_n((INTEGER*) __mem, &__cmp, __val, 1, ORDER_SUCC, ORDER_FAIL);  \
+      bool __r = __atomic_compare_exchange_n((INTEGER*) __mem, &__cmp, __val, 1,  \
+                                             ORDER_SUCC, ORDER_FAIL);  \
       *(INTEGER*) __cmpp = __cmp;  \
       return __r;  \
     }
@@ -220,15 +243,19 @@ __MCF_ATOMIC_FUNCTIONS(__MCF_ATOMIC_cmpxchg_weak_, cst)
  * The value for comparison is passed via the pointer `cmpp`.
  * The value to write is passed by value as an integer.
  *
- * `bool _MCF_atomic_cmpxchg_weak_pWIDTH_ORDER(void* restrict mem, void* restrict cmpp, const void* val);`  */
+ *   bool
+ *   _MCF_atomic_cmpxchg_weak_p[WIDTH]_[ORDER](void* restrict mem, void* restrict cmpp, const void* val);
+ */
 #define __MCF_ATOMIC_cmpxchg_weak_p(INTEGER, SUFFIX, ORDER_SUCC, ORDER_FAIL)  \
   __MCF_ALWAYS_INLINE  \
   bool  \
-  _MCF_atomic_cmpxchg_weak_p##SUFFIX(void* __restrict __mem, void* __restrict __cmpp, const void* __valp) __MCF_NOEXCEPT  \
+  _MCF_atomic_cmpxchg_weak_p##SUFFIX(void* __restrict __mem, void* __restrict __cmpp,  \
+                                     const void* __valp) __MCF_NOEXCEPT  \
     {  \
       INTEGER __cmp = *(INTEGER*) __cmpp;  \
       INTEGER __val = *(const INTEGER*) __valp;  \
-      bool __r = __atomic_compare_exchange_n((INTEGER*) __mem, &__cmp, __val, 1, ORDER_SUCC, ORDER_FAIL);  \
+      bool __r = __atomic_compare_exchange_n((INTEGER*) __mem, &__cmp, __val, 1,  \
+                                             ORDER_SUCC, ORDER_FAIL);  \
       *(INTEGER*) __cmpp = __cmp;  \
       return __r;  \
     }
@@ -243,7 +270,9 @@ __MCF_ATOMIC_FUNCTIONS(__MCF_ATOMIC_cmpxchg_weak_p, cst)
  * The value that has been swapped out is returned as an integer.
  * The value to add is passed by value as an integer.
  *
- * `INTEGER val __MCF_atomic_xadd_WIDTH_ORDER(void* mem, INTEGER val);`  */
+ *   [INTEGER]
+ *   _MCF_atomic_xadd_[WIDTH]_[ORDER](void* mem, [INTEGER] val);
+ */
 #define __MCF_ATOMIC_xadd_(INTEGER, SUFFIX, ORDER_SUCC, ORDER_FAIL)  \
   __MCF_ALWAYS_INLINE  \
   INTEGER  \
@@ -262,7 +291,9 @@ __MCF_ATOMIC_FUNCTIONS(__MCF_ATOMIC_xadd_, cst)
  * The value that has been swapped out is returned as an integer.
  * The value to subtract is passed by value as an integer.
  *
- * `INTEGER val __MCF_atomic_xsub_WIDTH_ORDER(void* mem, INTEGER val);`  */
+ *   [INTEGER]
+ *   _MCF_atomic_xsub_[WIDTH]_[ORDER](void* mem, [INTEGER] val);
+ */
 #define __MCF_ATOMIC_xsub_(INTEGER, SUFFIX, ORDER_SUCC, ORDER_FAIL)  \
   __MCF_ALWAYS_INLINE  \
   INTEGER  \
