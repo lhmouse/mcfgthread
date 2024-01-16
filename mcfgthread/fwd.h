@@ -15,84 +15,15 @@
 #  error Only Windows platforms are supported.
 #endif
 
-#ifdef __cplusplus
-#  /* C++  */
-#  define __MCF_C(...)    /* nothing  */
-#  define __MCF_C99(...)  /* nothing  */
-#  define __MCF_C11(...)  /* nothing  */
-#
-#elif !defined(__STDC_VERSION__) || (__STDC_VERSION__ < 199901L)
-#  /* C89  */
-#  define __MCF_C(...)    __VA_ARGS__
-#  define __MCF_C99(...)  /* nothing  */
-#  define __MCF_C11(...)  /* nothing  */
-#
-#elif __STDC_VERSION__ < 201103L
-#  /* C99  */
-#  define __MCF_C(...)    __VA_ARGS__
-#  define __MCF_C99(...)  __VA_ARGS__
-#  define __MCF_C11(...)  /* nothing  */
-#
-#else
-#  /* C11  */
-#  define __MCF_C(...)    __VA_ARGS__
-#  define __MCF_C99(...)  __VA_ARGS__
-#  define __MCF_C11(...)  __VA_ARGS__
-#
-#endif  /* __STDC_VERSION__  */
-
-#ifndef __cplusplus
-#  /* C  */
-#  define __MCF_CXX(...)    /* nothing  */
-#  define __MCF_CXX11(...)  /* nothing  */
-#  define __MCF_CXX14(...)  /* nothing  */
-#
-#elif __cplusplus < 201103L
-#  /* C++98  */
-#  define __MCF_CXX(...)    __VA_ARGS__
-#  define __MCF_CXX11(...)  /* nothing  */
-#  define __MCF_CXX14(...)  /* nothing  */
-#
-#elif __cplusplus < 201402L
-#  /* C++11  */
-#  define __MCF_CXX(...)    __VA_ARGS__
-#  define __MCF_CXX11(...)  __VA_ARGS__
-#  define __MCF_CXX14(...)  /* nothing  */
-#
-#else
-#  /* C++14  */
-#  define __MCF_CXX(...)    __VA_ARGS__
-#  define __MCF_CXX11(...)  __VA_ARGS__
-#  define __MCF_CXX14(...)  __VA_ARGS__
-#
-#endif  /* __cplusplus  */
-
-#define __MCF_PTR_BITS   (__SIZEOF_POINTER__ * __CHAR_BIT__)
-#define __MCF_0_INIT    {__MCF_C(0)}
-#define __MCF_SX(...)   #__VA_ARGS__
-#define __MCF_S(...)   __MCF_SX(__VA_ARGS__)
-#define __MCF_SET_IF(x, ...)   ((void) ((x) && (*(x) = (__VA_ARGS__))))
-
+/* Compiler-specific stuff  */
+#define __MCF_GNU_INLINE    extern __inline__ __attribute__((__gnu_inline__))
 #define __MCF_ALWAYS_INLINE   __MCF_GNU_INLINE __attribute__((__always_inline__, __artificial__))
 #define __MCF_NEVER_INLINE   __attribute__((__noinline__))
-#define __MCF_GNU_INLINE    extern __inline__ __attribute__((__gnu_inline__))
-#define __MCF_ASM_CALL(x)  __asm__(__MCF_S(__USER_LABEL_PREFIX__) #x)
-
-#ifndef __cplusplus
-#  define __MCF_NOEXCEPT
-#elif __cplusplus < 201103L
-#  define __MCF_NOEXCEPT   throw()
-#else
-#  define __MCF_NOEXCEPT   noexcept
-#endif
-
-#ifndef __cplusplus
-#  define __MCF_C_DECLARATIONS_BEGIN
-#  define __MCF_C_DECLARATIONS_END
-#else
-#  define __MCF_C_DECLARATIONS_BEGIN   extern "C" {
-#  define __MCF_C_DECLARATIONS_END     }  /* extern "C"  */
-#endif
+#define __MCF_NEVER_RETURN   __attribute__((__noreturn__))
+#define __MCF_FN_CONST     __attribute__((__const__))
+#define __MCF_FN_PURE      __attribute__((__pure__))
+#define __MCF_ASM_CALL(x)   __asm__(__MCF_S(__USER_LABEL_PREFIX__) #x)
+#define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
 
 #ifdef __MCF_DEBUG
 #  define __MCF_UNREACHABLE   __MCF_runtime_failure(__func__)
@@ -100,11 +31,69 @@
 #  define __MCF_UNREACHABLE   __builtin_unreachable()
 #endif
 
+#ifdef _WIN64
+#  define __MCF_PTR_BITS   64
+#else
+#  define __MCF_PTR_BITS   32
+#endif
+
+/* Standard support  */
+#define __MCF_C(...)  __VA_ARGS__
+#define __MCF_C99(...)
+#define __MCF_C11(...)
+#define __MCF_CXX(...)
+#define __MCF_CXX11(...)
+#define __MCF_CXX14(...)
+#define __MCF_NOEXCEPT
+#define __MCF_C_DECLARATIONS_BEGIN
+#define __MCF_C_DECLARATIONS_END
+
+#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 199901L)  /* C99  */
+#  undef __MCF_C99
+#  define __MCF_C99(...)   __VA_ARGS__
+#endif
+
+#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 201112L)  /* C11  */
+#  undef __MCF_C11
+#  define __MCF_C11(...)   __VA_ARGS__
+#endif
+
+#if defined __cplusplus  /* C++  */
+#  undef __MCF_C
+#  define __MCF_C(...)   /* hidden  */
+#  undef __MCF_CXX
+#  define __MCF_CXX(...)   __VA_ARGS__
+#  undef __MCF_NOEXCEPT
+#  define __MCF_NOEXCEPT      throw()
+#  undef __MCF_C_DECLARATIONS_BEGIN
+#  define __MCF_C_DECLARATIONS_BEGIN   extern "C" {
+#  undef __MCF_C_DECLARATIONS_END
+#  define __MCF_C_DECLARATIONS_END   }  /* extern "C"  */
+#endif
+
+#if defined __cplusplus && (__cplusplus >= 201103L)  /* C++11  */
+#  undef __MCF_CXX11
+#  define __MCF_CXX11(...)   __VA_ARGS__
+#  undef __MCF_NOEXCEPT
+#  define __MCF_NOEXCEPT   noexcept
+#endif
+
+#if defined __cplusplus && (__cplusplus >= 201402L)  /* C++14  */
+#  undef __MCF_CXX14
+#  define __MCF_CXX14(...)   __VA_ARGS__
+#endif
+
+/* Common declarations start here.  */
 __MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_FWD_IMPORT
 #  define __MCF_FWD_IMPORT
 #  define __MCF_FWD_INLINE  __MCF_GNU_INLINE
 #endif
+
+#define __MCF_SX(...)   #__VA_ARGS__
+#define __MCF_S(...)   __MCF_SX(__VA_ARGS__)
+#define __MCF_0_INIT    { __MCF_C(0) }
+#define __MCF_SET_IF(x, ...)   ((void) ((x) && (*(x) = (__VA_ARGS__))))
 
 /* The `__MCF_STATIC_ASSERT_0()` macro is an expression that yields zero if it
  * compiles anyway. Its argument must be a constant expression.  */
@@ -124,21 +113,6 @@ extern "C++" template<> struct __MCF_static_assert<true> { };
  * and `__MCF_CHECK()` effects abnormal termination of the current program.  */
 #define __MCF_ASSERT(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
 #define __MCF_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__func__))
-
-/* Define thread priority constants, from lowest to highest.
- * These values match Windows APIs and can be passed around as such, but we
- * define only what we find necessary at the moment.  */
-enum __MCF_thread_priority __MCF_CXX11(: int)
-  {
-    _MCF_thread_priority_idle           = -15,
-    _MCF_thread_priority_low            =  -2,
-    _MCF_thread_priority_below_normal   =  -1,
-    _MCF_thread_priority_normal         =   0,
-    _MCF_thread_priority_above_normal   =  +1,
-    _MCF_thread_priority_high           =  +2,
-    _MCF_thread_priority_realtime       = +15,
-    __MCF_thread_priority_end
-  };
 
 /* Make some forward declarations.  */
 typedef struct __MCF_dtor_element __MCF_dtor_element;
@@ -180,45 +154,56 @@ typedef void __MCF_atexit_callback(void);
 /* Define the prototype for `call_once()`.  */
 typedef void __MCF_once_callback(void);
 
-/* Define some helper functions.  */
+/* Define thread priority constants, from lowest to highest.
+ * These values match Windows APIs and can be passed around as such, but we
+ * define only what we find necessary at the moment.  */
+enum __MCF_thread_priority __MCF_CXX11(: signed)
+  {
+    _MCF_thread_priority_idle           = -15,
+    _MCF_thread_priority_low            =  -2,
+    _MCF_thread_priority_below_normal   =  -1,
+    _MCF_thread_priority_normal         =   0,
+    _MCF_thread_priority_above_normal   =  +1,
+    _MCF_thread_priority_high           =  +2,
+    _MCF_thread_priority_realtime       = +15,
+    __MCF_thread_priority_end
+  };
+
+/* Gets the last error number, like `GetLastError()`.  */
+__MCF_FWD_IMPORT __MCF_FN_PURE
+uint32_t
+_MCF_get_win32_error(void) __MCF_NOEXCEPT;
+
+/* Gets the system page size, which is usually 4KiB or 8KiB.  */
+__MCF_FWD_IMPORT __MCF_FN_CONST
+size_t
+_MCF_get_page_size(void) __MCF_NOEXCEPT;
+
+/* Gets the number of logical processors in the current group.  */
+__MCF_FWD_IMPORT __MCF_FN_CONST
+size_t
+_MCF_get_processor_count(void) __MCF_NOEXCEPT;
+
+/* Gets the mask of active processors. Each bit 1 denotes a processor that
+ * has been configured into the system.  */
+__MCF_FWD_IMPORT __MCF_FN_CONST
+uintptr_t
+_MCF_get_active_processor_mask(void) __MCF_NOEXCEPT;
+
+/* Declare some helper functions.  */
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
 _MCF_minz(size_t __x, size_t __y) __MCF_NOEXCEPT
-  {
-    return (__y < __x) ? __y : __x;
-  }
+  { return (__y < __x) ? __y : __x;  }
 
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
 _MCF_maxz(size_t __x, size_t __y) __MCF_NOEXCEPT
-  {
-    return (__x < __y) ? __y : __x;
-  }
+  { return (__x < __y) ? __y : __x;  }
 
-__MCF_FWD_IMPORT
+__MCF_FWD_IMPORT __MCF_NEVER_RETURN __MCF_NEVER_INLINE
 void
-__MCF_runtime_failure(const char* __where) __attribute__((__noreturn__, __noinline__, __cold__));
-
-/* Gets the last error number, like `GetLastError()`.  */
-__MCF_FWD_IMPORT
-uint32_t
-_MCF_get_win32_error(void) __MCF_NOEXCEPT __attribute__((__pure__));
-
-/* Gets the system page size, which is usually 4KiB or 8KiB.  */
-__MCF_FWD_IMPORT
-size_t
-_MCF_get_page_size(void) __MCF_NOEXCEPT __attribute__((__const__));
-
-/* Gets the number of logical processors in the current group.  */
-__MCF_FWD_IMPORT
-size_t
-_MCF_get_processor_count(void) __MCF_NOEXCEPT __attribute__((__const__));
-
-/* Gets the mask of active processors. Each bit 1 denotes a processor that
- * has been configured into the system.  */
-__MCF_FWD_IMPORT
-uintptr_t
-_MCF_get_active_processor_mask(void) __MCF_NOEXCEPT __attribute__((__const__));
+__MCF_runtime_failure(const char* __where);
 
 __MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_FWD_  */

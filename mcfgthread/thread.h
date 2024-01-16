@@ -35,7 +35,7 @@ struct __MCF_thread
      * preceding it is reserved for future use. It is not safe to assume the
      * offset of `__data_storage` to be a constant.  */
 #define __MCF_THREAD_DATA_ALIGNMENT   16U
-    __extension__ char __data_storage[0] __attribute__((__aligned__(__MCF_THREAD_DATA_ALIGNMENT)));
+    __MCF_ALIGNED(__MCF_THREAD_DATA_ALIGNMENT) char __data_storage[0];
   };
 
 /* Creates a thread. The `__nref` member is initialized to 2, because a running
@@ -74,14 +74,14 @@ __MCF_thread_attach_foreign(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 /* Gets a pointer to user-defined data of a thread. If the thread does not have
  * user-defined data, because zero was specified for the `__size` parameter to
  * `_MCF_thread_new()`, a null pointer is returned.  */
-__MCF_THREAD_INLINE __MCF_CXX11(constexpr)
+__MCF_THREAD_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
 __MCF_CXX(const) void*
-_MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT __attribute__((__pure__));
+_MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT;
 
 /* Gets the number of references of a thread struct.  */
-__MCF_THREAD_INLINE
+__MCF_THREAD_INLINE __MCF_FN_PURE
 int32_t
-_MCF_thread_get_ref(const _MCF_thread* __thrd) __MCF_NOEXCEPT __attribute__((__pure__));
+_MCF_thread_get_ref(const _MCF_thread* __thrd) __MCF_NOEXCEPT;
 
 /* Adds a reference count of a thread structure. This may be useful if you
  * wish to pass a pointer to other code.  */
@@ -101,19 +101,19 @@ void
 _MCF_thread_drop_ref(_MCF_thread* __thrd_opt) __MCF_NOEXCEPT;
 
 /* Gets the ID of a thread.  */
-__MCF_THREAD_INLINE __MCF_CXX11(constexpr)
+__MCF_THREAD_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
 uint32_t
-_MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT __attribute__((__pure__));
+_MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_NOEXCEPT;
 
 /* Gets the handle of a thread.  */
-__MCF_THREAD_INLINE __MCF_CXX11(constexpr)
+__MCF_THREAD_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
 __MCF_HANDLE
-_MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT __attribute__((__pure__));
+_MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT;
 
 /* Exits from a thread.  */
-__MCF_THREAD_IMPORT
+__MCF_THREAD_IMPORT __MCF_NEVER_RETURN
 void
-_MCF_thread_exit(void) __MCF_NOEXCEPT __attribute__((__noreturn__));
+_MCF_thread_exit(void) __MCF_NOEXCEPT;
 
 /* Waits for a thread to finish execution.
  *
@@ -158,14 +158,14 @@ _MCF_thread_set_priority(_MCF_thread* __thrd_opt, _MCF_thread_priority __priorit
 /* Gets a non-owning pointer to the current thread object. If the calling thread
  * was not created by `_MCF_thread_new_aligned()`, a thread object with no user
  * data is allocated and returned.  */
-__MCF_THREAD_IMPORT
+__MCF_THREAD_IMPORT __MCF_FN_CONST
 _MCF_thread*
-_MCF_thread_self(void) __MCF_NOEXCEPT __attribute__((__const__));
+_MCF_thread_self(void) __MCF_NOEXCEPT;
 
 /* Gets the thread ID of the current thread.  */
-__MCF_THREAD_INLINE
+__MCF_THREAD_INLINE __MCF_FN_CONST
 uint32_t
-_MCF_thread_self_tid(void) __MCF_NOEXCEPT __attribute__((__const__));
+_MCF_thread_self_tid(void) __MCF_NOEXCEPT;
 
 /* Gives up the current time slice.  */
 __MCF_THREAD_IMPORT
@@ -202,9 +202,9 @@ _MCF_sleep_noninterruptible(const int64_t* __timeout_opt) __MCF_NOEXCEPT;
  *
  * Returns the thread-local value if one has been set by the calling thread, or
  * a null pointer otherwise. No return value is reserved to indicate errors.  */
-__MCF_THREAD_INLINE
+__MCF_THREAD_INLINE __MCF_FN_PURE
 void*
-_MCF_tls_get(const _MCF_tls_key* __key) __MCF_NOEXCEPT __attribute__((__pure__));
+_MCF_tls_get(const _MCF_tls_key* __key) __MCF_NOEXCEPT;
 
 /* Sets a thread-local value. The calling thread shall have been created by
  * `_MCF_thread_new()`, or shall be the main thread.

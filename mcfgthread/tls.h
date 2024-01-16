@@ -54,9 +54,9 @@ _MCF_tls_key*
 _MCF_tls_key_new(_MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT;
 
 /* Get the number of references of a thread-local key.  */
-__MCF_TLS_INLINE
+__MCF_TLS_INLINE __MCF_FN_PURE
 int32_t
-_MCF_tls_key_get_ref(const _MCF_tls_key* __key) __MCF_NOEXCEPT __attribute__((__pure__));
+_MCF_tls_key_get_ref(const _MCF_tls_key* __key) __MCF_NOEXCEPT;
 
 /* Adds a reference count of a thread-local key. This may be useful if you
  * wish to pass a pointer to other code.  */
@@ -87,17 +87,17 @@ void
 _MCF_tls_key_delete(_MCF_tls_key* __key_opt) __MCF_NOEXCEPT;
 
 /* Gets the destructor, which may be null if none has been given.  */
-__MCF_TLS_INLINE __MCF_CXX11(constexpr)
+__MCF_TLS_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
 _MCF_tls_dtor*
-_MCF_tls_key_get_destructor(const _MCF_tls_key* __key) __MCF_NOEXCEPT __attribute__((__pure__));
+_MCF_tls_key_get_destructor(const _MCF_tls_key* __key) __MCF_NOEXCEPT;
 
 /* Gets a value from the table.
  *
  * Returns the thread-local value if one has been set, or a null pointer
  * otherwise. No return value is reserved to indicate errors.  */
-__MCF_TLS_IMPORT
+__MCF_TLS_IMPORT __MCF_FN_PURE
 void*
-__MCF_tls_table_get(const __MCF_tls_table* __table, const _MCF_tls_key* __key) __MCF_NOEXCEPT __attribute__((__pure__));
+__MCF_tls_table_get(const __MCF_tls_table* __table, const _MCF_tls_key* __key) __MCF_NOEXCEPT;
 
 /* Sets a value into the table.
  *
