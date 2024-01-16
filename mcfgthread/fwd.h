@@ -126,7 +126,7 @@ typedef struct __MCF_once _MCF_once;
 typedef struct __MCF_sem _MCF_sem;
 typedef struct __MCF_event _MCF_event;
 typedef struct __MCF_thread _MCF_thread;
-typedef enum __MCF_thread_priority _MCF_thread_priority;
+typedef int _MCF_thread_priority;
 typedef struct __MCF_tls_key _MCF_tls_key;
 
 typedef struct timespec __MCF_timespec;
@@ -153,21 +153,6 @@ typedef void __MCF_atexit_callback(void);
 
 /* Define the prototype for `call_once()`.  */
 typedef void __MCF_once_callback(void);
-
-/* Define thread priority constants, from lowest to highest.
- * These values match Windows APIs and can be passed around as such, but we
- * define only what we find necessary at the moment.  */
-enum __MCF_thread_priority __MCF_CXX11(: signed)
-  {
-    _MCF_thread_priority_idle           = -15,
-    _MCF_thread_priority_low            =  -2,
-    _MCF_thread_priority_below_normal   =  -1,
-    _MCF_thread_priority_normal         =   0,
-    _MCF_thread_priority_above_normal   =  +1,
-    _MCF_thread_priority_high           =  +2,
-    _MCF_thread_priority_realtime       = +15,
-    __MCF_thread_priority_end
-  };
 
 /* Gets the last error number, like `GetLastError()`.  */
 __MCF_FWD_IMPORT __MCF_FN_PURE

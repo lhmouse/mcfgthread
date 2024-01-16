@@ -38,6 +38,21 @@ struct __MCF_thread
     __MCF_ALIGNED(__MCF_THREAD_DATA_ALIGNMENT) char __data_storage[0];
   };
 
+/* Define thread priority constants, from lowest to highest.
+ * These values match Windows APIs and can be passed around as such, but we
+ * define only what we find necessary at the moment.  */
+enum __MCF_thread_priority __MCF_CXX11(: int)
+  {
+    _MCF_thread_priority_idle           = -15,
+    _MCF_thread_priority_low            =  -2,
+    _MCF_thread_priority_below_normal   =  -1,
+    _MCF_thread_priority_normal         =   0,
+    _MCF_thread_priority_above_normal   =  +1,
+    _MCF_thread_priority_high           =  +2,
+    _MCF_thread_priority_realtime       = +15,
+    __MCF_thread_priority_end
+  };
+
 /* Creates a thread. The `__nref` member is initialized to 2, because a running
  * thread holds a reference to itself.
  *
