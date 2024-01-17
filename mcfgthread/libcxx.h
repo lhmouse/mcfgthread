@@ -341,17 +341,25 @@ __MCF_LIBCXX_INLINE
 int
 __MCF_libcxx_execute_once(__libcpp_exec_once_flag* __once, __MCF_once_callback* __init_proc)
   {
-    _MCF_once* __cleanup __attribute__((__cleanup__(__MCF_gthr_unonce))) = NULL;
+#ifdef _MSC_VER
+    _MCF_once* __once_g = NULL;
+    __try
+#else
+    _MCF_once* __once_g __attribute__((__cleanup__(__MCF_gthr_unonce))) = NULL;
+#endif
+    {
+      if(_MCF_once_wait(__once, NULL) == 0)
+        return 0;
 
-    if(_MCF_once_wait(__once, NULL) == 0)
+      __once_g = __once;
+      __init_proc();
+      __once_g = NULL;
+      _MCF_once_release(__once);
       return 0;
-
-    __cleanup = __once;
-    __init_proc();
-    __cleanup = NULL;
-
-    _MCF_once_release(__once);
-    return 0;
+    }
+ #ifdef _MSC_VER
+    __finally { __MCF_gthr_unonce(&__once_g);  }
+ #endif
   }
 
 __MCF_LIBCXX_INLINE

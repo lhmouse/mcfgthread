@@ -303,30 +303,95 @@ _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
     return __thrd->__handle;
   }
 
+#if defined _MSC_VER && (defined _M_X64 && !defined _M_ARM64EC)
+/* x86-64, MSVC  */
+unsigned long __readgsdword(unsigned long) __MCF_NOEXCEPT;
+#pragma intrinsic(__readgsdword)
+__MCF_THREAD_INLINE
+uint32_t
+_MCF_thread_self_tid(void) __MCF_NOEXCEPT
+  {
+    return __readgsdword(0x48);
+  }
+#elif defined __amd64__
+/* x86-64, GCC or Clang  */
 __MCF_THREAD_INLINE
 uint32_t
 _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   {
     uint32_t __tid;
-#if defined __amd64__
-    /* Current TEB starts at `gs:0`.  */
     __asm__ ("{ movl %%gs:0x48, %0 | mov %0, dword ptr gs:[0x48] }" : "=r"(__tid));
-#elif defined __i386__
-    /* Current TEB starts at `fs:0`.  */
-    __asm__ ("{ movl %%fs:0x24, %0 | mov %0, dword ptr fs:[0x24] }" : "=r"(__tid));
-#elif defined __aarch64__
-    /* Current TEB base is `x18`.  */
-    __asm__ ("ldr %w0, [x18, #0x48]" : "=r"(__tid));
-#elif defined __arm__
-    /* Current TEB base is moved from co-processor p15.  */
-    char* __teb;
-    __asm__ ("mrc p15, #0, %0, c13, c0, #2" : "=r"(__teb));
-    __tid = *(uint32_t*) (__teb + 0x24);
-#else
-#  error TODO: CPU not supported
-#endif
     return __tid;
   }
+#endif
+
+#if defined _MSC_VER && defined _M_IX86
+/* x86, MSVC  */
+unsigned long __readfsdword(unsigned long) __MCF_NOEXCEPT;
+#pragma intrinsic(__readfsdword)
+__MCF_THREAD_INLINE
+uint32_t
+_MCF_thread_self_tid(void) __MCF_NOEXCEPT
+  {
+    return __readfsdword(0x24);
+  }
+#elif defined __i386__
+/* x86, GCC or Clang  */
+__MCF_THREAD_INLINE
+uint32_t
+_MCF_thread_self_tid(void) __MCF_NOEXCEPT
+  {
+    uint32_t __tid;
+    __asm__ ("{ movl %%fs:0x24, %0 | mov %0, dword ptr fs:[0x24] }" : "=r"(__tid));
+    return __tid;
+  }
+#endif
+
+#if defined _MSC_VER && (defined _M_ARM64 || defined _M_ARM64EC)
+/* ARM64, MSVC  */
+unsigned long __readx18dword(unsigned long) __MCF_NOEXCEPT;
+#pragma intrinsic(__readx18dword)
+__MCF_THREAD_INLINE
+uint32_t
+_MCF_thread_self_tid(void) __MCF_NOEXCEPT
+  {
+    return __readx18dword(0x48);
+  }
+#elif defined __aarch64__
+/* ARM64, GCC or Clang  */
+__MCF_THREAD_INLINE
+uint32_t
+_MCF_thread_self_tid(void) __MCF_NOEXCEPT
+  {
+    uint32_t __tid;
+    __asm__ ("ldr %w0, [x18, #0x48]" : "=r"(__tid));
+    return __tid;
+  }
+#endif
+
+#if defined _MSC_VER && defined _M_ARM
+/* ARM32, MSVC  */
+int _MoveFromCoprocessor(unsigned, unsigned, unsigned, unsigned) __MCF_NOEXCEPT;
+#pragma intrinsic(_MoveFromCoprocessor)
+__MCF_THREAD_INLINE
+uint32_t
+_MCF_thread_self_tid(void) __MCF_NOEXCEPT
+  {
+    char* __teb;
+    __teb = (char*) _MoveFromCoprocessor(15, 0, 13, 0, 2);
+    return *(uint32_t*) (__teb + 0x24);
+  }
+#elif defined __aarch64__
+/* ARM32, GCC or Clang  */
+__MCF_THREAD_INLINE
+uint32_t
+_MCF_thread_self_tid(void) __MCF_NOEXCEPT
+  {
+    char* __teb;
+    __asm__ ("mrc p15, #0, %0, c13, c0, #2" : "=r"(__teb));
+    return *(uint32_t*) (__teb + 0x24);
+  }
+#endif
 
 __MCF_THREAD_INLINE
 void*

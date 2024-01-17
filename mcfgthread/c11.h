@@ -80,12 +80,12 @@ enum __MCF_thrd_error
 /* 7.26.2.1 The call_once function  */
 __MCF_C11_INLINE
 void
-__MCF_c11_call_once(once_flag* __flag, __MCF_once_callback* __init_func);
+__MCF_c11_call_once(once_flag* __once, __MCF_once_callback* __init_proc);
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_ALWAYS_INLINE void call_once(once_flag* __flag, __MCF_once_callback* __init_func) __MCF_ASM_CALL(__MCF_c11_call_once);
+__MCF_ALWAYS_INLINE void call_once(once_flag* __once, __MCF_once_callback* __init_proc) __MCF_ASM_CALL(__MCF_c11_call_once);
 #  ifndef __clang__
-__MCF_ALWAYS_INLINE void call_once(once_flag* __flag, __MCF_once_callback* __init_func) { __MCF_c11_call_once(__flag, __init_func);  }
+__MCF_ALWAYS_INLINE void call_once(once_flag* __once, __MCF_once_callback* __init_proc) { __MCF_c11_call_once(__once, __init_proc);  }
 #  endif  /* __clang__  */
 #endif
 
@@ -397,17 +397,26 @@ __MCF_ALWAYS_INLINE int tss_set(tss_t __key, void* __val_opt) __MCF_NOEXCEPT { r
  * this file.  */
 __MCF_C11_INLINE
 void
-__MCF_c11_call_once(once_flag* __flag, __MCF_once_callback* __init_func)
+__MCF_c11_call_once(once_flag* __once, __MCF_once_callback* __init_proc)
   {
-    _MCF_once* __cleanup __attribute__((__cleanup__(__MCF_gthr_unonce))) = NULL;
+#ifdef _MSC_VER
+    _MCF_once* __once_g = NULL;
+    __try
+#else
+    _MCF_once* __once_g __attribute__((__cleanup__(__MCF_gthr_unonce))) = NULL;
+#endif
+    {
+      if(_MCF_once_wait(__once, NULL) == 0)
+        return;
 
-    if(_MCF_once_wait(__flag, NULL) == 0)
-      return;
-
-    __cleanup = __flag;
-    __init_func();
-    __cleanup = NULL;
-    _MCF_once_release(__flag);
+      __once_g = __once;
+      __init_proc();
+      __once_g = NULL;
+      _MCF_once_release(__once);
+    }
+ #ifdef _MSC_VER
+    __finally { __MCF_gthr_unonce(&__once_g);  }
+ #endif
   }
 
 __MCF_C11_INLINE
