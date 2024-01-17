@@ -381,7 +381,7 @@ _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   }
 #elif defined _M_ARM && defined _MSC_VER
 /* ARM32, MSVC  */
-int _MoveFromCoprocessor(unsigned, unsigned, unsigned, unsigned) __MCF_NOEXCEPT;
+unsigned _MoveFromCoprocessor(unsigned, unsigned, unsigned, unsigned, unsigned) __MCF_NOEXCEPT;
 #pragma intrinsic(_MoveFromCoprocessor)
 __MCF_THREAD_INLINE
 uint32_t
