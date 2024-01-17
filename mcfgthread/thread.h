@@ -310,7 +310,7 @@ uint32_t
 _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   {
     uint32_t __tid;
-    __asm__ ("{ movl %%gs:0x48, %0 | mov %0, dword ptr gs:[0x48] }" : "=r"(__tid));
+    __asm__ ("{ movl %%gs:0x48, %0 | mov %0, gs:[0x48] }" : "=r"(__tid));
     return __tid;
   }
 #elif (defined _M_X64 && !defined _M_ARM64EC) && defined _MSC_VER
@@ -332,7 +332,7 @@ uint32_t
 _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   {
     uint32_t __tid;
-    __asm__ ("{ movl %%fs:0x24, %0 | mov %0, dword ptr fs:[0x24] }" : "=r"(__tid));
+    __asm__ ("{ movl %%fs:0x24, %0 | mov %0, fs:[0x24] }" : "=r"(__tid));
     return __tid;
   }
 #elif defined _M_IX86 && defined _MSC_VER
