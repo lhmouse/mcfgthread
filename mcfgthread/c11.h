@@ -404,7 +404,6 @@ __MCF_c11_call_once(once_flag* __once, __MCF_once_callback* __init_proc)
     __try
 #else
     _MCF_once* __once_g __attribute__((__cleanup__(__MCF_gthr_unonce))) = NULL;
-    if(0); else
 #endif
     {
       if(_MCF_once_wait(__once, NULL) == 0)
@@ -415,9 +414,9 @@ __MCF_c11_call_once(once_flag* __once, __MCF_once_callback* __init_proc)
       __once_g = NULL;
       _MCF_once_release(__once);
     }
- #ifdef _MSC_VER
+#ifdef _MSC_VER
     __finally { __MCF_gthr_unonce(&__once_g);  }
- #endif
+#endif
   }
 
 __MCF_C11_INLINE

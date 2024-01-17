@@ -346,7 +346,6 @@ __MCF_libcxx_execute_once(__libcpp_exec_once_flag* __once, __MCF_once_callback* 
     __try
 #else
     _MCF_once* __once_g __attribute__((__cleanup__(__MCF_gthr_unonce))) = NULL;
-    if(0); else
 #endif
     {
       if(_MCF_once_wait(__once, NULL) == 0)
@@ -358,9 +357,9 @@ __MCF_libcxx_execute_once(__libcpp_exec_once_flag* __once, __MCF_once_callback* 
       _MCF_once_release(__once);
       return 0;
     }
- #ifdef _MSC_VER
+#ifdef _MSC_VER
     __finally { __MCF_gthr_unonce(&__once_g);  }
- #endif
+#endif
   }
 
 __MCF_LIBCXX_INLINE
