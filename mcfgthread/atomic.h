@@ -72,9 +72,6 @@ __MCF_C_DECLARATIONS_BEGIN
            atomic_compare_exchange_weak_explicit(p, pcmp, val, ord_succ, ord_fail)
 #endif
 
-#define __MCF_zp_r   const void* __restrict
-#define __MCF_zp     void* __restrict
-
 /* Perform an atomic load operation. `mem` shall point to an atomic object of the
  * specified width. The first function returns the value as an integer. The second
  * function writes the value into `*res`.

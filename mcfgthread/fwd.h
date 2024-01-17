@@ -151,6 +151,8 @@ typedef struct __MCF_tls_key _MCF_tls_key;
 
 typedef struct timespec __MCF_timespec;
 typedef void* __MCF_HANDLE;
+typedef const void* __restrict __MCF_zp_r;
+typedef void* __restrict __MCF_zp;
 
 /* See `_MCF_cond_wait()` for details about these callbacks.  */
 typedef intptr_t _MCF_cond_unlock_callback(intptr_t __lock_arg);
