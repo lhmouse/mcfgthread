@@ -1,7 +1,7 @@
 ACLOCAL_AMFLAGS = -I m4
 END =
 
-AM_CPPFLAGS = -pipe -Wall -Wextra -Wpedantic -I../mcfgthread
+AM_CPPFLAGS = -pipe -Wall -Wextra -I../mcfgthread
 AM_CXXFLAGS = -std=c++11 -static-libgcc -static-libstdc++
 
 AM_DEFAULT_SOURCE_EXT = .cpp
