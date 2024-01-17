@@ -42,9 +42,9 @@ typedef __MCF_gthr_rc_mutex __gthread_recursive_mutex_t;
 /* Informs the runtime that threading support is active.
  * Windows creates new threads for console control handlers, so threading
  * cannot be disabled.  */
-__MCF_GTHR_INLINE __MCF_CXX11(constexpr)
+__MCF_GTHR_INLINE __MCF_FN_CONST __MCF_CXX11(constexpr)
 int
-__MCF_gthr_active_p(void) __MCF_NOEXCEPT __attribute__((__const__));
+__MCF_gthr_active_p(void) __MCF_NOEXCEPT;
 
 #ifndef __MCF_GTHR_NO_ALIASES
 #  define __gthread_active_p  __MCF_gthr_active_p
@@ -78,9 +78,9 @@ __MCF_gthr_key_delete(__gthread_key_t __key) __MCF_NOEXCEPT;
 #endif
 
 /* Gets a thread-specific value, like `pthread_getspecific()`.  */
-__MCF_GTHR_INLINE
+__MCF_GTHR_INLINE __MCF_FN_PURE
 void*
-__MCF_gthr_getspecific(__gthread_key_t __key) __MCF_NOEXCEPT __attribute__((__pure__));
+__MCF_gthr_getspecific(__gthread_key_t __key) __MCF_NOEXCEPT;
 
 #ifndef __MCF_GTHR_NO_ALIASES
 #  define __gthread_getspecific  __MCF_gthr_getspecific
@@ -303,18 +303,18 @@ __MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_NOEXCEPT;
 /* Gets a thread itself, like `pthread_self()`.
  * The thread shall be the main thread, or shall have been created by
  * `__gthread_create()`. Otherwise the behavior is undefined.  */
-__MCF_GTHR_INLINE
+__MCF_GTHR_INLINE __MCF_FN_CONST
 __gthread_t
-__MCF_gthr_self(void) __MCF_NOEXCEPT __attribute__((__const__, __returns_nonnull__));
+__MCF_gthr_self(void) __MCF_NOEXCEPT;
 
 #ifndef __MCF_GTHR_NO_ALIASES
 #  define __gthread_self  __MCF_gthr_self
 #endif
 
 /* Checks whether two thread IDs compare equal, like `pthread_equal()`.  */
-__MCF_GTHR_INLINE __MCF_CXX11(constexpr)
+__MCF_GTHR_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
 int
-__MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT __attribute__((__pure__));
+__MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_NOEXCEPT;
 
 #ifndef __MCF_GTHR_NO_ALIASES
 #  define __gthread_equal  __MCF_gthr_equal

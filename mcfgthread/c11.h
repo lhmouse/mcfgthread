@@ -246,9 +246,9 @@ __MCF_ALWAYS_INLINE int thrd_create(thrd_t* __thrd, thrd_start_t __proc, void* _
 #endif
 
 /* 7.26.5.2 The thrd_current function  */
-__MCF_C11_INLINE
+__MCF_C11_INLINE __MCF_FN_CONST
 thrd_t
-__MCF_c11_thrd_current(void) __MCF_NOEXCEPT __attribute__((__const__, __returns_nonnull__));
+__MCF_c11_thrd_current(void) __MCF_NOEXCEPT;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_ALWAYS_INLINE thrd_t thrd_current(void) __MCF_NOEXCEPT __MCF_ASM_CALL(__MCF_c11_thrd_current);
@@ -270,9 +270,9 @@ __MCF_ALWAYS_INLINE int thrd_detach(thrd_t __thrd) __MCF_NOEXCEPT { return __MCF
 #endif
 
 /* 7.26.5.4 The thrd_equal function  */
-__MCF_C11_INLINE __MCF_CXX11(constexpr)
+__MCF_C11_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
 int
-__MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_NOEXCEPT __attribute__((__pure__));
+__MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_NOEXCEPT;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_ALWAYS_INLINE int thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_NOEXCEPT __MCF_ASM_CALL(__MCF_c11_thrd_equal);
@@ -282,9 +282,9 @@ __MCF_ALWAYS_INLINE int thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_NOEXCEPT { re
 #endif
 
 /* 7.26.5.5 The thrd_exit function  */
-__MCF_C11_INLINE
+__MCF_C11_INLINE __MCF_NEVER_RETURN
 void
-__MCF_c11_thrd_exit(int __res) __MCF_NOEXCEPT __attribute__((__noreturn__));
+__MCF_c11_thrd_exit(int __res) __MCF_NOEXCEPT;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_ALWAYS_INLINE void thrd_exit(int __res) __MCF_NOEXCEPT __MCF_ASM_CALL(__MCF_c11_thrd_exit);
@@ -367,9 +367,9 @@ __MCF_ALWAYS_INLINE void tss_delete(tss_t __key) __MCF_NOEXCEPT { __MCF_c11_tss_
 #endif
 
 /* 7.26.6.3 The tss_get function  */
-__MCF_C11_INLINE
+__MCF_C11_INLINE __MCF_FN_PURE
 void*
-__MCF_c11_tss_get(tss_t __key) __MCF_NOEXCEPT __attribute__((__pure__));
+__MCF_c11_tss_get(tss_t __key) __MCF_NOEXCEPT;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_ALWAYS_INLINE void* tss_get(tss_t __key) __MCF_NOEXCEPT __MCF_ASM_CALL(__MCF_c11_tss_get);

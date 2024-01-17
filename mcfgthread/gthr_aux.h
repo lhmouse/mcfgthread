@@ -49,9 +49,9 @@ __MCF_gthr_unonce(_MCF_once** __oncep) __MCF_NOEXCEPT;
 
 /* This is an auxiliary function for converting a `__MCF_timespec` to the
  * number of milliseconds since the Unix epoch, with boundary checking.  */
-__MCF_GTHR_AUX_IMPORT
+__MCF_GTHR_AUX_IMPORT __MCF_FN_PURE
 int64_t
-__MCF_gthr_timeout_from_timespec(const __MCF_timespec* __abs_time) __MCF_NOEXCEPT __attribute__((__pure__));
+__MCF_gthr_timeout_from_timespec(const __MCF_timespec* __abs_time) __MCF_NOEXCEPT;
 
 /* These are auxiliary functions for condition variables. The argument is a
  * pointer to a plain `_MCF_mutex`.  */

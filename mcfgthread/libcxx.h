@@ -68,9 +68,9 @@ __MCF_libcxx_tls_delete(__libcpp_tls_key __key) __MCF_NOEXCEPT;
 #endif
 
 /* Gets a thread-specific value, like `pthread_getspecific()`.  */
-__MCF_LIBCXX_INLINE
+__MCF_LIBCXX_INLINE __MCF_FN_PURE
 void*
-__MCF_libcxx_tls_get(__libcpp_tls_key __key) __MCF_NOEXCEPT __attribute__((__pure__));
+__MCF_libcxx_tls_get(__libcpp_tls_key __key) __MCF_NOEXCEPT;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_tls_get  __MCF_libcxx_tls_get
@@ -263,9 +263,9 @@ __MCF_libcxx_thread_detach(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT;
 #endif
 
 /* Checks whether a thread object is null.  */
-__MCF_LIBCXX_INLINE __MCF_CXX11(constexpr)
+__MCF_LIBCXX_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
 bool
-__MCF_libcxx_thread_isnull(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT __attribute__((__pure__));
+__MCF_libcxx_thread_isnull(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_thread_isnull  __MCF_libcxx_thread_isnull
@@ -274,36 +274,36 @@ __MCF_libcxx_thread_isnull(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT __at
 /* Gets a thread itself, like `pthread_self()`.
  * The thread shall be the main thread, or shall have been created by
  * `__libcpp_thread_create()`. Otherwise the behavior is undefined.  */
-__MCF_LIBCXX_INLINE
+__MCF_LIBCXX_INLINE __MCF_FN_CONST
 __libcpp_thread_id
-__MCF_libcxx_thread_get_current_id(void) __MCF_NOEXCEPT __attribute__((__const__));
+__MCF_libcxx_thread_get_current_id(void) __MCF_NOEXCEPT;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_thread_get_current_id  __MCF_libcxx_thread_get_current_id
 #endif
 
 /* Gets the ID of another thread.  */
-__MCF_LIBCXX_INLINE __MCF_CXX11(constexpr)
+__MCF_LIBCXX_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
 __libcpp_thread_id
-__MCF_libcxx_thread_get_id(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT __attribute__((__pure__));
+__MCF_libcxx_thread_get_id(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_thread_get_id  __MCF_libcxx_thread_get_id
 #endif
 
 /* Checks whether two thread IDs compare equal, like `pthread_equal()`.  */
-__MCF_LIBCXX_INLINE __MCF_CXX11(constexpr)
+__MCF_LIBCXX_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
 bool
-__MCF_libcxx_thread_id_equal(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_NOEXCEPT __attribute__((__pure__));
+__MCF_libcxx_thread_id_equal(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_NOEXCEPT;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_thread_id_equal  __MCF_libcxx_thread_id_equal
 #endif
 
 /* Checks whether two thread IDs compare less, for standard containers.  */
-__MCF_LIBCXX_INLINE __MCF_CXX11(constexpr)
+__MCF_LIBCXX_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
 bool
-__MCF_libcxx_thread_id_less(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_NOEXCEPT __attribute__((__pure__));
+__MCF_libcxx_thread_id_less(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_NOEXCEPT;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_thread_id_less  __MCF_libcxx_thread_id_less

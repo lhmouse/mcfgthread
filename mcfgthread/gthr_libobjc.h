@@ -155,9 +155,9 @@ __MCF_gthr_objc_thread_set_priority(int __priority) __MCF_NOEXCEPT;
 #endif
 
 /* Return the current thread's priority.  */
-__MCF_GTHR_LIBOBJC_INLINE
+__MCF_GTHR_LIBOBJC_INLINE __MCF_FN_PURE
 int
-__MCF_gthr_objc_thread_get_priority(void) __MCF_NOEXCEPT __attribute__((__pure__));
+__MCF_gthr_objc_thread_get_priority(void) __MCF_NOEXCEPT;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
 #  define __gthread_objc_thread_get_priority  __MCF_gthr_objc_thread_get_priority
@@ -173,27 +173,27 @@ __MCF_gthr_objc_thread_yield(void) __MCF_NOEXCEPT;
 #endif
 
 /* Terminate the current thread.  */
-__MCF_GTHR_LIBOBJC_INLINE
+__MCF_GTHR_LIBOBJC_INLINE __MCF_NEVER_RETURN
 int
-__MCF_gthr_objc_thread_exit(void) __MCF_NOEXCEPT __attribute__((__noreturn__));
+__MCF_gthr_objc_thread_exit(void) __MCF_NOEXCEPT;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
 #  define __gthread_objc_thread_exit  __MCF_gthr_objc_thread_exit
 #endif
 
 /* Returns an integer value which uniquely describes a thread.  */
-__MCF_GTHR_LIBOBJC_INLINE
+__MCF_GTHR_LIBOBJC_INLINE __MCF_FN_CONST
 objc_thread_t
-__MCF_gthr_objc_thread_id(void) __MCF_NOEXCEPT __attribute__((__const__));
+__MCF_gthr_objc_thread_id(void) __MCF_NOEXCEPT;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
 #  define __gthread_objc_thread_id  __MCF_gthr_objc_thread_id
 #endif
 
 /* Returns the thread's local storage pointer.  */
-__MCF_GTHR_LIBOBJC_INLINE
+__MCF_GTHR_LIBOBJC_INLINE __MCF_FN_PURE
 void*
-__MCF_gthr_objc_thread_get_data(void) __MCF_NOEXCEPT __attribute__((__pure__));
+__MCF_gthr_objc_thread_get_data(void) __MCF_NOEXCEPT;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
 #  define __gthread_objc_thread_get_data  __MCF_gthr_objc_thread_get_data

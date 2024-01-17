@@ -14,17 +14,17 @@ __MCF_C_DECLARATIONS_BEGIN
 #endif
 
 /* Declare 'real' functions here.  */
-__MCF_EXIT_IMPORT
+__MCF_EXIT_IMPORT __MCF_NEVER_RETURN
 void
-__MCF__Exit(int __status) __MCF_NOEXCEPT __attribute__((__noreturn__));
+__MCF__Exit(int __status) __MCF_NOEXCEPT;
 
-__MCF_EXIT_IMPORT
+__MCF_EXIT_IMPORT __MCF_NEVER_RETURN
 void
-__MCF_quick_exit(int __status) __MCF_NOEXCEPT __attribute__((__noreturn__));
+__MCF_quick_exit(int __status) __MCF_NOEXCEPT;
 
-__MCF_EXIT_IMPORT
+__MCF_EXIT_IMPORT __MCF_NEVER_RETURN
 void
-__MCF_exit(int __status) __MCF_NOEXCEPT __attribute__((__noreturn__));
+__MCF_exit(int __status) __MCF_NOEXCEPT;
 
 __MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_EXIT_  */
