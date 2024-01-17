@@ -14,7 +14,7 @@ __MCF_C_DECLARATIONS_BEGIN
 #endif
 
 #ifdef __GNUC__
-/* Use GCC and Clang bultins which map to C++11 atomic functions directly. GCC
+/* Use GCC and Clang bultins which map to C++11 atomic functions precisely. GCC
  * 4.7 or Clang 3.1 is required.  */
 #  define __MCF__Atomic
 
