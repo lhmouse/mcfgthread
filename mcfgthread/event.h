@@ -111,7 +111,7 @@ _MCF_event_get(const _MCF_event* __event) __MCF_NOEXCEPT
   {
     _MCF_event __temp;
     _MCF_atomic_load_pptr_rlx(&__temp, __event);
-    return __temp.__value;
+    return (uint8_t) __temp.__value;
   }
 
 __MCF_EVENT_INLINE
@@ -127,7 +127,7 @@ _MCF_event_await_change(_MCF_event* __event, int __undesired, const int64_t* __t
     /* Check whether the event does not contain the undesired value. If so,
      * don't block at all.  */
     if(__old.__value != (uint8_t) __undesired)
-      return __old.__value;
+      return (uint8_t) __old.__value;
 
     if(__timeout_opt && (*__timeout_opt == 0))
       return -1;
