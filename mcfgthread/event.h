@@ -19,21 +19,24 @@ __MCF_C_DECLARATIONS_BEGIN
 struct __MCF_event
   {
     uintptr_t __value : 8;
-    uintptr_t __reserved_bits : 1;
+    uintptr_t __reserved_bit : 1;
 
 #define __MCF_EVENT_NSLEEP_M   (__MCF_UPTR_MAX >> 9)
     uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
-/* This is the maximum value of an event.  */
-#define __MCF_EVENT_VALUE_MAX   __UINT8_MAX__
+/* This is the maximum value of an event. This is a value of type `int` due
+ * to potential integral promotion.  */
+#define __MCF_EVENT_VALUE_MAX   0xFF
 
 /* Define a macro for static initialization of events. The argument is the
  * initial value of the event.  */
 #define __MCF_EVENT_INIT(__value_init)  \
-    { __MCF_STATIC_ASSERT_0((__value_init) >= 0) +  \
-      __MCF_STATIC_ASSERT_0((__value_init) <= __MCF_EVENT_VALUE_MAX) +  \
-      (__value_init), 0, 0 }
+    {  \
+      (__value_init), 0, 0  \
+      + __MCF_STATIC_ASSERT_0((__value_init) >= 0)  \
+      + __MCF_STATIC_ASSERT_0((__value_init) <= __MCF_EVENT_VALUE_MAX)  \
+    }
 
 /* Initializes an event dynamically. The argument is the initial value of
  * the event, which shall not be negative.
