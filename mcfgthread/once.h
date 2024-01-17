@@ -101,7 +101,7 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
 
     /* Check the first byte to see whether initialization has been completed,
      * and if that's the case, don't do anything.  */
-    if(__builtin_expect(__old.__ready, 1))
+    if(__old.__ready)
       return 0;
 
     if(__timeout_opt && (*__timeout_opt == 0) && __old.__locked)
