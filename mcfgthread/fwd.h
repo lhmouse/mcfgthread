@@ -45,9 +45,15 @@
 #endif
 
 #ifdef _WIN64
-#  define __MCF_PTR_BITS   64
+#  define __MCF_PTR_BITS     64
+#  define __MCF_IPTR_MIN   (-0x7FFFFFFFFFFFFFFF - 1)
+#  define __MCF_IPTR_MAX     0x7FFFFFFFFFFFFFFF
+#  define __MCF_UPTR_MAX     0xFFFFFFFFFFFFFFFFU
 #else
-#  define __MCF_PTR_BITS   32
+#  define __MCF_PTR_BITS     32
+#  define __MCF_IPTR_MIN   (-0x7FFFFFFF - 1)
+#  define __MCF_IPTR_MAX     0x7FFFFFFF
+#  define __MCF_UPTR_MAX     0xFFFFFFFFU
 #endif
 
 /* Standard support  */

@@ -26,7 +26,7 @@ struct __MCF_mutex
 #define __MCF_MUTEX_SP_NFAIL_M  15U
     uintptr_t __sp_nfail : 4;  /* number of timeouts after spinning  */
 
-#define __MCF_MUTEX_NSLEEP_M  (__UINTPTR_MAX__ >> 9)
+#define __MCF_MUTEX_NSLEEP_M  (__MCF_UPTR_MAX >> 9)
     uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
