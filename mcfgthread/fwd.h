@@ -16,7 +16,7 @@
 #endif
 
 /* Compiler-specific stuff  */
-#ifdef _MSC_VER
+#if defined _MSC_VER && !defined __clang__
 #  define __MCF_GNU_INLINE    __inline
 #  define __MCF_ALWAYS_INLINE   __forceinline
 #  define __MCF_NEVER_INLINE   __declspec(noinline)
