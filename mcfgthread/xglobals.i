@@ -128,7 +128,7 @@ EXCEPTION_DISPOSITION
 __cdecl
 __MCF_seh_top(EXCEPTION_RECORD* __rec, PVOID __estab_frame, CONTEXT* __ctx, PVOID __disp_ctx) __MCF_NOEXCEPT;
 
-#if defined(__i386__)
+#if defined __i386__
 /* On x86, SEH is stack-based.  */
 typedef struct __MCF_seh_i386_node __MCF_seh_i386_node;
 
@@ -373,7 +373,7 @@ __MCF_close_handle(__MCF_HANDLE __handle) __MCF_NOEXCEPT
     __MCF_ASSERT_NT(__status);
   }
 
-#if defined(__i386__) || defined(__amd64__)
+#if defined __i386__ || defined __amd64__
 /* Define macros for string operations for reducing code size.  */
 #  define __MCF_X86_REP_STOSB(di, cx, ax)  \
     __asm__ volatile (  \

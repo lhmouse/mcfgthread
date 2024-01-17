@@ -48,17 +48,17 @@
 #define __MCF_C_DECLARATIONS_BEGIN
 #define __MCF_C_DECLARATIONS_END
 
-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901L)  /* C99  */
+#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 199901L)  /* C99  */
 #  undef __MCF_C99
 #  define __MCF_C99(...)   __VA_ARGS__
 #endif
 
-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)  /* C11  */
+#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 201112L)  /* C11  */
 #  undef __MCF_C11
 #  define __MCF_C11(...)   __VA_ARGS__
 #endif
 
-#if defined(__cplusplus)  /* C++  */
+#if defined __cplusplus  /* C++  */
 #  undef __MCF_C
 #  define __MCF_C(...)   /* hidden  */
 #  undef __MCF_CXX
@@ -71,14 +71,14 @@
 #  define __MCF_C_DECLARATIONS_END   }  /* extern "C"  */
 #endif
 
-#if defined(__cplusplus) && (__cplusplus >= 201103L)  /* C++11  */
+#if defined __cplusplus && (__cplusplus >= 201103L)  /* C++11  */
 #  undef __MCF_CXX11
 #  define __MCF_CXX11(...)   __VA_ARGS__
 #  undef __MCF_NOEXCEPT
 #  define __MCF_NOEXCEPT   noexcept
 #endif
 
-#if defined(__cplusplus) && (__cplusplus >= 201402L)  /* C++14  */
+#if defined __cplusplus && (__cplusplus >= 201402L)  /* C++14  */
 #  undef __MCF_CXX14
 #  define __MCF_CXX14(...)   __VA_ARGS__
 #endif

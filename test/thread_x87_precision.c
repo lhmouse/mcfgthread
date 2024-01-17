@@ -10,7 +10,7 @@ static
 void
 thread_proc(_MCF_thread* self)
   {
-#if defined(__i386__) || defined(__amd64__)
+#if defined __i386__ || defined __amd64__
     assert(sizeof(long double) > 8);
     static volatile long double eps = 0x0.000000000000001p0L;
     static volatile long double ep1 = 0x1.000000000000001p0L;

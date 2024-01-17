@@ -10,28 +10,28 @@
 #include <windows.h>
 
 
-#if defined(USE_SRWLOCK)
+#if defined USE_SRWLOCK
 
 #  define my_mutex_t      SRWLOCK
 #  define my_init(m)      InitializeSRWLock(m)
 #  define my_lock(m)      AcquireSRWLockExclusive(m)
 #  define my_unlock(m)    ReleaseSRWLockExclusive(m)
 
-#elif defined(USE_CRITICAL_SECTION)
+#elif defined USE_CRITICAL_SECTION
 
 #  define my_mutex_t      CRITICAL_SECTION
 #  define my_init(m)      InitializeCriticalSection(m)
 #  define my_lock(m)      EnterCriticalSection(m)
 #  define my_unlock(m)    LeaveCriticalSection(m)
 
-#elif defined(USE_WINPTHREAD)
+#elif defined USE_WINPTHREAD
 
 #  define my_mutex_t      pthread_mutex_t
 #  define my_init(m)      pthread_mutex_init(m, NULL)
 #  define my_lock(m)      pthread_mutex_lock(m)
 #  define my_unlock(m)    pthread_mutex_unlock(m)
 
-#elif defined(USE_MCFGTHREAD)
+#elif defined USE_MCFGTHREAD
 
 #  define my_mutex_t      _MCF_mutex
 #  define my_init(m)      __MCF_gthr_mutex_init(m)

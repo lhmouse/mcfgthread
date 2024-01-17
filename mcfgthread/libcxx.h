@@ -8,7 +8,7 @@
 #include "fwd.h"
 #include "gthr_aux.h"
 #include <errno.h>
-#if defined(__cplusplus) && (__cplusplus >= 201103L)
+#if defined __cplusplus && (__cplusplus >= 201103L)
 #  include <chrono>
 #endif
 
@@ -314,7 +314,7 @@ __MCF_LIBCXX_IMPORT
 void
 __MCF_libcxx_thread_sleep_for_ns_count(int64_t __ns) __MCF_NOEXCEPT;
 
-#if defined(__cplusplus) && (__cplusplus >= 201103L)
+#if defined __cplusplus && (__cplusplus >= 201103L)
 __MCF_ALWAYS_INLINE
 void
 __libcpp_thread_sleep_for(const ::std::chrono::nanoseconds& __ns) __MCF_NOEXCEPT

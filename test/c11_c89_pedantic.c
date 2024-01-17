@@ -4,7 +4,7 @@
 
 #include "../mcfgthread/c11.h"
 
-#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 199901)
+#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 199901)
 #  error Please compile this file as C89.
 #endif
 

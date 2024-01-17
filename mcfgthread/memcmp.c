@@ -19,7 +19,7 @@ memcmp(const void* src, const void* cmp, size_t size)
     const uint8_t* pcmp = cmp;
     size_t dp = size;
 
-#if defined(__i386__) || defined(__amd64__)
+#if defined __i386__ || defined __amd64__
     /* Perform string comparison with hardware.  */
     __asm__ volatile (
       "xor eax, eax; "  /* clear ZF and CF  */

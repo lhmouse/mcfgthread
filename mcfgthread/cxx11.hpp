@@ -51,7 +51,7 @@ template<typename _Tp>
 class thread_specific_ptr;  // inspired by boost
 
 // Provide limited support for `-fno-exceptions`.
-#if defined(__EXCEPTIONS) || defined(__cpp_exceptions)
+#if defined __EXCEPTIONS || defined __cpp_exceptions
 
 #  define __MCF_TRY          try
 #  define __MCF_CATCH(...)   catch(__VA_ARGS__)
@@ -74,7 +74,7 @@ class thread_specific_ptr;  // inspired by boost
 // Provide `INVOKE` for C++11. [func.require]
 // At the moment, all results are discarded, so the expression always has a
 // type of `void` for simplicity.
-#if defined(__cpp_lib_invoke)
+#if defined __cpp_lib_invoke
 
 #  define __MCF_VOID_INVOKE(_F, ...)   ((void) ::std::invoke(_F, __VA_ARGS__))
 
