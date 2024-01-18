@@ -15,6 +15,11 @@
 #include <winternl.h>
 #include <winerror.h>
 #include <sysinfoapi.h>
+#include <profileapi.h>
+#include <realtimeapiset.h>
+#include <heapapi.h>
+#include <libloaderapi.h>
+#include <processthreadsapi.h>
 #include <wincon.h>
 
 __MCF_C_DECLARATIONS_BEGIN
@@ -63,35 +68,7 @@ __MCF_WINAPI(DWORD) GetLastError(void) __attribute__((__pure__));
 __MCF_WINAPI(void) SetLastError(DWORD);
 __MCF_WINAPI(PVOID) EncodePointer(PVOID) __attribute__((__const__));
 __MCF_WINAPI(PVOID) DecodePointer(PVOID) __attribute__((__const__));
-
 __MCF_WINAPI(NTSTATUS) BaseGetNamedObjectDirectory(HANDLE*);
-__MCF_WINAPI(BOOL) SetConsoleCtrlHandler(PHANDLER_ROUTINE, BOOL);
-__MCF_WINAPI(HMODULE) GetModuleHandleW(LPCWSTR) __attribute__((__pure__));
-__MCF_WINAPI(FARPROC) GetProcAddress(HMODULE, LPCSTR) __attribute__((__pure__));
-
-__MCF_WINAPI(DWORD) TlsAlloc(void);
-__MCF_WINAPI(BOOL) TlsFree(DWORD);
-__MCF_WINAPI(LPVOID) TlsGetValue(DWORD) __attribute__((__pure__));
-__MCF_WINAPI(BOOL) TlsSetValue(DWORD, LPVOID);
-
-__MCF_WINAPI(HANDLE) GetProcessHeap(void) __attribute__((__const__));
-__MCF_WINAPI(LPVOID) HeapAlloc(HANDLE, DWORD, SIZE_T) __attribute__((__alloc_size__(3)));
-__MCF_WINAPI(LPVOID) HeapReAlloc(HANDLE, DWORD, LPVOID, SIZE_T) __attribute__((__alloc_size__(4)));
-__MCF_WINAPI(SIZE_T) HeapSize(HANDLE, DWORD, LPCVOID) __attribute__((__pure__));
-__MCF_WINAPI(BOOL) HeapFree(HANDLE, DWORD, LPVOID);
-
-__MCF_WINAPI(void) GetSystemTimeAsFileTime(FILETIME*);
-__MCF_WINAPI(ULONGLONG) GetTickCount64(void);
-__MCF_WINAPI(BOOL) QueryUnbiasedInterruptTime(PULONGLONG);
-__MCF_WINAPI(BOOL) QueryPerformanceFrequency(LARGE_INTEGER*);
-__MCF_WINAPI(BOOL) QueryPerformanceCounter(LARGE_INTEGER*);
-
-__MCF_WINAPI(HANDLE) CreateThread(SECURITY_ATTRIBUTES*, SIZE_T, PTHREAD_START_ROUTINE, LPVOID, DWORD, DWORD*);
-__MCF_WINAPI(void) ExitThread(DWORD) __attribute__((__noreturn__));
-__MCF_WINAPI(int) GetThreadPriority(HANDLE) __attribute__((__pure__));
-__MCF_WINAPI(BOOL) SetThreadPriority(HANDLE, int);
-__MCF_WINAPI(DWORD) GetCurrentProcessId(void) __attribute__((__const__));
-__MCF_WINAPI(BOOL) TerminateProcess(HANDLE, UINT);
 
 /* Declare NTDLL (driver) APIs here.  */
 __MCF_WINAPI(NTSTATUS) LdrAddRefDll(ULONG, PVOID);
