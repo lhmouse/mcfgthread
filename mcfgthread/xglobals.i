@@ -20,6 +20,7 @@
 #include <heapapi.h>
 #include <libloaderapi.h>
 #include <processthreadsapi.h>
+#include <shtypes.h>
 #include <wincon.h>
 
 __MCF_C_DECLARATIONS_BEGIN
