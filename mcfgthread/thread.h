@@ -89,7 +89,7 @@ __MCF_thread_attach_foreign(_MCF_thread* __thrd) __MCF_NOEXCEPT;
 /* Gets a pointer to user-defined data of a thread. If the thread does not have
  * user-defined data, because zero was specified for the `__size` parameter to
  * `_MCF_thread_new()`, a null pointer is returned.  */
-__MCF_THREAD_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
+__MCF_THREAD_INLINE __MCF_FN_PURE
 __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT;
 
