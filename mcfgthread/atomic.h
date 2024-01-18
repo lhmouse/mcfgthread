@@ -257,7 +257,7 @@ __MCF_atomic_xchg_(z, cst, size_t)
  * atomic object with `*cmp`. If they do not equal, these functions write the old
  * value into `*cmp` and return `false`. If they equal, these functions store the
  * integer `val` or the value at `*src` into `*mem`, and return `false`. These
- * functions may perform the operation as loops and will not fail spuriously.
+ * functions may perform the operation as a loop and will not fail spuriously.
  *
  *   bool
  *   _MCF_atomic_cmpxchg_[WIDTH]_[ORDER](void* mem, [INTEGER]* cmp, [INTEGER] val);
