@@ -7,7 +7,7 @@
 
 #include "fwd.h"
 
-#if defined __GNUC__ || defined __clang__ || defined __STDC_NO_ATOMICS__
+#if defined __GNUC__ || defined __clang__
 /* Use native types.  */
 #  define __MCF_atomic(...)   volatile __VA_ARGS__
 
