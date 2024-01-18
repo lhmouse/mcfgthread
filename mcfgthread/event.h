@@ -46,12 +46,12 @@ struct __MCF_event
  * arguments.  */
 __MCF_EVENT_INLINE
 int
-_MCF_event_init(_MCF_event* __event, int __value_init) __MCF_NOEXCEPT;
+_MCF_event_init(_MCF_event* __eventp, int __value_init) __MCF_NOEXCEPT;
 
 /* Gets the current value of an event.  */
 __MCF_EVENT_INLINE
 uint8_t
-_MCF_event_get(const _MCF_event* __event) __MCF_NOEXCEPT;
+_MCF_event_get(const _MCF_event* __eventp) __MCF_NOEXCEPT;
 
 /* Waits for an event until it does NOT contain an undesired value.
  *
@@ -69,11 +69,11 @@ _MCF_event_get(const _MCF_event* __event) __MCF_NOEXCEPT;
  * or -1 if the operation has timed out, or -2 in case of invalid arguments.  */
 __MCF_EVENT_IMPORT
 int
-_MCF_event_await_change_slow(_MCF_event* __event, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+_MCF_event_await_change_slow(_MCF_event* __eventp, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
 __MCF_EVENT_INLINE
 int
-_MCF_event_await_change(_MCF_event* __event, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+_MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
 /* Sets the value of an event. If the value has been changed, other threads are
  * woken up so they can check it.
@@ -82,11 +82,11 @@ _MCF_event_await_change(_MCF_event* __event, int __undesired, const int64_t* __t
  * invalid arguments.  */
 __MCF_EVENT_IMPORT
 int
-_MCF_event_set_slow(_MCF_event* __event, int __value) __MCF_NOEXCEPT;
+_MCF_event_set_slow(_MCF_event* __eventp, int __value) __MCF_NOEXCEPT;
 
 __MCF_EVENT_INLINE
 int
-_MCF_event_set(_MCF_event* __event, int __value) __MCF_NOEXCEPT;
+_MCF_event_set(_MCF_event* __eventp, int __value) __MCF_NOEXCEPT;
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
@@ -95,34 +95,34 @@ _MCF_event_set(_MCF_event* __event, int __value) __MCF_NOEXCEPT;
  * this file.  */
 __MCF_EVENT_INLINE
 int
-_MCF_event_init(_MCF_event* __event, int __value_init) __MCF_NOEXCEPT
+_MCF_event_init(_MCF_event* __eventp, int __value_init) __MCF_NOEXCEPT
   {
     if((__value_init < 0) || (__value_init > __MCF_EVENT_VALUE_MAX))
       return -1;
 
     _MCF_event __temp = { (uint8_t) __value_init, 0, 0 };
-    _MCF_atomic_store_pptr_rel(__event, &__temp);
+    _MCF_atomic_store_pptr_rel(__eventp, &__temp);
     return 0;
   }
 
 __MCF_EVENT_INLINE
 uint8_t
-_MCF_event_get(const _MCF_event* __event) __MCF_NOEXCEPT
+_MCF_event_get(const _MCF_event* __eventp) __MCF_NOEXCEPT
   {
     _MCF_event __temp;
-    _MCF_atomic_load_pptr_rlx(&__temp, __event);
+    _MCF_atomic_load_pptr_rlx(&__temp, __eventp);
     return (uint8_t) __temp.__value;
   }
 
 __MCF_EVENT_INLINE
 int
-_MCF_event_await_change(_MCF_event* __event, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT
+_MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
     if((__undesired < 0) || (__undesired > __MCF_EVENT_VALUE_MAX))
       return -2;
 
     _MCF_event __old;
-    _MCF_atomic_load_pptr_acq(&__old, __event);
+    _MCF_atomic_load_pptr_acq(&__old, __eventp);
 
     /* Check whether the event does not contain the undesired value. If so,
      * don't block at all.  */
@@ -132,25 +132,25 @@ _MCF_event_await_change(_MCF_event* __event, int __undesired, const int64_t* __t
     if(__timeout_opt && (*__timeout_opt == 0))
       return -1;
 
-    return _MCF_event_await_change_slow(__event, __undesired, __timeout_opt);
+    return _MCF_event_await_change_slow(__eventp, __undesired, __timeout_opt);
   }
 
 __MCF_EVENT_INLINE
 int
-_MCF_event_set(_MCF_event* __event, int __value) __MCF_NOEXCEPT
+_MCF_event_set(_MCF_event* __eventp, int __value) __MCF_NOEXCEPT
   {
     if((__value < 0) || (__value > __MCF_EVENT_VALUE_MAX))
       return -1;
 
     _MCF_event __old;
-    _MCF_atomic_load_pptr_acq(&__old, __event);
+    _MCF_atomic_load_pptr_acq(&__old, __eventp);
 
     /* Check whether the event already contains the value. If so, don't do
      * anything, in order to prevent thundering herds.  */
     if(__old.__value == (uint8_t) __value)
       return 0;
 
-    return _MCF_event_set_slow(__event, __value);
+    return _MCF_event_set_slow(__eventp, __value);
   }
 
 __MCF_C_DECLARATIONS_END
