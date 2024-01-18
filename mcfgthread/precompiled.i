@@ -18,10 +18,9 @@
 #endif
 
 #include <minwindef.h>
-#include <ntdef.h>
+#include <winnt.h>
+#include <winternl.h>
 #include <winerror.h>
-#include <ntstatus.h>
-
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>

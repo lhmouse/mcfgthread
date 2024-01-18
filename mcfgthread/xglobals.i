@@ -11,10 +11,11 @@
 #include "cond.h"
 #include "dtor_queue.h"
 #include <minwindef.h>
-#include <ntdef.h>
+#include <winnt.h>
+#include <winternl.h>
 #include <winerror.h>
-#include <ntstatus.h>
 #include <sysinfoapi.h>
+#include <wincon.h>
 
 __MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_XGLOBALS_IMPORT
@@ -53,22 +54,18 @@ __MCF_C_DECLARATIONS_BEGIN
  * the `.bss` section.  */
 #define __MCF_BAD_PTR  ((void*) -127)
 
-#define __MCF_ASSERT_NT(...)  __MCF_ASSERT(NT_SUCCESS(__VA_ARGS__))
-#define __MCF_CHECK_NT(...)   __MCF_CHECK(NT_SUCCESS(__VA_ARGS__))
-#define __MCF_WINAPI(...)  __attribute__((__dllimport__, __nothrow__)) __VA_ARGS__ __stdcall
+#define __MCF_ASSERT_NT(...)  __MCF_ASSERT((__VA_ARGS__) >= 0)
+#define __MCF_CHECK_NT(...)   __MCF_CHECK((__VA_ARGS__) >= 0)
+#define __MCF_WINAPI(...)    __attribute__((__dllimport__, __nothrow__)) __VA_ARGS__ __stdcall
 
 /* Declare KERNEL32 APIs here.  */
-typedef struct _SECURITY_ATTRIBUTES SECURITY_ATTRIBUTES;
-typedef DWORD __stdcall THREAD_START_ROUTINE(LPVOID);
-typedef BOOL __stdcall HANDLER_ROUTINE(DWORD);
-
 __MCF_WINAPI(DWORD) GetLastError(void) __attribute__((__pure__));
 __MCF_WINAPI(void) SetLastError(DWORD);
 __MCF_WINAPI(PVOID) EncodePointer(PVOID) __attribute__((__const__));
 __MCF_WINAPI(PVOID) DecodePointer(PVOID) __attribute__((__const__));
 
 __MCF_WINAPI(NTSTATUS) BaseGetNamedObjectDirectory(HANDLE*);
-__MCF_WINAPI(BOOL) SetConsoleCtrlHandler(HANDLER_ROUTINE*, BOOL);
+__MCF_WINAPI(BOOL) SetConsoleCtrlHandler(PHANDLER_ROUTINE, BOOL);
 __MCF_WINAPI(HMODULE) GetModuleHandleW(LPCWSTR) __attribute__((__pure__));
 __MCF_WINAPI(FARPROC) GetProcAddress(HMODULE, LPCSTR) __attribute__((__pure__));
 
@@ -89,7 +86,7 @@ __MCF_WINAPI(BOOL) QueryUnbiasedInterruptTime(PULONGLONG);
 __MCF_WINAPI(BOOL) QueryPerformanceFrequency(LARGE_INTEGER*);
 __MCF_WINAPI(BOOL) QueryPerformanceCounter(LARGE_INTEGER*);
 
-__MCF_WINAPI(HANDLE) CreateThread(SECURITY_ATTRIBUTES*, SIZE_T, THREAD_START_ROUTINE*, LPVOID, DWORD, DWORD*);
+__MCF_WINAPI(HANDLE) CreateThread(SECURITY_ATTRIBUTES*, SIZE_T, PTHREAD_START_ROUTINE, LPVOID, DWORD, DWORD*);
 __MCF_WINAPI(void) ExitThread(DWORD) __attribute__((__noreturn__));
 __MCF_WINAPI(int) GetThreadPriority(HANDLE) __attribute__((__pure__));
 __MCF_WINAPI(BOOL) SetThreadPriority(HANDLE, int);
