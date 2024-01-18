@@ -248,7 +248,7 @@ _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __
     return _MCF_thread_new_aligned(__proc, 0, __data_opt, __size);
   }
 
-__MCF_THREAD_INLINE __MCF_CXX11(constexpr)
+__MCF_THREAD_INLINE
 __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   {
@@ -256,8 +256,7 @@ _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_NOEXCEPT
   }
 
 #ifdef __cplusplus
-extern "C++"
-inline __MCF_CXX11(constexpr)
+extern "C++" inline
 void*
 _MCF_thread_get_data(_MCF_thread* __thrd) __MCF_NOEXCEPT
   {
