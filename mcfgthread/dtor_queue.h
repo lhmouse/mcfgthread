@@ -16,7 +16,7 @@ __MCF_C_DECLARATIONS_BEGIN
 /* Define the cxa_atexit queue structure.  */
 struct __MCF_dtor_element
   {
-    __MCF_cxa_dtor_cdecl* __dtor;
+    __MCF_cxa_dtor_union __dtor;
     void* __this;
     void* __dso;
   };

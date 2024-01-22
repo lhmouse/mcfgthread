@@ -144,13 +144,13 @@ __MCF_seh_i386_cleanup(__MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
  * properly.  */
 __MCF_ALWAYS_INLINE
 void
-__MCF_invoke_cxa_dtor(__MCF_cxa_dtor_cdecl* __dtor, void* __arg)
+__MCF_invoke_cxa_dtor(__MCF_cxa_dtor_union __dtor, void* __arg)
   {
     /* Parameters are `EAX`, `EDX`, `ECX`, `ESP[4]`.  */
-    typedef void __i386_abi_dtor(int, int, void*, void*) __attribute__((__regparm__(3)));
     int __eax, __edx;
     __asm__ ("" : "=a"(__eax), "=d"(__edx));  /* uninitialized.  */
-    (*(__i386_abi_dtor*)(int) __dtor) (__eax, __edx, __arg, __arg);
+    typedef void __i386_abi_dtor(int, int, void*, void*) __attribute__((__regparm__(3)));
+    (*(__i386_abi_dtor*)(int) __dtor.__c_ptr) (__eax, __edx, __arg, __arg);
   }
 #else
 /* Otherwise, SEH is table-based.  */

@@ -168,7 +168,28 @@ typedef void _MCF_tls_dtor(void* __ptr);
  * and on the stack, to allow both `__cdecl` and `__thiscall` functions to work
  * properly. The function prototype is declared for compatibility with GCC.  */
 typedef void __MCF_cxa_dtor_cdecl(void* __arg);
-typedef __MCF_cxa_dtor_cdecl __MCF_cxa_dtor_union;
+
+#if defined __i386__ && (defined __GNUC__ || defined __clang__)
+typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __arg);
+typedef union __MCF_cxa_dtor_union __MCF_cxa_dtor_union;
+
+/* Provide dual-ABI support via this union.  */
+union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
+  {
+    __MCF_cxa_dtor_cdecl* __c_ptr;
+    __MCF_cxa_dtor_thiscall* __tc_ptr;
+
+#  ifdef __cplusplus
+    /* `__transparent_union__` is not supported in C++, so mimic it.  */
+    __MCF_cxa_dtor_union(__MCF_cxa_dtor_cdecl* __p) __MCF_NOEXCEPT : __c_ptr(__p)  { }
+    __MCF_cxa_dtor_union(__MCF_cxa_dtor_stdcall* __p) __MCF_NOEXCEPT : __tc_ptr(__p)  { }
+#  endif
+  };
+#else
+/* FIXME: MSVC doesn't seem to support `__thiscall` on non-member functions.  */
+typedef __MCF_cxa_dtor_cdecl __MCF_cxa_dtor_thiscall;
+typedef __MCF_cxa_dtor_cdecl* __MCF_cxa_dtor_union;
+#endif
 
 /* Define the prototype for `atexit()` and `at_quick_exit()`.  */
 typedef void __MCF_atexit_callback(void);
