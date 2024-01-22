@@ -170,23 +170,32 @@ typedef void _MCF_tls_dtor(void* __ptr);
 typedef void __MCF_cxa_dtor_cdecl(void* __arg);
 
 #if defined __i386__ && (defined __GNUC__ || defined __clang__)
+/* Support both calling conventions with a transparent union.  */
 typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __arg);
 typedef union __MCF_cxa_dtor_union __MCF_cxa_dtor_union;
-
-/* Provide dual-ABI support via this union.  */
+#  ifdef __cplusplus
+union __MCF_cxa_dtor_union
+#  else
 union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
+#  endif
   {
-    __MCF_cxa_dtor_cdecl* __c_ptr;
-    __MCF_cxa_dtor_thiscall* __tc_ptr;
+    __MCF_cxa_dtor_cdecl* __cdecl_ptr;
+    __MCF_cxa_dtor_thiscall* __thiscall_ptr;
 
 #  ifdef __cplusplus
-    /* `__transparent_union__` is not supported in C++, so mimic it.  */
-    __MCF_cxa_dtor_union(__MCF_cxa_dtor_cdecl* __p) __MCF_NOEXCEPT : __c_ptr(__p)  { }
-    __MCF_cxa_dtor_union(__MCF_cxa_dtor_stdcall* __p) __MCF_NOEXCEPT : __tc_ptr(__p)  { }
+    /* Unfortunately, transparent unions are not supported in C++, and have
+     * to be emulated with constructors.  */
+    __MCF_CXX11(constexpr)
+    __MCF_cxa_dtor_union(__MCF_cxa_dtor_cdecl* __xptr) __MCF_NOEXCEPT
+      : __cdecl_ptr(__xptr)  { }
+
+    __MCF_CXX11(constexpr)
+    __MCF_cxa_dtor_union(__MCF_cxa_dtor_thiscall* __xptr) __MCF_NOEXCEPT
+      : __thiscall_ptr(__xptr)  { }
 #  endif
   };
 #else
-/* FIXME: MSVC doesn't seem to support `__thiscall` on non-member functions.  */
+/* Make these barely compile.  */
 typedef __MCF_cxa_dtor_cdecl __MCF_cxa_dtor_thiscall;
 typedef __MCF_cxa_dtor_cdecl* __MCF_cxa_dtor_union;
 #endif
