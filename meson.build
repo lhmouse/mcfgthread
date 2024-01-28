@@ -288,12 +288,15 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
 lib_mcfgthread_a = static_library('mcfgthread',
       c_pch: 'mcfgthread/precompiled.h',
       c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables' ],
+      dependencies: [ dep_kernel32, dep_ntdll ],
       sources: [ mcfgthread_src ],
       install: true)
 
-libmcfgthread_pc = import('pkgconfig').generate(lib_mcfgthread_dll,
+import('pkgconfig').generate(lib_mcfgthread_dll,
       name: 'mcfgthread',
-      description: 'Cornerstone library for C++11 threading on mingw-w64')
+      url: 'https://github.com/lhmouse/mcfgthread',
+      description: 'Cornerstone library for C++11 threading on mingw-w64',
+      libraries: '-lntdll')
 
 #===========================================================
 # Rules for tests
