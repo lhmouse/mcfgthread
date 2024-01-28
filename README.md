@@ -12,9 +12,16 @@ I decide to recreate everything from scratch. Apologies for the trouble.
 Compiling natively can be done in MSYS2. We take the UCRT64 shell as an example.
 Others are similar. Clang shells are also supported.
 
+**WARNING** If you are using [GCC with the MCF thread model](https://gcc-mcf.lhmouse.com/),
+you must build _libmcfgthread-1.dll_ before anything else. Meson creates the DLL
+in the working directory, which might get picked up by cc1.exe when it is only
+half-baked, because [Microsoft documentation says that DLLs in the working directory
+take precedence over those in PATH.](https://learn.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-search-order#standard-search-order-for-unpackaged-apps).
+
 ```sh
 pacman -S --noconfirm mingw-w64-ucrt-x86_64-{{headers,crt,tools}-git,gcc,binutils,meson}
 meson setup build_dir
+ninja libmcfgthread-1.dll  # see warning above
 meson test -Cbuild_dir
 ```
 
