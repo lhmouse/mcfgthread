@@ -206,6 +206,11 @@ test_src = [
 #===========================================================
 # Global configuration
 #===========================================================
+ver = configuration_data()
+ver.set('abi_major', meson.project_version().split('.')[0])
+ver.set('abi_minor', meson.project_version().split('.')[1])
+ver.set_quoted('abi_string', meson.project_version())
+
 cc = meson.get_compiler('c')
 cc_is_i386 = cc.compiles('int foo = __i386__;')
 cc_is_amd64 = cc.compiles('int foo = __amd64__;')
@@ -255,13 +260,8 @@ dep_advapi32 = cc.find_library('advapi32')
 #===========================================================
 # Rules for headers
 #===========================================================
-version_h = configuration_data()
-version_h.set('abi_major', meson.project_version().split('.')[0])
-version_h.set('abi_minor', meson.project_version().split('.')[1])
-version_h.set_quoted('abi_string', meson.project_version())
-
 configure_file(input: 'mcfgthread/version.h.in',
-               configuration: version_h,
+               configuration: ver,
                output: 'version.h',
                install: false)
 
@@ -282,7 +282,8 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
       c_args: [ '-nostdlib', '-ffreestanding', '-fasynchronous-unwind-tables' ],
       sources: [ mcfgthread_src, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
-      soversion: version_h.get('abi_major') + '.' + version_h.get('abi_minor') + '.0',
+      soversion: ver.get('abi_major'),
+      version: '@0@.@1@.@2@'.format(ver.get('abi_major'), ver.get('abi_minor'), 0),
       install: true)
 
 lib_mcfgthread_a = static_library('mcfgthread',
