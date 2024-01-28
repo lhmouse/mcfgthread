@@ -277,7 +277,7 @@ mcfgthread_version_o = import('windows').compile_resources(
       depend_files: [ meson.current_build_dir() / 'version.h',
                       'mcfgthread/version.manifest' ])
 
-lib_mcfgthread_dll = shared_library('x/libmcfgthread',
+lib_mcfgthread_dll = shared_library('mcfgthread',
       c_pch: 'mcfgthread/precompiled.h',
       c_args: [ '-nostdlib', '-ffreestanding', '-fasynchronous-unwind-tables' ],
       sources: [ mcfgthread_src, mcfgthread_version_o ],
