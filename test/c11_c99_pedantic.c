@@ -4,8 +4,8 @@
 
 #include "../mcfgthread/c11.h"
 
-#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 199901)
-#  error Please compile this file as C89.
+#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 201112L)
+#  error Please compile this file as C99.
 #endif
 
 int

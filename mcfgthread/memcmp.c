@@ -2,7 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved.  */
 
-#include "precompiled.i"
+#include "precompiled.h"
 
 __MCF_DLLEXPORT
 int

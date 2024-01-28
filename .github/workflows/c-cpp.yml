@@ -23,16 +23,19 @@ jobs:
 
     - name: Install dependencies
       run: >-
-           sudo apt-get install -y --no-install-recommends autoconf automake
-           libtool make wine wine-binfmt mingw-w64-x86-64-dev mingw-w64-tools
-           gcc-mingw-w64-x86-64 binutils-mingw-w64-x86-64
+           sudo apt-get install -y --no-install-recommends
+           mingw-w64-{x86-64-dev,tools} {gcc,g++,binutils}-mingw-w64-x86-64
+           ninja-build python3-pip wine wine-binfmt
+
+    - name: Install newest meson
+      run: >-
+           sudo pip3 install meson  # --break-system-packages
 
     - name: Run tests
       run: >-
-           CONFIGURE_BUILD=x86_64-pc-linux
-           CONFIGURE_HOST=x86_64-w64-mingw32
-           CC=x86_64-w64-mingw32-gcc-win32
-           ./ci/build.sh
+           meson setup --cross-file meson.cross.x86_64-w64-mingw32
+           -Denable-debug-checks=true build_ci
+           && meson test -Cbuild_ci
 
   msys2-ucrt64:
     name: MSYS2 native build (x86-64)
@@ -51,12 +54,13 @@ jobs:
 
     - name: Install dependencies
       run: >-
-           pacman -S --noconfirm autoconf automake libtool gettext make
-           mingw-w64-ucrt-x86_64-headers-git mingw-w64-ucrt-x86_64-crt-git
-           mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-binutils
+           pacman -S --noconfirm
+           mingw-w64-ucrt-x86_64-{{headers,crt,tools}-git,gcc,binutils,meson}
 
     - name: Run tests
-      run: ./ci/build.sh
+      run: >-
+           meson setup -Denable-debug-checks=true build_ci
+           && meson test -Cbuild_ci
 
   msys2-mingw32:
     name: MSYS2 native build (i686)
@@ -75,9 +79,10 @@ jobs:
 
     - name: Install dependencies
       run: >-
-           pacman -S --noconfirm autoconf automake libtool gettext make
-           mingw-w64-i686-headers-git mingw-w64-i686-crt-git
-           mingw-w64-i686-gcc mingw-w64-i686-binutils
+           pacman -S --noconfirm
+           mingw-w64-i686-{{headers,crt,tools}-git,gcc,binutils,meson}
 
     - name: Run tests
-      run: ./ci/build.sh
+      run: >-
+           meson setup -Denable-debug-checks=true build_ci
+           && meson test -Cbuild_ci

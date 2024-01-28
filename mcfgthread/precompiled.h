@@ -7,10 +7,6 @@
 
 #include "version.h"
 
-#ifdef HAVE_CONFIG_H
-#  include <config.h>
-#endif
-
 #ifdef DLL_EXPORT
 #  define __MCF_DLLEXPORT  __declspec(dllexport)
 #else
