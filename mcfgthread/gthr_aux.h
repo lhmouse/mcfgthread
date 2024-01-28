@@ -73,6 +73,24 @@ __MCF_GTHR_AUX_IMPORT
 void
 __MCF_gthr_recursive_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
 
+/* These are auxiliary functions to implement recursive mutexes, and are not
+ * to be called directly.  */
+__MCF_GTHR_AUX_INLINE
+void
+__MCF_gthr_rc_mutex_init(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT;
+
+__MCF_GTHR_AUX_INLINE
+int
+__MCF_gthr_rc_mutex_recurse(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT;
+
+__MCF_GTHR_AUX_INLINE
+int
+__MCF_gthr_rc_mutex_wait(__MCF_gthr_rc_mutex* __rmtx, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+
+__MCF_GTHR_AUX_INLINE
+void
+__MCF_gthr_rc_mutex_release(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT;
+
 /* This is the actual thread function for a gthread.  */
 __MCF_GTHR_AUX_IMPORT
 void
@@ -91,7 +109,7 @@ __MCF_gthr_unonce(_MCF_once** __oncep) __MCF_NOEXCEPT
       _MCF_once_abort(*__oncep);
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_AUX_INLINE
 void
 __MCF_gthr_rc_mutex_init(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
   {
@@ -100,7 +118,7 @@ __MCF_gthr_rc_mutex_init(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
     _MCF_mutex_init(__rmtx->__mutex);
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_AUX_INLINE
 int
 __MCF_gthr_rc_mutex_recurse(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
   {
@@ -114,7 +132,7 @@ __MCF_gthr_rc_mutex_recurse(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
     return 0;
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_AUX_INLINE
 int
 __MCF_gthr_rc_mutex_wait(__MCF_gthr_rc_mutex* __rmtx, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
@@ -131,7 +149,7 @@ __MCF_gthr_rc_mutex_wait(__MCF_gthr_rc_mutex* __rmtx, const int64_t* __timeout_o
     return 0;
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_AUX_INLINE
 void
 __MCF_gthr_rc_mutex_release(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
   {

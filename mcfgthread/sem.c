@@ -2,7 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved.  */
 
-#include "precompiled.i"
+#include "precompiled.h"
 #define __MCF_SEM_IMPORT  __MCF_DLLEXPORT
 #define __MCF_SEM_INLINE  __MCF_DLLEXPORT
 #include "sem.h"

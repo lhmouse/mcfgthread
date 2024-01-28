@@ -7,6 +7,6 @@
 
 #define _MCF_ABI_VERSION_MAJOR    @abi_major@
 #define _MCF_ABI_VERSION_MINOR    @abi_minor@
-#define _MCF_ABI_VERSION_STRING   "@abi_major@.@abi_minor@-@abi_suffix@"
+#define _MCF_ABI_VERSION_STRING   @abi_string@
 
 #endif  /* __MCFGTHREAD_VERSION_  */

@@ -13,7 +13,7 @@ thread_proc(_MCF_thread* self)
   {
     void* data = _MCF_thread_get_data(self);
     assert((uintptr_t) data % __MCF_THREAD_DATA_ALIGNMENT == 0);
-    assert(RtlCompareMemory(data, "hello", 5) == 5);  // all equal
+    assert(memcmp(data, "hello", 5) == 0);
 
     printf("thread %d quitting\n", self->__tid);
   }

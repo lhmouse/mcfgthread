@@ -1,0 +1,3 @@
+option('enable-debug-checks',
+       type: 'boolean', value: false,
+       description: 'enable run-time assertions')
