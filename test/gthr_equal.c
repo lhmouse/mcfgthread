@@ -16,20 +16,20 @@ thread_proc(void* param)
     assert(__gthread_equal(__gthread_self(), thrd));
 
     printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
-    return NULL;
+    return __MCF_nullptr;
   }
 
 int
 main(void)
   {
-    int r = __gthread_create(&thrd, thread_proc, NULL);
+    int r = __gthread_create(&thrd, thread_proc, __MCF_nullptr);
     assert(r == 0);
     assert(thrd);
 
     assert(!__gthread_equal(__gthread_self(), thrd));
 
     printf("main waiting\n");
-    r = __gthread_join(thrd, NULL);
+    r = __gthread_join(thrd, __MCF_nullptr);
     assert(r == 0);
     printf("main wait finished\n");
   }

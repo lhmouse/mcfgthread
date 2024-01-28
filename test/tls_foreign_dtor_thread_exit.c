@@ -36,7 +36,7 @@ thread_proc(LPVOID param)
 int
 main(void)
   {
-    thrd = CreateThread(NULL, 0, thread_proc, NULL, 0, NULL);
+    thrd = CreateThread(__MCF_nullptr, 0, thread_proc, __MCF_nullptr, 0, __MCF_nullptr);
     assert(thrd);
 
     printf("main waiting\n");

@@ -27,14 +27,14 @@ static
 void
 thread_proc(_MCF_thread* self)
   {
-    _MCF_sem_wait(&thread_start, NULL);
+    _MCF_sem_wait(&thread_start, __MCF_nullptr);
 
     int r = _MCF_tls_set(key, &count);
     assert(r == 0);
     printf("thread %d set value\n", self->__tid);
 
     _MCF_sem_signal(&value_set);
-    _MCF_sem_wait(&key_deleted, NULL);
+    _MCF_sem_wait(&key_deleted, __MCF_nullptr);
 
     printf("thread %d quitting\n", self->__tid);
   }
@@ -45,19 +45,19 @@ main(void)
     key = _MCF_tls_key_new(tls_destructor);
     assert(key);
 
-    thrd = _MCF_thread_new(thread_proc, NULL, 0);
+    thrd = _MCF_thread_new(thread_proc, __MCF_nullptr, 0);
     assert(thrd);
 
     printf("main waiting for value_set\n");
     _MCF_sem_signal(&thread_start);
-    _MCF_sem_wait(&value_set, NULL);
+    _MCF_sem_wait(&value_set, __MCF_nullptr);
 
     _MCF_tls_key_delete(key);
-    key = NULL;
+    key = __MCF_nullptr;
     printf("main deleted key; waiting for termination\n");
     _MCF_sem_signal(&key_deleted);
 
-    _MCF_thread_wait(thrd, NULL);
+    _MCF_thread_wait(thrd, __MCF_nullptr);
     printf("main wait finished\n");
 
     assert(count == 0);

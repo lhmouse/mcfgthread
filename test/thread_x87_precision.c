@@ -25,12 +25,12 @@ thread_proc(_MCF_thread* self)
 int
 main(void)
   {
-    _MCF_thread* thrd = _MCF_thread_new(thread_proc, NULL, 0);
+    _MCF_thread* thrd = _MCF_thread_new(thread_proc, __MCF_nullptr, 0);
     assert(thrd);
 
     printf("main waiting\n");
-    _MCF_thread_wait(thrd, NULL);
+    _MCF_thread_wait(thrd, __MCF_nullptr);
     printf("main wait finished\n");
 
-    _MCF_thread_wait(thrd, NULL);
+    _MCF_thread_wait(thrd, __MCF_nullptr);
   }

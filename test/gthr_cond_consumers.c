@@ -52,7 +52,7 @@ thread_proc(void* param)
     }
 
     printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
-    return NULL;
+    return __MCF_nullptr;
   }
 
 int
@@ -106,7 +106,7 @@ main(void)
 
     printf("main waiting\n");
     for(size_t k = 0;  k < NTHREADS;  ++k) {
-      int r = __gthread_join(threads[k], NULL);
+      int r = __gthread_join(threads[k], __MCF_nullptr);
       assert(r == 0);
       printf("main wait finished: %d, consumed %d\n", (int)k, consumed[k]);
       total += consumed[k];

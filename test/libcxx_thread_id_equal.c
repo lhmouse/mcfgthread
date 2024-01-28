@@ -17,13 +17,13 @@ thread_proc(void* param)
     assert(__libcpp_thread_id_equal(__MCF_libcxx_thread_get_current_id(), _MCF_thread_self_tid()));
 
     printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
-    return NULL;
+    return __MCF_nullptr;
   }
 
 int
 main(void)
   {
-    int r = __libcpp_thread_create(&thrd, thread_proc, NULL);
+    int r = __libcpp_thread_create(&thrd, thread_proc, __MCF_nullptr);
     assert(r == 0);
     assert(thrd);
 

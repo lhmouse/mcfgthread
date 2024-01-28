@@ -26,13 +26,13 @@ void*
 thread_proc(void* param)
   {
     (void) param;
-    _MCF_sem_wait(&start, NULL);
+    _MCF_sem_wait(&start, __MCF_nullptr);
 
     int r = _MCF_tls_set(key, &count);
     assert(r == 0);
 
     printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
-    return NULL;
+    return __MCF_nullptr;
   }
 
 int
@@ -43,7 +43,7 @@ main(void)
     assert(key);
 
     for(size_t k = 0;  k < NTHREADS;  ++k) {
-      r = __libcpp_thread_create(&threads[k], thread_proc, NULL);
+      r = __libcpp_thread_create(&threads[k], thread_proc, __MCF_nullptr);
       assert(r == 0);
       assert(threads[k]);
     }

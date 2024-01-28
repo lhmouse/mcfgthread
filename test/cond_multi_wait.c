@@ -21,7 +21,7 @@ thread_proc(_MCF_thread* self)
 
     const int64_t start_time = _MCF_tick_count();
     while(_MCF_tick_count() < start_time + 3000) {
-      _MCF_cond_wait(&cond, NULL, NULL, 0, (const int64_t[]){ 0 });
+      _MCF_cond_wait(&cond, __MCF_nullptr, __MCF_nullptr, 0, (const int64_t[]){ 0 });
 
       // Check whether a deadlock has occurred.
       //   https://github.com/lhmouse/mcfgthread/issues/86
@@ -41,9 +41,9 @@ thread_proc(_MCF_thread* self)
 int
 main(void)
   {
-    thread1 = _MCF_thread_new(thread_proc, NULL, 0);
+    thread1 = _MCF_thread_new(thread_proc, __MCF_nullptr, 0);
     assert(thread1);
-    thread2 = _MCF_thread_new(thread_proc, NULL, 0);
+    thread2 = _MCF_thread_new(thread_proc, __MCF_nullptr, 0);
     assert(thread2);
 
     const int64_t start_time = _MCF_tick_count();
@@ -54,6 +54,6 @@ main(void)
     }
 
     printf("main waiting\n");
-    _MCF_thread_wait(thread1, NULL);
-    _MCF_thread_wait(thread2, NULL);
+    _MCF_thread_wait(thread1, __MCF_nullptr);
+    _MCF_thread_wait(thread2, __MCF_nullptr);
   }

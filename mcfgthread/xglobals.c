@@ -85,7 +85,7 @@ __MCF_batch_release_common(const void* key, size_t count)
       return 0;
 
     for(size_t k = 0;  k != count;  ++k)
-      __MCF_keyed_event_signal(key, NULL);  /* infinite timeout  */
+      __MCF_keyed_event_signal(key, __MCF_nullptr);  /* infinite timeout  */
 
     /* Return the number of threads that have been woken.  */
     return count;
@@ -111,7 +111,7 @@ static
 int
 do_static_dtor_queue_pop(__MCF_dtor_element* elem, _MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
   {
-    _MCF_mutex_lock(mtx, NULL);
+    _MCF_mutex_lock(mtx, __MCF_nullptr);
     int err = __MCF_dtor_queue_pop(elem, queue, dso);
     _MCF_mutex_unlock(mtx);
     return err;
@@ -194,14 +194,14 @@ do_on_process_attach(void)
     /* Allocate or open storage for global data.
      * We are in the DLL main routine, so locking is unnecessary.  */
     HANDLE gfile;
-    __MCF_CHECK_NT(NtCreateSection(&gfile, STANDARD_RIGHTS_REQUIRED | SECTION_MAP_READ | SECTION_MAP_WRITE, &gattrs, &gsize, PAGE_READWRITE, SEC_COMMIT, NULL));
+    __MCF_CHECK_NT(NtCreateSection(&gfile, STANDARD_RIGHTS_REQUIRED | SECTION_MAP_READ | SECTION_MAP_WRITE, &gattrs, &gsize, PAGE_READWRITE, SEC_COMMIT, __MCF_nullptr));
     __MCF_ASSERT(gfile);
 
     /* Get a pointer to this named region. Unlike `CreateFileMappingW()`,
      * the view shall not be inherited by child processes.  */
-    PVOID gmem_base = NULL;
+    PVOID gmem_base = __MCF_nullptr;
     SIZE_T gmem_size = 0;
-    __MCF_CHECK_NT(NtMapViewOfSection(gfile, GetCurrentProcess(), &gmem_base, 0, 0, NULL, &gmem_size, 2, 0, PAGE_READWRITE));
+    __MCF_CHECK_NT(NtMapViewOfSection(gfile, GetCurrentProcess(), &gmem_base, 0, 0, __MCF_nullptr, &gmem_size, 2, 0, PAGE_READWRITE));
     __MCF_ASSERT(gmem_base);
     __MCF_ASSERT(gmem_size >= sizeof(__MCF_crt_xglobals));
     __MCF_g = gmem_base;
@@ -265,7 +265,7 @@ do_on_thread_detach(void)
 
     /* Per-thread atexit callbacks may use TLS, so call them before
      * destructors of thread-local objects.  */
-    while(__MCF_dtor_queue_pop(&elem, self->__atexit_queue, NULL) == 0)
+    while(__MCF_dtor_queue_pop(&elem, self->__atexit_queue, __MCF_nullptr) == 0)
       __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
 
     /* Call destructors of TLS keys. The TLS table may be modified by
@@ -311,7 +311,7 @@ do_image_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
     /* Perform global initialization and per-thread cleanup as needed.
      * Note, upon `DLL_PROCESS_DETACH`, no cleanup is performed, because
      * other DLLs might have been unloaded and we would be referencing
-     * unmapped memory. User code should call `__cxa_finalize(NULL)` before
+     * unmapped memory. User code should call `__cxa_finalize(__MCF_nullptr)` before
      * exiting from a process.  */
     if(reason == DLL_PROCESS_ATTACH)
       do_on_process_attach();

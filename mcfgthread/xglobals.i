@@ -315,7 +315,7 @@ extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY __MCF_g;
 #define __MCF_G_FIELD_OPT(field)  \
     (((unsigned long) __builtin_expect((long) __MCF_g->__self_size, sizeof(__MCF_crt_xglobals))  \
            >= __builtin_offsetof(__MCF_crt_xglobals, field) + sizeof(__MCF_g->field))  \
-        ? &(__MCF_g->field) : NULL)
+        ? &(__MCF_g->field) : __MCF_nullptr)
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
@@ -326,7 +326,7 @@ __MCF_ALWAYS_INLINE
 NTSTATUS
 __MCF_keyed_event_wait(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
   {
-    NTSTATUS __status = NtWaitForKeyedEvent(NULL, (PVOID) __key, 0, (LARGE_INTEGER*) __timeout);
+    NTSTATUS __status = NtWaitForKeyedEvent(__MCF_nullptr, (PVOID) __key, 0, (LARGE_INTEGER*) __timeout);
     __MCF_ASSERT_NT(__status);
     return __status;
   }
@@ -335,7 +335,7 @@ __MCF_ALWAYS_INLINE
 NTSTATUS
 __MCF_keyed_event_signal(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
   {
-    NTSTATUS __status = NtReleaseKeyedEvent(NULL, (PVOID) __key, 0, (LARGE_INTEGER*) __timeout);
+    NTSTATUS __status = NtReleaseKeyedEvent(__MCF_nullptr, (PVOID) __key, 0, (LARGE_INTEGER*) __timeout);
     __MCF_ASSERT_NT(__status);
     return __status;
   }
@@ -446,7 +446,7 @@ void*
 __MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT
   {
     void* __ptr = HeapReAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY, *__pptr, __size);
-    return !__ptr ? NULL : (*__pptr = __ptr);
+    return !__ptr ? __MCF_nullptr : (*__pptr = __ptr);
   }
 
 __MCF_XGLOBALS_INLINE
@@ -454,7 +454,7 @@ void*
 __MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
   {
     void* __ptr = HeapAlloc(__MCF_crt_heap, 0, __size);
-    return !__ptr ? NULL : __MCF_mcopy(__ptr, __data, __size);
+    return !__ptr ? __MCF_nullptr : __MCF_mcopy(__ptr, __data, __size);
   }
 
 __MCF_XGLOBALS_INLINE

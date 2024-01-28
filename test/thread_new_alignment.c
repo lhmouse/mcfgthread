@@ -29,7 +29,7 @@ main(void)
       _MCF_thread* thrd = _MCF_thread_new(thread_proc, "hello", 5);
       assert(thrd);
 
-      _MCF_thread_wait(thrd, NULL);
+      _MCF_thread_wait(thrd, __MCF_nullptr);
       _MCF_thread_drop_ref(thrd);
     }
   }

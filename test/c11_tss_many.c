@@ -11,7 +11,7 @@ main(void)
 #define NKEYS  1000U
     tss_t keys[NKEYS];
     for(size_t k = 0;  k != NKEYS;  ++k) {
-      int r = tss_create(&keys[k], NULL);
+      int r = tss_create(&keys[k], __MCF_nullptr);
       assert(r == thrd_success);
       assert(keys[k]);
     }

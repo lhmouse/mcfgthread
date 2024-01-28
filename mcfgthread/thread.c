@@ -37,16 +37,16 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
   {
     /* Validate arguments.  */
     if(!proc)
-      return __MCF_win32_error_p(ERROR_INVALID_PARAMETER, NULL);
+      return __MCF_win32_error_p(ERROR_INVALID_PARAMETER, __MCF_nullptr);
 
     if(align & (align - 1))
-      return __MCF_win32_error_p(ERROR_NOT_SUPPORTED, NULL);
+      return __MCF_win32_error_p(ERROR_NOT_SUPPORTED, __MCF_nullptr);
 
     if(align >= 0x10000000U)
-      return __MCF_win32_error_p(ERROR_NOT_SUPPORTED, NULL);
+      return __MCF_win32_error_p(ERROR_NOT_SUPPORTED, __MCF_nullptr);
 
     if(size >= 0x7FF00000U)
-      return __MCF_win32_error_p(ERROR_ARITHMETIC_OVERFLOW, NULL);
+      return __MCF_win32_error_p(ERROR_ARITHMETIC_OVERFLOW, __MCF_nullptr);
 
     /* Calculate the number of bytes to allocate.  */
     size_t real_alignment = _MCF_maxz(__MCF_THREAD_DATA_ALIGNMENT, align);
@@ -57,7 +57,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     /* Allocate and initialize the thread control structure.  */
     _MCF_thread* thrd = __MCF_malloc_0(size_request);
     if(!thrd)
-      return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, NULL);
+      return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, __MCF_nullptr);
 
     _MCF_atomic_store_32_rlx(thrd->__nref, 2);
     thrd->__proc = proc;
@@ -82,10 +82,10 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
 
     /* Create the thread now.  */
     DWORD tid;
-    thrd->__handle = CreateThread(NULL, 0, do_win32_thread_thunk, thrd, 0, &tid);
-    if(thrd->__handle == NULL) {
+    thrd->__handle = CreateThread(__MCF_nullptr, 0, do_win32_thread_thunk, thrd, 0, &tid);
+    if(thrd->__handle == __MCF_nullptr) {
       __MCF_mfree(thrd);
-      return NULL;
+      return __MCF_nullptr;
     }
 
     /* Set `__tid` in case `CreateThread()` returns before the new thread begins
@@ -100,8 +100,8 @@ __MCF_thread_attach_foreign(_MCF_thread* thrd)
   {
     __MCF_ASSERT(thrd->__nref[0] == 0);
     __MCF_ASSERT(thrd->__tid == 0);
-    __MCF_ASSERT(thrd->__handle == NULL);
-    __MCF_ASSERT(TlsGetValue(__MCF_g->__tls_index) == NULL);
+    __MCF_ASSERT(thrd->__handle == __MCF_nullptr);
+    __MCF_ASSERT(TlsGetValue(__MCF_g->__tls_index) == __MCF_nullptr);
 
     /* Initialize thread identity fields.  */
     thrd->__tid = _MCF_thread_self_tid();
@@ -179,12 +179,12 @@ _MCF_thread*
 _MCF_thread_self(void)
   {
     _MCF_thread* self = TlsGetValue(__MCF_g->__tls_index);
-    if(__builtin_expect(self != NULL, 1))
+    if(__builtin_expect(self != __MCF_nullptr, 1))
       return self;
 
     self = __MCF_malloc_0(sizeof(_MCF_thread));
     if(!self)
-      return NULL;
+      return __MCF_nullptr;
 
     return __MCF_thread_attach_foreign(self);
   }

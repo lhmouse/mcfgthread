@@ -47,13 +47,17 @@
 
 #ifdef _WIN64
 #  define __MCF_PTR_BITS     64
-#  define __MCF_IPTR_MIN   (-0x7FFFFFFFFFFFFFFF - 1)
-#  define __MCF_IPTR_MAX     0x7FFFFFFFFFFFFFFF
-#  define __MCF_UPTR_MAX     0xFFFFFFFFFFFFFFFFU
+#  define __MCF_IPTR_MIN   (-0x7FFFFFFFFFFFFFFFLL - 1)
+#  define __MCF_IPTR_0       0LL
+#  define __MCF_IPTR_MAX     0x7FFFFFFFFFFFFFFFLL
+#  define __MCF_UPTR_0       0ULL
+#  define __MCF_UPTR_MAX     0xFFFFFFFFFFFFFFFFULL
 #else
 #  define __MCF_PTR_BITS     32
 #  define __MCF_IPTR_MIN   (-0x7FFFFFFF - 1)
+#  define __MCF_IPTR_0       0
 #  define __MCF_IPTR_MAX     0x7FFFFFFF
+#  define __MCF_UPTR_0       0U
 #  define __MCF_UPTR_MAX     0xFFFFFFFFU
 #endif
 
@@ -64,9 +68,11 @@
 #define __MCF_CXX(...)
 #define __MCF_CXX11(...)
 #define __MCF_CXX14(...)
-#define __MCF_NOEXCEPT
+
 #define __MCF_C_DECLARATIONS_BEGIN
 #define __MCF_C_DECLARATIONS_END
+#define __MCF_NOEXCEPT
+#define __MCF_nullptr   __MCF_IPTR_0
 
 #if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 199901L)  /* C99  */
 #  undef __MCF_C99
@@ -83,12 +89,12 @@
 #  define __MCF_C(...)   /* hidden  */
 #  undef __MCF_CXX
 #  define __MCF_CXX(...)   __VA_ARGS__
-#  undef __MCF_NOEXCEPT
-#  define __MCF_NOEXCEPT      throw()
 #  undef __MCF_C_DECLARATIONS_BEGIN
 #  define __MCF_C_DECLARATIONS_BEGIN   extern "C" {
 #  undef __MCF_C_DECLARATIONS_END
 #  define __MCF_C_DECLARATIONS_END   }  /* extern "C"  */
+#  undef __MCF_NOEXCEPT
+#  define __MCF_NOEXCEPT      throw()
 #endif
 
 #if defined __cplusplus && (__cplusplus >= 201103L)  /* C++11  */
@@ -96,6 +102,8 @@
 #  define __MCF_CXX11(...)   __VA_ARGS__
 #  undef __MCF_NOEXCEPT
 #  define __MCF_NOEXCEPT   noexcept
+#  undef __MCF_nullptr
+#  define __MCF_nullptr   nullptr
 #endif
 
 #if defined __cplusplus && (__cplusplus >= 201402L)  /* C++14  */

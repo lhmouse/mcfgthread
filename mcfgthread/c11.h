@@ -400,18 +400,18 @@ void
 __MCF_c11_call_once(once_flag* __once, __MCF_once_callback* __init_proc)
   {
 #ifdef _MSC_VER
-    _MCF_once* __once_g = NULL;
+    _MCF_once* __once_g = __MCF_nullptr;
     __try
 #else
-    _MCF_once* __once_g __attribute__((__cleanup__(__MCF_gthr_unonce))) = NULL;
+    _MCF_once* __once_g __attribute__((__cleanup__(__MCF_gthr_unonce))) = __MCF_nullptr;
 #endif
     {
-      if(_MCF_once_wait(__once, NULL) == 0)
+      if(_MCF_once_wait(__once, __MCF_nullptr) == 0)
         return;
 
       __once_g = __once;
       __init_proc();
-      __once_g = NULL;
+      __once_g = __MCF_nullptr;
       _MCF_once_release(__once);
     }
 #ifdef _MSC_VER
@@ -463,7 +463,7 @@ __MCF_C11_INLINE
 int
 __MCF_c11_cnd_wait(cnd_t* __cond, mtx_t* __mtx) __MCF_NOEXCEPT
   {
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) __mtx->__rc_mtx, NULL);
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) __mtx->__rc_mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return thrd_success;
   }
@@ -523,7 +523,7 @@ __MCF_c11_mtx_lock(mtx_t* __mtx) __MCF_NOEXCEPT
     if(__err != thrd_busy)
       return __err;
 
-    __err = __MCF_gthr_rc_mutex_wait(__mtx->__rc_mtx, NULL);
+    __err = __MCF_gthr_rc_mutex_wait(__mtx->__rc_mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return thrd_success;
   }
@@ -584,7 +584,7 @@ __MCF_c11_thrd_create(thrd_t* __thrdp, thrd_start_t __proc, void* __arg) __MCF_N
 
     __thrd = _MCF_thread_new(__MCF_c11_thread_thunk_v2, __rec, sizeof(*__rec));
     *__thrdp = __thrd;
-    return (__thrd == NULL) ? thrd_nomem : thrd_success;
+    return (__thrd == __MCF_nullptr) ? thrd_nomem : thrd_success;
   }
 
 __MCF_C11_INLINE
@@ -670,7 +670,7 @@ __MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_NOEXCEPT
     if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
       return thrd_error;
 
-    __err = _MCF_thread_wait(__thrd, NULL);
+    __err = _MCF_thread_wait(__thrd, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     __MCF_SET_IF(__resp_opt, __rec->__result);
 
@@ -692,7 +692,7 @@ __MCF_c11_tss_create(tss_t* __keyp, tss_dtor_t __dtor_opt) __MCF_NOEXCEPT
   {
     _MCF_tls_key* __key = _MCF_tls_key_new(__dtor_opt);
     *__keyp = __key;
-    return (__key == NULL) ? thrd_nomem : thrd_success;
+    return (__key == __MCF_nullptr) ? thrd_nomem : thrd_success;
   }
 
 __MCF_C11_INLINE

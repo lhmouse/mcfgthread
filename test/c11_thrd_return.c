@@ -23,7 +23,7 @@ thread_proc(void* param)
 int
 main(void)
   {
-    int r = thrd_create(&thrd, thread_proc, NULL);
+    int r = thrd_create(&thrd, thread_proc, __MCF_nullptr);
     assert(r == thrd_success);
     assert(thrd);
 

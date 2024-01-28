@@ -33,7 +33,7 @@ typedef _MCF_mutex __libcpp_mutex_t;
 typedef __MCF_gthr_rc_mutex __libcpp_recursive_mutex_t;
 
 /* Define macros for initialization.  */
-#define _LIBCPP_NULL_THREAD   NULL
+#define _LIBCPP_NULL_THREAD   __MCF_nullptr
 #define _LIBCPP_TLS_DESTRUCTOR_CC  /* default calling convention  */
 #define _LIBCPP_EXEC_ONCE_INITIALIZER   __MCF_0_INIT
 #define _LIBCPP_CONDVAR_INITIALIZER   __MCF_0_INIT
@@ -342,18 +342,18 @@ int
 __MCF_libcxx_execute_once(__libcpp_exec_once_flag* __once, __MCF_once_callback* __init_proc)
   {
 #ifdef _MSC_VER
-    _MCF_once* __once_g = NULL;
+    _MCF_once* __once_g = __MCF_nullptr;
     __try
 #else
-    _MCF_once* __once_g __attribute__((__cleanup__(__MCF_gthr_unonce))) = NULL;
+    _MCF_once* __once_g __attribute__((__cleanup__(__MCF_gthr_unonce))) = __MCF_nullptr;
 #endif
     {
-      if(_MCF_once_wait(__once, NULL) == 0)
+      if(_MCF_once_wait(__once, __MCF_nullptr) == 0)
         return 0;
 
       __once_g = __once;
       __init_proc();
-      __once_g = NULL;
+      __once_g = __MCF_nullptr;
       _MCF_once_release(__once);
       return 0;
     }
@@ -368,7 +368,7 @@ __MCF_libcxx_tls_create(__libcpp_tls_key* __keyp, _MCF_tls_dtor* __dtor_opt) __M
   {
     _MCF_tls_key* __key = _MCF_tls_key_new(__dtor_opt);
     *__keyp = __key;
-    return (__key == NULL) ? ENOMEM : 0;
+    return (__key == __MCF_nullptr) ? ENOMEM : 0;
   }
 
 __MCF_LIBCXX_INLINE
@@ -414,7 +414,7 @@ __MCF_LIBCXX_INLINE
 int
 __MCF_libcxx_mutex_lock(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT
   {
-    int __err = _MCF_mutex_lock(__mtx, NULL);
+    int __err = _MCF_mutex_lock(__mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
@@ -460,7 +460,7 @@ __MCF_libcxx_recursive_mutex_lock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEX
     if(__err == 0)
       return 0;
 
-    __err = __MCF_gthr_rc_mutex_wait(__rmtx, NULL);
+    __err = __MCF_gthr_rc_mutex_wait(__rmtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
@@ -507,7 +507,7 @@ __MCF_LIBCXX_INLINE
 int
 __MCF_libcxx_condvar_wait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx) __MCF_NOEXCEPT
   {
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback, __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx, NULL);
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback, __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
@@ -550,7 +550,7 @@ __MCF_libcxx_thread_create(__libcpp_thread_t* __thrdp, __MCF_gthr_thread_procedu
 
     __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk_v2, __rec, sizeof(*__rec));
     *__thrdp = __thrd;
-    return (__thrd == NULL) ? EAGAIN : 0;  /* as specified by POSIX  */
+    return (__thrd == __MCF_nullptr) ? EAGAIN : 0;  /* as specified by POSIX  */
   }
 
 __MCF_LIBCXX_INLINE
@@ -576,7 +576,7 @@ __MCF_libcxx_thread_join(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT
     if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
       return EINVAL;
 
-    __err = _MCF_thread_wait(__thrd, NULL);
+    __err = _MCF_thread_wait(__thrd, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
 
     /* Free the thread.  */

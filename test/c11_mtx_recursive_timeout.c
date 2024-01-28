@@ -17,17 +17,17 @@ main(void)
     struct timespec timeout;
     int r;
 
-    _MCF_thread_set_priority(NULL, _MCF_thread_priority_above_normal);
+    _MCF_thread_set_priority(__MCF_nullptr, _MCF_thread_priority_above_normal);
 
     r = mtx_init(&mutex, mtx_recursive | mtx_timed);
     assert(r == thrd_success);
 
     /* Round the time up.  */
-    int64_t sleep_until = (int64_t) time(NULL) * 1000 + 2000;
+    int64_t sleep_until = (int64_t) time(__MCF_nullptr) * 1000 + 2000;
     _MCF_sleep(&sleep_until);
 
     now = _MCF_perf_counter();
-    timeout.tv_sec = time(NULL) + 1;
+    timeout.tv_sec = time(__MCF_nullptr) + 1;
     timeout.tv_nsec = 100000000;
     r = mtx_timedlock(&mutex, &timeout);  /* lock it  */
     assert(r == thrd_success);
@@ -37,7 +37,7 @@ main(void)
     assert(delta <= 100);
 
     now = _MCF_perf_counter();
-    timeout.tv_sec = time(NULL) + 1;
+    timeout.tv_sec = time(__MCF_nullptr) + 1;
     timeout.tv_nsec = 100000000;
     r = mtx_timedlock(&mutex, &timeout);
     assert(r == thrd_success);

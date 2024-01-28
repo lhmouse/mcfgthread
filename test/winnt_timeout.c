@@ -14,7 +14,7 @@ main(void)
     double now, delta;
     __MCF_winnt_timeout to;
 
-    _MCF_thread_set_priority(NULL, _MCF_thread_priority_above_normal);
+    _MCF_thread_set_priority(__MCF_nullptr, _MCF_thread_priority_above_normal);
     now = _MCF_perf_counter();
 
     __MCF_initialize_winnt_timeout_v3(&to, (const int64_t[]){ -1100 });  /* relative  */

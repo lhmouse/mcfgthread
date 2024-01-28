@@ -21,7 +21,7 @@ static
 void
 thread_proc(_MCF_thread* self)
   {
-    _MCF_once_wait(&start, NULL);
+    _MCF_once_wait(&start, __MCF_nullptr);
 
     int r = _MCF_once_wait(&once, (const int64_t[]) { 0 });
     printf("thread %d got %d\n", self->__tid, r);
@@ -56,14 +56,14 @@ int
 main(void)
   {
     for(size_t k = 0;  k < NTHREADS;  ++k) {
-      threads[k] = _MCF_thread_new(thread_proc, NULL, 0);
+      threads[k] = _MCF_thread_new(thread_proc, __MCF_nullptr, 0);
       assert(threads[k]);
     }
 
     printf("main waiting\n");
     _MCF_once_release(&start);
     for(size_t k = 0;  k < NTHREADS;  ++k) {
-      _MCF_thread_wait(threads[k], NULL);
+      _MCF_thread_wait(threads[k], __MCF_nullptr);
       printf("main wait finished: %d\n", (int)k);
     }
 

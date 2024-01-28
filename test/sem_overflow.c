@@ -29,13 +29,13 @@ main(void)
     assert(_MCF_sem_signal_some(&sem, 1) == -2);
     assert(_MCF_sem_get(&sem) == __MCF_SEM_VALUE_MAX);
 
-    assert(_MCF_sem_wait(&sem, NULL) == 0);
+    assert(_MCF_sem_wait(&sem, __MCF_nullptr) == 0);
     assert(_MCF_sem_get(&sem) == __MCF_SEM_VALUE_MAX - 1);
 
     assert(_MCF_sem_signal_some(&sem, 1) == 0);
     assert(_MCF_sem_get(&sem) == __MCF_SEM_VALUE_MAX);
 
-    assert(_MCF_sem_wait(&sem, NULL) == 0);
+    assert(_MCF_sem_wait(&sem, __MCF_nullptr) == 0);
     assert(_MCF_sem_get(&sem) == __MCF_SEM_VALUE_MAX - 1);
 
     assert(_MCF_sem_signal_some(&sem, 2) == -2);

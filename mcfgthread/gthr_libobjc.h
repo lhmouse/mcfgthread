@@ -253,7 +253,7 @@ int
 __MCF_gthr_objc_mutex_lock(objc_mutex_t __objc_mtx) __MCF_NOEXCEPT
   {
     _MCF_mutex* __mtx = (_MCF_mutex*)(void*) &(__objc_mtx->backend);
-    int __err = _MCF_mutex_lock(__mtx, NULL);
+    int __err = _MCF_mutex_lock(__mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
@@ -300,7 +300,7 @@ __MCF_gthr_objc_condition_wait(objc_condition_t __objc_cnd, objc_mutex_t __objc_
   {
     _MCF_cond* __cond = (_MCF_cond*)(void*) &(__objc_cnd->backend);
     _MCF_mutex* __mtx = (_MCF_mutex*)(void*) &(__objc_mtx->backend);
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback, __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx, NULL);
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback, __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
@@ -338,7 +338,7 @@ __MCF_gthr_objc_thread_detach(__MCF_gthr_thread_procedure* __proc, void* __arg) 
 
     __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk_v2, __rec, sizeof(*__rec));
     if(!__thrd)
-      return NULL;
+      return __MCF_nullptr;
 
     __tid = __thrd->__tid;
     _MCF_thread_drop_ref_nonnull(__thrd);
@@ -350,7 +350,7 @@ int
 __MCF_gthr_objc_thread_set_priority(int __priority) __MCF_NOEXCEPT
   {
     int __wprio = (__priority < 0) ? -2 : (__priority - 2);
-    int __err = _MCF_thread_set_priority(NULL, (_MCF_thread_priority) __wprio);
+    int __err = _MCF_thread_set_priority(__MCF_nullptr, (_MCF_thread_priority) __wprio);
     return __err;
   }
 
@@ -358,7 +358,7 @@ __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_thread_get_priority(void) __MCF_NOEXCEPT
   {
-    int __wprio = (int) _MCF_thread_get_priority(NULL);
+    int __wprio = (int) _MCF_thread_get_priority(__MCF_nullptr);
     int __priority = (__wprio < -2) ? 0 : (__wprio + 2);
     return __priority;
   }
@@ -390,7 +390,7 @@ __MCF_gthr_objc_thread_get_data(void) __MCF_NOEXCEPT
   {
     _MCF_thread* __self = _MCF_thread_self();
     if(!__self)
-      return NULL;
+      return __MCF_nullptr;
 
     return __self->__libobjc_tls_data;
   }

@@ -346,18 +346,18 @@ int
 __MCF_gthr_once(__gthread_once_t* __once, __MCF_once_callback* __init_proc)
   {
 #ifdef _MSC_VER
-    _MCF_once* __once_g = NULL;
+    _MCF_once* __once_g = __MCF_nullptr;
     __try
 #else
-    _MCF_once* __once_g __attribute__((__cleanup__(__MCF_gthr_unonce))) = NULL;
+    _MCF_once* __once_g __attribute__((__cleanup__(__MCF_gthr_unonce))) = __MCF_nullptr;
 #endif
     {
-      if(_MCF_once_wait(__once, NULL) == 0)
+      if(_MCF_once_wait(__once, __MCF_nullptr) == 0)
         return 0;
 
       __once_g = __once;
       __init_proc();
-      __once_g = NULL;
+      __once_g = __MCF_nullptr;
       _MCF_once_release(__once);
       return 0;
     }
@@ -372,7 +372,7 @@ __MCF_gthr_key_create(__gthread_key_t* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_
   {
     _MCF_tls_key* __key = _MCF_tls_key_new(__dtor_opt);
     *__keyp = __key;
-    return (__key == NULL) ? -1 : 0;
+    return (__key == __MCF_nullptr) ? -1 : 0;
   }
 
 __MCF_GTHR_INLINE
@@ -418,7 +418,7 @@ __MCF_GTHR_INLINE
 int
 __MCF_gthr_mutex_lock(__gthread_mutex_t* __mtx) __MCF_NOEXCEPT
   {
-    int __err = _MCF_mutex_lock(__mtx, NULL);
+    int __err = _MCF_mutex_lock(__mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
@@ -473,7 +473,7 @@ __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx) __MCF_NOEXC
     if(__err == 0)
       return 0;
 
-    __err = __MCF_gthr_rc_mutex_wait(__rmtx, NULL);
+    __err = __MCF_gthr_rc_mutex_wait(__rmtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
@@ -534,7 +534,7 @@ __MCF_GTHR_INLINE
 int
 __MCF_gthr_cond_wait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx) __MCF_NOEXCEPT
   {
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback, __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx, NULL);
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback, __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
@@ -543,7 +543,7 @@ __MCF_GTHR_INLINE
 int
 __MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
   {
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) __rmtx, NULL);
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback, __MCF_gthr_recursive_mutex_relock_callback, (intptr_t) __rmtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
@@ -586,7 +586,7 @@ __MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, 
 
     __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk_v2, __rec, sizeof(*__rec));
     *__thrdp = __thrd;
-    return (__thrd == NULL) ? -1 : 0;
+    return (__thrd == __MCF_nullptr) ? -1 : 0;
   }
 
 __MCF_GTHR_INLINE
@@ -611,7 +611,7 @@ __MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_NOEXCEPT
     if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
       return -3;
 
-    __err = _MCF_thread_wait(__thrd, NULL);
+    __err = _MCF_thread_wait(__thrd, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     __MCF_SET_IF(__resp_opt, __rec->__result);
 

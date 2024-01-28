@@ -30,21 +30,21 @@ void*
 thread_proc(void* param)
   {
     (void) param;
-    _MCF_sem_wait(&start, NULL);
+    _MCF_sem_wait(&start, __MCF_nullptr);
 
     int err = __libcpp_execute_once(&once, once_do_it);
     printf("thread %d got %d\n", (int) _MCF_thread_self_tid(), err);
     assert(err == 0);
 
     printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
-    return NULL;
+    return __MCF_nullptr;
   }
 
 int
 main(void)
   {
     for(size_t k = 0;  k < NTHREADS;  ++k) {
-      int r = __libcpp_thread_create(&threads[k], thread_proc, NULL);
+      int r = __libcpp_thread_create(&threads[k], thread_proc, __MCF_nullptr);
       assert(r == 0);
       assert(threads[k]);
     }

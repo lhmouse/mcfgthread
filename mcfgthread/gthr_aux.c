@@ -40,7 +40,7 @@ __MCF_gthr_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
 
     /* Relock the mutex. The `unlocked` value is unused.  */
     (void) unlocked;
-    _MCF_mutex_lock(mtx, NULL);
+    _MCF_mutex_lock(mtx, __MCF_nullptr);
   }
 
 __MCF_DLLEXPORT
@@ -67,7 +67,7 @@ __MCF_gthr_recursive_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
     __MCF_gthr_rc_mutex* rmtx = (__MCF_gthr_rc_mutex*) arg;
 
     /* Relock the mutex and restore the depth counter.  */
-    _MCF_mutex_lock(rmtx->__mutex, NULL);
+    _MCF_mutex_lock(rmtx->__mutex, __MCF_nullptr);
     __MCF_ASSERT(rmtx->__owner[0] == 0);
     _MCF_atomic_store_32_rlx(rmtx->__owner, (int32_t) _MCF_thread_self_tid());
     rmtx->__depth = (int32_t) unlocked;

@@ -22,14 +22,14 @@ thread_proc(void* param)
 int
 main(void)
   {
-    int r = thrd_create(&thrd, thread_proc, NULL);
+    int r = thrd_create(&thrd, thread_proc, __MCF_nullptr);
     assert(r == 0);
     assert(thrd);
 
     assert(!thrd_equal(thrd_current(), thrd));
 
     printf("main waiting\n");
-    r = thrd_join(thrd, NULL);
+    r = thrd_join(thrd, __MCF_nullptr);
     assert(r == 0);
     printf("main wait finished\n");
   }

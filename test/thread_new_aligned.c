@@ -24,7 +24,7 @@ main(void)
 
       uint32_t align = 1U << i;
       uint32_t size = 0x10000U;
-      _MCF_thread* thrd = _MCF_thread_new_aligned(thread_proc, align, NULL, size);
+      _MCF_thread* thrd = _MCF_thread_new_aligned(thread_proc, align, __MCF_nullptr, size);
       if(!thrd) {
         assert(GetLastError() == ERROR_NOT_SUPPORTED);
         continue;
@@ -34,7 +34,7 @@ main(void)
       assert((uintptr_t) data % align == 0);
       assert((char*) data + size <= (char*) thrd + HeapSize(GetProcessHeap(), 0, thrd));
 
-      _MCF_thread_wait(thrd, NULL);
+      _MCF_thread_wait(thrd, __MCF_nullptr);
       _MCF_thread_drop_ref(thrd);
     }
   }

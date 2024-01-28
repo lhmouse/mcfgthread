@@ -52,7 +52,7 @@ thread_proc(void* param)
     }
 
     printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
-    return NULL;
+    return __MCF_nullptr;
   }
 
 int

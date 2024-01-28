@@ -16,7 +16,7 @@ main(void)
     double now, delta;
     int r;
 
-    _MCF_thread_set_priority(NULL, _MCF_thread_priority_above_normal);
+    _MCF_thread_set_priority(__MCF_nullptr, _MCF_thread_priority_above_normal);
 
     r = _MCF_event_await_change(&event, -1, (const int64_t[]){ (int64_t) _MCF_hires_utc_now() + 1100 });  /* absolute  */
     assert(r == -2);

@@ -17,11 +17,11 @@ thread_proc(_MCF_thread* self)
 int
 main(void)
   {
-    _MCF_thread* thrd = _MCF_thread_new_aligned(thread_proc, 3, NULL, 0);
-    assert(thrd == NULL);
+    _MCF_thread* thrd = _MCF_thread_new_aligned(thread_proc, 3, __MCF_nullptr, 0);
+    assert(thrd == __MCF_nullptr);
     assert(GetLastError() == ERROR_NOT_SUPPORTED);
 
-    thrd = _MCF_thread_new_aligned(thread_proc, 0x40000000, NULL, 0);
-    assert(thrd == NULL);
+    thrd = _MCF_thread_new_aligned(thread_proc, 0x40000000, __MCF_nullptr, 0);
+    assert(thrd == __MCF_nullptr);
     assert(GetLastError() == ERROR_NOT_SUPPORTED);
   }

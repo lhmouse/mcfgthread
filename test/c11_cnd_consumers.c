@@ -116,7 +116,7 @@ main(void)
 
     printf("main waiting\n");
     for(size_t k = 0;  k < NTHREADS;  ++k) {
-      int r = thrd_join(threads[k], NULL);
+      int r = thrd_join(threads[k], __MCF_nullptr);
       assert(r == thrd_success);
       printf("main wait finished: %d, consumed %d\n", (int)k, consumed[k]);
       total += consumed[k];

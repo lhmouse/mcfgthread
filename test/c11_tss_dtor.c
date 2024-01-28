@@ -26,7 +26,7 @@ int
 thread_proc(void* param)
   {
     (void) param;
-    _MCF_sem_wait(&start, NULL);
+    _MCF_sem_wait(&start, __MCF_nullptr);
 
     int r = _MCF_tls_set(key, &count);
     assert(r == thrd_success);
@@ -43,7 +43,7 @@ main(void)
     assert(key);
 
     for(size_t k = 0;  k < NTHREADS;  ++k) {
-      r = thrd_create(&threads[k], thread_proc, NULL);
+      r = thrd_create(&threads[k], thread_proc, __MCF_nullptr);
       assert(r == thrd_success);
       assert(threads[k]);
     }
@@ -51,7 +51,7 @@ main(void)
     printf("main waiting\n");
     _MCF_sem_signal_some(&start, NTHREADS);
     for(size_t k = 0;  k < NTHREADS;  ++k) {
-      r = thrd_join(threads[k], NULL);
+      r = thrd_join(threads[k], __MCF_nullptr);
       assert(r == thrd_success);
       printf("main wait finished: %d\n", (int)k);
     }

@@ -24,7 +24,7 @@ main(void)
     }
 
     for(intptr_t k = 1000;  k >= 1;  --k) {
-      r = __MCF_dtor_queue_pop(&elem, &queue, NULL);
+      r = __MCF_dtor_queue_pop(&elem, &queue, __MCF_nullptr);
       assert(r == 0);
       printf("pop: %td, size = %td\n", (intptr_t) elem.__this, (intptr_t) queue.__size);
 
@@ -32,9 +32,9 @@ main(void)
       assert(elem.__dso == (void*) (k % 10));
     }
 
-    r = __MCF_dtor_queue_pop(&elem, &queue, NULL);
+    r = __MCF_dtor_queue_pop(&elem, &queue, __MCF_nullptr);
     assert(r == -1);
 
     assert(queue.__size == 0);
-    assert(queue.__prev == NULL);
+    assert(queue.__prev == __MCF_nullptr);
   }

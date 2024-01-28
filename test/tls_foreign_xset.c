@@ -19,18 +19,18 @@ thread_proc(LPVOID param)
     int r;
 
     p = _MCF_tls_get(key);
-    assert(p == NULL);
+    assert(p == __MCF_nullptr);
 
     p = &r;
     r = _MCF_tls_xset(key, &p, &dso_2);
     assert(r == 0);
-    assert(p == NULL);
+    assert(p == __MCF_nullptr);
 
     p = _MCF_tls_get(key);
     assert(p == &dso_2);
 
     p = &r;
-    r = _MCF_tls_xset(key, &p, NULL);
+    r = _MCF_tls_xset(key, &p, __MCF_nullptr);
     assert(r == 0);
     assert(p == &dso_2);
 
@@ -46,22 +46,22 @@ main(void)
     void* p;
     int r;
 
-    key = _MCF_tls_key_new(NULL);
+    key = _MCF_tls_key_new(__MCF_nullptr);
     assert(key);
-    assert(_MCF_tls_key_get_destructor(key) == NULL);
+    assert(_MCF_tls_key_get_destructor(key) == __MCF_nullptr);
 
     p = _MCF_tls_get(key);
-    assert(p == NULL);
+    assert(p == __MCF_nullptr);
 
     p = &r;
-    r = _MCF_tls_xset(key, &p, NULL);
+    r = _MCF_tls_xset(key, &p, __MCF_nullptr);
     assert(r == 0);
-    assert(p == NULL);
+    assert(p == __MCF_nullptr);
 
     p = &r;
     r = _MCF_tls_xset(key, &p, &dso_1);
     assert(r == 0);
-    assert(p == NULL);
+    assert(p == __MCF_nullptr);
 
     p = _MCF_tls_get(key);
     assert(p == &dso_1);
@@ -71,7 +71,7 @@ main(void)
     assert(r == 0);
     assert(p == &dso_1);
 
-    thrd = CreateThread(NULL, 0, thread_proc, NULL, 0, NULL);
+    thrd = CreateThread(__MCF_nullptr, 0, thread_proc, __MCF_nullptr, 0, __MCF_nullptr);
     assert(thrd);
 
     printf("main waiting\n");
@@ -82,7 +82,7 @@ main(void)
     assert(p == &dso_2);
 
     p = &r;
-    r = _MCF_tls_xset(key, &p, NULL);
+    r = _MCF_tls_xset(key, &p, __MCF_nullptr);
     assert(r == 0);
     assert(p == &dso_2);
   }

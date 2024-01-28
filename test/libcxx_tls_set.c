@@ -19,7 +19,7 @@ thread_proc(void* param)
     int r;
 
     p = __libcpp_tls_get(key);
-    assert(p == NULL);
+    assert(p == __MCF_nullptr);
 
     r = __libcpp_tls_set(key, &dso_2);
     assert(r == 0);
@@ -29,7 +29,7 @@ thread_proc(void* param)
 
     _MCF_sleep((const int64_t[]) { -1000 });
     printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
-    return NULL;
+    return __MCF_nullptr;
   }
 
 int
@@ -38,12 +38,12 @@ main(void)
     void* p;
     int r;
 
-    r = __libcpp_tls_create(&key, NULL);
+    r = __libcpp_tls_create(&key, __MCF_nullptr);
     assert(r == 0);
     assert(key);
 
     p = __libcpp_tls_get(key);
-    assert(p == NULL);
+    assert(p == __MCF_nullptr);
 
     r = __libcpp_tls_set(key, &dso_1);
     assert(r == 0);
@@ -51,7 +51,7 @@ main(void)
     p = __libcpp_tls_get(key);
     assert(p == &dso_1);
 
-    r = __libcpp_thread_create(&thrd, thread_proc, NULL);
+    r = __libcpp_thread_create(&thrd, thread_proc, __MCF_nullptr);
     assert(r == 0);
     assert(thrd);
 

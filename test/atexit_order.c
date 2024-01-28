@@ -25,7 +25,7 @@ int
 main(void)
   {
     static int value = 42;
-    __MCF_cxa_atexit(atexit_second, &value, NULL);
-    __MCF_cxa_atexit(atexit_first, &value, NULL);
+    __MCF_cxa_atexit(atexit_second, &value, __MCF_nullptr);
+    __MCF_cxa_atexit(atexit_first, &value, __MCF_nullptr);
     __MCF_exit(1);
   }

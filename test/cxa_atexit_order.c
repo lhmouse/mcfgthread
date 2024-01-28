@@ -39,11 +39,11 @@ cleanup_4(void* ptr)
 int
 main(void)
   {
-    __MCF_cxa_atexit(cleanup_4, (void*) 4, NULL);
-    __MCF_cxa_thread_atexit(cleanup_2, (void*) 2, NULL);
-    __MCF_cxa_thread_atexit(cleanup_1, (void*) 1, NULL);
-    __MCF_cxa_atexit(cleanup_3, (void*) 3, NULL);
+    __MCF_cxa_atexit(cleanup_4, (void*) 4, __MCF_nullptr);
+    __MCF_cxa_thread_atexit(cleanup_2, (void*) 2, __MCF_nullptr);
+    __MCF_cxa_thread_atexit(cleanup_1, (void*) 1, __MCF_nullptr);
+    __MCF_cxa_atexit(cleanup_3, (void*) 3, __MCF_nullptr);
 
-    __MCF_cxa_finalize(NULL);
+    __MCF_cxa_finalize(__MCF_nullptr);
     __MCF__Exit(0);
   }

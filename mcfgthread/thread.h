@@ -397,8 +397,8 @@ void*
 _MCF_tls_get(const _MCF_tls_key* __key) __MCF_NOEXCEPT
   {
     _MCF_thread* __self = _MCF_thread_self();
-    return (__self == NULL)
-        ? NULL  /* foreign thread  */
+    return (__self == __MCF_nullptr)
+        ? __MCF_nullptr  /* foreign thread  */
         : __MCF_tls_table_get(__self->__tls_table, __key);
   }
 
@@ -407,7 +407,7 @@ int
 _MCF_tls_xset(_MCF_tls_key* __key, void** __old_value_opt, const void* __value_opt) __MCF_NOEXCEPT
   {
     _MCF_thread* __self = _MCF_thread_self();
-    return (__self == NULL)
+    return (__self == __MCF_nullptr)
         ? -1  /* allocation failure  */
         : __MCF_tls_table_xset(__self->__tls_table, __key, __old_value_opt, __value_opt);
   }
@@ -417,9 +417,9 @@ int
 _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt) __MCF_NOEXCEPT
   {
     _MCF_thread* __self = _MCF_thread_self();
-    return (__self == NULL)
+    return (__self == __MCF_nullptr)
         ? -1  /* allocation failure  */
-        : __MCF_tls_table_xset(__self->__tls_table, __key, NULL, __value_opt);
+        : __MCF_tls_table_xset(__self->__tls_table, __key, __MCF_nullptr, __value_opt);
   }
 
 __MCF_C_DECLARATIONS_END
