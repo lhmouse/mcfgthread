@@ -304,14 +304,14 @@ import('pkgconfig').generate(lib_mcfgthread_dll,
 #===========================================================
 foreach src: test_src
   name = src.underscorify()
-  test = executable(name, src, link_with: lib_mcfgthread_dll)
+  test = executable(name, src, link_with: lib_mcfgthread_a)
   test(name, test, timeout: 120)
 endforeach
 
 # Specialized: -ladvapi32 -lntdll
 test = executable('test_memory_c', 'test/memory.c',
                   dependencies: [ dep_advapi32, dep_ntdll ],
-                  link_with: lib_mcfgthread_dll)
+                  link_with: lib_mcfgthread_a)
 test(name, test)
 
 # Specialized: -Wpedantic
@@ -319,11 +319,11 @@ test = executable('test_gthr_c89_pedantic_c', 'test/gthr_c89_pedantic.c',
                   c_args: [ '-std=c89', '-Wpedantic',
                             '-Werror=declaration-after-statement',
                             '-Wno-variadic-macros', '-Wno-long-long' ],
-                  link_with: lib_mcfgthread_dll)
+                  link_with: lib_mcfgthread_a)
 test(name, test)
 
 # Specialized: -Wpedantic
 test = executable('test_c11_c99_pedantic_c', 'test/c11_c99_pedantic.c',
                   c_args: [ '-std=c99', '-Wpedantic' ],
-                  link_with: lib_mcfgthread_dll)
+                  link_with: lib_mcfgthread_a)
 test(name, test)
