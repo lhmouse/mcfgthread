@@ -52,15 +52,15 @@ Use it at your own risk.
 
 ## Benchmarking
 
-[The test program](mutex_performance.c) was compiled and run on a **Windows
-10** machine with a 10-core **Intel i9 10900K** processor.
-
 * **#THREADS**: number of threads
 * **#ITERATIONS**: number of iterations per thread
 * **SRWLOCK**: Windows `SRWLOCK`
 * **CRITICAL_SECTION**: Windows `CRITICAL_SECTION`
 * **WINPTHREAD**: winpthread `pthread_mutex_t`
 * **MCFGTHREAD**: mcfgthread `_MCF_mutex` with `-fno-inline`
+
+These are results of [the test program](mutex_performance.c) on an x86-64
+ **Windows 10** machine with a 10-core **Intel i9 10900K** processor:
 
 | #THREADS | #ITERATIONS |       SRWLOCK | CRITICAL_SECTION |    WINPTHREAD |    MCFGTHREAD |
 |---------:|------------:|--------------:|-----------------:|--------------:|--------------:|
@@ -72,6 +72,20 @@ Use it at your own risk.
 |       20 |     600,000 |  2266.024 ms  |     8687.350 ms  |  2559.691 ms  |**1001.314 ms**|
 |       60 |     200,000 |**2831.348 ms**|    10164.012 ms  |  3814.880 ms  |  3299.509 ms  |
 |      200 |      60,000 |**2849.850 ms**|    10544.007 ms  |  3825.518 ms  |  3579.925 ms  |
+
+And these are results of the same program on **Wine 6.0.3** on an x86-64
+**Ubuntu 22.04** virtual machine with a 16-core **AMD EPYC2** processor:
+
+| #THREADS | #ITERATIONS |       SRWLOCK | CRITICAL_SECTION |    WINPTHREAD |    MCFGTHREAD |
+|---------:|------------:|--------------:|-----------------:|--------------:|--------------:|
+|        1 |  10,000,000 |  2466.983 ms  |     2574.892 ms  |**2444.599 ms**|  3167.704 ms  |
+|        2 |   5,000,000 |  1940.147 ms  |**   1918.091 ms**|  2078.076 ms  |  2213.607 ms  |
+|        4 |   2,000,000 |  3717.442 ms  |     5356.369 ms  |  3859.484 ms  |**1974.007 ms**|
+|        6 |   1,000,000 |  3517.333 ms  |     4519.209 ms  |  2474.208 ms  |**1582.614 ms**|
+|       10 |     500,000 |  3105.191 ms  |     4706.027 ms  |  2388.662 ms  |**1363.926 ms**|
+|       20 |     200,000 |  2721.077 ms  |     4262.151 ms  |  1966.195 ms  |**1340.997 ms**|
+|       60 |      60,000 |  2397.048 ms  |     3807.141 ms  |  1530.147 ms  |**1511.931 ms**|
+|      200 |      20,000 |  2632.933 ms  |     4148.604 ms  |**1615.904 ms**|  1784.553 ms  |
 
 ## Implementation details
 
