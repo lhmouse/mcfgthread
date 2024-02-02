@@ -47,14 +47,14 @@
 
 #ifdef _WIN64
 #  define __MCF_PTR_BITS     64
-#  define __MCF_IPTR_MIN   (-0x7FFFFFFFFFFFFFFFLL - 1)
+#  define __MCF_IPTR_MIN   (-0x7FFFFFFFFFFFFFFFLL-1)
 #  define __MCF_IPTR_0       0LL
 #  define __MCF_IPTR_MAX     0x7FFFFFFFFFFFFFFFLL
 #  define __MCF_UPTR_0       0ULL
 #  define __MCF_UPTR_MAX     0xFFFFFFFFFFFFFFFFULL
 #else
 #  define __MCF_PTR_BITS     32
-#  define __MCF_IPTR_MIN   (-0x7FFFFFFF - 1)
+#  define __MCF_IPTR_MIN   (-0x7FFFFFFF-1)
 #  define __MCF_IPTR_0       0
 #  define __MCF_IPTR_MAX     0x7FFFFFFF
 #  define __MCF_UPTR_0       0U
