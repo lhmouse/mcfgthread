@@ -93,8 +93,7 @@ __MCF_C_DECLARATIONS_BEGIN
 #define __MCF_atomic_load_(WIDTH, ORDER, INTEGER)  \
   __MCF_ALWAYS_INLINE  \
   INTEGER  \
-  _MCF_atomic_load_##WIDTH##_##ORDER(__MCF_zp_r __mem)  \
-    __MCF_NOEXCEPT  \
+  _MCF_atomic_load_##WIDTH##_##ORDER(__MCF_zp_r __mem) __MCF_NOEXCEPT  \
     {  \
       return __MCF_atomic_load((const __MCF_atomic(INTEGER)*) __mem,  \
                      __MCF_memory_order_##ORDER);  \
@@ -102,8 +101,7 @@ __MCF_C_DECLARATIONS_BEGIN
   \
   __MCF_ALWAYS_INLINE  \
   void  \
-  _MCF_atomic_load_p##WIDTH##_##ORDER(__MCF_zp __res, __MCF_zp_r __mem)  \
-    __MCF_NOEXCEPT  \
+  _MCF_atomic_load_p##WIDTH##_##ORDER(__MCF_zp __res, __MCF_zp_r __mem) __MCF_NOEXCEPT  \
     {  \
       *(INTEGER*) __res = __MCF_atomic_load((const __MCF_atomic(INTEGER)*) __mem,  \
                                   __MCF_memory_order_##ORDER);  \
@@ -146,8 +144,7 @@ __MCF_atomic_load_(z, cst, size_t)
 #define __MCF_atomic_store_(WIDTH, ORDER, INTEGER)  \
   __MCF_ALWAYS_INLINE  \
   void  \
-  _MCF_atomic_store_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER __val)  \
-    __MCF_NOEXCEPT  \
+  _MCF_atomic_store_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER __val) __MCF_NOEXCEPT  \
     {  \
       __MCF_atomic_store((__MCF_atomic(INTEGER)*) __mem, __val,  \
               __MCF_memory_order_##ORDER);  \
@@ -155,8 +152,7 @@ __MCF_atomic_load_(z, cst, size_t)
   \
   __MCF_ALWAYS_INLINE  \
   void  \
-  _MCF_atomic_store_p##WIDTH##_##ORDER(__MCF_zp __mem, __MCF_zp_r __src)  \
-    __MCF_NOEXCEPT  \
+  _MCF_atomic_store_p##WIDTH##_##ORDER(__MCF_zp __mem, __MCF_zp_r __src) __MCF_NOEXCEPT  \
     {  \
       __MCF_atomic_store((__MCF_atomic(INTEGER)*) __mem, *(const INTEGER*) __src,  \
               __MCF_memory_order_##ORDER);  \
@@ -200,8 +196,7 @@ __MCF_atomic_store_(z, cst, size_t)
 #define __MCF_atomic_xchg_(WIDTH, ORDER, INTEGER)  \
   __MCF_ALWAYS_INLINE  \
   INTEGER  \
-  _MCF_atomic_xchg_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER __val)  \
-    __MCF_NOEXCEPT  \
+  _MCF_atomic_xchg_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER __val) __MCF_NOEXCEPT  \
     {  \
       return __MCF_atomic_xchg((__MCF_atomic(INTEGER)*) __mem, __val,  \
                      __MCF_memory_order_##ORDER);  \
@@ -209,8 +204,7 @@ __MCF_atomic_store_(z, cst, size_t)
   \
   __MCF_ALWAYS_INLINE  \
   void  \
-  _MCF_atomic_xchg_p##WIDTH##_##ORDER(__MCF_zp __res, __MCF_zp __mem, __MCF_zp_r __src)  \
-    __MCF_NOEXCEPT  \
+  _MCF_atomic_xchg_p##WIDTH##_##ORDER(__MCF_zp __res, __MCF_zp __mem, __MCF_zp_r __src) __MCF_NOEXCEPT  \
     {  \
       *(INTEGER*) __res = __MCF_atomic_xchg((__MCF_atomic(INTEGER)*) __mem,  \
                                   *(const INTEGER*) __src, __MCF_memory_order_##ORDER);  \
@@ -268,20 +262,20 @@ __MCF_atomic_xchg_(z, cst, size_t)
 #define __MCF_atomic_cmpxchg_(WIDTH, ORDER, INTEGER)  \
   __MCF_ALWAYS_INLINE  \
   bool  \
-  _MCF_atomic_cmpxchg_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER* __restrict __cmp, INTEGER __val)  \
-    __MCF_NOEXCEPT  \
+  _MCF_atomic_cmpxchg_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER* __restrict __cmp, INTEGER __val) __MCF_NOEXCEPT  \
     {  \
-      return __MCF_atomic_cmpxchg((__MCF_atomic(INTEGER)*) __mem, __cmp, __val,  \
-                     __MCF_memory_order_##ORDER, __MCF_memory_order_f_##ORDER);  \
+      return __MCF_atomic_cmpxchg((__MCF_atomic(INTEGER)*) __mem, __cmp,  \
+                     __val, __MCF_memory_order_##ORDER,  \
+                     __MCF_memory_order_f_##ORDER);  \
     }  \
   \
   __MCF_ALWAYS_INLINE  \
   bool  \
-  _MCF_atomic_cmpxchg_p##WIDTH##_##ORDER(__MCF_zp __mem, __MCF_zp __cmp, __MCF_zp __val)  \
-    __MCF_NOEXCEPT  \
+  _MCF_atomic_cmpxchg_p##WIDTH##_##ORDER(__MCF_zp __mem, __MCF_zp __cmp, __MCF_zp __val) __MCF_NOEXCEPT  \
     {  \
       return __MCF_atomic_cmpxchg((__MCF_atomic(INTEGER)*) __mem, (INTEGER*) __cmp,  \
-                 *(const INTEGER*) __val, __MCF_memory_order_##ORDER, __MCF_memory_order_f_##ORDER);  \
+                 *(const INTEGER*) __val, __MCF_memory_order_##ORDER,  \
+                 __MCF_memory_order_f_##ORDER);  \
     }
 
 __MCF_atomic_cmpxchg_(8, rlx, int8_t)
@@ -336,20 +330,20 @@ __MCF_atomic_cmpxchg_(z, cst, size_t)
 #define __MCF_atomic_cmpxchg_weak_(WIDTH, ORDER, INTEGER)  \
   __MCF_ALWAYS_INLINE  \
   bool  \
-  _MCF_atomic_cmpxchg_weak_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER* __restrict __cmp, INTEGER __val)  \
-    __MCF_NOEXCEPT  \
+  _MCF_atomic_cmpxchg_weak_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER* __restrict __cmp, INTEGER __val) __MCF_NOEXCEPT  \
     {  \
-      return __MCF_atomic_cmpxchgw((__MCF_atomic(INTEGER)*) __mem, __cmp, __val,  \
-                     __MCF_memory_order_##ORDER, __MCF_memory_order_f_##ORDER);  \
+      return __MCF_atomic_cmpxchgw((__MCF_atomic(INTEGER)*) __mem, __cmp,  \
+                     __val, __MCF_memory_order_##ORDER,  \
+                     __MCF_memory_order_f_##ORDER);  \
     }  \
   \
   __MCF_ALWAYS_INLINE  \
   bool  \
-  _MCF_atomic_cmpxchg_weak_p##WIDTH##_##ORDER(__MCF_zp __mem, __MCF_zp __cmp, __MCF_zp __val)  \
-    __MCF_NOEXCEPT  \
+  _MCF_atomic_cmpxchg_weak_p##WIDTH##_##ORDER(__MCF_zp __mem, __MCF_zp __cmp, __MCF_zp __val) __MCF_NOEXCEPT  \
     {  \
       return __MCF_atomic_cmpxchgw((__MCF_atomic(INTEGER)*) __mem, (INTEGER*) __cmp,  \
-                 *(const INTEGER*) __val, __MCF_memory_order_##ORDER, __MCF_memory_order_f_##ORDER);  \
+                     *(const INTEGER*) __val, __MCF_memory_order_##ORDER,  \
+                     __MCF_memory_order_f_##ORDER);  \
     }
 
 __MCF_atomic_cmpxchg_weak_(8, rlx, int8_t)
@@ -397,10 +391,10 @@ __MCF_atomic_cmpxchg_weak_(z, cst, size_t)
 #define __MCF_atomic_xadd_(WIDTH, ORDER, INTEGER)  \
   __MCF_ALWAYS_INLINE  \
   INTEGER  \
-  _MCF_atomic_xadd_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER __val)  \
-    __MCF_NOEXCEPT  \
+  _MCF_atomic_xadd_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER __val) __MCF_NOEXCEPT  \
     {  \
-      return __MCF_atomic_xadd((__MCF_atomic(INTEGER)*) __mem, __val, __MCF_memory_order_##ORDER);  \
+      return __MCF_atomic_xadd((__MCF_atomic(INTEGER)*) __mem, __val,  \
+                     __MCF_memory_order_##ORDER);  \
     }
 
 __MCF_atomic_xadd_(8, rlx, int8_t)
@@ -448,10 +442,10 @@ __MCF_atomic_xadd_(z, cst, size_t)
 #define __MCF_atomic_xsub_(WIDTH, ORDER, INTEGER)  \
   __MCF_ALWAYS_INLINE  \
   INTEGER  \
-  _MCF_atomic_xsub_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER __val)  \
-    __MCF_NOEXCEPT  \
+  _MCF_atomic_xsub_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER __val) __MCF_NOEXCEPT  \
     {  \
-      return __MCF_atomic_xsub((__MCF_atomic(INTEGER)*) __mem, __val, __MCF_memory_order_##ORDER);  \
+      return __MCF_atomic_xsub((__MCF_atomic(INTEGER)*) __mem, __val,  \
+                     __MCF_memory_order_##ORDER);  \
     }
 
 __MCF_atomic_xsub_(8, rlx, int8_t)
