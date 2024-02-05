@@ -271,15 +271,16 @@ install_headers(meson.current_build_dir() / 'version.h', subdir: 'mcfgthread')
 #===========================================================
 # Rules for 'lib/libmcfgthread'
 #===========================================================
+lib_mcfgthread_cflags = [ '-ffreestanding', '-fasynchronous-unwind-tables' ]
+
 mcfgthread_version_o = import('windows').compile_resources(
       'mcfgthread/version.rc',
       args: [ '-I.', '-c65001' ],
-      depend_files: [ meson.current_build_dir() / 'version.h',
-                      'mcfgthread/version.manifest' ])
+      depend_files: [ 'mcfgthread/version.h.in', 'mcfgthread/version.manifest' ])
 
 lib_mcfgthread_dll = shared_library('mcfgthread',
       c_pch: 'mcfgthread/precompiled.h',
-      c_args: [ '-nostdlib', '-ffreestanding', '-fasynchronous-unwind-tables' ],
+      c_args: [ lib_mcfgthread_cflags, '-nostdlib', '-DDLL_EXPORT' ],
       sources: [ mcfgthread_src, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
       soversion: ver.get('abi_major'),
@@ -288,7 +289,7 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
 
 lib_mcfgthread_a = static_library('mcfgthread',
       c_pch: 'mcfgthread/precompiled.h',
-      c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables' ],
+      c_args: [ lib_mcfgthread_cflags ],
       dependencies: [ dep_kernel32, dep_ntdll ],
       sources: [ mcfgthread_src ],
       install: true)
