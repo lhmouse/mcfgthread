@@ -2,12 +2,12 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved.  */
 
-#include "precompiled.h"
+#include "xprecompiled.h"
 #define __MCF_EXIT_IMPORT  __MCF_DLLEXPORT
 #define __MCF_EXIT_INLINE  __MCF_DLLEXPORT
 #include "exit.h"
 #include "cxa.h"
-#include "xglobals.i"
+#include "xglobals.h"
 
 __MCF_DLLEXPORT
 void

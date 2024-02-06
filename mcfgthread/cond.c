@@ -2,11 +2,11 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved.  */
 
-#include "precompiled.h"
+#include "xprecompiled.h"
 #define __MCF_COND_IMPORT  __MCF_DLLEXPORT
 #define __MCF_COND_INLINE  __MCF_DLLEXPORT
 #include "cond.h"
-#include "xglobals.i"
+#include "xglobals.h"
 
 typedef struct __MCF_cond_unlock_result __MCF_cond_unlock_result;
 

@@ -2,7 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved.  */
 
-#include "precompiled.h"
+#include "xprecompiled.h"
 #define __MCF_CXA_IMPORT  __MCF_DLLEXPORT
 #define __MCF_CXA_INLINE  __MCF_DLLEXPORT
 #include "cxa.h"
@@ -10,7 +10,7 @@
 #include "mutex.h"
 #include "dtor_queue.h"
 #include "thread.h"
-#include "xglobals.i"
+#include "xglobals.h"
 
 __MCF_DLLEXPORT
 int

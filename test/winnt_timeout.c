@@ -2,7 +2,7 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022, LH_Mouse. All wrongs reserved.  */
 
-#include "../mcfgthread/xglobals.i"
+#include "../mcfgthread/xglobals.h"
 #include "../mcfgthread/clock.h"
 #include "../mcfgthread/thread.h"
 #include <assert.h>

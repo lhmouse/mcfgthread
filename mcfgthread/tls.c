@@ -2,12 +2,12 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved.  */
 
-#include "precompiled.h"
+#include "xprecompiled.h"
 #define __MCF_TLS_IMPORT  __MCF_DLLEXPORT
 #define __MCF_TLS_INLINE  __MCF_DLLEXPORT
 #include "tls.h"
 #include "atomic.h"
-#include "xglobals.i"
+#include "xglobals.h"
 
 __MCF_DLLEXPORT
 _MCF_tls_key*

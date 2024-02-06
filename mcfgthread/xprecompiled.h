@@ -2,8 +2,8 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved.  */
 
-#ifndef __MCFGTHREAD_PRECOMPILED_
-#define __MCFGTHREAD_PRECOMPILED_
+#ifndef __MCFGTHREAD_XPRECOMPILED_
+#define __MCFGTHREAD_XPRECOMPILED_
 
 #include "version.h"
 
@@ -22,4 +22,4 @@
 #include <stdbool.h>
 #include <limits.h>
 
-#endif  /* __MCFGTHREAD_PRECOMPILED_  */
+#endif  /* __MCFGTHREAD_XPRECOMPILED_  */

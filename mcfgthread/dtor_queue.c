@@ -2,12 +2,12 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved.  */
 
-#include "precompiled.h"
+#include "xprecompiled.h"
 #define __MCF_DTOR_QUEUE_IMPORT  __MCF_DLLEXPORT
 #define __MCF_DTOR_QUEUE_INLINE  __MCF_DLLEXPORT
 #include "dtor_queue.h"
 #include "mutex.h"
-#include "xglobals.i"
+#include "xglobals.h"
 
 __MCF_DLLEXPORT
 int

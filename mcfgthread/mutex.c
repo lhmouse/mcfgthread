@@ -2,11 +2,11 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved.  */
 
-#include "precompiled.h"
+#include "xprecompiled.h"
 #define __MCF_MUTEX_IMPORT  __MCF_DLLEXPORT
 #define __MCF_MUTEX_INLINE  __MCF_DLLEXPORT
 #include "mutex.h"
-#include "xglobals.i"
+#include "xglobals.h"
 
 static inline
 BYTE*

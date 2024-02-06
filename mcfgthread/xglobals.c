@@ -2,11 +2,11 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved.  */
 
-#include "precompiled.h"
+#include "xprecompiled.h"
 #define __MCF_XGLOBALS_IMPORT  __MCF_DLLEXPORT
 #define __MCF_XGLOBALS_INLINE  __MCF_DLLEXPORT
 #define __MCF_XGLOBALS_READONLY
-#include "xglobals.i"
+#include "xglobals.h"
 
 __MCF_DLLEXPORT
 EXCEPTION_DISPOSITION

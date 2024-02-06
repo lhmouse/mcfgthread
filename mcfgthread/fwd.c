@@ -2,11 +2,11 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved.  */
 
-#include "precompiled.h"
+#include "xprecompiled.h"
 #define __MCF_FWD_IMPORT  __MCF_DLLEXPORT
 #define __MCF_FWD_INLINE  __MCF_DLLEXPORT
 #include "fwd.h"
-#include "xglobals.i"
+#include "xglobals.h"
 
 __MCF_DLLEXPORT
 void

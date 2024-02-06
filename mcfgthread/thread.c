@@ -2,11 +2,11 @@
  * See LICENSE.TXT for licensing information.
  * Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved.  */
 
-#include "precompiled.h"
+#include "xprecompiled.h"
 #define __MCF_THREAD_IMPORT  __MCF_DLLEXPORT
 #define __MCF_THREAD_INLINE  __MCF_DLLEXPORT
 #include "thread.h"
-#include "xglobals.i"
+#include "xglobals.h"
 
 static __attribute__((__force_align_arg_pointer__))
 DWORD

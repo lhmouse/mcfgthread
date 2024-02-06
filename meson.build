@@ -277,7 +277,7 @@ mcfgthread_version_o = import('windows').compile_resources(
       depend_files: [ 'mcfgthread/version.h.in', 'mcfgthread/version.manifest' ])
 
 lib_mcfgthread_dll = shared_library('mcfgthread',
-      c_pch: 'mcfgthread/precompiled.h',
+      c_pch: 'mcfgthread/xprecompiled.h',
       c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables', '-DDLL_EXPORT' ],
       link_args: [ '-nostdlib', '-Wl,--entry,__MCF_dll_startup@@Z',
                    '-Wl,--enable-auto-image-base', '-Wl,--subsystem,windows:6.1',
@@ -289,7 +289,7 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
       install: true)
 
 lib_mcfgthread_a = static_library('mcfgthread',
-      c_pch: 'mcfgthread/precompiled.h',
+      c_pch: 'mcfgthread/xprecompiled.h',
       c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables' ],
       dependencies: [ dep_kernel32, dep_ntdll ],
       sources: [ mcfgthread_src ],
