@@ -479,19 +479,20 @@ __MCF_C11_INLINE
 int
 __MCF_c11_mtx_init(mtx_t* __mtx, int __type) __MCF_NOEXCEPT
   {
-    switch(__type) {
-      default:
-        /* Invalid `__type` specified.  */
-        return thrd_error;
-
+    switch(__type)
+      {
       case mtx_plain:
       case mtx_timed:
       case mtx_plain | mtx_recursive:
       case mtx_timed | mtx_recursive:
-        /* Initialize an unowned mutex.  */
+        /* Initialize an unowned mutex of the given type.  */
         __mtx->__type = (uint8_t) __type;
         __MCF_gthr_rc_mutex_init(__mtx->__rc_mtx);
         return thrd_success;
+
+      default:
+        /* Reject the invalid `__type`.  */
+        return thrd_error;
     }
   }
 
