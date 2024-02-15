@@ -20,9 +20,9 @@ take precedence over those in PATH.](https://learn.microsoft.com/en-us/windows/w
 
 ```sh
 pacman -S --noconfirm mingw-w64-ucrt-x86_64-{{headers,crt,tools}-git,gcc,binutils,meson}
-meson setup build_dir
+meson setup build_debug
 ninja libmcfgthread-1.dll  # see warning above
-meson test -Cbuild_dir
+meson test -Cbuild_debug
 ```
 
 Cross-compiling from Debian, Ubuntu or Linux Mint is supported. In order to run
@@ -30,8 +30,8 @@ tests, Wine is required.
 
 ```sh
 sudo apt-get install -y --no-install-recommends mingw-w64-{x86-64-dev,tools} {gcc,g++,binutils}-mingw-w64-x86-64 meson wine wine-binfmt
-meson setup --cross-file meson.cross.x86_64-w64-mingw32 build_dir
-meson test -Cbuild_dir
+meson setup --cross-file meson.cross.x86_64-w64-mingw32 build_debug
+meson test -Cbuild_debug
 ```
 
 ## Notes
