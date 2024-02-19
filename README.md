@@ -16,7 +16,7 @@ Others are similar. Clang shells are also supported.
 you must build _libmcfgthread-1.dll_ before anything else. Meson creates the DLL
 in the working directory, which might get picked up by cc1.exe when it is only
 half-baked, because [Microsoft documentation says that DLLs in the working directory
-take precedence over those in PATH.](https://learn.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-search-order#standard-search-order-for-unpackaged-apps).
+take precedence over those in PATH](https://learn.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-search-order#standard-search-order-for-unpackaged-apps).
 
 ```sh
 pacman -S --noconfirm mingw-w64-ucrt-x86_64-{{headers,crt,tools}-git,gcc,binutils,meson}
