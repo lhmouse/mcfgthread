@@ -285,7 +285,7 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
       sources: [ mcfgthread_src, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
       soversion: ver.get('abi_major'),
-      version: '@0@.@1@.@2@'.format(ver.get('abi_major'), ver.get('abi_minor'), 0),
+      version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
       install: true)
 
 lib_mcfgthread_a = static_library('mcfgthread',
