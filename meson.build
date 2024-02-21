@@ -305,27 +305,25 @@ import('pkgconfig').generate(lib_mcfgthread_dll,
 # Rules for tests
 #===========================================================
 foreach src: test_src
-  name = src.underscorify()
-  t = executable(name, src, link_with: lib_mcfgthread_a)
-  test(name, t, timeout: 120)
+  test(src, executable(src.replace('.c', '').underscorify(), src,
+                       link_with: lib_mcfgthread_a))
 endforeach
 
 # Specialized: -ladvapi32 -lntdll
-t = executable('test_memory_c', 'test/memory.c',
-                  dependencies: [ dep_advapi32, dep_ntdll ],
-                  link_with: lib_mcfgthread_a)
-test(name, t)
+test('test/memory.c', executable('test_memory_c',
+             'test/memory.c',
+              dependencies: [ dep_advapi32, dep_ntdll ],
+              link_with: lib_mcfgthread_a))
 
-# Specialized: -Wpedantic
-t = executable('test_gthr_c89_pedantic_c', 'test/gthr_c89_pedantic.c',
-                  c_args: [ '-std=c89', '-Wpedantic',
-                            '-Werror=declaration-after-statement',
-                            '-Wno-variadic-macros', '-Wno-long-long' ],
-                  link_with: lib_mcfgthread_a)
-test(name, t)
+# Specialized: -std=c89 -Wpedantic
+test('test/gthr_c89_pedantic.c', executable('test_gthr_c89_pedantic_c',
+             'test/gthr_c89_pedantic.c',
+              c_args: [ '-std=c89', '-Werror=declaration-after-statement',
+                        '-Wpedantic', '-Wno-variadic-macros', '-Wno-long-long' ],
+              link_with: lib_mcfgthread_a))
 
-# Specialized: -Wpedantic
-t = executable('test_c11_c99_pedantic_c', 'test/c11_c99_pedantic.c',
-                  c_args: [ '-std=c99', '-Wpedantic' ],
-                  link_with: lib_mcfgthread_a)
-test(name, t)
+# Specialized: -std=c99 -Wpedantic
+test('test/c11_c99_pedantic.c', executable('test_c11_c99_pedantic_c',
+             'test/c11_c99_pedantic.c',
+              c_args: [ '-std=c99', '-Wpedantic' ],
+              link_with: lib_mcfgthread_a))
