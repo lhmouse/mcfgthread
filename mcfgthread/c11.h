@@ -493,7 +493,7 @@ __MCF_c11_mtx_init(mtx_t* __mtx, int __type) __MCF_NOEXCEPT
       default:
         /* Reject the invalid `__type`.  */
         return thrd_error;
-    }
+      }
   }
 
 __MCF_ALWAYS_INLINE
