@@ -35,7 +35,7 @@ jobs:
       run: >-
            meson setup --cross-file meson.cross.x86_64-w64-mingw32
            -Denable-debug-checks=true build_ci
-           && meson test -Cbuild_ci
+           && meson test -t3 -Cbuild_ci
 
   msys2-ucrt64:
     name: MSYS2 native build (x86-64)
