@@ -38,7 +38,7 @@ jobs:
            && meson test -t3 -Cbuild_ci
 
   msys2-ucrt64:
-    name: MSYS2 native build (x86-64)
+    name: MSYS2 native build (x86-64 GCC)
     runs-on: windows-latest
 
     defaults:
@@ -55,7 +55,7 @@ jobs:
     - name: Install dependencies
       run: >-
            pacman -S --noconfirm
-           mingw-w64-ucrt-x86_64-{{headers,crt,tools}-git,gcc,binutils,meson}
+           mingw-w64-ucrt-x86_64-{{headers,crt,tools}-git,gcc,meson}
 
     - name: Run tests
       run: >-
@@ -63,7 +63,7 @@ jobs:
            && meson test -Cbuild_ci
 
   msys2-mingw32:
-    name: MSYS2 native build (i686)
+    name: MSYS2 native build (i686 GCC)
     runs-on: windows-latest
 
     defaults:
@@ -80,9 +80,35 @@ jobs:
     - name: Install dependencies
       run: >-
            pacman -S --noconfirm
-           mingw-w64-i686-{{headers,crt,tools}-git,gcc,binutils,meson}
+           mingw-w64-i686-{{headers,crt,tools}-git,gcc,meson}
 
     - name: Run tests
       run: >-
+           meson setup -Denable-debug-checks=true build_ci
+           && meson test -Cbuild_ci
+
+  msys2-clang64:
+    name: MSYS2 native build (x86-64 Clang)
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: msys2 {0}
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: msys2/setup-msys2@v2
+      with:
+        msystem: CLANG64
+
+    - name: Install dependencies
+      run: >-
+           pacman -S --noconfirm
+           mingw-w64-clang-x86_64-{{headers,crt,tools}-git,clang,meson}
+
+    - name: Run tests
+      run: >-
+           export CC=clang CXX=clang++;
            meson setup -Denable-debug-checks=true build_ci
            && meson test -Cbuild_ci
