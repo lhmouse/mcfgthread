@@ -5,6 +5,7 @@
 #include "xprecompiled.h"
 #define __MCF_LIBCXX_IMPORT  __MCF_DLLEXPORT
 #define __MCF_LIBCXX_INLINE  __MCF_DLLEXPORT
+#define __MCF_LIBCXX_NO_ALIASES  1
 #include "libcxx.h"
 
 __MCF_DLLEXPORT

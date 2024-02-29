@@ -5,6 +5,7 @@
 #include "xprecompiled.h"
 #define __MCF_C11_IMPORT  __MCF_DLLEXPORT
 #define __MCF_C11_INLINE  __MCF_DLLEXPORT
+#define __MCF_C11_NO_ALIASES  1
 #include "c11.h"
 #include "clock.h"
 

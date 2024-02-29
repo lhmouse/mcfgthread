@@ -5,4 +5,5 @@
 #include "xprecompiled.h"
 #define __MCF_GTHR_LIBOBJC_IMPORT  __MCF_DLLEXPORT
 #define __MCF_GTHR_LIBOBJC_INLINE  __MCF_DLLEXPORT
+#define __MCF_GTHR_LIBOBJC_NO_ALIASES  1
 #include "gthr_libobjc.h"
