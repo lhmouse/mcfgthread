@@ -18,6 +18,7 @@
 /* Define compiler-specific stuff. In the case of clang-cl, prefer GNU
  * extensions to Microsoft ones.  */
 #if defined __GNUC__ || defined __clang__
+#  define __MCF_EX            __extension__
 #  define __MCF_GNU_INLINE     extern __inline__ __attribute__((__gnu_inline__))
 #  define __MCF_ALWAYS_INLINE   __MCF_GNU_INLINE __attribute__((__always_inline__, __artificial__))
 #  define __MCF_NEVER_INLINE   __attribute__((__noinline__))
@@ -27,6 +28,7 @@
 #  define __MCF_ASM_CALL(x)   __asm__(__MCF_S(__USER_LABEL_PREFIX__) #x)
 #  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
 #else
+#  define __MCF_EX            /* unsupported */
 #  define __MCF_GNU_INLINE     __inline
 #  define __MCF_ALWAYS_INLINE   __forceinline
 #  define __MCF_NEVER_INLINE   __declspec(noinline)
@@ -38,7 +40,7 @@
 #endif
 
 #ifdef __MCF_DEBUG
-#  define __MCF_UNREACHABLE   __MCF_runtime_failure(__func__)
+#  define __MCF_UNREACHABLE   __MCF_runtime_failure(__MCF_EX __func__)
 #elif defined __GNUC__ || defined __clang__
 #  define __MCF_UNREACHABLE   __builtin_unreachable()
 #else
@@ -140,7 +142,7 @@ extern "C++" template<> struct __MCF_static_assert<true> { };
  * an argument yields false, `__MCF_ASSERT()` results in undefined behavior,
  * and `__MCF_CHECK()` effects abnormal termination of the current program.  */
 #define __MCF_ASSERT(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
-#define __MCF_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__func__))
+#define __MCF_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__MCF_EX __func__))
 
 /* Make some forward declarations.  */
 typedef struct __MCF_dtor_element __MCF_dtor_element;

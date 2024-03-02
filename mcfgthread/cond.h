@@ -18,10 +18,10 @@ __MCF_C_DECLARATIONS_BEGIN
  * This takes up the same storage as a pointer.  */
 struct __MCF_cond
   {
-    uintptr_t __reserved_bits : 9;
+    __MCF_EX uintptr_t __reserved_bits : 9;
 
 #define __MCF_COND_NSLEEP_M   (__MCF_UPTR_MAX >> 9)
-    uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
+    __MCF_EX uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
 /* Initializes a condition variable dynamically.

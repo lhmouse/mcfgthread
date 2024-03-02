@@ -18,11 +18,11 @@ __MCF_C_DECLARATIONS_BEGIN
  * This takes up the same storage as a pointer.  */
 struct __MCF_once
   {
-    uintptr_t __ready : 8;  /* this conforms to the Itanium C++ ABI  */
-    uintptr_t __locked : 1;
+    __MCF_EX uintptr_t __ready : 8;  /* this conforms to the Itanium C++ ABI  */
+    __MCF_EX uintptr_t __locked : 1;
 
 #define __MCF_ONCE_NSLEEP_M  (__MCF_UPTR_MAX >> 9)
-    uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
+    __MCF_EX uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
 /* Initializes a once-initialization flag dynamically.

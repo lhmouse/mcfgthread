@@ -35,7 +35,7 @@ struct __MCF_thread
      * preceding it is reserved for future use. It is not safe to assume the
      * offset of `__data_storage` to be a constant.  */
 #define __MCF_THREAD_DATA_ALIGNMENT   16U
-    __MCF_ALIGNED(__MCF_THREAD_DATA_ALIGNMENT) char __data_storage[0];
+    __MCF_EX __MCF_ALIGNED(__MCF_THREAD_DATA_ALIGNMENT) char __data_storage[0];
   };
 
 /* Define thread priority constants, from lowest to highest.
