@@ -21,8 +21,9 @@ take precedence over those in PATH](https://learn.microsoft.com/en-us/windows/wi
 ```sh
 pacman -S --noconfirm mingw-w64-ucrt-x86_64-{{headers,crt,tools}-git,gcc,binutils,meson}
 meson setup build_debug
+cd build_debug
 ninja libmcfgthread-1.dll  # see warning above
-meson test -Cbuild_debug
+ninja test
 ```
 
 Cross-compiling from Debian, Ubuntu or Linux Mint is supported. In order to run
