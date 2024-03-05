@@ -312,10 +312,13 @@ extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY __MCF_g;
 
 /* As `__MCF_crt_xglobals` is shared between all static and shared instances of
  * this library within a single process, we have to involve sort of versioning.  */
+#define __MCF_G_SIZE  \
+    ((unsigned long) __builtin_expect((long) __MCF_g->__self_size, sizeof(__MCF_crt_xglobals)))
+
 #define __MCF_G_FIELD_OPT(field)  \
-    (((unsigned long) __builtin_expect((long) __MCF_g->__self_size, sizeof(__MCF_crt_xglobals))  \
-           >= __builtin_offsetof(__MCF_crt_xglobals, field) + sizeof(__MCF_g->field))  \
-        ? &(__MCF_g->field) : __MCF_nullptr)
+    ((__MCF_G_SIZE >= offsetof(__MCF_crt_xglobals, field) + sizeof(__MCF_g->field))  \
+     ? &(__MCF_g->field)  \
+     : __MCF_nullptr)
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
@@ -446,7 +449,9 @@ void*
 __MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT
   {
     void* __ptr = HeapReAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY, *__pptr, __size);
-    return !__ptr ? __MCF_nullptr : (*__pptr = __ptr);
+    if(__ptr)
+      *__pptr = __ptr;
+    return __ptr;
   }
 
 __MCF_XGLOBALS_INLINE
@@ -454,7 +459,9 @@ void*
 __MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
   {
     void* __ptr = HeapAlloc(__MCF_crt_heap, 0, __size);
-    return !__ptr ? __MCF_nullptr : __MCF_mcopy(__ptr, __data, __size);
+    if(__ptr)
+      __MCF_mcopy(__ptr, __data, __size);
+    return __ptr;
   }
 
 __MCF_XGLOBALS_INLINE
@@ -462,7 +469,7 @@ size_t
 __MCF_msize(const void* __ptr) __MCF_NOEXCEPT
   {
     size_t __size = HeapSize(__MCF_crt_heap, 0, __ptr);
-    __MCF_ASSERT(__size != (size_t)-1);
+    __MCF_ASSERT(__size != (size_t) -1);
     return __size;
   }
 
