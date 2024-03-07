@@ -8,6 +8,20 @@
 #include "clock.h"
 #include "xglobals.h"
 
+static inline
+uint64_t
+do_divide_by_10000(uint64_t value)
+  {
+#ifdef __SIZEOF_INT128__
+    return (uint64_t) ((unsigned __int128) value * 0x68DB8BAC710CBULL >> 64);
+#else
+    uint64_t temp = (uint32_t) value * 0xBAC710CBULL >> 32;
+    uint64_t middle = (uint32_t) value * 0x68DB8ULL;
+    temp = ((value >> 32) * 0xBAC710CBULL + (uint32_t) middle + temp) >> 32;
+    return temp + (middle >> 32) + (value >> 32) * 0x68DB8ULL;
+#endif
+  }
+
 __MCF_DLLEXPORT
 int64_t
 _MCF_utc_now(void)
@@ -15,28 +29,20 @@ _MCF_utc_now(void)
     FILETIME ft;
     GetSystemTimeAsFileTime(&ft);
 
-    /* `t := (low + high * 0x1p32) * 0x68DB8BAC710CB / 0x1p64`  */
-#ifdef __SIZEOF_INT128__
-    uint64_t t = ft.dwLowDateTime | (uint64_t) ft.dwHighDateTime << 32;
-    t = (uint64_t) ((unsigned __int128) t * 0x68DB8BAC710CBULL >> 64);
-#else
-    uint64_t t = ft.dwLowDateTime * 0xBAC710CBULL >> 32;
-    uint64_t middle = ft.dwLowDateTime * 0x68DB8ULL;
-    t = (ft.dwHighDateTime * 0xBAC710CBULL + (uint32_t) middle + t) >> 32;
-    t += (middle >> 32) + ft.dwHighDateTime * 0x68DB8ULL;
-#endif  /* `__int128`  */
-
     /* 11644473600000 is number of milliseconds from 1601-01-01T00:00:00Z
      * (the NT epoch) to 1970-01-01T00:00:00Z (the Unix Epoch).  */
-    return (int64_t) t - 11644473600000;
+    uint64_t t = ft.dwLowDateTime;
+    t += (uint64_t) ft.dwHighDateTime << 32;
+    t = do_divide_by_10000(t);
+    return (int64_t) (t - 11644473600000);
   }
 
 __MCF_DLLEXPORT
 double
 _MCF_hires_utc_now(void)
   {
-    FILETIME ft;
     __MCF_LAZY_DECLARE(GetSystemTimePreciseAsFileTime);
+    FILETIME ft;
 
     /* This is available since Windows 8.  */
     if(__MCF_LAZY_GET(GetSystemTimePreciseAsFileTime))
@@ -44,13 +50,11 @@ _MCF_hires_utc_now(void)
     else
       GetSystemTimeAsFileTime(&ft);
 
-    /* `t := (low + high * 0x1p32) / 10000`  */
+    /* 11644473600000 is number of milliseconds from 1601-01-01T00:00:00Z
+     * (the NT epoch) to 1970-01-01T00:00:00Z (the Unix Epoch).  */
     double t = (double) ft.dwLowDateTime;
     t += (double) ft.dwHighDateTime * 0x1p32;
     t *= 0.0001;
-
-    /* 11644473600000 is number of milliseconds from 1601-01-01T00:00:00Z
-     * (the NT epoch) to 1970-01-01T00:00:00Z (the Unix Epoch).  */
     return t - 11644473600000;
   }
 
