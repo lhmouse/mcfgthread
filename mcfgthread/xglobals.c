@@ -228,6 +228,7 @@ do_on_process_attach(void)
     HMODULE ntdll = GetModuleHandleW(L"NTDLL.DLL");
 
     __MCF_G_LAZY_INIT(kernelbase, GetSystemTimePreciseAsFileTime);  /* win8 */
+    __MCF_G_LAZY_INIT(kernelbase, QueryInterruptTime);  /* win10 */
 
     /* Attach the main thread. The structure should be all zeroes so no
      * initialization is necessary.  */

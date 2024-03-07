@@ -101,6 +101,7 @@ __MCF_WINAPI(NTSTATUS) NtReleaseKeyedEvent(HANDLE, PVOID, BOOLEAN, LARGE_INTEGER
 #define __MCF_LAZY_GET(name)        (__MCF_G_FIELD_OPT(__f_##name) && (__f_##name = __MCF_g->__f_##name))
 
 typedef void __stdcall decltype_GetSystemTimePreciseAsFileTime(FILETIME*);
+typedef void __stdcall decltype_QueryInterruptTime(ULONGLONG*);
 
 /* Declare helper functions here.  */
 __MCF_XGLOBALS_IMPORT
@@ -299,6 +300,7 @@ struct __MCF_crt_xglobals
 
     /* WARNING: fields hereinafter must be accessed via `__MCF_G_FIELD_OPT`!  */
     __MCF_LAZY_DECLARE(GetSystemTimePreciseAsFileTime);
+    __MCF_LAZY_DECLARE(QueryInterruptTime);
   };
 
 /* These are constants that have to be initialized at load time.  */

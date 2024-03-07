@@ -62,7 +62,17 @@ __MCF_DLLEXPORT
 int64_t
 _MCF_tick_count(void)
   {
-    return (int64_t) GetTickCount64();
+    __MCF_LAZY_DECLARE(QueryInterruptTime);
+    ULONGLONG t;
+
+    /* This is available since Windows 10.  */
+    if(__MCF_LAZY_GET(QueryInterruptTime)) {
+      __MCF_LAZY_DEREF(QueryInterruptTime) (&t);
+      t = do_divide_by_10000(t);
+    } else
+      t = GetTickCount64();
+
+    return (int64_t) t;
   }
 
 __MCF_DLLEXPORT

@@ -66,6 +66,7 @@ mcfgthread_src = [
 
 test_src = [
   'test/win8.c',
+  'test/win10.c',
   'test/clock.c',
   'test/winnt_timeout.c',
   'test/once_zero_timeout.c',
