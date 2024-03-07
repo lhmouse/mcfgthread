@@ -201,7 +201,6 @@ do_on_process_attach(void)
     SIZE_T gmem_size = 0;
     __MCF_CHECK_NT(NtMapViewOfSection(gfile, GetCurrentProcess(), &gmem_base, 0, 0, NULL, &gmem_size, 2, 0, PAGE_READWRITE));
     __MCF_ASSERT(gmem_base);
-    __MCF_ASSERT(gmem_size >= sizeof(__MCF_crt_xglobals));
     __MCF_g = gmem_base;
 
     if(__MCF_g->__self_ptr) {
@@ -214,6 +213,8 @@ do_on_process_attach(void)
       return;
     }
 
+    /* The region is new, so initialize it.  */
+    __MCF_ASSERT(gmem_size >= sizeof(__MCF_crt_xglobals));
     __MCF_g->__self_ptr = __MCF_g;
     __MCF_g->__self_size = sizeof(__MCF_crt_xglobals);
 
