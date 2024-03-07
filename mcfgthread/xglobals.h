@@ -95,6 +95,11 @@ __MCF_WINAPI(NTSTATUS) NtWaitForKeyedEvent(HANDLE, PVOID, BOOLEAN, LARGE_INTEGER
 __MCF_WINAPI(NTSTATUS) NtReleaseKeyedEvent(HANDLE, PVOID, BOOLEAN, LARGE_INTEGER*);
 
 /* Lazy binding.  */
+#define __MCF_LAZY_DECLARE(name)     decltype_##name* __f_##name
+#define __MCF_G_LAZY_INIT(dll, name)  ((dll) && __MCF_g->__f_##name = (decltype_##name*)(INT_PTR) GetProcAddress(dll, #name))
+#define __MCF_LAZY_DEREF(name)       (*__f_##name)
+#define __MCF_LAZY_GET(name)        (__MCF_G_FIELD_OPT(__f_##name) && (__f_##name = __MCF_g->__f_##name))
+
 typedef void __stdcall decltype_GetSystemTimePreciseAsFileTime(FILETIME*);
 
 /* Declare helper functions here.  */
@@ -293,7 +298,7 @@ struct __MCF_crt_xglobals
     uintptr_t __sleeping_threads[1];
 
     /* WARNING: fields hereinafter must be accessed via `__MCF_G_FIELD_OPT`!  */
-    decltype_GetSystemTimePreciseAsFileTime* __f_GetSystemTimePreciseAsFileTime;
+    __MCF_LAZY_DECLARE(GetSystemTimePreciseAsFileTime);
   };
 
 /* These are constants that have to be initialized at load time.  */

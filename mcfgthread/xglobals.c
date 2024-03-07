@@ -224,20 +224,10 @@ do_on_process_attach(void)
     __MCF_CHECK(__MCF_g->__tls_index != UINT32_MAX);
 
     /* Perform lazy binding on some functions.  */
-#define do_set_lazy_binding_(dll, proc)  \
-    do {  \
-      decltype_##proc** pp_##proc = __MCF_G_FIELD_OPT(__f_##proc);  \
-      if(!pp_##proc)  \
-        break;  \
-      HMODULE mod_##proc = GetModuleHandleW(L##dll ".DLL");  \
-      if(!mod_##proc)  \
-        break;  \
-      *pp_##proc = (decltype_##proc*)(INT_PTR) GetProcAddress(mod_##proc, #proc);  \
-    }  \
-    while(false)  /* no semicolon  */
+    HMODULE kernelbase = GetModuleHandleW(L"KERNELBASE.DLL");
+    HMODULE ntdll = GetModuleHandleW(L"NTDLL.DLL");
 
-    /* Window 8  */
-    do_set_lazy_binding_("KERNEL32", GetSystemTimePreciseAsFileTime);
+    __MCF_G_LAZY_INIT(kernelbase, GetSystemTimePreciseAsFileTime);  /* win8 */
 
     /* Attach the main thread. The structure should be all zeroes so no
      * initialization is necessary.  */

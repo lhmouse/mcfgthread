@@ -36,12 +36,11 @@ double
 _MCF_hires_utc_now(void)
   {
     FILETIME ft;
-    decltype_GetSystemTimePreciseAsFileTime** pp_GetSystemTimePreciseAsFileTime;
+    __MCF_LAZY_DECLARE(GetSystemTimePreciseAsFileTime);
 
     /* This is available since Windows 8.  */
-    pp_GetSystemTimePreciseAsFileTime = __MCF_G_FIELD_OPT(__f_GetSystemTimePreciseAsFileTime);
-    if(pp_GetSystemTimePreciseAsFileTime && *pp_GetSystemTimePreciseAsFileTime)
-      (**pp_GetSystemTimePreciseAsFileTime) (&ft);
+    if(__MCF_LAZY_GET(GetSystemTimePreciseAsFileTime))
+      __MCF_LAZY_DEREF(GetSystemTimePreciseAsFileTime) (&ft);
     else
       GetSystemTimeAsFileTime(&ft);
 

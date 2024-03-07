@@ -17,10 +17,10 @@ main(void)
     if(os_ver < 602)
       return 77;  // skip
 
-    HMODULE kernel32 = GetModuleHandleW(L"KERNEL32");
-    assert(kernel32);
+    HMODULE kernelbase = GetModuleHandleW(L"KERNELBASE.DLL");
+    assert(kernelbase);
 
-    FARPROC fn = GetProcAddress(kernel32, "GetSystemTimePreciseAsFileTime");
+    FARPROC fn = GetProcAddress(kernelbase, "GetSystemTimePreciseAsFileTime");
     assert(fn);
     void* gf = __MCF_G_FIELD_OPT(__f_GetSystemTimePreciseAsFileTime);
     assert(gf);
