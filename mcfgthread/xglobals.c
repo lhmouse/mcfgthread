@@ -226,6 +226,7 @@ do_on_process_attach(void)
     /* Perform lazy binding on some functions.  */
     HMODULE kernelbase = GetModuleHandleW(L"KERNELBASE.DLL");
     HMODULE ntdll = GetModuleHandleW(L"NTDLL.DLL");
+    __MCF_CHECK(kernelbase && ntdll);
 
     __MCF_G_LAZY_INIT(kernelbase, GetSystemTimePreciseAsFileTime);  /* win8 */
     __MCF_G_LAZY_INIT(kernelbase, QueryInterruptTime);  /* win10 */
