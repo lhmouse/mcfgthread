@@ -176,15 +176,13 @@ do_on_process_attach(void)
     if(__MCF_g->__self_ptr) {
       /* Reuse the existent region and close excess handles.  */
       __MCF_g = __MCF_g->__self_ptr;
-      __MCF_CHECK(__MCF_g->__self_size >= sizeof(__MCF_crt_xglobals));
-
       NtUnmapViewOfSection(GetCurrentProcess(), gmem_base);
       __MCF_close_handle(gfile);
       return;
     }
 
     /* The region is new, so initialize it.  */
-    __MCF_ASSERT(gmem_size >= sizeof(__MCF_crt_xglobals));
+    __MCF_CHECK(gmem_size >= sizeof(__MCF_crt_xglobals));
     __MCF_g->__self_ptr = __MCF_g;
     __MCF_g->__self_size = sizeof(__MCF_crt_xglobals);
 
