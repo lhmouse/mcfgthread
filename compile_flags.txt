@@ -27,3 +27,4 @@
 -Werror=implicit-int
 -mavx
 -masm=intel
+-D__MCF_DEBUG
