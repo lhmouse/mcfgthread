@@ -307,7 +307,7 @@ import('pkgconfig').generate(lib_mcfgthread_dll,
 # Rules for tests
 #===========================================================
 foreach src: test_src
-  test(src, executable(src.replace('.c', '').underscorify(), src,
+  test(src, executable(src.underscorify(), src,
                        link_with: lib_mcfgthread_a))
 endforeach
 
