@@ -11,7 +11,7 @@
 int
 main(void)
   {
-    tzset();
+    _tzset();
 
     SYSTEMTIME st;
     GetLocalTime(&st);
