@@ -227,8 +227,7 @@ _MCF_sleep(const int64_t* timeout_opt)
     __MCF_initialize_winnt_timeout_v2(&nt_timeout, timeout_opt);
 
     /* Set a handler to receive Ctrl-C notifications.  */
-    BOOL added __attribute__((__cleanup__(do_handler_cleanup))) = false;
-    added = SetConsoleCtrlHandler(do_handle_interrupt, true);
+    BOOL added __attribute__((__cleanup__(do_handler_cleanup))) = SetConsoleCtrlHandler(do_handle_interrupt, true);
 
     /* Allocate a count for the current thread. The addend is for backward
      * compatibility, because this used to be an `_MCF_cond`.  */
