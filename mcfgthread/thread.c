@@ -171,8 +171,7 @@ int
 _MCF_sleep(const int64_t* timeout_opt)
   {
     /* Set a handler to receive Ctrl-C notifications.  */
-    BOOL added __attribute__((__cleanup__(do_handler_cleanup))) = false;
-    added = SetConsoleCtrlHandler(do_handle_interrupt, true);
+    BOOL added __attribute__((__cleanup__(do_handler_cleanup))) = SetConsoleCtrlHandler(do_handle_interrupt, true);
 
     int err = _MCF_cond_wait(__MCF_g->__interrupt_cond, NULL, NULL, 0, timeout_opt);
     return err ^ -1;
