@@ -188,6 +188,8 @@ test_src = [
   'test/condition_variable_wait_for.cpp',
   'test/call_once_returning.cpp',
   'test/call_once_exceptional.cpp',
+  'test/call_once_seh_returning.cpp',
+  'test/call_once_seh_exceptional.cpp',
   'test/recursive_mutex.cpp',
   'test/recursive_mutex_try_lock.cpp',
   'test/recursive_timed_mutex_try_lock_until.cpp',

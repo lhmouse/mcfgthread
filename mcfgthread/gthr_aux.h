@@ -40,12 +40,26 @@ struct __MCF_gthr_thread_record
     uintptr_t __reserved_high;
   };
 
-/* This is an auxiliary function for exception handling in `__gthread_once()`.
+/* Note that this function is obsolescent by `__MCF_gthr_call_once_seh()`, and
+ * is kept only for compatibility.
+ * This is an auxiliary function for exception handling in `__gthread_once()`.
  * Ideally, if the target function throws exception we would like to allow
  * attempts to retry. Sadly this is not possible in standard C.  */
 __MCF_GTHR_AUX_INLINE
 void
 __MCF_gthr_unonce(_MCF_once** __oncep) __MCF_NOEXCEPT;
+
+/* These functions implement `__gthread_once()`. If `__once_fn` initiates stack
+ * unwinding, by throwing an exception for example, the state of `*__once` will
+  * be restored correctly.
+  * FIXME: At the moment (2024-03-14) GCC does not support SEH on i686. */
+__MCF_GTHR_AUX_INLINE
+void
+__MCF_gthr_call_once_seh(_MCF_once* __once, __MCF_cxa_dtor_cdecl* __init_proc, void* __arg);
+
+__MCF_GTHR_AUX_IMPORT
+void
+__MCF_gthr_call_once_seh_take_over(_MCF_once* __once, __MCF_cxa_dtor_cdecl* __init_proc, void* __arg);
 
 /* This is an auxiliary function for converting a `__MCF_timespec` to the
  * number of milliseconds since the Unix epoch, with boundary checking.  */
@@ -107,6 +121,18 @@ __MCF_gthr_unonce(_MCF_once** __oncep) __MCF_NOEXCEPT
   {
     if(*__oncep)
       _MCF_once_abort(*__oncep);
+  }
+
+__MCF_GTHR_AUX_INLINE
+void
+__MCF_gthr_call_once_seh(_MCF_once* __once, __MCF_cxa_dtor_cdecl* __init_proc, void* __arg)
+  {
+    int __err = _MCF_once_wait(__once, __MCF_nullptr);
+    if(__err == 0)
+      return;  /* already initialized  */
+
+    __MCF_ASSERT(__err == 1);
+    __MCF_gthr_call_once_seh_take_over(__once, __init_proc, __arg);
   }
 
 __MCF_GTHR_AUX_INLINE
