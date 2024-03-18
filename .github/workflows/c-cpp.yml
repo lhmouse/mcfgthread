@@ -12,7 +12,7 @@ on:
 
 jobs:
   ubuntu-x86-64:
-    name: Ubuntu cross build (x86-64)
+    name: Ubuntu cross build (x86-64 GCC)
     runs-on: ubuntu-latest
 
     steps:
@@ -35,7 +35,36 @@ jobs:
       run: >-
            meson setup --cross-file meson.cross.x86_64-w64-mingw32
            -Denable-debug-checks=true build_ci
-           && meson test -t3 -Cbuild_ci
+           && meson test -j3 -t5 -Cbuild_ci
+
+  linaro-ubuntu-arm64:
+    name: Ubuntu cross build (AArch64 Clang)
+    runs-on: ubuntu-latest
+    container: linaro/wine-arm64
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: >-
+           apt-get install -y --no-install-recommends
+           ninja-build python3-pip
+
+    - name: Install newest meson
+      run: >-
+           pip3 install meson --break-system-packages
+
+    - name: Download llvm-mingw
+      run: >-
+           wget 'https://github.com/mstorsjo/llvm-mingw/releases/download/20240308/llvm-mingw-20240308-ucrt-ubuntu-20.04-x86_64.tar.xz'
+           && tar -xaf llvm-mingw-20240308-ucrt-ubuntu-20.04-x86_64.tar.xz
+
+    - name: Run tests
+      run: >-
+           export PATH=$(pwd)/llvm-mingw-20240308-ucrt-ubuntu-20.04-x86_64/bin:$PATH;
+           meson setup --cross-file meson.cross.aarch64-w64-mingw32
+           -Denable-debug-checks=true build_ci
+           && meson test -j3 -t8 -Cbuild_ci
 
   msys2-ucrt64:
     name: MSYS2 native build (x86-64 GCC)
