@@ -24,6 +24,8 @@
 #  define __MCF_atomic_cmpxchgw(p,c,v,o,f)   __atomic_compare_exchange_n(p,c,v,1,o,f)
 #  define __MCF_atomic_xadd(p,v,o)           __atomic_fetch_add(p,v,o)
 #  define __MCF_atomic_xsub(p,v,o)           __atomic_fetch_sub(p,v,o)
+#  define __MCF_atomic_thread_fence(o)       __atomic_thread_fence(o)
+#  define __MCF_atomic_signal_fence(o)       __atomic_signal_fence(o)
 #endif
 
 #if !defined __MCF_atomic && defined __cplusplus && (__cplusplus >= 201103L)
@@ -44,6 +46,8 @@
 #  define __MCF_atomic_cmpxchgw(p,c,v,o,f)   (p)->compare_exchange_weak(*(c),v,o,f)
 #  define __MCF_atomic_xadd(p,v,o)           (p)->fetch_add(v,o)
 #  define __MCF_atomic_xsub(p,v,o)           (p)->fetch_sub(v,o)
+#  define __MCF_atomic_thread_fence(o)       ::std::atomic_thread_fence(o)
+#  define __MCF_atomic_signal_fence(o)       ::std::atomic_signal_fence(o)
 #endif
 
 #if !defined __MCF_atomic
@@ -65,6 +69,8 @@
 #  define __MCF_atomic_cmpxchgw(p,c,v,o,f)   atomic_compare_exchange_weak_explicit(p,c,v,o,f)
 #  define __MCF_atomic_xadd(p,v,o)           atomic_fetch_add_explicit(p,v,o)
 #  define __MCF_atomic_xsub(p,v,o)           atomic_fetch_sub_explicit(p,v,o)
+#  define __MCF_atomic_thread_fence(o)       atomic_thread_fence(o)
+#  define __MCF_atomic_signal_fence(o)       atomic_signal_fence(o)
 #endif
 
 __MCF_C_DECLARATIONS_BEGIN
@@ -483,6 +489,44 @@ __MCF_atomic_xsub_(z, acq, size_t)
 __MCF_atomic_xsub_(z, rel, size_t)
 __MCF_atomic_xsub_(z, arl, size_t)
 __MCF_atomic_xsub_(z, cst, size_t)
+
+/* Emit a fence between threads.
+ *
+ *   void
+ *   _MCF_thread_fence_[ORDER]();
+ */
+#define __MCF_atomic_thread_fence_(ORDER)  \
+  __MCF_ALWAYS_INLINE  \
+  void  \
+  _MCF_thread_fence_##ORDER(void) __MCF_NOEXCEPT  \
+    {  \
+      __MCF_atomic_thread_fence(__MCF_memory_order_##ORDER);  \
+    }
+
+__MCF_atomic_thread_fence_(rlx)
+__MCF_atomic_thread_fence_(acq)
+__MCF_atomic_thread_fence_(rel)
+__MCF_atomic_thread_fence_(arl)
+__MCF_atomic_thread_fence_(cst)
+
+/* Emit a fence within the same thread.
+ *
+ *   void
+ *   _MCF_signal_fence_[ORDER]();
+ */
+#define __MCF_atomic_signal_fence_(ORDER)  \
+  __MCF_ALWAYS_INLINE  \
+  void  \
+  _MCF_signal_fence_##ORDER(void) __MCF_NOEXCEPT  \
+    {  \
+      __MCF_atomic_signal_fence(__MCF_memory_order_##ORDER);  \
+    }
+
+__MCF_atomic_signal_fence_(rlx)
+__MCF_atomic_signal_fence_(acq)
+__MCF_atomic_signal_fence_(rel)
+__MCF_atomic_signal_fence_(arl)
+__MCF_atomic_signal_fence_(cst)
 
 __MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_ATOMIC_  */
