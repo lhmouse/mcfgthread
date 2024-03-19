@@ -248,8 +248,7 @@ add_project_arguments(
    language: 'c')
 
 add_project_arguments(
-   '-std=c++11', '-static-libgcc', '-static-libstdc++', '-Wno-redundant-move',
-   '-Wzero-as-null-pointer-constant',
+   '-std=c++11', '-Wno-redundant-move', '-Wzero-as-null-pointer-constant',
    language: 'cpp')
 
 #===========================================================
@@ -307,7 +306,8 @@ import('pkgconfig').generate(lib_mcfgthread_dll,
 # Rules for tests
 #===========================================================
 foreach src: test_src
-  test(src, executable(src.replace('.c', '').underscorify(), src,
+  test(src, executable(src.underscorify(), src,
+                       link_args: [ '-static' ],
                        link_with: lib_mcfgthread_a))
 endforeach
 
@@ -315,6 +315,7 @@ endforeach
 test('test/memory.c', executable('test_memory_c',
              'test/memory.c',
               dependencies: [ dep_advapi32, dep_ntdll ],
+              link_args: [ '-static' ],
               link_with: lib_mcfgthread_a))
 
 # Specialized: -std=c89 -Wpedantic
@@ -322,10 +323,12 @@ test('test/gthr_c89_pedantic.c', executable('test_gthr_c89_pedantic_c',
              'test/gthr_c89_pedantic.c',
               c_args: [ '-std=c89', '-Werror=declaration-after-statement',
                         '-Wpedantic', '-Wno-variadic-macros', '-Wno-long-long' ],
+              link_args: [ '-static' ],
               link_with: lib_mcfgthread_a))
 
 # Specialized: -std=c99 -Wpedantic
 test('test/c11_c99_pedantic.c', executable('test_c11_c99_pedantic_c',
              'test/c11_c99_pedantic.c',
               c_args: [ '-std=c99', '-Wpedantic' ],
+              link_args: [ '-static' ],
               link_with: lib_mcfgthread_a))
