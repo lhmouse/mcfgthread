@@ -66,21 +66,22 @@ __asm__ (
 #  if defined __amd64__
 /* The stack is used as follows:
  *
- * RSP  0: establisher frame; shallow slot for subroutines
+ * RSP  0: shallow slot for subroutines
  *      8: ditto
  *     16: ditto
  *     24: ditto
- *     32: saved frame pointer
+ *     32: establisher frame; saved frame pointer
  * ENT 40: return address
  *     48: shallow slot for `once` from RCX
  *     56: shallow slot for `init_proc` from RDX
  *     64: shallow slot for `arg` from R8
  *     72: unused
  */
-#  define __MCF_SEH_ONCE_PTR_DISPLACEMENT   48
+#  define __MCF_SEH_ONCE_PTR_DISPLACEMENT   16
 "  push rbp                                                        \n\t"
 ".seh_pushreg rbp                                                  \n\t"
 "  mov rbp, rsp                                                    \n\t"
+".seh_setframe rbp, 0                                              \n\t"
 "  sub rsp, 32                                                     \n\t"
 ".seh_stackalloc 32                                                \n\t"
 ".seh_endprologue                                                  \n\t"
