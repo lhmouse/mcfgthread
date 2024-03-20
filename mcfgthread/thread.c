@@ -27,9 +27,7 @@ do_win32_thread_thunk(LPVOID param)
 
     /* Attach the thread and execute the user-defined procedure.  */
     __MCF_CHECK(TlsSetValue(__MCF_g->__tls_index, self));
-    _MCF_thread_fence_acq();
     self->__proc(self);
-    _MCF_thread_fence_rel();
     return 0;
   }
 
@@ -81,8 +79,6 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
       if(data_opt)
         __MCF_mcopy(thrd->__data_opt, data_opt, size);
     }
-
-    _MCF_thread_fence_rel();
 
     /* Create the thread now.  */
     DWORD tid;
@@ -142,7 +138,6 @@ __MCF_DLLEXPORT
 void
 _MCF_thread_exit(void)
   {
-    _MCF_thread_fence_rel();
     ExitThread(0);
     __MCF_UNREACHABLE;
   }
@@ -159,7 +154,6 @@ _MCF_thread_wait(const _MCF_thread* thrd_opt, const int64_t* timeout_opt)
 
     NTSTATUS status = NtWaitForSingleObject(thrd_opt->__handle, false, nt_timeout.__li);
     __MCF_ASSERT_NT(status);
-    _MCF_thread_fence_acq();
     return (status != STATUS_WAIT_0) ? -1 : 0;
   }
 
