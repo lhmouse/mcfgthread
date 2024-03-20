@@ -332,3 +332,10 @@ test('test/c11_c99_pedantic.c', executable('test_c11_c99_pedantic_c',
               c_args: [ '-std=c99', '-Wpedantic' ],
               link_args: [ '-static' ],
               link_with: lib_mcfgthread_a))
+
+# Specialized: -std=c++11 -fno-rtti -fno-exceptions
+test('test/cxx11_no_exceptions', executable('test_cxx11_no_exceptions_cpp',
+             'test/cxx11_no_exceptions.cpp',
+              cpp_args: [ '-std=c++11', '-fno-rtti', '-fno-exceptions' ],
+              link_args: [ '-static' ],
+              link_with: lib_mcfgthread_a))
