@@ -24,17 +24,17 @@ __asm__ (
 "_do_call_once_seh_take_over:                                      \n\t"
 /* The stack is used as follows:
  *
- * ESP  0: argument to subroutines
- *      4: unused
- *      8: unused
- *     12: unused
- *     16: establisher frame; pointer to previous frame
- *     20: `do_call_once_seh_uhandler`
- *     24: saved frame pointer
- * ENT 28: return address
- *     32: `once`
- *     36: `init_proc`
- *     40: `arg`
+ *    -24: argument to subroutines
+ *    -20: unused
+ *    -16: unused
+ *    -12: unused
+ *     -8: establisher frame; pointer to previous frame
+ *     -4: `do_call_once_seh_uhandler`
+ * EBP  0: saved frame pointer
+ * ENT  4: return address
+ *      8: `once`
+ *     12: `init_proc`
+ *     16: `arg`
  */
 #  define __MCF_SEH_ONCE_PTR_DISPLACEMENT   16
 "  push ebp                                                        \n\t"
@@ -42,17 +42,17 @@ __asm__ (
 "  sub esp, 24                                                     \n\t"
 /* Install an SEH handler.  */
 "  mov eax, DWORD PTR fs:[0]                                       \n\t"
-"  lea ecx, DWORD PTR [esp + 16]                                   \n\t"
+"  lea ecx, DWORD PTR [ebp - 8]                                    \n\t"
 "  mov DWORD PTR [ecx], eax                                        \n\t"
 "  mov DWORD PTR [ecx + 4], OFFSET _do_call_once_seh_uhandler      \n\t"
 "  mov DWORD PTR fs:[0], ecx                                       \n\t"
 /* Make the call `(*init_proc) (arg)`.  */
-"  mov eax, DWORD PTR [esp + 36]                                   \n\t"
-"  mov ecx, DWORD PTR [esp + 40]                                   \n\t"
-"  mov DWORD PTR [esp], ecx                                        \n\t"
+"  mov eax, DWORD PTR [ebp + 12]                                   \n\t"
+"  mov ecx, DWORD PTR [ebp + 16]                                   \n\t"
+"  mov DWORD PTR [ebp - 24], ecx                                   \n\t"
 "  call eax                                                        \n\t"
 /* Dismantle the SEH handler.  */
-"  mov ecx, DWORD PTR [esp + 16]                                   \n\t"
+"  mov ecx, DWORD PTR [ebp - 8]                                    \n\t"
 "  mov DWORD PTR fs:[0], ecx                                       \n\t"
 /* Disarm the once flag with a tail call.  */
 "  leave                                                           \n\t"
@@ -66,16 +66,16 @@ __asm__ (
 #  if defined __amd64__
 /* The stack is used as follows:
  *
- * RSP  0: shallow slot for subroutines
- *      8: ditto
- *     16: ditto
- *     24: ditto
- *     32: establisher frame; saved frame pointer
- * ENT 40: return address
- *     48: shallow slot for `once` from RCX
- *     56: shallow slot for `init_proc` from RDX
- *     64: shallow slot for `arg` from R8
- *     72: unused
+ *    -32: shallow slot for subroutines
+ *    -24: ditto
+ *    -16: ditto
+ *     -8: ditto
+ * RBP  0: establisher frame; saved frame pointer
+ * ENT  8: return address
+ *     16: shallow slot for `once` from RCX
+ *     24: shallow slot for `init_proc` from RDX
+ *     32: shallow slot for `arg` from R8
+ *     40: unused
  */
 #  define __MCF_SEH_ONCE_PTR_DISPLACEMENT   16
 "  push rbp                                                        \n\t"
@@ -86,12 +86,12 @@ __asm__ (
 ".seh_stackalloc 32                                                \n\t"
 ".seh_endprologue                                                  \n\t"
 /* Stash `once` for the handler.  */
-"  mov QWORD PTR [rsp + 48], rcx                                   \n\t"
+"  mov QWORD PTR [rbp + 16], rcx                                   \n\t"
 /* Make the call `(*init_proc) (arg)`.  */
 "  mov rcx, r8                                                     \n\t"
 "  call rdx                                                        \n\t"
 /* Disarm the once flag with a tail call.  */
-"  mov rcx, QWORD PTR [rsp + 48]                                   \n\t"
+"  mov rcx, QWORD PTR [rbp + 16]                                   \n\t"
 "  leave                                                           \n\t"
 "  jmp _MCF_once_release                                           \n\t"
 #  elif defined __arm__
