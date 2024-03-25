@@ -11,7 +11,6 @@
 void
 __cdecl
 do_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_cdecl* init_proc, void* arg);
-
 __asm__ (
 ".text  \n\t"
 #if defined __i386__ || defined __amd64__
@@ -62,7 +61,7 @@ __asm__ (
 ".def do_call_once_seh_take_over; .scl 2; .type 32; .endef         \n\t"
 "do_call_once_seh_take_over:                                       \n\t"
 ".seh_proc do_call_once_seh_take_over                              \n\t"
-".seh_handler do_call_once_seh_uhandler, " __MCF_SEH_FLAG_BOTH "   \n\t"
+".seh_handler do_call_once_seh_uhandler, " __MCF_SEH_FLAG_UNWIND " \n\t"
 #  if defined __amd64__
 /* The stack is used as follows:
  *
