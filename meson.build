@@ -216,7 +216,8 @@ ver.set_quoted('abi_string', meson.project_version())
 cc = meson.get_compiler('c')
 cc_is_i386 = cc.compiles('int foo = __i386__;')
 cc_is_amd64 = cc.compiles('int foo = __amd64__;')
-cc_asm_intel = cc.compiles('int foo(int a) { return a + 1; }', args: [ '-masm=intel' ])
+cc_asm_intel = cc.compiles('int foo(int a) { return a + 1; }',
+                           args: [ '-masm=intel' ])
 
 if cc_asm_intel
   add_project_arguments('-masm=intel', language: [ 'c', 'cpp' ])
