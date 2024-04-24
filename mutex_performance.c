@@ -4,11 +4,8 @@
 
 #include <math.h>
 #include <stdio.h>
-#include <mcfgthread/gthr.h>
-#include <mcfgthread/clock.h>
-#include <pthread.h>
+#include <assert.h>
 #include <windows.h>
-
 
 #if defined USE_SRWLOCK
 
@@ -26,12 +23,17 @@
 
 #elif defined USE_WINPTHREAD
 
+#  include <pthread.h>
+
 #  define my_mutex_t      pthread_mutex_t
 #  define my_init(m)      pthread_mutex_init(m, NULL)
 #  define my_lock(m)      pthread_mutex_lock(m)
 #  define my_unlock(m)    pthread_mutex_unlock(m)
 
 #elif defined USE_MCFGTHREAD
+
+#  include <mcfgthread/gthr.h>
+#  include <mcfgthread/clock.h>
 
 #  define my_mutex_t      _MCF_mutex
 #  define my_init(m)      __MCF_gthr_mutex_init(m)
@@ -49,13 +51,15 @@
 #define NITER  1000000
 
 HANDLE start;
-__gthread_t threads[NTHRD];
+HANDLE threads[NTHRD];
 my_mutex_t mutex;
 volatile double dst = 12345;
 volatile double src = 54321;
+LARGE_INTEGER t0, t1, tf;
 
 static
-void*
+DWORD
+__stdcall
 thread_proc(void* arg)
   {
     (void) arg;
@@ -72,18 +76,18 @@ thread_proc(void* arg)
       dst = src;
       my_unlock(&mutex);
 
-      __gthread_yield();
+      SwitchToThread();
     }
 
-    printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
-    return NULL;
+    printf("thread %d quitting\n", (int) GetCurrentThreadId());
+    return 0;
   }
 
 int
 main(void)
   {
     start = CreateEventW(NULL, TRUE, FALSE, NULL);
-    __MCF_CHECK(start);
+    assert(start);
 
     my_init(&mutex);
 
@@ -92,16 +96,22 @@ main(void)
     printf("using `%s`:\n  # of threads    = %d\n  # of iterations = %d\n",
            xstr1(my_mutex_t), NTHRD, NITER);
 
-    for(intptr_t k = 0;  k < NTHRD;  ++k)
-      __MCF_CHECK(__gthread_create(&threads[k], thread_proc, NULL) == 0);
+    for(intptr_t k = 0;  k < NTHRD;  ++k) {
+      threads[k] = CreateThread(NULL, 0, thread_proc, NULL, 0, NULL);
+      assert(threads[k]);
+    }
 
     printf("main waiting\n");
     SetEvent(start);
-    double t_sta = _MCF_perf_counter();
+    QueryPerformanceCounter(&t0);
 
-    for(intptr_t k = 0;  k < NTHRD;  ++k)
-      __MCF_CHECK(__gthread_join(threads[k], NULL) == 0);
+    for(intptr_t k = 0;  k < NTHRD;  ++k) {
+      WaitForSingleObject(threads[k], INFINITE);
+      CloseHandle(threads[k]);
+    }
 
-    double t_fin = _MCF_perf_counter();
-    printf("total time:\n  %.3f milliseconds\n", t_fin - t_sta);
+    QueryPerformanceCounter(&t1);
+    QueryPerformanceFrequency(&tf);
+    printf("total time:\n  %.3f milliseconds\n",
+           (double) (t1.QuadPart - t0.QuadPart) * 1000 / tf.QuadPart);
   }
