@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Remove mono runtime
       run: sudo apt-get purge mono-runtime
@@ -44,7 +44,7 @@ jobs:
     container: linaro/wine-arm64
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install dependencies
       run: >-
@@ -77,7 +77,7 @@ jobs:
         shell: msys2 {0}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - uses: msys2/setup-msys2@v2
       with:
@@ -102,7 +102,7 @@ jobs:
         shell: msys2 {0}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - uses: msys2/setup-msys2@v2
       with:
@@ -127,7 +127,7 @@ jobs:
         shell: msys2 {0}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - uses: msys2/setup-msys2@v2
       with:
