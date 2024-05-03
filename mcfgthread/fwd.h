@@ -116,8 +116,10 @@ __MCF_C_DECLARATIONS_BEGIN
 /* The `__MCF_STATIC_ASSERT_0()` macro is an expression that yields zero if it
  * compiles anyway. Its argument must be a constant expression.  */
 #ifdef __cplusplus
-extern "C++" template<bool> struct __MCF_static_assert;
-extern "C++" template<> struct __MCF_static_assert<true> { };
+extern "C++" {
+template<bool> struct __MCF_static_assert;
+template<> struct __MCF_static_assert<true> { };
+}  /* extern "C++"  */
 #  define __MCF_STATIC_ASSERT_T(...)   ::__MCF_static_assert<bool(__VA_ARGS__)>
 #else
 #  define __MCF_STATIC_ASSERT_T(...)   struct { int: 1|-!(__VA_ARGS__); }
