@@ -33,7 +33,8 @@ tests, Wine is required.
 sudo apt-get install -y --no-install-recommends mingw-w64-{x86-64-dev,tools}  \
         {gcc,g++,binutils}-mingw-w64-x86-64 meson wine wine-binfmt
 meson setup --cross-file meson.cross.x86_64-w64-mingw32 build_debug
-meson test -Cbuild_debug
+cd build_debug
+ninja test
 ```
 
 ## Notes
