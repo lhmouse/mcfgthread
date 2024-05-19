@@ -12,7 +12,7 @@
 ## NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 ## CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-project('mcfgthread', [ 'c', 'cpp' ], version: '1.8.beta')
+project('mcfgthread', [ 'c', 'cpp' ], version: '1.8.ga')
 
 #===========================================================
 # List of files
