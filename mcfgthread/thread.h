@@ -314,7 +314,7 @@ _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   }
 #elif (defined _M_X64 && !defined _M_ARM64EC) && defined _MSC_VER
 /* native x86-64, MSVC  */
-unsigned long __readgsdword(unsigned long) __MCF_NOEXCEPT;
+__declspec(nothrow) unsigned long __readgsdword(unsigned long);
 #pragma intrinsic(__readgsdword)
 __MCF_THREAD_INLINE
 uint32_t
@@ -336,7 +336,7 @@ _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   }
 #elif defined _M_IX86 && defined _MSC_VER
 /* x86, MSVC  */
-unsigned long __readfsdword(unsigned long) __MCF_NOEXCEPT;
+__declspec(nothrow) unsigned long __readfsdword(unsigned long);
 #pragma intrinsic(__readfsdword)
 __MCF_THREAD_INLINE
 uint32_t
@@ -358,7 +358,7 @@ _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   }
 #elif (defined _M_ARM64 || defined _M_ARM64EC) && defined _MSC_VER
 /* ARM64 or emulated x64 on ARM64, MSVC  */
-unsigned long __readx18dword(unsigned long) __MCF_NOEXCEPT;
+__declspec(nothrow) unsigned long __readx18dword(unsigned long);
 #pragma intrinsic(__readx18dword)
 __MCF_THREAD_INLINE
 uint32_t
@@ -380,7 +380,7 @@ _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   }
 #elif defined _M_ARM && defined _MSC_VER
 /* ARM32, MSVC  */
-unsigned _MoveFromCoprocessor(unsigned, unsigned, unsigned, unsigned, unsigned) __MCF_NOEXCEPT;
+__declspec(nothrow) unsigned _MoveFromCoprocessor(unsigned, unsigned, unsigned, unsigned, unsigned);
 #pragma intrinsic(_MoveFromCoprocessor)
 __MCF_THREAD_INLINE
 uint32_t
