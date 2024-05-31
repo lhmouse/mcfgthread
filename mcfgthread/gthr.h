@@ -53,7 +53,7 @@ __MCF_gthr_active_p(void) __MCF_NOEXCEPT;
 /* Performs one-time initialization, like `pthread_once()`.  */
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_once(__gthread_once_t* __once, __MCF_once_callback* __init_proc);
+__MCF_gthr_once(__gthread_once_t* __once, __MCF_once_callback* __init_proc) __MCF_MAY_THROW;
 
 #ifndef __MCF_GTHR_NO_ALIASES
 #  define __gthread_once  __MCF_gthr_once
@@ -343,7 +343,7 @@ __MCF_gthr_active_p(void) __MCF_NOEXCEPT
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_once(__gthread_once_t* __once, __MCF_once_callback* __init_proc)
+__MCF_gthr_once(__gthread_once_t* __once, __MCF_once_callback* __init_proc) __MCF_MAY_THROW
   {
     __MCF_gthr_call_once_seh(__once, (__MCF_cxa_dtor_cdecl*)(intptr_t) __init_proc, __MCF_nullptr);
     return 0;
