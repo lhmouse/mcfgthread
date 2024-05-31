@@ -49,6 +49,12 @@
 #  endif
 #endif
 
+#ifdef _MSC_VER
+#  define __MCF_MAY_THROW   throw(...)
+#else
+#  define __MCF_MAY_THROW
+#endif
+
 #ifdef _WIN64
 #  define __MCF_PTR_BITS     64
 #  define __MCF_IPTR_MIN   (-0x7FFFFFFFFFFFFFFFLL-1)
