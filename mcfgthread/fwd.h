@@ -41,10 +41,12 @@
 
 #ifdef __MCF_DEBUG
 #  define __MCF_UNREACHABLE   __MCF_runtime_failure(__MCF_EX __func__)
-#elif defined __GNUC__ || defined __clang__
-#  define __MCF_UNREACHABLE   __builtin_unreachable()
 #else
-#  define __MCF_UNREACHABLE   __assume(0)
+#  ifdef __GNUC__
+#    define __MCF_UNREACHABLE   __builtin_unreachable()
+#  else
+#    define __MCF_UNREACHABLE   __assume(0)
+#  endif
 #endif
 
 #ifdef _WIN64
