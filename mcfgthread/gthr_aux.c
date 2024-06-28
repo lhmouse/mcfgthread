@@ -61,7 +61,7 @@ __asm__ (
 ".def do_call_once_seh_take_over; .scl 2; .type 32; .endef         \n\t"
 "do_call_once_seh_take_over:                                       \n\t"
 ".seh_proc do_call_once_seh_take_over                              \n\t"
-".seh_handler do_call_once_seh_uhandler, " __MCF_SEH_FLAG_UNWIND " \n\t"
+".seh_handler do_call_once_seh_uhandler, @except, @unwind          \n\t"
 #  if defined __amd64__
 /* The stack is used as follows:
  *
