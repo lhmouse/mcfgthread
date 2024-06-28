@@ -368,30 +368,6 @@ _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   }
 #endif
 
-#if defined __arm__ && (defined __GNUC__ || defined __clang__)
-/* ARM32, GCC or Clang  */
-__MCF_THREAD_INLINE
-uint32_t
-_MCF_thread_self_tid(void) __MCF_NOEXCEPT
-  {
-    char* __teb;
-    __asm__ ("mrc p15, #0, %0, c13, c0, #2" : "=r"(__teb));
-    return *(uint32_t*) (__teb + 0x24);
-  }
-#elif defined _M_ARM && defined _MSC_VER
-/* ARM32, MSVC  */
-__declspec(nothrow) unsigned _MoveFromCoprocessor(unsigned, unsigned, unsigned, unsigned, unsigned);
-#pragma intrinsic(_MoveFromCoprocessor)
-__MCF_THREAD_INLINE
-uint32_t
-_MCF_thread_self_tid(void) __MCF_NOEXCEPT
-  {
-    char* __teb;
-    __teb = (char*) _MoveFromCoprocessor(15, 0, 13, 0, 2);
-    return *(uint32_t*) (__teb + 0x24);
-  }
-#endif
-
 __MCF_THREAD_INLINE
 void*
 _MCF_tls_get(const _MCF_tls_key* __key) __MCF_NOEXCEPT
