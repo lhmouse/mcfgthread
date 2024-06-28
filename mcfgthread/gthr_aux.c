@@ -57,7 +57,8 @@ __asm__ (
 "  leave                                                           \n\t"
 "  jmp __MCF_once_release                                          \n\t"
 #else
-/* Otherwise, SEH is table-based.  */
+/* Otherwise, SEH is table-based. `@unwind` without `@except` works only on
+ * x86-64 and not on ARM, so let's keep both for simplicity.  */
 ".def do_call_once_seh_take_over; .scl 2; .type 32; .endef         \n\t"
 "do_call_once_seh_take_over:                                       \n\t"
 ".seh_proc do_call_once_seh_take_over                              \n\t"
