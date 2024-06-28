@@ -168,13 +168,10 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_union __dtor, void* __arg)
 #else
 /* Otherwise, SEH is table-based. `@unwind` without `@except` works only on
  * x86-64 and not on ARM, so let's keep both for simplicity.  */
-#  define __MCF_SEH_FLAG_EXCEPT   "@except"
-#  define __MCF_SEH_FLAG_UNWIND   "@except, @unwind"
-
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
-    __asm__ (".seh_handler __MCF_seh_top, " __MCF_SEH_FLAG_EXCEPT)  /* no semicolon  */
+    __asm__ (".seh_handler __MCF_seh_top, @except")  /* no semicolon  */
 
-/* This works on x86_64 and ARM64, and should work on ARM (FIXME: untested).  */
+/* This works on x86_64 and ARM64.  */
 __MCF_ALWAYS_INLINE
 void
 __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_cdecl* __dtor, void* __arg)
