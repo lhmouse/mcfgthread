@@ -96,31 +96,6 @@ __asm__ (
 "  mov rcx, QWORD PTR [rbp + 16]                                   \n\t"
 "  leave                                                           \n\t"
 "  jmp _MCF_once_release                                           \n\t"
-#  elif defined __arm__
-/* The stack is used as follows:
- *
- *  SP  0: `once` from R0
- *      4: unused
- *      8: saved R11
- *     12: saved LR
- * ENT 16: establisher frame
- */
-#  define __MCF_SEH_ONCE_PTR_DISPLACEMENT   -16
-".thumb_func                                                       \n\t"
-"  push.w {r0, r1, r11, lr}                                        \n\t"
-".seh_save_regs_w {r0, r1, r11, lr}                                \n\t"
-"  add.w r11, sp, #8                                               \n\t"
-".seh_nop_w                                                        \n\t"
-".seh_endprologue                                                  \n\t"
-/* Make the call `(*init_proc) (arg)`.  */
-"  mov.w r0, r2                                                    \n\t"
-"  blx r1                                                          \n\t"
-/* Disarm the once flag with a tail call.  */
-".seh_startepilogue                                                \n\t"
-"  pop.w {r0, r1, r11, lr}                                         \n\t"
-".seh_save_regs_w {r0, r1, r11, lr}                                \n\t"
-".seh_endepilogue                                                  \n\t"
-"  b.w _MCF_once_release                                           \n\t"
 #  elif defined __aarch64__
 /* The stack is used as follows:
  *
