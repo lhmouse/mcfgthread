@@ -63,7 +63,7 @@ Use it at your own risk.
 * **MCFGTHREAD**: mcfgthread `_MCF_mutex` with `-fno-inline`
 
 These are results of [the test program](mutex_performance.c) on an x86-64
- *Windows 10* machine with a 10-core *Intel i9 10900K* processor:
+*Windows 10* machine with a 10-core *Intel i9 10900K* processor:
 
 | #THREADS | #ITERATIONS |       SRWLOCK | CRITICAL_SECTION |    WINPTHREAD |    MCFGTHREAD |
 |---------:|------------:|--------------:|-----------------:|--------------:|--------------:|
@@ -89,6 +89,20 @@ And these are results of the same program on *Wine 6.0.3* on an x86-64
 |       20 |     200,000 |  2721.077 ms  |     4262.151 ms  |  1966.195 ms  |**1340.997 ms**|
 |       60 |      60,000 |  2397.048 ms  |     3807.141 ms  |  1530.147 ms  |**1511.931 ms**|
 |      200 |      20,000 |  2632.933 ms  |     4148.604 ms  |**1615.904 ms**|  1784.553 ms  |
+
+And these are results of the same program on an ARM *Windows 11* machine with
+an 8-core *Qualcomm Snapdragon 8cx Gen 3* processor, compiled with Clang:
+
+| #THREADS | #ITERATIONS |       SRWLOCK | CRITICAL_SECTION |    WINPTHREAD |    MCFGTHREAD |
+|---------:|------------:|--------------:|-----------------:|--------------:|--------------:|
+|        1 |  10,000,000 |  2105.027 ms  |     2164.209 ms  |  2122.998 ms  |**2033.915 ms**|
+|        2 |   5,000,000 |  1701.007 ms  |     1620.484 ms  |  1547.963 ms  |**1496.309 ms**|
+|        4 |   2,000,000 |**1395.439 ms**|     3067.075 ms  |  2583.215 ms  |  1525.453 ms  |
+|        6 |   1,000,000 |**1181.352 ms**|     4334.280 ms  |  2167.916 ms  |  1354.046 ms  |
+|       10 |     500,000 |  2738.153 ms  |     2799.624 ms  |**2687.904 ms**|  2739.022 ms  |
+|       20 |     100,000 |  3259.999 ms  |   **3220.732 ms**|  3287.581 ms  |  3291.146 ms  |
+|       60 |      30,000 |  2931.157 ms  |     2934.896 ms  |  2938.784 ms  |**2922.015 ms**|
+|      200 |      10,000 |**3197.414 ms**|     3216.323 ms  |  3221.090 ms  |  3229.249 ms  |
 
 ## Implementation details
 
