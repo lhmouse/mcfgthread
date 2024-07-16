@@ -293,8 +293,8 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
 lib_mcfgthread_a = static_library('mcfgthread',
       c_pch: 'mcfgthread/xprecompiled.h',
       c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables' ],
-      dependencies: [ dep_kernel32, dep_ntdll ],
       sources: [ mcfgthread_src ],
+      dependencies: [ dep_kernel32, dep_ntdll ],
       install: true)
 
 import('pkgconfig').generate(lib_mcfgthread_dll,
