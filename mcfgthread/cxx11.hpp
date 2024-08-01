@@ -1,6 +1,9 @@
 /* This file is part of MCF Gthread.
- * See LICENSE.TXT for licensing information.
- * Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved.  */
+ * Copyright (C) 2022-2024 LH_Mouse. All wrongs reserved.
+ *
+ * MCF Gthread is free software. Licensing information is included in
+ * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
+ * to this file.  */
 
 #ifndef __MCFGTHREAD_CXX11_
 #define __MCFGTHREAD_CXX11_
