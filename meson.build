@@ -12,7 +12,10 @@
 ## NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 ## CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-project('mcfgthread', [ 'c', 'cpp' ], version: '1.8.ga')
+project('mcfgthread',
+        'c', 'cpp',
+        version: '1.8.ga',
+        default_options: [ 'c_std=c99', 'cpp_std=c++11', 'warning_level=2' ])
 
 #===========================================================
 # List of files
@@ -216,10 +219,10 @@ ver.set('abi_minor', meson.project_version().split('.')[1])
 ver.set_quoted('abi_string', meson.project_version())
 
 cc = meson.get_compiler('c')
+cxx = meson.get_compiler('cpp')
 cc_is_i386 = cc.compiles('int foo = __i386__;')
 cc_is_amd64 = cc.compiles('int foo = __amd64__;')
-cc_asm_intel = cc.compiles('int foo(int a) { return a + 1; }',
-                           args: [ '-masm=intel' ])
+cc_asm_intel = cc.has_argument('-masm=intel')
 
 if cc_asm_intel
   add_project_arguments('-masm=intel', language: [ 'c', 'cpp' ])
@@ -234,24 +237,27 @@ if get_option('enable-debug-checks')
 endif
 
 add_project_arguments(
-    '-Wall', '-Wextra', '-Winvalid-pch', '-D_WIN32_WINNT=0x0601',
-    '-U_FORTIFY_SOURCE', '-fno-stack-protector', '-fstrict-aliasing',
-    '-ffast-math', '-fno-ident', '-Werror=conversion', '-Werror=sign-compare',
-    '-Werror=sign-conversion', '-Werror=write-strings', '-Werror=return-type',
-    '-Werror=double-promotion', '-Wmissing-declarations', '-Wswitch-enum',
-    '-Wmissing-field-initializers', '-Wsuggest-attribute=noreturn', '-Wshadow',
-    '-Wunused-function', '-Wunused-label', '-Wunused-local-typedefs',
-    '-Wunused-but-set-variable', '-Wunused-but-set-parameter',
+    cc.get_supported_arguments(
+        '-Winvalid-pch', '-D_WIN32_WINNT=0x0601', '-U_FORTIFY_SOURCE',
+        '-fno-stack-protector', '-fstrict-aliasing', '-ffast-math', '-fno-ident',
+        '-Werror=conversion', '-Werror=sign-compare', '-Werror=sign-conversion',
+        '-Werror=write-strings', '-Werror=return-type', '-Werror=double-promotion',
+        '-Wmissing-declarations', '-Wswitch-enum', '-Wmissing-field-initializers',
+        '-Wsuggest-attribute=noreturn', '-Wshadow', '-Wunused-function',
+        '-Wunused-label', '-Wunused-local-typedefs', '-Wunused-but-set-variable',
+        '-Wunused-but-set-parameter'),
     language: [ 'c', 'cpp' ])
 
 add_project_arguments(
-   '-std=c99', '-Werror=discarded-qualifiers', '-Werror=strict-prototypes',
-   '-Werror=incompatible-pointer-types', '-Werror=implicit-function-declaration',
-   '-Werror=int-conversion', '-Werror=implicit-int',
+   cc.get_supported_arguments(
+      '-Werror=discarded-qualifiers', '-Werror=strict-prototypes',
+      '-Werror=incompatible-pointer-types', '-Werror=implicit-function-declaration',
+      '-Werror=int-conversion', '-Werror=implicit-int'),
    language: 'c')
 
 add_project_arguments(
-   '-std=c++11', '-Wno-redundant-move', '-Wzero-as-null-pointer-constant',
+   cxx.get_supported_arguments(
+      '-Wno-redundant-move', '-Wzero-as-null-pointer-constant'),
    language: 'cpp')
 
 #===========================================================
