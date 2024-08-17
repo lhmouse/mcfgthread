@@ -33,8 +33,8 @@ __asm__ (
  *     -8: establisher frame; pointer to previous frame
  *     -4: `do_call_once_seh_uhandler`
  * EBP  0: saved frame pointer
- * ENT  4: return address
- *      8: `once`
+ *      4: return address
+ * ENT  8: `once`
  *     12: `init_proc`
  *     16: `arg`
  */
@@ -74,8 +74,8 @@ __asm__ (
  *    -16: ditto
  *     -8: ditto
  * RBP  0: establisher frame; saved frame pointer
- * ENT  8: return address
- *     16: shallow slot for `once` from RCX
+ *      8: return address
+ * ENT 16: shallow slot for `once` from RCX
  *     24: shallow slot for `init_proc` from RDX
  *     32: shallow slot for `arg` from R8
  *     40: unused
