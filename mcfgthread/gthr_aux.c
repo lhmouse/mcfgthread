@@ -13,7 +13,7 @@
 
 void
 __cdecl
-do_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_cdecl* init_proc, void* arg);
+__MCF_do_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_cdecl* init_proc, void* arg);
 __asm__ (
 ".text  \n\t"
 #if defined __i386__ || defined __amd64__
@@ -22,8 +22,8 @@ __asm__ (
 #endif
 #if defined __i386__
 /* On x86, SEH is stack-based.  */
-".def _do_call_once_seh_take_over; .scl 2; .type 32; .endef        \n\t"
-"_do_call_once_seh_take_over:                                      \n\t"
+".def ___MCF_do_call_once_seh_take_over; .scl 2; .type 32; .endef  \n\t"
+"___MCF_do_call_once_seh_take_over:                                \n\t"
 /* The stack is used as follows:
  *
  *    -24: argument to subroutines
@@ -62,9 +62,9 @@ __asm__ (
 #else
 /* Otherwise, SEH is table-based. `@unwind` without `@except` works only on
  * x86-64 and not on ARM, so let's keep both for simplicity.  */
-".def do_call_once_seh_take_over; .scl 2; .type 32; .endef         \n\t"
-"do_call_once_seh_take_over:                                       \n\t"
-".seh_proc do_call_once_seh_take_over                              \n\t"
+".def __MCF_do_call_once_seh_take_over; .scl 2; .type 32; .endef   \n\t"
+"__MCF_do_call_once_seh_take_over:                                 \n\t"
+".seh_proc __MCF_do_call_once_seh_take_over                        \n\t"
 ".seh_handler do_call_once_seh_uhandler, @except, @unwind          \n\t"
 #  if defined __amd64__
 /* The stack is used as follows:
@@ -150,7 +150,7 @@ __MCF_DLLEXPORT
 void
 __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_cdecl* init_proc, void* arg)
   {
-    do_call_once_seh_take_over(once, init_proc, arg);
+    __MCF_do_call_once_seh_take_over(once, init_proc, arg);
   }
 
 __MCF_DLLEXPORT
