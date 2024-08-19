@@ -122,20 +122,21 @@ __MCF_EVENT_INLINE
 int
 _MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
+#if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
     _MCF_event __old;
 
     if((__undesired < 0) || (__undesired > __MCF_EVENT_VALUE_MAX))
       return -2;
 
-    _MCF_atomic_load_pptr_acq(&__old, __eventp);
-
     /* Check whether the event does not contain the undesired value. If so,
      * don't block at all.  */
+    _MCF_atomic_load_pptr_acq(&__old, __eventp);
     if(__old.__value != __undesired)
       return __old.__value;
 
     if(__timeout_opt && (*__timeout_opt == 0))
       return -1;
+#endif  /* speed */
 
     return _MCF_event_await_change_slow(__eventp, __undesired, __timeout_opt);
   }
@@ -144,17 +145,18 @@ __MCF_EVENT_INLINE
 int
 _MCF_event_set(_MCF_event* __eventp, int __value) __MCF_NOEXCEPT
   {
+#if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
     _MCF_event __old;
 
     if((__value < 0) || (__value > __MCF_EVENT_VALUE_MAX))
       return -1;
 
-    _MCF_atomic_load_pptr_acq(&__old, __eventp);
-
     /* Check whether the event already contains the value. If so, don't do
      * anything, in order to prevent thundering herds.  */
+    _MCF_atomic_load_pptr_acq(&__old, __eventp);
     if(__old.__value == __value)
       return 0;
+#endif  /* speed */
 
     return _MCF_event_set_slow(__eventp, __value);
   }
