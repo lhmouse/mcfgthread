@@ -12,11 +12,10 @@
 ## NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
 ## CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-project(
-    'mcfgthread',
-    [ 'c', 'cpp' ],
-    version: '1.9.alpha',
-    default_options: ['c_std=c99', 'cpp_std=c++11', 'warning_level=2'])
+project('mcfgthread',
+        'c', 'cpp',
+        version: '1.9.alpha',
+        default_options: [ 'c_std=c99', 'cpp_std=c++11', 'warning_level=2' ])
 
 #===========================================================
 # List of files
