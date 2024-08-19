@@ -100,10 +100,11 @@ __MCF_EVENT_INLINE
 int
 _MCF_event_init(_MCF_event* __eventp, int __value_init) __MCF_NOEXCEPT
   {
+    _MCF_event __temp = { (uint8_t) __value_init, 0, 0 };
+
     if((__value_init < 0) || (__value_init > __MCF_EVENT_VALUE_MAX))
       return -1;
 
-    _MCF_event __temp = { (uint8_t) __value_init, 0, 0 };
     _MCF_atomic_store_pptr_rel(__eventp, &__temp);
     return 0;
   }
@@ -121,10 +122,11 @@ __MCF_EVENT_INLINE
 int
 _MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
+    _MCF_event __old;
+
     if((__undesired < 0) || (__undesired > __MCF_EVENT_VALUE_MAX))
       return -2;
 
-    _MCF_event __old;
     _MCF_atomic_load_pptr_acq(&__old, __eventp);
 
     /* Check whether the event does not contain the undesired value. If so,
@@ -142,10 +144,11 @@ __MCF_EVENT_INLINE
 int
 _MCF_event_set(_MCF_event* __eventp, int __value) __MCF_NOEXCEPT
   {
+    _MCF_event __old;
+
     if((__value < 0) || (__value > __MCF_EVENT_VALUE_MAX))
       return -1;
 
-    _MCF_event __old;
     _MCF_atomic_load_pptr_acq(&__old, __eventp);
 
     /* Check whether the event already contains the value. If so, don't do
