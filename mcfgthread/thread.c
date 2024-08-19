@@ -104,7 +104,9 @@ __MCF_thread_attach_foreign(_MCF_thread* thrd)
     __MCF_ASSERT(thrd->__nref[0] == 0);
     __MCF_ASSERT(thrd->__tid == 0);
     __MCF_ASSERT(thrd->__handle == __MCF_nullptr);
-    __MCF_ASSERT(TlsGetValue(__MCF_g->__tls_index) == __MCF_nullptr);
+
+    /* Ensure the thread has not been attached.  */
+    __MCF_CHECK(TlsGetValue(__MCF_g->__tls_index) == __MCF_nullptr);
 
     /* Initialize thread identity fields.  */
     thrd->__tid = _MCF_thread_self_tid();
