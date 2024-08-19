@@ -18,6 +18,9 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
     _MCF_event old, new;
     NTSTATUS status;
 
+    if((undesired < 0) || (undesired > __MCF_EVENT_VALUE_MAX))
+      return -2;
+
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
