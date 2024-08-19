@@ -99,16 +99,18 @@ __MCF_ONCE_INLINE
 int
 _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
+#if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
     _MCF_once __old;
-    _MCF_atomic_load_pptr_acq(&__old, __once);
 
     /* Check the first byte to see whether initialization has been completed,
      * and if that's the case, don't do anything.  */
+    _MCF_atomic_load_pptr_acq(&__old, __once);
     if(__old.__ready)
       return 0;
 
     if(__timeout_opt && (*__timeout_opt == 0) && __old.__locked)
       return -1;
+#endif  /* speed */
 
     return _MCF_once_wait_slow(__once, __timeout_opt);
   }
