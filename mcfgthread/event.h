@@ -115,7 +115,7 @@ _MCF_event_get(const _MCF_event* __eventp) __MCF_NOEXCEPT
   {
     _MCF_event __temp;
     _MCF_atomic_load_pptr_rlx(&__temp, __eventp);
-    return (uint8_t) __temp.__value;
+    return __temp.__value;
   }
 
 __MCF_EVENT_INLINE
@@ -131,8 +131,8 @@ _MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __
 
     /* Check whether the event does not contain the undesired value. If so,
      * don't block at all.  */
-    if(__old.__value != (uint8_t) __undesired)
-      return (uint8_t) __old.__value;
+    if(__old.__value != __undesired)
+      return __old.__value;
 
     if(__timeout_opt && (*__timeout_opt == 0))
       return -1;
@@ -153,7 +153,7 @@ _MCF_event_set(_MCF_event* __eventp, int __value) __MCF_NOEXCEPT
 
     /* Check whether the event already contains the value. If so, don't do
      * anything, in order to prevent thundering herds.  */
-    if(__old.__value == (uint8_t) __value)
+    if(__old.__value == __value)
       return 0;
 
     return _MCF_event_set_slow(__eventp, __value);
