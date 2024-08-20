@@ -100,11 +100,12 @@ __MCF_EVENT_INLINE
 int
 _MCF_event_init(_MCF_event* __eventp, int __value_init) __MCF_NOEXCEPT
   {
-    _MCF_event __temp = { (uint8_t) __value_init, 0, 0 };
+    _MCF_event __temp = { 0, 0, 0 };
 
     if((__value_init < 0) || (__value_init > __MCF_EVENT_VALUE_MAX))
       return -1;
 
+    __temp.__value = (uint8_t) __value_init;
     _MCF_atomic_store_pptr_rel(__eventp, &__temp);
     return 0;
   }
