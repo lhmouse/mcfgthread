@@ -108,6 +108,7 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEP
     if(_MCF_atomic_cmpxchg_weak_pptr_acq(__mutex, &__old, &__new))
       return 0;
 
+    /* If a timeout of zero is specified, don't block at all.  */
     if(__timeout_opt && (*__timeout_opt == 0) && __old.__locked)
       return -1;
 #endif  /* speed */
