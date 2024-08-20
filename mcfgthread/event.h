@@ -134,6 +134,7 @@ _MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __
     if(__old.__value != __undesired)
       return __old.__value;
 
+    /* If a timeout of zero is specified, don't block at all.  */
     if(__timeout_opt && (*__timeout_opt == 0))
       return -1;
 #endif  /* speed */

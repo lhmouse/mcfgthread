@@ -108,6 +108,7 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
     if(__old.__ready)
       return 0;
 
+    /* If a timeout of zero is specified, don't block at all.  */
     if(__timeout_opt && (*__timeout_opt == 0) && __old.__locked)
       return -1;
 #endif  /* speed */
