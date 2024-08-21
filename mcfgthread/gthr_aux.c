@@ -15,16 +15,16 @@ __MCF_DLLEXPORT
 void
 __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_cdecl* init_proc, void* arg);
 __asm__ (
+#  ifdef DLL_EXPORT
+".section \".drectve\"  \n\t"
+".ascii \" -export:\\\"__MCF_gthr_call_once_seh_take_over\\\"\"  \n\t"
+#  endif
 #if defined __i386__ || defined __amd64__
 /* This is required by Clang, where `-masm=intel` doesn't affect basic asm.  */
 ".intel_syntax noprefix  \n\t"
 #endif
 #if defined __i386__
 /* On x86, SEH is stack-based.  */
-#  ifdef DLL_EXPORT
-".section \".drectve\"  \n\t"
-".ascii \" -export:\\\"___MCF_gthr_call_once_seh_take_over\\\"\"  \n\t"
-#  endif
 ".text  \n\t"
 ".globl ___MCF_gthr_call_once_seh_take_over  \n\t"
 ".def ___MCF_gthr_call_once_seh_take_over; .scl 2; .type 32; .endef  \n\t"
@@ -67,10 +67,6 @@ __asm__ (
 #else
 /* Otherwise, SEH is table-based. `@unwind` without `@except` works only on
  * x86-64 and not on ARM, so let's keep both for simplicity.  */
-#  ifdef DLL_EXPORT
-".section \".drectve\"  \n\t"
-".ascii \" -export:\\\"__MCF_gthr_call_once_seh_take_over\\\"\"  \n\t"
-#  endif
 ".text  \n\t"
 ".globl __MCF_gthr_call_once_seh_take_over  \n\t"
 ".def __MCF_gthr_call_once_seh_take_over; .scl 2; .type 32; .endef   \n\t"
