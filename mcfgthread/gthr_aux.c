@@ -26,8 +26,8 @@ __asm__ (
 ".ascii \" -export:\\\"___MCF_gthr_call_once_seh_take_over\\\"\"  \n\t"
 #  endif
 ".text  \n\t"
-".def ___MCF_gthr_call_once_seh_take_over; .scl 2; .type 32; .endef  \n\t"
 ".globl ___MCF_gthr_call_once_seh_take_over  \n\t"
+".def ___MCF_gthr_call_once_seh_take_over; .scl 2; .type 32; .endef  \n\t"
 "___MCF_gthr_call_once_seh_take_over:  \n\t"
 /* The stack is used as follows:
  *
@@ -72,8 +72,8 @@ __asm__ (
 ".ascii \" -export:\\\"__MCF_gthr_call_once_seh_take_over\\\"\"  \n\t"
 #  endif
 ".text  \n\t"
-".def __MCF_gthr_call_once_seh_take_over; .scl 2; .type 32; .endef   \n\t"
 ".globl __MCF_gthr_call_once_seh_take_over  \n\t"
+".def __MCF_gthr_call_once_seh_take_over; .scl 2; .type 32; .endef   \n\t"
 "__MCF_gthr_call_once_seh_take_over:  \n\t"
 ".seh_proc __MCF_gthr_call_once_seh_take_over  \n\t"
 ".seh_handler do_call_once_seh_uhandler, @except, @unwind  \n\t"
