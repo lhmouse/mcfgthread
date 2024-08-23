@@ -76,15 +76,15 @@ __asm__ (
 #  if defined __amd64__
 /* The stack is used as follows:
  *
- *    -32: shallow slot for subroutines
+ *    -32: shadow slot for subroutines
  *    -24: ditto
  *    -16: ditto
  *     -8: ditto
  * RBP  0: establisher frame; saved frame pointer
  *      8: return address
- * ENT 16: shallow slot for `once` from RCX
- *     24: shallow slot for `init_proc` from RDX
- *     32: shallow slot for `arg` from R8
+ * ENT 16: shadow slot for `once` from RCX
+ *     24: shadow slot for `init_proc` from RDX
+ *     32: shadow slot for `arg` from R8
  *     40: unused
  */
 #  define __MCF_SEH_ONCE_PTR_DISPLACEMENT   16
