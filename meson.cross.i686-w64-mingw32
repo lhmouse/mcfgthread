@@ -1,3 +1,6 @@
+[properties]
+skip_sanity_check = true
+
 [binaries]
 c = 'i686-w64-mingw32-gcc'
 cpp = 'i686-w64-mingw32-g++'
