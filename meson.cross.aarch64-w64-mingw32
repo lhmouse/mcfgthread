@@ -1,3 +1,6 @@
+[properties]
+skip_sanity_check = true
+
 [binaries]
 c = 'aarch64-w64-mingw32-clang'
 cpp = 'aarch64-w64-mingw32-clang++'
