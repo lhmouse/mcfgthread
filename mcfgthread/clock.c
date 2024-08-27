@@ -29,14 +29,12 @@ __MCF_DLLEXPORT
 int64_t
 _MCF_utc_now(void)
   {
-    ULARGE_INTEGER uli;
-
     /* `ULARGE_INTEGER` has a more strict alignment requirement than `FILETIME`,
-     * so the cast should be safe.  */
+     * so the cast should be safe. `116444736000000000` is number of 1/100
+     * seconds from 1601-01-01T00:00:00Z (the NT epoch) to 1970-01-01T00:00:00Z
+     * (the Unix Epoch).  */
+    ULARGE_INTEGER uli;
     GetSystemTimeAsFileTime((FILETIME*) &uli);
-
-    /* 11644473600 is number of seconds from 1601-01-01T00:00:00Z (the NT epoch)
-     * to 1970-01-01T00:00:00Z (the Unix Epoch).  */
     return (int64_t) do_divide_by_10000(uli.QuadPart - 116444736000000000);
   }
 
@@ -44,18 +42,19 @@ __MCF_DLLEXPORT
 double
 _MCF_hires_utc_now(void)
   {
-    __MCF_LAZY_DECLARE(GetSystemTimePreciseAsFileTime);
+    if(__MCF_LAZY_P(GetSystemTimePreciseAsFileTime)) {
+      /* This is available since Windows 8.  */
+      ULARGE_INTEGER uli;
+      __MCF_LAZY_REF(GetSystemTimePreciseAsFileTime) ((FILETIME*) &uli);
+      return (double) ((int64_t) uli.QuadPart - 116444736000000000) * 0.0001;
+    }
+
+    /* `ULARGE_INTEGER` has a more strict alignment requirement than `FILETIME`,
+     * so the cast should be safe. `116444736000000000` is number of 1/100
+     * seconds from 1601-01-01T00:00:00Z (the NT epoch) to 1970-01-01T00:00:00Z
+     * (the Unix Epoch).  */
     ULARGE_INTEGER uli;
-
-    /* This is available since Windows 8. `ULARGE_INTEGER` has a more strict
-     * alignment requirement than `FILETIME`, so the cast should be safe.  */
-    if(__MCF_LAZY_GET(GetSystemTimePreciseAsFileTime))
-      __MCF_LAZY_DEREF(GetSystemTimePreciseAsFileTime) ((FILETIME*) &uli);
-    else
-      GetSystemTimeAsFileTime((FILETIME*) &uli);
-
-    /* 11644473600 is number of seconds from 1601-01-01T00:00:00Z (the NT epoch)
-     * to 1970-01-01T00:00:00Z (the Unix Epoch).  */
+    GetSystemTimeAsFileTime((FILETIME*) &uli);
     return (double) ((int64_t) uli.QuadPart - 116444736000000000) * 0.0001;
   }
 
@@ -63,27 +62,24 @@ __MCF_DLLEXPORT
 int64_t
 _MCF_tick_count(void)
   {
-    __MCF_LAZY_DECLARE(QueryInterruptTime);
-    ULONGLONG ull;
+    if(__MCF_LAZY_P(QueryInterruptTime)) {
+      /* This is available since Windows 10.  */
+      ULONGLONG ull;
+      __MCF_LAZY_REF(QueryInterruptTime) (&ull);
+      return (int64_t) do_divide_by_10000(ull);
+    }
 
-    /* This is available since Windows Vista. Its result is calculated by
-     * multiplying the count of ticks by the interval of each tick (15.625 ms),
-     * hence the poor accuracy.  */
-    if(!__MCF_LAZY_GET(QueryInterruptTime))
-      return (int64_t) GetTickCount64();
-
-    /* This is available since Windows 10.  */
-    __MCF_LAZY_DEREF(QueryInterruptTime) (&ull);
-    return (int64_t) do_divide_by_10000(ull);
+    /* This is available since Windows Vista and has a resolution of
+     * 15.625 ms.  */
+    return (int64_t) GetTickCount64();
   }
 
 __MCF_DLLEXPORT
 double
 _MCF_perf_counter(void)
   {
-    LARGE_INTEGER li;
-
     /* This will not fail since Windows XP.  */
+    LARGE_INTEGER li;
     QueryPerformanceCounter(&li);
     return (double) li.QuadPart * __MCF_crt_pf_recip;
   }

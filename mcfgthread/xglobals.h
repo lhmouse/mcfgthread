@@ -101,15 +101,6 @@ __MCF_WINAPI(NTSTATUS) NtYieldExecution(void);
 __MCF_WINAPI(NTSTATUS) NtWaitForKeyedEvent(HANDLE, PVOID, BOOLEAN, LARGE_INTEGER*);
 __MCF_WINAPI(NTSTATUS) NtReleaseKeyedEvent(HANDLE, PVOID, BOOLEAN, LARGE_INTEGER*);
 
-/* Lazy binding.  */
-#define __MCF_LAZY_DECLARE(name)     decltype_##name* __f_##name
-#define __MCF_G_LAZY_INIT(dll, name)   ((void) ((dll) && (__MCF_g->__f_##name = (decltype_##name*)(INT_PTR) GetProcAddress(dll, #name))))
-#define __MCF_LAZY_DEREF(name)       (*__f_##name)
-#define __MCF_LAZY_GET(name)        (__MCF_G_FIELD_OPT(__f_##name) && (__f_##name = __MCF_g->__f_##name))
-
-typedef void __stdcall decltype_GetSystemTimePreciseAsFileTime(FILETIME*);
-typedef void __stdcall decltype_QueryInterruptTime(ULONGLONG*);
-
 /* Declare helper functions here.  */
 __MCF_XGLOBALS_IMPORT
 EXCEPTION_DISPOSITION
@@ -272,6 +263,20 @@ __MCF_XGLOBALS_IMPORT
 void
 __MCF_run_dtors_atexit(void* __dso) __MCF_NOEXCEPT;
 
+/* Define macros and types for lazy binding.
+ * If a symbol cannot be found during startup, it is set to a null pointer.  */
+#define __MCF_G_LAZY_FIELD(name)   decltype_##name* __f_##name
+#define __MCF_G_INITIALIZE_LAZY(dll, name)  \
+    (__MCF_g->__f_##name = (dll)  \
+         ? (decltype_##name*)(INT_PTR) GetProcAddress(dll, #name)  \
+         : __MCF_nullptr)
+
+#define __MCF_LAZY_P(name)    (__MCF_G_FIELD_OPT(__f_##name) && __MCF_g->__f_##name)
+#define __MCF_LAZY_REF(name)   (*(__MCF_g->__f_##name))
+
+typedef void __stdcall decltype_GetSystemTimePreciseAsFileTime(FILETIME*);
+typedef void __stdcall decltype_QueryInterruptTime(ULONGLONG*);
+
 /* Declare global data.  */
 typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
 
@@ -299,8 +304,8 @@ struct __MCF_crt_xglobals
     uintptr_t __sleeping_threads[1];
 
     /* WARNING: fields hereinafter must be accessed via `__MCF_G_FIELD_OPT`!  */
-    __MCF_LAZY_DECLARE(GetSystemTimePreciseAsFileTime);
-    __MCF_LAZY_DECLARE(QueryInterruptTime);
+    __MCF_G_LAZY_FIELD(GetSystemTimePreciseAsFileTime);
+    __MCF_G_LAZY_FIELD(QueryInterruptTime);
   };
 
 /* These are constants that have to be initialized at load time.  */
