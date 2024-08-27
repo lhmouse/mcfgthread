@@ -29,13 +29,13 @@ __MCF_DLLEXPORT
 int64_t
 _MCF_utc_now(void)
   {
-    /* `ULARGE_INTEGER` has a more strict alignment requirement than `FILETIME`,
+    /* `ULONGLONG` has a more strict alignment requirement than `FILETIME`,
      * so the cast should be safe. `116444736000000000` is number of 1/100
      * seconds from 1601-01-01T00:00:00Z (the NT epoch) to 1970-01-01T00:00:00Z
      * (the Unix Epoch).  */
-    ULARGE_INTEGER uli;
-    GetSystemTimeAsFileTime((FILETIME*) &uli);
-    return (int64_t) do_divide_by_10000(uli.QuadPart - 116444736000000000);
+    ULONGLONG ull;
+    GetSystemTimeAsFileTime((FILETIME*) &ull);
+    return (int64_t) do_divide_by_10000(ull - 116444736000000000);
   }
 
 __MCF_DLLEXPORT
@@ -44,18 +44,18 @@ _MCF_hires_utc_now(void)
   {
     if(__MCF_LAZY_P(GetSystemTimePreciseAsFileTime)) {
       /* This is available since Windows 8.  */
-      ULARGE_INTEGER uli;
-      __MCF_LAZY_REF(GetSystemTimePreciseAsFileTime) ((FILETIME*) &uli);
-      return (double) ((int64_t) uli.QuadPart - 116444736000000000) * 0.0001;
+      ULONGLONG ull;
+      __MCF_LAZY_REF(GetSystemTimePreciseAsFileTime) ((FILETIME*) &ull);
+      return (double) ((int64_t) ull - 116444736000000000) * 0.0001;
     }
 
-    /* `ULARGE_INTEGER` has a more strict alignment requirement than `FILETIME`,
+    /* `ULONGLONG` has a more strict alignment requirement than `FILETIME`,
      * so the cast should be safe. `116444736000000000` is number of 1/100
      * seconds from 1601-01-01T00:00:00Z (the NT epoch) to 1970-01-01T00:00:00Z
      * (the Unix Epoch).  */
-    ULARGE_INTEGER uli;
-    GetSystemTimeAsFileTime((FILETIME*) &uli);
-    return (double) ((int64_t) uli.QuadPart - 116444736000000000) * 0.0001;
+    ULONGLONG ull;
+    GetSystemTimeAsFileTime((FILETIME*) &ull);
+    return (double) ((int64_t) ull - 116444736000000000) * 0.0001;
   }
 
 __MCF_DLLEXPORT
