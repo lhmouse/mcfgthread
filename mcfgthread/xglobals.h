@@ -101,6 +101,13 @@ __MCF_WINAPI(NTSTATUS) NtYieldExecution(void);
 __MCF_WINAPI(NTSTATUS) NtWaitForKeyedEvent(HANDLE, PVOID, BOOLEAN, LARGE_INTEGER*);
 __MCF_WINAPI(NTSTATUS) NtReleaseKeyedEvent(HANDLE, PVOID, BOOLEAN, LARGE_INTEGER*);
 
+/* Define macros and types for lazy binding.
+ * If a symbol cannot be found during startup, it is set to a null pointer.  */
+#define __MCF_G_LAZY_FIELD(name)   decltype_##name* __f_##name
+
+typedef void __stdcall decltype_GetSystemTimePreciseAsFileTime(FILETIME*);
+typedef void __stdcall decltype_QueryInterruptTime(ULONGLONG*);
+
 /* Declare helper functions here.  */
 __MCF_XGLOBALS_IMPORT
 EXCEPTION_DISPOSITION
@@ -263,20 +270,6 @@ __MCF_XGLOBALS_IMPORT
 void
 __MCF_run_dtors_atexit(void* __dso) __MCF_NOEXCEPT;
 
-/* Define macros and types for lazy binding.
- * If a symbol cannot be found during startup, it is set to a null pointer.  */
-#define __MCF_G_LAZY_FIELD(name)   decltype_##name* __f_##name
-#define __MCF_G_INITIALIZE_LAZY(dll, name)  \
-    (__MCF_g->__f_##name = (dll)  \
-         ? (decltype_##name*)(INT_PTR) GetProcAddress(dll, #name)  \
-         : __MCF_nullptr)
-
-#define __MCF_LAZY_P(name)    (__MCF_G_FIELD_OPT(__f_##name) && __MCF_g->__f_##name)
-#define __MCF_LAZY_REF(name)   (*(__MCF_g->__f_##name))
-
-typedef void __stdcall decltype_GetSystemTimePreciseAsFileTime(FILETIME*);
-typedef void __stdcall decltype_QueryInterruptTime(ULONGLONG*);
-
 /* Declare global data.  */
 typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
 
@@ -331,6 +324,14 @@ extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY __MCF_g;
     ((__MCF_G_SIZE >= offsetof(__MCF_crt_xglobals, field) + sizeof(__MCF_g->field))  \
      ? &(__MCF_g->field)  \
      : __MCF_nullptr)
+
+#define __MCF_G_INITIALIZE_LAZY(dll, name)  \
+    (__MCF_g->__f_##name =  \
+        (dll) ? (decltype_##name*)(INT_PTR) GetProcAddress(dll, #name)  \
+              : __MCF_nullptr)
+
+#define __MCF_LAZY_P(name)    (__MCF_G_FIELD_OPT(__f_##name) && __MCF_g->__f_##name)
+#define __MCF_LAZY_REF(name)   (*(__MCF_g->__f_##name))
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
