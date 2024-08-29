@@ -220,8 +220,8 @@ ver.set_quoted('abi_string', meson.project_version())
 
 cc = meson.get_compiler('c')
 cxx = meson.get_compiler('cpp')
-cc_is_i386 = cc.compiles('int foo = __i386__;')
-cc_is_amd64 = cc.compiles('int foo = __amd64__;')
+cc_is_i386 = cc.has_define('__i386__')
+cc_is_amd64 = cc.has_define('__amd64__')
 cc_asm_intel = cc.has_argument('-masm=intel')
 
 if cc_asm_intel
