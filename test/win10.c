@@ -16,7 +16,7 @@ main(void)
     DWORD ver = GetVersion();
     DWORD os_ver = (ver & 0xFF) * 100 + (ver >> 8 & 0xFF);
 
-    printf("os_ver = %ld\n", os_ver);
+    printf("os_ver = %d\n", (int) os_ver);
     if(os_ver < 1000)
       return 77;  // skip
 
