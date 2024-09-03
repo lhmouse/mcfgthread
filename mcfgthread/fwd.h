@@ -58,7 +58,7 @@
 #  define __MCF_MAY_THROW
 #endif
 
-#ifdef _WIN64
+#if defined _WIN64 || defined _LP64
 #  define __MCF_PTR_BITS     64
 #  define __MCF_IPTR_MIN   (-0x7FFFFFFFFFFFFFFFLL-1)
 #  define __MCF_IPTR_0       0LL
