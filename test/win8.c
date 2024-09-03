@@ -13,6 +13,9 @@
 int
 main(void)
   {
+#if defined __CYGWIN__
+    return 77;
+#else
     DWORD ver = GetVersion();
     DWORD os_ver = (ver & 0xFF) * 100 + (ver >> 8 & 0xFF);
 
@@ -28,4 +31,5 @@ main(void)
     void* gf = __MCF_G_FIELD_OPT(__f_GetSystemTimePreciseAsFileTime);
     assert(gf);
     assert((INT_PTR) fn == *(INT_PTR*) gf);
+#endif
   }

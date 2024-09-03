@@ -68,6 +68,8 @@ mcfgthread_src = [
 ]
 
 test_src = [
+  'test/win8.c',
+  'test/win10.c',
   'test/clock.c',
   'test/winnt_timeout.c',
   'test/once_zero_timeout.c',
@@ -313,55 +315,42 @@ import('pkgconfig').generate(lib_mcfgthread_dll,
 # Rules for tests
 #===========================================================
 foreach src: test_src
-  test(src,
-       executable(src.underscorify(), src,
-                  link_args: [ '-static' ],
-                  link_with: lib_mcfgthread_dll))
+  test(src, executable(src.underscorify(), src,
+                       link_with: lib_mcfgthread_a))
 endforeach
-
-# Specialized: static
-test('test/win8.c',
-     executable('test_win8_c', 'test/win8.c',
-                link_args: [ '-static' ],
-                link_with: lib_mcfgthread_a))
-
-test('test/win10.c',
-     executable('test_win10_c', 'test/win10.c',
-                link_args: [ '-static' ],
-                link_with: lib_mcfgthread_a))
 
 # Specialized: -ladvapi32 -lntdll
 test('test/memory.c',
-     executable('test_memory_c', 'test/memory.c',
+     executable('test_memory_c',
+                'test/memory.c',
                 dependencies: [ dep_advapi32, dep_ntdll ],
-                link_args: [ '-static' ],
-                link_with: lib_mcfgthread_dll))
+                link_with: lib_mcfgthread_a))
 
 # Specialized: -std=c89 -Wpedantic
 test('test/gthr_c89_pedantic.c',
-     executable('test_gthr_c89_pedantic_c', 'test/gthr_c89_pedantic.c',
+     executable('test_gthr_c89_pedantic_c',
+                'test/gthr_c89_pedantic.c',
                 c_args: [ '-std=c89', '-Werror=declaration-after-statement',
                           '-Wpedantic', '-Wno-variadic-macros', '-Wno-long-long' ],
-                link_args: [ '-static' ],
-                link_with: lib_mcfgthread_dll))
+                link_with: lib_mcfgthread_a))
 
 # Specialized: -std=c99 -Wpedantic
 test('test/c11_c99_pedantic.c',
-     executable('test_c11_c99_pedantic_c', 'test/c11_c99_pedantic.c',
+     executable('test_c11_c99_pedantic_c',
+                'test/c11_c99_pedantic.c',
                 c_args: [ '-std=c99', '-Wpedantic' ],
-                link_args: [ '-static' ],
-                link_with: lib_mcfgthread_dll))
+                link_with: lib_mcfgthread_a))
 
 # Specialized: -std=c++11 -fno-rtti -fno-exceptions
 test('test/cxx11_no_exceptions.cpp',
-     executable('test_cxx11_no_exceptions_cpp', 'test/cxx11_no_exceptions.cpp',
+     executable('test_cxx11_no_exceptions_cpp',
+                'test/cxx11_no_exceptions.cpp',
                 cpp_args: [ '-std=c++11', '-fno-rtti', '-fno-exceptions' ],
-                link_args: [ '-static' ],
-                link_with: lib_mcfgthread_dll))
+                link_with: lib_mcfgthread_a))
 
 # Specialized: -std=c++11 -Wpedantic
 test('test/cxx11_pedantic.cpp',
-     executable('test_cxx11_pedantic_cpp', 'test/cxx11_pedantic.cpp',
+     executable('test_cxx11_pedantic_cpp',
+                'test/cxx11_pedantic.cpp',
                 cpp_args: [ '-std=c++11', '-Wpedantic' ],
-                link_args: [ '-static' ],
-                link_with: lib_mcfgthread_dll))
+                link_with: lib_mcfgthread_a))
