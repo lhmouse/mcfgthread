@@ -316,7 +316,7 @@ test('test/win8.c',
                 link_args: [ '-static' ],
                 link_with: lib_mcfgthread_a))
 
-test('test/win8.c',
+test('test/win10.c',
      executable('test_win10_c', 'test/win10.c',
                 link_args: [ '-static' ],
                 link_with: lib_mcfgthread_a))
