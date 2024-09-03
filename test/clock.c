@@ -5,6 +5,7 @@
  * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
+#define _POSIX_C_SOURCE 200809
 #include "../mcfgthread/clock.h"
 #include <assert.h>
 #include <stdio.h>
@@ -14,11 +15,14 @@
 int
 main(void)
   {
+#if defined _WIN32
     _tzset();
+#else
+    tzset();
+#endif
 
     SYSTEMTIME st;
     GetLocalTime(&st);
-
     struct tm tm;
     tm.tm_year = st.wYear - 1900;
     tm.tm_mon = st.wMonth - 1;
@@ -27,13 +31,12 @@ main(void)
     tm.tm_min = st.wMinute;
     tm.tm_sec = st.wSecond;
     tm.tm_isdst = -1;
-
-    __time64_t ts;
-#ifdef _USE_32BIT_TIME_T
-    ts = _mktime64(&tm);
+#if defined _WIN32 && defined _USE_32BIT_TIME_T
+    __time64_t ts = _mktime64(&tm);
 #else
-    ts = mktime(&tm);
+    time_t ts = mktime(&tm);
 #endif
+
     long long vcrt_now = ts * 1000 + st.wMilliseconds;
     printf("vcrt_now = %lld\n", vcrt_now);
 
