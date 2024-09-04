@@ -71,15 +71,12 @@ __MCF_C_DECLARATIONS_BEGIN
 #define __MCF_CHECK_NT(...)   __MCF_CHECK((__VA_ARGS__) >= 0)
 #define __MCF_WINAPI(...)    __attribute__((__dllimport__, __nothrow__)) __VA_ARGS__ __stdcall
 
-/* Declare KERNEL32 APIs here.  */
 __MCF_WINAPI(DWORD) GetLastError(void) __attribute__((__pure__));
 __MCF_WINAPI(void) SetLastError(DWORD);
 __MCF_WINAPI(PVOID) EncodePointer(PVOID) __attribute__((__const__));
 __MCF_WINAPI(PVOID) DecodePointer(PVOID) __attribute__((__const__));
-__MCF_WINAPI(NTSTATUS) BaseGetNamedObjectDirectory(HANDLE*);
 
-/* Declare NTDLL (driver) APIs here.  */
-__MCF_WINAPI(NTSTATUS) LdrAddRefDll(ULONG, PVOID);
+__MCF_WINAPI(NTSTATUS) BaseGetNamedObjectDirectory(HANDLE*);
 __MCF_WINAPI(BOOLEAN) RtlDllShutdownInProgress(void) __attribute__((__const__));
 
 __MCF_WINAPI(void) RtlMoveMemory(void*, const void*, SIZE_T);
@@ -90,13 +87,11 @@ __MCF_WINAPI(SIZE_T) RtlCompareMemory(const void*, const void*, SIZE_T) __attrib
 __MCF_WINAPI(NTSTATUS) NtCreateSection(HANDLE*, ACCESS_MASK, OBJECT_ATTRIBUTES*, LARGE_INTEGER*, ULONG, ULONG, HANDLE);
 __MCF_WINAPI(NTSTATUS) NtMapViewOfSection(HANDLE, HANDLE, PVOID*, ULONG_PTR, SIZE_T, LARGE_INTEGER*, SIZE_T*, ULONG, ULONG, ULONG);
 __MCF_WINAPI(NTSTATUS) NtUnmapViewOfSection(HANDLE, PVOID);
-__MCF_WINAPI(NTSTATUS) NtProtectVirtualMemory(HANDLE, PVOID*, SIZE_T*, ULONG, ULONG*);
 
 __MCF_WINAPI(NTSTATUS) NtDuplicateObject(HANDLE, HANDLE, HANDLE, HANDLE*, ACCESS_MASK, ULONG, ULONG);
 __MCF_WINAPI(NTSTATUS) NtClose(HANDLE);
 __MCF_WINAPI(NTSTATUS) NtWaitForSingleObject(HANDLE, BOOLEAN, LARGE_INTEGER*);
 __MCF_WINAPI(NTSTATUS) NtDelayExecution(BOOLEAN, LARGE_INTEGER*);
-__MCF_WINAPI(NTSTATUS) NtYieldExecution(void);
 
 __MCF_WINAPI(NTSTATUS) NtWaitForKeyedEvent(HANDLE, PVOID, BOOLEAN, LARGE_INTEGER*);
 __MCF_WINAPI(NTSTATUS) NtReleaseKeyedEvent(HANDLE, PVOID, BOOLEAN, LARGE_INTEGER*);
