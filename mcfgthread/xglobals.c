@@ -225,10 +225,10 @@ do_on_process_attach(void)
     __MCF_g->__tls_index = TlsAlloc();
     __MCF_CHECK(__MCF_g->__tls_index != UINT32_MAX);
 
-    /* Perform lazy binding on some functions.  */
-    HMODULE kernelbase = GetModuleHandleW(L"KERNELBASE.DLL");
-    HMODULE ntdll = GetModuleHandleW(L"NTDLL.DLL");
-    __MCF_CHECK(kernelbase && ntdll);
+    /* Perform lazy binding for newer functions.  */
+    HMODULE kernelbase, ntdll;
+    __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, L"KERNELBASE.DLL", &kernelbase));
+    __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, L"NTDLL.DLL", &ntdll));
 
     __MCF_G_INITIALIZE_LAZY(kernelbase, GetSystemTimePreciseAsFileTime);  /* win8 */
     __MCF_G_INITIALIZE_LAZY(kernelbase, QueryInterruptTime);  /* win10 */
@@ -334,13 +334,12 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
       return 1;
 
     /* Freeze the `.data` section.  */
-    PVOID base = &__MCF_g;
-    SIZE_T size = sizeof(__MCF_g);
     DWORD dummy;
-    __MCF_CHECK_NT(NtProtectVirtualMemory(GetCurrentProcess(), &base, &size, PAGE_READONLY, &dummy));
+    __MCF_CHECK(VirtualProtect(&__MCF_g, sizeof(__MCF_g), PAGE_READONLY, &dummy));
 
     /* Prevent this DLL from being unloaded.  */
-    __MCF_CHECK_NT(LdrAddRefDll(1, instance));
+    HMODULE module;
+    GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN | GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (PCWSTR) instance, &module);
     return 1;
   }
 
