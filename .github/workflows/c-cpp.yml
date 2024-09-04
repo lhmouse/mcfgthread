@@ -36,7 +36,7 @@ jobs:
       run: >-
            meson setup --cross-file meson.cross.x86_64-w64-mingw32
            -Denable-debug-checks=true build_ci
-           && meson test -j3 -t4 -Cbuild_ci
+           && meson test -j4 -t8 -Cbuild_ci
 
   linaro-ubuntu-arm64:
     name: Ubuntu cross build (AArch64 Clang)
@@ -66,7 +66,7 @@ jobs:
            export PATH=$(pwd)/llvm-mingw-20240308-ucrt-ubuntu-20.04-x86_64/bin:$PATH;
            meson setup --cross-file meson.cross.aarch64-w64-mingw32
            -Denable-debug-checks=true build_ci
-           && meson test -j3 -t12 -Cbuild_ci
+           && meson test -j4 -t20 -Cbuild_ci
 
   msys2-ucrt64:
     name: MSYS2 native build (x86-64 GCC)
@@ -91,7 +91,7 @@ jobs:
     - name: Run tests
       run: >-
            meson setup -Denable-debug-checks=true build_ci
-           && meson test -Cbuild_ci
+           && meson test -j4 -t2 -Cbuild_ci
 
   msys2-mingw32:
     name: MSYS2 native build (i686 GCC)
@@ -116,7 +116,7 @@ jobs:
     - name: Run tests
       run: >-
            meson setup -Denable-debug-checks=true build_ci
-           && meson test -Cbuild_ci
+           && meson test -j4 -t2 -Cbuild_ci
 
   msys2-clang64:
     name: MSYS2 native build (x86-64 Clang)
@@ -142,4 +142,4 @@ jobs:
       run: >-
            export CC=clang CXX=clang++;
            meson setup -Denable-debug-checks=true build_ci
-           && meson test -Cbuild_ci
+           && meson test -j4 -t2 -Cbuild_ci
