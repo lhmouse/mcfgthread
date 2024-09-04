@@ -66,7 +66,7 @@ jobs:
            export PATH=$(pwd)/llvm-mingw-20240308-ucrt-ubuntu-20.04-x86_64/bin:$PATH;
            meson setup --cross-file meson.cross.aarch64-w64-mingw32
            -Denable-debug-checks=true build_ci
-           && meson test -j3 -t24 -Cbuild_ci
+           && meson test -j2 -t12 -Cbuild_ci
 
   msys2-ucrt64:
     name: MSYS2 native build (x86-64 GCC)
