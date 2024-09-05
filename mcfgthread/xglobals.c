@@ -197,7 +197,7 @@ do_on_process_attach(void)
     /* Allocate or open storage for global data.
      * We are in the DLL main routine, so locking is unnecessary.  */
     HANDLE gfile;
-    __MCF_CHECK_NT(NtCreateSection(&gfile, STANDARD_RIGHTS_REQUIRED | SECTION_MAP_READ | SECTION_MAP_WRITE, &gattrs, &gsize, PAGE_READWRITE, SEC_COMMIT, __MCF_nullptr));
+    __MCF_CHECK_NT(NtCreateSection(&gfile, SECTION_ALL_ACCESS, &gattrs, &gsize, PAGE_READWRITE, SEC_COMMIT, __MCF_nullptr));
     __MCF_ASSERT(gfile);
 
     /* Get a pointer to this named region. Unlike `CreateFileMappingW()`,
