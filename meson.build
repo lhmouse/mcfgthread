@@ -352,8 +352,8 @@ foreach src: test_src
 
   test_exe = executable(src.underscorify(), src,
                         c_args: test_c_args,
-                        cpp_args : test_cpp_args,
-                        link_args: [ '-static' ],
+                        cpp_args: test_cpp_args,
+                        link_args: [ '-static-libgcc', '-static-libstdc++' ],
                         dependencies: test_dependencies,
                         link_with: test_link_with,
                         install: false)
