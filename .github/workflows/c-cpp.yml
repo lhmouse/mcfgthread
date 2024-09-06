@@ -61,6 +61,11 @@ jobs:
            wget 'https://github.com/mstorsjo/llvm-mingw/releases/download/20240308/llvm-mingw-20240308-ucrt-ubuntu-20.04-x86_64.tar.xz'
            && tar -xaf llvm-mingw-20240308-ucrt-ubuntu-20.04-x86_64.tar.xz
 
+    - name: Work around issues about meson tests
+      run: >-
+           sed -Ei '/^exe_wrapper/s/wine-arm64/magic-arm64/' meson.cross.aarch64-w64-mingw32
+           && ln -s $(which wine-arm64) $(pwd)/llvm-mingw-20240308-ucrt-ubuntu-20.04-x86_64/bin/magic-arm64
+
     - name: Run tests
       run: >-
            export PATH=$(pwd)/llvm-mingw-20240308-ucrt-ubuntu-20.04-x86_64/bin:$PATH;
