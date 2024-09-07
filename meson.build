@@ -42,7 +42,7 @@ mcfgthread_include = [
   'mcfgthread/cxx11.hpp',
 ]
 
-mcfgthread_src = [
+mcfgthread_src_min = [
   'mcfgthread/xglobals.c',
   'mcfgthread/memcpy.c',
   'mcfgthread/memmove.c',
@@ -61,6 +61,9 @@ mcfgthread_src = [
   'mcfgthread/exit.c',
   'mcfgthread/tls.c',
   'mcfgthread/gthr_aux.c',
+]
+
+mcfgthread_src_ex = [
   'mcfgthread/gthr.c',
   'mcfgthread/gthr_libobjc.c',
   'mcfgthread/c11.c',
@@ -293,13 +296,25 @@ mcfgthread_version_o = import('windows').compile_resources(
       args: [ '-I.', '-c65001' ],
       depend_files: [ 'mcfgthread/version.h.in', 'mcfgthread/version.manifest' ])
 
+lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
+      c_pch: 'mcfgthread/xprecompiled.h',
+      c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables', '-DDLL_EXPORT' ],
+      link_args: [ '-nostdlib', '-Wl,--entry,__MCF_dll_startup@@Z',
+                   '-Wl,--enable-auto-image-base', '-Wl,--subsystem,windows:6.1',
+                   '-Wl,--exclude-all-symbols', '-Wl,--kill-at' ],
+      sources: [ mcfgthread_src_min, mcfgthread_version_o ],
+      dependencies: [ dep_kernel32, dep_ntdll ],
+      soversion: ver.get('abi_major'),
+      version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
+      install: true)
+
 lib_mcfgthread_dll = shared_library('mcfgthread',
       c_pch: 'mcfgthread/xprecompiled.h',
       c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables', '-DDLL_EXPORT' ],
       link_args: [ '-nostdlib', '-Wl,--entry,__MCF_dll_startup@@Z',
                    '-Wl,--enable-auto-image-base', '-Wl,--subsystem,windows:6.1',
                    '-Wl,--exclude-all-symbols', '-Wl,--kill-at' ],
-      sources: [ mcfgthread_src, mcfgthread_version_o ],
+      sources: [ mcfgthread_src_min, mcfgthread_src_ex, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
       soversion: ver.get('abi_major'),
       version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
@@ -308,7 +323,7 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
 lib_mcfgthread_a = static_library('mcfgthread',
       c_pch: 'mcfgthread/xprecompiled.h',
       c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables' ],
-      sources: [ mcfgthread_src ],
+      sources: [ mcfgthread_src_min, mcfgthread_src_ex, ],
       dependencies: [ dep_kernel32, dep_ntdll ],
       install: true)
 
