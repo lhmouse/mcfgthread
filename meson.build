@@ -336,44 +336,46 @@ import('pkgconfig').generate(lib_mcfgthread_dll,
 #===========================================================
 # Rules for tests
 #===========================================================
-foreach src: test_src
-  test_c_args = []
-  test_cpp_args = []
-  test_dependencies = []
-  test_link_with = lib_mcfgthread_dll
+if get_option('build-test')
+  foreach src: test_src
+    test_c_args = []
+    test_cpp_args = []
+    test_dependencies = []
+    test_link_with = lib_mcfgthread_dll
 
-  if src == 'test/win8.c' or src == 'test/win10.c'
-    test_link_with = lib_mcfgthread_a
-  endif
+    if src == 'test/win8.c' or src == 'test/win10.c'
+      test_link_with = lib_mcfgthread_a
+    endif
 
-  if src == 'test/memory.c'
-    test_dependencies = [ dep_advapi32, dep_ntdll ]
-  endif
+    if src == 'test/memory.c'
+      test_dependencies = [ dep_advapi32, dep_ntdll ]
+    endif
 
-  if src == 'test/gthr_c89_pedantic.c'
-    test_c_args = [ '-std=c89', '-Wpedantic', '-Wno-variadic-macros',
-                    '-Wno-long-long', '-Werror=declaration-after-statement' ]
-  endif
+    if src == 'test/gthr_c89_pedantic.c'
+      test_c_args = [ '-std=c89', '-Wpedantic', '-Wno-variadic-macros',
+                      '-Wno-long-long', '-Werror=declaration-after-statement' ]
+    endif
 
-  if src == 'test/c11_c99_pedantic.c'
-    test_c_args = [ '-std=c99', '-Wpedantic' ]
-  endif
+    if src == 'test/c11_c99_pedantic.c'
+      test_c_args = [ '-std=c99', '-Wpedantic' ]
+    endif
 
-  if src == 'test/cxx11_no_exceptions.cpp'
-    test_cpp_args = [ '-std=c++11', '-fno-rtti', '-fno-exceptions' ]
-  endif
+    if src == 'test/cxx11_no_exceptions.cpp'
+      test_cpp_args = [ '-std=c++11', '-fno-rtti', '-fno-exceptions' ]
+    endif
 
-  if src == 'test/cxx11_pedantic.cpp'
-    test_cpp_args = [ '-std=c++11', '-Wpedantic' ]
-  endif
+    if src == 'test/cxx11_pedantic.cpp'
+      test_cpp_args = [ '-std=c++11', '-Wpedantic' ]
+    endif
 
-  test_exe = executable(src.underscorify(), src,
-                        c_args: test_c_args,
-                        cpp_args: test_cpp_args,
-                        link_args: [ '-static-libgcc', '-static-libstdc++' ],
-                        dependencies: test_dependencies,
-                        link_with: test_link_with,
-                        install: false)
+    test_exe = executable(src.underscorify(), src,
+                          c_args: test_c_args,
+                          cpp_args: test_cpp_args,
+                          link_args: [ '-static-libgcc', '-static-libstdc++' ],
+                          dependencies: test_dependencies,
+                          link_with: test_link_with,
+                          install: false)
 
-  test('..' / src, test_exe)
-endforeach
+    test('..' / src, test_exe)
+  endforeach
+endif

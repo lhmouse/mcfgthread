@@ -35,7 +35,7 @@ jobs:
     - name: Run tests
       run: >-
            meson setup --cross-file meson.cross.x86_64-w64-mingw32
-           -Denable-debug-checks=true build_ci
+           -Denable-debug-checks=true -Dbuild-test=true build_ci
            && meson test -j4 -t8 -Cbuild_ci
 
   linaro-ubuntu-arm64:
@@ -65,7 +65,7 @@ jobs:
       run: >-
            export PATH=$(pwd)/llvm-mingw-20240308-ucrt-ubuntu-20.04-x86_64/bin:$PATH;
            meson setup --cross-file meson.cross.aarch64-w64-mingw32
-           -Denable-debug-checks=true build_ci
+           -Denable-debug-checks=true -Dbuild-test=true build_ci
            && meson test -j2 -t12 -Cbuild_ci
 
   msys2-ucrt64:
@@ -90,7 +90,7 @@ jobs:
 
     - name: Run tests
       run: >-
-           meson setup -Denable-debug-checks=true build_ci
+           meson setup -Denable-debug-checks=true -Dbuild-test=true build_ci
            && meson test -j4 -t2 -Cbuild_ci
 
   msys2-mingw32:
@@ -115,7 +115,7 @@ jobs:
 
     - name: Run tests
       run: >-
-           meson setup -Denable-debug-checks=true build_ci
+           meson setup -Denable-debug-checks=true -Dbuild-test=true build_ci
            && meson test -j4 -t2 -Cbuild_ci
 
   msys2-clang64:
@@ -141,5 +141,5 @@ jobs:
     - name: Run tests
       run: >-
            export CC=clang CXX=clang++;
-           meson setup -Denable-debug-checks=true build_ci
+           meson setup -Denable-debug-checks=true -Dbuild-test=true build_ci
            && meson test -j4 -t2 -Cbuild_ci

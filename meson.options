@@ -15,3 +15,7 @@
 option('enable-debug-checks',
        type: 'boolean', value: false,
        description: 'enable run-time assertions')
+
+option('build-test',
+       type: 'boolean', value: false,
+       description: 'Build unit test')
