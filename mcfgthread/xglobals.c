@@ -169,10 +169,10 @@ do_on_process_attach(void)
     GetSystemInfo(&__MCF_crt_sysinfo);
 
     __MCF_crt_heap = GetProcessHeap();
-    __MCF_CHECK(__MCF_crt_heap);
+    __MCF_ASSERT(__MCF_crt_heap);
 
     LARGE_INTEGER pfreq;
-    __MCF_CHECK(QueryPerformanceFrequency(&pfreq));
+    __MCF_ASSERT(QueryPerformanceFrequency(&pfreq));
     __MCF_crt_pf_recip = 1000 / (double) pfreq.QuadPart;
 
     /* Initialize dynamic global shared data.  */
@@ -339,7 +339,7 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
 
     /* Prevent this DLL from being unloaded.  */
     HMODULE module;
-    GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN | GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (PCWSTR) instance, &module);
+    __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN | GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (PCWSTR) instance, &module));
     return 1;
   }
 
