@@ -175,7 +175,7 @@ int
 _MCF_thread_set_priority(_MCF_thread* thrd_opt, _MCF_thread_priority priority)
   {
     HANDLE handle = thrd_opt ? thrd_opt->__handle : GetCurrentThread();
-    BOOL succ = SetThreadPriority(handle, (int8_t) priority);
+    BOOL succ = SetThreadPriority(handle, priority);
     return !succ ? -1 : 0;
   }
 
