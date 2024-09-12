@@ -265,8 +265,8 @@ do_on_thread_detach(void)
     /* Call destructors of TLS keys. The TLS table may be modified by
      * destructors, so swap it out first.  */
     while(self->__tls_table->__begin) {
-      __builtin_memcpy(&tls, self->__tls_table, sizeof(__MCF_tls_table));
-      __builtin_memset(self->__tls_table, 0, sizeof(__MCF_tls_table));
+      __MCF_mcopy(&tls, self->__tls_table, sizeof(__MCF_tls_table));
+      __MCF_mzero(self->__tls_table, sizeof(__MCF_tls_table));
 
       while(tls.__begin != tls.__end) {
         tls.__end --;
