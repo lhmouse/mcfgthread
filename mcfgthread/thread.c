@@ -134,6 +134,15 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
     if(thrd == __MCF_g->__main_thread)
       return;
 
+    /* If this is the backup one, clear it for reuse.  */
+    _MCF_thread* oom_self = __MCF_G_FIELD_OPT(__thread_oom_self_st);
+    if(thrd == oom_self) {
+      __MCF_close_handle(thrd->__handle);
+      __MCF_mzero(thrd, sizeof(_MCF_thread));
+      _MCF_mutex_unlock(__MCF_g->__thread_oom_mtx);
+      return;
+    }
+
     /* Deallocate all associated resources.  */
     __MCF_close_handle(thrd->__handle);
     __MCF_mfree(thrd);
@@ -187,9 +196,18 @@ _MCF_thread_self(void)
     if(self)
       return self;
 
-    /* Allocate a new thread object with no user-defined data.  */
+    /* Allocate a new thread object with no user-defined data. When out of memory,
+     * use the pre-allocated backup. */
     self = __MCF_malloc_0(sizeof(_MCF_thread));
-    __MCF_CHECK(self);
+    if(!self) {
+      self = __MCF_G_FIELD_OPT(__thread_oom_self_st);
+      __MCF_CHECK(self);
+
+      /* If the backup is in use, this thread shall block until the other thread
+       * terminates.  */
+      _MCF_mutex_lock(__MCF_g->__thread_oom_mtx, __MCF_nullptr);
+    }
+
     return __MCF_thread_attach_foreign(self);
   }
 

@@ -294,6 +294,9 @@ struct __MCF_crt_xglobals
     /* WARNING: fields hereinafter must be accessed via `__MCF_G_FIELD_OPT`!  */
     __MCF_G_LAZY_FIELD(GetSystemTimePreciseAsFileTime);
     __MCF_G_LAZY_FIELD(QueryInterruptTime);
+
+    _MCF_mutex __thread_oom_mtx[1];
+    _MCF_thread __thread_oom_self_st;
   };
 
 /* These are constants that have to be initialized at load time.  */
