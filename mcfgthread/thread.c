@@ -184,13 +184,12 @@ _MCF_thread*
 _MCF_thread_self(void)
   {
     _MCF_thread* self = TlsGetValue(__MCF_g->__tls_index);
-    if(__builtin_expect(self != __MCF_nullptr, 1))
+    if(self)
       return self;
 
+    /* Allocate a new thread object with no user-defined data.  */
     self = __MCF_malloc_0(sizeof(_MCF_thread));
-    if(!self)
-      return __MCF_nullptr;
-
+    __MCF_CHECK(self);
     return __MCF_thread_attach_foreign(self);
   }
 

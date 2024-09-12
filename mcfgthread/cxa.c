@@ -81,11 +81,8 @@ __MCF_DLLEXPORT
 int
 __MCF_cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
   {
-    _MCF_thread* self = _MCF_thread_self();
-    if(!self)
-      return -1;
-
     /* Push the element to the thread-specific queue.  */
+    _MCF_thread* self = _MCF_thread_self();
     __MCF_dtor_element elem = { dtor, this, dso };
     int err = __MCF_dtor_queue_push(self->__atexit_queue, &elem);
     return err;
@@ -103,11 +100,8 @@ void
 do_thread_dtor_queue_finalize(void* dso)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
-    __MCF_dtor_element elem;
-
     _MCF_thread* self = TlsGetValue(__MCF_g->__tls_index);
-    if(!self)
-      return;
+    __MCF_dtor_element elem;
 
     while(__MCF_dtor_queue_pop(&elem, self->__atexit_queue, dso) == 0)
       __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
