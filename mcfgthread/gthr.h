@@ -632,9 +632,7 @@ __MCF_GTHR_INLINE
 __gthread_t
 __MCF_gthr_self(void) __MCF_NOEXCEPT
   {
-    _MCF_thread* __self = _MCF_thread_self();
-    __MCF_CHECK(__self);
-    return __self;
+    return _MCF_thread_self();
   }
 
 __MCF_GTHR_INLINE __MCF_CXX11(constexpr)

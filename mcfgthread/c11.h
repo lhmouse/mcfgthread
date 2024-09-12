@@ -604,9 +604,7 @@ __MCF_C11_INLINE
 thrd_t
 __MCF_c11_thrd_current(void) __MCF_NOEXCEPT
   {
-    _MCF_thread* __self = _MCF_thread_self();
-    __MCF_CHECK(__self);
-    return __self;
+    return _MCF_thread_self();
   }
 
 __MCF_C11_INLINE
@@ -642,11 +640,8 @@ __MCF_C11_INLINE
 void
 __MCF_c11_thrd_exit(int __result) __MCF_NOEXCEPT
   {
-    __MCF_c11_thread_record* __rec;
     _MCF_thread* __self = _MCF_thread_self();
-
-    if(!__self)
-      _MCF_thread_exit();
+    __MCF_c11_thread_record* __rec;
 
     /* As there is no type information, we examine the thread procedure to
      * ensure we don't mistake a thread of a wrong type. The current thread
