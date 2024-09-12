@@ -46,7 +46,7 @@ main(void)
     }
 
     printf("main waiting\n");
-    for(intptr_t k = 0;  k < NTHREADS;  ++k) {
+    for(size_t k = 0;  k < NTHREADS;  ++k) {
       WaitForSingleObject(threads[k], INFINITE);
       CloseHandle(threads[k]);
       printf("main wait finished: %d\n", (int)k);
