@@ -33,7 +33,7 @@ main(void)
     return 77;
 #else
     const uint32_t heap_capacity = 1048576;  // 1 MB
-    HANDLE* const heap = (HANDLE*) &__MCF_crt_heap;
+    volatile HANDLE* const heap = (volatile HANDLE*) &__MCF_crt_heap;
 
     // replace global heap
     *heap = HeapCreate(0, 0, heap_capacity);
