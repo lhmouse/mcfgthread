@@ -337,7 +337,7 @@ __MCF_ALWAYS_INLINE
 NTSTATUS
 __MCF_keyed_event_wait(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
   {
-    NTSTATUS __status = NtWaitForKeyedEvent(__MCF_nullptr, (PVOID) __key, 0, (LARGE_INTEGER*) __timeout);
+    NTSTATUS __status = NtWaitForKeyedEvent(NULL, (PVOID) __key, 0, (LARGE_INTEGER*) __timeout);
     __MCF_ASSERT_NT(__status);
     return __status;
   }
@@ -346,7 +346,7 @@ __MCF_ALWAYS_INLINE
 NTSTATUS
 __MCF_keyed_event_signal(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
   {
-    NTSTATUS __status = NtReleaseKeyedEvent(__MCF_nullptr, (PVOID) __key, 0, (LARGE_INTEGER*) __timeout);
+    NTSTATUS __status = NtReleaseKeyedEvent(NULL, (PVOID) __key, 0, (LARGE_INTEGER*) __timeout);
     __MCF_ASSERT_NT(__status);
     return __status;
   }
@@ -359,38 +359,20 @@ __MCF_close_handle(__MCF_HANDLE __handle) __MCF_NOEXCEPT
     __MCF_ASSERT_NT(__status);
   }
 
-#if defined __i386__ || defined __amd64__
-/* Define macros for string operations for reducing code size.  */
-#  define __MCF_X86_REP_STOSB(di, cx, ax)  \
-    __asm__ volatile (  \
-        "rep stosb"  \
-          : "+D"(*(di)), "+c"(*(cx)) : "a"(ax)  \
-          : "memory")  /* no semicolon  */
-
-#  define __MCF_X86_REP_MOVSB(di, si, cx)  \
-    __asm__ volatile (  \
-        "rep movsb"  \
-          : "+D"(*(di)), "+S"(*(si)), "+c"(*(cx)) :  \
-          : "memory")  /* no semicolon  */
-
-#  define __MCF_X86_REP_MOVSB_R(di, si, cx)  \
-    __asm__ volatile (  \
-        "std; rep movsb; cld"  \
-          : "+D"(*(di)), "+S"(*(si)), "+c"(*(cx)) :  \
-          : "memory")  /* no semicolon  */
-#endif
-
 __MCF_XGLOBALS_INLINE
 void*
 __cdecl
 __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
     __MCF_ASSERT((uintptr_t) __dst - (uintptr_t) __src >= __size);
-#ifdef __MCF_X86_REP_MOVSB
-    char* __di = (char*) __dst;
-    char* __si = (char*) __src;
-    size_t __cx = __size;
-    __MCF_X86_REP_MOVSB(&__di, &__si, &__cx);
+#if defined __i386__ || defined __amd64__
+    PVOID __edi, __ecx, __esi;
+    __asm__ volatile (
+      "rep movsb"
+      : "=D"(__edi), "=c"(__ecx), "=S"(__esi)
+      : "0"(__dst), "1"(__size), "2"(__src)
+      : "memory"
+    );
 #else
     RtlMoveMemory(__dst, __src, __size);
 #endif
@@ -403,11 +385,18 @@ __cdecl
 __MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
   {
     __MCF_ASSERT((uintptr_t) __src - (uintptr_t) __dst >= __size);
-#ifdef __MCF_X86_REP_MOVSB_R
-    char* __di = (char*) __dst + __size - 1;
-    char* __si = (char*) __src + __size - 1;
-    size_t __cx = __size;
-    __MCF_X86_REP_MOVSB_R(&__di, &__si, &__cx);
+#if defined __i386__ || defined __amd64__
+    PVOID __edi, __ecx, __esi;
+    __asm__ volatile (
+      "std; "
+      "lea %0, [%0 + %1 - 1]; "
+      "lea %2, [%2 + %1 - 1]; "
+      "rep movsb; "
+      "cld; "
+      : "=D"(__edi), "=c"(__ecx), "=S"(__esi)
+      : "0"(__dst), "1"(__size), "2"(__src)
+      : "memory"
+    );
 #else
     RtlMoveMemory(__dst, __src, __size);
 #endif
@@ -419,10 +408,14 @@ void*
 __cdecl
 __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
   {
-#ifdef __MCF_X86_REP_STOSB
-    char* __di = (char*) __dst;
-    size_t __cx = __size;
-    __MCF_X86_REP_STOSB(&__di, &__cx, __val);
+#if defined __i386__ || defined __amd64__
+    PVOID __edi, __ecx;
+    __asm__ volatile (
+      "rep stosb"
+      : "=D"(__edi), "=c"(__ecx)
+      : "0"(__dst), "1"(__size), "a"(__val)
+      : "memory"
+    );
 #else
     RtlFillMemory(__dst, __size, __val);
 #endif
@@ -434,10 +427,14 @@ void*
 __cdecl
 __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
   {
-#ifdef __MCF_X86_REP_STOSB
-    char* __di = (char*) __dst;
-    size_t __cx = __size;
-    __MCF_X86_REP_STOSB(&__di, &__cx, 0);
+#if defined __i386__ || defined __amd64__
+    PVOID __edi, __ecx;
+    __asm__ volatile (
+      "rep stosb"
+      : "=D"(__edi), "=c"(__ecx)
+      : "0"(__dst), "1"(__size), "a"(0)
+      : "memory"
+    );
 #else
     RtlZeroMemory(__dst, __size);
 #endif
