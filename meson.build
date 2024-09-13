@@ -347,24 +347,24 @@ foreach src: test_src
     test_link_with = lib_mcfgthread_a
   endif
 
-  if src == 'test/memory.c'
+  if src in [ 'test/memory.c' ]
     test_dependencies = [ dep_advapi32, dep_ntdll ]
   endif
 
-  if src == 'test/gthr_c89_pedantic.c'
+  if src in [ 'test/gthr_c89_pedantic.c' ]
     test_c_args = [ '-std=c89', '-Wpedantic', '-Wno-variadic-macros',
                     '-Wno-long-long', '-Werror=declaration-after-statement' ]
   endif
 
-  if src == 'test/c11_c99_pedantic.c'
+  if src in [ 'test/c11_c99_pedantic.c' ]
     test_c_args = [ '-std=c99', '-Wpedantic' ]
   endif
 
-  if src == 'test/cxx11_no_exceptions.cpp'
+  if src in [ 'test/cxx11_no_exceptions.cpp' ]
     test_cpp_args = [ '-std=c++11', '-fno-rtti', '-fno-exceptions' ]
   endif
 
-  if src == 'test/cxx11_pedantic.cpp'
+  if src in [ 'test/cxx11_pedantic.cpp' ]
     test_cpp_args = [ '-std=c++11', '-Wpedantic' ]
   endif
 
