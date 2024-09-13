@@ -32,14 +32,18 @@ main(void)
 #if defined __CYGWIN__
     return 77;
 #else
+    const uint32_t heap_capacity = 1048576;  // 1 MB
+    HANDLE* const heap = (HANDLE*) &__MCF_crt_heap;
+
     // replace global heap
-    *(HANDLE*) &__MCF_crt_heap = HeapCreate(0, 0, 1048576);  // 1 MB
-    assert(__MCF_crt_heap);
+    *heap = HeapCreate(0, 0, heap_capacity);
+    assert(*heap);
 
     // allocate until oom
-    while(__MCF_malloc_0(100) != __MCF_nullptr)
-      continue;
+    for(uint32_t i = 0;  i < heap_capacity / 16;  ++i)
+      (void)! __MCF_malloc_0(16);
 
+    // create threads; must be native
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       threads[k] = CreateThread(NULL, 0, thread_proc, NULL, 0, NULL);
       assert(threads[k]);
