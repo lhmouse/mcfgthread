@@ -342,7 +342,7 @@ foreach src: test_src
   test_dependencies = []
   test_link_with = lib_mcfgthread_dll
 
-  if src == 'test/win8.c' or src == 'test/win10.c'
+  if src in [ 'test/win8.c', 'test/win10.c' ]
     test_link_with = lib_mcfgthread_a
   endif
 
