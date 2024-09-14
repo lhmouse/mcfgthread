@@ -163,6 +163,9 @@ _MCF_thread_wait(const _MCF_thread* thrd_opt, const int64_t* timeout_opt)
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
+    /* Translate the thread handle for the sake of consistency. It is probably
+     * not useful to pass a null thread pointer, as the operation will time out
+     * or deadlock anyway.  */
     HANDLE handle = thrd_opt ? thrd_opt->__handle : GetCurrentThread();
     NTSTATUS status = NtWaitForSingleObject(handle, false, nt_timeout.__li);
     __MCF_ASSERT_NT(status);
