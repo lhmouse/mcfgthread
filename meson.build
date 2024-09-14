@@ -255,7 +255,7 @@ add_project_arguments(
         '-Wmissing-field-initializers', '-Wsuggest-attribute=noreturn', '-Wshadow',
         '-Wunused-function', '-Wunused-label', '-Wunused-local-typedefs',
         '-Wunused-but-set-variable', '-Wunused-but-set-parameter',
-        '-Wunused-const-variable'
+        '-Wunused-const-variable', '-Wno-unused-command-line-argument'
     ),
     language: [ 'c', 'cpp' ])
 
@@ -263,7 +263,8 @@ add_project_arguments(
    cc.get_supported_arguments(
        '-Werror=discarded-qualifiers', '-Werror=strict-prototypes',
        '-Werror=incompatible-pointer-types', '-Werror=int-conversion',
-       '-Werror=implicit-function-declaration', '-Werror=implicit-int'),
+       '-Werror=implicit-function-declaration', '-Werror=implicit-int',
+       '-Wno-c99-extensions'),
    language: 'c')
 
 add_project_arguments(
