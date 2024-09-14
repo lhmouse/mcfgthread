@@ -160,13 +160,11 @@ __MCF_DLLEXPORT
 int
 _MCF_thread_wait(const _MCF_thread* thrd_opt, const int64_t* timeout_opt)
   {
-    if(!thrd_opt)
-      return -1;
-
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
-    NTSTATUS status = NtWaitForSingleObject(thrd_opt->__handle, false, nt_timeout.__li);
+    HANDLE handle = thrd_opt ? thrd_opt->__handle : GetCurrentThread();
+    NTSTATUS status = NtWaitForSingleObject(handle, false, nt_timeout.__li);
     __MCF_ASSERT_NT(status);
     return (status != STATUS_WAIT_0) ? -1 : 0;
   }
