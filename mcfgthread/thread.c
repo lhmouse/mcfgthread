@@ -194,16 +194,14 @@ _MCF_thread*
 _MCF_thread_self(void)
   {
     _MCF_thread* self = __MCF_nullptr;
-
-    /* Try fetching the pointer from TEB to save an indirect function call.  */
-    if(__MCF_g->__tls_index < 64) {
-      uintptr_t index = __MCF_g->__tls_index;
+    const uintptr_t tls_index = __MCF_g->__tls_index;
+    if(tls_index < 64) {
 #if defined __amd64__
-      __asm__ ("mov %0, gs:[0x1480 + %1 * 8]" : "=r"(self) : "r"(index));
+      __asm__ ("mov %0, gs:[0x1480 + %1 * 8]" : "=r"(self) : "r"(tls_index));
 #elif defined __i386__
-      __asm__ ("mov %0, fs:[0xE10 + %1 * 4]" : "=r"(self) : "r"(index));
+      __asm__ ("mov %0, fs:[0xE10 + %1 * 4]" : "=r"(self) : "r"(tls_index));
 #elif defined __aarch64__
-      __asm__ ("ldr %0, [x18, %1, lsl 3]" : "=r"(self) : "r"(0x1480 / 8 + index));
+      __asm__ ("ldr %0, [x18, %1, lsl 3]" : "=r"(self) : "r"(0x1480 / 8 + tls_index));
 #else
 #  error Unsupported architecture
 #endif
@@ -211,7 +209,6 @@ _MCF_thread_self(void)
         return self;
     }
 
-    /* Try the generic path.  */
     self = TlsGetValue(__MCF_g->__tls_index);
     if(self)
       return self;
