@@ -337,7 +337,7 @@ _MCF_thread_self_tid(void) __MCF_NOEXCEPT
 #  endif
 #elif defined _MSC_VER
     /* MSVC  */
-#  if defined _M_ARM64 && !defined _M_ARM64EC
+#  if defined _M_X64 && !defined _M_ARM64EC
     __tid = __readgsdword(0x48);
 #  elif defined _M_IX86
     __tid = __readfsdword(0x24);
