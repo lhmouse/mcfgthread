@@ -204,6 +204,8 @@ _MCF_thread_self(void)
       __asm__ ("mov %0, fs:[0xE10 + %1 * 4]" : "=r"(self) : "r"(index));
 #elif defined __aarch64__
       __asm__ ("ldr %0, [x18, %1, lsl 3]" : "=r"(self) : "r"(0x1480 / 8 + index));
+#else
+#  error Unsupported architecture
 #endif
       if(self)
         return self;
