@@ -58,15 +58,15 @@ jobs:
 
     - name: Download llvm-mingw
       run: >-
-           wget 'https://github.com/mstorsjo/llvm-mingw/releases/download/20240308/llvm-mingw-20240308-ucrt-ubuntu-20.04-x86_64.tar.xz'
-           && tar -xaf llvm-mingw-20240308-ucrt-ubuntu-20.04-x86_64.tar.xz
+           wget 'https://github.com/mstorsjo/llvm-mingw/releases/download/20240917/llvm-mingw-20240917-ucrt-ubuntu-20.04-x86_64.tar.xz'
+           && tar -xaf llvm-mingw-20240917-ucrt-ubuntu-20.04-x86_64.tar.xz
 
     - name: Run tests
       run: >-
-           export PATH=$(pwd)/llvm-mingw-20240308-ucrt-ubuntu-20.04-x86_64/bin:$PATH;
+           export PATH=$(pwd)/llvm-mingw-20240917-ucrt-ubuntu-20.04-x86_64/bin:$PATH;
            meson setup --cross-file meson.cross.aarch64-w64-mingw32
            -Denable-debug-checks=true build_ci
-           && meson test -j2 -t12 -Cbuild_ci
+           && meson test -j1 -t8 -Cbuild_ci
 
   msys2-ucrt64:
     name: MSYS2 native build (x86-64 GCC)
