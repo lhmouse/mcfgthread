@@ -305,71 +305,52 @@ _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
     return __thrd->__handle;
   }
 
-#if defined __amd64__ && (defined __GNUC__ || defined __clang__)
-/* x86-64, GCC or Clang  */
-__MCF_THREAD_INLINE
-uint32_t
-_MCF_thread_self_tid(void) __MCF_NOEXCEPT
-  {
-    uint32_t __tid;
-    __asm__ ("{ movl %%gs:0x48, %0 | mov %0, gs:[0x48] }" : "=r"(__tid));
-    return __tid;
-  }
-#elif (defined _M_X64 && !defined _M_ARM64EC) && defined _MSC_VER
-/* native x86-64, MSVC  */
-__declspec(nothrow) unsigned long __readgsdword(unsigned long);
-#pragma intrinsic(__readgsdword)
-__MCF_THREAD_INLINE
-uint32_t
-_MCF_thread_self_tid(void) __MCF_NOEXCEPT
-  {
-    return __readgsdword(0x48);
-  }
-#endif
-
-#if defined __i386__ && (defined __GNUC__ || defined __clang__)
-/* x86, GCC or Clang  */
-__MCF_THREAD_INLINE
-uint32_t
-_MCF_thread_self_tid(void) __MCF_NOEXCEPT
-  {
-    uint32_t __tid;
-    __asm__ ("{ movl %%fs:0x24, %0 | mov %0, fs:[0x24] }" : "=r"(__tid));
-    return __tid;
-  }
-#elif defined _M_IX86 && defined _MSC_VER
-/* x86, MSVC  */
+#if defined _MSC_VER
+/* MSVC requires that intrinsic functions be declared.  */
+#  if defined _M_X64 || defined _M_IX86
 __declspec(nothrow) unsigned long __readfsdword(unsigned long);
-#pragma intrinsic(__readfsdword)
-__MCF_THREAD_INLINE
-uint32_t
-_MCF_thread_self_tid(void) __MCF_NOEXCEPT
-  {
-    return __readfsdword(0x24);
-  }
-#endif
+_Pragma("intrinsic(__readfsdword)")
+__declspec(nothrow) unsigned long __readgsdword(unsigned long);
+_Pragma("intrinsic(__readgsdword)")
+#  endif
+#  if defined _M_ARM64 || defined _M_ARM64EC
+__declspec(nothrow) unsigned long __readx18dword(unsigned long);
+_Pragma("intrinsic(__readx18dword)")
+#  endif
+#endif  /* MSVC  */
 
-#if defined __aarch64__ && (defined __GNUC__ || defined __clang__)
-/* ARM64, GCC or Clang  */
 __MCF_THREAD_INLINE
 uint32_t
 _MCF_thread_self_tid(void) __MCF_NOEXCEPT
   {
     uint32_t __tid;
+#if defined __GNUC__ || defined __clang__
+    /* GCC or Clang  */
+#  if defined __amd64__
+    __asm__ ("{ movl %%gs:0x48, %0 | mov %0, gs:[0x48] }" : "=r"(__tid));
+#  elif defined __i386__
+    __asm__ ("{ movl %%fs:0x24, %0 | mov %0, fs:[0x24] }" : "=r"(__tid));
+#  elif defined __aarch64__
     __asm__ ("ldr %w0, [x18, #0x48]" : "=r"(__tid));
+#  else
+#    error Unsupported architecture
+#  endif
+#elif defined _MSC_VER
+    /* MSVC  */
+#  if defined _M_X64 && !defined _M_ARM64EC
+    __tid = __readgsdword(0x48);
+#  elif defined _M_IX86
+    __tid = __readfsdword(0x24);
+#  elif defined _M_ARM64 || defined _M_ARM64EC
+    __tid = __readx18dword(0x48);
+#  else
+#    error Unsupported architecture
+#  endif
+#else
+#  error Unsupported compiler
+#endif
     return __tid;
   }
-#elif (defined _M_ARM64 || defined _M_ARM64EC) && defined _MSC_VER
-/* ARM64 or emulated x64 on ARM64, MSVC  */
-__declspec(nothrow) unsigned long __readx18dword(unsigned long);
-#pragma intrinsic(__readx18dword)
-__MCF_THREAD_INLINE
-uint32_t
-_MCF_thread_self_tid(void) __MCF_NOEXCEPT
-  {
-    return __readx18dword(0x48);
-  }
-#endif
 
 __MCF_THREAD_INLINE
 void*
