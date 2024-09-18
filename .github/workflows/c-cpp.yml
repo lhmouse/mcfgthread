@@ -36,7 +36,7 @@ jobs:
       run: >-
            meson setup --cross-file meson.cross.x86_64-w64-mingw32
            -Denable-debug-checks=true build_ci
-           && meson test -j4 -t8 -Cbuild_ci
+           && meson test -j2 -t8 -Cbuild_ci
 
   linaro-ubuntu-arm64:
     name: Ubuntu cross build (AArch64 Clang)
