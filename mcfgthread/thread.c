@@ -266,22 +266,22 @@ __MCF_DLLEXPORT
 int
 _MCF_sleep(const int64_t* timeout_opt)
   {
-    uintptr_t old, new;
-    NTSTATUS status;
-
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     /* Set a handler to receive Ctrl-C notifications.  */
-    BOOL added __attribute__((__cleanup__(do_handler_cleanup))) = SetConsoleCtrlHandler(do_handle_interrupt, true);
+    BOOL added __attribute__((__cleanup__(do_handler_cleanup))) = false;
+    added = SetConsoleCtrlHandler(do_handle_interrupt, true);
 
     /* Allocate a count for the current thread. The addend is for backward
      * compatibility, because this used to be an `_MCF_cond`.  */
-    _MCF_atomic_xadd_ptr_rlx(__MCF_g->__sleeping_threads, 0x200);
+    uintptr_t old, new;
+    old = (uintptr_t) _MCF_atomic_xadd_ptr_rlx(__MCF_g->__sleeping_threads, 0x200);
+    new = old + 0x200;
 
     /* Try waiting.  */
-    status = __MCF_keyed_event_wait(__MCF_g->__sleeping_threads, &nt_timeout);
-    while(status != STATUS_WAIT_0) {
+    int err = __MCF_keyed_event_wait(__MCF_g->__sleeping_threads, &nt_timeout);
+    while(err != 0) {
       /* Tell another thread which is going to signal this condition variable
        * that an old waiter has left by decrementing the number of sleeping
        * threads. But see below...  */
@@ -305,7 +305,7 @@ _MCF_sleep(const int64_t* timeout_opt)
        * keyed event before us, so we set the timeout to zero. If we time out
        * once more, the third thread will have incremented the number of
        * sleeping threads and we can try decrementing it again.  */
-      status = __MCF_keyed_event_wait(__MCF_g->__sleeping_threads, &(__MCF_winnt_timeout) { 0 });
+      err = __MCF_keyed_event_wait(__MCF_g->__sleeping_threads, &(__MCF_winnt_timeout) { 0 });
     }
 
     /* We have got interrupted.  */

@@ -53,10 +53,6 @@ __MCF_DLLEXPORT
 int
 _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
   {
-    _MCF_mutex old, new;
-    NTSTATUS status;
-    uint32_t spinnable, my_mask;
-
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
@@ -67,6 +63,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
      * sleeping count. The spinning failure counter is decremented if the
      * mutex can be locked immediately; and incremented otherwise, no matter
      * whether the current thread is going to spin or not.  */
+    _MCF_mutex old, new;
+    uint32_t spinnable;
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, mutex);
     do {
@@ -83,7 +81,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     if(old.__locked == 0)
       return 0;
 
-    my_mask = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
+    uint32_t my_mask = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
     if(my_mask != 0) {
       __MCF_ASSERT((my_mask & (my_mask - 1U)) == 0);
 
@@ -139,8 +137,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     }
 
     /* Try waiting.  */
-    status = __MCF_keyed_event_wait(mutex, &nt_timeout);
-    while(status != STATUS_WAIT_0) {
+    int err = __MCF_keyed_event_wait(mutex, &nt_timeout);
+    while(err != 0) {
       /* Tell another thread which is going to signal this mutex that an old
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
@@ -164,7 +162,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
        * keyed event before us, so we set the timeout to zero. If we time out
        * once more, the third thread will have incremented the number of
        * sleeping threads and we can try decrementing it again.  */
-      status = __MCF_keyed_event_wait(mutex, &(__MCF_winnt_timeout) { 0 });
+      err = __MCF_keyed_event_wait(mutex, &(__MCF_winnt_timeout) { 0 });
     }
 
     /* We have got notified.  */

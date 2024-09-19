@@ -35,13 +35,11 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     __MCF_cond_unlock_result ul_res __attribute__((__cleanup__(do_unlock_cleanup))) = __MCF_0_INIT;
 
-    _MCF_cond old, new;
-    NTSTATUS status;
-
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     /* Allocate a count for the current thread.  */
+    _MCF_cond old, new;
     _MCF_atomic_load_pptr_rlx(&old, cond);
     do {
       new = old;
@@ -58,8 +56,8 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     }
 
     /* Try waiting.  */
-    status = __MCF_keyed_event_wait(cond, &nt_timeout);
-    while(status != STATUS_WAIT_0) {
+    int err = __MCF_keyed_event_wait(cond, &nt_timeout);
+    while(err != 0) {
       /* Tell another thread which is going to signal this condition variable
        * that an old waiter has left by decrementing the number of sleeping
        * threads. But see below...  */
@@ -83,7 +81,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
        * keyed event before us, so we set the timeout to zero. If we time out
        * once more, the third thread will have incremented the number of
        * sleeping threads and we can try decrementing it again.  */
-      status = __MCF_keyed_event_wait(cond, &(__MCF_winnt_timeout) { 0 });
+      err = __MCF_keyed_event_wait(cond, &(__MCF_winnt_timeout) { 0 });
     }
 
     /* We have got notified.  */
