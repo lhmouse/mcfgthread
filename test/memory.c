@@ -9,13 +9,11 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+#include <winbase.h>
+#include <ntsecapi.h>
 
 static char comp[100];
 static char data[100];
-
-__MCF_WINAPI(HMODULE) LoadLibraryW(LPCWSTR);
-__MCF_WINAPI(BOOLEAN) SystemFunction036(PVOID, ULONG);
-#define RtlGenRandom  SystemFunction036
 
 int
 main(void)
@@ -36,7 +34,7 @@ main(void)
     assert(pmemcmp);
 
     // __MCF_mfill
-    SystemFunction036(comp, sizeof(comp));
+    RtlGenRandom(comp, sizeof(comp));
     pmemmove(data, comp, sizeof(comp));
 
     pmemset(comp + 20, 'b', 30);
@@ -51,7 +49,7 @@ main(void)
     assert(memcmp(comp, data, sizeof(comp)) == 0);
 
     // __MCF_mzero
-    SystemFunction036(comp, sizeof(comp));
+    RtlGenRandom(comp, sizeof(comp));
     pmemmove(data, comp, sizeof(comp));
 
     pmemset(comp + 20, 0, 30);
@@ -66,7 +64,7 @@ main(void)
     assert(memcmp(comp, data, sizeof(comp)) == 0);
 
     // __MCF_mcopy
-    SystemFunction036(comp, sizeof(comp));
+    RtlGenRandom(comp, sizeof(comp));
     pmemmove(data, comp, sizeof(comp));
 
     pmemmove(comp + 10, comp + 20, 40);
@@ -77,7 +75,7 @@ main(void)
     assert(memcmp(comp, data, sizeof(comp)) == 0);
 
     // __MCF_mcopy_backward
-    SystemFunction036(comp, sizeof(comp));
+    RtlGenRandom(comp, sizeof(comp));
     pmemmove(data, comp, sizeof(comp));
 
     pmemmove(comp + 20, comp + 10, 40);
@@ -88,7 +86,7 @@ main(void)
     assert(memcmp(comp, data, sizeof(comp)) == 0);
 
     // __MCF_mcomp (equal)
-    SystemFunction036(comp, sizeof(comp));
+    RtlGenRandom(comp, sizeof(comp));
     pmemmove(data, comp, sizeof(comp));
 
     assert(pmemcmp(comp, data, sizeof(comp)) == 0);
