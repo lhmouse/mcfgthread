@@ -31,7 +31,7 @@ void
 __MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* to, const int64_t* ms_opt)
   {
     /* Initialize it to an infinite value.  */
-    to->__li->QuadPart = INT64_MAX;
+    to->__li.QuadPart = INT64_MAX;
     to->__since = 0;
 
     /* If no timeout is given, wait indefinitely.  */
@@ -45,7 +45,7 @@ __MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* to, const int64_t* ms_opt
       if(*ms_opt > 910692730085477)
         return;
 
-      to->__li->QuadPart = (11644473600000 + *ms_opt) * 10000;
+      to->__li.QuadPart = (11644473600000 + *ms_opt) * 10000;
     }
     else if(*ms_opt < 0) {
       /* If `*ms_opt` is negative, it denotes the number of milliseconds to
@@ -53,11 +53,11 @@ __MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* to, const int64_t* ms_opt
       if(*ms_opt < -922337203685477)
         return;
 
-      to->__li->QuadPart = *ms_opt * 10000;
+      to->__li.QuadPart = *ms_opt * 10000;
       QueryUnbiasedInterruptTime(&(to->__since));
     }
     else
-      to->__li->QuadPart = 0;
+      to->__li.QuadPart = 0;
   }
 
 __MCF_DLLEXPORT
@@ -65,15 +65,15 @@ void
 __MCF_adjust_winnt_timeout_v3(__MCF_winnt_timeout* to)
   {
     /* Absolute timeouts need no adjustment.  */
-    if(to->__li->QuadPart >= 0)
+    if(to->__li.QuadPart >= 0)
       return;
 
     /* Add the number of 100 nanoseconds that have elapsed so far, to the
      * timeout which is negative, using saturation arithmetic.  */
     ULONGLONG old_since = to->__since;
     QueryUnbiasedInterruptTime(&(to->__since));
-    to->__li->QuadPart += (LONGLONG) (to->__since - old_since);
-    to->__li->QuadPart &= to->__li->QuadPart >> 63;
+    to->__li.QuadPart += (LONGLONG) (to->__since - old_since);
+    to->__li.QuadPart &= to->__li.QuadPart >> 63;
   }
 
 __MCF_DLLEXPORT
@@ -107,6 +107,14 @@ void*
 __MCF_win32_error_p(DWORD code, void* ptr)
   {
     SetLastError(code);
+    return ptr;
+  }
+
+__MCF_DLLEXPORT
+void*
+__MCF_win32_ntstatus_p(NTSTATUS status, void* ptr)
+  {
+    SetLastError(RtlNtStatusToDosError(status));
     return ptr;
   }
 
@@ -175,13 +183,8 @@ do_on_process_attach(void)
     __MCF_ASSERT(QueryPerformanceFrequency(&pfreq));
     __MCF_crt_pf_recip = 1000 / (double) pfreq.QuadPart;
 
-    /* Initialize dynamic global shared data.  */
-    static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
-    static UNICODE_STRING gname = { .Buffer = gnbuffer, .Length = sizeof(gnbuffer) - sizeof(WCHAR), .MaximumLength = sizeof(gnbuffer) };
-    static OBJECT_ATTRIBUTES gattrs = { .Length = sizeof(OBJECT_ATTRIBUTES), .ObjectName = &gname, .Attributes = OBJ_OPENIF | OBJ_EXCLUSIVE };
-    static LARGE_INTEGER gsize = { .QuadPart = sizeof(__MCF_crt_xglobals) };
-
     /* Generate the unique name for this process.  */
+    static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
     DWORD pid = GetCurrentProcessId();
     UINT64 cookie = (UINT_PTR) EncodePointer((PVOID) ~(UINT_PTR) (pid * 0x100000001ULL)) * 0x9E3779B97F4A7C15ULL;
 
@@ -191,27 +194,29 @@ do_on_process_attach(void)
     do_encode_numeric_field(gnbuffer + 34, 16, cookie, L"GHJKLMNPQRSTUWXY");
     __MCF_ASSERT(gnbuffer[50] == 0);
 
-    __MCF_CHECK_NT(BaseGetNamedObjectDirectory(&(gattrs.RootDirectory)));
-    __MCF_ASSERT(gattrs.RootDirectory);
+    UNICODE_STRING gname = { sizeof(gnbuffer) - sizeof(WCHAR), sizeof(gnbuffer), gnbuffer };
+    HANDLE gdir = __MCF_get_directory_for_named_objects();
+    __MCF_ASSERT(gdir);
 
-    /* Allocate or open storage for global data.
-     * We are in the DLL main routine, so locking is unnecessary.  */
-    HANDLE gfile;
-    __MCF_CHECK_NT(NtCreateSection(&gfile, SECTION_ALL_ACCESS, &gattrs, &gsize, PAGE_READWRITE, SEC_COMMIT, __MCF_nullptr));
-    __MCF_ASSERT(gfile);
+    /* Allocate or open storage for global data. We are in the DLL main routine,
+     * so locking is not necessary.  */
+    OBJECT_ATTRIBUTES gattrs;
+    InitializeObjectAttributes(&gattrs, &gname, OBJ_OPENIF | OBJ_EXCLUSIVE, gdir, __MCF_nullptr);
+    HANDLE gfile = __MCF_create_named_section(&gattrs, sizeof(__MCF_crt_xglobals));
+    __MCF_CHECK(gfile);
 
-    /* Get a pointer to this named region. Unlike `CreateFileMappingW()`,
-     * the view shall not be inherited by child processes.  */
-    PVOID gmem_base = __MCF_nullptr;
-    SIZE_T gmem_size = 0;
-    __MCF_CHECK_NT(NtMapViewOfSection(gfile, GetCurrentProcess(), &gmem_base, 0, 0, __MCF_nullptr, &gmem_size, 2, 0, PAGE_READWRITE));
+    /* Get a pointer to this named region. Unlike `CreateFileMappingW()`, the
+     * view shall not be inherited by child processes.  */
+    void* gmem_base = __MCF_nullptr;
+    size_t gmem_size = 0;
+    __MCF_map_view_of_section(gfile, &gmem_base, &gmem_size, false);
     __MCF_ASSERT(gmem_base);
     __MCF_g = gmem_base;
 
     if(__MCF_g->__self_ptr) {
       /* Reuse the existent region and close excess handles.  */
       __MCF_g = __MCF_g->__self_ptr;
-      NtUnmapViewOfSection(GetCurrentProcess(), gmem_base);
+      __MCF_unmap_view_of_section(gmem_base);
       __MCF_close_handle(gfile);
       return;
     }
