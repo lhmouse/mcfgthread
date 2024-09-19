@@ -5,24 +5,29 @@ implements the _gthread interface set_, which is used internally both by **GCC**
 to provide synchronization of initialization of local static objects, and by
 **libstdc++** to provide C++11 threading facilities.
 
-I decide to recreate everything from scratch. Apologies for the trouble.
+> [!WARNING]
+> This project uses some undocumented NT system calls and is not guaranteed to
+> work on some Windows versions. The author gives no warranty for this project.
+> Use it at your own risk.
 
 ## How to Build
 
 Compiling natively can be done in MSYS2. We take the UCRT64 shell as an example.
 Others are similar. Clang shells are also supported.
 
-**WARNING** If you are using [GCC with the MCF thread model](https://gcc-mcf.lhmouse.com/),
-you must build _libmcfgthread-1.dll_ before anything else. Meson creates the DLL
-in the working directory, which might get picked up by cc1.exe when it is only
-half-baked, because [Microsoft documentation says that DLLs in the working directory
-take precedence over those in PATH](https://learn.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-search-order#standard-search-order-for-unpackaged-apps).
+> [!CAUTION]
+> If you are using [GCC with the MCF thread model](https://gcc-mcf.lhmouse.com/),
+> you must build _libmcfgthread-1.dll_ before anything else. Meson creates the DLL
+> in the working directory, which might get picked up by the compiler when it is
+> only half-baked. Microsoft documentation says that [DLLs in the working directory
+> take precedence over those in PATH](https://learn.microsoft.com/en-us/windows/win32/dlls/dynamic-link-library-search-order#standard-search-order-for-unpackaged-apps).
+> There is no immediate plan on fixing this.
 
 ```sh
 pacman -S --noconfirm mingw-w64-ucrt-x86_64-{{headers,crt,tools}-git,gcc,binutils,meson}
 meson setup build_debug
 cd build_debug
-ninja libmcfgthread-1.dll  # see warning above
+ninja libmcfgthread-1.dll  # see CAUTION above
 ninja test
 ```
 
@@ -37,21 +42,16 @@ cd build_debug
 ninja test
 ```
 
-## Notes
-
-In order for `__cxa_atexit()` (and the non-standard `__cxa_at_quick_exit()`) to
-conform to the Itanium C++ ABI, it is required 1) for a process to call
-`__cxa_finalize(NULL)` when exiting, and 2) for a DLL to call
-`__cxa_finalize(&__dso_handle)` when it is unloaded dynamically. This requires
-[hacking the CRT](https://github.com/lhmouse/MINGW-packages/blob/0274a6e7e0da258cf5e32efe6e4427454741fa32/mingw-w64-crt-git/9003-crt-Implement-standard-conforming-termination-suppor.patch). If you don't
-have the modified CRT, you may still get standard compliance by 1) calling
-`__MCF_exit()` instead of `exit()` from your program, and 2) calling
-`__cxa_finalize(&__dso_handle)` followed by `fflush(NULL)` upon receipt of
-`DLL_PROCESS_DETACH` in your `DllMain()`.
-
-This project uses some undocumented NT system calls and is not guaranteed to
-work on some Windows versions. The author gives no warranty for this project.
-Use it at your own risk.
+> [!TIP]
+> In order for `__cxa_atexit()` (and the non-standard `__cxa_at_quick_exit()`) to
+> conform to the Itanium C++ ABI, it is required 1) for a process to call
+> `__cxa_finalize(NULL)` when exiting, and 2) for a DLL to call
+> `__cxa_finalize(&__dso_handle)` when it is unloaded dynamically. This requires
+> [hacking the CRT](https://github.com/lhmouse/MINGW-packages/blob/0274a6e7e0da258cf5e32efe6e4427454741fa32/mingw-w64-crt-git/9003-crt-Implement-standard-conforming-termination-suppor.patch). If you don't
+> have the modified CRT, you may still get standard compliance by 1) calling
+> `__MCF_exit()` instead of `exit()` from your program, and 2) calling
+> `__cxa_finalize(&__dso_handle)` followed by `fflush(NULL)` upon receipt of
+> `DLL_PROCESS_DETACH` in your `DllMain()`.
 
 ## Benchmarking
 
