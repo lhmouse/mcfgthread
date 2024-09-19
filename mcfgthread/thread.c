@@ -189,27 +189,11 @@ _MCF_thread_set_priority(_MCF_thread* thrd_opt, _MCF_thread_priority priority)
     return !succ ? -1 : 0;
   }
 
-__MCF_DLLEXPORT
+static __MCF_NEVER_INLINE
 _MCF_thread*
-_MCF_thread_self(void)
+do_thread_self_slow(void* placeholder_for_tail_call)
   {
-    _MCF_thread* self = __MCF_nullptr;
-    const uintptr_t tls_index = __MCF_g->__tls_index;
-    if(tls_index < 64) {
-#if defined __amd64__
-      __asm__ ("mov %0, gs:[0x1480 + %1 * 8]" : "=r"(self) : "r"(tls_index));
-#elif defined __i386__
-      __asm__ ("mov %0, fs:[0xE10 + %1 * 4]" : "=r"(self) : "r"(tls_index));
-#elif defined __aarch64__
-      __asm__ ("ldr %0, [x18, %1, lsl 3]" : "=r"(self) : "r"(0x1480 / 8 + tls_index));
-#else
-#  error Unsupported architecture
-#endif
-      if(self)
-        return self;
-    }
-
-    self = TlsGetValue(__MCF_g->__tls_index);
+    _MCF_thread* self = TlsGetValue(__MCF_g->__tls_index);
     if(self)
       return self;
 
@@ -225,8 +209,34 @@ _MCF_thread_self(void)
       _MCF_mutex_lock(__MCF_g->__thread_oom_mtx, __MCF_nullptr);
     }
 
+    (void) placeholder_for_tail_call;
     return __MCF_thread_attach_foreign(self);
   }
+
+__MCF_DLLEXPORT
+_MCF_thread*
+_MCF_thread_self(void)
+  {
+    if(__MCF_g->__tls_index < 64) {
+      _MCF_thread* self;
+      uintptr_t tls_index = __MCF_g->__tls_index;
+#if defined __amd64__
+      __asm__ ("mov %0, gs:[0x1480 + %1 * 8]" : "=r"(self) : "r"(tls_index));
+#elif defined __i386__
+      __asm__ ("mov %0, fs:[0xE10 + %1 * 4]" : "=r"(self) : "r"(tls_index));
+#elif defined __aarch64__
+      __asm__ ("ldr %0, [x18, %1, lsl 3]" : "=r"(self) : "r"(0x1480 / 8 + tls_index));
+#else
+#  error Unsupported architecture
+#endif
+      if(self)
+        return self;
+    }
+
+    /* Allocate a thread structure for this foreign thread.  */
+    return do_thread_self_slow(__MCF_nullptr);
+  }
+
 
 __MCF_DLLEXPORT
 void
