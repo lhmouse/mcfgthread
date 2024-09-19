@@ -110,7 +110,7 @@ __MCF_thread_attach_foreign(_MCF_thread* thrd)
 
     /* Initialize thread identity fields.  */
     thrd->__tid = _MCF_thread_self_tid();
-    __MCF_CHECK_NT(NtDuplicateObject(GetCurrentProcess(), GetCurrentThread(), GetCurrentProcess(), &(thrd->__handle), 0, 0, DUPLICATE_SAME_ACCESS));
+    thrd->__handle = __MCF_duplicate_handle(GetCurrentThread());
     __MCF_CHECK(thrd->__handle);
 
     /* Initialize the reference count to detached state.  */
@@ -167,9 +167,7 @@ _MCF_thread_wait(const _MCF_thread* thrd_opt, const int64_t* timeout_opt)
      * not useful to pass a null thread pointer, as the operation will time out
      * or deadlock anyway.  */
     HANDLE handle = thrd_opt ? thrd_opt->__handle : GetCurrentThread();
-    NTSTATUS status = NtWaitForSingleObject(handle, false, nt_timeout.__li);
-    __MCF_ASSERT_NT(status);
-    return (status != STATUS_WAIT_0) ? -1 : 0;
+    return __MCF_wait_for_single_object(handle, &nt_timeout);
   }
 
 __MCF_DLLEXPORT
@@ -282,7 +280,7 @@ _MCF_sleep(const int64_t* timeout_opt)
     _MCF_atomic_xadd_ptr_rlx(__MCF_g->__sleeping_threads, 0x200);
 
     /* Try waiting.  */
-    status = __MCF_keyed_event_wait(__MCF_g->__sleeping_threads, nt_timeout.__li);
+    status = __MCF_keyed_event_wait(__MCF_g->__sleeping_threads, &nt_timeout);
     while(status != STATUS_WAIT_0) {
       /* Tell another thread which is going to signal this condition variable
        * that an old waiter has left by decrementing the number of sleeping
@@ -307,7 +305,7 @@ _MCF_sleep(const int64_t* timeout_opt)
        * keyed event before us, so we set the timeout to zero. If we time out
        * once more, the third thread will have incremented the number of
        * sleeping threads and we can try decrementing it again.  */
-      status = __MCF_keyed_event_wait(__MCF_g->__sleeping_threads, (LARGE_INTEGER[]) { 0 });
+      status = __MCF_keyed_event_wait(__MCF_g->__sleeping_threads, &(__MCF_winnt_timeout) { 0 });
     }
 
     /* We have got interrupted.  */
@@ -320,8 +318,5 @@ _MCF_sleep_noninterruptible(const int64_t* timeout_opt)
   {
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
-
-    /* Just sleep.  */
-    NTSTATUS status = NtDelayExecution(false, nt_timeout.__li);
-    __MCF_ASSERT_NT(status);
+    __MCF_sleep(&nt_timeout);
   }

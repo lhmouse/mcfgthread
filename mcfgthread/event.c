@@ -38,7 +38,7 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(event, &old, &new));
 
     /* Try waiting.  */
-    status = __MCF_keyed_event_wait(event, nt_timeout.__li);
+    status = __MCF_keyed_event_wait(event, &nt_timeout);
     while(status != STATUS_WAIT_0) {
       /* Tell another thread which is going to signal this flag that an old
        * waiter has left by decrementing the number of sleeping threads. But
@@ -63,7 +63,7 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
        * keyed event before us, so we set the timeout to zero. If we time out
        * once more, the third thread will have incremented the number of
        * sleeping threads and we can try decrementing it again.  */
-      status = __MCF_keyed_event_wait(event, (LARGE_INTEGER[]) { 0 });
+      status = __MCF_keyed_event_wait(event, &(__MCF_winnt_timeout) { 0 });
     }
 
     /* We have got notified.  */
