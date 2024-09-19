@@ -17,7 +17,8 @@ __MCF_runtime_failure(const char* where)
   {
     /* `where` can be examined with a debugger.  */
     __asm__ volatile ("" : : "m"(where) : "memory");
-    __builtin_trap();
+    TerminateProcess(GetCurrentProcess(), STATUS_FATAL_APP_EXIT);
+    __builtin_unreachable();
   }
 
 __MCF_DLLEXPORT
