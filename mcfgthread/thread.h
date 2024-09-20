@@ -173,9 +173,10 @@ __MCF_THREAD_IMPORT
 int
 _MCF_thread_set_priority(_MCF_thread* __thrd_opt, _MCF_thread_priority __priority) __MCF_NOEXCEPT;
 
-/* Gets a non-owning pointer to the current thread object. If the calling thread
- * was not created by `_MCF_thread_new_aligned()`, a thread object with no user
- * data is allocated and returned.  */
+/* Gets a non-owning pointer to the current thread object. This function never
+ * returns a null pointer. If the calling thread was not created by
+ * `_MCF_thread_new_aligned()`, a thread object with no user data is allocated
+ * and returned.  */
 __MCF_THREAD_IMPORT __MCF_FN_CONST
 _MCF_thread*
 _MCF_thread_self(void) __MCF_NOEXCEPT;
