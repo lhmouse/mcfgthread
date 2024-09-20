@@ -17,12 +17,12 @@ int
 __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
   {
     if(queue->__size == __MCF_DTOR_QUEUE_BLOCK_SIZE) {
-      /* If the current block is full, allocate a new one and create a singly
-       * linked list.  */
       __MCF_dtor_queue* prev = __MCF_malloc_copy(queue, sizeof(__MCF_dtor_queue));
       if(!prev)
         return __MCF_win32_error_i(ERROR_NOT_ENOUGH_MEMORY, -1);
 
+      /* Create a singly-linked list by moving elements to `*prev`. The
+       * current block is empty now.  */
       queue->__prev = prev;
       queue->__size = 0;
     }
