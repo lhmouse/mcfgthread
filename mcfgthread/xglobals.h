@@ -229,15 +229,15 @@ __MCF_mfree(void* ptr_opt) __MCF_NOEXCEPT;
 
 /* These functions set the last error code and return the second argument.
  * They should be subject to tail-call optimization.  */
-__MCF_XGLOBALS_IMPORT
+__MCF_XGLOBALS_IMPORT __MCF_FN_COLD
 int
 __MCF_win32_error_i(DWORD code, int val) __MCF_NOEXCEPT;
 
-__MCF_XGLOBALS_IMPORT
+__MCF_XGLOBALS_IMPORT __MCF_FN_COLD
 void*
 __MCF_win32_error_p(DWORD code, void* ptr) __MCF_NOEXCEPT;
 
-__MCF_XGLOBALS_IMPORT
+__MCF_XGLOBALS_IMPORT __MCF_FN_COLD
 void*
 __MCF_win32_ntstatus_p(NTSTATUS status, void* ptr) __MCF_NOEXCEPT;
 

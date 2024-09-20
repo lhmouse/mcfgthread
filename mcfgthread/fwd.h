@@ -28,6 +28,7 @@
 #  define __MCF_NEVER_RETURN   __attribute__((__noreturn__))
 #  define __MCF_FN_CONST     __attribute__((__const__))
 #  define __MCF_FN_PURE      __attribute__((__pure__))
+#  define __MCF_FN_COLD      __attribute__((__cold__))
 #  define __MCF_ASM_CALL(x)   __asm__(__MCF_S(__USER_LABEL_PREFIX__) #x)
 #  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
 #else
@@ -38,6 +39,7 @@
 #  define __MCF_NEVER_RETURN   __declspec(noreturn)
 #  define __MCF_FN_CONST     __declspec(noalias)
 #  define __MCF_FN_PURE      __declspec(noalias)
+#  define __MCF_FN_COLD      /* unsupported */
 #  define __MCF_ASM_CALL(x)   /* unnecessary */
 #  define __MCF_ALIGNED(x)    __declspec(align(x))
 #endif
@@ -261,7 +263,7 @@ size_t
 _MCF_maxz(size_t __x, size_t __y) __MCF_NOEXCEPT
   { return (__x < __y) ? __y : __x;  }
 
-__MCF_FWD_IMPORT __MCF_NEVER_RETURN __MCF_NEVER_INLINE
+__MCF_FWD_IMPORT __MCF_NEVER_RETURN __MCF_NEVER_INLINE __MCF_FN_COLD
 void
 __MCF_runtime_failure(const char* __where);
 
