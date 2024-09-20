@@ -70,6 +70,9 @@ NTSYSAPI void NTAPI RtlFillMemory(void* dst, SIZE_T size, int c);
 NTSYSAPI void NTAPI RtlZeroMemory(void* dst, SIZE_T size);
 NTSYSAPI SIZE_T NTAPI RtlCompareMemory(const void* src, const void* cmp, SIZE_T size) __attribute__((__pure__));
 
+NTSYSAPI ULONG NTAPI RtlNtStatusToDosError(NTSTATUS status);
+NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status) __attribute__((__const__));
+
 /* Define a non-zero but invalid value. This can be used to mark a pointer
  * to freed memory, or to prevent a static pointer from being placed into
  * the `.bss` section.  */
