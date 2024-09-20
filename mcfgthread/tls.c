@@ -97,7 +97,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
     __MCF_SET_IF(old_value_opt, __MCF_nullptr);
 
     if(_MCF_atomic_load_8_rlx(key->__deleted))
-      return -1;
+      return __MCF_win32_error_i(ERROR_INVALID_PARAMETER, -1);
 
     if(!value_opt && !table->__begin) {
       /* The new value will be effectively unset. If the table is empty, there
@@ -117,7 +117,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
 
       elem = __MCF_malloc_0(capacity * sizeof(__MCF_tls_element));
       if(!elem)
-        return -1;
+        return __MCF_win32_error_i(ERROR_NOT_ENOUGH_MEMORY, -1);
 
       __MCF_tls_table temp = *table;
       table->__begin = elem;
