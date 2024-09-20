@@ -36,8 +36,8 @@
 #  define __MCF_ALWAYS_INLINE   __forceinline
 #  define __MCF_NEVER_INLINE   __declspec(noinline)
 #  define __MCF_NEVER_RETURN   __declspec(noreturn)
-#  define __MCF_FN_CONST     /* unsupported */
-#  define __MCF_FN_PURE      /* unsupported */
+#  define __MCF_FN_CONST     __declspec(noalias)
+#  define __MCF_FN_PURE      __declspec(noalias)
 #  define __MCF_ASM_CALL(x)   /* unnecessary */
 #  define __MCF_ALIGNED(x)    __declspec(align(x))
 #endif
