@@ -84,7 +84,7 @@ __MCF_batch_release_common(const void* key, size_t count)
      * they are waiting. We don't release the keyed event in this case, as it
      * blocks the calling thread infinitely if there is no thread to wake up.
      * See <https://github.com/lhmouse/mcfgthread/issues/21>.  */
-    if(RtlDllShutdownInProgress())
+    if(__MCF_is_process_shutting_down())
       return 0;
 
     for(size_t k = 0;  k != count;  ++k)
