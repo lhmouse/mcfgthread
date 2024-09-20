@@ -21,7 +21,7 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
        * linked list.  */
       __MCF_dtor_queue* prev = __MCF_malloc_copy(queue, sizeof(__MCF_dtor_queue));
       if(!prev)
-        return -1;
+        return __MCF_win32_error_i(ERROR_NOT_ENOUGH_MEMORY, -1);
 
       queue->__prev = prev;
       queue->__size = 0;
