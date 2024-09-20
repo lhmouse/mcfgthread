@@ -235,7 +235,6 @@ _MCF_thread_self(void)
     return do_thread_self_slow(__MCF_nullptr);
   }
 
-
 __MCF_DLLEXPORT
 void
 _MCF_yield(void)
