@@ -7,7 +7,7 @@
 
 #include "../mcfgthread/thread.h"
 #include <assert.h>
-#include <stdio.h>
+#include <windows.h>
 
 int
 main(void)
@@ -35,6 +35,7 @@ main(void)
 
     r = _MCF_tls_set(key, &r);
     assert(r == -1);
+    assert(GetLastError() == ERROR_INVALID_PARAMETER);
 
     p = _MCF_tls_get(key);
     assert(p == __MCF_nullptr);
