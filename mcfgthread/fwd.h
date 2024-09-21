@@ -54,7 +54,7 @@
 #  endif
 #endif
 
-#ifdef _MSC_VER
+#if defined _MSC_VER && defined __cplusplus
 #  define __MCF_MAY_THROW   throw(...)
 #else
 #  define __MCF_MAY_THROW
