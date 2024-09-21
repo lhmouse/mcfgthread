@@ -78,7 +78,7 @@ __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
     if(_MCF_atomic_load_8_rlx(key->__deleted))
       return __MCF_nullptr;
 
-    if(!table->__begin)
+    if(table->__begin == table->__end)
       return __MCF_nullptr;
 
     /* Search for the given key.  */
@@ -99,7 +99,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
     if(_MCF_atomic_load_8_rlx(key->__deleted))
       return __MCF_win32_error_i(ERROR_INVALID_PARAMETER, -1);
 
-    if(!value_opt && !table->__begin) {
+    if(!value_opt && (table->__begin == table->__end)) {
       /* The new value will be effectively unset. If the table is empty, there
        * can't be a value to unset, so report success anyway.  */
       return 0;
