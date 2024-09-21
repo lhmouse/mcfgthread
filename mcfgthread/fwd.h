@@ -76,7 +76,6 @@
 #  define __MCF_UPTR_MAX     0xFFFFFFFFU
 #endif
 
-/* Standard support  */
 #define __MCF_C(...)  __VA_ARGS__
 #define __MCF_C99(...)
 #define __MCF_C11(...)
@@ -89,30 +88,30 @@
 #define __MCF_NOEXCEPT
 #define __MCF_nullptr   __MCF_IPTR_0
 
-#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 199901L)  /* C99  */
+#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 199901L)
 #  undef __MCF_C99
 #  define __MCF_C99(...)   __VA_ARGS__
 #endif
 
-#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 201112L)  /* C11  */
+#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 201112L)
 #  undef __MCF_C11
 #  define __MCF_C11(...)   __VA_ARGS__
 #endif
 
-#if defined __cplusplus  /* C++  */
+#if defined __cplusplus
 #  undef __MCF_C
-#  define __MCF_C(...)   /* hidden  */
+#  define __MCF_C(...)
 #  undef __MCF_CXX
 #  define __MCF_CXX(...)   __VA_ARGS__
 #  undef __MCF_C_DECLARATIONS_BEGIN
 #  define __MCF_C_DECLARATIONS_BEGIN   extern "C" {
 #  undef __MCF_C_DECLARATIONS_END
-#  define __MCF_C_DECLARATIONS_END   }  /* extern "C"  */
+#  define __MCF_C_DECLARATIONS_END   }
 #  undef __MCF_NOEXCEPT
 #  define __MCF_NOEXCEPT      throw()
 #endif
 
-#if defined __cplusplus && (__cplusplus >= 201103L)  /* C++11  */
+#if defined __cplusplus && (__cplusplus >= 201103L)
 #  undef __MCF_CXX11
 #  define __MCF_CXX11(...)   __VA_ARGS__
 #  undef __MCF_NOEXCEPT
@@ -121,7 +120,7 @@
 #  define __MCF_nullptr   nullptr
 #endif
 
-#if defined __cplusplus && (__cplusplus >= 201402L)  /* C++14  */
+#if defined __cplusplus && (__cplusplus >= 201402L)
 #  undef __MCF_CXX14
 #  define __MCF_CXX14(...)   __VA_ARGS__
 #endif
