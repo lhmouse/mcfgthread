@@ -21,11 +21,11 @@ __MCF_C_DECLARATIONS_BEGIN
  * This takes up the same storage as a pointer.  */
 struct __MCF_event
   {
-    uintptr_t __value : 8;
-    uintptr_t __reserved_bit : 1;
+    __MCF_EX uintptr_t __value : 8;
+    __MCF_EX uintptr_t __reserved_bit : 1;
 
 #define __MCF_EVENT_NSLEEP_M   (__MCF_UPTR_MAX >> 9)
-    uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
+    __MCF_EX uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
 /* This is the maximum value of an event. This is a value of type `int` due
