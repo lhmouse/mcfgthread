@@ -29,7 +29,7 @@ main(void)
      * in Wine, which physical Windows doesn't have.
      * See https://bugs.winehq.org/show_bug.cgi?id=57035  */
     int64_t sleep_until = (int64_t) time(__MCF_nullptr) * 1000 + 2000;
-    while(time(__MCF_nullptr) * 1000 < sleep_until)
+    while(time(__MCF_nullptr) < sleep_until / 1000)
       _MCF_sleep(&sleep_until);
 
     now = _MCF_perf_counter();
