@@ -19,9 +19,12 @@ main(void)
 
     _MCF_thread_set_priority(__MCF_nullptr, _MCF_thread_priority_above_normal);
 
-    /* Round the time up.  */
+    /* Round the time up. The `while` loops is necessary to work around a bug
+     * in Wine, which physical Windows doesn't have.
+     * See https://bugs.winehq.org/show_bug.cgi?id=57035  */
     int64_t sleep_until = (int64_t) time(__MCF_nullptr) * 1000 + 2000;
-    _MCF_sleep(&sleep_until);
+    while(time(__MCF_nullptr) * 1000 < sleep_until)
+      _MCF_sleep(&sleep_until);
 
     now = _MCF_perf_counter();
     timeout.tv_sec = time(__MCF_nullptr) + 1;
