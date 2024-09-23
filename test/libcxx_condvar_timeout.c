@@ -26,7 +26,7 @@ main(void)
     r = __libcpp_mutex_trylock(&mutex);
     assert(r == true);
 
-    /* Round the time up. The `while` loops is necessary to work around a bug
+    /* Round the time up. The `while` loop is necessary to work around a bug
      * in Wine, which physical Windows doesn't have.
      * See https://bugs.winehq.org/show_bug.cgi?id=57035  */
     int64_t sleep_until = (int64_t) time(__MCF_nullptr) * 1000 + 2000;
