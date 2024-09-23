@@ -56,18 +56,11 @@ class thread_specific_ptr;  // inspired by boost
 // Provide limited support for `-fno-exceptions`.
 #if defined __EXCEPTIONS || defined __cpp_exceptions
 
-#  define __MCF_TRY          try
-#  define __MCF_CATCH(...)   catch(__VA_ARGS__)
-#  define __MCF_THROW(...)   throw __VA_ARGS__
-
 #  define __MCF_THROW_SYSTEM_ERROR(_Code, _Msg)  \
-     throw ::std::system_error((int) (::std::errc::_Code), ::std::generic_category(), _Msg)
+     throw ::std::system_error(static_cast<int>(::std::errc::_Code),  \
+                               ::std::generic_category(), _Msg)
 
 #else  // __EXCEPTIONS
-
-#  define __MCF_TRY          if(true)
-#  define __MCF_CATCH(...)   else if(false)
-#  define __MCF_THROW(...)   ::std::terminate()
 
 #  define __MCF_THROW_SYSTEM_ERROR(_Code, _Msg)  \
      ::__MCF_runtime_failure(_Msg)
@@ -254,12 +247,11 @@ struct _Invoke_decay_copy<_Callable, _Mine, _Others...>
 // Reference implementation for [thread.once.onceflag]
 struct once_flag
   {
-    ::_MCF_once _M_once[1] = { };
+    ::_MCF_once _M_once[1];
 
+    constexpr once_flag() noexcept : _M_once() { }
     once_flag(const once_flag&) = delete;
     once_flag& operator=(const once_flag&) = delete;
-
-    constexpr once_flag() noexcept { }
   };
 
 // Reference implementation for [thread.once.callonce]
@@ -267,24 +259,25 @@ template<typename _Callable, typename... _Args>
 void
 call_once(once_flag& __flag, _Callable&& __callable, _Args&&... __args)
   {
+    struct _Once_sentry
+      {
+        static void _Deferred_prototype(::_MCF_once*) noexcept;
+        decltype(_Deferred_prototype)* __deferred_fn;
+        ::_MCF_once* __once;
+
+        ~_Once_sentry() noexcept
+          { (* this->__deferred_fn) (this->__once);  }
+      };
+
     int __err = ::_MCF_once_wait(__flag._M_once, nullptr);
     if(__err == 0)
       return;  // passive
 
+    // active
     __MCF_ASSERT(__err == 1);
-
-    __MCF_TRY {
-      // active
-      __MCF_VOID_INVOKE(::std::forward<_Callable>(__callable), ::std::forward<_Args>(__args)...);
-    }
-    __MCF_CATCH(...) {
-      // exceptional
-      ::_MCF_once_abort(__flag._M_once);
-      __MCF_THROW();
-    }
-
-    // returning
-    ::_MCF_once_release(__flag._M_once);
+    _Once_sentry __sentry = { ::_MCF_once_abort, __flag._M_once };
+    __MCF_VOID_INVOKE(::std::forward<_Callable>(__callable), ::std::forward<_Args>(__args)...);
+    __sentry.__deferred_fn = ::_MCF_once_release;
   }
 
 // Reference implementation for [thread.mutex.class] and
@@ -563,47 +556,64 @@ class thread
         struct _My_data
           {
             _My_invoker _M_invoker[1];
-            ::_MCF_event _M_status[1];
+            ::_MCF_event _M_ctor_status[1];
+          };
 
-            static
-            void
-            __do_it(::_MCF_thread* __thr)
-              {
-                _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(__thr);
+        struct _Thread_sentry
+          {
+            static void _Deferred_prototype(::_MCF_thread*) noexcept;
+            decltype(_Deferred_prototype)* __deferred_fn;
+            ::_MCF_thread* __thr;
 
-                // Check whether `*_M_invoker` has been constructed. If its
-                // constructor failed, this thread shall exit immediately.
-                int __st = ::_MCF_event_await_change(__my->_M_status, _St_zero, nullptr);
-                if(__st == _St_cancelled)
-                  return;
+            ~_Thread_sentry() noexcept
+              { (* this->__deferred_fn) (this->__thr);  }
+          };
 
-                // Execute the user-defined procedure.
-                __MCF_ASSERT(__st == _St_constructed);
-                __my->_M_invoker->__do_it();
-                __my->_M_invoker->~_My_invoker();
-              };
+        auto __thread_fn = [](::_MCF_thread* __thr)
+          {
+            _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(__thr);
+
+            // Check whether `*_M_invoker` has been constructed. If its
+            // constructor failed, this thread shall exit immediately.
+            int __st = ::_MCF_event_await_change(__my->_M_ctor_status, _St_zero, nullptr);
+            if(__st == _St_cancelled)
+              return;
+
+            // Execute the user-defined procedure.
+            __MCF_ASSERT(__st == _St_constructed);
+            __my->_M_invoker->__do_it();
+            __my->_M_invoker->~_My_invoker();
+          };
+
+        auto __sentry_cancel_thread = [](::_MCF_thread* __thr)
+          {
+            _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(__thr);
+
+            // Cancel the thread.
+            ::_MCF_event_set(__my->_M_ctor_status, _St_cancelled);
+            ::_MCF_thread_drop_ref(__thr);
+          };
+
+        auto __sentry_complete_thread = [](::_MCF_thread* __thr)
+          {
+            _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(__thr);
+
+            // Let the thread go.
+            ::_MCF_event_set(__my->_M_ctor_status, _St_constructed);
           };
 
         // Create the thread. User-defined data are initialized to zeroes.
-        this->_M_thr = ::_MCF_thread_new_aligned(_My_data::__do_it, alignof(_My_data), nullptr, sizeof(_My_data));
-        if(!this->_M_thr)
+        ::_MCF_thread* __thr = ::_MCF_thread_new_aligned(__thread_fn, alignof(_My_data), nullptr, sizeof(_My_data));
+        if(!__thr)
           __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_thread_new_aligned");
 
-        _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(this->_M_thr);
+        _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(__thr);
+        this->_M_thr = __thr;
 
-        __MCF_TRY {
-          // Construct `_M_invoker`.
-          ::new((void*) __my->_M_invoker) _My_invoker(__callable, __args...);
-        }
-        __MCF_CATCH(...) {
-          // Cancel the thread.
-          ::_MCF_event_set(__my->_M_status, _St_cancelled);
-          ::_MCF_thread_drop_ref(this->_M_thr);
-          __MCF_THROW();
-        }
-
-        // Let the thread go.
-        ::_MCF_event_set(__my->_M_status, _St_constructed);
+        // active
+        _Thread_sentry __sentry = { __sentry_cancel_thread, __thr };
+        ::new(static_cast<void*>(__my->_M_invoker)) _My_invoker(__callable, __args...);
+        __sentry.__deferred_fn = __sentry_complete_thread;
       }
 
     thread(thread&& __other) noexcept
