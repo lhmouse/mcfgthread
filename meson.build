@@ -346,6 +346,7 @@ import('pkgconfig').generate(lib_mcfgthread_dll,
 foreach src: test_src
   test_c_args = []
   test_cpp_args = []
+  test_link_args = []
   test_dependencies = []
   test_link_with = lib_mcfgthread_dll
 
@@ -374,10 +375,14 @@ foreach src: test_src
     test_cpp_args = [ '-std=c++11', '-Wpedantic' ]
   endif
 
+  if src.endswith('.cpp')
+    test_link_args = [ '-static-libgcc', '-static-libstdc++' ]
+  endif
+
   test_exe = executable(src.underscorify(), src,
                         c_args: test_c_args,
                         cpp_args: test_cpp_args,
-                        link_args: [ '-static-libgcc', '-static-libstdc++' ],
+                        link_args: test_link_args,
                         dependencies: test_dependencies,
                         link_with: test_link_with,
                         install: false)
