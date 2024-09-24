@@ -457,7 +457,7 @@ __MCF_mfree(void* ptr_opt) __MCF_NOEXCEPT
 /* Gets a handle to the directory for all named objects (mutexes, semaphores,
  * events, etc.) for the current session. The handle is cached in KERNEL32.DLL
  * and must not be closed.  */
-NTSYSAPI NTSTATUS NTAPI BaseGetNamedObjectDirectory(HANDLE* OutHandle) __attribute__((__dllimport__));
+NTSYSAPI NTSTATUS NTAPI BaseGetNamedObjectDirectory(HANDLE* OutHandle);
 
 __MCF_ALWAYS_INLINE
 HANDLE
@@ -471,7 +471,7 @@ __MCF_get_directory_for_named_objects(void) __MCF_NOEXCEPT
 
 /* Indicates whether the current process is being shut down. This function has
  * existed since at least Windows 7, but is only documented since Windows 10.  */
-NTSYSAPI BOOLEAN NTAPI RtlDllShutdownInProgress(void) __attribute__((__dllimport__));
+NTSYSAPI BOOLEAN NTAPI RtlDllShutdownInProgress(void);
 
 __MCF_ALWAYS_INLINE
 bool
