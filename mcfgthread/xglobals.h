@@ -666,5 +666,20 @@ __MCF_keyed_event_signal(const void* Key, const __MCF_winnt_timeout* Timeout) __
     return (status != STATUS_WAIT_0) ? -1 : 0;
   }
 
+/* Sends a hard-error LPC message to CSRSS.EXE. This function is useful in a DLL
+ * entry-point function or a TLS callback, where it is not safe to make a call
+ * to `MessageBox()`.  */
+NTSYSAPI NTSTATUS NTAPI NtRaiseHardError(NTSTATUS Status, ULONG NumberOfParameters, ULONG UnicodeStringParameterMask, ULONG_PTR* Parameters, ULONG ResponseOption, ULONG* Response);
+
+__MCF_ALWAYS_INLINE
+int
+__MCF_show_hard_error_message_box(const UNICODE_STRING* caption, const UNICODE_STRING* text) __MCF_NOEXCEPT
+  {
+    ULONG_PTR params[4] = { (ULONG_PTR) text, (ULONG_PTR) caption, MB_OK | MB_ICONSTOP, 0 };
+    ULONG response = 0;
+    NTSTATUS status = NtRaiseHardError(0x50000018, 4, 0b0011, params, 1, &response);
+    return !NT_SUCCESS(status) ? -1 : (int) response;
+  }
+
 __MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_XGLOBALS_  */
