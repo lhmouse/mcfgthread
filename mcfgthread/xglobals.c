@@ -185,22 +185,20 @@ do_on_process_attach(void)
 
     /* Generate the unique name for this process.  */
     static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
-    DWORD pid = GetCurrentProcessId();
-    UINT64 cookie = (UINT_PTR) EncodePointer((PVOID) ~(UINT_PTR) (pid * 0x100000001ULL)) * 0x9E3779B97F4A7C15ULL;
-
+    UNICODE_STRING gname = RTL_CONSTANT_STRING(gnbuffer);
     __MCF_ASSERT(gnbuffer[25] == L'*');
+    DWORD pid = GetCurrentProcessId();
     do_encode_numeric_field(gnbuffer + 25, 8, pid, L"0123456789ABCDEF");
     __MCF_ASSERT(gnbuffer[34] == L'#');
+    UINT64 cookie = (UINT_PTR) EncodePointer((PVOID) ~(UINT_PTR) (pid * 0x100000001ULL)) * 0x9E3779B97F4A7C15ULL;
     do_encode_numeric_field(gnbuffer + 34, 16, cookie, L"GHJKLMNPQRSTUWXY");
     __MCF_ASSERT(gnbuffer[50] == 0);
-
-    UNICODE_STRING gname = { sizeof(gnbuffer) - sizeof(WCHAR), sizeof(gnbuffer), gnbuffer };
-    HANDLE gdir = __MCF_get_directory_for_named_objects();
-    __MCF_ASSERT(gdir);
 
     /* Allocate or open storage for global data. We are in the DLL main routine,
      * so locking is not necessary.  */
     OBJECT_ATTRIBUTES gattrs;
+    HANDLE gdir = __MCF_get_directory_for_named_objects();
+    __MCF_ASSERT(gdir);
     InitializeObjectAttributes(&gattrs, &gname, OBJ_OPENIF | OBJ_EXCLUSIVE, gdir, __MCF_nullptr);
     HANDLE gfile = __MCF_create_named_section(&gattrs, sizeof(__MCF_crt_xglobals));
     __MCF_CHECK(gfile);

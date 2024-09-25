@@ -25,6 +25,7 @@
 #include <processthreadsapi.h>
 #include <shtypes.h>
 #include <wincon.h>
+#include <ntdef.h>
 
 __MCF_C_DECLARATIONS_BEGIN
 #ifndef __MCF_XGLOBALS_IMPORT
