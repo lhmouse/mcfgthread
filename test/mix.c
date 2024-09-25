@@ -9,7 +9,6 @@
 #include "version.h"
 #include <assert.h>
 #include <windows.h>
-#include <wchar.h>
 
 int
 main(void)
@@ -19,10 +18,10 @@ main(void)
 #else
     // load functions from dll
     wchar_t dll_name[100];
-    swprintf(dll_name, 100, L"libmcfgthread-%d.dll", _MCF_ABI_VERSION_MAJOR);
+    wsprintfW(dll_name, L"libmcfgthread-%d.dll", _MCF_ABI_VERSION_MAJOR);
     HMODULE pdll = LoadLibraryW(dll_name);
     assert(pdll);
-    swprintf(dll_name, 100, L"libmcfgthread-minimal-%d.dll", _MCF_ABI_VERSION_MAJOR);
+    wsprintfW(dll_name, L"libmcfgthread-minimal-%d.dll", _MCF_ABI_VERSION_MAJOR);
     HMODULE mdll = LoadLibraryW(dll_name);
     assert(mdll);
 
