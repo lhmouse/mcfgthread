@@ -580,9 +580,9 @@ NTSYSAPI NTSTATUS NTAPI NtWaitForKeyedEvent(HANDLE KeyedEvent, PVOID Key, BOOLEA
 
 __MCF_ALWAYS_INLINE
 int
-__MCF_keyed_event_wait(const void* __key, const __MCF_winnt_timeout* Timeout) __MCF_NOEXCEPT
+__MCF_keyed_event_wait(const void* Key, const __MCF_winnt_timeout* Timeout) __MCF_NOEXCEPT
   {
-    NTSTATUS status = NtWaitForKeyedEvent(NULL, (PVOID) __key, false, (LARGE_INTEGER*) &(Timeout->__li));
+    NTSTATUS status = NtWaitForKeyedEvent(NULL, (PVOID) Key, false, (LARGE_INTEGER*) &(Timeout->__li));
     __MCF_ASSERT(NT_SUCCESS(status));
     return (status != STATUS_WAIT_0) ? -1 : 0;
   }
@@ -595,9 +595,9 @@ NTSYSAPI NTSTATUS NTAPI NtReleaseKeyedEvent(HANDLE KeyedEvent, PVOID Key, BOOLEA
 
 __MCF_ALWAYS_INLINE
 int
-__MCF_keyed_event_signal(const void* __key, const __MCF_winnt_timeout* Timeout) __MCF_NOEXCEPT
+__MCF_keyed_event_signal(const void* Key, const __MCF_winnt_timeout* Timeout) __MCF_NOEXCEPT
   {
-    NTSTATUS status = NtReleaseKeyedEvent(NULL, (PVOID) __key, false, (LARGE_INTEGER*) &(Timeout->__li));
+    NTSTATUS status = NtReleaseKeyedEvent(NULL, (PVOID) Key, false, (LARGE_INTEGER*) &(Timeout->__li));
     __MCF_ASSERT(NT_SUCCESS(status));
     return (status != STATUS_WAIT_0) ? -1 : 0;
   }
