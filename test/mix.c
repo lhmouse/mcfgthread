@@ -17,12 +17,9 @@ main(void)
     return 77;
 #else
     // load functions from dll
-    wchar_t dll_name[100];
-    wsprintfW(dll_name, L"libmcfgthread-%d.dll", _MCF_ABI_VERSION_MAJOR);
-    HMODULE pdll = LoadLibraryW(dll_name);
+    HMODULE pdll = LoadLibraryW(L"libmcfgthread-" __MCF_S(_MCF_ABI_VERSION_MAJOR) ".dll");
     assert(pdll);
-    wsprintfW(dll_name, L"libmcfgthread-minimal-%d.dll", _MCF_ABI_VERSION_MAJOR);
-    HMODULE mdll = LoadLibraryW(dll_name);
+    HMODULE mdll = LoadLibraryW(L"libmcfgthread-minimal-" __MCF_S(_MCF_ABI_VERSION_MAJOR) ".dll");
     assert(mdll);
 
     typedef __typeof__(_MCF_tls_get) tls_get_fn;
