@@ -355,6 +355,7 @@ foreach src: test_src
 
   if src in [ 'test/memory.c' ]
     test_dependencies = [ dep_advapi32, dep_ntdll ]
+    test_link_with = lib_mcfgthread_minimal_dll
   endif
 
   if src in [ 'test/gthr_c89_pedantic.c' ]
