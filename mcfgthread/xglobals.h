@@ -302,7 +302,7 @@ extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY __MCF_g;
 /* As `__MCF_crt_xglobals` is shared between all static and shared instances of
  * this library within a single process, we have to involve sort of versioning.  */
 #define __MCF_G_SIZE  \
-    ((unsigned long) __builtin_expect((long) __MCF_g->__self_size, sizeof(__MCF_crt_xglobals)))
+    ((uint32_t) __builtin_expect((long) __MCF_g->__self_size, sizeof(__MCF_crt_xglobals)))
 
 #define __MCF_G_FIELD_OPT(field)  \
     ((__MCF_G_SIZE >= offsetof(__MCF_crt_xglobals, field) + sizeof(__MCF_g->field))  \
