@@ -207,6 +207,12 @@ int
 __cdecl
 __MCF_mcompare(const void* src, const void* cmp, size_t size) __MCF_NOEXCEPT;
 
+/* Check whether two blocks of memory compare equal.  */
+__MCF_XGLOBALS_INLINE __MCF_FN_PURE
+bool
+__cdecl
+__MCF_mequal(const void* src, const void* cmp, size_t size) __MCF_NOEXCEPT;
+
 /* Allocate a block of zeroed memory, like `calloc()`.  */
 __MCF_XGLOBALS_INLINE
 void*
@@ -436,6 +442,30 @@ __MCF_mcompare(const void* src, const void* cmp, size_t size)
     diff = (pos != size) ? (*((PBYTE) src + pos) - *((PBYTE) cmp + pos)) : 0;
 #endif
     return diff;
+  }
+
+__MCF_XGLOBALS_INLINE
+bool
+__cdecl
+__MCF_mequal(const void* src, const void* cmp, size_t size)
+  {
+    bool eq;
+#if defined __i386__ || defined __amd64__
+    /* Perform string comparison with hardware.  */
+    PVOID esi, edi, ecx;
+    __asm__ (
+      "test ecx, ecx; " /* clear ZF if there is no input  */
+      "repz cmpsb; "    /* compare DS:[ESI] with ES:[EDI]  */
+      : "=@ccz"(eq), "=S"(esi), "=c"(ecx), "=D"(edi)
+      : "1"(src), "2"(size), "3"(cmp)
+      : "memory"
+    );
+#else
+    /* Check whether the number of matching bytes equals the total number
+     * of bytes.  */
+    eq = RtlCompareMemory(src, cmp, size) == size;
+#endif
+    return eq;
   }
 
 __MCF_XGLOBALS_INLINE

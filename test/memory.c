@@ -48,6 +48,7 @@ main(void)
     assert(pmemcmp(comp, data, sizeof(comp)) == 0);
     assert(memcmp(comp, data, sizeof(comp)) == 0);
     assert(__MCF_mcompare(comp, data, sizeof(comp)) == 0);
+    assert(__MCF_mequal(comp, data, sizeof(comp)) == true);
 
     // __MCF_mzero
     RtlGenRandom(comp, sizeof(comp));
@@ -64,6 +65,7 @@ main(void)
     assert(pmemcmp(comp, data, sizeof(comp)) == 0);
     assert(memcmp(comp, data, sizeof(comp)) == 0);
     assert(__MCF_mcompare(comp, data, sizeof(comp)) == 0);
+    assert(__MCF_mequal(comp, data, sizeof(comp)) == true);
 
     // __MCF_mcopy
     RtlGenRandom(comp, sizeof(comp));
@@ -76,6 +78,7 @@ main(void)
     assert(pmemcmp(comp, data, sizeof(comp)) == 0);
     assert(memcmp(comp, data, sizeof(comp)) == 0);
     assert(__MCF_mcompare(comp, data, sizeof(comp)) == 0);
+    assert(__MCF_mequal(comp, data, sizeof(comp)) == true);
 
     // __MCF_mcopy_backward
     RtlGenRandom(comp, sizeof(comp));
@@ -88,6 +91,7 @@ main(void)
     assert(pmemcmp(comp, data, sizeof(comp)) == 0);
     assert(memcmp(comp, data, sizeof(comp)) == 0);
     assert(__MCF_mcompare(comp, data, sizeof(comp)) == 0);
+    assert(__MCF_mequal(comp, data, sizeof(comp)) == true);
 
     // __MCF_mcompare (equal)
     RtlGenRandom(comp, sizeof(comp));
@@ -96,6 +100,7 @@ main(void)
     assert(pmemcmp(comp, data, sizeof(comp)) == 0);
     assert(memcmp(comp, data, sizeof(comp)) == 0);
     assert(__MCF_mcompare(comp, data, sizeof(comp)) == 0);
+    assert(__MCF_mequal(comp, data, sizeof(comp)) == true);
 
     // __MCF_mcompare (less 2)
     comp[72] = '1';
@@ -104,6 +109,7 @@ main(void)
     assert(pmemcmp(comp, data, sizeof(comp)) < 0);
     assert(memcmp(comp, data, sizeof(comp)) < 0);
     assert(__MCF_mcompare(comp, data, sizeof(comp)) < 0);
+    assert(__MCF_mequal(comp, data, sizeof(comp)) == false);
 
     // __MCF_mcompare (greater 1)
     comp[71] = '\x80';
@@ -112,6 +118,7 @@ main(void)
     assert(pmemcmp(comp, data, sizeof(comp)) > 0);
     assert(memcmp(comp, data, sizeof(comp)) > 0);
     assert(__MCF_mcompare(comp, data, sizeof(comp)) > 0);
+    assert(__MCF_mequal(comp, data, sizeof(comp)) == false);
 
     // __MCF_mcompare (greater 2)
     comp[45] = '2';
@@ -120,6 +127,7 @@ main(void)
     assert(pmemcmp(comp, data, sizeof(comp)) > 0);
     assert(memcmp(comp, data, sizeof(comp)) > 0);
     assert(__MCF_mcompare(comp, data, sizeof(comp)) > 0);
+    assert(__MCF_mequal(comp, data, sizeof(comp)) == false);
 
     // __MCF_mcompare (less 1)
     comp[44] = '\x7F';
@@ -128,4 +136,5 @@ main(void)
     assert(pmemcmp(comp, data, sizeof(comp)) < 0);
     assert(memcmp(comp, data, sizeof(comp)) < 0);
     assert(__MCF_mcompare(comp, data, sizeof(comp)) < 0);
+    assert(__MCF_mequal(comp, data, sizeof(comp)) == false);
   }
