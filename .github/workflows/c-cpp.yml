@@ -37,10 +37,10 @@ jobs:
            meson setup --cross-file meson.cross.x86_64-w64-mingw32
            -Denable-debug-checks=true build_ci
            && meson compile -Cbuild_ci
-           && meson test -j2 -t8 -Cbuild_ci
+           && meson test -j3 -t12 -Cbuild_ci
 
   linaro-ubuntu-arm64:
-    name: Ubuntu cross build (AArch64 Clang)
+    name: Ubuntu cross build (ARM64 Clang)
     runs-on: ubuntu-latest
     container: linaro/wine-arm64
 
@@ -68,7 +68,7 @@ jobs:
            meson setup --cross-file meson.cross.aarch64-w64-mingw32
            -Denable-debug-checks=true build_ci
            && meson compile -Cbuild_ci
-           && meson test -j1 -t8 -Cbuild_ci
+           && meson test -j2 -t20 -Cbuild_ci
 
   msys2-ucrt64:
     name: MSYS2 native build (x86-64 GCC)
