@@ -6,37 +6,16 @@
  * to this file.  */
 
 #include "xprecompiled.h"
+#include <string.h>
 
-__MCF_DLLEXPORT
 int
 __cdecl
-memcmp(const void* src, const void* cmp, size_t size);
+__MCF_mcompare(const void* src, const void* cmp, size_t size);
 
 __MCF_DLLEXPORT
 int
 __cdecl
 memcmp(const void* src, const void* cmp, size_t size)
   {
-    int diff;
-    const uint8_t* psrc = src;
-    const uint8_t* pcmp = cmp;
-    size_t t = size;
-
-#if defined __i386__ || defined __amd64__
-    /* Perform string comparison with hardware.  */
-    __asm__ volatile (
-      "xor eax, eax; "  /* clear ZF and CF  */
-      "repz cmpsb; "    /* perform comparison  */
-      "setnz al; "      /* EAX = 0 if equal, 1 if less or greater  */
-      "sbb ecx, ecx; "  /* ECX = 0 if equal or greater, -1 if less  */
-      "or eax, ecx; "
-      : "=a"(diff), "+S"(psrc), "+D"(pcmp), "+c"(t) :
-      : "memory");
-#else
-    /* Get the number of matching bytes. If there is a mismatch, get the
-     * difference between the first pair of mismatching bytes.  */
-    t = RtlCompareMemory(psrc, pcmp, t);
-    diff = (t == size) ? 0 : (psrc[t] - pcmp[t]);
-#endif
-    return diff;
+    return __MCF_mcompare(src, cmp, size);
   }

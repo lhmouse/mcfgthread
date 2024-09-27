@@ -6,6 +6,7 @@
  * to this file.  */
 
 #include "xprecompiled.h"
+#include <string.h>
 
 void*
 __cdecl
@@ -14,11 +15,6 @@ __MCF_mcopy(void* dst, const void* src, size_t size);
 void*
 __cdecl
 __MCF_mcopy_backward(void* dst, const void* src, size_t size);
-
-__MCF_DLLEXPORT
-void*
-__cdecl
-memmove(void* dst, const void* src, size_t size);
 
 __MCF_DLLEXPORT
 void*

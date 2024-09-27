@@ -201,6 +201,12 @@ void*
 __cdecl
 __MCF_mzero(void* dst, size_t size) __MCF_NOEXCEPT;
 
+/* Compare two blocks of memory, like `memcmp()`.  */
+__MCF_XGLOBALS_INLINE __MCF_FN_PURE
+int
+__cdecl
+__MCF_mcompare(const void* src, const void* cmp, size_t size) __MCF_NOEXCEPT;
+
 /* Allocate a block of zeroed memory, like `calloc()`.  */
 __MCF_XGLOBALS_INLINE
 void*
@@ -402,6 +408,34 @@ __MCF_mzero(void* dst, size_t size) __MCF_NOEXCEPT
     RtlZeroMemory(dst, size);
 #endif
     return dst;
+  }
+
+__MCF_XGLOBALS_INLINE
+int
+__cdecl
+__MCF_mcompare(const void* src, const void* cmp, size_t size)
+  {
+    int diff;
+#if defined __i386__ || defined __amd64__
+    /* Perform string comparison with hardware.  */
+    PVOID esi, edi, ecx;
+    __asm__ (
+      "xor eax, eax; "  /* clear ZF and CF  */
+      "repz cmpsb; "    /* compare DS:[ESI] with ES:[EDI]  */
+      "setnz al; "      /* EAX = 0 if equal, 1 if less or greater  */
+      "sbb ecx, ecx; "  /* ECX = 0 if equal or greater, -1 if less  */
+      "or eax, ecx; "
+      : "=a"(diff), "=S"(esi), "=c"(ecx), "=D"(edi)
+      : "1"(src), "2"(size), "3"(cmp)
+      : "memory"
+    );
+#else
+    /* Get the number of matching bytes. If there is a mismatch, get the
+     * difference between the first pair of mismatching bytes.  */
+    SIZE_T pos = RtlCompareMemory(src, cmp, size);
+    diff = (pos != size) ? (*((PBYTE) src + pos) - *((PBYTE) cmp + pos)) : 0;
+#endif
+    return diff;
   }
 
 __MCF_XGLOBALS_INLINE
