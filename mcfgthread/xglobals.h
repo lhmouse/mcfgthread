@@ -673,9 +673,9 @@ NTSYSAPI NTSTATUS NTAPI NtRaiseHardError(NTSTATUS Status, ULONG NumberOfParamete
 
 __MCF_ALWAYS_INLINE
 int
-__MCF_show_hard_error_message_box(const UNICODE_STRING* caption, const UNICODE_STRING* text) __MCF_NOEXCEPT
+__MCF_show_service_notification(const UNICODE_STRING* caption, DWORD options, const UNICODE_STRING* text) __MCF_NOEXCEPT
   {
-    ULONG_PTR params[4] = { (ULONG_PTR) text, (ULONG_PTR) caption, MB_OK | MB_ICONSTOP, 0 };
+    ULONG_PTR params[4] = { (ULONG_PTR) text, (ULONG_PTR) caption, options, 0 };
     ULONG response = 0;
     NTSTATUS status = NtRaiseHardError(0x50000018, 4, 0b0011, params, 1, &response);
     return !NT_SUCCESS(status) ? -1 : (int) response;
