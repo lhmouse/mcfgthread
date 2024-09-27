@@ -7,8 +7,8 @@
 
 #include "../mcfgthread/xglobals.h"
 #include <assert.h>
-#include <stdio.h>
 #include <windows.h>
+#include <versionhelpers.h>
 
 int
 main(void)
@@ -16,11 +16,7 @@ main(void)
 #if defined __CYGWIN__
     return 77;
 #else
-    DWORD ver = GetVersion();
-    DWORD os_ver = (ver & 0xFF) * 100 + (ver >> 8 & 0xFF);
-
-    printf("os_ver = %d\n", (int) os_ver);
-    if(os_ver < 602)
+    if(!IsWindows8OrGreater())
       return 77;  // skip
 
     HMODULE kernelbase = GetModuleHandleW(L"KERNELBASE.DLL");
