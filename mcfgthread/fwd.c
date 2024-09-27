@@ -24,7 +24,7 @@ DWORD
 do_format_message(DWORD code, WCHAR* outptr, PCWSTR end_of_buffer)
   {
     return FormatMessageW(
-        FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | 0xFF,
+        FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | 255,
         __MCF_nullptr, code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
         outptr, (DWORD) (end_of_buffer - outptr), __MCF_nullptr);
   }
