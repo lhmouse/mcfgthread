@@ -171,7 +171,7 @@ do_encode_numeric_field(wchar_t* ptr, size_t width, uint64_t value, const wchar_
 
 static
 void
-do_on_process_attach(void)
+__MCF_crt_mcfgthread_initialize_globals(void)
   {
     /* Initialize static global constants.  */
     GetSystemInfo(&__MCF_crt_sysinfo);
@@ -311,7 +311,7 @@ do_image_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
      * unmapped memory. User code should call `__cxa_finalize(__MCF_nullptr)` before
      * exiting from a process.  */
     if(reason == DLL_PROCESS_ATTACH)
-      do_on_process_attach();
+      __MCF_crt_mcfgthread_initialize_globals();
     else if(reason == DLL_THREAD_DETACH)
       do_on_thread_detach();
   }
