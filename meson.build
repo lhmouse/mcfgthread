@@ -78,6 +78,7 @@ test_src = [
   'test/memory.c',
   'test/clock.c',
   'test/winnt_timeout.c',
+  'test/runtime_failure.c',
   'test/once_zero_timeout.c',
   'test/once_release.c',
   'test/once_abort.c',
