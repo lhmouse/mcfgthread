@@ -71,6 +71,8 @@ __MCF_runtime_failure(const char* where)
 
       do_append_string(&sptr, end_of_buffer, L'\r');
       do_append_string(&sptr, end_of_buffer, L'\n');
+      do_append_string(&sptr, end_of_buffer, L'\r');
+      do_append_string(&sptr, end_of_buffer, L'\n');
 
       text.Length = (USHORT) ((UINT_PTR) sptr - (UINT_PTR) text.Buffer);
     }
