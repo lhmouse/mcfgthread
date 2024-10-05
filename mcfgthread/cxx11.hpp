@@ -261,8 +261,8 @@ call_once(once_flag& __flag, _Callable&& __callable, _Args&&... __args)
   {
     struct _Once_sentry
       {
-        static void _Deferred_prototype(::_MCF_once*) noexcept;
-        decltype(_Deferred_prototype)* __deferred_fn;
+        static void __deferred_prototype(::_MCF_once*) noexcept;
+        decltype(__deferred_prototype)* __deferred_fn;
         ::_MCF_once* __once;
 
         ~_Once_sentry() noexcept
@@ -561,8 +561,8 @@ class thread
 
         struct _Thread_sentry
           {
-            static void _Deferred_prototype(::_MCF_thread*) noexcept;
-            decltype(_Deferred_prototype)* __deferred_fn;
+            static void __deferred_prototype(::_MCF_thread*) noexcept;
+            decltype(__deferred_prototype)* __deferred_fn;
             ::_MCF_thread* __thr;
 
             ~_Thread_sentry() noexcept
