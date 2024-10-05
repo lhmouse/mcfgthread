@@ -585,7 +585,7 @@ class thread
             __my->_M_invoker->~_My_invoker();
           };
 
-        auto __sentry_cancel_thread = [](::_MCF_thread* __thr)
+        auto __sentry_cancel_thread = [](::_MCF_thread* __thr) noexcept
           {
             _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(__thr);
 
@@ -594,7 +594,7 @@ class thread
             ::_MCF_thread_drop_ref(__thr);
           };
 
-        auto __sentry_complete_thread = [](::_MCF_thread* __thr)
+        auto __sentry_complete_thread = [](::_MCF_thread* __thr) noexcept
           {
             _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(__thr);
 
