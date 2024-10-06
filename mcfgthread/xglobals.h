@@ -419,7 +419,7 @@ __MCF_mzero(void* dst, size_t size) __MCF_NOEXCEPT
 __MCF_XGLOBALS_INLINE
 int
 __cdecl
-__MCF_mcompare(const void* src, const void* cmp, size_t size)
+__MCF_mcompare(const void* src, const void* cmp, size_t size) __MCF_NOEXCEPT
   {
     int diff;
 #if defined __i386__ || defined __amd64__
@@ -447,7 +447,7 @@ __MCF_mcompare(const void* src, const void* cmp, size_t size)
 __MCF_XGLOBALS_INLINE
 bool
 __cdecl
-__MCF_mequal(const void* src, const void* cmp, size_t size)
+__MCF_mequal(const void* src, const void* cmp, size_t size) __MCF_NOEXCEPT
   {
     bool eq;
 #if defined __i386__ || defined __amd64__
