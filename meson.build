@@ -258,7 +258,8 @@ add_project_arguments(
       '-Wmissing-field-initializers', '-Wsuggest-attribute=noreturn', '-Wshadow',
       '-Wunused-function', '-Wunused-label', '-Wunused-local-typedefs',
       '-Wunused-but-set-variable', '-Wunused-but-set-parameter',
-      '-Wunused-const-variable', '-Wno-unused-command-line-argument'),
+      '-Wunused-const-variable', '-Wno-unused-command-line-argument',
+      '-Wno-dll-attribute-on-redeclaration'),
     language: [ 'c', 'cpp' ])
 
 add_project_arguments(
