@@ -313,15 +313,19 @@ lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
       install: true)
 
-lib_mcfgthread_dll = shared_library('mcfgthread',
+lib_mcfgthread_temp_a = static_library('mcfgthread_temp',
       c_pch: 'mcfgthread/xprecompiled.h',
       c_args: [ '-DDLL_EXPORT', cc.get_supported_arguments('-mcmodel=small'),
                 '-ffreestanding', '-fasynchronous-unwind-tables' ],
+      objects: lib_mcfgthread_minimal_dll.extract_objects(mcfgthread_src_min),
+      sources: [ mcfgthread_src_ex, mcfgthread_version_o ],
+      install: false)
+
+lib_mcfgthread_dll = shared_library('mcfgthread',
       link_args: [ '-nostdlib', '-Wl,--entry,__MCF_dll_startup@@Z',
                    '-Wl,--gc-sections', '-Wl,--exclude-all-symbols', '-Wl,--kill-at',
                    '-Wl,--enable-auto-image-base', '-Wl,--subsystem,windows:6.1' ],
-      objects: lib_mcfgthread_minimal_dll.extract_objects(mcfgthread_src_min),
-      sources: [ mcfgthread_src_ex, mcfgthread_version_o ],
+      link_whole: lib_mcfgthread_temp_a,
       dependencies: [ dep_kernel32, dep_ntdll ],
       soversion: ver.get('abi_major'),
       version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
