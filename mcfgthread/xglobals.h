@@ -301,6 +301,8 @@ struct __MCF_crt_xglobals
 extern SYSTEM_INFO __MCF_XGLOBALS_READONLY __MCF_crt_sysinfo;
 extern HANDLE __MCF_XGLOBALS_READONLY __MCF_crt_heap;
 extern double __MCF_XGLOBALS_READONLY __MCF_crt_pf_recip;
+extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_kernelbase;
+extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_ntdll;
 
 /* This is a pointer to the process-specific data.
  * As mcfgthread may be linked statically by user DLLs, we must ensure that, in

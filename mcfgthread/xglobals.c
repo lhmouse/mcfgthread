@@ -177,11 +177,14 @@ __MCF_crt_mcfgthread_initialize_globals(void)
     GetSystemInfo(&__MCF_crt_sysinfo);
 
     __MCF_crt_heap = GetProcessHeap();
-    __MCF_ASSERT(__MCF_crt_heap);
+    __MCF_CHECK(__MCF_crt_heap);
 
     LARGE_INTEGER pfreq;
-    __MCF_ASSERT(QueryPerformanceFrequency(&pfreq));
+    __MCF_CHECK(QueryPerformanceFrequency(&pfreq));
     __MCF_crt_pf_recip = 1000 / (double) pfreq.QuadPart;
+
+    __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, L"KERNELBASE.DLL", &__MCF_crt_kernelbase));
+    __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, L"NTDLL.DLL", &__MCF_crt_ntdll));
 
     /* Generate the unique name for this process.  */
     static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
@@ -229,12 +232,8 @@ __MCF_crt_mcfgthread_initialize_globals(void)
     __MCF_CHECK(__MCF_g->__tls_index != UINT32_MAX);
 
     /* Perform lazy binding for newer functions.  */
-    HMODULE kernelbase, ntdll;
-    __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, L"KERNELBASE.DLL", &kernelbase));
-    __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, L"NTDLL.DLL", &ntdll));
-
-    __MCF_G_INITIALIZE_LAZY(kernelbase, GetSystemTimePreciseAsFileTime);  /* win8 */
-    __MCF_G_INITIALIZE_LAZY(kernelbase, QueryInterruptTime);  /* win10 */
+    __MCF_G_INITIALIZE_LAZY(__MCF_crt_kernelbase, GetSystemTimePreciseAsFileTime);  /* win8 */
+    __MCF_G_INITIALIZE_LAZY(__MCF_crt_kernelbase, QueryInterruptTime);  /* win10 */
 
     /* Attach the main thread. The structure should be all zeroes so no
      * initialization is necessary.  */
@@ -361,6 +360,8 @@ const PIMAGE_TLS_CALLBACK __MCF_xl_b __attribute__((__section__(".CRT$XLB"), __u
 HANDLE __MCF_crt_heap = __MCF_BAD_PTR;
 double __MCF_crt_pf_recip = 1;
 SYSTEM_INFO __MCF_crt_sysinfo = { .dwPageSize = 1 };
+HMODULE __MCF_crt_kernelbase = __MCF_BAD_PTR;
+HMODULE __MCF_crt_ntdll = __MCF_BAD_PTR;
 
 /* This is a pointer to global data. If this library is linked statically,
  * all instances of this pointer in the same process should point to the
