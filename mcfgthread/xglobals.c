@@ -161,9 +161,10 @@ do_encode_numeric_field(wchar_t* ptr, size_t width, uint64_t value, const wchar_
       *--eptr = digits[0];
   }
 
-static
+static __attribute__((__force_align_arg_pointer__))
 void
-__MCF_crt_mcfgthread_initialize_globals(void)
+__cdecl
+__MCF_mcfgthread_initialize_globals(void)
   {
     /* Initialize static global constants.  */
     GetSystemInfo(&__MCF_crt_sysinfo);
@@ -238,9 +239,10 @@ __MCF_crt_mcfgthread_initialize_globals(void)
     __MCF_thread_attach_foreign(__MCF_g->__main_thread);
   }
 
-static
+static __attribute__((__force_align_arg_pointer__))
 void
-do_on_thread_detach(void)
+__cdecl
+__MCF_mcfgthread_finalize_thread(void)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     __MCF_dtor_element elem;
@@ -294,25 +296,6 @@ do_on_thread_detach(void)
     _MCF_thread_drop_ref_nonnull(self);
   }
 
-static
-void
-__stdcall
-do_image_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
-  {
-    (void) module;
-    (void) reserved;
-
-    /* Perform global initialization and per-thread cleanup as needed.
-     * Note, upon `DLL_PROCESS_DETACH`, no cleanup is performed, because
-     * other DLLs might have been unloaded and we would be referencing
-     * unmapped memory. User code should call `__cxa_finalize(__MCF_nullptr)` before
-     * exiting from a process.  */
-    if(reason == DLL_PROCESS_ATTACH)
-      __MCF_crt_mcfgthread_initialize_globals();
-    else if(reason == DLL_THREAD_DETACH)
-      do_on_thread_detach();
-  }
-
 #ifdef DLL_EXPORT
 
 /* When building the shared library, invoke the common routine from the DLL
@@ -327,19 +310,22 @@ int
 __stdcall
 __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
   {
-    /* Call the common routine. This will not fail.  */
-    do_image_tls_callback(instance, reason, reserved);
+    DWORD dummy1;
+    HMODULE dummy2 = reserved;
 
-    if(reason != DLL_PROCESS_ATTACH)
-      return 1;
+    switch(reason)
+      {
+      case DLL_PROCESS_ATTACH:
+        __MCF_mcfgthread_initialize_globals();
+        __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN | GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, instance, &dummy2));
+        __MCF_CHECK(VirtualProtect(&__MCF_g, sizeof(__MCF_g), PAGE_READONLY, &dummy1));
+        break;
 
-    /* Freeze the `.data` section.  */
-    DWORD dummy;
-    __MCF_CHECK(VirtualProtect(&__MCF_g, sizeof(__MCF_g), PAGE_READONLY, &dummy));
+      case DLL_THREAD_DETACH:
+        __MCF_mcfgthread_finalize_thread();
+        break;
+      }
 
-    /* Prevent this DLL from being unloaded.  */
-    HMODULE module;
-    __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN | GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (PCWSTR) instance, &module));
     return 1;
   }
 
@@ -348,8 +334,27 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
 /* When building the static library, invoke the common routine from a TLS
  * callback. This requires the main executable be linked with 'tlssup.o'.
  * Such initialization should happen as early as possible.  */
-extern const PIMAGE_TLS_CALLBACK __MCF_xl_b;
-const PIMAGE_TLS_CALLBACK __MCF_xl_b __attribute__((__section__(".CRT$XLB"), __used__)) = do_image_tls_callback;
+static
+void
+__stdcall
+__MCF_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
+  {
+    (void) module;
+    (void) reserved;
+
+    switch(reason)
+      {
+      case DLL_PROCESS_ATTACH:
+        __MCF_mcfgthread_initialize_globals();
+        break;
+
+      case DLL_THREAD_DETACH:
+        __MCF_mcfgthread_finalize_thread();
+        break;
+      }
+  }
+
+static PIMAGE_TLS_CALLBACK __xl_b __attribute__((__section__(".CRT$XLB"), __used__)) = __MCF_tls_callback;
 
 #endif  /* DLL_EXPORT  */
 
