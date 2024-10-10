@@ -106,6 +106,7 @@ test_src = [
   'test/cxa_thread_atexit_exit.c',
   'test/cxa_atexit_order.c',
   'test/tls_dtor.c',
+  'test/tls_dtor_static.c',
   'test/tls_xset.c',
   'test/tls_deleted_key.c',
   'test/tls_deleted_key_get_set.c',
@@ -351,7 +352,8 @@ foreach src: test_src
   test_dependencies = []
   test_link_with = lib_mcfgthread_dll
 
-  if src in [ 'test/win8.c', 'test/win10.c', 'test/self_oom.c', 'test/mix.c' ]
+  if src in [ 'test/win8.c', 'test/win10.c', 'test/self_oom.c', 'test/mix.c',
+              'test/tls_dtor_static.c' ]
     test_link_with = lib_mcfgthread_a
   endif
 
