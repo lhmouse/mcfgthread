@@ -169,9 +169,8 @@ do_encode_numeric_field(wchar_t* ptr, size_t width, uint64_t value, const wchar_
       *--eptr = digits[0];
   }
 
-static __attribute__((__force_align_arg_pointer__))
+static
 void
-__cdecl
 __MCF_mcfgthread_initialize_globals(void)
   {
     /* Initialize static global constants.  */
@@ -241,9 +240,8 @@ __MCF_mcfgthread_initialize_globals(void)
     __MCF_thread_attach_foreign(__MCF_g->__main_thread);
   }
 
-static __attribute__((__force_align_arg_pointer__))
+static
 void
-__cdecl
 __MCF_mcfgthread_finalize_thread(void)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
@@ -300,14 +298,17 @@ __MCF_mcfgthread_finalize_thread(void)
 
 #ifdef DLL_EXPORT
 
-/* When building the shared library, invoke the common routine from the DLL
- * entry point callback. The decorated name is fabricated such that it
- * remains the same on both x86 and x86-64.  */
+/* Declare the DLL entry point function. This has the same signature as
+ * `DllMain()`.The decorated name is fabricated such that is remains the
+ * same on both x86 and x86-64.  */
 int
 __stdcall
 __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
   __asm__("__MCF_dll_startup@@Z");
 
+/* When building the shared library, invoke the common routine from the
+ * DLL entry point callback.  */
+__attribute__((__force_align_arg_pointer__))
 int
 __stdcall
 __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
@@ -334,9 +335,8 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
 #else  /* DLL_EXPORT  */
 
 /* When building the static library, invoke the common routine from a TLS
- * callback. This requires the main executable be linked with 'tlssup.o'.
- * Such initialization should happen as early as possible.  */
-static
+ * callback.  */
+static __attribute__((__force_align_arg_pointer__))
 void
 __stdcall
 __MCF_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
@@ -356,7 +356,11 @@ __MCF_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
       }
   }
 
-static PIMAGE_TLS_CALLBACK __xl_b __attribute__((__section__(".CRT$XLB"), __used__)) = __MCF_tls_callback;
+/* This requires the main executable be linked with 'tlssup.o'. Such
+ * initialization shall happen as early as possible.  */
+static PIMAGE_TLS_CALLBACK __xl_b
+    __attribute__((__section__(".CRT$XLB"), __used__))
+    = __MCF_tls_callback;
 
 #endif  /* DLL_EXPORT  */
 
