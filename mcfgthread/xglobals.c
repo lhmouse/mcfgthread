@@ -304,8 +304,8 @@ __stdcall
 __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
   __asm__("__MCF_dll_startup@@Z");
 
-/* When building the shared library, invoke the common routine from the
- * DLL entry point callback.  */
+/* When building the shared library, invoke common routines from the DLL
+ * entry point callback.  */
 __attribute__((__force_align_arg_pointer__))
 int
 __stdcall
@@ -332,7 +332,7 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
 
 #else  /* DLL_EXPORT  */
 
-/* When building the static library, invoke the common routine from a TLS
+/* When building the static library, invoke common routines from a TLS
  * callback.  */
 static __attribute__((__force_align_arg_pointer__))
 void
@@ -356,9 +356,7 @@ __MCF_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
 
 /* This requires the main executable be linked with 'tlssup.o'. Such
  * initialization shall happen as early as possible.  */
-static PIMAGE_TLS_CALLBACK __xl_b
-    __attribute__((__section__(".CRT$XLB"), __used__))
-    = __MCF_tls_callback;
+static PIMAGE_TLS_CALLBACK __MCF__xl_b __MCF__CRT_ALLOC(".CRT$XLB") = __MCF_tls_callback;
 
 #endif  /* DLL_EXPORT  */
 

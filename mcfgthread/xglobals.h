@@ -62,6 +62,9 @@ __MCF_C_DECLARATIONS_BEGIN
 #define GetCurrentProcess()  ((HANDLE) -1)
 #define GetCurrentThread()   ((HANDLE) -2)
 
+/* Allocate a variable in a specific section.  */
+#define __MCF__CRT_ALLOC(x)  __attribute__((__section__(x), __used__))
+
 /* Define a non-zero but invalid value. This can be used to mark a pointer
  * to freed memory, or to prevent a static pointer from being placed into
  * the `.bss` section.  */
