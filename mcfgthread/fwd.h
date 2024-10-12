@@ -166,6 +166,7 @@ typedef struct __MCF_tls_element __MCF_tls_element;
 
 typedef struct __MCF_cond _MCF_cond;
 typedef struct __MCF_mutex _MCF_mutex;
+typedef struct __MCF_shared_mutex _MCF_shared_mutex;
 typedef struct __MCF_once _MCF_once;
 typedef struct __MCF_sem _MCF_sem;
 typedef struct __MCF_event _MCF_event;
