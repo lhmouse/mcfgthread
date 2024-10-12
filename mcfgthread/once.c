@@ -31,7 +31,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
 
       new = old;
       new.__locked = 1;
-      new.__nsleep = (old.__nsleep + old.__locked) & __MCF_MUTEX_NSLEEP_M;
+      new.__nsleep = (old.__nsleep + old.__locked) & __MCF_ONCE_NSLEEP_M;
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(once, &old, &new));
 
