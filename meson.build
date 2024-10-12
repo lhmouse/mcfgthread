@@ -190,8 +190,8 @@ test_src = [
   'test/at_quick_exit_ignored_on__Exit.c',
   'test/cxx11_no_exceptions.cpp',
   'test/cxx11_pedantic.cpp',
-  'test/mutex.cpp',
   'test/mutex_ctor_constexpr.cpp',
+  'test/mutex.cpp',
   'test/mutex_nonrecursive.cpp',
   'test/mutex_try_lock.cpp',
   'test/timed_mutex_try_lock_until.cpp',
@@ -368,16 +368,16 @@ foreach src: test_src
     test_c_args = [ '-std=c99', '-Wpedantic' ]
   endif
 
+  if src.endswith('.cpp')
+    test_link_args = [ '-static-libgcc', '-static-libstdc++' ]
+  endif
+
   if src in [ 'test/cxx11_no_exceptions.cpp' ]
     test_cpp_args = [ '-std=c++11', '-fno-rtti', '-fno-exceptions' ]
   endif
 
   if src in [ 'test/cxx11_pedantic.cpp' ]
     test_cpp_args = [ '-std=c++11', '-Wpedantic' ]
-  endif
-
-  if src.endswith('.cpp')
-    test_link_args = [ '-static-libgcc', '-static-libstdc++' ]
   endif
 
   test_exe = executable(src.underscorify(), src,
