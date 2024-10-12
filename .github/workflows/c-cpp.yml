@@ -30,7 +30,7 @@ jobs:
 
     - name: Install newest meson
       run: >-
-           sudo pip3 install meson  # --break-system-packages
+           sudo pip3 install meson --break-system-packages
 
     - name: Run tests
       run: >-
