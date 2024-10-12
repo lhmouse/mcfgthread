@@ -28,8 +28,8 @@ struct __MCF_once
     __MCF_EX uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
-/* Initializes a once-initialization flag dynamically.
- * Static ones should be initialized with `{0}`, like other structs.
+/* Initializes a once-initialization flag dynamically. Static ones should be
+ * initialized with `{0}`, like other structs.
  *
  * Each once-initialization flag can be in any of the three states: UNLOCKED,
  * LOCKED and READY. An once-initialization flag is initialized to the UNLOCKED
@@ -39,9 +39,10 @@ void
 _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT;
 
 /* Attempts to lock a once-initialization flag.
+ *
  * The return value of this function has the same semantics with the
- * `__cxa_guard_acquire()` function from the Itanium C++ ABI; see
- * <https://itanium-cxx-abi.github.io/cxx-abi/abi.html#once-ctor>
+ * `__cxa_guard_acquire()` function from the Itanium C++ ABI, as explained on
+ * <https://itanium-cxx-abi.github.io/cxx-abi/abi.html#once-ctor>.
  *
  * If the `__timeout_opt` argument points to a positive integer, it denotes the
  * expiration time in number of milliseconds since 1970-01-01T00:00:00Z. If it

@@ -35,8 +35,8 @@ struct __MCF_sem
       (__value_init)  }
 
 /* Initializes a semaphore dynamically. The argument is the initial value of
- * the semaphore, which shall not be negative.
- * Static ones should be initialized with `__MCF_SEM_INIT(__value_init)`.
+ * the semaphore, which shall not be negative. Static ones should be initialized
+ * with `__MCF_SEM_INIT(__value_init)`.
  *
  * Returns 0 if the initialization is successful, or -1 in case of invalid
  * arguments.  */
