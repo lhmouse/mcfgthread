@@ -18,7 +18,6 @@
 #include <mutex>  // unique_lock, lock_guard
 #include <new>  // operator new()
 #include <type_traits>  // many
-#include <iosfwd>
 
 namespace _MCF {
 
