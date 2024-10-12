@@ -181,7 +181,6 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
      * further threads to spin.  */
     size_t wake_one;
     _MCF_mutex old, new;
-
     _MCF_atomic_load_pptr_rlx(&old, mutex);
     do {
       new = old;
