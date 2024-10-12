@@ -27,8 +27,8 @@ struct __MCF_cond
     __MCF_EX uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
-/* Initializes a condition variable dynamically.
- * Static ones should be initialized with `{0}`, like other structs.  */
+/* Initializes a condition variable dynamically. Static ones should be
+ * initialized with `{0}`, like other structs.  */
 __MCF_COND_INLINE
 void
 _MCF_cond_init(_MCF_cond* __cond) __MCF_NOEXCEPT;

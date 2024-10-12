@@ -42,8 +42,8 @@ struct __MCF_event
     }
 
 /* Initializes an event dynamically. The argument is the initial value of
- * the event, which shall not be negative.
- * Static ones should be initialized with `__MCF_EVENT_INIT(__value_init)`.
+ * the event, which shall not be negative. Static ones should be initialized
+ * with `__MCF_EVENT_INIT(__value_init)`.
  *
  * Returns 0 if the initialization is successful, or -1 in case of invalid
  * arguments.  */

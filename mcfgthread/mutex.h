@@ -45,13 +45,14 @@ struct __MCF_mutex
  * This value had better be divisible by `__MCF_MUTEX_SP_NFAIL_THRESHOLD`.  */
 #define __MCF_MUTEX_MAX_SPIN_COUNT     1280U
 
-/* Initializes a mutex dynamically.
- * Static ones should be initialized with `{0}`, like other structs.  */
+/* Initializes a mutex dynamically. Static ones should be initialized with
+ * `{0}`, like other structs.  */
 __MCF_MUTEX_INLINE
 void
 _MCF_mutex_init(_MCF_mutex* __mutex) __MCF_NOEXCEPT;
 
 /* Attempts to lock a mutex.
+ *
  * This a simple mutex that is not recursive and performs no error checking. If
  * the caller attempts to lock a mutex which it has already held, deadlocks may
  * occur.
@@ -72,9 +73,10 @@ __MCF_MUTEX_INLINE
 int
 _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
-/* Releases a mutex. This function may be called by a different thread from
- * which locked the same mutex. If the mutex has not been locked, the behavior
- * is undefined.  */
+/* Releases a mutex. If the mutex has not been locked, the behavior is undefined.
+ *
+ * This function may be called by a different thread from which locked the same
+ * mutex.  */
 __MCF_MUTEX_IMPORT
 void
 _MCF_mutex_unlock_slow(_MCF_mutex* __mutex) __MCF_NOEXCEPT;
