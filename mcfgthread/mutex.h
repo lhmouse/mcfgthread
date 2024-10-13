@@ -22,21 +22,15 @@ __MCF_C_DECLARATIONS_BEGIN
 struct __MCF_mutex
   {
     __MCF_EX uintptr_t __locked : 1;
-
-#define __MCF_MUTEX_SP_MASK_M  15U
     __MCF_EX uintptr_t __sp_mask : 4;  /* mask of spinning threads; 1b/thread  */
-
-#define __MCF_MUTEX_SP_NFAIL_M  15U
     __MCF_EX uintptr_t __sp_nfail : 4;  /* number of timeouts after spinning  */
-
-#define __MCF_MUTEX_NSLEEP_M  (__MCF_UPTR_MAX >> 9)
     __MCF_EX uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
 /* If the spinning failure counter has reached this number, newcomers will not
  * attempt to spin at all.
- * This value must not be greater than `__MCF_MUTEX_SP_NFAIL_M`, and must not
- * be zero.  */
+ * This value must not be greater than the number of bits in `__sp_nfail`, and
+ * must not be zero.  */
 #define __MCF_MUTEX_SP_NFAIL_THRESHOLD   10U
 
 /* This is the initial number of iterations that a thread may spin before it

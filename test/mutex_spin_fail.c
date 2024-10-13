@@ -22,7 +22,7 @@ main(void)
     assert(mutex.__locked == 1);
     assert(mutex.__sp_nfail == 0);
 
-    for(size_t count = 1;  count <= __MCF_MUTEX_SP_NFAIL_M;  ++count) {
+    for(size_t count = 1;  count <= 15;  ++count) {
       printf("try failing: %d\n", (int) count);
       assert(_MCF_mutex_lock(&mutex, (const int64_t[]){ -100 }) == -1);
       assert(mutex.__locked == 1);
@@ -32,9 +32,9 @@ main(void)
     printf("try failing: final\n");
     assert(_MCF_mutex_lock(&mutex, (const int64_t[]){ -100 }) == -1);
     assert(mutex.__locked == 1);
-    assert(mutex.__sp_nfail == __MCF_MUTEX_SP_NFAIL_M);
+    assert(mutex.__sp_nfail == 15);
 
-    for(size_t count = __MCF_MUTEX_SP_NFAIL_M;  count >= 1;  --count) {
+    for(size_t count = 15;  count >= 1;  --count) {
       printf("try succeeding: %d\n", (int) count);
       _MCF_mutex_unlock(&mutex);
       assert(mutex.__locked == 0);

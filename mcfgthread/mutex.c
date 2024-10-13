@@ -20,7 +20,7 @@ do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
      * makes an attempt to lock the mutex where it is spinning. As the number
      * of spinning iterations is limited, this mechanism need not be reliable.  */
     static const uint32_t table_size = sizeof(__MCF_g->__mutex_spin_field);
-    static const uint32_t block_size = table_size / __builtin_ctz(__MCF_MUTEX_SP_MASK_M + 1U);
+    static const uint32_t block_size = table_size / 16U;
     static const uint32_t table_size_reciprocal = 0x100000000U / table_size;
 
     /* We use an `uint32_t` as a fixed-point ratio within [0,1). Hence
@@ -46,7 +46,7 @@ do_adjust_sp_nfail(uintptr_t old, int add)
     /* Adjust the value using saturation arithmetic.  */
     __MCF_ASSERT((-1 <= add) && (add <= +1));
     uintptr_t temp = old + (uint32_t) add;
-    return temp - temp / (__MCF_MUTEX_SP_NFAIL_M + 1U);
+    return temp - temp / 16U;
   }
 
 __MCF_DLLEXPORT
@@ -57,9 +57,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     /* If this mutex has not been locked, lock it; otherwise, if `__sp_mask`
-     * is less than `__MCF_MUTEX_SP_MASK_M` and `__sp_nfail` is less than
-     * `__MCF_MUTEX_SP_NFAIL_THRESHOLD`, which means the current thread is
-     * allowed to spin, allocate a spinning bit; otherwise, allocate a
+     * is less than the number bits in `__sp_nfail` and `__sp_nfail` is less
+     * than `__MCF_MUTEX_SP_NFAIL_THRESHOLD`, which means the current thread
+     * is allowed to spin, allocate a spinning bit; otherwise, allocate a
      * sleeping count. The spinning failure counter is decremented if the
      * mutex can be locked immediately; and incremented otherwise, no matter
      * whether the current thread is going to spin or not.  */
@@ -69,8 +69,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     _MCF_atomic_load_pptr_rlx(&old, mutex);
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
-      spinnable = (uint32_t) ((old.__sp_mask - __MCF_MUTEX_SP_MASK_M)
-                              & (old.__sp_nfail - __MCF_MUTEX_SP_NFAIL_THRESHOLD)) >> 31;
+      spinnable = (uint32_t) ((old.__sp_mask - 15U) & (old.__sp_nfail - __MCF_MUTEX_SP_NFAIL_THRESHOLD)) >> 31;
       new.__locked = 1;
       new.__sp_mask = old.__sp_mask | (old.__sp_mask + (old.__locked & spinnable));
       new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked * 2 - 1);
