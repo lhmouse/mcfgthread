@@ -41,11 +41,13 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     /* Allocate a count for the current thread.  */
     _MCF_cond old, new;
     _MCF_atomic_load_pptr_rlx(&old, cond);
+#pragma GCC diagnostic ignored "-Wconversion"
     do {
       new = old;
-      new.__nsleep = (old.__nsleep + 1U) & __MCF_COND_NSLEEP_M;
+      new.__nsleep = old.__nsleep + 1U;
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
+#pragma GCC diagnostic pop
 
     if(unlock_opt) {
       /* Now, unlock the associated mutex. If another thread attempts to signal
@@ -62,14 +64,16 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
        * that an old waiter has left by decrementing the number of sleeping
        * threads. But see below...  */
       _MCF_atomic_load_pptr_rlx(&old, cond);
+#pragma GCC diagnostic ignored "-Wconversion"
       do {
         if(old.__nsleep == 0)
           break;
 
         new = old;
-        new.__nsleep = (old.__nsleep - 1U) & __MCF_COND_NSLEEP_M;
+        new.__nsleep = old.__nsleep - 1U;
       }
       while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
+#pragma GCC diagnostic pop
 
       if(old.__nsleep != 0)
         return -1;
@@ -96,12 +100,14 @@ _MCF_cond_signal_some_slow(_MCF_cond* cond, size_t max)
     size_t wake_num;
     _MCF_cond old, new;
     _MCF_atomic_load_pptr_rlx(&old, cond);
+#pragma GCC diagnostic ignored "-Wconversion"
     do {
       new = old;
       wake_num = _MCF_minz(old.__nsleep, max);
-      new.__nsleep = (old.__nsleep - wake_num) & __MCF_COND_NSLEEP_M;
+      new.__nsleep = old.__nsleep - wake_num;
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
+#pragma GCC diagnostic pop
 
     return __MCF_batch_release_common(cond, wake_num);
   }
