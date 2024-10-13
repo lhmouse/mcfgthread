@@ -31,7 +31,8 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
       if(old.__value != undesired)
         return old.__value;
 
-      new = old;
+      new.__value = old.__value;
+      new.__reserved_bit = 0;
       new.__nsleep = old.__nsleep + 1U;
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(event, &old, &new));
@@ -49,7 +50,8 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
         if(old.__nsleep == 0)
           break;
 
-        new = old;
+        new.__value = old.__value;
+        new.__reserved_bit = 0;
         new.__nsleep = old.__nsleep - 1U;
       }
       while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(event, &old, &new));

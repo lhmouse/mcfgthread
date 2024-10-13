@@ -69,10 +69,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     _MCF_atomic_load_pptr_rlx(&old, mutex);
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
-      new = old;
-      new.__locked = 1;
       spinnable = (uint32_t) ((old.__sp_mask - __MCF_MUTEX_SP_MASK_M)
                               & (old.__sp_nfail - __MCF_MUTEX_SP_NFAIL_THRESHOLD)) >> 31;
+      new.__locked = 1;
       new.__sp_mask = old.__sp_mask | (old.__sp_mask + (old.__locked & spinnable));
       new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked * 2 - 1);
       new.__nsleep = old.__nsleep + (old.__locked & ~spinnable);
@@ -110,9 +109,10 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
           if(old.__locked != 0)
             break;
 
-          new = old;
           new.__locked = 1;
+          new.__sp_mask = old.__sp_mask;
           new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, -1);
+          new.__nsleep = old.__nsleep;
         }
         while(!_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new));
 #pragma GCC diagnostic pop
@@ -130,8 +130,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       _MCF_atomic_load_pptr_rlx(&old, mutex);
 #pragma GCC diagnostic ignored "-Wconversion"
       do {
-        new = old;
         new.__locked = 1;
+        new.__sp_mask = old.__sp_mask;
         new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked - 1);
         new.__nsleep = old.__nsleep + old.__locked;
       }
@@ -155,7 +155,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         if(old.__nsleep == 0)
           break;
 
-        new = old;
+        new.__locked = old.__locked;
+        new.__sp_mask = old.__sp_mask;
+        new.__sp_nfail = old.__sp_nfail;
         new.__nsleep = old.__nsleep - 1U;
       }
       while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(mutex, &old, &new));
@@ -191,10 +193,10 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
     _MCF_atomic_load_pptr_rlx(&old, mutex);
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
-      new = old;
+      wake_one = _MCF_minz(old.__nsleep, 1);
       new.__locked = 0;
       new.__sp_mask = old.__sp_mask & (old.__sp_mask - 1U);
-      wake_one = _MCF_minz(old.__nsleep, 1);
+      new.__sp_nfail = old.__sp_nfail;
       new.__nsleep = old.__nsleep - wake_one;
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_rel(mutex, &old, &new));

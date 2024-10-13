@@ -28,7 +28,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
       if(old.__ready != 0)
         return 0;
 
-      new = old;
+      new.__ready = old.__ready;
       new.__locked = 1;
       new.__nsleep = old.__nsleep + old.__locked;
     }
@@ -52,7 +52,8 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         if(old.__nsleep == 0)
           break;
 
-        new = old;
+        new.__ready = old.__ready;
+        new.__locked = old.__locked;
         new.__nsleep = old.__nsleep - 1U;
       }
       while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(once, &old, &new));
@@ -87,9 +88,9 @@ _MCF_once_abort(_MCF_once* once)
     _MCF_atomic_load_pptr_rlx(&old, once);
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
-      new = old;
-      new.__locked = 0;
       wake_one = _MCF_minz(old.__nsleep, 1);
+      new.__ready = old.__ready;
+      new.__locked = 0;
       new.__nsleep = old.__nsleep - wake_one;
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(once, &old, &new));

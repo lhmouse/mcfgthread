@@ -43,7 +43,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     _MCF_atomic_load_pptr_rlx(&old, cond);
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
-      new = old;
+      new.__reserved_bits = 0;
       new.__nsleep = old.__nsleep + 1U;
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
@@ -69,7 +69,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
         if(old.__nsleep == 0)
           break;
 
-        new = old;
+        new.__reserved_bits = 0;
         new.__nsleep = old.__nsleep - 1U;
       }
       while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
@@ -102,8 +102,8 @@ _MCF_cond_signal_some_slow(_MCF_cond* cond, size_t max)
     _MCF_atomic_load_pptr_rlx(&old, cond);
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
-      new = old;
       wake_num = _MCF_minz(old.__nsleep, max);
+      new.__reserved_bits = 0;
       new.__nsleep = old.__nsleep - wake_num;
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));

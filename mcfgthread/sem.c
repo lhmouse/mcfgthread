@@ -36,7 +36,6 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
         if(old.__value >= 0)
           break;
 
-        new = old;
         new.__value = old.__value + 1;
       }
       while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(sem, &old, &new));
@@ -73,7 +72,6 @@ _MCF_sem_signal_some(_MCF_sem* sem, intptr_t value_add)
       if(old.__value > __MCF_SEM_VALUE_MAX - value_add)
         return -2;  /* would overflow  */
 
-      new = old;
       wake_num = _MCF_minz(-(size_t) (old.__value & (old.__value >> (__MCF_PTR_BITS - 1))), (size_t) value_add);
       new.__value = old.__value + value_add;
     }
