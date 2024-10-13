@@ -73,7 +73,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       new.__locked = 1;
       new.__sp_mask = old.__sp_mask | (old.__sp_mask + (old.__locked & spinnable));
       new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked * 2 - 1);
-      new.__nsleep = old.__nsleep + (old.__locked & ~spinnable);
+      new.__nsleep = old.__nsleep + (old.__locked & (spinnable - 1U));
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(mutex, &old, &new));
 #pragma GCC diagnostic pop
