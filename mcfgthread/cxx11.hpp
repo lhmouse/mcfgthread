@@ -12,12 +12,16 @@
 #include "gthr_aux.h"
 #include "cxa.h"
 #include "event.h"
+#include "shared_mutex.h"
 #include <chrono>  // duration, time_point
 #include <functional>  // mem_fn(), invoke()
 #include <system_error>  // system_error, errc, error_code
 #include <mutex>  // unique_lock, lock_guard
 #include <new>  // operator new()
 #include <type_traits>  // many
+#if __cplusplus >= 201402L
+#include <shared_mutex>  // shared_lock
+#endif
 
 namespace _MCF {
 
@@ -28,6 +32,9 @@ extern "C" void* __dso_handle;
 namespace chrono = ::std::chrono;
 using ::std::lock_guard;
 using ::std::unique_lock;
+#ifdef __cpp_lib_shared_timed_mutex  // C++14
+using ::std::shared_lock;
+#endif
 #ifdef __cpp_lib_scoped_lock  // C++17
 using ::std::scoped_lock;
 #endif
@@ -43,6 +50,8 @@ using ::std::lock;
 struct once_flag;
 class mutex;
 using timed_mutex = mutex;
+class shared_mutex;  // C++17
+using shared_timed_mutex = shared_mutex;  // C++14
 class recursive_mutex;
 using recursive_timed_mutex = recursive_mutex;
 enum class cv_status { no_timeout, timeout };
@@ -336,6 +345,103 @@ class mutex
     unlock() noexcept  // strengthened
       {
         ::_MCF_mutex_unlock(this->_M_mtx);
+      }
+  };
+
+// Reference implementation for [thread.sharedmutex.class] and
+// [thread.sharedtimedmutex.class].
+class shared_mutex
+  {
+  private:
+    ::_MCF_shared_mutex _M_smtx[1] = { };
+
+    shared_mutex(const shared_mutex&) = delete;
+    shared_mutex& operator=(const shared_mutex&) = delete;
+
+  public:
+    constexpr shared_mutex() noexcept { }
+
+    using native_handle_type = ::_MCF_shared_mutex*;
+
+    __MCF_CXX14(constexpr)
+    native_handle_type
+    native_handle() noexcept
+      {
+        return this->_M_smtx;
+      }
+
+    void
+    lock() noexcept  // strengthened
+      {
+        int __err = ::_MCF_shared_mutex_lock_exclusive(this->_M_smtx, nullptr);
+        __MCF_ASSERT(__err == 0);
+      }
+
+    bool
+    try_lock() noexcept  // strengthened
+      {
+        int64_t __timeout = 0;
+        int __err = ::_MCF_shared_mutex_lock_exclusive(this->_M_smtx, &__timeout);
+        return __err == 0;
+      }
+
+    template<typename _Clock, typename _Dur>
+    bool
+    try_lock_until(const chrono::time_point<_Clock, _Dur>& __abs_time)
+      {
+        int __err = _Noadl::__wait_until(__abs_time, ::_MCF_shared_mutex_lock_exclusive, this->_M_smtx);
+        return __err == 0;
+      }
+
+    template<typename _Rep, typename _Period>
+    bool
+    try_lock_for(const chrono::duration<_Rep, _Period>& __rel_time)
+      {
+        int __err = _Noadl::__wait_for(__rel_time, ::_MCF_shared_mutex_lock_exclusive, this->_M_smtx);
+        return __err == 0;
+      }
+
+    void
+    unlock() noexcept  // strengthened
+      {
+        ::_MCF_shared_mutex_unlock(this->_M_smtx);
+      }
+
+    void
+    lock_shared() noexcept  // strengthened
+      {
+        int __err = ::_MCF_shared_mutex_lock_shared(this->_M_smtx, nullptr);
+        __MCF_ASSERT(__err == 0);
+      }
+
+    bool
+    try_lock_shared() noexcept  // strengthened
+      {
+        int64_t __timeout = 0;
+        int __err = ::_MCF_shared_mutex_lock_shared(this->_M_smtx, &__timeout);
+        return __err == 0;
+      }
+
+    template<typename _Clock, typename _Dur>
+    bool
+    try_lock_shared_until(const chrono::time_point<_Clock, _Dur>& __abs_time)
+      {
+        int __err = _Noadl::__wait_until(__abs_time, ::_MCF_shared_mutex_lock_shared, this->_M_smtx);
+        return __err == 0;
+      }
+
+    template<typename _Rep, typename _Period>
+    bool
+    try_lock_shared_for(const chrono::duration<_Rep, _Period>& __rel_time)
+      {
+        int __err = _Noadl::__wait_for(__rel_time, ::_MCF_shared_mutex_lock_shared, this->_M_smtx);
+        return __err == 0;
+      }
+
+    void
+    unlock_shared() noexcept  // strengthened
+      {
+        ::_MCF_shared_mutex_unlock(this->_M_smtx);
       }
   };
 

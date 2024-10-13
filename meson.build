@@ -25,6 +25,7 @@ mcfgthread_include = [
   'mcfgthread/fwd.h',
   'mcfgthread/clock.h',
   'mcfgthread/mutex.h',
+  'mcfgthread/shared_mutex.h',
   'mcfgthread/cond.h',
   'mcfgthread/once.h',
   'mcfgthread/sem.h',
@@ -51,6 +52,7 @@ mcfgthread_src_min = [
   'mcfgthread/fwd.c',
   'mcfgthread/clock.c',
   'mcfgthread/mutex.c',
+  'mcfgthread/shared_mutex.c',
   'mcfgthread/cond.c',
   'mcfgthread/once.c',
   'mcfgthread/sem.c',
@@ -88,6 +90,11 @@ test_src = [
   'test/mutex_zero_timeout.c',
   'test/mutex_timeout.c',
   'test/mutex.c',
+  'test/shared_mutex_zero_timeout.c',
+  'test/shared_mutex_timeout.c',
+  'test/shared_mutex_shared.c',
+  'test/shared_mutex_shared_too_many.c',
+  'test/shared_mutex_exclusive.c',
   'test/cond_timeout.c',
   'test/cond_multi_wait.c',
   'test/sem_init.c',
@@ -192,12 +199,22 @@ test_src = [
   'test/at_quick_exit_ignored_on__Exit.c',
   'test/cxx11_no_exceptions.cpp',
   'test/cxx11_pedantic.cpp',
+  'test/cxx14_pedantic.cpp',
   'test/mutex_ctor_constexpr.cpp',
   'test/mutex.cpp',
   'test/mutex_nonrecursive.cpp',
   'test/mutex_try_lock.cpp',
   'test/timed_mutex_try_lock_until.cpp',
   'test/timed_mutex_try_lock_for.cpp',
+  'test/shared_mutex_ctor_constexpr.cpp',
+  'test/shared_mutex_shared.cpp',
+  'test/shared_mutex_exclusive.cpp',
+  'test/shared_mutex_try_lock_shared.cpp',
+  'test/shared_mutex_try_lock_exclusive.cpp',
+  'test/shared_timed_mutex_try_lock_shared_until.cpp',
+  'test/shared_timed_mutex_try_lock_exclusive_until.cpp',
+  'test/shared_timed_mutex_try_lock_shared_for.cpp',
+  'test/shared_timed_mutex_try_lock_exclusive_for.cpp',
   'test/condition_variable_consumers.cpp',
   'test/condition_variable_wait_until.cpp',
   'test/condition_variable_wait_for.cpp',
@@ -381,6 +398,18 @@ foreach src: test_src
 
   if src in [ 'test/cxx11_pedantic.cpp' ]
     test_cpp_args = [ '-std=c++11', '-Wpedantic' ]
+  endif
+
+  if src in [ 'test/cxx14_pedantic.cpp' ]
+    test_cpp_args = [ '-std=c++14', '-Wpedantic' ]
+  endif
+
+  if src.startswith('test/shared_mutex_')
+    test_cpp_args = [ '-std=c++17' ]
+  endif
+
+  if src.startswith('test/shared_timed_mutex_')
+    test_cpp_args = [ '-std=c++14' ]
   endif
 
   test_exe = executable(src.underscorify(), src,
