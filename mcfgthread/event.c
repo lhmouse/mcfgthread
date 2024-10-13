@@ -26,14 +26,16 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
     _MCF_event old, new;
   try_wait_loop:
     _MCF_atomic_load_pptr_acq(&old, event);
+#pragma GCC diagnostic ignored "-Wconversion"
     do {
       if(old.__value != undesired)
         return old.__value;
 
       new = old;
-      new.__nsleep = (old.__nsleep + 1U) & __MCF_EVENT_NSLEEP_M;
+      new.__nsleep = old.__nsleep + 1U;
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(event, &old, &new));
+#pragma GCC diagnostic pop
 
     /* Try waiting.  */
     int err = __MCF_keyed_event_wait(event, &nt_timeout);
@@ -42,14 +44,16 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, event);
+#pragma GCC diagnostic ignored "-Wconversion"
       do {
         if(old.__nsleep == 0)
           break;
 
         new = old;
-        new.__nsleep = (old.__nsleep - 1U) & __MCF_EVENT_NSLEEP_M;
+        new.__nsleep = old.__nsleep - 1U;
       }
       while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(event, &old, &new));
+#pragma GCC diagnostic pop
 
       if(old.__nsleep != 0)
         return -1;
