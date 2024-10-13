@@ -28,7 +28,7 @@ extern "C" void* __dso_handle;
 namespace chrono = ::std::chrono;
 using ::std::lock_guard;
 using ::std::unique_lock;
-#ifdef __cpp_lib_scoped_lock
+#ifdef __cpp_lib_scoped_lock  // C++17
 using ::std::scoped_lock;
 #endif
 using ::std::defer_lock_t;
