@@ -729,16 +729,13 @@ class thread
           };
 
         // Create the thread. User-defined data are initialized to zeroes.
-        ::_MCF_thread* __thr = ::_MCF_thread_new_aligned(__thread_fn, alignof(_My_data), nullptr, sizeof(_My_data));
-        if(!__thr)
+        this->_M_thr = ::_MCF_thread_new_aligned(__thread_fn, alignof(_My_data), nullptr, sizeof(_My_data));
+        if(!this->_M_thr)
           __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_thread_new_aligned");
 
-        this->_M_thr = __thr;
-        _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(__thr);
-
         // active
-        _Thread_sentry __sentry = { __sentry_cancel_thread, __thr };
-        ::new(static_cast<void*>(__my->_M_invoker)) _My_invoker(__callable, __args...);
+        _Thread_sentry __sentry = { __sentry_cancel_thread, this->_M_thr };
+        ::new(::_MCF_thread_get_data(this->_M_thr)) _My_invoker(__callable, __args...);
         __sentry.__deferred_fn = __sentry_complete_thread;
       }
 
