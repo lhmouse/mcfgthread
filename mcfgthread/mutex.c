@@ -20,12 +20,13 @@ do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
      * makes an attempt to lock the mutex where it is spinning. As the number
      * of spinning iterations is limited, this mechanism need not be reliable.  */
     static const uint32_t table_size = sizeof(__MCF_g->__mutex_spin_field);
+    static const uint32_t table_size_reciprocal = 0x100000000U / table_size;
 
     /* We use an `uint32_t` as a fixed-point ratio within [0,1). Hence
      * `offset_in_table = ratio / 2^32 * table_size = ratio / (2^32 / table_size)`,
      * where `2^32 / table_size` is a constant.  */
     uint32_t ratio = (uint32_t) ((uintptr_t) mutex / sizeof(void*)) * 0x9E3779B9U;
-    DWORD base = ratio / (uint32_t) (0x100000000U / table_size);
+    DWORD base = ratio / table_size_reciprocal;
     __MCF_ASSERT(base < table_size);
 
     /* The unfortunate GCC `__builtin_ctz()` returns a signed integer which
