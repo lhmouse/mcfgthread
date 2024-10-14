@@ -733,8 +733,8 @@ class thread
         if(!__thr)
           __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_thread_new_aligned");
 
-        _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(__thr);
         this->_M_thr = __thr;
+        _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(__thr);
 
         // active
         _Thread_sentry __sentry = { __sentry_cancel_thread, __thr };
@@ -812,7 +812,7 @@ class thread
         this->_M_thr = nullptr;
       }
 
-    constexpr
+    __MCF_CXX14(constexpr)
     id
     get_id() const noexcept
       {
@@ -936,33 +936,25 @@ template<typename _Tp>
 class thread_specific_ptr
   {
   private:
-    ::_MCF_tls_key* _M_key = nullptr;
+    ::_MCF_tls_key* _M_key;
 
     thread_specific_ptr(const thread_specific_ptr&) = delete;
     thread_specific_ptr& operator=(const thread_specific_ptr&) = delete;
 
-    static
-    void
-    __default_cleanup(_Tp* __ptr) noexcept
-      {
-        delete __ptr;
-      }
-
-    using _Native_cleanup = void (void*);
-    using _Specialized_cleanup = void (_Tp*);
-
   public:
-    explicit
-    thread_specific_ptr(_Specialized_cleanup* __cleanup_opt)
+    thread_specific_ptr()
       {
-        this->_M_key = ::_MCF_tls_key_new((_Native_cleanup*) __cleanup_opt);
+        this->_M_key = ::_MCF_tls_key_new(+[](void* __vptr) noexcept { delete (_Tp*) __vptr; });
         if(!this->_M_key)
           __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_tls_key_new");
       }
 
-    thread_specific_ptr()
-      : thread_specific_ptr(__default_cleanup)
+    explicit
+    thread_specific_ptr(void (*__cleanup_opt) (_Tp*))
       {
+        this->_M_key = ::_MCF_tls_key_new((::_MCF_tls_dtor*)(intptr_t) __cleanup_opt);
+        if(!this->_M_key)
+          __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_tls_key_new");
       }
 
     ~thread_specific_ptr()
