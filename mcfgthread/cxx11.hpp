@@ -18,6 +18,7 @@
 #include <system_error>  // system_error, errc, error_code
 #include <mutex>  // unique_lock, lock_guard
 #include <new>  // operator new()
+#include <iosfwd>  // basic_ostream
 #include <type_traits>  // many
 #if __cplusplus >= 201402L
 #include <shared_mutex>  // shared_lock
@@ -302,6 +303,8 @@ class mutex
     constexpr mutex() noexcept { }
 
     using native_handle_type = ::_MCF_mutex*;
+    using lock_guard_type = lock_guard<mutex>;  // extension
+    using unique_lock_type = unique_lock<mutex>;  // extension
 
     __MCF_CXX14(constexpr)
     native_handle_type
@@ -362,6 +365,11 @@ class shared_mutex
     constexpr shared_mutex() noexcept { }
 
     using native_handle_type = ::_MCF_shared_mutex*;
+    using lock_guard_type = lock_guard<shared_mutex>;  // extension
+    using unique_lock_type = unique_lock<shared_mutex>;  // extension
+#ifdef __cpp_lib_shared_timed_mutex  // C++14
+    using shared_lock_type = shared_lock<shared_mutex>;  // extension
+#endif
 
     __MCF_CXX14(constexpr)
     native_handle_type
@@ -459,6 +467,8 @@ class recursive_mutex
     constexpr recursive_mutex() noexcept { }  // strengthened
 
     using native_handle_type = ::__MCF_gthr_rc_mutex*;
+    using lock_guard_type = lock_guard<recursive_mutex>;  // extension
+    using unique_lock_type = unique_lock<recursive_mutex>;  // extension
 
     __MCF_CXX14(constexpr)
     native_handle_type
@@ -526,6 +536,8 @@ class condition_variable
     constexpr condition_variable() noexcept { }  // strengthened
 
     using native_handle_type = ::_MCF_cond*;
+    using mutex_type = lock_guard<mutex>;  // extension
+    using unique_lock_type = unique_lock<mutex>;  // extension
 
     __MCF_CXX14(constexpr)
     native_handle_type
@@ -547,12 +559,12 @@ class condition_variable
       }
 
     void
-    wait(unique_lock<mutex>& __lock) noexcept  // strengthened
+    wait(unique_lock_type& __lock) noexcept  // strengthened
       {
         __MCF_ASSERT(__lock.owns_lock());  // must owning a mutex
         __MCF_ASSERT(__lock.mutex() != nullptr);
 
-        unique_lock<mutex> __temp_lock;
+        unique_lock_type __temp_lock;
         __temp_lock.swap(__lock);
 
         int __err = ::_MCF_cond_wait(this->_M_cnd,
@@ -565,7 +577,7 @@ class condition_variable
 
     template<typename _Predicate>
     void
-    wait(unique_lock<mutex>& __lock, _Predicate&& __pred)
+    wait(unique_lock_type& __lock, _Predicate&& __pred)
       {
         while(!(bool) __pred())
           this->wait(__lock);
@@ -573,12 +585,12 @@ class condition_variable
 
     template<typename _Clock, typename _Dur>
     cv_status
-    wait_until(unique_lock<mutex>& __lock, const chrono::time_point<_Clock, _Dur>& __abs_time)
+    wait_until(unique_lock_type& __lock, const chrono::time_point<_Clock, _Dur>& __abs_time)
       {
         __MCF_ASSERT(__lock.owns_lock());  // must owning a mutex
         __MCF_ASSERT(__lock.mutex() != nullptr);
 
-        unique_lock<mutex> __temp_lock;
+        unique_lock_type __temp_lock;
         __temp_lock.swap(__lock);
 
         int __err = _Noadl::__wait_until(__abs_time, ::_MCF_cond_wait, this->_M_cnd,
@@ -591,7 +603,7 @@ class condition_variable
 
     template<typename _Clock, typename _Dur, typename _Predicate>
     bool
-    wait_until(unique_lock<mutex>& __lock, const chrono::time_point<_Clock, _Dur>& __abs_time, _Predicate&& __pred)
+    wait_until(unique_lock_type& __lock, const chrono::time_point<_Clock, _Dur>& __abs_time, _Predicate&& __pred)
       {
         while(!(bool) __pred())
           if(this->wait_until(__lock, __abs_time) == cv_status::timeout)
@@ -601,12 +613,12 @@ class condition_variable
 
     template<typename _Rep, typename _Period>
     cv_status
-    wait_for(unique_lock<mutex>& __lock, const chrono::duration<_Rep, _Period>& __rel_time)
+    wait_for(unique_lock_type& __lock, const chrono::duration<_Rep, _Period>& __rel_time)
       {
         __MCF_ASSERT(__lock.owns_lock());  // must owning a mutex
         __MCF_ASSERT(__lock.mutex() != nullptr);
 
-        unique_lock<mutex> __temp_lock;
+        unique_lock_type __temp_lock;
         __temp_lock.swap(__lock);
 
         int __err = _Noadl::__wait_for(__rel_time, ::_MCF_cond_wait, this->_M_cnd,
@@ -619,7 +631,7 @@ class condition_variable
 
     template<typename _Rep, typename _Period, typename _Predicate>
     bool
-    wait_for(unique_lock<mutex>& __lock, const chrono::duration<_Rep, _Period>& __rel_time, _Predicate&& __pred)
+    wait_for(unique_lock_type& __lock, const chrono::duration<_Rep, _Period>& __rel_time, _Predicate&& __pred)
       {
         return this->wait_until(__lock, chrono::steady_clock::now() + __rel_time, __pred);
       }
@@ -639,16 +651,25 @@ notify_all_at_thread_exit(condition_variable& __cond, unique_lock<mutex> __lock)
   }
 
 // Reference implementation for [thread.thread.class]
+struct _Thread_id
+  {
+    uint32_t _M_tid;  // Windows thread ID
+
+    constexpr _Thread_id() noexcept : _M_tid()  { }
+    explicit constexpr _Thread_id(::_MCF_thread* __thr_opt) noexcept
+      : _M_tid(__thr_opt ? ::_MCF_thread_get_tid(__thr_opt) : 0U)  { }
+  };
+
 class thread
   {
   private:
-    ::_MCF_thread* _M_thr = nullptr;
+    ::_MCF_thread* _M_thr;
 
     thread(const thread&) = delete;
     thread& operator=(const thread&) = delete;
 
   public:
-    constexpr thread() noexcept { }
+    constexpr thread() noexcept : _M_thr() { }
 
     template<typename _Callable, typename... _Args,
     __MCF_SFINAE_DISABLE_IF(::std::is_same<typename ::std::decay<_Callable>::type, thread>::value)>
@@ -746,13 +767,7 @@ class thread
       }
 
     using native_handle_type = ::_MCF_thread*;
-
-    struct id
-      {
-        uint32_t _M_tid = 0;  // native thread ID
-
-        constexpr id() noexcept { }
-      };
+    using id = _Thread_id;
 
     __MCF_CXX14(constexpr)
     native_handle_type
@@ -797,14 +812,11 @@ class thread
         this->_M_thr = nullptr;
       }
 
-    __MCF_CXX14(constexpr)
+    constexpr
     id
     get_id() const noexcept
       {
-        id __id;
-        if(this->_M_thr)
-          __id._M_tid = ::_MCF_thread_get_tid(this->_M_thr);
-        return __id;
+        return id(this->_M_thr);
       }
 
     static
@@ -959,6 +971,8 @@ class thread_specific_ptr
       }
 
     using native_handle_type = ::_MCF_tls_key*;
+    using element_type = _Tp;
+    using pointer = _Tp*;
 
     __MCF_CXX14(constexpr)
     native_handle_type
@@ -966,9 +980,6 @@ class thread_specific_ptr
       {
         return this->_M_key;
       }
-
-    using element_type = _Tp;
-    using pointer = _Tp*;
 
     pointer
     get() const noexcept
