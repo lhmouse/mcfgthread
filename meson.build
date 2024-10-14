@@ -267,8 +267,7 @@ add_project_arguments(
    cc.get_supported_arguments(
       '-Werror=discarded-qualifiers', '-Werror=strict-prototypes',
       '-Werror=incompatible-pointer-types', '-Werror=int-conversion',
-      '-Werror=implicit-function-declaration', '-Werror=implicit-int',
-      '-Wno-c99-extensions'),
+      '-Werror=implicit-function-declaration', '-Werror=implicit-int'),
    language: 'c')
 
 add_project_arguments(
@@ -364,7 +363,8 @@ foreach src: test_src
 
   if src in [ 'test/gthr_c89_pedantic.c' ]
     test_c_args = [ '-std=c89', '-Wpedantic', '-Wno-variadic-macros',
-                    '-Wno-long-long', '-Werror=declaration-after-statement' ]
+                    '-Wno-long-long', '-Werror=declaration-after-statement',
+                    cc.get_supported_arguments('-Wno-c99-extensions') ]
   endif
 
   if src in [ 'test/c11_c99_pedantic.c' ]
