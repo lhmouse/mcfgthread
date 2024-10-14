@@ -197,11 +197,7 @@ typedef void __MCF_cxa_dtor_cdecl(void* __arg);
 /* Support both calling conventions with a transparent union.  */
 typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __arg);
 typedef union __MCF_cxa_dtor_union __MCF_cxa_dtor_union;
-#  ifdef __cplusplus
-union __MCF_cxa_dtor_union
-#  else
 union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
-#  endif
   {
     __MCF_cxa_dtor_cdecl* __cdecl_ptr;
     __MCF_cxa_dtor_thiscall* __thiscall_ptr;
