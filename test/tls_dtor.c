@@ -21,6 +21,7 @@ void
 tls_destructor(void* ptr)
   {
     printf("thread %d tls_destructor\n", (int) _MCF_thread_self_tid());
+    assert(_MCF_tls_get(key) == __MCF_nullptr);
     __atomic_fetch_add((int*) ptr, 1, __ATOMIC_RELAXED);
   }
 
