@@ -11,7 +11,7 @@
 #include "cond.h"
 #include "dtor_queue.h"
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __attribute__((__used__))
 EXCEPTION_DISPOSITION
 __cdecl
 __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
