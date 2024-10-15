@@ -116,7 +116,7 @@ _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __time
       return 0;
 
     /* If a timeout of zero is specified, don't block at all.  */
-    if(__timeout_opt && (*__timeout_opt == 0) && __old.__locked)
+    if(__timeout_opt && (*__timeout_opt == 0) && (__old.__nshare == 0x3FFF))
       return -1;
 #endif  /* speed */
 
@@ -136,7 +136,7 @@ _MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smutex, const int64_t* __t
       return 0;
 
     /* If a timeout of zero is specified, don't block at all.  */
-    if(__timeout_opt && (*__timeout_opt == 0) && __old.__locked)
+    if(__timeout_opt && (*__timeout_opt == 0) && (__old.__nshare != 0))
       return -1;
 #endif  /* speed */
 
