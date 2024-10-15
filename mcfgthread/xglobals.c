@@ -8,7 +8,7 @@
 #define __MCF_XGLOBALS_READONLY
 #include "xglobals.i"
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __attribute__((__used__))
 EXCEPTION_DISPOSITION
 __cdecl
 __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
