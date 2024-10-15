@@ -1,10 +1,18 @@
 #!/bin/bash -e
 
-meson setup  \
-  -Ddebug=true -Doptimization=0  \
-  -Denable-debug-checks=true  \
+if ! grep -Eoi '^mingw' /proc/version &>/dev/null
+then
+  _cross_file='--cross-file meson.cross.x86_64-w64-mingw32'
+fi
+
+meson setup ${_cross_file}  \
+  -Ddebug=true -Doptimization=0 -Denable-debug-checks=true  \
   build_debug
 
-meson setup  \
+meson setup ${_cross_file}  \
   -Ddebug=true -Doptimization=s  \
   build_release
+
+meson setup ${_cross_file}  \
+  -Ddebug=true -Doptimization=3 -Db_flto=true  \
+  build_optimized
