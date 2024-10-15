@@ -13,7 +13,7 @@
 
 __MCF_DLLEXPORT
 int
-_MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* mutex, const int64_t* timeout_opt)
+_MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* timeout_opt)
   {
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
@@ -25,14 +25,14 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* mutex, const int64_t* time
     _MCF_shared_mutex old, new;
     uint32_t shareable;
   try_lock_loop:
-    _MCF_atomic_load_pptr_rlx(&old, mutex);
+    _MCF_atomic_load_pptr_rlx(&old, smutex);
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
       shareable = (uint32_t) ((old.__nshare - __MCF_SHARED_MUTEX_MAX_SHARE) & (old.__nsleep - 1U)) >> 31;
       new.__nshare = old.__nshare + shareable;
       new.__nsleep = old.__nsleep + 1U - shareable;
     }
-    while(!_MCF_atomic_cmpxchg_weak_pptr_arl(mutex, &old, &new));
+    while(!_MCF_atomic_cmpxchg_weak_pptr_arl(smutex, &old, &new));
 #pragma GCC diagnostic pop
 
     /* If this mutex has been locked by the current thread, succeed.  */
@@ -40,12 +40,12 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* mutex, const int64_t* time
       return 0;
 
     /* Try waiting.  */
-    int err = __MCF_keyed_event_wait(mutex, &nt_timeout);
+    int err = __MCF_keyed_event_wait(smutex, &nt_timeout);
     while(err != 0) {
       /* Tell another thread which is going to signal this mutex that an old
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
-      _MCF_atomic_load_pptr_rlx(&old, mutex);
+      _MCF_atomic_load_pptr_rlx(&old, smutex);
 #pragma GCC diagnostic ignored "-Wconversion"
       do {
         if(old.__nsleep == 0)
@@ -54,7 +54,7 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* mutex, const int64_t* time
         new.__nshare = old.__nshare;
         new.__nsleep = old.__nsleep - 1U;
       }
-      while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(mutex, &old, &new));
+      while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(smutex, &old, &new));
 #pragma GCC diagnostic pop
 
       if(old.__nsleep != 0)
@@ -67,7 +67,7 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* mutex, const int64_t* time
        * keyed event before us, so we set the timeout to zero. If we time out
        * once more, the third thread will have incremented the number of
        * sleeping threads and we can try decrementing it again.  */
-      err = __MCF_keyed_event_wait(mutex, &(__MCF_winnt_timeout) { 0 });
+      err = __MCF_keyed_event_wait(smutex, &(__MCF_winnt_timeout) { 0 });
     }
 
     /* We have got notified.  */
@@ -77,7 +77,7 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* mutex, const int64_t* time
 
 __MCF_DLLEXPORT
 int
-_MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* mutex, const int64_t* timeout_opt)
+_MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* timeout_opt)
   {
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
@@ -88,13 +88,13 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* mutex, const int64_t* t
      * count.  */
     _MCF_shared_mutex old, new;
   try_lock_loop:
-    _MCF_atomic_load_pptr_rlx(&old, mutex);
+    _MCF_atomic_load_pptr_rlx(&old, smutex);
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
       new.__nshare = old.__nshare + ((old.__nshare - 1U) >> 14);
       new.__nsleep = old.__nsleep + ((old.__nshare + 0x3FFFU) >> 14);
     }
-    while(!_MCF_atomic_cmpxchg_weak_pptr_arl(mutex, &old, &new));
+    while(!_MCF_atomic_cmpxchg_weak_pptr_arl(smutex, &old, &new));
 #pragma GCC diagnostic pop
 
     /* If this mutex has been locked by the current thread, succeed.  */
@@ -102,12 +102,12 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* mutex, const int64_t* t
       return 0;
 
     /* Try waiting.  */
-    int err = __MCF_keyed_event_wait(mutex, &nt_timeout);
+    int err = __MCF_keyed_event_wait(smutex, &nt_timeout);
     while(err != 0) {
       /* Tell another thread which is going to signal this mutex that an old
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
-      _MCF_atomic_load_pptr_rlx(&old, mutex);
+      _MCF_atomic_load_pptr_rlx(&old, smutex);
 #pragma GCC diagnostic ignored "-Wconversion"
       do {
         if(old.__nsleep == 0)
@@ -116,7 +116,7 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* mutex, const int64_t* t
         new.__nshare = old.__nshare;
         new.__nsleep = old.__nsleep - 1U;
       }
-      while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(mutex, &old, &new));
+      while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(smutex, &old, &new));
 #pragma GCC diagnostic pop
 
       if(old.__nsleep != 0)
@@ -129,7 +129,7 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* mutex, const int64_t* t
        * keyed event before us, so we set the timeout to zero. If we time out
        * once more, the third thread will have incremented the number of
        * sleeping threads and we can try decrementing it again.  */
-      err = __MCF_keyed_event_wait(mutex, &(__MCF_winnt_timeout) { 0 });
+      err = __MCF_keyed_event_wait(smutex, &(__MCF_winnt_timeout) { 0 });
     }
 
     /* We have got notified.  */
@@ -139,7 +139,7 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* mutex, const int64_t* t
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
 void
-_MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* mutex)
+_MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
   {
     /* Determine whether the shared mutex has been locked in shared mode
      * (`__nshare` <= `__MCF_SHARED_MUTEX_MAX_SHARE`) or exclusive mode. The
@@ -148,7 +148,7 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* mutex)
      * mutex shall perform a wakeup operation.  */
     size_t wake_one;
     _MCF_shared_mutex old, new;
-    _MCF_atomic_load_pptr_rlx(&old, mutex);
+    _MCF_atomic_load_pptr_rlx(&old, smutex);
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
       __MCF_ASSERT(old.__nshare != 0);
@@ -156,8 +156,8 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* mutex)
       new.__nshare = old.__nshare - 1U + (((old.__nshare + 1U) >> 13) & 2U);
       new.__nsleep = old.__nsleep - wake_one;
     }
-    while(!_MCF_atomic_cmpxchg_weak_pptr_arl(mutex, &old, &new));
+    while(!_MCF_atomic_cmpxchg_weak_pptr_arl(smutex, &old, &new));
 #pragma GCC diagnostic pop
 
-    __MCF_batch_release_common(mutex, wake_one);
+    __MCF_batch_release_common(smutex, wake_one);
   }

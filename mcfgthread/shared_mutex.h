@@ -34,7 +34,7 @@ struct __MCF_shared_mutex
  * `{0}`, like other structs.  */
 __MCF_SHARED_MUTEX_INLINE
 void
-_MCF_shared_mutex_init(_MCF_shared_mutex* __mutex) __MCF_NOEXCEPT;
+_MCF_shared_mutex_init(_MCF_shared_mutex* __smutex) __MCF_NOEXCEPT;
 
 /* Attempts to lock a shared mutex in shared mode.
  *
@@ -52,11 +52,11 @@ _MCF_shared_mutex_init(_MCF_shared_mutex* __mutex) __MCF_NOEXCEPT;
  * -1 if the operation has timed out.  */
 __MCF_SHARED_MUTEX_IMPORT
 int
-_MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+_MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
 __MCF_SHARED_MUTEX_INLINE
 int
-_MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+_MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
 /* Attempts to lock a shared mutex in exclusive mode.
  *
@@ -73,22 +73,22 @@ _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __mutex, const int64_t* __timeo
  * or -1 if the operation has timed out.  */
 __MCF_SHARED_MUTEX_IMPORT
 int
-_MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+_MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
 __MCF_SHARED_MUTEX_INLINE
 int
-_MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+_MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
 
 /* Releases a shared mutex, in either shared or exclusive mode. This function may
  * be called by a different thread from which locked the same mutex. If the mutex
  * has not been locked, the behavior is undefined.  */
 __MCF_SHARED_MUTEX_IMPORT
 void
-_MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* __mutex) __MCF_NOEXCEPT;
+_MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* __smutex) __MCF_NOEXCEPT;
 
 __MCF_SHARED_MUTEX_INLINE
 void
-_MCF_shared_mutex_unlock(_MCF_shared_mutex* __mutex) __MCF_NOEXCEPT;
+_MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex) __MCF_NOEXCEPT;
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
@@ -97,22 +97,22 @@ _MCF_shared_mutex_unlock(_MCF_shared_mutex* __mutex) __MCF_NOEXCEPT;
  * this file.  */
 __MCF_SHARED_MUTEX_INLINE
 void
-_MCF_shared_mutex_init(_MCF_shared_mutex* __mutex) __MCF_NOEXCEPT
+_MCF_shared_mutex_init(_MCF_shared_mutex* __smutex) __MCF_NOEXCEPT
   {
     _MCF_shared_mutex __temp = __MCF_0_INIT;
-    _MCF_atomic_store_pptr_rel(__mutex, &__temp);
+    _MCF_atomic_store_pptr_rel(__smutex, &__temp);
   }
 
 __MCF_SHARED_MUTEX_INLINE
 int
-_MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT
+_MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
 #if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
     _MCF_shared_mutex __old = { 0, 0 };
     _MCF_shared_mutex __new = { 1, 0 };
 
     /* This is optimized solely for single-thread code.  */
-    if(_MCF_atomic_cmpxchg_weak_pptr_acq(__mutex, &__old, &__new))
+    if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smutex, &__old, &__new))
       return 0;
 
     /* If a timeout of zero is specified, don't block at all.  */
@@ -120,19 +120,19 @@ _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __mutex, const int64_t* __timeo
       return -1;
 #endif  /* speed */
 
-    return _MCF_shared_mutex_lock_shared_slow(__mutex, __timeout_opt);
+    return _MCF_shared_mutex_lock_shared_slow(__smutex, __timeout_opt);
   }
 
 __MCF_SHARED_MUTEX_INLINE
 int
-_MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __mutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT
+_MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt) __MCF_NOEXCEPT
   {
 #if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
     _MCF_shared_mutex __old = { 0, 0 };
     _MCF_shared_mutex __new = { 0x3FFF, 0 };
 
     /* This is optimized solely for single-thread code.  */
-    if(_MCF_atomic_cmpxchg_weak_pptr_acq(__mutex, &__old, &__new))
+    if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smutex, &__old, &__new))
       return 0;
 
     /* If a timeout of zero is specified, don't block at all.  */
@@ -140,23 +140,23 @@ _MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __mutex, const int64_t* __ti
       return -1;
 #endif  /* speed */
 
-    return _MCF_shared_mutex_lock_exclusive_slow(__mutex, __timeout_opt);
+    return _MCF_shared_mutex_lock_exclusive_slow(__smutex, __timeout_opt);
   }
 
 __MCF_SHARED_MUTEX_INLINE
 void
-_MCF_shared_mutex_unlock(_MCF_shared_mutex* __mutex) __MCF_NOEXCEPT
+_MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex) __MCF_NOEXCEPT
   {
 #if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
     _MCF_shared_mutex __old = { 1, 0 };
     _MCF_shared_mutex __new = { 0, 0 };
 
     /* This is optimized solely for single-thread code.  */
-    if(_MCF_atomic_cmpxchg_weak_pptr_rel(__mutex, &__old, &__new))
+    if(_MCF_atomic_cmpxchg_weak_pptr_rel(__smutex, &__old, &__new))
       return;
 #endif  /* speed */
 
-    _MCF_shared_mutex_unlock_slow(__mutex);
+    _MCF_shared_mutex_unlock_slow(__smutex);
   }
 
 __MCF_C_DECLARATIONS_END
