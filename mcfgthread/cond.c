@@ -65,18 +65,14 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
        * threads. But see below...  */
       _MCF_atomic_load_pptr_rlx(&old, cond);
 #pragma GCC diagnostic ignored "-Wconversion"
-      do {
-        if(old.__nsleep == 0)
-          break;
-
+      while(old.__nsleep != 0) {
         new.__reserved_bits = 0;
         new.__nsleep = old.__nsleep - 1U;
-      }
-      while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
-#pragma GCC diagnostic pop
 
-      if(old.__nsleep != 0)
-        return -1;
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new))
+          return -1;
+      }
+#pragma GCC diagnostic pop
 
       /* ... It is possible that a second thread has already decremented the
        * counter. If this does take place, it is going to release the keyed

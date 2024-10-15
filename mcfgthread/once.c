@@ -48,20 +48,15 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, once);
 #pragma GCC diagnostic ignored "-Wconversion"
-      do {
-        if(old.__nsleep == 0)
-          break;
-
+      while(old.__nsleep != 0) {
         new.__ready = old.__ready;
         new.__locked = old.__locked;
         new.__nsleep = old.__nsleep - 1U;
-      }
-      while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(once, &old, &new));
-#pragma GCC diagnostic pop
 
-      /* We may still return something meaningful here.  */
-      if(old.__nsleep != 0)
-        return ((int) old.__ready - 1) >> 8;
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(once, &old, &new))
+          return (int) old.__ready - 1;
+      }
+#pragma GCC diagnostic pop
 
       /* ... It is possible that a second thread has already decremented the
        * counter. If this does take place, it is going to release the keyed

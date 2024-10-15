@@ -149,20 +149,16 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, mutex);
 #pragma GCC diagnostic ignored "-Wconversion"
-      do {
-        if(old.__nsleep == 0)
-          break;
-
+      while(old.__nsleep != 0) {
         new.__locked = old.__locked;
         new.__sp_mask = old.__sp_mask;
         new.__sp_nfail = old.__sp_nfail;
         new.__nsleep = old.__nsleep - 1U;
-      }
-      while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(mutex, &old, &new));
-#pragma GCC diagnostic pop
 
-      if(old.__nsleep != 0)
-        return -1;
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(mutex, &old, &new))
+          return -1;
+      }
+#pragma GCC diagnostic pop
 
       /* ... It is possible that a second thread has already decremented the
        * counter. If this does take place, it is going to release the keyed

@@ -32,16 +32,12 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
     while(err != 0) {
       /* Remove myself from the wait queue. But see below...  */
       _MCF_atomic_load_pptr_rlx(&old, sem);
-      do {
-        if(old.__value >= 0)
-          break;
-
+      while(old.__value < 0) {
         new.__value = old.__value + 1;
-      }
-      while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(sem, &old, &new));
 
-      if(old.__value < 0)
-        return -1;
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(sem, &old, &new))
+          return -1;
+      }
 
       /* ... It is possible that a second thread has already incremented the
        * counter. If this does take place, it is going to release the keyed

@@ -47,18 +47,14 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, smutex);
 #pragma GCC diagnostic ignored "-Wconversion"
-      do {
-        if(old.__nsleep == 0)
-          break;
-
+      while(old.__nsleep != 0) {
         new.__nshare = old.__nshare;
         new.__nsleep = old.__nsleep - 1U;
-      }
-      while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(smutex, &old, &new));
-#pragma GCC diagnostic pop
 
-      if(old.__nsleep != 0)
-        return -1;
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smutex, &old, &new))
+          return -1;
+      }
+#pragma GCC diagnostic pop
 
       /* ... It is possible that a second thread has already decremented the
        * counter. If this does take place, it is going to release the keyed
@@ -109,18 +105,14 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, smutex);
 #pragma GCC diagnostic ignored "-Wconversion"
-      do {
-        if(old.__nsleep == 0)
-          break;
-
+      while(old.__nsleep != 0) {
         new.__nshare = old.__nshare;
         new.__nsleep = old.__nsleep - 1U;
-      }
-      while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(smutex, &old, &new));
-#pragma GCC diagnostic pop
 
-      if(old.__nsleep != 0)
-        return -1;
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smutex, &old, &new))
+          return -1;
+      }
+#pragma GCC diagnostic pop
 
       /* ... It is possible that a second thread has already decremented the
        * counter. If this does take place, it is going to release the keyed

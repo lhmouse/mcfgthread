@@ -46,19 +46,15 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, event);
 #pragma GCC diagnostic ignored "-Wconversion"
-      do {
-        if(old.__nsleep == 0)
-          break;
-
+      while(old.__nsleep != 0) {
         new.__value = old.__value;
         new.__reserved_bit = 0;
         new.__nsleep = old.__nsleep - 1U;
-      }
-      while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(event, &old, &new));
-#pragma GCC diagnostic pop
 
-      if(old.__nsleep != 0)
-        return -1;
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(event, &old, &new))
+          return -1;
+      }
+#pragma GCC diagnostic pop
 
       /* ... It is possible that a second thread has already decremented the
        * counter. If this does take place, it is going to release the keyed

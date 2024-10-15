@@ -276,17 +276,13 @@ _MCF_sleep(const int64_t* timeout_opt)
        * that an old waiter has left by decrementing the number of sleeping
        * threads. But see below...  */
       _MCF_atomic_load_pptr_rlx(&old, __MCF_g->__sleeping_threads);
-      do {
-        if(old == 0)
-          break;
-
+      while(old != 0) {
         __MCF_ASSERT(old % 0x200 == 0);
         new = old - 0x200;
-      }
-      while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(__MCF_g->__sleeping_threads, &old, &new));
 
-      if(old != 0)
-        return 0;  /* timed out  */
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(__MCF_g->__sleeping_threads, &old, &new))
+          return 0;
+      }
 
       /* ... It is possible that a second thread has already decremented the
        * counter. If this does take place, it is going to release the keyed
