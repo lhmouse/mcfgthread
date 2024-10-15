@@ -13,6 +13,7 @@
 #include "mutex.h"
 #include "cond.h"
 #include "thread.h"
+#include "shared_mutex.h"
 #include <time.h>  /* struct timespec  */
 
 __MCF_C_DECLARATIONS_BEGIN
@@ -79,6 +80,20 @@ __MCF_gthr_mutex_unlock_callback(intptr_t __arg) __MCF_NOEXCEPT;
 __MCF_GTHR_AUX_IMPORT
 void
 __MCF_gthr_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
+
+/* These are auxiliary functions for condition variables. The argument is a
+ * pointer to a `_MCF_shared_mutex`.  */
+__MCF_GTHR_AUX_IMPORT
+intptr_t
+__MCF_gthr_shared_mutex_unlock_callback(intptr_t __arg) __MCF_NOEXCEPT;
+
+__MCF_GTHR_AUX_IMPORT
+void
+__MCF_gthr_shared_mutex_relock_shared_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
+
+__MCF_GTHR_AUX_IMPORT
+void
+__MCF_gthr_shared_mutex_relock_exclusive_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
 
 /* These are auxiliary functions for condition variables. The argument is a
  * pointer to a `__MCF_gthr_rc_mutex`.  */
