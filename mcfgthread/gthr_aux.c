@@ -15,13 +15,13 @@ __MCF_DLLEXPORT
 void
 __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_cdecl* init_proc, void* arg);
 __asm__ (
-#  ifdef DLL_EXPORT
-".section \".drectve\"  \n\t"
-".ascii \" -export:\\\"__MCF_gthr_call_once_seh_take_over\\\"\"  \n\t"
-#  endif
 #if defined __i386__ || defined __amd64__
 /* This is required by Clang, where `-masm=intel` doesn't affect basic asm.  */
 ".intel_syntax noprefix  \n\t"
+#endif
+#ifdef DLL_EXPORT
+".section \".drectve\"  \n\t"
+".ascii \" -export:\\\"__MCF_gthr_call_once_seh_take_over\\\"\"  \n\t"
 #endif
 #if defined __i386__
 /* On x86, SEH is stack-based.  */
