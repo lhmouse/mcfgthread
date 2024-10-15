@@ -26,6 +26,7 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
     uint32_t shareable;
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, smutex);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
       shareable = (uint32_t) ((old.__nshare - __MCF_SHARED_MUTEX_MAX_SHARE) & (old.__nsleep - 1U)) >> 31;
@@ -46,6 +47,7 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, smutex);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       while(old.__nsleep != 0) {
         new.__nshare = old.__nshare;
@@ -85,6 +87,7 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
     _MCF_shared_mutex old, new;
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, smutex);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
       new.__nshare = old.__nshare + ((old.__nshare - 1U) >> 14);
@@ -104,6 +107,7 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, smutex);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       while(old.__nsleep != 0) {
         new.__nshare = old.__nshare;
@@ -141,6 +145,7 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
     size_t wake_one;
     _MCF_shared_mutex old, new;
     _MCF_atomic_load_pptr_rlx(&old, smutex);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
       __MCF_ASSERT(old.__nshare != 0);

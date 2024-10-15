@@ -41,6 +41,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     /* Allocate a count for the current thread.  */
     _MCF_cond old, new;
     _MCF_atomic_load_pptr_rlx(&old, cond);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
       new.__reserved_bits = 0;
@@ -64,6 +65,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
        * that an old waiter has left by decrementing the number of sleeping
        * threads. But see below...  */
       _MCF_atomic_load_pptr_rlx(&old, cond);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       while(old.__nsleep != 0) {
         new.__reserved_bits = 0;
@@ -96,6 +98,7 @@ _MCF_cond_signal_some_slow(_MCF_cond* cond, size_t max)
     size_t wake_num;
     _MCF_cond old, new;
     _MCF_atomic_load_pptr_rlx(&old, cond);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
       wake_num = _MCF_minz(old.__nsleep, max);

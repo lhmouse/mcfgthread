@@ -66,6 +66,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     uint32_t spinnable;
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, mutex);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
       spinnable = (uint32_t) ((old.__sp_mask - 15U) & (old.__sp_nfail - __MCF_MUTEX_SP_NFAIL_THRESHOLD)) >> 31;
@@ -102,6 +103,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         /* If this mutex has not been locked, lock it and decrement the
          * failure counter. Otherwise, do nothing.  */
         _MCF_atomic_load_pptr_rlx(&old, mutex);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
         do {
           if(old.__locked != 0)
@@ -126,6 +128,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
        * had unlocked the mutex before we incremented the sleeping counter,
        * we could miss a wakeup and result in deadlocks.  */
       _MCF_atomic_load_pptr_rlx(&old, mutex);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       do {
         new.__locked = 1;
@@ -148,6 +151,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, mutex);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       while(old.__nsleep != 0) {
         new.__locked = old.__locked;
@@ -185,6 +189,7 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
     size_t wake_one;
     _MCF_mutex old, new;
     _MCF_atomic_load_pptr_rlx(&old, mutex);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
       wake_one = _MCF_minz(old.__nsleep, 1);

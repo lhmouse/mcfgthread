@@ -23,6 +23,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     _MCF_once old, new;
   try_lock_loop:
     _MCF_atomic_load_pptr_acq(&old, once);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
       if(old.__ready != 0)
@@ -47,6 +48,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, once);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       while(old.__nsleep != 0) {
         new.__ready = old.__ready;
@@ -81,6 +83,7 @@ _MCF_once_abort(_MCF_once* once)
     size_t wake_one;
     _MCF_once old, new;
     _MCF_atomic_load_pptr_rlx(&old, once);
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
       wake_one = _MCF_minz(old.__nsleep, 1);
