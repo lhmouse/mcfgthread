@@ -148,6 +148,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, mutex);
+#pragma GCC diagnostic ignored "-Wconversion"
       while(old.__nsleep != 0) {
         new.__locked = old.__locked;
         new.__sp_mask = old.__sp_mask;
@@ -157,6 +158,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(mutex, &old, &new))
           return -1;
       }
+#pragma GCC diagnostic pop
 
       /* ... It is possible that a second thread has already decremented the
        * counter. If this does take place, it is going to release the keyed
