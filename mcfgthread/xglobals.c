@@ -120,6 +120,7 @@ __MCF_win32_ntstatus_p(NTSTATUS status, void* ptr)
 
 static
 int
+__fastcall
 do_static_dtor_queue_pop(__MCF_dtor_element* elem, _MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
   {
     _MCF_mutex_lock(mtx, __MCF_nullptr);
@@ -152,6 +153,7 @@ __MCF_run_dtors_atexit(void* dso)
 
 static
 void
+__fastcall
 do_encode_numeric_field(wchar_t* ptr, size_t width, uint64_t value, const wchar_t* digits)
   {
     wchar_t* eptr = ptr + width;
