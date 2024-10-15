@@ -14,5 +14,5 @@ meson setup ${_cross_file}  \
   build_release
 
 meson setup ${_cross_file}  \
-  -Ddebug=true -Doptimization=3 -Db_flto=true  \
+  -Ddebug=true -Doptimization=3 -Db_lto=true  \
   build_optimized
