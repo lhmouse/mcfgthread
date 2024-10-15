@@ -15,13 +15,6 @@ void
 __fastcall
 __MCF_gthr_do_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_cdecl* init_proc, void* arg);
 
-__MCF_DLLEXPORT
-void
-__MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_cdecl* init_proc, void* arg)
-  {
-    __MCF_gthr_do_call_once_seh_take_over(once, init_proc, arg);
-  }
-
 __asm__ (
 #if defined __i386__ || defined __amd64__
 /* This is required by Clang, where `-masm=intel` doesn't affect basic asm.  */
@@ -158,6 +151,13 @@ do_call_once_seh_uhandler(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx
 
     /* Continue unwinding.  */
     return ExceptionContinueSearch;
+  }
+
+__MCF_DLLEXPORT
+void
+__MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_cdecl* init_proc, void* arg)
+  {
+    __MCF_gthr_do_call_once_seh_take_over(once, init_proc, arg);
   }
 
 __MCF_DLLEXPORT
