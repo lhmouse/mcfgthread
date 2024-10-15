@@ -121,7 +121,7 @@ __MCF_win32_ntstatus_p(NTSTATUS status, void* ptr)
 static
 int
 __fastcall
-do_static_dtor_queue_pop(__MCF_dtor_element* elem, _MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
+do_pop_static_dtor(__MCF_dtor_element* elem, _MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
   {
     _MCF_mutex_lock(mtx, __MCF_nullptr);
     int err = __MCF_dtor_queue_pop(elem, queue, dso);
@@ -131,23 +131,12 @@ do_static_dtor_queue_pop(__MCF_dtor_element* elem, _MCF_mutex* mtx, __MCF_dtor_q
 
 __MCF_DLLEXPORT
 void
-__MCF_run_dtors_at_quick_exit(void* dso)
+__MCF_run_static_dtors(_MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     __MCF_dtor_element elem;
 
-    while(do_static_dtor_queue_pop(&elem, __MCF_g->__quick_exit_mtx, __MCF_g->__quick_exit_queue, dso) == 0)
-      __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
-  }
-
-__MCF_DLLEXPORT
-void
-__MCF_run_dtors_atexit(void* dso)
-  {
-    __MCF_SEH_DEFINE_TERMINATE_FILTER;
-    __MCF_dtor_element elem;
-
-    while(do_static_dtor_queue_pop(&elem, __MCF_g->__exit_mtx, __MCF_g->__exit_queue, dso) == 0)
+    while(do_pop_static_dtor(&elem, mtx, queue, dso) == 0)
       __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
   }
 

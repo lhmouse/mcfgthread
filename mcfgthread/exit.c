@@ -24,7 +24,7 @@ __MCF_DLLEXPORT
 void
 __MCF_quick_exit(int status)
   {
-    __MCF_run_dtors_at_quick_exit(__MCF_nullptr);
+    __MCF_run_static_dtors(__MCF_g->__quick_exit_mtx, __MCF_g->__quick_exit_queue, __MCF_nullptr);
     __MCF__Exit(status);
   }
 

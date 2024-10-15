@@ -121,7 +121,7 @@ __MCF_cxa_finalize(void* dso)
      * [basic.start.term]/2.) Destructors of thread-local keys are not called,
      * according to POSIX.  */
     do_thread_dtor_queue_finalize(dso);
-    __MCF_run_dtors_atexit(dso);
+    __MCF_run_static_dtors(__MCF_g->__exit_mtx, __MCF_g->__exit_queue, dso);
 
     /* Remove quick exit callbacks that will expire.  */
     _MCF_mutex_lock(__MCF_g->__quick_exit_mtx, __MCF_nullptr);

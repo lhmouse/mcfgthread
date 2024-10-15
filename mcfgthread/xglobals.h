@@ -261,11 +261,7 @@ __MCF_win32_ntstatus_p(NTSTATUS status, void* ptr) __MCF_NOEXCEPT;
  * meant to be called directly.  */
 __MCF_XGLOBALS_IMPORT
 void
-__MCF_run_dtors_at_quick_exit(void* dso) __MCF_NOEXCEPT;
-
-__MCF_XGLOBALS_IMPORT
-void
-__MCF_run_dtors_atexit(void* dso) __MCF_NOEXCEPT;
+__MCF_run_static_dtors(_MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso) __MCF_NOEXCEPT;
 
 __MCF_XGLOBALS_IMPORT
 void
