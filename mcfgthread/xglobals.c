@@ -171,9 +171,9 @@ do_encode_numeric_field(wchar_t* ptr, size_t width, uint64_t value, const wchar_
       *--eptr = digits[0];
   }
 
-static
+__MCF_DLLEXPORT
 void
-__MCF_mcfgthread_initialize_globals(void)
+__MCF_gthread_initialize_globals(void)
   {
     /* Initialize static global constants.  */
     GetSystemInfo(&__MCF_crt_sysinfo);
@@ -242,9 +242,9 @@ __MCF_mcfgthread_initialize_globals(void)
     __MCF_thread_attach_foreign(__MCF_g->__main_thread);
   }
 
-static
+__MCF_DLLEXPORT
 void
-__MCF_mcfgthread_finalize_thread(void)
+__MCF_gthread_on_thread_exit(void)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     __MCF_dtor_element elem;
@@ -321,13 +321,13 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
     switch(reason)
       {
       case DLL_PROCESS_ATTACH:
-        __MCF_mcfgthread_initialize_globals();
+        __MCF_gthread_initialize_globals();
         __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN | GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, instance, &dummy2));
         __MCF_CHECK(VirtualProtect(&__MCF_g, sizeof(__MCF_g), PAGE_READONLY, &dummy1));
         break;
 
       case DLL_THREAD_DETACH:
-        __MCF_mcfgthread_finalize_thread();
+        __MCF_gthread_on_thread_exit();
         break;
       }
 
@@ -349,11 +349,11 @@ __MCF_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
     switch(reason)
       {
       case DLL_PROCESS_ATTACH:
-        __MCF_mcfgthread_initialize_globals();
+        __MCF_gthread_initialize_globals();
         break;
 
       case DLL_THREAD_DETACH:
-        __MCF_mcfgthread_finalize_thread();
+        __MCF_gthread_on_thread_exit();
         break;
       }
   }

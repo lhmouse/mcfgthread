@@ -267,6 +267,14 @@ __MCF_XGLOBALS_IMPORT
 void
 __MCF_run_dtors_atexit(void* dso) __MCF_NOEXCEPT;
 
+__MCF_XGLOBALS_IMPORT
+void
+__MCF_gthread_initialize_globals(void) __MCF_NOEXCEPT;
+
+__MCF_XGLOBALS_IMPORT
+void
+__MCF_gthread_on_thread_exit(void) __MCF_NOEXCEPT;
+
 /* Declare global data.  */
 typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
 
