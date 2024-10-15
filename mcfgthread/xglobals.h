@@ -288,12 +288,12 @@ struct __MCF_crt_xglobals
     _MCF_thread __main_thread[1];
 
     /* `atexit()` support  */
-    _MCF_mutex __cxa_atexit_mtx[1];
-    __MCF_dtor_queue __cxa_atexit_queue[1];
+    _MCF_mutex __exit_mtx[1];
+    __MCF_dtor_queue __exit_queue[1];
 
     /* `at_quick_exit()` support  */
-    _MCF_mutex __cxa_at_quick_exit_mtx[1];
-    __MCF_dtor_queue __cxa_at_quick_exit_queue[1];
+    _MCF_mutex __quick_exit_mtx[1];
+    __MCF_dtor_queue __quick_exit_queue[1];
 
     /* mutex support  */
     __MCF_ALIGNED(64) BYTE __mutex_spin_field[2048];

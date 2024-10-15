@@ -136,7 +136,7 @@ __MCF_run_dtors_at_quick_exit(void* dso)
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     __MCF_dtor_element elem;
 
-    while(do_static_dtor_queue_pop(&elem, __MCF_g->__cxa_at_quick_exit_mtx, __MCF_g->__cxa_at_quick_exit_queue, dso) == 0)
+    while(do_static_dtor_queue_pop(&elem, __MCF_g->__quick_exit_mtx, __MCF_g->__quick_exit_queue, dso) == 0)
       __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
   }
 
@@ -147,7 +147,7 @@ __MCF_run_dtors_atexit(void* dso)
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     __MCF_dtor_element elem;
 
-    while(do_static_dtor_queue_pop(&elem, __MCF_g->__cxa_atexit_mtx, __MCF_g->__cxa_atexit_queue, dso) == 0)
+    while(do_static_dtor_queue_pop(&elem, __MCF_g->__exit_mtx, __MCF_g->__exit_queue, dso) == 0)
       __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
   }
 
