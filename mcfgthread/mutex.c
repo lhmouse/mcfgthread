@@ -111,7 +111,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
           new.__locked = 1;
-          new.__sp_mask = old.__sp_mask;
+          new.__sp_mask = old.__sp_mask & ~my_mask;
           new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, -1);
           new.__nsleep = old.__nsleep;
 #pragma GCC diagnostic pop
@@ -133,7 +133,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
         new.__locked = 1;
-        new.__sp_mask = old.__sp_mask;
+        new.__sp_mask = old.__sp_mask & ~my_mask;
         new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked - 1);
         new.__nsleep = old.__nsleep + old.__locked;
 #pragma GCC diagnostic pop
