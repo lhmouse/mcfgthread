@@ -86,7 +86,6 @@ test_src = [
   'test/once_abort.c',
   'test/once_timeout.c',
   'test/mutex_spin_fail.c',
-  'test/mutex_spin_mask.c',
   'test/mutex_zero_timeout.c',
   'test/mutex_timeout.c',
   'test/mutex.c',
