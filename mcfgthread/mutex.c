@@ -45,7 +45,7 @@ do_adjust_sp_nfail(uint32_t old, int add)
     /* Adjust the value using saturation arithmetic.  */
     __MCF_ASSERT((-1 <= add) && (add <= +1));
     uint32_t temp = old + (uint32_t) add;
-    return temp - temp / 16U;
+    return temp - (temp >> 4);
   }
 
 __MCF_DLLEXPORT
