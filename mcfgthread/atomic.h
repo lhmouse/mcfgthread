@@ -342,8 +342,7 @@ __MCF_atomic_cmpxchg_(z, cst, size_t)
   _MCF_atomic_cmpxchg_weak_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER* __restrict __cmp, INTEGER __val) __MCF_NOEXCEPT  \
     {  \
       return __MCF_atomic_cmpxchgw((__MCF_atomic(INTEGER)*) __mem, __cmp,  \
-                     __val, __MCF_memory_order_##ORDER,  \
-                     __MCF_memory_order_f_##ORDER);  \
+                     __val, __MCF_memory_order_##ORDER, __MCF_memory_order_f_##ORDER);  \
     }  \
   \
   __MCF_ALWAYS_INLINE  \
@@ -351,8 +350,7 @@ __MCF_atomic_cmpxchg_(z, cst, size_t)
   _MCF_atomic_cmpxchg_weak_p##WIDTH##_##ORDER(__MCF_zp __mem, __MCF_zp __cmp, __MCF_zp __val) __MCF_NOEXCEPT  \
     {  \
       return __MCF_atomic_cmpxchgw((__MCF_atomic(INTEGER)*) __mem, (INTEGER*) __cmp,  \
-                     *(const INTEGER*) __val, __MCF_memory_order_##ORDER,  \
-                     __MCF_memory_order_f_##ORDER);  \
+                     *(const INTEGER*) __val, __MCF_memory_order_##ORDER, __MCF_memory_order_f_##ORDER);  \
     }
 
 __MCF_atomic_cmpxchg_weak_(8, rlx, int8_t)
