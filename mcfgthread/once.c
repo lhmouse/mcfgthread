@@ -23,18 +23,18 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     _MCF_once old, new;
   try_lock_loop:
     _MCF_atomic_load_pptr_acq(&old, once);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
     do
       if(old.__ready != 0)
         return 0;
       else {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
         new.__ready = old.__ready;
         new.__locked = 1;
         new.__nsleep = old.__nsleep + old.__locked;
+#pragma GCC diagnostic pop
       }
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(once, &old, &new));
-#pragma GCC diagnostic pop
 
     /* If this flag has been changed from UNLOCKED to LOCKED, return 1 to
      * allow initialization of protected resources.  */
@@ -48,17 +48,17 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, once);
+      while(old.__nsleep != 0) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-      while(old.__nsleep != 0) {
         new.__ready = old.__ready;
         new.__locked = old.__locked;
         new.__nsleep = old.__nsleep - 1U;
+#pragma GCC diagnostic pop
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(once, &old, &new))
           return (int) old.__ready - 1;
       }
-#pragma GCC diagnostic pop
 
       /* ... It is possible that a second thread has already decremented the
        * counter. If this does take place, it is going to release the keyed
@@ -83,16 +83,17 @@ _MCF_once_abort(_MCF_once* once)
     bool wake_one;
     _MCF_once old, new;
     _MCF_atomic_load_pptr_rlx(&old, once);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
     do {
       wake_one = old.__nsleep != 0;
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
       new.__ready = old.__ready;
       new.__locked = 0;
       new.__nsleep = old.__nsleep - wake_one;
+#pragma GCC diagnostic pop
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(once, &old, &new));
-#pragma GCC diagnostic pop
 
     __MCF_batch_release_common(once, wake_one);
   }

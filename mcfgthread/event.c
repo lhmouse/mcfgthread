@@ -26,18 +26,18 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
     _MCF_event old, new;
   try_wait_loop:
     _MCF_atomic_load_pptr_acq(&old, event);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
     do
       if(old.__value != undesired)
         return old.__value;
       else {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
         new.__value = old.__value;
         new.__reserved_bit = 0;
         new.__nsleep = old.__nsleep + 1U;
+#pragma GCC diagnostic pop
       }
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(event, &old, &new));
-#pragma GCC diagnostic pop
 
     /* Try waiting.  */
     int err = __MCF_keyed_event_wait(event, &nt_timeout);
@@ -46,17 +46,17 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, event);
+      while(old.__nsleep != 0) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-      while(old.__nsleep != 0) {
         new.__value = old.__value;
         new.__reserved_bit = 0;
         new.__nsleep = old.__nsleep - 1U;
+#pragma GCC diagnostic pop
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(event, &old, &new))
           return -1;
       }
-#pragma GCC diagnostic pop
 
       /* ... It is possible that a second thread has already decremented the
        * counter. If this does take place, it is going to release the keyed

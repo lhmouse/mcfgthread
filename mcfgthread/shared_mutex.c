@@ -26,15 +26,16 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
     uint32_t shareable;
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, smutex);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
     do {
       shareable = (uint32_t) ((old.__nshare - __MCF_SHARED_MUTEX_MAX_SHARE) & (old.__nsleep - 1U)) >> 31;
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
       new.__nshare = old.__nshare + shareable;
       new.__nsleep = old.__nsleep + 1U - shareable;
+#pragma GCC diagnostic pop
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(smutex, &old, &new));
-#pragma GCC diagnostic pop
 
     /* If this mutex has been locked by the current thread, succeed.  */
     if(old.__nshare != new.__nshare)
@@ -47,16 +48,16 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, smutex);
+      while(old.__nsleep != 0) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-      while(old.__nsleep != 0) {
         new.__nshare = old.__nshare;
         new.__nsleep = old.__nsleep - 1U;
+#pragma GCC diagnostic pop
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smutex, &old, &new))
           return -1;
       }
-#pragma GCC diagnostic pop
 
       /* ... It is possible that a second thread has already decremented the
        * counter. If this does take place, it is going to release the keyed
@@ -87,14 +88,14 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
     _MCF_shared_mutex old, new;
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, smutex);
+    do {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-    do {
       new.__nshare = old.__nshare + ((old.__nshare - 1U) >> 14);
       new.__nsleep = old.__nsleep + ((old.__nshare + 0x3FFFU) >> 14);
+#pragma GCC diagnostic pop
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(smutex, &old, &new));
-#pragma GCC diagnostic pop
 
     /* If this mutex has been locked by the current thread, succeed.  */
     if(old.__nshare == 0)
@@ -107,16 +108,16 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, smutex);
+      while(old.__nsleep != 0) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-      while(old.__nsleep != 0) {
         new.__nshare = old.__nshare;
         new.__nsleep = old.__nsleep - 1U;
+#pragma GCC diagnostic pop
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smutex, &old, &new))
           return -1;
       }
-#pragma GCC diagnostic pop
 
       /* ... It is possible that a second thread has already decremented the
        * counter. If this does take place, it is going to release the keyed
@@ -145,16 +146,17 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
     size_t wake_one;
     _MCF_shared_mutex old, new;
     _MCF_atomic_load_pptr_rlx(&old, smutex);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
     do {
       __MCF_ASSERT(old.__nshare != 0);
       wake_one = _MCF_minz(old.__nsleep, (((old.__nshare - 2U) ^ (old.__nshare + 1U)) >> 14) & 1U);
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
       new.__nshare = old.__nshare - 1U + (((old.__nshare + 1U) >> 13) & 2U);
       new.__nsleep = old.__nsleep - wake_one;
+#pragma GCC diagnostic pop
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(smutex, &old, &new));
-#pragma GCC diagnostic pop
 
     __MCF_batch_release_common(smutex, wake_one);
   }

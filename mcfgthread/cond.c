@@ -36,14 +36,14 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     /* Allocate a count for the current thread.  */
     _MCF_cond old, new;
     _MCF_atomic_load_pptr_rlx(&old, cond);
+    do {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-    do {
       new.__reserved_bits = 0;
       new.__nsleep = old.__nsleep + 1U;
+#pragma GCC diagnostic pop
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
-#pragma GCC diagnostic pop
 
     if(unlock_opt) {
       /* Now, unlock the associated mutex. If another thread attempts to signal
@@ -59,16 +59,16 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
        * that an old waiter has left by decrementing the number of sleeping
        * threads. But see below...  */
       _MCF_atomic_load_pptr_rlx(&old, cond);
+      while(old.__nsleep != 0) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-      while(old.__nsleep != 0) {
         new.__reserved_bits = 0;
         new.__nsleep = old.__nsleep - 1U;
+#pragma GCC diagnostic pop
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new))
           return do_cond_wait_cleanup(relock_for_tail_call, lock_arg, unlocked, -1);
       }
-#pragma GCC diagnostic pop
 
       /* ... It is possible that a second thread has already decremented the
        * counter. If this does take place, it is going to release the keyed
@@ -92,15 +92,16 @@ _MCF_cond_signal_some_slow(_MCF_cond* cond, size_t max)
     size_t wake_num;
     _MCF_cond old, new;
     _MCF_atomic_load_pptr_rlx(&old, cond);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
     do {
       wake_num = _MCF_minz(old.__nsleep, max);
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
       new.__reserved_bits = 0;
       new.__nsleep = old.__nsleep - wake_num;
+#pragma GCC diagnostic pop
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
-#pragma GCC diagnostic pop
 
     return __MCF_batch_release_common(cond, wake_num);
   }
