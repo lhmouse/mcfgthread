@@ -13,9 +13,9 @@
 
 static __MCF_NEVER_INLINE
 int
-do_cond_wait_cleanup(_MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, intptr_t unlocked, int err)
+do_cond_wait_cleanup(_MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, intptr_t unlocked, int err)
   {
-    if(unlock_opt && relock_opt)
+    if(relock_opt)
       (*relock_opt) (lock_arg, unlocked);
 
     /* Forward the error code to caller.  */
@@ -27,6 +27,7 @@ int
 _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, const int64_t* timeout_opt)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
+    _MCF_cond_relock_callback* relock_for_tail_call = __MCF_nullptr;
     intptr_t unlocked = 0;
 
     __MCF_winnt_timeout nt_timeout;
@@ -44,10 +45,12 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
 #pragma GCC diagnostic pop
 
-    /* Now, unlock the associated mutex. If another thread attempts to signal
-     * this one, it shall block.  */
-    if(unlock_opt)
+    if(unlock_opt) {
+      /* Now, unlock the associated mutex. If another thread attempts to signal
+       * this one, it shall block.  */
+      relock_for_tail_call = relock_opt;
       unlocked = (*unlock_opt) (lock_arg);
+    }
 
     /* Try waiting.  */
     int err = __MCF_keyed_event_wait(cond, &nt_timeout);
@@ -63,7 +66,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
         new.__nsleep = old.__nsleep - 1U;
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new))
-          return do_cond_wait_cleanup(unlock_opt, relock_opt, lock_arg, unlocked, -1);
+          return do_cond_wait_cleanup(relock_for_tail_call, lock_arg, unlocked, -1);
       }
 #pragma GCC diagnostic pop
 
@@ -78,7 +81,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     }
 
     /* We have got notified.  */
-    return do_cond_wait_cleanup(unlock_opt, relock_opt, lock_arg, unlocked, 0);
+    return do_cond_wait_cleanup(relock_for_tail_call, lock_arg, unlocked, 0);
   }
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
