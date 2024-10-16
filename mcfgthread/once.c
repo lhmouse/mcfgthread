@@ -80,13 +80,13 @@ void
 _MCF_once_abort(_MCF_once* once)
   {
     /* Clear the `__locked` field and release at most one thread, if any.  */
-    size_t wake_one;
+    bool wake_one;
     _MCF_once old, new;
     _MCF_atomic_load_pptr_rlx(&old, once);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
-      wake_one = _MCF_minz(old.__nsleep, 1);
+      wake_one = old.__nsleep != 0;
       new.__ready = old.__ready;
       new.__locked = 0;
       new.__nsleep = old.__nsleep - wake_one;

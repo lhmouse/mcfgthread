@@ -186,13 +186,13 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
     /* Clear the `__locked` field and release at most one thread, if any.
      * The right most bit one of the spinning mask is also cleared to enable
      * further threads to spin.  */
-    size_t wake_one;
+    bool wake_one;
     _MCF_mutex old, new;
     _MCF_atomic_load_pptr_rlx(&old, mutex);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
     do {
-      wake_one = _MCF_minz(old.__nsleep, 1);
+      wake_one = old.__nsleep != 0;
       new.__locked = 0;
       new.__sp_mask = old.__sp_mask & (old.__sp_mask - 1U);
       new.__sp_nfail = old.__sp_nfail;
