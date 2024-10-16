@@ -304,7 +304,7 @@ struct __MCF_crt_xglobals
     __MCF_ALIGNED(64) BYTE __mutex_spin_field[2048];
 
     /* thread suspension support  */
-    uintptr_t __sleeping_threads[1];
+    _MCF_cond __interrupt_cond[1];
 
     /* WARNING: Fields hereinafter must be accessed via `__MCF_G_FIELD_OPT`!  */
     __MCF_G_LAZY_FIELD(GetSystemTimePreciseAsFileTime);

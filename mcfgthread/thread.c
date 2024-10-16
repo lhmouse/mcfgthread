@@ -233,69 +233,46 @@ _MCF_yield(void)
     SwitchToThread();
   }
 
-static
+static __MCF_REALIGN_SP
 BOOL
 __stdcall
-do_handle_interrupt(DWORD type)
+do_sleep_interrupt(DWORD type)
   {
     (void) type;
-    uintptr_t old = (uintptr_t) _MCF_atomic_xchg_ptr_rlx(__MCF_g->__sleeping_threads, 0);
-    __MCF_batch_release_common(__MCF_g->__sleeping_threads, old / 0x200);
+
+    /* Notify all threads that are sleeping.  */
+    _MCF_cond_signal_all(__MCF_g->__interrupt_cond);
     return false;
   }
 
-static inline
-void
-do_handler_cleanup(BOOL* added)
+static
+intptr_t
+do_sleep_unlock(intptr_t arg)
   {
-    if(*added)
-      SetConsoleCtrlHandler(do_handle_interrupt, false);
+    (void) arg;
+
+    /* Add a Ctrl-C handler. The return value indicates whether it has been
+     * added successfully.  */
+    return SetConsoleCtrlHandler(do_sleep_interrupt, true);
+  }
+
+static
+void
+do_sleep_relock(intptr_t arg, intptr_t added)
+  {
+    (void) arg;
+
+    /* If a Ctrl-C handler has been added, remove it now.  */
+    if(added != 0)
+      SetConsoleCtrlHandler(do_sleep_interrupt, false);
   }
 
 __MCF_DLLEXPORT
 int
 _MCF_sleep(const int64_t* timeout_opt)
   {
-    __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
-
-    /* Set a handler to receive Ctrl-C notifications.  */
-    BOOL added __attribute__((__cleanup__(do_handler_cleanup))) = false;
-    added = SetConsoleCtrlHandler(do_handle_interrupt, true);
-
-    /* Allocate a count for the current thread. The addend is for backward
-     * compatibility, because this used to be an `_MCF_cond`.  */
-    uintptr_t old, new;
-    old = (uintptr_t) _MCF_atomic_xadd_ptr_rlx(__MCF_g->__sleeping_threads, 0x200);
-    new = old + 0x200;
-
-    /* Try waiting.  */
-    int err = __MCF_keyed_event_wait(__MCF_g->__sleeping_threads, &nt_timeout);
-    while(err != 0) {
-      /* Tell another thread which is going to signal this condition variable
-       * that an old waiter has left by decrementing the number of sleeping
-       * threads. But see below...  */
-      _MCF_atomic_load_pptr_rlx(&old, __MCF_g->__sleeping_threads);
-      while(old != 0) {
-        __MCF_ASSERT(old % 0x200 == 0);
-        new = old - 0x200;
-
-        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(__MCF_g->__sleeping_threads, &old, &new))
-          return 0;
-      }
-
-      /* ... It is possible that a second thread has already decremented the
-       * counter. If this does take place, it is going to release the keyed
-       * event soon. We must still wait, otherwise we get a deadlock in the
-       * second thread. However, a third thread could start waiting for this
-       * keyed event before us, so we set the timeout to zero. If we time out
-       * once more, the third thread will have incremented the number of
-       * sleeping threads and we can try decrementing it again.  */
-      err = __MCF_keyed_event_wait(__MCF_g->__sleeping_threads, &(__MCF_winnt_timeout) { 0 });
-    }
-
-    /* We have got interrupted.  */
-    return -1;
+    int err = _MCF_cond_wait(__MCF_g->__interrupt_cond, do_sleep_unlock, do_sleep_relock, 0, timeout_opt);
+    return err ^ -1;
   }
 
 __MCF_DLLEXPORT
