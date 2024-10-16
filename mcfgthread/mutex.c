@@ -63,18 +63,19 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
      * mutex can be locked immediately; and incremented otherwise, no matter
      * whether the current thread is going to spin or not.  */
     _MCF_mutex old, new;
-    uint32_t spinnable;
+    int spin_count;
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, mutex);
     do {
-      spinnable = (uint32_t) ((old.__sp_mask - 15U) & (old.__sp_nfail - __MCF_MUTEX_SP_NFAIL_THRESHOLD)) >> 31;
+      spin_count = (int) (old.__sp_nfail - __MCF_MUTEX_SP_NFAIL_THRESHOLD);
+      bool may_spin = (old.__sp_mask != 15) && (spin_count > 0);
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       new.__locked = 1;
-      new.__sp_mask = old.__sp_mask | (old.__sp_mask + (old.__locked & spinnable));
+      new.__sp_mask = old.__sp_mask | (old.__sp_mask + (old.__locked & may_spin));
       new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked * 2 - 1);
-      new.__nsleep = old.__nsleep + (old.__locked & (spinnable - 1U));
+      new.__nsleep = old.__nsleep + (old.__locked & !may_spin);
 #pragma GCC diagnostic pop
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(mutex, &old, &new));
@@ -86,14 +87,11 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     uint32_t my_mask = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
     if(my_mask != 0) {
       __MCF_ASSERT((my_mask & (my_mask - 1U)) == 0);
+      __MCF_ASSERT(spin_count > 0);
+      spin_count *= (int) (__MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_SP_NFAIL_THRESHOLD);
 
-      /* Calculate the spin count for this loop.  */
-      register int spin = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
-      __MCF_ASSERT(spin > 0);
-      spin *= (int) (__MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_SP_NFAIL_THRESHOLD);
-
-      while(__builtin_expect(spin, 100) > 0) {
-        spin --;
+      while(__builtin_expect(spin_count, 100) > 0) {
+        spin_count --;
         YieldProcessor();
 
         /* Wait for my turn.  */
