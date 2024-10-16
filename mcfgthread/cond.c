@@ -11,21 +11,15 @@
 #include "cond.h"
 #include "xglobals.h"
 
-typedef struct __MCF_cond_unlock_result __MCF_cond_unlock_result;
-
-struct __MCF_cond_unlock_result
+static __MCF_NEVER_INLINE
+int
+do_cond_wait_cleanup(int err, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, intptr_t unlocked)
   {
-    _MCF_cond_relock_callback* relock_opt;
-    intptr_t lock_arg;
-    intptr_t unlocked;
-  };
+    if(unlock_opt && relock_opt)
+      (*relock_opt) (lock_arg, unlocked);
 
-static inline
-void
-do_unlock_cleanup(__MCF_cond_unlock_result* res)
-  {
-    if(res->relock_opt)
-      res->relock_opt(res->lock_arg, res->unlocked);
+    /* Forward the error code to caller.  */
+    return err;
   }
 
 __MCF_DLLEXPORT
@@ -33,7 +27,7 @@ int
 _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, const int64_t* timeout_opt)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
-    __MCF_cond_unlock_result ul_res __attribute__((__cleanup__(do_unlock_cleanup))) = __MCF_0_INIT;
+    intptr_t unlocked = 0;
 
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
@@ -50,13 +44,10 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
 #pragma GCC diagnostic pop
 
-    if(unlock_opt) {
-      /* Now, unlock the associated mutex. If another thread attempts to signal
-       * this one, it shall block.  */
-      ul_res.unlocked = unlock_opt(lock_arg);
-      ul_res.lock_arg = lock_arg;
-      ul_res.relock_opt = relock_opt;
-    }
+    /* Now, unlock the associated mutex. If another thread attempts to signal
+     * this one, it shall block.  */
+    if(unlock_opt)
+      unlocked = (*unlock_opt) (lock_arg);
 
     /* Try waiting.  */
     int err = __MCF_keyed_event_wait(cond, &nt_timeout);
@@ -72,7 +63,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
         new.__nsleep = old.__nsleep - 1U;
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new))
-          return -1;
+          return do_cond_wait_cleanup(-1, unlock_opt, relock_opt, lock_arg, unlocked);
       }
 #pragma GCC diagnostic pop
 
@@ -87,7 +78,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     }
 
     /* We have got notified.  */
-    return 0;
+    return do_cond_wait_cleanup(0, unlock_opt, relock_opt, lock_arg, unlocked);
   }
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
