@@ -64,13 +64,13 @@ _MCF_sem_signal_some(_MCF_sem* sem, intptr_t value_add)
     size_t wake_num;
     _MCF_sem old, new;
     _MCF_atomic_load_pptr_rlx(&old, sem);
-    do {
+    do
       if(old.__value > __MCF_SEM_VALUE_MAX - value_add)
         return -2;  /* would overflow  */
-
-      wake_num = _MCF_minz(-(size_t) (old.__value & (old.__value >> (__MCF_PTR_BITS - 1))), (size_t) value_add);
-      new.__value = old.__value + value_add;
-    }
+      else {
+        wake_num = _MCF_minz(-(size_t) (old.__value & (old.__value >> (__MCF_PTR_BITS - 1))), (size_t) value_add);
+        new.__value = old.__value + value_add;
+      }
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(sem, &old, &new));
 
     __MCF_batch_release_common(sem, wake_num);

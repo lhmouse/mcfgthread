@@ -28,14 +28,14 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
     _MCF_atomic_load_pptr_acq(&old, event);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-    do {
+    do
       if(old.__value != undesired)
         return old.__value;
-
-      new.__value = old.__value;
-      new.__reserved_bit = 0;
-      new.__nsleep = old.__nsleep + 1U;
-    }
+      else {
+        new.__value = old.__value;
+        new.__reserved_bit = 0;
+        new.__nsleep = old.__nsleep + 1U;
+      }
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(event, &old, &new));
 #pragma GCC diagnostic pop
 

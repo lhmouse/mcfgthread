@@ -25,14 +25,14 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     _MCF_atomic_load_pptr_acq(&old, once);
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-    do {
+    do
       if(old.__ready != 0)
         return 0;
-
-      new.__ready = old.__ready;
-      new.__locked = 1;
-      new.__nsleep = old.__nsleep + old.__locked;
-    }
+      else {
+        new.__ready = old.__ready;
+        new.__locked = 1;
+        new.__nsleep = old.__nsleep + old.__locked;
+      }
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(once, &old, &new));
 #pragma GCC diagnostic pop
 
