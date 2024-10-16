@@ -11,7 +11,7 @@
 #include "thread.h"
 #include "xglobals.h"
 
-static __attribute__((__force_align_arg_pointer__))
+static __MCF_REALIGN_SP
 DWORD
 __stdcall
 do_win32_thread_thunk(LPVOID param)

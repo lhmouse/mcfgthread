@@ -299,7 +299,7 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
 
 /* When building the shared library, invoke common routines from the DLL
  * entry point callback.  */
-__attribute__((__force_align_arg_pointer__))
+__MCF_REALIGN_SP
 int
 __stdcall
 __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
@@ -327,7 +327,7 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
 
 /* When building the static library, invoke common routines from a TLS
  * callback.  */
-static __attribute__((__force_align_arg_pointer__))
+static __MCF_REALIGN_SP
 void
 __stdcall
 __MCF_tls_callback(PVOID module, DWORD reason, LPVOID reserved)

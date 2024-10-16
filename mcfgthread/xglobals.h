@@ -144,6 +144,12 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_union dtor, void* arg)
     __asm__ ("" : "=a"(eax), "=d"(edx));  /* dummy */
     (*(dual_dtor_t*)(int) dtor.__cdecl_ptr) (eax, edx, arg, arg);
   }
+
+/* GCC assumes that ESP is always aligned to a 16-byte boundary, but for MSVC
+ * it might not be aligned, so it has to be enforced, otherwise SSE instructions
+ * may fault.  */
+#  define __MCF_REALIGN_SP    __attribute__((__force_align_arg_pointer__))
+
 #else
 /* Otherwise, SEH is table-based.  */
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
@@ -156,7 +162,10 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_cdecl* dtor, void* arg)
   {
     (*dtor) (arg);
   }
-#endif
+
+#  define __MCF_REALIGN_SP    /* nothing */
+
+#endif  /* non-i386 */
 
 /* This structure contains timeout values that will be passed to NT syscalls.  */
 typedef struct __MCF_winnt_timeout __MCF_winnt_timeout;
