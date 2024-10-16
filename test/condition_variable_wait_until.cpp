@@ -30,22 +30,22 @@ main(void)
     NS::cv_status r;
 
     ::_MCF_thread_set_priority(nullptr, ::_MCF_thread_priority_above_normal);
-    NS::unique_lock<NS::mutex> lock(mutex);
+    NS::unique_lock<NS::mutex> xlk(mutex);
 
     // Round the time up.
     int64_t sleep_until = (int64_t) ::time(nullptr) * 1000 + 2000;
     ::_MCF_sleep(&sleep_until);
 
     now = ::_MCF_perf_counter();
-    r = cond.wait_until(lock, NS::chrono::system_clock::now() + NS::chrono::milliseconds(1100));
+    r = cond.wait_until(xlk, NS::chrono::system_clock::now() + NS::chrono::milliseconds(1100));
     assert(r == NS::cv_status::timeout);
     delta = ::_MCF_perf_counter() - now;
     assert(delta >= 1100 - 20);
     assert(delta <= 1200);
 
-    assert(lock);
+    assert(xlk);
     try
-     { assert(lock.try_lock() == false);  }
+     { assert(xlk.try_lock() == false);  }
     catch(std::system_error& e)
      { assert(e.code() == std::errc::resource_deadlock_would_occur);  }
   }

@@ -33,8 +33,8 @@ thread_proc()
     ::_MCF_sem_wait(&start, nullptr);
 
     for(;;) {
-      NS::unique_lock<NS::mutex> lock(mutex, NS::try_to_lock);
-      if(lock) {
+      NS::unique_lock<NS::mutex> xlk(mutex, NS::try_to_lock);
+      if(xlk) {
         // Add a resource.
         int old = resource;
         NS::this_thread::sleep_for(NS::chrono::milliseconds(10));
