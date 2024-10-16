@@ -32,7 +32,7 @@ thread_proc()
   {
     ::_MCF_sem_wait(&start, nullptr);
 
-    NS::lock_guard<NS::mutex> lock(mutex);
+    NS::lock_guard<NS::mutex> xlk(mutex);
 
     // Add a resource.
     int old = resource;

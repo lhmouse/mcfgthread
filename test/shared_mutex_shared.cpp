@@ -34,7 +34,7 @@ thread_proc()
   {
     ::_MCF_sem_wait(&start, nullptr);
 
-    NS::shared_lock<NS::shared_mutex> lock(mutex);
+    NS::shared_lock<NS::shared_mutex> xlk(mutex);
 
     // Add a resource.
     int old = resource.load();
