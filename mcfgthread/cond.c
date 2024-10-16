@@ -13,7 +13,7 @@
 
 static __MCF_NEVER_INLINE
 int
-do_cond_wait_cleanup(int err, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, intptr_t unlocked)
+do_cond_wait_cleanup(_MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, intptr_t unlocked, int err)
   {
     if(unlock_opt && relock_opt)
       (*relock_opt) (lock_arg, unlocked);
@@ -63,7 +63,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
         new.__nsleep = old.__nsleep - 1U;
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new))
-          return do_cond_wait_cleanup(-1, unlock_opt, relock_opt, lock_arg, unlocked);
+          return do_cond_wait_cleanup(unlock_opt, relock_opt, lock_arg, unlocked, -1);
       }
 #pragma GCC diagnostic pop
 
@@ -78,7 +78,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     }
 
     /* We have got notified.  */
-    return do_cond_wait_cleanup(0, unlock_opt, relock_opt, lock_arg, unlocked);
+    return do_cond_wait_cleanup(unlock_opt, relock_opt, lock_arg, unlocked, 0);
   }
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
