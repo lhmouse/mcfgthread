@@ -23,16 +23,15 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
      * (`__nshare` < `__MCF_SHARED_MUTEX_MAX_SHARE`). A reader shall not preempt
      * a lock. If shared access can't be granted, allocate a sleeping count.  */
     _MCF_shared_mutex old, new;
-    uint32_t shareable;
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, smutex);
     do {
-      shareable = (uint32_t) ((old.__nshare - __MCF_SHARED_MUTEX_MAX_SHARE) & (old.__nsleep - 1U)) >> 31;
+      bool shareable = (old.__nshare < __MCF_SHARED_MUTEX_MAX_SHARE) && (old.__nsleep == 0);
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       new.__nshare = old.__nshare + shareable;
-      new.__nsleep = old.__nsleep + 1U - shareable;
+      new.__nsleep = old.__nsleep + !shareable;
 #pragma GCC diagnostic pop
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(smutex, &old, &new));
@@ -89,10 +88,12 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, smutex);
     do {
+      bool lockable = old.__nshare == 0;
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-      new.__nshare = old.__nshare + ((old.__nshare - 1U) >> 14);
-      new.__nsleep = old.__nsleep + ((old.__nshare + 0x3FFFU) >> 14);
+      new.__nshare = old.__nshare - lockable;
+      new.__nsleep = old.__nsleep + !lockable;
 #pragma GCC diagnostic pop
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(smutex, &old, &new));
@@ -143,16 +144,18 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
      * last reader (`__nshare` = 1 before the call) or writer (`__nshare` =
      * `__MCF_SHARED_MUTEX_NSHARE_M` before the call) that unlocks a shared
      * mutex shall perform a wakeup operation.  */
-    size_t wake_one;
+    bool wake_one;
     _MCF_shared_mutex old, new;
     _MCF_atomic_load_pptr_rlx(&old, smutex);
     do {
-      __MCF_ASSERT(old.__nshare != 0);
-      wake_one = _MCF_minz(old.__nsleep, (((old.__nshare - 2U) ^ (old.__nshare + 1U)) >> 14) & 1U);
+      bool was_exclusive = old.__nshare == 0x3FFF;
+      bool was_shared = (old.__nshare != 0) && !was_exclusive;
+      __MCF_ASSERT(was_exclusive || was_shared);
+      wake_one = (old.__nsleep != 0) && ((old.__nshare == 1) || was_exclusive);
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-      new.__nshare = old.__nshare - 1U + (((old.__nshare + 1U) >> 13) & 2U);
+      new.__nshare = old.__nshare - was_shared + was_exclusive;
       new.__nsleep = old.__nsleep - wake_one;
 #pragma GCC diagnostic pop
     }
