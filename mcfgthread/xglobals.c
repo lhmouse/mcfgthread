@@ -76,7 +76,7 @@ __MCF_adjust_winnt_timeout_v3(__MCF_winnt_timeout* to)
     to->__li.QuadPart &= to->__li.QuadPart >> 63;
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_NEVER_INLINE
 size_t
 __MCF_batch_release_common(const void* key, size_t count)
   {
@@ -94,7 +94,7 @@ __MCF_batch_release_common(const void* key, size_t count)
     return count;
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_NEVER_INLINE
 int
 __MCF_win32_error_i(DWORD code, int val)
   {
@@ -102,7 +102,7 @@ __MCF_win32_error_i(DWORD code, int val)
     return val;
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_NEVER_INLINE
 void*
 __MCF_win32_error_p(DWORD code, void* ptr)
   {
@@ -110,7 +110,7 @@ __MCF_win32_error_p(DWORD code, void* ptr)
     return ptr;
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_NEVER_INLINE
 void*
 __MCF_win32_ntstatus_p(NTSTATUS status, void* ptr)
   {
