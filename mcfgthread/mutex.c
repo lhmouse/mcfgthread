@@ -12,7 +12,7 @@
 #include "xglobals.h"
 
 static inline
-BYTE*
+int8_t*
 do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
   {
     /* Each spinning thread is assigned a byte in the field. If the thread sees
@@ -39,12 +39,12 @@ do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
   }
 
 static inline
-uintptr_t
-do_adjust_sp_nfail(uintptr_t old, int add)
+uint32_t
+do_adjust_sp_nfail(uint32_t old, int add)
   {
     /* Adjust the value using saturation arithmetic.  */
     __MCF_ASSERT((-1 <= add) && (add <= +1));
-    uintptr_t temp = old + (uint32_t) add;
+    uint32_t temp = old + (uint32_t) add;
     return temp - temp / 16U;
   }
 
@@ -96,8 +96,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         YieldProcessor();
 
         /* Wait for my turn.  */
-        BYTE cmp = 1;
-        if(!_MCF_atomic_cmpxchg_weak_8_rlx(do_spin_byte_ptr(mutex, my_mask), (int8_t*) &cmp, 0))
+        int8_t cmp = 1;
+        if(!_MCF_atomic_cmpxchg_weak_8_rlx(do_spin_byte_ptr(mutex, my_mask), &cmp, 0))
           continue;
 
         /* If this mutex has not been locked, lock it and decrement the

@@ -301,7 +301,7 @@ struct __MCF_crt_xglobals
     __MCF_dtor_queue __quick_exit_queue[1];
 
     /* mutex support  */
-    __MCF_ALIGNED(64) BYTE __mutex_spin_field[2048];
+    __MCF_ALIGNED(64) int8_t __mutex_spin_field[2048];
 
     /* thread suspension support  */
     _MCF_cond __interrupt_cond[1];
