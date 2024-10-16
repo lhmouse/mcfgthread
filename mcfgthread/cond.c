@@ -11,7 +11,7 @@
 #include "cond.h"
 #include "xglobals.h"
 
-static __MCF_NEVER_INLINE
+static
 int
 do_cond_wait_cleanup(_MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, intptr_t unlocked, int err)
   {
