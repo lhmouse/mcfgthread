@@ -23,17 +23,17 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     _MCF_once old, new;
   try_lock_loop:
     _MCF_atomic_load_pptr_acq(&old, once);
-    do
+    do {
       if(old.__ready != 0)
         return 0;
-      else {
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-        new.__ready = old.__ready;
-        new.__locked = 1;
-        new.__nsleep = old.__nsleep + old.__locked;
+      new.__ready = old.__ready;
+      new.__locked = 1;
+      new.__nsleep = old.__nsleep + old.__locked;
 #pragma GCC diagnostic pop
-      }
+    }
     while(!_MCF_atomic_cmpxchg_weak_pptr_arl(once, &old, &new));
 
     /* If this flag has been changed from UNLOCKED to LOCKED, return 1 to
