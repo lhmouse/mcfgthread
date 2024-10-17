@@ -60,7 +60,7 @@ Use it at your own risk.
 * **SRWLOCK**: Windows `SRWLOCK`
 * **CRITICAL_SECTION**: Windows `CRITICAL_SECTION`
 * **WINPTHREAD**: winpthread `pthread_mutex_t`
-* **MCFGTHREAD**: mcfgthread `_MCF_mutex` with inlining
+* **MCFGTHREAD**: mcfgthread `_MCF_mutex` without inlining
 
 These are results of [the test program](mutex_performance.c) on an x86-64
 *Windows 10* machine with a 10-core *Intel i9 10900K* processor:
