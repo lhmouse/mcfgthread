@@ -33,7 +33,7 @@ extern "C" void* __dso_handle;
 namespace chrono = ::std::chrono;
 using ::std::lock_guard;
 using ::std::unique_lock;
-#ifdef __cpp_lib_shared_timed_mutex  // C++14
+#if __cplusplus >= 201402L
 using ::std::shared_lock;
 #endif
 #ifdef __cpp_lib_scoped_lock  // C++17
@@ -367,7 +367,7 @@ class shared_mutex
     using native_handle_type = ::_MCF_shared_mutex*;
     using lock_guard_type = lock_guard<shared_mutex>;  // extension
     using unique_lock_type = unique_lock<shared_mutex>;  // extension
-#ifdef __cpp_lib_shared_timed_mutex  // C++14
+#if __cplusplus >= 201402L
     using shared_lock_type = shared_lock<shared_mutex>;  // extension
 #endif
 
