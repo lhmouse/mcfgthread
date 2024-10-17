@@ -36,7 +36,6 @@
 #elif defined USE_MCFGTHREAD
 
 #  include <mcfgthread/mutex.h>
-#  include <mcfgthread/clock.h>
 
 #  define my_mutex_t      _MCF_mutex
 #  define my_init(m)      _MCF_mutex_init(m)
