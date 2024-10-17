@@ -35,13 +35,13 @@
 
 #elif defined USE_MCFGTHREAD
 
-#  include <mcfgthread/gthr.h>
+#  include <mcfgthread/mutex.h>
 #  include <mcfgthread/clock.h>
 
 #  define my_mutex_t      _MCF_mutex
-#  define my_init(m)      __MCF_gthr_mutex_init(m)
-#  define my_lock(m)      __MCF_gthr_mutex_lock(m)
-#  define my_unlock(m)    __MCF_gthr_mutex_unlock(m)
+#  define my_init(m)      _MCF_mutex_init(m)
+#  define my_lock(m)      _MCF_mutex_lock_slow(m, NULL)
+#  define my_unlock(m)    _MCF_mutex_unlock_slow(m)
 
 #else
 
