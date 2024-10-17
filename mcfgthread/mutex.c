@@ -86,7 +86,6 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 
     uint32_t my_mask = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
     if(my_mask != 0) {
-      __MCF_ASSERT((my_mask & (my_mask - 1U)) == 0);
       __MCF_ASSERT(spin_count > 0);
       spin_count *= (int) (__MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_SP_NFAIL_THRESHOLD);
 
@@ -116,7 +115,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         }
       }
 
-      /* We have wasted some time. Now allocate a sleeping count.
+      /* We have wasted some time, so return the spinning mask and allocate
+       * a sleeping count.
        * IMPORTANT! We can increment the sleeping counter ONLY IF the mutex
        * is being locked by another thread. Otherwise, if the other thread
        * had unlocked the mutex before we incremented the sleeping counter,
@@ -126,7 +126,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
         new.__locked = 1;
-        new.__sp_mask = old.__sp_mask;
+        new.__sp_mask = old.__sp_mask & ~my_mask;
         new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked - 1);
         new.__nsleep = old.__nsleep + old.__locked;
 #pragma GCC diagnostic pop
