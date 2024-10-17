@@ -22,4 +22,6 @@ constexpr NS::mutex m2{};
 int
 main(void)
   {
+    (void) m1;
+    (void) m2;
   }
