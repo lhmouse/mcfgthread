@@ -106,7 +106,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
           new.__locked = 1;
-          new.__sp_mask = old.__sp_mask & ~my_mask;
+          new.__sp_mask = old.__sp_mask;
           new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, -1);
           new.__nsleep = old.__nsleep;
 #pragma GCC diagnostic pop
@@ -126,7 +126,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
         new.__locked = 1;
-        new.__sp_mask = old.__sp_mask & ~my_mask;
+        new.__sp_mask = old.__sp_mask;
         new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked - 1);
         new.__nsleep = old.__nsleep + old.__locked;
 #pragma GCC diagnostic pop
@@ -189,7 +189,7 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       new.__locked = 0;
-      new.__sp_mask = old.__sp_mask;
+      new.__sp_mask = old.__sp_mask & (old.__sp_mask - 1U);
       new.__sp_nfail = old.__sp_nfail;
       new.__nsleep = old.__nsleep - wake_one;
 #pragma GCC diagnostic pop
@@ -197,7 +197,8 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
     while(!_MCF_atomic_cmpxchg_weak_pptr_rel(mutex, &old, &new));
 
     /* Notify a spinning thread, if any. If `__sp_mask` was non-zero, only its
-     * rightmost bit is of interest, so we need not calculate the difference.  */
+     * rightmost bit should have been cleared, so we need not calculate the
+     * bit difference, unlike `_MCF_mutex_lock_slow()`.  */
     if(old.__sp_mask != 0)
       _MCF_atomic_store_8_rlx(do_spin_byte_ptr(mutex, old.__sp_mask), 1);
 
