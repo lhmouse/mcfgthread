@@ -67,8 +67,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, mutex);
     do {
-      spin_count = (int) (old.__sp_nfail - __MCF_MUTEX_SP_NFAIL_THRESHOLD);
-      bool may_spin = (old.__sp_mask != 15) && (spin_count > 0);
+      spin_count = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
+      bool may_spin = (old.__sp_mask != 15U) && (spin_count > 0);
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
