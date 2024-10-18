@@ -10,9 +10,9 @@ meson setup ${_cross_file}  \
   build_debug
 
 meson setup ${_cross_file}  \
-  -Ddebug=true -Doptimization=s -Db_lto=true  \
+  -Ddebug=true -Doptimization=s  \
   build_release
 
 meson setup ${_cross_file}  \
-  -Ddebug=true -Doptimization=3 -Db_lto=true  \
+  -Ddebug=true -Doptimization=3  \
   build_optimized
