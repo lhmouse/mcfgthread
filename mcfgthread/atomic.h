@@ -20,15 +20,15 @@
 #  define __MCF_memory_order_arl     __ATOMIC_ACQ_REL
 #  define __MCF_memory_order_cst     __ATOMIC_SEQ_CST
 
-#  define __MCF_atomic_load(p,o)             __atomic_load_n(p,o)
-#  define __MCF_atomic_store(p,v,o)          __atomic_store_n(p,v,o)
-#  define __MCF_atomic_xchg(p,v,o)           __atomic_exchange_n(p,v,o)
-#  define __MCF_atomic_cmpxchg(p,c,v,o,f)    __atomic_compare_exchange_n(p,c,v,0,o,f)
-#  define __MCF_atomic_cmpxchgw(p,c,v,o,f)   __atomic_compare_exchange_n(p,c,v,1,o,f)
-#  define __MCF_atomic_xadd(p,v,o)           __atomic_fetch_add(p,v,o)
-#  define __MCF_atomic_xsub(p,v,o)           __atomic_fetch_sub(p,v,o)
-#  define __MCF_atomic_thread_fence(o)       __atomic_thread_fence(o)
-#  define __MCF_atomic_signal_fence(o)       __atomic_signal_fence(o)
+#  define __MCF_atomic_load(p,o)              __atomic_load_n(p,o)
+#  define __MCF_atomic_store(p,v,o)           __atomic_store_n(p,v,o)
+#  define __MCF_atomic_xchg(p,v,o)            __atomic_exchange_n(p,v,o)
+#  define __MCF_atomic_cmpxchg(p,c,v,o,f)     __atomic_compare_exchange_n(p,c,v,0,o,f)
+#  define __MCF_atomic_cmpxchg_w(p,c,v,o,f)   __atomic_compare_exchange_n(p,c,v,1,o,f)
+#  define __MCF_atomic_xadd(p,v,o)            __atomic_fetch_add(p,v,o)
+#  define __MCF_atomic_xsub(p,v,o)            __atomic_fetch_sub(p,v,o)
+#  define __MCF_atomic_thread_fence(o)        __atomic_thread_fence(o)
+#  define __MCF_atomic_signal_fence(o)        __atomic_signal_fence(o)
 #endif
 
 #if !defined __MCF_atomic && defined __cplusplus && (__cplusplus >= 201103L)
@@ -42,15 +42,15 @@
 #  define __MCF_memory_order_arl     ::std::memory_order_acq_rel
 #  define __MCF_memory_order_cst     ::std::memory_order_seq_cst
 
-#  define __MCF_atomic_load(p,o)             (p)->load(o)
-#  define __MCF_atomic_store(p,v,o)          (p)->store(v,o)
-#  define __MCF_atomic_xchg(p,v,o)           (p)->exchange(v,o)
-#  define __MCF_atomic_cmpxchg(p,c,v,o,f)    (p)->compare_exchange_strong(*(c),v,o,f)
-#  define __MCF_atomic_cmpxchgw(p,c,v,o,f)   (p)->compare_exchange_weak(*(c),v,o,f)
-#  define __MCF_atomic_xadd(p,v,o)           (p)->fetch_add(v,o)
-#  define __MCF_atomic_xsub(p,v,o)           (p)->fetch_sub(v,o)
-#  define __MCF_atomic_thread_fence(o)       ::std::atomic_thread_fence(o)
-#  define __MCF_atomic_signal_fence(o)       ::std::atomic_signal_fence(o)
+#  define __MCF_atomic_load(p,o)              (p)->load(o)
+#  define __MCF_atomic_store(p,v,o)           (p)->store(v,o)
+#  define __MCF_atomic_xchg(p,v,o)            (p)->exchange(v,o)
+#  define __MCF_atomic_cmpxchg(p,c,v,o,f)     (p)->compare_exchange_strong(*(c),v,o,f)
+#  define __MCF_atomic_cmpxchg_w(p,c,v,o,f)   (p)->compare_exchange_weak(*(c),v,o,f)
+#  define __MCF_atomic_xadd(p,v,o)            (p)->fetch_add(v,o)
+#  define __MCF_atomic_xsub(p,v,o)            (p)->fetch_sub(v,o)
+#  define __MCF_atomic_thread_fence(o)        ::std::atomic_thread_fence(o)
+#  define __MCF_atomic_signal_fence(o)        ::std::atomic_signal_fence(o)
 #endif
 
 #if !defined __MCF_atomic
@@ -65,15 +65,15 @@
 #  define __MCF_memory_order_arl       memory_order_acq_rel
 #  define __MCF_memory_order_cst       memory_order_seq_cst
 
-#  define __MCF_atomic_load(p,o)             atomic_load_explicit(p,o)
-#  define __MCF_atomic_store(p,v,o)          atomic_store_explicit(p,v,o)
-#  define __MCF_atomic_xchg(p,v,o)           atomic_exchange_explicit(p,v,o)
-#  define __MCF_atomic_cmpxchg(p,c,v,o,f)    atomic_compare_exchange_strong_explicit(p,c,v,o,f)
-#  define __MCF_atomic_cmpxchgw(p,c,v,o,f)   atomic_compare_exchange_weak_explicit(p,c,v,o,f)
-#  define __MCF_atomic_xadd(p,v,o)           atomic_fetch_add_explicit(p,v,o)
-#  define __MCF_atomic_xsub(p,v,o)           atomic_fetch_sub_explicit(p,v,o)
-#  define __MCF_atomic_thread_fence(o)       atomic_thread_fence(o)
-#  define __MCF_atomic_signal_fence(o)       atomic_signal_fence(o)
+#  define __MCF_atomic_load(p,o)              atomic_load_explicit(p,o)
+#  define __MCF_atomic_store(p,v,o)           atomic_store_explicit(p,v,o)
+#  define __MCF_atomic_xchg(p,v,o)            atomic_exchange_explicit(p,v,o)
+#  define __MCF_atomic_cmpxchg(p,c,v,o,f)     atomic_compare_exchange_strong_explicit(p,c,v,o,f)
+#  define __MCF_atomic_cmpxchg_w(p,c,v,o,f)   atomic_compare_exchange_weak_explicit(p,c,v,o,f)
+#  define __MCF_atomic_xadd(p,v,o)            atomic_fetch_add_explicit(p,v,o)
+#  define __MCF_atomic_xsub(p,v,o)            atomic_fetch_sub_explicit(p,v,o)
+#  define __MCF_atomic_thread_fence(o)        atomic_thread_fence(o)
+#  define __MCF_atomic_signal_fence(o)        atomic_signal_fence(o)
 #endif
 
 __MCF_C_DECLARATIONS_BEGIN
@@ -94,26 +94,27 @@ __MCF_C_DECLARATIONS_BEGIN
  * function writes the value into `*res`.
  *
  *   [INTEGER]
- *   _MCF_atomic_load_[WIDTH]_[ORDER](const void* mem);
+ *   _MCF_atomic_load_[WIDTH]_[ORDER] (const void* mem);
  *
  *   void
- *   _MCF_atomic_load_p[WIDTH]_[ORDER](void* res, const void* mem);
+ *   _MCF_atomic_load_p[WIDTH]_[ORDER] (void* res, const void* mem);
  */
 #define __MCF_atomic_load_(WIDTH, ORDER, INTEGER)  \
   __MCF_ALWAYS_INLINE  \
   INTEGER  \
-  _MCF_atomic_load_##WIDTH##_##ORDER(__MCF_zp_r __mem) __MCF_NOEXCEPT  \
+  _MCF_atomic_load_##WIDTH##_##ORDER(const void* __mem) __MCF_NOEXCEPT  \
     {  \
       return __MCF_atomic_load((const __MCF_atomic(INTEGER)*) __mem,  \
-                     __MCF_memory_order_##ORDER);  \
+                               __MCF_memory_order_##ORDER);  \
     }  \
   \
   __MCF_ALWAYS_INLINE  \
   void  \
-  _MCF_atomic_load_p##WIDTH##_##ORDER(__MCF_zp __res, __MCF_zp_r __mem) __MCF_NOEXCEPT  \
+  _MCF_atomic_load_p##WIDTH##_##ORDER(void* __res, const void* __mem) __MCF_NOEXCEPT  \
     {  \
-      *(INTEGER*) __res = __MCF_atomic_load((const __MCF_atomic(INTEGER)*) __mem,  \
-                                  __MCF_memory_order_##ORDER);  \
+      INTEGER __rval = __MCF_atomic_load((const __MCF_atomic(INTEGER)*) __mem,  \
+                                         __MCF_memory_order_##ORDER);  \
+      *(INTEGER*) __res = __rval;  \
     }
 
 __MCF_atomic_load_(8, rlx, int8_t)
@@ -145,26 +146,27 @@ __MCF_atomic_load_(z, cst, size_t)
  * stores the value at `*src`.
  *
  *   void
- *   _MCF_atomic_store_[WIDTH]_[ORDER](void* mem, [INTEGER] val);
+ *   _MCF_atomic_store_[WIDTH]_[ORDER] (void* mem, [INTEGER] val);
  *
  *   void
- *   _MCF_atomic_store_p[WIDTH]_[ORDER](void* mem, const void* src);
+ *   _MCF_atomic_store_p[WIDTH]_[ORDER] (void* mem, const void* src);
  */
 #define __MCF_atomic_store_(WIDTH, ORDER, INTEGER)  \
   __MCF_ALWAYS_INLINE  \
   void  \
-  _MCF_atomic_store_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER __val) __MCF_NOEXCEPT  \
+  _MCF_atomic_store_##WIDTH##_##ORDER(void* __mem, INTEGER __val) __MCF_NOEXCEPT  \
     {  \
       __MCF_atomic_store((__MCF_atomic(INTEGER)*) __mem, __val,  \
-              __MCF_memory_order_##ORDER);  \
+                         __MCF_memory_order_##ORDER);  \
     }  \
   \
   __MCF_ALWAYS_INLINE  \
   void  \
-  _MCF_atomic_store_p##WIDTH##_##ORDER(__MCF_zp __mem, __MCF_zp_r __src) __MCF_NOEXCEPT  \
+  _MCF_atomic_store_p##WIDTH##_##ORDER(void* __mem, const void* __src) __MCF_NOEXCEPT  \
     {  \
-      __MCF_atomic_store((__MCF_atomic(INTEGER)*) __mem, *(const INTEGER*) __src,  \
-              __MCF_memory_order_##ORDER);  \
+      INTEGER __val = *(const INTEGER*) __src;  \
+      __MCF_atomic_store((__MCF_atomic(INTEGER)*) __mem, __val,  \
+                         __MCF_memory_order_##ORDER);  \
     }
 
 __MCF_atomic_store_(8, rlx, int8_t)
@@ -197,26 +199,28 @@ __MCF_atomic_store_(z, cst, size_t)
  * writes the old value into `*res`.
  *
  *   [INTEGER]
- *   _MCF_atomic_xchg_[WIDTH]_[ORDER](void* mem, [INTEGER] val);
+ *   _MCF_atomic_xchg_[WIDTH]_[ORDER] (void* mem, [INTEGER] val);
  *
  *   void
- *   _MCF_atomic_xchg_p[WIDTH]_[ORDER](void* res, void* mem, const void* src);
+ *   _MCF_atomic_xchg_p[WIDTH]_[ORDER] (void* res, void* mem, const void* src);
  */
 #define __MCF_atomic_xchg_(WIDTH, ORDER, INTEGER)  \
   __MCF_ALWAYS_INLINE  \
   INTEGER  \
-  _MCF_atomic_xchg_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER __val) __MCF_NOEXCEPT  \
+  _MCF_atomic_xchg_##WIDTH##_##ORDER(void* __mem, INTEGER __val) __MCF_NOEXCEPT  \
     {  \
       return __MCF_atomic_xchg((__MCF_atomic(INTEGER)*) __mem, __val,  \
-                     __MCF_memory_order_##ORDER);  \
+                               __MCF_memory_order_##ORDER);  \
     }  \
   \
   __MCF_ALWAYS_INLINE  \
   void  \
-  _MCF_atomic_xchg_p##WIDTH##_##ORDER(__MCF_zp __res, __MCF_zp __mem, __MCF_zp_r __src) __MCF_NOEXCEPT  \
+  _MCF_atomic_xchg_p##WIDTH##_##ORDER(void* __res, void* __mem, const void* __src) __MCF_NOEXCEPT  \
     {  \
-      *(INTEGER*) __res = __MCF_atomic_xchg((__MCF_atomic(INTEGER)*) __mem,  \
-                                  *(const INTEGER*) __src, __MCF_memory_order_##ORDER);  \
+      INTEGER __val = *(const INTEGER*) __src;  \
+      INTEGER __rval = __MCF_atomic_xchg((__MCF_atomic(INTEGER)*) __mem, __val,  \
+                                         __MCF_memory_order_##ORDER);  \
+      *(INTEGER*) __res = __rval;  \
     }
 
 __MCF_atomic_xchg_(8, rlx, int8_t)
@@ -263,28 +267,32 @@ __MCF_atomic_xchg_(z, cst, size_t)
  * functions may perform the operation as a loop and will not fail spuriously.
  *
  *   bool
- *   _MCF_atomic_cmpxchg_[WIDTH]_[ORDER](void* mem, [INTEGER]* cmp, [INTEGER] val);
+ *   _MCF_atomic_cmpxchg_[WIDTH]_[ORDER] (void* mem, [INTEGER]* cmp, [INTEGER] val);
  *
  *   bool
- *   _MCF_atomic_cmpxchg_p[WIDTH]_[ORDER](void* mem, void* cmp, const void* src);
+ *   _MCF_atomic_cmpxchg_p[WIDTH]_[ORDER] (void* mem, void* cmp, const void* src);
  */
 #define __MCF_atomic_cmpxchg_(WIDTH, ORDER, INTEGER)  \
   __MCF_ALWAYS_INLINE  \
   bool  \
-  _MCF_atomic_cmpxchg_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER* __restrict __cmp, INTEGER __val) __MCF_NOEXCEPT  \
+  _MCF_atomic_cmpxchg_##WIDTH##_##ORDER(void* __mem, INTEGER* __cmp, INTEGER __val) __MCF_NOEXCEPT  \
     {  \
-      return __MCF_atomic_cmpxchg((__MCF_atomic(INTEGER)*) __mem, __cmp,  \
-                     __val, __MCF_memory_order_##ORDER,  \
-                     __MCF_memory_order_f_##ORDER);  \
+      return __MCF_atomic_cmpxchg((__MCF_atomic(INTEGER)*) __mem, __cmp, __val,  \
+                                  __MCF_memory_order_##ORDER,  \
+                                  __MCF_memory_order_f_##ORDER);  \
     }  \
   \
   __MCF_ALWAYS_INLINE  \
   bool  \
-  _MCF_atomic_cmpxchg_p##WIDTH##_##ORDER(__MCF_zp __mem, __MCF_zp __cmp, __MCF_zp __val) __MCF_NOEXCEPT  \
+  _MCF_atomic_cmpxchg_p##WIDTH##_##ORDER(void* __mem, void* __cmp, const void* __src) __MCF_NOEXCEPT  \
     {  \
-      return __MCF_atomic_cmpxchg((__MCF_atomic(INTEGER)*) __mem, (INTEGER*) __cmp,  \
-                 *(const INTEGER*) __val, __MCF_memory_order_##ORDER,  \
-                 __MCF_memory_order_f_##ORDER);  \
+      INTEGER __cval = *(const INTEGER*) __cmp;  \
+      INTEGER __val = *(const INTEGER*) __src;  \
+      bool __succ = __MCF_atomic_cmpxchg((__MCF_atomic(INTEGER)*) __mem, &__cval, __val,  \
+                                         __MCF_memory_order_##ORDER,  \
+                                         __MCF_memory_order_f_##ORDER);  \
+      *(INTEGER*) __cmp = __cval;  \
+      return __succ;  \
     }
 
 __MCF_atomic_cmpxchg_(8, rlx, int8_t)
@@ -331,26 +339,32 @@ __MCF_atomic_cmpxchg_(z, cst, size_t)
  * functions may fail spuriously.
  *
  *   bool
- *   _MCF_atomic_cmpxchg_weak_[WIDTH]_[ORDER](void* mem, [INTEGER]* cmp, [INTEGER] val);
+ *   _MCF_atomic_cmpxchg_weak_[WIDTH]_[ORDER] (void* mem, [INTEGER]* cmp, [INTEGER] val);
  *
  *   bool
- *   _MCF_atomic_cmpxchg_weak_p[WIDTH]_[ORDER](void* mem, void* cmp, const void* src);
+ *   _MCF_atomic_cmpxchg_weak_p[WIDTH]_[ORDER] (void* mem, void* cmp, const void* src);
  */
 #define __MCF_atomic_cmpxchg_weak_(WIDTH, ORDER, INTEGER)  \
   __MCF_ALWAYS_INLINE  \
   bool  \
-  _MCF_atomic_cmpxchg_weak_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER* __restrict __cmp, INTEGER __val) __MCF_NOEXCEPT  \
+  _MCF_atomic_cmpxchg_weak_##WIDTH##_##ORDER(void* __mem, INTEGER* __cmp, INTEGER __val) __MCF_NOEXCEPT  \
     {  \
-      return __MCF_atomic_cmpxchgw((__MCF_atomic(INTEGER)*) __mem, __cmp,  \
-                     __val, __MCF_memory_order_##ORDER, __MCF_memory_order_f_##ORDER);  \
+      return __MCF_atomic_cmpxchg_w((__MCF_atomic(INTEGER)*) __mem, __cmp, __val,  \
+                                    __MCF_memory_order_##ORDER,  \
+                                    __MCF_memory_order_f_##ORDER);  \
     }  \
   \
   __MCF_ALWAYS_INLINE  \
   bool  \
-  _MCF_atomic_cmpxchg_weak_p##WIDTH##_##ORDER(__MCF_zp __mem, __MCF_zp __cmp, __MCF_zp __val) __MCF_NOEXCEPT  \
+  _MCF_atomic_cmpxchg_weak_p##WIDTH##_##ORDER(void* __mem, void* __cmp, const void* __src) __MCF_NOEXCEPT  \
     {  \
-      return __MCF_atomic_cmpxchgw((__MCF_atomic(INTEGER)*) __mem, (INTEGER*) __cmp,  \
-                     *(const INTEGER*) __val, __MCF_memory_order_##ORDER, __MCF_memory_order_f_##ORDER);  \
+      INTEGER __cval = *(const INTEGER*) __cmp;  \
+      INTEGER __val = *(const INTEGER*) __src;  \
+      bool __succ = __MCF_atomic_cmpxchg_w((__MCF_atomic(INTEGER)*) __mem, &__cval, __val,  \
+                                           __MCF_memory_order_##ORDER,  \
+                                           __MCF_memory_order_f_##ORDER);  \
+      *(INTEGER*) __cmp = __cval;  \
+      return __succ;  \
     }
 
 __MCF_atomic_cmpxchg_weak_(8, rlx, int8_t)
@@ -393,15 +407,15 @@ __MCF_atomic_cmpxchg_weak_(z, cst, size_t)
  * specified width. These function return the old value.
  *
  *   [INTEGER]
- *   _MCF_atomic_xadd_[WIDTH]_[ORDER](void* mem, [INTEGER] val);
+ *   _MCF_atomic_xadd_[WIDTH]_[ORDER] (void* mem, [INTEGER] val);
  */
 #define __MCF_atomic_xadd_(WIDTH, ORDER, INTEGER)  \
   __MCF_ALWAYS_INLINE  \
   INTEGER  \
-  _MCF_atomic_xadd_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER __val) __MCF_NOEXCEPT  \
+  _MCF_atomic_xadd_##WIDTH##_##ORDER(void* __mem, INTEGER __val) __MCF_NOEXCEPT  \
     {  \
       return __MCF_atomic_xadd((__MCF_atomic(INTEGER)*) __mem, __val,  \
-                     __MCF_memory_order_##ORDER);  \
+                               __MCF_memory_order_##ORDER);  \
     }
 
 __MCF_atomic_xadd_(8, rlx, int8_t)
@@ -444,15 +458,15 @@ __MCF_atomic_xadd_(z, cst, size_t)
  * of the specified width. These function return the old value.
  *
  *   [INTEGER]
- *   _MCF_atomic_xsub_[WIDTH]_[ORDER](void* mem, [INTEGER] val);
+ *   _MCF_atomic_xsub_[WIDTH]_[ORDER] (void* mem, [INTEGER] val);
  */
 #define __MCF_atomic_xsub_(WIDTH, ORDER, INTEGER)  \
   __MCF_ALWAYS_INLINE  \
   INTEGER  \
-  _MCF_atomic_xsub_##WIDTH##_##ORDER(__MCF_zp __mem, INTEGER __val) __MCF_NOEXCEPT  \
+  _MCF_atomic_xsub_##WIDTH##_##ORDER(void* __mem, INTEGER __val) __MCF_NOEXCEPT  \
     {  \
       return __MCF_atomic_xsub((__MCF_atomic(INTEGER)*) __mem, __val,  \
-                     __MCF_memory_order_##ORDER);  \
+                               __MCF_memory_order_##ORDER);  \
     }
 
 __MCF_atomic_xsub_(8, rlx, int8_t)
@@ -494,7 +508,7 @@ __MCF_atomic_xsub_(z, cst, size_t)
 /* Emit a fence between threads.
  *
  *   void
- *   _MCF_thread_fence_[ORDER]();
+ *   _MCF_thread_fence_[ORDER] (void);
  */
 #define __MCF_atomic_thread_fence_(ORDER)  \
   __MCF_ALWAYS_INLINE  \
@@ -513,7 +527,7 @@ __MCF_atomic_thread_fence_(cst)
 /* Emit a fence within the same thread.
  *
  *   void
- *   _MCF_signal_fence_[ORDER]();
+ *   _MCF_signal_fence_[ORDER] (void);
  */
 #define __MCF_atomic_signal_fence_(ORDER)  \
   __MCF_ALWAYS_INLINE  \
