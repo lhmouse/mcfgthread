@@ -493,8 +493,9 @@ __MCF_LIBCXX_INLINE
 int
 __MCF_libcxx_condvar_wait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx) __MCF_NOEXCEPT
   {
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback, __MCF_gthr_mutex_relock_callback,
-                               (intptr_t) __mtx, __MCF_nullptr);
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback,
+                               __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx,
+                               __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
@@ -504,8 +505,9 @@ int
 __MCF_libcxx_condvar_timedwait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx, const __libcpp_timespec_t* __abs_time) __MCF_NOEXCEPT
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback, __MCF_gthr_mutex_relock_callback,
-                               (intptr_t) __mtx, &__timeout);
+    int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback,
+                               __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx,
+                               &__timeout);
     return __err;
   }
 
