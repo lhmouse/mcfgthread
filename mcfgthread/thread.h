@@ -13,7 +13,7 @@
 #include "tls.h"
 #include "atomic.h"
 
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_THREAD_IMPORT
 #  define __MCF_THREAD_IMPORT
 #  define __MCF_THREAD_INLINE  __MCF_GNU_INLINE
@@ -377,5 +377,5 @@ _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt) __MCF_NOEXCEPT
     return __MCF_tls_table_xset(__self->__tls_table, __key, __MCF_nullptr, __value_opt);
   }
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_THREAD_  */

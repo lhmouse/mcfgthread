@@ -83,8 +83,6 @@
 #define __MCF_CXX11(...)
 #define __MCF_CXX14(...)
 
-#define __MCF_C_DECLARATIONS_BEGIN
-#define __MCF_C_DECLARATIONS_END
 #define __MCF_NOEXCEPT
 #define __MCF_nullptr   __MCF_IPTR_0
 
@@ -103,10 +101,6 @@
 #  define __MCF_C(...)
 #  undef __MCF_CXX
 #  define __MCF_CXX(...)   __VA_ARGS__
-#  undef __MCF_C_DECLARATIONS_BEGIN
-#  define __MCF_C_DECLARATIONS_BEGIN   extern "C" {
-#  undef __MCF_C_DECLARATIONS_END
-#  define __MCF_C_DECLARATIONS_END   }
 #  undef __MCF_NOEXCEPT
 #  define __MCF_NOEXCEPT      throw()
 #endif
@@ -126,7 +120,7 @@
 #endif
 
 /* Common declarations start here.  */
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_FWD_IMPORT
 #  define __MCF_FWD_IMPORT
 #  define __MCF_FWD_INLINE  __MCF_GNU_INLINE
@@ -261,5 +255,5 @@ __MCF_FWD_IMPORT __MCF_NEVER_RETURN __MCF_NEVER_INLINE __MCF_FN_COLD
 void
 __MCF_runtime_failure(const char* __where);
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_FWD_  */

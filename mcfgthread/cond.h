@@ -11,7 +11,7 @@
 #include "fwd.h"
 #include "atomic.h"
 
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_COND_IMPORT
 #  define __MCF_COND_IMPORT
 #  define __MCF_COND_INLINE  __MCF_GNU_INLINE
@@ -116,5 +116,5 @@ _MCF_cond_signal_all(_MCF_cond* __cond) __MCF_NOEXCEPT
     return _MCF_cond_signal_some(__cond, SIZE_MAX);
   }
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_COND_  */

@@ -10,7 +10,7 @@
 
 #include "fwd.h"
 
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_DTOR_QUEUE_IMPORT
 #  define __MCF_DTOR_QUEUE_IMPORT
 #  define __MCF_DTOR_QUEUE_INLINE  __MCF_GNU_INLINE
@@ -61,5 +61,5 @@ __MCF_DTOR_QUEUE_IMPORT
 size_t
 __MCF_dtor_queue_remove(__MCF_dtor_queue* __queue, void* __dso) __MCF_NOEXCEPT;
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_DTOR_QUEUE_  */

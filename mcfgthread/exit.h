@@ -10,7 +10,7 @@
 
 #include "fwd.h"
 
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_EXIT_IMPORT
 #  define __MCF_EXIT_IMPORT
 #  define __MCF_EXIT_INLINE  __MCF_GNU_INLINE
@@ -29,5 +29,5 @@ __MCF_EXIT_IMPORT __MCF_NEVER_RETURN
 void
 __MCF_exit(int __status) __MCF_NOEXCEPT;
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_EXIT_  */

@@ -16,7 +16,7 @@
 #include "shared_mutex.h"
 #include <time.h>  /* struct timespec  */
 
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_GTHR_AUX_IMPORT
 #  define __MCF_GTHR_AUX_IMPORT
 #  define __MCF_GTHR_AUX_INLINE  __MCF_GNU_INLINE
@@ -208,5 +208,5 @@ __MCF_gthr_rc_mutex_release(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
     _MCF_mutex_unlock(__rmtx->__mutex);
   }
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_GTHR_AUX_  */

@@ -11,7 +11,7 @@
 #include "fwd.h"
 #include "atomic.h"
 
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_EVENT_IMPORT
 #  define __MCF_EVENT_IMPORT
 #  define __MCF_EVENT_INLINE  __MCF_GNU_INLINE
@@ -161,5 +161,5 @@ _MCF_event_set(_MCF_event* __eventp, int __value) __MCF_NOEXCEPT
     return _MCF_event_set_slow(__eventp, __value);
   }
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_EVENT_  */

@@ -76,7 +76,7 @@
 #  define __MCF_atomic_signal_fence(o)        atomic_signal_fence(o)
 #endif
 
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_ATOMIC_IMPORT
 #  define __MCF_ATOMIC_IMPORT
 #  define __MCF_ATOMIC_INLINE  __MCF_GNU_INLINE
@@ -543,5 +543,5 @@ __MCF_atomic_signal_fence_(rel)
 __MCF_atomic_signal_fence_(arl)
 __MCF_atomic_signal_fence_(cst)
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_ATOMIC_  */

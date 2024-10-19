@@ -11,7 +11,7 @@
 #include "fwd.h"
 #include "atomic.h"
 
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_SHARED_MUTEX_IMPORT
 #  define __MCF_SHARED_MUTEX_IMPORT
 #  define __MCF_SHARED_MUTEX_INLINE  __MCF_GNU_INLINE
@@ -159,5 +159,5 @@ _MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex) __MCF_NOEXCEPT
     _MCF_shared_mutex_unlock_slow(__smutex);
   }
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_SHARED_MUTEX_  */

@@ -11,7 +11,7 @@
 #include "fwd.h"
 #include "atomic.h"
 
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_ONCE_IMPORT
 #  define __MCF_ONCE_IMPORT
 #  define __MCF_ONCE_INLINE  __MCF_GNU_INLINE
@@ -115,5 +115,5 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
     return _MCF_once_wait_slow(__once, __timeout_opt);
   }
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_ONCE_  */
