@@ -10,7 +10,7 @@
 
 #include "fwd.h"
 
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_CXA_IMPORT
 #  define __MCF_CXA_IMPORT
 #  define __MCF_CXA_INLINE  __MCF_GNU_INLINE
@@ -59,5 +59,5 @@ __MCF_CXA_IMPORT
 void
 __MCF_cxa_finalize(void* __dso) __MCF_NOEXCEPT;
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_CXA_  */

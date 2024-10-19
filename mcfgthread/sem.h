@@ -11,7 +11,7 @@
 #include "fwd.h"
 #include "atomic.h"
 
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_SEM_IMPORT
 #  define __MCF_SEM_IMPORT
 #  define __MCF_SEM_INLINE  __MCF_GNU_INLINE
@@ -117,5 +117,5 @@ _MCF_sem_signal(_MCF_sem* __sem) __MCF_NOEXCEPT
     return _MCF_sem_signal_some(__sem, 1);
   }
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_SEM_  */

@@ -11,7 +11,7 @@
 #include "fwd.h"
 #include "gthr_aux.h"
 
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_C11_IMPORT
 #  define __MCF_C11_IMPORT
 #  define __MCF_C11_INLINE  __MCF_GNU_INLINE
@@ -729,5 +729,5 @@ __MCF_c11_tss_set(tss_t __key, void* __val_opt) __MCF_NOEXCEPT
     return (__err != 0) ? thrd_error : thrd_success;
   }
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_C11_  */

@@ -11,7 +11,7 @@
 #include "fwd.h"
 #include "gthr_aux.h"
 
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_GTHR_IMPORT
 #  define __MCF_GTHR_IMPORT
 #  define __MCF_GTHR_INLINE  __MCF_GNU_INLINE
@@ -655,5 +655,5 @@ __MCF_gthr_yield(void) __MCF_NOEXCEPT
     _MCF_yield();
   }
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_GTHR_  */

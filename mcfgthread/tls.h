@@ -11,7 +11,7 @@
 #include "fwd.h"
 #include "atomic.h"
 
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_TLS_IMPORT
 #  define __MCF_TLS_IMPORT
 #  define __MCF_TLS_INLINE  __MCF_GNU_INLINE
@@ -164,5 +164,5 @@ _MCF_tls_key_get_destructor(const _MCF_tls_key* __key) __MCF_NOEXCEPT
     return __key->__dtor_opt;
   }
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_TLS_  */

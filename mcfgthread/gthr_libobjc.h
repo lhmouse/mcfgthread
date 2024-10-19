@@ -14,7 +14,7 @@
 #  include <objc/thr.h>
 #endif
 
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_GTHR_LIBOBJC_IMPORT
 #  define __MCF_GTHR_LIBOBJC_IMPORT
 #  define __MCF_GTHR_LIBOBJC_INLINE  __MCF_GNU_INLINE
@@ -406,5 +406,5 @@ __MCF_gthr_objc_thread_set_data(void* __value) __MCF_NOEXCEPT
     return 0;
   }
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_GTHR_LIBOBJC_  */

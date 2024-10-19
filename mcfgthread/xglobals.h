@@ -27,7 +27,7 @@
 #include <wincon.h>
 #include <ntdef.h>
 
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_XGLOBALS_IMPORT
 #  define __MCF_XGLOBALS_IMPORT
 #  define __MCF_XGLOBALS_INLINE  __MCF_GNU_INLINE
@@ -699,5 +699,5 @@ __MCF_show_service_notification(const UNICODE_STRING* caption, DWORD options, co
     return !NT_SUCCESS(status) ? -1 : (int) response;
   }
 
-__MCF_C_DECLARATIONS_END
+__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_XGLOBALS_  */
