@@ -51,7 +51,7 @@ struct __MCF_gthr_thread_record
  * attempts to retry. Sadly this is not possible in standard C.  */
 __MCF_GTHR_AUX_INLINE
 void
-__MCF_gthr_unonce(_MCF_once** __oncep) __MCF_NOEXCEPT;
+__MCF_gthr_unonce(_MCF_once** __oncep) __MCF_noexcept;
 
 /* These functions implement `__gthread_once()`. If `__once_fn` initiates stack
  * unwinding, by throwing an exception for example, the state of `*__once` will
@@ -69,64 +69,64 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* __once, __MCF_cxa_dtor_cdecl* __in
  * number of milliseconds since the Unix epoch, with boundary checking.  */
 __MCF_GTHR_AUX_IMPORT __MCF_FN_PURE
 int64_t
-__MCF_gthr_timeout_from_timespec(const __MCF_timespec* __abs_time) __MCF_NOEXCEPT;
+__MCF_gthr_timeout_from_timespec(const __MCF_timespec* __abs_time) __MCF_noexcept;
 
 /* These are auxiliary functions for condition variables. The argument is a
  * pointer to a plain `_MCF_mutex`.  */
 __MCF_GTHR_AUX_IMPORT
 intptr_t
-__MCF_gthr_mutex_unlock_callback(intptr_t __arg) __MCF_NOEXCEPT;
+__MCF_gthr_mutex_unlock_callback(intptr_t __arg) __MCF_noexcept;
 
 __MCF_GTHR_AUX_IMPORT
 void
-__MCF_gthr_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
+__MCF_gthr_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_noexcept;
 
 /* These are auxiliary functions for condition variables. The argument is a
  * pointer to a `_MCF_shared_mutex`.  */
 __MCF_GTHR_AUX_IMPORT
 intptr_t
-__MCF_gthr_shared_mutex_unlock_callback(intptr_t __arg) __MCF_NOEXCEPT;
+__MCF_gthr_shared_mutex_unlock_callback(intptr_t __arg) __MCF_noexcept;
 
 __MCF_GTHR_AUX_IMPORT
 void
-__MCF_gthr_shared_mutex_relock_shared_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
+__MCF_gthr_shared_mutex_relock_shared_callback(intptr_t __arg, intptr_t __unlocked) __MCF_noexcept;
 
 __MCF_GTHR_AUX_IMPORT
 void
-__MCF_gthr_shared_mutex_relock_exclusive_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
+__MCF_gthr_shared_mutex_relock_exclusive_callback(intptr_t __arg, intptr_t __unlocked) __MCF_noexcept;
 
 /* These are auxiliary functions for condition variables. The argument is a
  * pointer to a `__MCF_gthr_rc_mutex`.  */
 __MCF_GTHR_AUX_IMPORT
 intptr_t
-__MCF_gthr_recursive_mutex_unlock_callback(intptr_t __arg) __MCF_NOEXCEPT;
+__MCF_gthr_recursive_mutex_unlock_callback(intptr_t __arg) __MCF_noexcept;
 
 __MCF_GTHR_AUX_IMPORT
 void
-__MCF_gthr_recursive_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_NOEXCEPT;
+__MCF_gthr_recursive_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_noexcept;
 
 /* These are auxiliary functions to implement recursive mutexes, and are not
  * to be called directly.  */
 __MCF_GTHR_AUX_INLINE
 void
-__MCF_gthr_rc_mutex_init(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT;
+__MCF_gthr_rc_mutex_init(__MCF_gthr_rc_mutex* __rmtx) __MCF_noexcept;
 
 __MCF_GTHR_AUX_INLINE
 int
-__MCF_gthr_rc_mutex_recurse(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT;
+__MCF_gthr_rc_mutex_recurse(__MCF_gthr_rc_mutex* __rmtx) __MCF_noexcept;
 
 __MCF_GTHR_AUX_INLINE
 int
-__MCF_gthr_rc_mutex_wait(__MCF_gthr_rc_mutex* __rmtx, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+__MCF_gthr_rc_mutex_wait(__MCF_gthr_rc_mutex* __rmtx, const int64_t* __timeout_opt) __MCF_noexcept;
 
 __MCF_GTHR_AUX_INLINE
 void
-__MCF_gthr_rc_mutex_release(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT;
+__MCF_gthr_rc_mutex_release(__MCF_gthr_rc_mutex* __rmtx) __MCF_noexcept;
 
 /* This is the actual thread function for a gthread.  */
 __MCF_GTHR_AUX_IMPORT
 void
-__MCF_gthr_thread_thunk_v2(_MCF_thread* __thrd) __MCF_NOEXCEPT;
+__MCF_gthr_thread_thunk_v2(_MCF_thread* __thrd) __MCF_noexcept;
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
@@ -135,7 +135,7 @@ __MCF_gthr_thread_thunk_v2(_MCF_thread* __thrd) __MCF_NOEXCEPT;
  * this file.  */
 __MCF_GTHR_AUX_INLINE
 void
-__MCF_gthr_unonce(_MCF_once** __oncep) __MCF_NOEXCEPT
+__MCF_gthr_unonce(_MCF_once** __oncep) __MCF_noexcept
   {
     if(*__oncep)
       _MCF_once_abort(*__oncep);
@@ -155,7 +155,7 @@ __MCF_gthr_call_once_seh(_MCF_once* __once, __MCF_cxa_dtor_cdecl* __init_proc, v
 
 __MCF_GTHR_AUX_INLINE
 void
-__MCF_gthr_rc_mutex_init(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
+__MCF_gthr_rc_mutex_init(__MCF_gthr_rc_mutex* __rmtx) __MCF_noexcept
   {
     __rmtx->__owner[0] = 0;
     __rmtx->__depth = 0;
@@ -164,7 +164,7 @@ __MCF_gthr_rc_mutex_init(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
 
 __MCF_GTHR_AUX_INLINE
 int
-__MCF_gthr_rc_mutex_recurse(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
+__MCF_gthr_rc_mutex_recurse(__MCF_gthr_rc_mutex* __rmtx) __MCF_noexcept
   {
     /* Check whether the mutex has already been owned.  */
     if(_MCF_atomic_load_32_rlx(__rmtx->__owner) != (int32_t) _MCF_thread_self_tid())
@@ -178,7 +178,7 @@ __MCF_gthr_rc_mutex_recurse(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
 
 __MCF_GTHR_AUX_INLINE
 int
-__MCF_gthr_rc_mutex_wait(__MCF_gthr_rc_mutex* __rmtx, const int64_t* __timeout_opt) __MCF_NOEXCEPT
+__MCF_gthr_rc_mutex_wait(__MCF_gthr_rc_mutex* __rmtx, const int64_t* __timeout_opt) __MCF_noexcept
   {
     /* Attempt to take ownership.  */
     int __err = _MCF_mutex_lock(__rmtx->__mutex, __timeout_opt);
@@ -195,7 +195,7 @@ __MCF_gthr_rc_mutex_wait(__MCF_gthr_rc_mutex* __rmtx, const int64_t* __timeout_o
 
 __MCF_GTHR_AUX_INLINE
 void
-__MCF_gthr_rc_mutex_release(__MCF_gthr_rc_mutex* __rmtx) __MCF_NOEXCEPT
+__MCF_gthr_rc_mutex_release(__MCF_gthr_rc_mutex* __rmtx) __MCF_noexcept
   {
     /* Reduce a level of recursion.  */
     __MCF_ASSERT(__rmtx->__depth > 0);
