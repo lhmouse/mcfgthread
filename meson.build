@@ -367,47 +367,48 @@ foreach src: test_src
   test_dependencies = []
   test_link_with = lib_mcfgthread_dll
 
-  if src in [ 'test/win8.c', 'test/win10.c', 'test/self_oom.c', 'test/mix.c',
-              'test/tls_dtor_static.c' ]
-    test_link_with = lib_mcfgthread_a
-  endif
-
-  if src in [ 'test/memory.c' ]
-    test_dependencies = [ dep_advapi32, dep_ntdll ]
-    test_link_with = lib_mcfgthread_minimal_dll
-  endif
-
-  if src in [ 'test/gthr_c89_pedantic.c' ]
-    test_c_args = [ '-std=c89', '-Wpedantic', '-Wno-variadic-macros',
-                    '-Wno-long-long', '-Werror=declaration-after-statement',
-                    cc.get_supported_arguments('-Wno-c99-extensions') ]
-  endif
-
-  if src in [ 'test/c11_c99_pedantic.c' ]
-    test_c_args = [ '-std=c99', '-Wpedantic' ]
-  endif
+  basename = src.replace('test/', '')
 
   if src.endswith('.cpp')
     test_link_args = [ '-static-libgcc', '-static-libstdc++' ]
   endif
 
-  if src in [ 'test/cxx11_no_exceptions.cpp' ]
+  if basename in [ 'win8.c', 'win10.c', 'self_oom.c', 'mix.c', 'tls_dtor_static.c' ]
+    test_link_with = lib_mcfgthread_a
+  endif
+
+  if basename in [ 'memory.c' ]
+    test_dependencies = [ dep_advapi32, dep_ntdll ]
+    test_link_with = lib_mcfgthread_minimal_dll
+  endif
+
+  if basename in [ 'gthr_c89_pedantic.c' ]
+    test_c_args = [ '-std=c89', '-Wpedantic', '-Wno-variadic-macros',
+                    '-Wno-long-long', '-Werror=declaration-after-statement',
+                    cc.get_supported_arguments('-Wno-c99-extensions') ]
+  endif
+
+  if basename in [ 'c11_c99_pedantic.c' ]
+    test_c_args = [ '-std=c99', '-Wpedantic' ]
+  endif
+
+  if basename in [ 'cxx11_no_exceptions.cpp' ]
     test_cpp_args = [ '-std=c++11', '-fno-rtti', '-fno-exceptions' ]
   endif
 
-  if src in [ 'test/cxx11_pedantic.cpp' ]
+  if basename in [ 'cxx11_pedantic.cpp' ]
     test_cpp_args = [ '-std=c++11', '-Wpedantic' ]
   endif
 
-  if src in [ 'test/cxx14_pedantic.cpp' ]
+  if basename in [ 'cxx14_pedantic.cpp' ]
     test_cpp_args = [ '-std=c++14', '-Wpedantic' ]
   endif
 
-  if src.startswith('test/shared_mutex_')
+  if basename.startswith('shared_mutex_')
     test_cpp_args = [ '-std=c++17' ]
   endif
 
-  if src.startswith('test/shared_timed_mutex_')
+  if basename.startswith('shared_timed_mutex_')
     test_cpp_args = [ '-std=c++14' ]
   endif
 
