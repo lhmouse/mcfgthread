@@ -14,7 +14,7 @@
 
 project('mcfgthread',
         'c', 'cpp',
-        version: '1.9.alpha',
+        version: '1.9.beta',
         default_options: [ 'c_std=c99', 'cpp_std=c++11', 'warning_level=2' ])
 
 #===========================================================
