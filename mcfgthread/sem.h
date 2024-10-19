@@ -42,7 +42,7 @@ struct __MCF_sem
  * arguments.  */
 __MCF_SEM_INLINE
 int
-_MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init) __MCF_NOEXCEPT;
+_MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init) __MCF_noexcept;
 
 /* Gets the current value of a semaphore.
  *
@@ -51,7 +51,7 @@ _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init) __MCF_NOEXCEPT;
  * this semaphore.  */
 __MCF_SEM_INLINE
 intptr_t
-_MCF_sem_get(const _MCF_sem* __sem) __MCF_NOEXCEPT;
+_MCF_sem_get(const _MCF_sem* __sem) __MCF_noexcept;
 
 /* Decrements the value of a semaphore. If the result is negative, the calling
  * thread will be suspended.
@@ -66,7 +66,7 @@ _MCF_sem_get(const _MCF_sem* __sem) __MCF_NOEXCEPT;
  * woken up by another thread, or -1 if the operation has timed out.  */
 __MCF_SEM_IMPORT
 int
-_MCF_sem_wait(_MCF_sem* __sem, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+_MCF_sem_wait(_MCF_sem* __sem, const int64_t* __timeout_opt) __MCF_noexcept;
 
 /* Increases the value of a semaphore by the specified value. If the value was
  * negative before the call, a waiting thread is woken up. The argument shall
@@ -76,11 +76,11 @@ _MCF_sem_wait(_MCF_sem* __sem, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
  * invalid arguments, or -2 if the result would overflow.  */
 __MCF_SEM_IMPORT
 int
-_MCF_sem_signal_some(_MCF_sem* __sem, intptr_t __value_add) __MCF_NOEXCEPT;
+_MCF_sem_signal_some(_MCF_sem* __sem, intptr_t __value_add) __MCF_noexcept;
 
 __MCF_SEM_INLINE
 int
-_MCF_sem_signal(_MCF_sem* __sem) __MCF_NOEXCEPT;
+_MCF_sem_signal(_MCF_sem* __sem) __MCF_noexcept;
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
@@ -89,7 +89,7 @@ _MCF_sem_signal(_MCF_sem* __sem) __MCF_NOEXCEPT;
  * this file.  */
 __MCF_SEM_INLINE
 int
-_MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init) __MCF_NOEXCEPT
+_MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init) __MCF_noexcept
   {
     _MCF_sem __temp = { 0 };
 
@@ -103,7 +103,7 @@ _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init) __MCF_NOEXCEPT
 
 __MCF_SEM_INLINE
 intptr_t
-_MCF_sem_get(const _MCF_sem* __sem) __MCF_NOEXCEPT
+_MCF_sem_get(const _MCF_sem* __sem) __MCF_noexcept
   {
     _MCF_sem __temp;
     _MCF_atomic_load_pptr_rlx(&__temp, __sem);
@@ -112,7 +112,7 @@ _MCF_sem_get(const _MCF_sem* __sem) __MCF_NOEXCEPT
 
 __MCF_SEM_INLINE
 int
-_MCF_sem_signal(_MCF_sem* __sem) __MCF_NOEXCEPT
+_MCF_sem_signal(_MCF_sem* __sem) __MCF_noexcept
   {
     return _MCF_sem_signal_some(__sem, 1);
   }

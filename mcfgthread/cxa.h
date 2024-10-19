@@ -21,43 +21,43 @@ __MCF_CXX(extern "C" {)
 
 __MCF_CXA_IMPORT
 int
-__MCF_cxa_guard_acquire(int64_t* __guard) __MCF_NOEXCEPT;
+__MCF_cxa_guard_acquire(int64_t* __guard) __MCF_noexcept;
 
 __MCF_CXA_IMPORT
 void
-__MCF_cxa_guard_release(int64_t* __guard) __MCF_NOEXCEPT;
+__MCF_cxa_guard_release(int64_t* __guard) __MCF_noexcept;
 
 __MCF_CXA_IMPORT
 void
-__MCF_cxa_guard_abort(int64_t* __guard) __MCF_NOEXCEPT;
+__MCF_cxa_guard_abort(int64_t* __guard) __MCF_noexcept;
 
 __MCF_CXA_IMPORT
 int
-__MCF_cxa_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT;
+__MCF_cxa_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_noexcept;
 
 __MCF_CXA_IMPORT
 int
-__MCF_atexit(__MCF_atexit_callback __atfn) __MCF_NOEXCEPT;
+__MCF_atexit(__MCF_atexit_callback __atfn) __MCF_noexcept;
 
 __MCF_CXA_IMPORT
 int
-__MCF_cxa_at_quick_exit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT;
+__MCF_cxa_at_quick_exit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_noexcept;
 
 __MCF_CXA_IMPORT
 int
-__MCF_at_quick_exit(__MCF_atexit_callback __atfn) __MCF_NOEXCEPT;
+__MCF_at_quick_exit(__MCF_atexit_callback __atfn) __MCF_noexcept;
 
 __MCF_CXA_IMPORT
 int
-__MCF_cxa_thread_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_NOEXCEPT;
+__MCF_cxa_thread_atexit(__MCF_cxa_dtor_union __dtor, void* __this, void* __dso) __MCF_noexcept;
 
 __MCF_CXA_IMPORT
 int
-__MCF_thread_atexit(__MCF_atexit_callback __atfn) __MCF_NOEXCEPT;
+__MCF_thread_atexit(__MCF_atexit_callback __atfn) __MCF_noexcept;
 
 __MCF_CXA_IMPORT
 void
-__MCF_cxa_finalize(void* __dso) __MCF_NOEXCEPT;
+__MCF_cxa_finalize(void* __dso) __MCF_noexcept;
 
 __MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_CXA_  */

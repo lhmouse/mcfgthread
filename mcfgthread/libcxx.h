@@ -54,7 +54,7 @@ __MCF_libcxx_execute_once(__libcpp_exec_once_flag* __once, __MCF_once_callback* 
 /* Allocates a thread-specific key, like `pthread_key_create()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_tls_create(__libcpp_tls_key* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT;
+__MCF_libcxx_tls_create(__libcpp_tls_key* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_tls_create  __MCF_libcxx_tls_create
@@ -64,7 +64,7 @@ __MCF_libcxx_tls_create(__libcpp_tls_key* __keyp, _MCF_tls_dtor* __dtor_opt) __M
  * This function is currently unused.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_tls_delete(__libcpp_tls_key __key) __MCF_NOEXCEPT;
+__MCF_libcxx_tls_delete(__libcpp_tls_key __key) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_tls_delete  __MCF_libcxx_tls_delete
@@ -73,7 +73,7 @@ __MCF_libcxx_tls_delete(__libcpp_tls_key __key) __MCF_NOEXCEPT;
 /* Gets a thread-specific value, like `pthread_getspecific()`.  */
 __MCF_LIBCXX_INLINE __MCF_FN_PURE
 void*
-__MCF_libcxx_tls_get(__libcpp_tls_key __key) __MCF_NOEXCEPT;
+__MCF_libcxx_tls_get(__libcpp_tls_key __key) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_tls_get  __MCF_libcxx_tls_get
@@ -82,7 +82,7 @@ __MCF_libcxx_tls_get(__libcpp_tls_key __key) __MCF_NOEXCEPT;
 /* Sets a thread-specific value, like `pthread_setspecific()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_tls_set(__libcpp_tls_key __key, const void* __val_opt) __MCF_NOEXCEPT;
+__MCF_libcxx_tls_set(__libcpp_tls_key __key, const void* __val_opt) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_tls_set  __MCF_libcxx_tls_set
@@ -92,7 +92,7 @@ __MCF_libcxx_tls_set(__libcpp_tls_key __key, const void* __val_opt) __MCF_NOEXCE
  * This function is currently unused.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_mutex_init(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT;
+__MCF_libcxx_mutex_init(__libcpp_mutex_t* __mtx) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_mutex_init  __MCF_libcxx_mutex_init
@@ -101,7 +101,7 @@ __MCF_libcxx_mutex_init(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT;
 /* Destroys a mutex. This function does nothing.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_mutex_destroy(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT;
+__MCF_libcxx_mutex_destroy(__libcpp_mutex_t* __mtx) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_mutex_destroy  __MCF_libcxx_mutex_destroy
@@ -110,7 +110,7 @@ __MCF_libcxx_mutex_destroy(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT;
 /* Locks a mutex, like `pthread_mutex_lock()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_mutex_lock(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT;
+__MCF_libcxx_mutex_lock(__libcpp_mutex_t* __mtx) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_mutex_lock  __MCF_libcxx_mutex_lock
@@ -119,7 +119,7 @@ __MCF_libcxx_mutex_lock(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT;
 /* Tries locking a mutex without blocking, like `pthread_mutex_trylock()`.  */
 __MCF_LIBCXX_INLINE
 bool
-__MCF_libcxx_mutex_trylock(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT;
+__MCF_libcxx_mutex_trylock(__libcpp_mutex_t* __mtx) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_mutex_trylock  __MCF_libcxx_mutex_trylock
@@ -128,7 +128,7 @@ __MCF_libcxx_mutex_trylock(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT;
 /* Unlocks a mutex, like `pthread_mutex_unlock()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_mutex_unlock(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT;
+__MCF_libcxx_mutex_unlock(__libcpp_mutex_t* __mtx) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_mutex_unlock  __MCF_libcxx_mutex_unlock
@@ -137,7 +137,7 @@ __MCF_libcxx_mutex_unlock(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT;
 /* Initializes a recursive mutex, like `pthread_mutex_init()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_recursive_mutex_init(__libcpp_recursive_mutex_t* __mtx) __MCF_NOEXCEPT;
+__MCF_libcxx_recursive_mutex_init(__libcpp_recursive_mutex_t* __mtx) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_recursive_mutex_init  __MCF_libcxx_recursive_mutex_init
@@ -146,7 +146,7 @@ __MCF_libcxx_recursive_mutex_init(__libcpp_recursive_mutex_t* __mtx) __MCF_NOEXC
 /* Destroys a recursive mutex. This function does nothing.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_recursive_mutex_destroy(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
+__MCF_libcxx_recursive_mutex_destroy(__libcpp_recursive_mutex_t* __rmtx) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_recursive_mutex_destroy  __MCF_libcxx_recursive_mutex_destroy
@@ -155,7 +155,7 @@ __MCF_libcxx_recursive_mutex_destroy(__libcpp_recursive_mutex_t* __rmtx) __MCF_N
 /* Locks a recursive mutex, like `pthread_mutex_lock()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_recursive_mutex_lock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
+__MCF_libcxx_recursive_mutex_lock(__libcpp_recursive_mutex_t* __rmtx) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_recursive_mutex_lock  __MCF_libcxx_recursive_mutex_lock
@@ -165,7 +165,7 @@ __MCF_libcxx_recursive_mutex_lock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEX
  * `pthread_mutex_trylock()`.  */
 __MCF_LIBCXX_INLINE
 bool
-__MCF_libcxx_recursive_mutex_trylock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
+__MCF_libcxx_recursive_mutex_trylock(__libcpp_recursive_mutex_t* __rmtx) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_recursive_mutex_trylock  __MCF_libcxx_recursive_mutex_trylock
@@ -174,7 +174,7 @@ __MCF_libcxx_recursive_mutex_trylock(__libcpp_recursive_mutex_t* __rmtx) __MCF_N
 /* Unlocks a recursive mutex, like `pthread_mutex_unlock()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_recursive_mutex_unlock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT;
+__MCF_libcxx_recursive_mutex_unlock(__libcpp_recursive_mutex_t* __rmtx) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_recursive_mutex_unlock  __MCF_libcxx_recursive_mutex_unlock
@@ -184,7 +184,7 @@ __MCF_libcxx_recursive_mutex_unlock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NO
  * This function is currently unused.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_init(__libcpp_condvar_t* __cond) __MCF_NOEXCEPT;
+__MCF_libcxx_condvar_init(__libcpp_condvar_t* __cond) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_condvar_init  __MCF_libcxx_condvar_init
@@ -193,7 +193,7 @@ __MCF_libcxx_condvar_init(__libcpp_condvar_t* __cond) __MCF_NOEXCEPT;
 /* Destroys a condition variable. This function does nothing.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_destroy(__libcpp_condvar_t* __cond) __MCF_NOEXCEPT;
+__MCF_libcxx_condvar_destroy(__libcpp_condvar_t* __cond) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_condvar_destroy  __MCF_libcxx_condvar_destroy
@@ -202,7 +202,7 @@ __MCF_libcxx_condvar_destroy(__libcpp_condvar_t* __cond) __MCF_NOEXCEPT;
 /* Waits for a condition variable, like `pthread_cond_wait()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_wait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx) __MCF_NOEXCEPT;
+__MCF_libcxx_condvar_wait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_condvar_wait  __MCF_libcxx_condvar_wait
@@ -212,7 +212,7 @@ __MCF_libcxx_condvar_wait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx) _
  * `pthread_cond_timedwait()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_timedwait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx, const __libcpp_timespec_t* __abs_time) __MCF_NOEXCEPT;
+__MCF_libcxx_condvar_timedwait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx, const __libcpp_timespec_t* __abs_time) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_condvar_timedwait  __MCF_libcxx_condvar_timedwait
@@ -222,7 +222,7 @@ __MCF_libcxx_condvar_timedwait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __m
  * `pthread_cond_signal()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_signal(__libcpp_condvar_t* __cond) __MCF_NOEXCEPT;
+__MCF_libcxx_condvar_signal(__libcpp_condvar_t* __cond) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_condvar_signal  __MCF_libcxx_condvar_signal
@@ -232,7 +232,7 @@ __MCF_libcxx_condvar_signal(__libcpp_condvar_t* __cond) __MCF_NOEXCEPT;
  * `pthread_cond_broadcast()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_broadcast(__libcpp_condvar_t* __cond) __MCF_NOEXCEPT;
+__MCF_libcxx_condvar_broadcast(__libcpp_condvar_t* __cond) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_condvar_broadcast  __MCF_libcxx_condvar_broadcast
@@ -241,7 +241,7 @@ __MCF_libcxx_condvar_broadcast(__libcpp_condvar_t* __cond) __MCF_NOEXCEPT;
 /* Creates a thread, like `pthread_create()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_thread_create(__libcpp_thread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT;
+__MCF_libcxx_thread_create(__libcpp_thread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_thread_create  __MCF_libcxx_thread_create
@@ -250,7 +250,7 @@ __MCF_libcxx_thread_create(__libcpp_thread_t* __thrdp, __MCF_gthr_thread_procedu
 /* Awaits a thread to terminate and gets its result, like `pthread_join()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_thread_join(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT;
+__MCF_libcxx_thread_join(const __libcpp_thread_t* __thrdp) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_thread_join  __MCF_libcxx_thread_join
@@ -259,7 +259,7 @@ __MCF_libcxx_thread_join(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT;
 /* Detaches a thread, like `pthread_detach()`  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_thread_detach(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT;
+__MCF_libcxx_thread_detach(const __libcpp_thread_t* __thrdp) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_thread_detach  __MCF_libcxx_thread_detach
@@ -268,7 +268,7 @@ __MCF_libcxx_thread_detach(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT;
 /* Checks whether a thread object is null.  */
 __MCF_LIBCXX_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
 bool
-__MCF_libcxx_thread_isnull(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT;
+__MCF_libcxx_thread_isnull(const __libcpp_thread_t* __thrdp) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_thread_isnull  __MCF_libcxx_thread_isnull
@@ -279,7 +279,7 @@ __MCF_libcxx_thread_isnull(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT;
  * `__libcpp_thread_create()`. Otherwise the behavior is undefined.  */
 __MCF_LIBCXX_INLINE __MCF_FN_CONST
 __libcpp_thread_id
-__MCF_libcxx_thread_get_current_id(void) __MCF_NOEXCEPT;
+__MCF_libcxx_thread_get_current_id(void) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_thread_get_current_id  __MCF_libcxx_thread_get_current_id
@@ -288,7 +288,7 @@ __MCF_libcxx_thread_get_current_id(void) __MCF_NOEXCEPT;
 /* Gets the ID of another thread.  */
 __MCF_LIBCXX_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
 __libcpp_thread_id
-__MCF_libcxx_thread_get_id(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT;
+__MCF_libcxx_thread_get_id(const __libcpp_thread_t* __thrdp) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_thread_get_id  __MCF_libcxx_thread_get_id
@@ -297,7 +297,7 @@ __MCF_libcxx_thread_get_id(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT;
 /* Checks whether two thread IDs compare equal, like `pthread_equal()`.  */
 __MCF_LIBCXX_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
 bool
-__MCF_libcxx_thread_id_equal(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_NOEXCEPT;
+__MCF_libcxx_thread_id_equal(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_thread_id_equal  __MCF_libcxx_thread_id_equal
@@ -306,7 +306,7 @@ __MCF_libcxx_thread_id_equal(__libcpp_thread_id __t1, __libcpp_thread_id __t2) _
 /* Checks whether two thread IDs compare less, for standard containers.  */
 __MCF_LIBCXX_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
 bool
-__MCF_libcxx_thread_id_less(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_NOEXCEPT;
+__MCF_libcxx_thread_id_less(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_thread_id_less  __MCF_libcxx_thread_id_less
@@ -315,12 +315,12 @@ __MCF_libcxx_thread_id_less(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __
 /* Suspends execution of the current thread for an amount of time.  */
 __MCF_LIBCXX_IMPORT
 void
-__MCF_libcxx_thread_sleep_for_ns_count(int64_t __ns) __MCF_NOEXCEPT;
+__MCF_libcxx_thread_sleep_for_ns_count(int64_t __ns) __MCF_noexcept;
 
 #if defined __cplusplus && (__cplusplus >= 201103L)
 __MCF_ALWAYS_INLINE
 void
-__libcpp_thread_sleep_for(const ::std::chrono::nanoseconds& __ns) __MCF_NOEXCEPT
+__libcpp_thread_sleep_for(const ::std::chrono::nanoseconds& __ns) __MCF_noexcept
   {
     __MCF_libcxx_thread_sleep_for_ns_count(__ns.count());
   }
@@ -329,7 +329,7 @@ __libcpp_thread_sleep_for(const ::std::chrono::nanoseconds& __ns) __MCF_NOEXCEPT
 /* Gives up the current time slice, like `sched_yield()`.  */
 __MCF_LIBCXX_INLINE
 void
-__MCF_libcxx_thread_yield(void) __MCF_NOEXCEPT;
+__MCF_libcxx_thread_yield(void) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_thread_yield  __MCF_libcxx_thread_yield
@@ -350,7 +350,7 @@ __MCF_libcxx_execute_once(__libcpp_exec_once_flag* __once, __MCF_once_callback* 
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_tls_create(__libcpp_tls_key* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_NOEXCEPT
+__MCF_libcxx_tls_create(__libcpp_tls_key* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_noexcept
   {
     _MCF_tls_key* __key = _MCF_tls_key_new(__dtor_opt);
     *__keyp = __key;
@@ -359,7 +359,7 @@ __MCF_libcxx_tls_create(__libcpp_tls_key* __keyp, _MCF_tls_dtor* __dtor_opt) __M
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_tls_delete(__libcpp_tls_key __key) __MCF_NOEXCEPT
+__MCF_libcxx_tls_delete(__libcpp_tls_key __key) __MCF_noexcept
   {
     _MCF_tls_key_delete(__key);
     return 0;
@@ -367,14 +367,14 @@ __MCF_libcxx_tls_delete(__libcpp_tls_key __key) __MCF_NOEXCEPT
 
 __MCF_LIBCXX_INLINE
 void*
-__MCF_libcxx_tls_get(__libcpp_tls_key __key) __MCF_NOEXCEPT
+__MCF_libcxx_tls_get(__libcpp_tls_key __key) __MCF_noexcept
   {
     return _MCF_tls_get(__key);
   }
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_tls_set(__libcpp_tls_key __key, const void* __val_opt) __MCF_NOEXCEPT
+__MCF_libcxx_tls_set(__libcpp_tls_key __key, const void* __val_opt) __MCF_noexcept
   {
     int __err = _MCF_tls_set(__key, __val_opt);
     return (__err != 0) ? EINVAL : 0;
@@ -382,7 +382,7 @@ __MCF_libcxx_tls_set(__libcpp_tls_key __key, const void* __val_opt) __MCF_NOEXCE
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_mutex_init(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT
+__MCF_libcxx_mutex_init(__libcpp_mutex_t* __mtx) __MCF_noexcept
   {
     _MCF_mutex_init(__mtx);
     return 0;
@@ -390,7 +390,7 @@ __MCF_libcxx_mutex_init(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_mutex_destroy(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT
+__MCF_libcxx_mutex_destroy(__libcpp_mutex_t* __mtx) __MCF_noexcept
   {
     (void) __mtx;
     return 0;
@@ -398,7 +398,7 @@ __MCF_libcxx_mutex_destroy(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_mutex_lock(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT
+__MCF_libcxx_mutex_lock(__libcpp_mutex_t* __mtx) __MCF_noexcept
   {
     int __err = _MCF_mutex_lock(__mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
@@ -407,7 +407,7 @@ __MCF_libcxx_mutex_lock(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT
 
 __MCF_LIBCXX_INLINE
 bool
-__MCF_libcxx_mutex_trylock(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT
+__MCF_libcxx_mutex_trylock(__libcpp_mutex_t* __mtx) __MCF_noexcept
   {
     int64_t __timeout = 0;
     int __err = _MCF_mutex_lock(__mtx, &__timeout);
@@ -416,7 +416,7 @@ __MCF_libcxx_mutex_trylock(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_mutex_unlock(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT
+__MCF_libcxx_mutex_unlock(__libcpp_mutex_t* __mtx) __MCF_noexcept
   {
     _MCF_mutex_unlock(__mtx);
     return 0;
@@ -424,7 +424,7 @@ __MCF_libcxx_mutex_unlock(__libcpp_mutex_t* __mtx) __MCF_NOEXCEPT
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_recursive_mutex_init(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
+__MCF_libcxx_recursive_mutex_init(__libcpp_recursive_mutex_t* __rmtx) __MCF_noexcept
   {
     __MCF_gthr_rc_mutex_init(__rmtx);
     return 0;
@@ -432,7 +432,7 @@ __MCF_libcxx_recursive_mutex_init(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEX
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_recursive_mutex_destroy(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
+__MCF_libcxx_recursive_mutex_destroy(__libcpp_recursive_mutex_t* __rmtx) __MCF_noexcept
   {
     (void) __rmtx;
     return 0;
@@ -440,7 +440,7 @@ __MCF_libcxx_recursive_mutex_destroy(__libcpp_recursive_mutex_t* __rmtx) __MCF_N
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_recursive_mutex_lock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
+__MCF_libcxx_recursive_mutex_lock(__libcpp_recursive_mutex_t* __rmtx) __MCF_noexcept
   {
     int __err = __MCF_gthr_rc_mutex_recurse(__rmtx);
     if(__err == 0)
@@ -453,7 +453,7 @@ __MCF_libcxx_recursive_mutex_lock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEX
 
 __MCF_LIBCXX_INLINE
 bool
-__MCF_libcxx_recursive_mutex_trylock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
+__MCF_libcxx_recursive_mutex_trylock(__libcpp_recursive_mutex_t* __rmtx) __MCF_noexcept
   {
     int64_t __timeout;
     int __err = __MCF_gthr_rc_mutex_recurse(__rmtx);
@@ -467,7 +467,7 @@ __MCF_libcxx_recursive_mutex_trylock(__libcpp_recursive_mutex_t* __rmtx) __MCF_N
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_recursive_mutex_unlock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NOEXCEPT
+__MCF_libcxx_recursive_mutex_unlock(__libcpp_recursive_mutex_t* __rmtx) __MCF_noexcept
   {
     __MCF_gthr_rc_mutex_release(__rmtx);
     return 0;
@@ -475,7 +475,7 @@ __MCF_libcxx_recursive_mutex_unlock(__libcpp_recursive_mutex_t* __rmtx) __MCF_NO
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_init(__libcpp_condvar_t* __cond) __MCF_NOEXCEPT
+__MCF_libcxx_condvar_init(__libcpp_condvar_t* __cond) __MCF_noexcept
   {
     _MCF_cond_init(__cond);
     return 0;
@@ -483,7 +483,7 @@ __MCF_libcxx_condvar_init(__libcpp_condvar_t* __cond) __MCF_NOEXCEPT
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_destroy(__libcpp_condvar_t* __cond) __MCF_NOEXCEPT
+__MCF_libcxx_condvar_destroy(__libcpp_condvar_t* __cond) __MCF_noexcept
   {
     (void) __cond;
     return 0;
@@ -491,7 +491,7 @@ __MCF_libcxx_condvar_destroy(__libcpp_condvar_t* __cond) __MCF_NOEXCEPT
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_wait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx) __MCF_NOEXCEPT
+__MCF_libcxx_condvar_wait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx) __MCF_noexcept
   {
     int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback,
                                __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx,
@@ -502,7 +502,7 @@ __MCF_libcxx_condvar_wait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx) _
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_timedwait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx, const __libcpp_timespec_t* __abs_time) __MCF_NOEXCEPT
+__MCF_libcxx_condvar_timedwait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx, const __libcpp_timespec_t* __abs_time) __MCF_noexcept
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
     int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback,
@@ -513,7 +513,7 @@ __MCF_libcxx_condvar_timedwait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __m
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_signal(__libcpp_condvar_t* __cond) __MCF_NOEXCEPT
+__MCF_libcxx_condvar_signal(__libcpp_condvar_t* __cond) __MCF_noexcept
   {
     _MCF_cond_signal(__cond);
     return 0;
@@ -521,7 +521,7 @@ __MCF_libcxx_condvar_signal(__libcpp_condvar_t* __cond) __MCF_NOEXCEPT
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_broadcast(__libcpp_condvar_t* __cond) __MCF_NOEXCEPT
+__MCF_libcxx_condvar_broadcast(__libcpp_condvar_t* __cond) __MCF_noexcept
   {
     _MCF_cond_signal_all(__cond);
     return 0;
@@ -529,7 +529,7 @@ __MCF_libcxx_condvar_broadcast(__libcpp_condvar_t* __cond) __MCF_NOEXCEPT
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_thread_create(__libcpp_thread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_NOEXCEPT
+__MCF_libcxx_thread_create(__libcpp_thread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_noexcept
   {
     __MCF_gthr_thread_record __rec[1] = __MCF_0_INIT;
     _MCF_thread* __thrd;
@@ -545,7 +545,7 @@ __MCF_libcxx_thread_create(__libcpp_thread_t* __thrdp, __MCF_gthr_thread_procedu
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_thread_join(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT
+__MCF_libcxx_thread_join(const __libcpp_thread_t* __thrdp) __MCF_noexcept
   {
     _MCF_thread* __thrd = *__thrdp;
     __MCF_gthr_thread_record* __rec;
@@ -576,7 +576,7 @@ __MCF_libcxx_thread_join(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_thread_detach(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT
+__MCF_libcxx_thread_detach(const __libcpp_thread_t* __thrdp) __MCF_noexcept
   {
     _MCF_thread* __thrd = *__thrdp;
     __MCF_gthr_thread_record* __rec;
@@ -599,42 +599,42 @@ __MCF_libcxx_thread_detach(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT
 
 __MCF_LIBCXX_INLINE __MCF_CXX11(constexpr)
 bool
-__MCF_libcxx_thread_isnull(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT
+__MCF_libcxx_thread_isnull(const __libcpp_thread_t* __thrdp) __MCF_noexcept
   {
     return *__thrdp == _LIBCPP_NULL_THREAD;
   }
 
 __MCF_LIBCXX_INLINE
 __libcpp_thread_id
-__MCF_libcxx_thread_get_current_id(void) __MCF_NOEXCEPT
+__MCF_libcxx_thread_get_current_id(void) __MCF_noexcept
   {
     return _MCF_thread_self_tid();
   }
 
 __MCF_LIBCXX_INLINE __MCF_CXX11(constexpr)
 __libcpp_thread_id
-__MCF_libcxx_thread_get_id(const __libcpp_thread_t* __thrdp) __MCF_NOEXCEPT
+__MCF_libcxx_thread_get_id(const __libcpp_thread_t* __thrdp) __MCF_noexcept
   {
     return _MCF_thread_get_tid(*__thrdp);
   }
 
 __MCF_LIBCXX_INLINE __MCF_CXX11(constexpr)
 bool
-__MCF_libcxx_thread_id_equal(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_NOEXCEPT
+__MCF_libcxx_thread_id_equal(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_noexcept
   {
     return __t1 == __t2;
   }
 
 __MCF_LIBCXX_INLINE __MCF_CXX11(constexpr)
 bool
-__MCF_libcxx_thread_id_less(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_NOEXCEPT
+__MCF_libcxx_thread_id_less(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_noexcept
   {
     return __t1 < __t2;
   }
 
 __MCF_LIBCXX_INLINE
 void
-__MCF_libcxx_thread_yield(void) __MCF_NOEXCEPT
+__MCF_libcxx_thread_yield(void) __MCF_noexcept
   {
     _MCF_yield();
   }

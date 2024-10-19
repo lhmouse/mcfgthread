@@ -47,12 +47,12 @@ struct __MCF_event
  * arguments.  */
 __MCF_EVENT_INLINE
 int
-_MCF_event_init(_MCF_event* __eventp, int __value_init) __MCF_NOEXCEPT;
+_MCF_event_init(_MCF_event* __eventp, int __value_init) __MCF_noexcept;
 
 /* Gets the current value of an event.  */
 __MCF_EVENT_INLINE
 uint8_t
-_MCF_event_get(const _MCF_event* __eventp) __MCF_NOEXCEPT;
+_MCF_event_get(const _MCF_event* __eventp) __MCF_noexcept;
 
 /* Waits for an event until it does NOT contain an undesired value.
  *
@@ -70,11 +70,11 @@ _MCF_event_get(const _MCF_event* __eventp) __MCF_NOEXCEPT;
  * or -1 if the operation has timed out, or -2 in case of invalid arguments.  */
 __MCF_EVENT_IMPORT
 int
-_MCF_event_await_change_slow(_MCF_event* __eventp, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+_MCF_event_await_change_slow(_MCF_event* __eventp, int __undesired, const int64_t* __timeout_opt) __MCF_noexcept;
 
 __MCF_EVENT_INLINE
 int
-_MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+_MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __timeout_opt) __MCF_noexcept;
 
 /* Sets the value of an event. If the value has been changed, other threads are
  * woken up so they can check it.
@@ -83,11 +83,11 @@ _MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __
  * invalid arguments.  */
 __MCF_EVENT_IMPORT
 int
-_MCF_event_set_slow(_MCF_event* __eventp, int __value) __MCF_NOEXCEPT;
+_MCF_event_set_slow(_MCF_event* __eventp, int __value) __MCF_noexcept;
 
 __MCF_EVENT_INLINE
 int
-_MCF_event_set(_MCF_event* __eventp, int __value) __MCF_NOEXCEPT;
+_MCF_event_set(_MCF_event* __eventp, int __value) __MCF_noexcept;
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
@@ -96,7 +96,7 @@ _MCF_event_set(_MCF_event* __eventp, int __value) __MCF_NOEXCEPT;
  * this file.  */
 __MCF_EVENT_INLINE
 int
-_MCF_event_init(_MCF_event* __eventp, int __value_init) __MCF_NOEXCEPT
+_MCF_event_init(_MCF_event* __eventp, int __value_init) __MCF_noexcept
   {
     _MCF_event __temp = { 0, 0, 0 };
 
@@ -110,7 +110,7 @@ _MCF_event_init(_MCF_event* __eventp, int __value_init) __MCF_NOEXCEPT
 
 __MCF_EVENT_INLINE
 uint8_t
-_MCF_event_get(const _MCF_event* __eventp) __MCF_NOEXCEPT
+_MCF_event_get(const _MCF_event* __eventp) __MCF_noexcept
   {
     _MCF_event __temp;
     _MCF_atomic_load_pptr_rlx(&__temp, __eventp);
@@ -119,7 +119,7 @@ _MCF_event_get(const _MCF_event* __eventp) __MCF_NOEXCEPT
 
 __MCF_EVENT_INLINE
 int
-_MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __timeout_opt) __MCF_NOEXCEPT
+_MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __timeout_opt) __MCF_noexcept
   {
 #if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
     _MCF_event __old;
@@ -143,7 +143,7 @@ _MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __
 
 __MCF_EVENT_INLINE
 int
-_MCF_event_set(_MCF_event* __eventp, int __value) __MCF_NOEXCEPT
+_MCF_event_set(_MCF_event* __eventp, int __value) __MCF_noexcept
   {
 #if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
     _MCF_event __old;

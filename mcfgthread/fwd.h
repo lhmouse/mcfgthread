@@ -83,7 +83,7 @@
 #define __MCF_CXX11(...)
 #define __MCF_CXX14(...)
 
-#define __MCF_NOEXCEPT
+#define __MCF_noexcept
 #define __MCF_nullptr   __MCF_IPTR_0
 
 #if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 199901L)
@@ -101,15 +101,15 @@
 #  define __MCF_C(...)
 #  undef __MCF_CXX
 #  define __MCF_CXX(...)   __VA_ARGS__
-#  undef __MCF_NOEXCEPT
-#  define __MCF_NOEXCEPT      throw()
+#  undef __MCF_noexcept
+#  define __MCF_noexcept      throw()
 #endif
 
 #if defined __cplusplus && (__cplusplus >= 201103L)
 #  undef __MCF_CXX11
 #  define __MCF_CXX11(...)   __VA_ARGS__
-#  undef __MCF_NOEXCEPT
-#  define __MCF_NOEXCEPT   noexcept
+#  undef __MCF_noexcept
+#  define __MCF_noexcept   noexcept
 #  undef __MCF_nullptr
 #  define __MCF_nullptr   nullptr
 #endif
@@ -199,11 +199,11 @@ union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
     /* Unfortunately, transparent unions are not supported in C++, and have
      * to be emulated with constructors.  */
     __MCF_CXX11(constexpr)
-    __MCF_cxa_dtor_union(__MCF_cxa_dtor_cdecl* __xptr) __MCF_NOEXCEPT
+    __MCF_cxa_dtor_union(__MCF_cxa_dtor_cdecl* __xptr) __MCF_noexcept
       : __cdecl_ptr(__xptr)  { }
 
     __MCF_CXX11(constexpr)
-    __MCF_cxa_dtor_union(__MCF_cxa_dtor_thiscall* __xptr) __MCF_NOEXCEPT
+    __MCF_cxa_dtor_union(__MCF_cxa_dtor_thiscall* __xptr) __MCF_noexcept
       : __thiscall_ptr(__xptr)  { }
 #  endif
   };
@@ -222,33 +222,33 @@ typedef void __MCF_once_callback(void);
 /* Gets the last error number, like `GetLastError()`.  */
 __MCF_FWD_IMPORT __MCF_FN_PURE
 uint32_t
-_MCF_get_win32_error(void) __MCF_NOEXCEPT;
+_MCF_get_win32_error(void) __MCF_noexcept;
 
 /* Gets the system page size, which is usually 4KiB or 8KiB.  */
 __MCF_FWD_IMPORT __MCF_FN_CONST
 size_t
-_MCF_get_page_size(void) __MCF_NOEXCEPT;
+_MCF_get_page_size(void) __MCF_noexcept;
 
 /* Gets the number of logical processors in the current group.  */
 __MCF_FWD_IMPORT __MCF_FN_CONST
 size_t
-_MCF_get_processor_count(void) __MCF_NOEXCEPT;
+_MCF_get_processor_count(void) __MCF_noexcept;
 
 /* Gets the mask of active processors. Each bit 1 denotes a processor that
  * has been configured into the system.  */
 __MCF_FWD_IMPORT __MCF_FN_CONST
 uintptr_t
-_MCF_get_active_processor_mask(void) __MCF_NOEXCEPT;
+_MCF_get_active_processor_mask(void) __MCF_noexcept;
 
 /* Declare some helper functions.  */
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
-_MCF_minz(size_t __x, size_t __y) __MCF_NOEXCEPT
+_MCF_minz(size_t __x, size_t __y) __MCF_noexcept
   { return (__y < __x) ? __y : __x;  }
 
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
-_MCF_maxz(size_t __x, size_t __y) __MCF_NOEXCEPT
+_MCF_maxz(size_t __x, size_t __y) __MCF_noexcept
   { return (__x < __y) ? __y : __x;  }
 
 __MCF_FWD_IMPORT __MCF_NEVER_RETURN __MCF_NEVER_INLINE __MCF_FN_COLD
