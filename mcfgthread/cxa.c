@@ -102,7 +102,7 @@ do_thread_dtor_queue_finalize(void* dso)
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     __MCF_dtor_element elem;
 
-    _MCF_thread* self = TlsGetValue(__MCF_g->__tls_index);
+    _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_g->__tls_index);
     if(!self)
       return;
 

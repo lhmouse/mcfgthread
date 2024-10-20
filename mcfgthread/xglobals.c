@@ -177,6 +177,9 @@ __MCF_gthread_initialize_globals(void)
     __MCF_CHECK(GetModuleHandleExW(1, L"KERNELBASE.DLL", &__MCF_crt_kernelbase));
     __MCF_CHECK(GetModuleHandleExW(1, L"NTDLL.DLL", &__MCF_crt_ntdll));
 
+    FARPROC dllfn = GetProcAddress(__MCF_crt_kernelbase, "TlsGetValue2");
+    __MCF_crt_TlsGetValue = !dllfn ? TlsGetValue : (decltype_TlsGetValue*)(intptr_t) dllfn;
+
     /* Generate the unique name for this process.  */
     static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
     UNICODE_STRING gname = RTL_CONSTANT_STRING(gnbuffer);
@@ -239,7 +242,7 @@ __MCF_gthread_on_thread_exit(void)
     __MCF_dtor_element elem;
     __MCF_tls_table tls;
 
-    _MCF_thread* self = TlsGetValue(__MCF_g->__tls_index);
+    _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_g->__tls_index);
     if(!self)
       return;
 
@@ -360,6 +363,7 @@ double __MCF_crt_pf_recip = 1;
 SYSTEM_INFO __MCF_crt_sysinfo = { .dwPageSize = 1 };
 HMODULE __MCF_crt_kernelbase = __MCF_BAD_PTR;
 HMODULE __MCF_crt_ntdll = __MCF_BAD_PTR;
+decltype_TlsGetValue* __MCF_crt_TlsGetValue = __MCF_BAD_PTR;
 
 /* This is a pointer to global data. If this library is linked statically,
  * all instances of this pointer in the same process should point to the

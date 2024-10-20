@@ -88,6 +88,7 @@ NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status) __attribute__((
 
 typedef void __stdcall decltype_GetSystemTimePreciseAsFileTime(FILETIME*);
 typedef void __stdcall decltype_QueryInterruptTime(ULONGLONG*);
+typedef LPVOID __stdcall decltype_TlsGetValue(DWORD);
 
 /* Declare helper functions here.  */
 __MCF_XGLOBALS_IMPORT
@@ -319,6 +320,7 @@ extern HANDLE __MCF_XGLOBALS_READONLY __MCF_crt_heap;
 extern double __MCF_XGLOBALS_READONLY __MCF_crt_pf_recip;
 extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_kernelbase;
 extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_ntdll;
+extern decltype_TlsGetValue* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue;
 
 /* This is a pointer to the process-specific data.
  * As mcfgthread may be linked statically by user DLLs, we must ensure that, in
