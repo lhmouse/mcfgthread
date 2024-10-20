@@ -151,6 +151,7 @@ test_src = [
   'test/gthr_tls_many.c',
   'test/gthr_thread_return.c',
   'test/gthr_equal.c',
+  'test/gthr_cxx98_pedantic.cpp',
   'test/libcxx_inline_alias.c',
   'test/libcxx_once.c',
   'test/libcxx_mutex_trylock.c',
@@ -386,6 +387,12 @@ foreach src: test_src
     test_c_args = [ '-std=c89', '-Wpedantic', '-Wno-variadic-macros',
                     '-Wno-long-long', '-Werror=declaration-after-statement',
                     cc.get_supported_arguments('-Wno-c99-extensions') ]
+  endif
+
+  if basename in [ 'gthr_cxx98_pedantic.cpp' ]
+    test_cpp_args = [ '-std=c++98', '-Wpedantic', '-Wno-variadic-macros',
+                      '-Wno-long-long', '-Wno-zero-as-null-pointer-constant',
+                      cc.get_supported_arguments('-Wno-c++11-extensions') ]
   endif
 
   if basename in [ 'c11_c99_pedantic.c' ]
