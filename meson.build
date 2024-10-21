@@ -45,10 +45,6 @@ mcfgthread_include = [
 
 mcfgthread_src_min = [
   'mcfgthread/xglobals.c',
-  'mcfgthread/memcpy.c',
-  'mcfgthread/memmove.c',
-  'mcfgthread/memcmp.c',
-  'mcfgthread/memset.c',
   'mcfgthread/fwd.c',
   'mcfgthread/clock.c',
   'mcfgthread/mutex.c',

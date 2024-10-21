@@ -94,6 +94,40 @@ __MCF_batch_release_common(const void* key, size_t count)
     return count;
   }
 
+__MCF_DLLEXPORT
+void*
+__cdecl
+memcpy(void* dst, const void* src, size_t size)
+  {
+    return __MCF_mcopy(dst, src, size);
+  }
+
+__MCF_DLLEXPORT
+void*
+__cdecl
+memmove(void* dst, const void* src, size_t size)
+  {
+    return ((uintptr_t) dst - (uintptr_t) src >= size)
+        ? __MCF_mcopy(dst, src, size)
+        : __MCF_mcopy_backward(dst, src, size);
+  }
+
+__MCF_DLLEXPORT
+void*
+__cdecl
+memset(void* dst, int val, size_t size)
+  {
+    return __MCF_mfill(dst, val, size);
+  }
+
+__MCF_DLLEXPORT
+int
+__cdecl
+memcmp(const void* src, const void* cmp, size_t size)
+  {
+    return __MCF_mcompare(src, cmp, size);
+  }
+
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
 int
 __MCF_win32_error_i(DWORD code, int val)
