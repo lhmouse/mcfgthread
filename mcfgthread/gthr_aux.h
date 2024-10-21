@@ -99,6 +99,10 @@ __MCF_GTHR_AUX_IMPORT
 void
 __MCF_gthr_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_noexcept;
 
+__MCF_GTHR_AUX_IMPORT
+int
+__MCF_gthr_cond_mutex_wait(_MCF_cond* __cond, _MCF_mutex* __mtx, int64_t* __timeout_opt) __MCF_noexcept;
+
 /* These are auxiliary functions for condition variables. The argument is a
  * pointer to a `_MCF_shared_mutex`.  */
 __MCF_GTHR_AUX_IMPORT
@@ -113,6 +117,14 @@ __MCF_GTHR_AUX_IMPORT
 void
 __MCF_gthr_shared_mutex_relock_exclusive_callback(intptr_t __arg, intptr_t __unlocked) __MCF_noexcept;
 
+__MCF_GTHR_AUX_IMPORT
+int
+__MCF_gthr_cond_shared_mutex_wait_shared(_MCF_cond* __cond, _MCF_shared_mutex* __smtx, int64_t* __timeout_opt) __MCF_noexcept;
+
+__MCF_GTHR_AUX_IMPORT
+int
+__MCF_gthr_cond_shared_mutex_wait_exclusive(_MCF_cond* __cond, _MCF_shared_mutex* __smtx, int64_t* __timeout_opt) __MCF_noexcept;
+
 /* These are auxiliary functions for condition variables. The argument is a
  * pointer to a `__MCF_gthr_rc_mutex`.  */
 __MCF_GTHR_AUX_IMPORT
@@ -122,6 +134,10 @@ __MCF_gthr_recursive_mutex_unlock_callback(intptr_t __arg) __MCF_noexcept;
 __MCF_GTHR_AUX_IMPORT
 void
 __MCF_gthr_recursive_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_noexcept;
+
+__MCF_GTHR_AUX_IMPORT
+int
+__MCF_gthr_cond_recursive_mutex_wait(_MCF_cond* __cond, __MCF_gthr_rc_mutex* __rmtx, int64_t* __timeout_opt) __MCF_noexcept;
 
 /* This is the actual thread function for a gthread.  */
 __MCF_GTHR_AUX_IMPORT
