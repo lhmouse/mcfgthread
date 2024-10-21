@@ -10,10 +10,10 @@
 
 #include "fwd.h"
 #include "once.h"
-#include "mutex.h"
 #include "cond.h"
-#include "thread.h"
+#include "mutex.h"
 #include "shared_mutex.h"
+#include "thread.h"
 #include <time.h>  /* struct timespec  */
 
 __MCF_CXX(extern "C" {)
@@ -71,6 +71,24 @@ __MCF_GTHR_AUX_IMPORT __MCF_FN_PURE
 int64_t
 __MCF_gthr_timeout_from_timespec(const __MCF_timespec* __abs_time) __MCF_noexcept;
 
+/* These are auxiliary functions to implement recursive mutexes, and are not
+ * to be called directly.  */
+__MCF_GTHR_AUX_INLINE
+void
+__MCF_gthr_rc_mutex_init(__MCF_gthr_rc_mutex* __rmtx) __MCF_noexcept;
+
+__MCF_GTHR_AUX_INLINE
+int
+__MCF_gthr_rc_mutex_recurse(__MCF_gthr_rc_mutex* __rmtx) __MCF_noexcept;
+
+__MCF_GTHR_AUX_INLINE
+int
+__MCF_gthr_rc_mutex_wait(__MCF_gthr_rc_mutex* __rmtx, const int64_t* __timeout_opt) __MCF_noexcept;
+
+__MCF_GTHR_AUX_INLINE
+void
+__MCF_gthr_rc_mutex_release(__MCF_gthr_rc_mutex* __rmtx) __MCF_noexcept;
+
 /* These are auxiliary functions for condition variables. The argument is a
  * pointer to a plain `_MCF_mutex`.  */
 __MCF_GTHR_AUX_IMPORT
@@ -104,24 +122,6 @@ __MCF_gthr_recursive_mutex_unlock_callback(intptr_t __arg) __MCF_noexcept;
 __MCF_GTHR_AUX_IMPORT
 void
 __MCF_gthr_recursive_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked) __MCF_noexcept;
-
-/* These are auxiliary functions to implement recursive mutexes, and are not
- * to be called directly.  */
-__MCF_GTHR_AUX_INLINE
-void
-__MCF_gthr_rc_mutex_init(__MCF_gthr_rc_mutex* __rmtx) __MCF_noexcept;
-
-__MCF_GTHR_AUX_INLINE
-int
-__MCF_gthr_rc_mutex_recurse(__MCF_gthr_rc_mutex* __rmtx) __MCF_noexcept;
-
-__MCF_GTHR_AUX_INLINE
-int
-__MCF_gthr_rc_mutex_wait(__MCF_gthr_rc_mutex* __rmtx, const int64_t* __timeout_opt) __MCF_noexcept;
-
-__MCF_GTHR_AUX_INLINE
-void
-__MCF_gthr_rc_mutex_release(__MCF_gthr_rc_mutex* __rmtx) __MCF_noexcept;
 
 /* This is the actual thread function for a gthread.  */
 __MCF_GTHR_AUX_IMPORT
