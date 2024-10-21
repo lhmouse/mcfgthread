@@ -6,7 +6,6 @@
  * to this file.  */
 
 #include "xprecompiled.h"
-#pragma GCC diagnostic ignored "-Wmissing-declarations"
 
 void*
 __cdecl
