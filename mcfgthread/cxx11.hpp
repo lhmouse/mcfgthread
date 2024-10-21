@@ -566,11 +566,8 @@ class condition_variable
 
         unique_lock_type __temp_lock;
         __temp_lock.swap(__lock);
-
-        int __err = ::_MCF_cond_wait(this->_M_cnd,
-             ::__MCF_gthr_mutex_unlock_callback, ::__MCF_gthr_mutex_relock_callback,
-             (intptr_t) __temp_lock.mutex()->native_handle(), nullptr);
-
+        ::_MCF_mutex* __mtx = __temp_lock.mutex()->native_handle();
+        int __err = ::__MCF_gthr_cond_mutex_wait(this->_M_cnd, __mtx, nullptr);
         __temp_lock.swap(__lock);
         __MCF_ASSERT(__err == 0);
       }
@@ -592,11 +589,8 @@ class condition_variable
 
         unique_lock_type __temp_lock;
         __temp_lock.swap(__lock);
-
-        int __err = _Noadl::__wait_until(__abs_time, ::_MCF_cond_wait, this->_M_cnd,
-             ::__MCF_gthr_mutex_unlock_callback, ::__MCF_gthr_mutex_relock_callback,
-             (intptr_t) __temp_lock.mutex()->native_handle());
-
+        ::_MCF_mutex* __mtx = __temp_lock.mutex()->native_handle();
+        int __err = _Noadl::__wait_until(__abs_time, ::__MCF_gthr_cond_mutex_wait, this->_M_cnd, __mtx);
         __temp_lock.swap(__lock);
         return (__err == 0) ? cv_status::no_timeout : cv_status::timeout;
       }
@@ -620,11 +614,8 @@ class condition_variable
 
         unique_lock_type __temp_lock;
         __temp_lock.swap(__lock);
-
-        int __err = _Noadl::__wait_for(__rel_time, ::_MCF_cond_wait, this->_M_cnd,
-             ::__MCF_gthr_mutex_unlock_callback, ::__MCF_gthr_mutex_relock_callback,
-             (intptr_t) __temp_lock.mutex()->native_handle());
-
+        ::_MCF_mutex* __mtx = __temp_lock.mutex()->native_handle();
+        int __err = _Noadl::__wait_for(__rel_time, ::__MCF_gthr_cond_mutex_wait, this->_M_cnd, __mtx);
         __temp_lock.swap(__lock);
         return (__err == 0) ? cv_status::no_timeout : cv_status::timeout;
       }

@@ -467,9 +467,7 @@ int
 __MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const __MCF_timespec* __ts) __MCF_noexcept
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__ts);
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback,
-                               __MCF_gthr_recursive_mutex_relock_callback,
-                               (intptr_t) __mtx->__rc_mtx, &__timeout);
+    int __err = __MCF_gthr_cond_recursive_mutex_wait(__cond, __mtx->__rc_mtx, &__timeout);
     return (__err != 0) ? thrd_timedout : thrd_success;
   }
 
@@ -477,9 +475,7 @@ __MCF_C11_INLINE
 int
 __MCF_c11_cnd_wait(cnd_t* __cond, mtx_t* __mtx) __MCF_noexcept
   {
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback,
-                               __MCF_gthr_recursive_mutex_relock_callback,
-                               (intptr_t) __mtx->__rc_mtx, __MCF_nullptr);
+    int __err = __MCF_gthr_cond_recursive_mutex_wait(__cond, __mtx->__rc_mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return thrd_success;
   }

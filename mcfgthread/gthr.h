@@ -520,9 +520,7 @@ __MCF_GTHR_INLINE
 int
 __MCF_gthr_cond_wait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx) __MCF_noexcept
   {
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback,
-                               __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx,
-                               __MCF_nullptr);
+    int __err = __MCF_gthr_cond_mutex_wait(__cond, __mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
@@ -531,9 +529,7 @@ __MCF_GTHR_INLINE
 int
 __MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mutex_t* __rmtx) __MCF_noexcept
   {
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_recursive_mutex_unlock_callback,
-                               __MCF_gthr_recursive_mutex_relock_callback,
-                               (intptr_t) __rmtx, __MCF_nullptr);
+    int __err = __MCF_gthr_cond_recursive_mutex_wait(__cond, __rmtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
@@ -543,9 +539,7 @@ int
 __MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time) __MCF_noexcept
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
-    int __err = _MCF_cond_wait(__cond, __MCF_gthr_mutex_unlock_callback,
-                               __MCF_gthr_mutex_relock_callback, (intptr_t) __mtx,
-                               &__timeout);
+    int __err = __MCF_gthr_cond_mutex_wait(__cond, __mtx, &__timeout);
     return __err;
   }
 
