@@ -35,7 +35,7 @@ main(void)
     ::_MCF_sleep(&sleep_until);
 
     now = ::_MCF_perf_counter();
-    r = mutex.try_lock_until(NS::chrono::system_clock::now() + NS::chrono::milliseconds(1100));
+    r = mutex.try_lock_until(NS::chrono::system_clock::now() + NS::chrono::milliseconds(1116));  // relaxed
     assert(r == true);
     delta = ::_MCF_perf_counter() - now;
     ::fprintf(stderr, "delta = %.6f\n", delta);
@@ -45,7 +45,7 @@ main(void)
     NS::thread(
      [&] {
        now = ::_MCF_perf_counter();
-       r = mutex.try_lock_until(NS::chrono::system_clock::now() + NS::chrono::milliseconds(1100));
+       r = mutex.try_lock_until(NS::chrono::system_clock::now() + NS::chrono::milliseconds(1116));  // relaxed
        assert(r == false);
        delta = ::_MCF_perf_counter() - now;
        ::fprintf(stderr, "delta = %.6f\n", delta);

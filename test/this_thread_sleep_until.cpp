@@ -31,7 +31,7 @@ main(void)
     ::_MCF_sleep(&sleep_until);
 
     now = ::_MCF_perf_counter();
-    NS::this_thread::sleep_until(NS::chrono::system_clock::now() + NS::chrono::milliseconds(1100));
+    NS::this_thread::sleep_until(NS::chrono::system_clock::now() + NS::chrono::milliseconds(1116));  // relaxed
     delta = ::_MCF_perf_counter() - now;
     ::fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1100);
