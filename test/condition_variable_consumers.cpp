@@ -39,7 +39,7 @@ thread_proc(int& my_consumed)
 
       // Consume it.
       int value_got = value;
-      //::printf("thread %d got %d\n", (int) ::_MCF_thread_self_tid(), value_got);
+      //::fprintf(stderr, "thread %d got %d\n", (int) ::_MCF_thread_self_tid(), value_got);
       if(value_got > 0)
         value = 0;
 
@@ -53,7 +53,7 @@ thread_proc(int& my_consumed)
       my_consumed += value_got;
     }
 
-    ::printf("thread %d quitting\n", (int) ::_MCF_thread_self_tid());
+    ::fprintf(stderr, "thread %d quitting\n", (int) ::_MCF_thread_self_tid());
   }
 
 int
@@ -71,7 +71,7 @@ main(void)
 
       // Produce one.
       value = 1;
-      //::printf("main set %d\n", value);
+      //::fprintf(stderr, "main set %d\n", value);
 
       cond_produced.notify_one();
     }
@@ -80,18 +80,18 @@ main(void)
 
     // Inform end of input
     value = -1;
-    ::printf("main set end of input\n");
+    ::fprintf(stderr, "main set end of input\n");
 
     cond_produced.notify_all();
     xlk.unlock();
 
     // Wait and sum all values
     int total = 0;
-    ::printf("main waiting\n");
+    ::fprintf(stderr, "main waiting\n");
 
     for(std::size_t k = 0;  k < NTHREADS;  ++k) {
       threads.at(k).join();
-      ::printf("main wait finished: %d, consumed %d\n", (int) k, consumed.at(k));
+      ::fprintf(stderr, "main wait finished: %d, consumed %d\n", (int) k, consumed.at(k));
       total += consumed.at(k);
     }
 

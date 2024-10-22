@@ -30,7 +30,7 @@ main(void)
         }
         catch(::std::system_error& e) {
           // XXX: unknown?
-          ::printf("error = %s\n", e.what());
+          ::fprintf(stderr, "error = %s\n", e.what());
         }
       });
 

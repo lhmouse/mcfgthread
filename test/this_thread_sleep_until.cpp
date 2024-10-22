@@ -33,7 +33,7 @@ main(void)
     now = ::_MCF_perf_counter();
     NS::this_thread::sleep_until(NS::chrono::system_clock::now() + NS::chrono::milliseconds(1100));
     delta = ::_MCF_perf_counter() - now;
-    ::printf("delta = %.6f\n", delta);
+    ::fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1100);
     assert(delta <= 1200);
   }
