@@ -21,7 +21,7 @@ main(void)
     _MCF_thread_set_priority(__MCF_nullptr, _MCF_thread_priority_above_normal);
 
     sleep_until = time(__MCF_nullptr) + 2;
-    _MCF_sleep(&(int64_t) { sleep_until * 1000 - 20 });
+    _MCF_sleep(&(int64_t) { sleep_until * 1000LL - 20 });
     do { now = _MCF_perf_counter();
          timeout.tv_sec = time(__MCF_nullptr);
     } while(timeout.tv_sec < sleep_until);

@@ -31,13 +31,7 @@ main(void)
     tm.tm_min = st.wMinute;
     tm.tm_sec = st.wSecond;
     tm.tm_isdst = -1;
-#if defined _WIN32 && defined _USE_32BIT_TIME_T
-    __time64_t ts = _mktime64(&tm);
-#else
-    time_t ts = mktime(&tm);
-#endif
-
-    long long vcrt_now = ts * 1000 + st.wMilliseconds;
+    long long vcrt_now = mktime(&tm) * 1000LL + st.wMilliseconds;
     fprintf(stderr, "vcrt_now = %lld\n", vcrt_now);
 
     long long ms_now = _MCF_utc_now();
