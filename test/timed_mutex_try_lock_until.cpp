@@ -49,7 +49,7 @@ main(void)
        assert(r == false);
        delta = ::_MCF_perf_counter() - now;
        ::printf("delta = %.6f\n", delta);
-       assert(delta >= 1100 - 20);
+       assert(delta >= 1100);
        assert(delta <= 1200);
      })
      .join();

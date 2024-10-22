@@ -17,6 +17,7 @@ int
 main(void)
   {
     double now, delta;
+    time_t sleep_until;
     struct timespec timeout;
     int r;
 
@@ -25,16 +26,13 @@ main(void)
     r = mtx_init(&mutex, mtx_recursive | mtx_timed);
     assert(r == thrd_success);
 
-    /* Round the time up. The `while` loop is necessary to work around a bug
-     * in Wine, which physical Windows doesn't have.
-     * See https://bugs.winehq.org/show_bug.cgi?id=57035  */
-    int64_t sleep_until = (int64_t) time(__MCF_nullptr) * 1000 + 2000;
-    while(time(__MCF_nullptr) < sleep_until / 1000)
-      _MCF_sleep(&sleep_until);
-
-    now = _MCF_perf_counter();
-    timeout.tv_sec = time(__MCF_nullptr) + 1;
-    timeout.tv_nsec = 100000000;
+    sleep_until = time(__MCF_nullptr) + 2;
+    _MCF_sleep(&(int64_t) { sleep_until * 1000 - 20 });
+    do { now = _MCF_perf_counter();
+         timeout.tv_sec = time(__MCF_nullptr);
+    } while(timeout.tv_sec < sleep_until);
+    timeout.tv_sec += 1;
+    timeout.tv_nsec = 100999999;
     r = mtx_timedlock(&mutex, &timeout);  /* lock it  */
     assert(r == thrd_success);
     delta = _MCF_perf_counter() - now;
@@ -42,9 +40,13 @@ main(void)
     assert(delta >= 0);
     assert(delta <= 100);
 
-    now = _MCF_perf_counter();
-    timeout.tv_sec = time(__MCF_nullptr) + 1;
-    timeout.tv_nsec = 100000000;
+    sleep_until = time(__MCF_nullptr) + 2;
+    _MCF_sleep(&(int64_t) { sleep_until * 1000 - 20 });
+    do { now = _MCF_perf_counter();
+         timeout.tv_sec = time(__MCF_nullptr);
+    } while(timeout.tv_sec < sleep_until);
+    timeout.tv_sec += 1;
+    timeout.tv_nsec = 100999999;
     r = mtx_timedlock(&mutex, &timeout);
     assert(r == thrd_success);
     delta = _MCF_perf_counter() - now;
