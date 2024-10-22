@@ -21,7 +21,7 @@ main(void)
 
     now = _MCF_perf_counter();
     timeout.tv_sec = 1;  /* relative  */
-    timeout.tv_nsec = 300999999;
+    timeout.tv_nsec = 300839999;
     rem.tv_sec = 5;
     rem.tv_nsec = 5;
     r = thrd_sleep(&timeout, &rem);
