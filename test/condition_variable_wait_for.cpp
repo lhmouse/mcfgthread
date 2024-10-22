@@ -36,6 +36,7 @@ main(void)
     r = cond.wait_for(xlk, NS::chrono::milliseconds(1100));
     assert(r == NS::cv_status::timeout);
     delta = ::_MCF_perf_counter() - now;
+    fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1100);
     assert(delta <= 1200);
 
