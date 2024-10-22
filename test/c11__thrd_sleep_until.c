@@ -32,7 +32,7 @@ main(void)
     r = _thrd_sleep_until(&timeout);
     assert(r == 0);
     delta = _MCF_perf_counter() - now;
-    printf("delta = %.6f\n", delta);
+    fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1300 - 40);
     assert(delta <= 1400);
 
@@ -42,7 +42,7 @@ main(void)
     r = _thrd_sleep_until(&timeout);
     assert(r == 0);
     delta = _MCF_perf_counter() - now;
-    printf("delta = %.6f\n", delta);
+    fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 0);
     assert(delta <= 100);
   }

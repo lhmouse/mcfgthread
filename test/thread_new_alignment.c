@@ -18,7 +18,7 @@ thread_proc(_MCF_thread* self)
     assert((uintptr_t) data % __MCF_THREAD_DATA_ALIGNMENT == 0);
     assert(memcmp(data, "hello", 5) == 0);
 
-    printf("thread %d quitting\n", self->__tid);
+    fprintf(stderr, "thread %d quitting\n", self->__tid);
   }
 
 int

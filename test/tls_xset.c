@@ -37,7 +37,7 @@ thread_proc(_MCF_thread* self)
     assert(p == &dso_2);
 
     _MCF_sleep((const int64_t[]) { -1000 });
-    printf("thread %d quitting\n", self->__tid);
+    fprintf(stderr, "thread %d quitting\n", self->__tid);
   }
 
 int
@@ -74,9 +74,9 @@ main(void)
     thrd = _MCF_thread_new(thread_proc, __MCF_nullptr, sizeof(int));
     assert(thrd);
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     _MCF_thread_wait(thrd, __MCF_nullptr);
-    printf("main wait finished\n");
+    fprintf(stderr, "main wait finished\n");
 
     p = _MCF_tls_get(key);
     assert(p == &dso_2);

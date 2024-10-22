@@ -81,7 +81,7 @@ thread_proc(void* arg)
       SwitchToThread();
     }
 
-    printf("thread %d quitting\n", (int) GetCurrentThreadId());
+    fprintf(stderr, "thread %d quitting\n", (int) GetCurrentThreadId());
     return 0;
   }
 
@@ -95,7 +95,7 @@ main(void)
 
 #define xstr1(x)  xstr2(x)
 #define xstr2(x)  #x
-    printf("using `%s`:\n  # of threads    = %d\n  # of iterations = %d\n",
+    fprintf(stderr, "using `%s`:\n  # of threads    = %d\n  # of iterations = %d\n",
            xstr1(my_mutex_t), NTHRD, NITER);
 
     for(intptr_t k = 0;  k < NTHRD;  ++k) {
@@ -103,7 +103,7 @@ main(void)
       assert(threads[k]);
     }
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     SetEvent(start);
     QueryPerformanceCounter(&t0);
 
@@ -114,6 +114,6 @@ main(void)
 
     QueryPerformanceCounter(&t1);
     QueryPerformanceFrequency(&tf);
-    printf("total time:\n  %.3f milliseconds\n",
+    fprintf(stderr, "total time:\n  %.3f milliseconds\n",
            (double) (t1.QuadPart - t0.QuadPart) * 1000 / tf.QuadPart);
   }

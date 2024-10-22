@@ -14,7 +14,7 @@ static
 void
 thread_atexit_proc(void* arg)
   {
-    printf("thread %d atexit\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d atexit\n", (int) _MCF_thread_self_tid());
     *(int*) arg = 42;
   }
 
@@ -24,7 +24,7 @@ thread_proc(_MCF_thread* self)
   {
     __MCF_cxa_thread_atexit(thread_atexit_proc, _MCF_thread_get_data(self), __MCF_nullptr);
     _MCF_sleep((const int64_t[]) { -1000 });
-    printf("thread %d quitting\n", self->__tid);
+    fprintf(stderr, "thread %d quitting\n", self->__tid);
   }
 
 int
@@ -36,9 +36,9 @@ main(void)
     int* value = _MCF_thread_get_data(thrd);
     assert(*value == 0);
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     _MCF_thread_wait(thrd, __MCF_nullptr);
-    printf("main wait finished\n");
+    fprintf(stderr, "main wait finished\n");
 
     assert(*value == 42);
   }

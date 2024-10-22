@@ -38,7 +38,7 @@ main(void)
     r = mtx_timedlock(&mutex, &timeout);  /* lock it  */
     assert(r == thrd_success);
     delta = _MCF_perf_counter() - now;
-    printf("delta = %.6f\n", delta);
+    fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 0);
     assert(delta <= 100);
 
@@ -48,7 +48,7 @@ main(void)
     r = mtx_timedlock(&mutex, &timeout);
     assert(r == thrd_success);
     delta = _MCF_perf_counter() - now;
-    printf("delta = %.6f\n", delta);
+    fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 0);
     assert(delta <= 100);
   }

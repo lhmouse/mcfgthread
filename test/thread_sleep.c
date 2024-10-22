@@ -24,7 +24,7 @@ main(void)
     r = _MCF_sleep(&timeout);
     assert(r == 0);
     delta = _MCF_perf_counter() - now;
-    printf("delta = %.6f\n", delta);
+    fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1100 - 40);
     assert(delta <= 1200);
 
@@ -33,7 +33,7 @@ main(void)
     r = _MCF_sleep(&timeout);
     assert(r == 0);
     delta = _MCF_perf_counter() - now;
-    printf("delta = %.6f\n", delta);
+    fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1100 - 40);
     assert(delta <= 1200);
 
@@ -41,7 +41,7 @@ main(void)
     timeout = (int64_t) _MCF_hires_utc_now() + 1100;  /* absolute  */
     _MCF_sleep_noninterruptible(&timeout);
     delta = _MCF_perf_counter() - now;
-    printf("delta = %.6f\n", delta);
+    fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1100 - 40);
     assert(delta <= 1200);
 
@@ -49,7 +49,7 @@ main(void)
     timeout = -1100;  /* relative  */
     _MCF_sleep_noninterruptible(&timeout);
     delta = _MCF_perf_counter() - now;
-    printf("delta = %.6f\n", delta);
+    fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1100 - 40);
     assert(delta <= 1200);
   }

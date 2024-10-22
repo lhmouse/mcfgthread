@@ -25,7 +25,7 @@ main(void)
     r = _MCF_once_wait(&once, (const int64_t[]){ (int64_t) _MCF_hires_utc_now() + 1100 });  /* absolute  */
     assert(r == 1);
     delta = _MCF_perf_counter() - now;
-    printf("delta = %.6f\n", delta);
+    fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 0);
     assert(delta <= 100);
 
@@ -33,7 +33,7 @@ main(void)
     r = _MCF_once_wait(&once, (const int64_t[]){ (int64_t) _MCF_hires_utc_now() + 1100 });  /* absolute  */
     assert(r == -1);
     delta = _MCF_perf_counter() - now;
-    printf("delta = %.6f\n", delta);
+    fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1100 - 40);
     assert(delta <= 1200);
 
@@ -41,7 +41,7 @@ main(void)
     r = _MCF_once_wait(&once, (const int64_t[]){ -1100 });  /* relative  */
     assert(r == -1);
     delta = _MCF_perf_counter() - now;
-    printf("delta = %.6f\n", delta);
+    fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1100 - 40);
     assert(delta <= 1200);
   }

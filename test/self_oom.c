@@ -22,7 +22,7 @@ thread_proc(void* arg)
     Sleep(1000);
     assert(_MCF_thread_self() == &(__MCF_g->__thread_oom_self_st));
     Sleep(100);
-    printf("thread %d quitting\n", _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", _MCF_thread_self_tid());
     return 0;
   }
 
@@ -49,11 +49,11 @@ main(void)
       assert(threads[k]);
     }
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       WaitForSingleObject(threads[k], INFINITE);
       CloseHandle(threads[k]);
-      printf("main wait finished: %d\n", (int)k);
+      fprintf(stderr, "main wait finished: %d\n", (int)k);
     }
 #endif
   }

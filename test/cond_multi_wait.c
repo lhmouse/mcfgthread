@@ -34,7 +34,7 @@ thread_proc(_MCF_thread* self)
         _MCF_sleep((const int64_t[]){ -10 });
         int32_t c2 = _MCF_atomic_load_32_rlx(&signal_count);
         if(c1 == c2) {
-          printf("maybe deadlock\n");
+          fprintf(stderr, "maybe deadlock\n");
           break;
         }
       }
@@ -56,7 +56,7 @@ main(void)
       _MCF_atomic_xadd_32_rlx(&signal_count, 1);
     }
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     _MCF_thread_wait(thread1, __MCF_nullptr);
     _MCF_thread_wait(thread2, __MCF_nullptr);
   }

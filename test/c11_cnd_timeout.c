@@ -43,7 +43,7 @@ main(void)
     r = cnd_timedwait(&cond, &mutex, &timeout);
     assert(r == thrd_timedout);
     delta = _MCF_perf_counter() - now;
-    printf("delta = %.6f\n", delta);
+    fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1100 - 40);
     assert(delta <= 1200);
 

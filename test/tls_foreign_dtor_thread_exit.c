@@ -42,9 +42,9 @@ main(void)
     thrd = CreateThread(__MCF_nullptr, 0, thread_proc, __MCF_nullptr, 0, __MCF_nullptr);
     assert(thrd);
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     WaitForSingleObject(thrd, INFINITE);
-    printf("main wait finished\n");
+    fprintf(stderr, "main wait finished\n");
 
     __MCF__Exit(43);
   }

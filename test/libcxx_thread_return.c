@@ -19,7 +19,7 @@ thread_proc(void* param)
     (void) param;
     _MCF_sleep((const int64_t[]) { -500 });
 
-    printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
     return &magic;
   }
 
@@ -30,8 +30,8 @@ main(void)
     assert(r == 0);
     assert(thrd);
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     r = __libcpp_thread_join(&thrd);
     assert(r == 0);
-    printf("main wait finished\n");
+    fprintf(stderr, "main wait finished\n");
   }

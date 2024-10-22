@@ -26,7 +26,7 @@ thread_proc(_MCF_thread* self)
     _MCF_once_wait(&start, __MCF_nullptr);
 
     int r = _MCF_once_wait(&once, __MCF_nullptr);
-    printf("thread %d got %d\n", self->__tid, r);
+    fprintf(stderr, "thread %d got %d\n", self->__tid, r);
     if(r == 1) {
       /* Perform initialization.  */
       int old = resource;
@@ -47,7 +47,7 @@ thread_proc(_MCF_thread* self)
     else
       assert(0);
 
-    printf("thread %d quitting\n", self->__tid);
+    fprintf(stderr, "thread %d quitting\n", self->__tid);
   }
 
 int
@@ -58,11 +58,11 @@ main(void)
       assert(threads[k]);
     }
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     _MCF_once_release(&start);
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       _MCF_thread_wait(threads[k], __MCF_nullptr);
-      printf("main wait finished: %d\n", (int)k);
+      fprintf(stderr, "main wait finished: %d\n", (int)k);
     }
 
     assert(resource == NTHREADS);

@@ -23,26 +23,26 @@ main(void)
     assert(mutex.__sp_nfail == 0);
 
     for(size_t count = 1;  count <= 15;  ++count) {
-      printf("try failing: %d\n", (int) count);
+      fprintf(stderr, "try failing: %d\n", (int) count);
       assert(_MCF_mutex_lock(&mutex, (const int64_t[]){ -100 }) == -1);
       assert(mutex.__locked == 1);
       assert(mutex.__sp_nfail == count);
     }
 
-    printf("try failing: final\n");
+    fprintf(stderr, "try failing: final\n");
     assert(_MCF_mutex_lock(&mutex, (const int64_t[]){ -100 }) == -1);
     assert(mutex.__locked == 1);
     assert(mutex.__sp_nfail == 15);
 
     for(size_t count = 15;  count >= 1;  --count) {
-      printf("try succeeding: %d\n", (int) count);
+      fprintf(stderr, "try succeeding: %d\n", (int) count);
       _MCF_mutex_unlock(&mutex);
       assert(mutex.__locked == 0);
       assert(_MCF_mutex_lock(&mutex, (const int64_t[]){ -100 >> count }) == 0);
       assert(mutex.__sp_nfail == count - 1);
     }
 
-    printf("try succeeding: final\n");
+    fprintf(stderr, "try succeeding: final\n");
     _MCF_mutex_unlock(&mutex);
     assert(mutex.__locked == 0);
     assert(_MCF_mutex_lock(&mutex, (const int64_t[]){ -100 }) == 0);
