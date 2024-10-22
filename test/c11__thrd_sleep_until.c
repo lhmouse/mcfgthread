@@ -26,7 +26,7 @@ main(void)
          timeout.tv_sec = time(__MCF_nullptr);
     } while(timeout.tv_sec < sleep_until);
     timeout.tv_sec += 1;
-    timeout.tv_nsec = 300999999;
+    timeout.tv_nsec = 300999999 - 10000000; // relaxed
     r = _thrd_sleep_until(&timeout);
     assert(r == 0);
     delta = _MCF_perf_counter() - now;
