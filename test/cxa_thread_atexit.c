@@ -23,7 +23,7 @@ void
 thread_proc(_MCF_thread* self)
   {
     __MCF_cxa_thread_atexit(thread_atexit_proc, _MCF_thread_get_data(self), __MCF_nullptr);
-    _MCF_sleep((const int64_t[]) { -1000 });
+    _MCF_sleep((const int64_t[]) { -1001 });
     fprintf(stderr, "thread %d quitting\n", self->__tid);
   }
 

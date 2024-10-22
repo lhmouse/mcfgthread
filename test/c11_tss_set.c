@@ -30,7 +30,7 @@ thread_proc(void* param)
     p = tss_get(key);
     assert(p == &dso_2);
 
-    _MCF_sleep((const int64_t[]) { -1000 });
+    _MCF_sleep((const int64_t[]) { -1001 });
     fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
     return 0;
   }
