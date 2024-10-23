@@ -308,15 +308,15 @@ _MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_NOEXCEPT
 #if defined _MSC_VER
 /* MSVC requires that intrinsic functions be declared.  */
 #  if defined _M_X64 || defined _M_IX86
-__declspec(nothrow) unsigned long __readfsdword(unsigned long);
+unsigned long __readfsdword(unsigned long _Offset);
 _Pragma("intrinsic(__readfsdword)")
-__declspec(nothrow) unsigned long __readgsdword(unsigned long);
+unsigned long __readgsdword(unsigned long _Offset);
 _Pragma("intrinsic(__readgsdword)")
-#  endif
+#  endif  /* x86 families */
 #  if defined _M_ARM64 || defined _M_ARM64EC
-__declspec(nothrow) unsigned long __readx18dword(unsigned long);
+unsigned long __readx18dword(unsigned long _Offset);
 _Pragma("intrinsic(__readx18dword)")
-#  endif
+#  endif  /* ARM64 families */
 #endif  /* MSVC  */
 
 __MCF_THREAD_INLINE
