@@ -282,7 +282,8 @@ __MCF_gthread_on_thread_exit(void)
       }
 
       /* Deallocate the table which should be empty now.  */
-      __MCF_mfree(tls.__begin);
+      if(tls.__begin)
+        __MCF_mfree_nonnull(tls.__begin);
     }
 
     /* Poison this value.  */

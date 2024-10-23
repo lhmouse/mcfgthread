@@ -68,7 +68,7 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* ds
       __MCF_dtor_queue* prev = cur_q->__prev;
       if((cur_q->__size == 0) && prev) {
         __MCF_mcopy(cur_q, prev, sizeof(__MCF_dtor_queue));
-        __MCF_mfree(prev);
+        __MCF_mfree_nonnull(prev);
       }
       else
         cur_q = prev;
@@ -105,7 +105,7 @@ __MCF_dtor_queue_remove(__MCF_dtor_queue* queue, void* dso)
       __MCF_dtor_queue* prev = cur_q->__prev;
       if((cur_q->__size == 0) && prev) {
         __MCF_mcopy(cur_q, prev, sizeof(__MCF_dtor_queue));
-        __MCF_mfree(prev);
+        __MCF_mfree_nonnull(prev);
       }
       else
         cur_q = prev;

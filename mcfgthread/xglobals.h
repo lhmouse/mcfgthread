@@ -248,10 +248,11 @@ __MCF_XGLOBALS_INLINE
 size_t
 __MCF_msize(const void* ptr) __MCF_noexcept __attribute__((__pure__));
 
-/* Free a block of memory, like `free()`.  */
+/* Free a block of memory, like `free()`, except that the argument shall not
+ * be a null pointer.  */
 __MCF_XGLOBALS_INLINE
 void
-__MCF_mfree(void* ptr_opt) __MCF_noexcept;
+__MCF_mfree_nonnull(void* ptr) __MCF_noexcept;
 
 /* These functions set the last error code and return the second argument.
  * They should be subject to tail-call optimization.  */
@@ -527,15 +528,15 @@ __MCF_msize(const void* ptr) __MCF_noexcept
 
 __MCF_XGLOBALS_INLINE
 void
-__MCF_mfree(void* ptr_opt) __MCF_noexcept
+__MCF_mfree_nonnull(void* ptr) __MCF_noexcept
   {
-    if(!ptr_opt)
-      return;
-
+    __MCF_ASSERT(ptr != __MCF_nullptr);
 #ifdef __MCF_DEBUG
-    __MCF_mfill(ptr_opt, 0xFE, HeapSize(__MCF_crt_heap, 0, ptr_opt));
+    size_t size = HeapSize(__MCF_crt_heap, 0, ptr);
+    __MCF_ASSERT(size != (size_t) -1);
+    __MCF_mfill(ptr, 0xFE, size);
 #endif
-    int succ = HeapFree(__MCF_crt_heap, 0, ptr_opt);
+    int succ = HeapFree(__MCF_crt_heap, 0, ptr);
     __MCF_ASSERT(succ);
   }
 

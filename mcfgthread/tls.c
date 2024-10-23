@@ -37,7 +37,7 @@ _MCF_tls_key_drop_ref_nonnull(_MCF_tls_key* key)
       return;
 
     /* Deallocate all associated resources.  */
-    __MCF_mfree(key);
+    __MCF_mfree_nonnull(key);
   }
 
 static inline
@@ -147,7 +147,8 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
       }
 
       /* Deallocate the old table which should be empty now.  */
-      __MCF_mfree(temp.__begin);
+      if(temp.__begin)
+        __MCF_mfree_nonnull(temp.__begin);
     }
 
     /* Search for the given key.  */

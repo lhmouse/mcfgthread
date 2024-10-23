@@ -87,7 +87,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     DWORD tid;
     thrd->__handle = CreateThread(__MCF_nullptr, 0, do_win32_thread_thunk, thrd, 0, &tid);
     if(thrd->__handle == __MCF_nullptr) {
-      __MCF_mfree(thrd);
+      __MCF_mfree_nonnull(thrd);
       return __MCF_nullptr;
     }
 
@@ -145,7 +145,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
 
     /* Deallocate all associated resources.  */
     __MCF_close_handle(thrd->__handle);
-    __MCF_mfree(thrd);
+    __MCF_mfree_nonnull(thrd);
   }
 
 __MCF_DLLEXPORT
