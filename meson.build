@@ -393,7 +393,7 @@ foreach src: test_src
   if basename in [ 'gthr_cxx98_pedantic.cpp' ]
     test_cpp_args = [ '-std=c++98', '-Wpedantic', '-Wno-variadic-macros',
                       '-Wno-long-long', '-Wno-zero-as-null-pointer-constant',
-                      cc.get_supported_arguments('-Wno-c++11-extensions') ]
+                      cxx.get_supported_arguments('-Wno-c++11-extensions') ]
   endif
 
   if basename in [ 'c11_c99_pedantic.c' ]
