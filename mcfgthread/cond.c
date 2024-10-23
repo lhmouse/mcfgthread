@@ -11,25 +11,10 @@
 #include "cond.h"
 #include "xglobals.h"
 
-static
+static __MCF_NEVER_INLINE
 int
-do_cond_wait_cleanup(_MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, intptr_t unlocked, int err)
+do_unlock_and_wait(intptr_t* unlocked, _MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, intptr_t lock_arg, const int64_t* timeout_opt)
   {
-    if(relock_opt)
-      (*relock_opt) (lock_arg, unlocked);
-
-    /* Forward the error code to caller.  */
-    return err;
-  }
-
-__MCF_DLLEXPORT
-int
-_MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, const int64_t* timeout_opt)
-  {
-    __MCF_SEH_DEFINE_TERMINATE_FILTER;
-    _MCF_cond_relock_callback* relock_for_tail_call = __MCF_nullptr;
-    intptr_t unlocked = 0;
-
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
@@ -45,12 +30,10 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
 
-    if(unlock_opt) {
-      /* Now, unlock the associated mutex. If another thread attempts to signal
-       * this one, it shall block.  */
-      relock_for_tail_call = relock_opt;
-      unlocked = (*unlock_opt) (lock_arg);
-    }
+    /* Now, unlock the associated mutex. If another thread attempts to signal
+     * this one, it shall block.  */
+    if(unlock_opt)
+      *unlocked = (*unlock_opt) (lock_arg);
 
     /* Try waiting.  */
     int err = __MCF_keyed_event_wait(cond, &nt_timeout);
@@ -67,7 +50,7 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
 #pragma GCC diagnostic pop
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new))
-          return do_cond_wait_cleanup(relock_for_tail_call, lock_arg, unlocked, -1);
+          return -1;
       }
 
       /* ... It is possible that a second thread has already decremented the
@@ -81,7 +64,28 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond
     }
 
     /* We have got notified.  */
-    return do_cond_wait_cleanup(relock_for_tail_call, lock_arg, unlocked, 0);
+    return 0;
+  }
+
+
+__MCF_DLLEXPORT
+int
+_MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, const int64_t* timeout_opt)
+  {
+    __MCF_SEH_DEFINE_TERMINATE_FILTER;
+    intptr_t unlocked;
+    int err = do_unlock_and_wait(&unlocked, cond, unlock_opt, lock_arg, timeout_opt);
+
+    /* If `relock_opt` is provided and the associated mutex has been unlocked,
+     * relock it. Sometimes the mutex will be unlocked right after this wait
+     * operation times out. As an optimization technique under such
+     * circumstances, a user may pass a null `relock_opt` and do relocking
+     * themself.  */
+    if(unlock_opt && relock_opt)
+      (*relock_opt) (lock_arg, unlocked);
+
+    /* Forward the error code to caller.  */
+    return err;
   }
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
