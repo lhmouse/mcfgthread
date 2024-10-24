@@ -65,7 +65,7 @@ __MCF_gthr_once(__gthread_once_t* __once, __MCF_once_callback* __init_proc) __MC
 /* Allocates a thread-specific key, like `pthread_key_create()`.  */
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_key_create(__gthread_key_t* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_noexcept;
+__MCF_gthr_key_create(__gthread_key_t* __keyp, __MCF_cxa_dtor_union __dtor_opt) __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
 #  define __gthread_key_create  __MCF_gthr_key_create
@@ -354,7 +354,7 @@ __MCF_gthr_once(__gthread_once_t* __once, __MCF_once_callback* __init_proc) __MC
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_key_create(__gthread_key_t* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_noexcept
+__MCF_gthr_key_create(__gthread_key_t* __keyp, __MCF_cxa_dtor_union __dtor_opt) __MCF_noexcept
   {
     _MCF_tls_key* __key = _MCF_tls_key_new(__dtor_opt);
     *__keyp = __key;

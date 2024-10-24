@@ -932,7 +932,7 @@ class thread_specific_ptr
   public:
     thread_specific_ptr()
       {
-        this->_M_key = ::_MCF_tls_key_new(+[](void* __vptr) noexcept { delete (_Tp*) __vptr; });
+        this->_M_key = ::_MCF_tls_key_new(+[](void* __vptr) { delete (_Tp*) __vptr; });
         if(!this->_M_key)
           __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_tls_key_new");
       }

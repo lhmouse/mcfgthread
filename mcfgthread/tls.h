@@ -37,7 +37,7 @@ struct __MCF_tls_key
     int32_t __nref[1];  /* atomic reference count  */
     uint8_t __deleted[1];  /* deleted?  */
     uint8_t __reserved_bytes[3];
-    _MCF_tls_dtor* __dtor_opt;  /* destructor, optional  */
+    __MCF_cxa_dtor_union __dtor_opt;  /* destructor, optional  */
   };
 
 /* Creates a thread-local key. The `__nref` member is initialized to 1.
@@ -54,7 +54,7 @@ struct __MCF_tls_key
  * obtained via `_MCF_get_win32_error()`.  */
 __MCF_TLS_IMPORT
 _MCF_tls_key*
-_MCF_tls_key_new(_MCF_tls_dtor* __dtor_opt) __MCF_noexcept;
+_MCF_tls_key_new(__MCF_cxa_dtor_union __dtor_opt) __MCF_noexcept;
 
 /* Get the number of references of a thread-local key.  */
 __MCF_TLS_INLINE __MCF_FN_PURE
@@ -161,7 +161,7 @@ __MCF_TLS_INLINE __MCF_CXX11(constexpr)
 _MCF_tls_dtor*
 _MCF_tls_key_get_destructor(const _MCF_tls_key* __key) __MCF_noexcept
   {
-    return __key->__dtor_opt;
+    return __key->__dtor_opt.__cdecl_ptr;
   }
 
 __MCF_CXX(})  /* extern "C"  */

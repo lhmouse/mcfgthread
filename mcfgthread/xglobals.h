@@ -159,9 +159,9 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_union dtor, void* arg)
 /* This works on x86_64 and ARM64.  */
 __MCF_ALWAYS_INLINE
 void
-__MCF_invoke_cxa_dtor(__MCF_cxa_dtor_cdecl* dtor, void* arg)
+__MCF_invoke_cxa_dtor(__MCF_cxa_dtor_union dtor, void* arg)
   {
-    (*dtor) (arg);
+    (*(dtor.__cdecl_ptr)) (arg);
   }
 
 #  define __MCF_REALIGN_SP    /* nothing */
