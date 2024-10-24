@@ -128,6 +128,14 @@ __MCF_CXX(extern "C" {)
 #define __MCF_0_INIT    { __MCF_C(0) }
 #define __MCF_SET_IF(x, ...)   ((void) ((x) && (*(x) = (__VA_ARGS__))))
 
+/* Some compilers warn about casts between pointers, so launder the pointer via
+ * an in-between integral type.  */
+#ifdef __cplusplus
+#  define __MCF_CAST_PTR(T, ...)   (reinterpret_cast<T*>(reinterpret_cast<intptr_t>(__VA_ARGS__)))
+#else
+#  define __MCF_CAST_PTR(T, ...)   ((T*)(intptr_t) (__VA_ARGS__))
+#endif
+
 /* The `__MCF_STATIC_ASSERT_0()` macro is an expression that yields zero if it
  * compiles anyway. Its argument must be a constant expression.  */
 #ifdef __cplusplus
