@@ -26,18 +26,18 @@ main(void)
     assert(mdll);
 
     typedef __typeof__(_MCF_tls_get) tls_get_fn;
-    tls_get_fn* pdll_tls_get = (tls_get_fn*)(INT_PTR) GetProcAddress(pdll, "_MCF_tls_get");
+    tls_get_fn* pdll_tls_get = __MCF_CAST_PTR(tls_get_fn, GetProcAddress(pdll, "_MCF_tls_get"));
     assert(pdll_tls_get);
     assert(pdll_tls_get != _MCF_tls_get);
-    tls_get_fn* mdll_tls_get = (tls_get_fn*)(INT_PTR) GetProcAddress(mdll, "_MCF_tls_get");
+    tls_get_fn* mdll_tls_get = __MCF_CAST_PTR(tls_get_fn, GetProcAddress(mdll, "_MCF_tls_get"));
     assert(mdll_tls_get);
     assert(mdll_tls_get != _MCF_tls_get);
 
     typedef __typeof__(_MCF_tls_xset) tls_xset_fn;
-    tls_xset_fn* pdll_tls_xset = (tls_xset_fn*)(INT_PTR) GetProcAddress(pdll, "_MCF_tls_xset");
+    tls_xset_fn* pdll_tls_xset = __MCF_CAST_PTR(tls_xset_fn, GetProcAddress(pdll, "_MCF_tls_xset"));
     assert(pdll_tls_xset);
     assert(pdll_tls_xset != _MCF_tls_xset);
-    tls_xset_fn* mdll_tls_xset = (tls_xset_fn*)(INT_PTR) GetProcAddress(mdll, "_MCF_tls_xset");
+    tls_xset_fn* mdll_tls_xset = __MCF_CAST_PTR(tls_xset_fn, GetProcAddress(mdll, "_MCF_tls_xset"));
     assert(mdll_tls_xset);
     assert(mdll_tls_xset != _MCF_tls_xset);
 
