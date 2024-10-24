@@ -14,7 +14,7 @@
 
 __MCF_DLLEXPORT
 _MCF_tls_key*
-_MCF_tls_key_new(_MCF_tls_dtor* dtor_opt)
+_MCF_tls_key_new(__MCF_cxa_dtor_union dtor_opt)
   {
     _MCF_tls_key* key = __MCF_malloc_0(sizeof(_MCF_tls_key));
     if(!key)

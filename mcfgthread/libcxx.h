@@ -54,7 +54,7 @@ __MCF_libcxx_execute_once(__libcpp_exec_once_flag* __once, __MCF_once_callback* 
 /* Allocates a thread-specific key, like `pthread_key_create()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_tls_create(__libcpp_tls_key* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_noexcept;
+__MCF_libcxx_tls_create(__libcpp_tls_key* __keyp, __MCF_cxa_dtor_union __dtor_opt) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_tls_create  __MCF_libcxx_tls_create
@@ -350,7 +350,7 @@ __MCF_libcxx_execute_once(__libcpp_exec_once_flag* __once, __MCF_once_callback* 
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_tls_create(__libcpp_tls_key* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_noexcept
+__MCF_libcxx_tls_create(__libcpp_tls_key* __keyp, __MCF_cxa_dtor_union __dtor_opt) __MCF_noexcept
   {
     _MCF_tls_key* __key = _MCF_tls_key_new(__dtor_opt);
     *__keyp = __key;
