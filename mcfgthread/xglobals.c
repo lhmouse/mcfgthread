@@ -178,7 +178,7 @@ __MCF_gthread_initialize_globals(void)
     __MCF_CHECK(GetModuleHandleExW(1, L"NTDLL.DLL", &__MCF_crt_ntdll));
 
     FARPROC dllfn = GetProcAddress(__MCF_crt_kernelbase, "TlsGetValue2");
-    __MCF_crt_TlsGetValue = !dllfn ? TlsGetValue : (decltype_TlsGetValue*)(intptr_t) dllfn;
+    __MCF_crt_TlsGetValue = dllfn ? (decltype_TlsGetValue*)(intptr_t) dllfn : TlsGetValue;
 
     /* Generate the unique name for this process.  */
     static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
