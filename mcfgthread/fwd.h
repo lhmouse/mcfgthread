@@ -131,7 +131,7 @@ __MCF_CXX(extern "C" {)
 /* Some compilers warn about casts between pointers, so launder the pointer via
  * an in-between integral type.  */
 #ifdef __cplusplus
-#  define __MCF_CAST_PTR(T, ...)   (reinterpret_cast<T*>(reinterpret_cast<intptr_t>(__VA_ARGS__)))
+#  define __MCF_CAST_PTR(T, ...)   (reinterpret_cast<T*>(reinterpret_cast< ::intptr_t>(__VA_ARGS__)))
 #else
 #  define __MCF_CAST_PTR(T, ...)   ((T*)(intptr_t) (__VA_ARGS__))
 #endif
