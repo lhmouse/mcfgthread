@@ -178,17 +178,24 @@ typedef void _MCF_thread_procedure(_MCF_thread* __thrd);
 /* Define the prototype for destructors for `_MCF_tls_key_new()`.  */
 typedef void _MCF_tls_dtor(void* __ptr);
 
+/* Define the prototype for `atexit()` and `at_quick_exit()`.  */
+typedef void __MCF_atexit_callback(void);
+
+/* Define the prototype for `call_once()`.  */
+typedef void __MCF_once_callback(void);
+
 /* Note: In the case of i386, the argument is passed both via the ECX register
  * and on the stack, to allow both `__cdecl` and `__thiscall` functions to work
  * properly. The function prototype is declared for compatibility with GCC.  */
 typedef void __MCF_cxa_dtor_cdecl(void* __arg);
 
-#if defined __i386__ && (defined __GNUC__ || defined __clang__)
+#if defined __GNUC__ || defined __clang__
 /* Support both calling conventions with a transparent union.  */
 typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __arg);
 typedef union __MCF_cxa_dtor_union __MCF_cxa_dtor_union;
 union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
   {
+    __MCF_atexit_callback* __no_arg_ptr;
     __MCF_cxa_dtor_cdecl* __cdecl_ptr;
     __MCF_cxa_dtor_thiscall* __thiscall_ptr;
 
@@ -196,12 +203,18 @@ union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
     /* Unfortunately, transparent unions are not supported in C++, and have
      * to be emulated with constructors.  */
     __MCF_CXX11(constexpr)
+    __MCF_cxa_dtor_union(__MCF_atexit_callback* __xptr) __MCF_noexcept
+      : __no_arg_ptr(__xptr)  { }
+
+    __MCF_CXX11(constexpr)
     __MCF_cxa_dtor_union(__MCF_cxa_dtor_cdecl* __xptr) __MCF_noexcept
       : __cdecl_ptr(__xptr)  { }
 
+#    ifdef __i386__
     __MCF_CXX11(constexpr)
     __MCF_cxa_dtor_union(__MCF_cxa_dtor_thiscall* __xptr) __MCF_noexcept
       : __thiscall_ptr(__xptr)  { }
+#    endif
 #  endif
   };
 #else
@@ -209,12 +222,6 @@ union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
 typedef __MCF_cxa_dtor_cdecl __MCF_cxa_dtor_thiscall;
 typedef __MCF_cxa_dtor_cdecl* __MCF_cxa_dtor_union;
 #endif
-
-/* Define the prototype for `atexit()` and `at_quick_exit()`.  */
-typedef void __MCF_atexit_callback(void);
-
-/* Define the prototype for `call_once()`.  */
-typedef void __MCF_once_callback(void);
 
 /* Declare it here for `__MCF_ASSERT()`.  */
 __MCF_NEVER_RETURN
