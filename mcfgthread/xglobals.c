@@ -271,7 +271,7 @@ __MCF_gthread_on_thread_exit(void)
 
         /* Call the destructor only if the value is not a null pointer, as
          * per POSIX.  */
-        if(!_MCF_atomic_load_8_rlx(tkey->__deleted) && tkey->__dtor_opt.__cdecl_ptr && tls.__end->__value_opt)
+        if(!_MCF_atomic_load_8_rlx(tkey->__deleted) && tkey->__dtor_opt && tls.__end->__value_opt)
           __MCF_invoke_cxa_dtor(tkey->__dtor_opt, tls.__end->__value_opt);
 
         /* Deallocate the key.  */
