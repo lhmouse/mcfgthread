@@ -23,7 +23,7 @@ _MCF_tls_key_new(__MCF_cxa_dtor_union dtor_opt)
     /* Initialize the key structure. The returned pointer is assumed to be
      * unique, so its reference count should be initialized to one.  */
     _MCF_atomic_store_32_rlx(key->__nref, 1);
-    key->__dtor_opt = dtor_opt;
+    key->__dtor_opt = dtor_opt.__cdecl_ptr;
     return key;
   }
 
