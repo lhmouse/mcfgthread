@@ -99,7 +99,6 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
 #if defined __i386__
 /* On x86, SEH is stack-based.  */
 typedef struct __MCF_seh_i386_node __MCF_seh_i386_node;
-
 struct __MCF_seh_i386_node
   {
     DWORD __next;
