@@ -53,9 +53,9 @@ __MCF_cxa_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
 
 __MCF_DLLEXPORT
 int
-__MCF_atexit(__MCF_atexit_callback atfn)
+__MCF_atexit(__MCF_atexit_callback* func)
   {
-    return __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*)(intptr_t) atfn, __MCF_nullptr, __MCF_nullptr);
+    return __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*)(intptr_t) func, __MCF_nullptr, __MCF_nullptr);
   }
 
 __MCF_DLLEXPORT
@@ -72,9 +72,9 @@ __MCF_cxa_at_quick_exit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
 
 __MCF_DLLEXPORT
 int
-__MCF_at_quick_exit(__MCF_atexit_callback atfn)
+__MCF_at_quick_exit(__MCF_atexit_callback* func)
   {
-    return __MCF_cxa_at_quick_exit((__MCF_cxa_dtor_cdecl*)(intptr_t) atfn, __MCF_nullptr, __MCF_nullptr);
+    return __MCF_cxa_at_quick_exit((__MCF_cxa_dtor_cdecl*)(intptr_t) func, __MCF_nullptr, __MCF_nullptr);
   }
 
 __MCF_DLLEXPORT
@@ -90,9 +90,9 @@ __MCF_cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
 
 __MCF_DLLEXPORT
 int
-__MCF_thread_atexit(__MCF_atexit_callback atfn)
+__MCF_thread_atexit(__MCF_atexit_callback* func)
   {
-    return __MCF_cxa_thread_atexit((__MCF_cxa_dtor_cdecl*)(intptr_t) atfn, __MCF_nullptr, __MCF_nullptr);
+    return __MCF_cxa_thread_atexit((__MCF_cxa_dtor_cdecl*)(intptr_t) func, __MCF_nullptr, __MCF_nullptr);
   }
 
 static
