@@ -201,9 +201,11 @@ inline
 void
 __check_thread_atexit(_Result __target(_Value*), typename ::std::common_type<_Value*>::type __ptr)
   {
-    static_assert(::std::is_scalar<_Result>::value || ::std::is_void<_Result>::value, "result not discardable");
+    static_assert(::std::is_scalar<_Result>::value || ::std::is_void<_Result>::value,
+                  "result not discardable");
 
-    int __err = ::__MCF_cxa_thread_atexit((__MCF_cxa_dtor_cdecl*)(intptr_t) __target, __ptr, &__dso_handle);
+    int __err = ::__MCF_cxa_thread_atexit(__MCF_CAST_PTR(__MCF_cxa_dtor_cdecl, __target),
+                                          __ptr, &__dso_handle);
     if(__err != 0)
       __MCF_THROW_SYSTEM_ERROR(not_enough_memory, "__MCF_cxa_thread_atexit");
   }
@@ -940,7 +942,7 @@ class thread_specific_ptr
     explicit
     thread_specific_ptr(void (*__cleanup_opt) (_Tp*))
       {
-        this->_M_key = ::_MCF_tls_key_new((::_MCF_tls_dtor*)(intptr_t) __cleanup_opt);
+        this->_M_key = ::_MCF_tls_key_new(__MCF_CAST_PTR(::_MCF_tls_dtor, __cleanup_opt));
         if(!this->_M_key)
           __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_tls_key_new");
       }
