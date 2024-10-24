@@ -140,10 +140,10 @@ void
 __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_union dtor, void* arg)
   {
     /* Parameters are `EAX`, `EDX`, `ECX`, `ESP[4]`.  */
-    typedef void dual_dtor_t(int, int, void*, void*) __attribute__((__regparm__(3)));
     int eax, edx;
     __asm__ ("" : "=a"(eax), "=d"(edx));  /* dummy */
-    (*(dual_dtor_t*)(int) dtor.__cdecl_ptr) (eax, edx, arg, arg);
+    typedef void dual_dtor_t(int, int, void*, void*) __attribute__((__regparm__(3)));
+    __MCF_CAST_PTR(dual_dtor_t, dtor.__cdecl_ptr) (eax, edx, arg, arg);
   }
 
 /* GCC assumes that ESP is always aligned to a 16-byte boundary, but for MSVC
@@ -344,7 +344,7 @@ extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY __MCF_g;
 
 #define __MCF_G_INITIALIZE_LAZY(dll, name)  \
     (__MCF_g->__f_##name =  \
-        (dll) ? (decltype_##name*)(INT_PTR) GetProcAddress(dll, #name)  \
+        (dll) ? __MCF_CAST_PTR(decltype_##name, GetProcAddress(dll, #name))  \
               : __MCF_nullptr)
 
 #define __MCF_LAZY_P(name)    (__MCF_G_FIELD_OPT(__f_##name) && __MCF_g->__f_##name)

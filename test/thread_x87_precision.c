@@ -33,7 +33,7 @@ main(void)
     HMODULE kernel32 = GetModuleHandleW(L"KERNEL32.DLL");
     if(kernel32) {
       typedef BOOL WINAPI IsWow64Process2_t(HANDLE, USHORT*, USHORT*);
-      IsWow64Process2_t* pIsWow64Process2 = (IsWow64Process2_t*)(INT_PTR) GetProcAddress(kernel32, "IsWow64Process2");
+      IsWow64Process2_t* pIsWow64Process2 = __MCF_CAST_PTR(IsWow64Process2_t, GetProcAddress(kernel32, "IsWow64Process2"));
       USHORT wProcess, wNative;
       if(pIsWow64Process2 && pIsWow64Process2(GetCurrentProcess(), &wProcess, &wNative)) {
         fprintf(stderr, "IsWow64Process2: host machine = 0x%.4X\n", wNative);
