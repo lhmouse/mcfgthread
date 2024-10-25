@@ -8,9 +8,10 @@
 #include "../mcfgthread/xglobals.h"
 #include "../mcfgthread/exit.h"
 #include <windows.h>
+#include <assert.h>
 #include <stdio.h>
 
-int unhandled_exit_code;
+int unhandled_exit_code = 0;
 
 static __MCF_NEVER_RETURN
 LONG
@@ -21,24 +22,42 @@ unhandled(EXCEPTION_POINTERS* except)
     __MCF__Exit(unhandled_exit_code);
   }
 
+static __MCF_NEVER_INLINE
+void
+test_top(void)
+  {
+    __MCF_SEH_DEFINE_TERMINATE_FILTER;
+    fprintf(stderr, "raise exception 1\n");
+    unhandled_exit_code = 42;
+    RaiseException(0x20474343U, 0, 0, __MCF_nullptr);  // continue
+  }
+
+static __MCF_NEVER_INLINE
+void
+test_unhandled(void)
+  {
+    fprintf(stderr, "raise exception 2\n");
+    unhandled_exit_code = 0;
+    RaiseException(0x20474343U, 0, 0, __MCF_nullptr);  // terminate
+    __MCF__Exit(41);
+  }
+
+static __attribute__((__stdcall__))
+DWORD
+thread_proc(LPVOID param)
+  {
+    (void) param;
+    test_top();
+    test_unhandled();
+    assert(false);
+  }
+
 int
 main(void)
   {
     SetUnhandledExceptionFilter(unhandled);
-
-    {
-      /* Raise `(1 << 29) | 'GCC'` and expect continuation.  */
-      __MCF_SEH_DEFINE_TERMINATE_FILTER;
-      fprintf(stderr, "raise exception 1\n");
-      unhandled_exit_code = 42;
-      RaiseException(0x20474343U, 0, 0, __MCF_nullptr);
-    }
-
-    {
-      /* Raise `(1 << 29) | 'GCC'` and expect termination.  */
-      fprintf(stderr, "raise exception 2\n");
-      unhandled_exit_code = 0;
-      RaiseException(0x20474343U, 0, 0, __MCF_nullptr);
-      __MCF__Exit(41);
-    }
+    HANDLE thrd = CreateThread(__MCF_nullptr, 0, thread_proc, __MCF_nullptr, 0, __MCF_nullptr);
+    assert(thrd);
+    WaitForSingleObject(thrd, INFINITE);
+    assert(false);
   }
