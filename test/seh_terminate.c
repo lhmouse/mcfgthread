@@ -50,6 +50,7 @@ thread_proc(LPVOID param)
     test_top();
     test_unhandled();
     assert(false);
+    return 0;
   }
 
 int
