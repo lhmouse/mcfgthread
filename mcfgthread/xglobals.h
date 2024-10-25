@@ -123,12 +123,8 @@ __MCF_seh_i386_cleanup(__MCF_seh_i386_node* const* ref)
     __asm__ volatile ("mov DWORD PTR fs:[0], %0" : : "r"(node->__next));
   }
 
-#  define __MCF_SEH_I386_NODE_PTR__(n)  __MCF_seh_i386_node_##n
-#  define __MCF_SEH_I386_NODE_PTR_(n)  __MCF_SEH_I386_NODE_PTR__(n)
-#  define __MCF_SEH_I386_NODE_PTR     __MCF_SEH_I386_NODE_PTR_(__LINE__)
-
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
-    __MCF_seh_i386_node* const __MCF_SEH_I386_NODE_PTR  \
+    __MCF_seh_i386_node* const __MCF_seh_i386_node__  \
            __attribute__((__cleanup__(__MCF_seh_i386_cleanup)))  \
       = __MCF_seh_i386_install(&(__MCF_seh_i386_node) { 0 })  /* no semicolon  */
 
