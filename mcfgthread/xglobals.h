@@ -107,29 +107,30 @@ struct __MCF_seh_i386_node
 
 __MCF_ALWAYS_INLINE
 __MCF_seh_i386_node*
-__MCF_seh_i386_install(__MCF_seh_i386_node* __seh_node) __MCF_noexcept
+__MCF_seh_i386_install(__MCF_seh_i386_node* node) __MCF_noexcept
   {
-    __asm__ volatile ("mov %0, fs:[0]" : "=r"(__seh_node->__next));
-    __seh_node->__filter = (DWORD) __MCF_seh_top;
-    __asm__ volatile ("mov fs:[0], %0" : : "r"(__seh_node));
-    return __seh_node;
+    __asm__ volatile ("mov %0, DWORD PTR fs:[0]" : "=r"(node->__next));
+    node->__filter = (DWORD) __MCF_seh_top;
+    __asm__ volatile ("mov DWORD PTR fs:[0], %0" : : "r"(node));
+    return node;
   }
 
 __MCF_ALWAYS_INLINE
 void
-__MCF_seh_i386_cleanup(__MCF_seh_i386_node* __seh_node) __MCF_noexcept
+__MCF_seh_i386_cleanup(__MCF_seh_i386_node* const* ref) __MCF_noexcept
   {
-    __asm__ volatile ("mov fs:[0], %0" : : "r"(__seh_node->__next));
+    __MCF_seh_i386_node* node = *ref;
+    __asm__ volatile ("mov DWORD PTR fs:[0], %0" : : "r"(node->__next));
   }
 
-#  define __MCF_SEH_I386_NODE_NY(n)  __MCF_seh_i386_node_##n
-#  define __MCF_SEH_I386_NODE_NX(n)  __MCF_SEH_I386_NODE_NY(n)
-#  define __MCF_SEH_I386_NODE_NAME_HERE   __MCF_SEH_I386_NODE_NX(__LINE__)
+#  define __MCF_SEH_I386_NODE_PTR__(n)  __MCF_seh_i386_node_##n
+#  define __MCF_SEH_I386_NODE_PTR_(n)  __MCF_SEH_I386_NODE_PTR__(n)
+#  define __MCF_SEH_I386_NODE_PTR     __MCF_SEH_I386_NODE_PTR_(__LINE__)
 
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
-    __MCF_seh_i386_node __MCF_SEH_I386_NODE_NAME_HERE  \
-        __attribute__((__cleanup__(__MCF_seh_i386_cleanup)))  \
-        = *__MCF_seh_i386_install(&__MCF_SEH_I386_NODE_NAME_HERE)  /* no semicolon  */
+    __MCF_seh_i386_node* const __MCF_SEH_I386_NODE_PTR  \
+           __attribute__((__cleanup__(__MCF_seh_i386_cleanup)))  \
+      = __MCF_seh_i386_install(&(__MCF_seh_i386_node) { 0 })  /* no semicolon  */
 
 /* In the case of i386, the argument is passed both via the ECX register and
  * on the stack, to allow both `__cdecl` and `__thiscall` functions to work
