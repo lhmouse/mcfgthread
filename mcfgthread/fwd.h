@@ -201,29 +201,33 @@ typedef void __MCF_cxa_dtor_cdecl(void* __arg);
 /* Support both calling conventions with a transparent union.  */
 typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __arg);
 typedef union __MCF_cxa_dtor_union __MCF_cxa_dtor_union;
-union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
+union __MCF_C(__attribute__((__transparent_union__))) __MCF_cxa_dtor_union
   {
     __MCF_atexit_callback* __no_arg_ptr;
     __MCF_cxa_dtor_cdecl* __cdecl_ptr;
     __MCF_cxa_dtor_thiscall* __thiscall_ptr;
 
-#  ifdef __cplusplus
     /* Unfortunately, transparent unions are not supported in C++, and have
      * to be emulated with constructors.  */
-    __MCF_CXX11(constexpr)
-    __MCF_cxa_dtor_union(__MCF_atexit_callback* __xptr) __MCF_noexcept
-      : __no_arg_ptr(__xptr)  { }
+    __MCF_CXX(
+      __MCF_CXX11(constexpr)
+      __MCF_cxa_dtor_union(__MCF_atexit_callback* __xptr) __MCF_noexcept
+        : __no_arg_ptr(__xptr)
+        { })
 
-    __MCF_CXX11(constexpr)
-    __MCF_cxa_dtor_union(__MCF_cxa_dtor_cdecl* __xptr) __MCF_noexcept
-      : __cdecl_ptr(__xptr)  { }
+    __MCF_CXX(
+      __MCF_CXX11(constexpr)
+      __MCF_cxa_dtor_union(__MCF_cxa_dtor_cdecl* __xptr) __MCF_noexcept
+        : __cdecl_ptr(__xptr)
+        { })
 
-#    ifdef __i386__
-    __MCF_CXX11(constexpr)
-    __MCF_cxa_dtor_union(__MCF_cxa_dtor_thiscall* __xptr) __MCF_noexcept
-      : __thiscall_ptr(__xptr)  { }
-#    endif
-#  endif
+# ifdef __i386__
+    __MCF_CXX(
+      __MCF_CXX11(constexpr)
+      __MCF_cxa_dtor_union(__MCF_cxa_dtor_thiscall* __xptr) __MCF_noexcept
+        : __thiscall_ptr(__xptr)
+        { })
+# endif
   };
 #else
 /* Make these barely compile.  */
