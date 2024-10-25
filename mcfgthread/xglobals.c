@@ -174,8 +174,8 @@ __MCF_gthread_initialize_globals(void)
     __MCF_CHECK(QueryPerformanceFrequency(&pfreq));
     __MCF_crt_pf_recip = 1000 / (double) pfreq.QuadPart;
 
-    __MCF_CHECK(GetModuleHandleExW(1, L"KERNELBASE.DLL", &__MCF_crt_kernelbase));
-    __MCF_CHECK(GetModuleHandleExW(1, L"NTDLL.DLL", &__MCF_crt_ntdll));
+    __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, L"KERNELBASE.DLL", &__MCF_crt_kernelbase));
+    __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, L"NTDLL.DLL", &__MCF_crt_ntdll));
 
     FARPROC dllfn = GetProcAddress(__MCF_crt_kernelbase, "TlsGetValue2");
     __MCF_crt_TlsGetValue = dllfn ? __MCF_CAST_PTR(decltype_TlsGetValue, dllfn) : TlsGetValue;
@@ -315,7 +315,7 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
       {
       case DLL_PROCESS_ATTACH:
         __MCF_gthread_initialize_globals();
-        __MCF_CHECK(GetModuleHandleExW(5, instance, &dummy2));
+        __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN | GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, instance, &dummy2));
         __MCF_CHECK(VirtualProtect(&__MCF_g, sizeof(__MCF_g), PAGE_READONLY, &dummy1));
         break;
 
