@@ -23,34 +23,37 @@ unhandled(EXCEPTION_POINTERS* except)
   }
 
 static __MCF_NEVER_INLINE
-void
+int
 test_top(void)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     fprintf(stderr, "raise exception 1\n");
     unhandled_exit_code = 42;
     RaiseException(0x20474343U, 0, 0, __MCF_nullptr);  // continue
+    return 1;
   }
 
 static __MCF_NEVER_INLINE
-void
+int
 test_unhandled(void)
   {
     fprintf(stderr, "raise exception 2\n");
     unhandled_exit_code = 0;
     RaiseException(0x20474343U, 0, 0, __MCF_nullptr);  // terminate
     __MCF__Exit(41);
+    return 2;
   }
 
-static __attribute__((__stdcall__))
+static
 DWORD
+__stdcall
 thread_proc(LPVOID param)
   {
     (void) param;
     test_top();
     test_unhandled();
     assert(false);
-    return 0;
+    return 1;
   }
 
 int
