@@ -321,7 +321,7 @@ mcfgthread_version_o = import('windows').compile_resources(
 
 lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       c_pch: 'mcfgthread/xprecompiled.h',
-      c_args: [ '-DDLL_EXPORT', cc.get_supported_arguments('-mcmodel=small'),
+      c_args: [ '-D__MCF_BUILDING_DLL', cc.get_supported_arguments('-mcmodel=small'),
                 '-ffreestanding', '-fasynchronous-unwind-tables' ],
       link_args: [ '-nostdlib', '-Wl,--entry,__MCF_dll_startup@@Z',
                    '-Wl,--gc-sections', '-Wl,--exclude-all-symbols', '-Wl,--kill-at',
@@ -334,7 +334,7 @@ lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
 
 lib_mcfgthread_dll = shared_library('mcfgthread',
       c_pch: 'mcfgthread/xprecompiled.h',
-      c_args: [ '-DDLL_EXPORT', cc.get_supported_arguments('-mcmodel=small'),
+      c_args: [ '-D__MCF_BUILDING_DLL', cc.get_supported_arguments('-mcmodel=small'),
                 '-ffreestanding', '-fasynchronous-unwind-tables' ],
       link_args: [ '-nostdlib', '-Wl,--entry,__MCF_dll_startup@@Z',
                    '-Wl,--gc-sections', '-Wl,--exclude-all-symbols', '-Wl,--kill-at',

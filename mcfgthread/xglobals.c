@@ -287,7 +287,7 @@ __MCF_gthread_on_thread_exit(void)
     _MCF_thread_drop_ref_nonnull(self);
   }
 
-#ifdef DLL_EXPORT
+#ifdef __MCF_BUILDING_DLL
 
 /* Declare the DLL entry point function. This has the same signature as
  * `DllMain()`.The decorated name is fabricated such that is remains the
@@ -323,7 +323,7 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
     return 1;
   }
 
-#else  /* DLL_EXPORT  */
+#else  /* __MCF_BUILDING_DLL  */
 
 /* When building the static library, invoke common routines from a TLS
  * callback.  */
@@ -351,7 +351,7 @@ __MCF_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
  * initialization shall happen as early as possible.  */
 static PIMAGE_TLS_CALLBACK __MCF__xl_b __MCF__CRT_ALLOC(".CRT$XLB") = __MCF_tls_callback;
 
-#endif  /* DLL_EXPORT  */
+#endif  /* __MCF_BUILDING_DLL  */
 
 /* These are constants that have to be initialized at load time. The
  * initializers prevent them from being placed into the`.bss` section.  */

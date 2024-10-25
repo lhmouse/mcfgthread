@@ -10,7 +10,7 @@
 
 #include "version.h"
 
-#ifdef DLL_EXPORT
+#ifdef __MCF_BUILDING_DLL
 #  define __MCF_DLLEXPORT  __declspec(dllexport)
 #else
 #  define __MCF_DLLEXPORT
