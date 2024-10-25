@@ -195,21 +195,6 @@ __wait_until(const chrono::time_point<_Clock, _Dur>& __abs_time, _Cond&& __cond,
     return __err;
   }
 
-// Registers a callback upon the current thread's exit.
-template<typename _Result, typename _Value>
-inline
-void
-__check_thread_atexit(_Result __target(_Value*), typename ::std::common_type<_Value*>::type __ptr)
-  {
-    static_assert(::std::is_scalar<_Result>::value || ::std::is_void<_Result>::value,
-                  "result not discardable");
-
-    int __err = ::__MCF_cxa_thread_atexit(__MCF_CAST_PTR(__MCF_cxa_dtor_cdecl, __target),
-                                          __ptr, &__dso_handle);
-    if(__err != 0)
-      __MCF_THROW_SYSTEM_ERROR(not_enough_memory, "__MCF_cxa_thread_atexit");
-  }
-
 // Create a thread. ISO C++ requires that arguments for the constructor of
 // `std::thread` be passed as decay-copied rvalues. This is the object that
 // saves copies of them and invokes the target function accordingly.
@@ -638,8 +623,16 @@ notify_all_at_thread_exit(condition_variable& __cond, unique_lock<mutex> __lock)
     __MCF_ASSERT(__lock.owns_lock());  // must owning a mutex
     __MCF_ASSERT(__lock.mutex() != nullptr);
 
-    _Noadl::__check_thread_atexit(::_MCF_cond_signal_all, __cond.native_handle());
-    _Noadl::__check_thread_atexit(::_MCF_mutex_unlock, __lock.mutex()->native_handle());
+    int __err = ::__MCF_cxa_thread_atexit(__MCF_CAST_PTR(__MCF_cxa_dtor_cdecl, ::_MCF_cond_signal_all),
+                                          __cond.native_handle(), &__dso_handle);
+    if(__err != 0)
+      __MCF_THROW_SYSTEM_ERROR(not_enough_memory, "__MCF_cxa_thread_atexit");
+
+    __err = ::__MCF_cxa_thread_atexit(__MCF_CAST_PTR(__MCF_cxa_dtor_cdecl, ::_MCF_mutex_unlock),
+                                      __lock.mutex()->native_handle(), &__dso_handle);
+    if(__err != 0)
+      __MCF_THROW_SYSTEM_ERROR(not_enough_memory, "__MCF_cxa_thread_atexit");
+
     __lock.release();
   }
 
