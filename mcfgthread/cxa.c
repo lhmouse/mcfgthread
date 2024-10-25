@@ -20,7 +20,7 @@ int
 __MCF_cxa_guard_acquire(int64_t* guard)
   {
     /* Reuse the storage of the guard object as a once flag.  */
-    return _MCF_once_wait_slow((_MCF_once*) guard, __MCF_nullptr);
+    return _MCF_once_wait_slow(__MCF_CAST_PTR(_MCF_once, guard), __MCF_nullptr);
   }
 
 __MCF_DLLEXPORT
@@ -28,7 +28,7 @@ void
 __MCF_cxa_guard_release(int64_t* guard)
   {
     /* Reuse the storage of the guard object as a once flag.  */
-    _MCF_once_release((_MCF_once*) guard);
+    _MCF_once_release(__MCF_CAST_PTR(_MCF_once, guard));
   }
 
 __MCF_DLLEXPORT
@@ -36,7 +36,7 @@ void
 __MCF_cxa_guard_abort(int64_t* guard)
   {
     /* Reuse the storage of the guard object as a once flag.  */
-    _MCF_once_abort((_MCF_once*) guard);
+    _MCF_once_abort(__MCF_CAST_PTR(_MCF_once, guard));
   }
 
 __MCF_DLLEXPORT
