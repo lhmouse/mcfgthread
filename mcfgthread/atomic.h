@@ -10,31 +10,11 @@
 
 #include "fwd.h"
 
-#if defined __GNUC__ || defined __clang__
-/* Use native types.  */
-#  define __MCF_atomic(...)   volatile __VA_ARGS__
-
-#  define __MCF_memory_order_rlx     __ATOMIC_RELAXED
-#  define __MCF_memory_order_acq     __ATOMIC_ACQUIRE
-#  define __MCF_memory_order_rel     __ATOMIC_RELEASE
-#  define __MCF_memory_order_arl     __ATOMIC_ACQ_REL
-#  define __MCF_memory_order_cst     __ATOMIC_SEQ_CST
-
-#  define __MCF_atomic_load(p,o)              __atomic_load_n(p,o)
-#  define __MCF_atomic_store(p,v,o)           __atomic_store_n(p,v,o)
-#  define __MCF_atomic_xchg(p,v,o)            __atomic_exchange_n(p,v,o)
-#  define __MCF_atomic_cmpxchg(p,c,v,o,f)     __atomic_compare_exchange_n(p,c,v,0,o,f)
-#  define __MCF_atomic_cmpxchg_w(p,c,v,o,f)   __atomic_compare_exchange_n(p,c,v,1,o,f)
-#  define __MCF_atomic_xadd(p,v,o)            __atomic_fetch_add(p,v,o)
-#  define __MCF_atomic_xsub(p,v,o)            __atomic_fetch_sub(p,v,o)
-#  define __MCF_atomic_thread_fence(o)        __atomic_thread_fence(o)
-#  define __MCF_atomic_signal_fence(o)        __atomic_signal_fence(o)
-#endif
-
-#if !defined __MCF_atomic && defined __cplusplus && (__cplusplus >= 201103L)
+#if defined __cplusplus && (__cplusplus >= 201103L)
 /* Use the C++11 standard library.  */
 #  include <atomic>
-#  define __MCF_atomic(...)   ::std::atomic<__VA_ARGS__>
+#  define __MCF_atomic(...)          ::std::atomic<__VA_ARGS__>
+#  define __MCF_ATOMICIFY(T, ...)    ((::std::atomic<T>*) (__VA_ARGS__))
 
 #  define __MCF_memory_order_rlx     ::std::memory_order_relaxed
 #  define __MCF_memory_order_acq     ::std::memory_order_acquire
@@ -51,19 +31,40 @@
 #  define __MCF_atomic_xsub(p,v,o)            (p)->fetch_sub(v,o)
 #  define __MCF_atomic_thread_fence(o)        ::std::atomic_thread_fence(o)
 #  define __MCF_atomic_signal_fence(o)        ::std::atomic_signal_fence(o)
-#endif
 
-#if !defined __MCF_atomic
+#elif defined __GNUC__ || defined __clang__
+/* Use native types.  */
+#  define __MCF_atomic(...)          volatile __VA_ARGS__
+#  define __MCF_ATOMICIFY(T, ...)    ((volatile T*) (__VA_ARGS__))
+
+#  define __MCF_memory_order_rlx     __ATOMIC_RELAXED
+#  define __MCF_memory_order_acq     __ATOMIC_ACQUIRE
+#  define __MCF_memory_order_rel     __ATOMIC_RELEASE
+#  define __MCF_memory_order_arl     __ATOMIC_ACQ_REL
+#  define __MCF_memory_order_cst     __ATOMIC_SEQ_CST
+
+#  define __MCF_atomic_load(p,o)              __atomic_load_n(p,o)
+#  define __MCF_atomic_store(p,v,o)           __atomic_store_n(p,v,o)
+#  define __MCF_atomic_xchg(p,v,o)            __atomic_exchange_n(p,v,o)
+#  define __MCF_atomic_cmpxchg(p,c,v,o,f)     __atomic_compare_exchange_n(p,c,v,0,o,f)
+#  define __MCF_atomic_cmpxchg_w(p,c,v,o,f)   __atomic_compare_exchange_n(p,c,v,1,o,f)
+#  define __MCF_atomic_xadd(p,v,o)            __atomic_fetch_add(p,v,o)
+#  define __MCF_atomic_xsub(p,v,o)            __atomic_fetch_sub(p,v,o)
+#  define __MCF_atomic_thread_fence(o)        __atomic_thread_fence(o)
+#  define __MCF_atomic_signal_fence(o)        __atomic_signal_fence(o)
+
+#else
 /* Use the C11 standard library. Microsoft Visual Studio 2022 has experimental
  * support for this, but it seems to suffice.  */
 #  include <stdatomic.h>
-#  define __MCF_atomic(...)   _Atomic(__VA_ARGS__)
+#  define __MCF_atomic(...)          _Atomic(__VA_ARGS__)
+#  define __MCF_ATOMICIFY(T, ...)    ((_Atomic T*) (__VA_ARGS__))
 
-#  define __MCF_memory_order_rlx       memory_order_relaxed
-#  define __MCF_memory_order_acq       memory_order_acquire
-#  define __MCF_memory_order_rel       memory_order_release
-#  define __MCF_memory_order_arl       memory_order_acq_rel
-#  define __MCF_memory_order_cst       memory_order_seq_cst
+#  define __MCF_memory_order_rlx     memory_order_relaxed
+#  define __MCF_memory_order_acq     memory_order_acquire
+#  define __MCF_memory_order_rel     memory_order_release
+#  define __MCF_memory_order_arl     memory_order_acq_rel
+#  define __MCF_memory_order_cst     memory_order_seq_cst
 
 #  define __MCF_atomic_load(p,o)              atomic_load_explicit(p,o)
 #  define __MCF_atomic_store(p,v,o)           atomic_store_explicit(p,v,o)
@@ -74,7 +75,8 @@
 #  define __MCF_atomic_xsub(p,v,o)            atomic_fetch_sub_explicit(p,v,o)
 #  define __MCF_atomic_thread_fence(o)        atomic_thread_fence(o)
 #  define __MCF_atomic_signal_fence(o)        atomic_signal_fence(o)
-#endif
+
+#endif  /* __MCF_atomic  */
 
 __MCF_CXX(extern "C" {)
 #ifndef __MCF_ATOMIC_IMPORT
@@ -105,7 +107,7 @@ __MCF_CXX(extern "C" {)
   INTEGER  \
   _MCF_atomic_load_##WIDTH##_##ORDER(const volatile void* __mem) __MCF_noexcept  \
     {  \
-      return __MCF_atomic_load((const __MCF_atomic(INTEGER)*) __mem,  \
+      return __MCF_atomic_load(__MCF_ATOMICIFY(INTEGER, __mem),  \
                                __MCF_memory_order_##ORDER);  \
     }  \
   \
@@ -113,7 +115,7 @@ __MCF_CXX(extern "C" {)
   void  \
   _MCF_atomic_load_p##WIDTH##_##ORDER(void* __res, const volatile void* __mem) __MCF_noexcept  \
     {  \
-      INTEGER __rval = __MCF_atomic_load((const __MCF_atomic(INTEGER)*) __mem,  \
+      INTEGER __rval = __MCF_atomic_load(__MCF_ATOMICIFY(INTEGER, __mem),  \
                                          __MCF_memory_order_##ORDER);  \
       *(INTEGER*) __res = __rval;  \
     }
@@ -158,7 +160,7 @@ __MCF_atomic_load_(z, cst, size_t)
   void  \
   _MCF_atomic_store_##WIDTH##_##ORDER(volatile void* __mem, INTEGER __val) __MCF_noexcept  \
     {  \
-      __MCF_atomic_store((__MCF_atomic(INTEGER)*) __mem, __val,  \
+      __MCF_atomic_store(__MCF_ATOMICIFY(INTEGER, __mem), __val,  \
                          __MCF_memory_order_##ORDER);  \
     }  \
   \
@@ -167,7 +169,7 @@ __MCF_atomic_load_(z, cst, size_t)
   _MCF_atomic_store_p##WIDTH##_##ORDER(volatile void* __mem, const void* __src) __MCF_noexcept  \
     {  \
       INTEGER __val = *(const INTEGER*) __src;  \
-      __MCF_atomic_store((__MCF_atomic(INTEGER)*) __mem, __val,  \
+      __MCF_atomic_store(__MCF_ATOMICIFY(INTEGER, __mem), __val,  \
                          __MCF_memory_order_##ORDER);  \
     }
 
@@ -212,7 +214,7 @@ __MCF_atomic_store_(z, cst, size_t)
   INTEGER  \
   _MCF_atomic_xchg_##WIDTH##_##ORDER(volatile void* __mem, INTEGER __val) __MCF_noexcept  \
     {  \
-      return __MCF_atomic_xchg((__MCF_atomic(INTEGER)*) __mem, __val,  \
+      return __MCF_atomic_xchg(__MCF_ATOMICIFY(INTEGER, __mem), __val,  \
                                __MCF_memory_order_##ORDER);  \
     }  \
   \
@@ -221,7 +223,7 @@ __MCF_atomic_store_(z, cst, size_t)
   _MCF_atomic_xchg_p##WIDTH##_##ORDER(void* __res, volatile void* __mem, const void* __src) __MCF_noexcept  \
     {  \
       INTEGER __val = *(const INTEGER*) __src;  \
-      INTEGER __rval = __MCF_atomic_xchg((__MCF_atomic(INTEGER)*) __mem, __val,  \
+      INTEGER __rval = __MCF_atomic_xchg(__MCF_ATOMICIFY(INTEGER, __mem), __val,  \
                                          __MCF_memory_order_##ORDER);  \
       *(INTEGER*) __res = __rval;  \
     }
@@ -281,7 +283,7 @@ __MCF_atomic_xchg_(z, cst, size_t)
   bool  \
   _MCF_atomic_cmpxchg_##WIDTH##_##ORDER(volatile void* __mem, INTEGER* __cmp, INTEGER __val) __MCF_noexcept  \
     {  \
-      return __MCF_atomic_cmpxchg((__MCF_atomic(INTEGER)*) __mem, __cmp, __val,  \
+      return __MCF_atomic_cmpxchg(__MCF_ATOMICIFY(INTEGER, __mem), __cmp, __val,  \
                                   __MCF_memory_order_##ORDER,  \
                                   __MCF_memory_order_f_##ORDER);  \
     }  \
@@ -292,7 +294,7 @@ __MCF_atomic_xchg_(z, cst, size_t)
     {  \
       INTEGER __cval = *(const INTEGER*) __cmp;  \
       INTEGER __val = *(const INTEGER*) __src;  \
-      bool __succ = __MCF_atomic_cmpxchg((__MCF_atomic(INTEGER)*) __mem, &__cval, __val,  \
+      bool __succ = __MCF_atomic_cmpxchg(__MCF_ATOMICIFY(INTEGER, __mem), &__cval, __val,  \
                                          __MCF_memory_order_##ORDER,  \
                                          __MCF_memory_order_f_##ORDER);  \
       *(INTEGER*) __cmp = __cval;  \
@@ -354,7 +356,7 @@ __MCF_atomic_cmpxchg_(z, cst, size_t)
   bool  \
   _MCF_atomic_cmpxchg_weak_##WIDTH##_##ORDER(volatile void* __mem, INTEGER* __cmp, INTEGER __val) __MCF_noexcept  \
     {  \
-      return __MCF_atomic_cmpxchg_w((__MCF_atomic(INTEGER)*) __mem, __cmp, __val,  \
+      return __MCF_atomic_cmpxchg_w(__MCF_ATOMICIFY(INTEGER, __mem), __cmp, __val,  \
                                     __MCF_memory_order_##ORDER,  \
                                     __MCF_memory_order_f_##ORDER);  \
     }  \
@@ -365,7 +367,7 @@ __MCF_atomic_cmpxchg_(z, cst, size_t)
     {  \
       INTEGER __cval = *(const INTEGER*) __cmp;  \
       INTEGER __val = *(const INTEGER*) __src;  \
-      bool __succ = __MCF_atomic_cmpxchg_w((__MCF_atomic(INTEGER)*) __mem, &__cval, __val,  \
+      bool __succ = __MCF_atomic_cmpxchg_w(__MCF_ATOMICIFY(INTEGER, __mem), &__cval, __val,  \
                                            __MCF_memory_order_##ORDER,  \
                                            __MCF_memory_order_f_##ORDER);  \
       *(INTEGER*) __cmp = __cval;  \
@@ -420,7 +422,7 @@ __MCF_atomic_cmpxchg_weak_(z, cst, size_t)
   INTEGER  \
   _MCF_atomic_xadd_##WIDTH##_##ORDER(volatile void* __mem, INTEGER __val) __MCF_noexcept  \
     {  \
-      return __MCF_atomic_xadd((__MCF_atomic(INTEGER)*) __mem, __val,  \
+      return __MCF_atomic_xadd(__MCF_ATOMICIFY(INTEGER, __mem), __val,  \
                                __MCF_memory_order_##ORDER);  \
     }
 
@@ -472,7 +474,7 @@ __MCF_atomic_xadd_(z, cst, size_t)
   INTEGER  \
   _MCF_atomic_xsub_##WIDTH##_##ORDER(volatile void* __mem, INTEGER __val) __MCF_noexcept  \
     {  \
-      return __MCF_atomic_xsub((__MCF_atomic(INTEGER)*) __mem, __val,  \
+      return __MCF_atomic_xsub(__MCF_ATOMICIFY(INTEGER, __mem), __val,  \
                                __MCF_memory_order_##ORDER);  \
     }
 
