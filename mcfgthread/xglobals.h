@@ -69,10 +69,10 @@ __MCF_CXX(extern "C" {)
 NTSYSAPI void NTAPI RtlMoveMemory(void* dst, const void* src, SIZE_T size);
 NTSYSAPI void NTAPI RtlFillMemory(void* dst, SIZE_T size, int c);
 NTSYSAPI void NTAPI RtlZeroMemory(void* dst, SIZE_T size);
-NTSYSAPI SIZE_T NTAPI RtlCompareMemory(const void* src, const void* cmp, SIZE_T size) __attribute__((__pure__));
+NTSYSAPI SIZE_T NTAPI RtlCompareMemory(const void* src, const void* cmp, SIZE_T size) __MCF_FN_PURE;
 
 NTSYSAPI ULONG NTAPI RtlNtStatusToDosError(NTSTATUS status);
-NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status) __attribute__((__const__));
+NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status) __MCF_FN_CONST;
 
 /* Allocate a variable in a specific section.  */
 #define __MCF__CRT_ALLOC(x)  __attribute__((__section__(x), __used__))
@@ -242,7 +242,7 @@ __MCF_malloc_copy(const void* data, size_t size) __attribute__((__warn_unused_re
 /* Get the size of an allocated block, like `malloc_usable_size()`.  */
 __MCF_XGLOBALS_INLINE
 size_t
-__MCF_msize(const void* ptr) __attribute__((__pure__));
+__MCF_msize(const void* ptr) __MCF_FN_PURE;
 
 /* Free a block of memory, like `free()`.  */
 __MCF_XGLOBALS_INLINE
