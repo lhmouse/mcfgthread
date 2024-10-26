@@ -68,12 +68,18 @@
 #  define __MCF_UPTR_MAX     0xFFFFFFFFU
 #endif
 
-#define __MCF_C(...)  __VA_ARGS__
+#define __MCF_C(...)     __VA_ARGS__
 #define __MCF_C99(...)
 #define __MCF_C11(...)
+#define __MCF_C17(...)
+#define __MCF_C23(...)
+
 #define __MCF_CXX(...)
 #define __MCF_CXX11(...)
 #define __MCF_CXX14(...)
+#define __MCF_CXX17(...)
+#define __MCF_CXX20(...)
+#define __MCF_CXX23(...)
 
 #define __MCF_noexcept
 #define __MCF_nullptr   __MCF_IPTR_0
@@ -88,13 +94,25 @@
 #  define __MCF_C11(...)   __VA_ARGS__
 #endif
 
+#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 201710L)
+#  undef __MCF_C17
+#  define __MCF_C17(...)   __VA_ARGS__
+#endif
+
+#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 202311L)
+#  undef __MCF_C23
+#  define __MCF_C23(...)   __VA_ARGS__
+#  undef __MCF_nullptr
+#  define __MCF_nullptr   nullptr
+#endif
+
 #if defined __cplusplus
-#  undef __MCF_C
-#  define __MCF_C(...)
 #  undef __MCF_CXX
 #  define __MCF_CXX(...)   __VA_ARGS__
+#  undef __MCF_C
+#  define __MCF_C(...)
 #  undef __MCF_noexcept
-#  define __MCF_noexcept      throw()
+#  define __MCF_noexcept   throw()
 #endif
 
 #if defined __cplusplus && (__cplusplus >= 201103L)
@@ -103,12 +121,27 @@
 #  undef __MCF_noexcept
 #  define __MCF_noexcept   noexcept
 #  undef __MCF_nullptr
-#  define __MCF_nullptr   nullptr
+#  define __MCF_nullptr    nullptr
 #endif
 
 #if defined __cplusplus && (__cplusplus >= 201402L)
 #  undef __MCF_CXX14
 #  define __MCF_CXX14(...)   __VA_ARGS__
+#endif
+
+#if defined __cplusplus && (__cplusplus >= 201703L)
+#  undef __MCF_CXX17
+#  define __MCF_CXX17(...)   __VA_ARGS__
+#endif
+
+#if defined __cplusplus && (__cplusplus >= 202002L)
+#  undef __MCF_CXX20
+#  define __MCF_CXX20(...)   __VA_ARGS__
+#endif
+
+#if defined __cplusplus && (__cplusplus >= 202302L)
+#  undef __MCF_CXX23
+#  define __MCF_CXX23(...)   __VA_ARGS__
 #endif
 
 #if defined __MCF_DEBUG
@@ -123,10 +156,17 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_FWD_INLINE  __MCF_GNU_INLINE
 #endif
 
-#define __MCF_SX(...)   #__VA_ARGS__
-#define __MCF_S(...)   __MCF_SX(__VA_ARGS__)
-#define __MCF_0_INIT    { __MCF_C(0) }
-#define __MCF_SET_IF(x, ...)   ((void) ((x) && (*(x) = (__VA_ARGS__))))
+#define __MCF_SET_IF(x, ...)    ((void) ((x) && (*(x) = (__VA_ARGS__))))
+#define __MCF_0_INIT           { __MCF_C(0) }
+
+#define __MCF_S_(...)   #__VA_ARGS__
+#define __MCF_S(...)   __MCF_S_(__VA_ARGS__)
+
+#define __MCF_C2_(x, y)   x##y
+#define __MCF_C2(x, y)   __MCF_C2_(x, y)
+
+#define __MCF_C3_(x, y, z)   x##y
+#define __MCF_C3(x, y, z)   __MCF_C3_(x, y, z)
 
 /* Some compilers warn about casts between pointers, so launder the pointer via
  * an in-between integral type.  */
