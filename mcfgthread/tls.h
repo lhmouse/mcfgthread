@@ -54,7 +54,7 @@ struct __MCF_tls_key
  * obtained via `_MCF_get_win32_error()`.  */
 __MCF_TLS_IMPORT
 _MCF_tls_key*
-_MCF_tls_key_new(__MCF_cxa_dtor_union __dtor_opt) __MCF_noexcept;
+_MCF_tls_key_new(__MCF_cxa_dtor_any_t __dtor_opt) __MCF_noexcept;
 
 /* Get the number of references of a thread-local key.  */
 __MCF_TLS_INLINE __MCF_FN_PURE

@@ -41,7 +41,7 @@ __MCF_cxa_guard_abort(int64_t* guard)
 
 __MCF_DLLEXPORT
 int
-__MCF_cxa_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
+__MCF_cxa_atexit(__MCF_cxa_dtor_any_t dtor, void* this, void* dso)
   {
     /* Push the element to the global queue.  */
     _MCF_mutex_lock(__MCF_g->__exit_mtx, __MCF_nullptr);
@@ -60,7 +60,7 @@ __MCF_atexit(__MCF_atexit_callback* func)
 
 __MCF_DLLEXPORT
 int
-__MCF_cxa_at_quick_exit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
+__MCF_cxa_at_quick_exit(__MCF_cxa_dtor_any_t dtor, void* this, void* dso)
   {
     /* Push the element to the global queue.  */
     _MCF_mutex_lock(__MCF_g->__quick_exit_mtx, __MCF_nullptr);
@@ -79,7 +79,7 @@ __MCF_at_quick_exit(__MCF_atexit_callback* func)
 
 __MCF_DLLEXPORT
 int
-__MCF_cxa_thread_atexit(__MCF_cxa_dtor_union dtor, void* this, void* dso)
+__MCF_cxa_thread_atexit(__MCF_cxa_dtor_any_t dtor, void* this, void* dso)
   {
     /* Push the element to the thread-specific queue.  */
     _MCF_thread* self = _MCF_thread_self();
