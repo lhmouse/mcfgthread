@@ -9,7 +9,6 @@
 #define __MCFGTHREAD_ATOMIC_
 
 #if !defined __MCF_ATOMIC_GENERATOR_STATE_
-
 #include "fwd.h"
 
 #if defined __GNUC__ || defined __clang__
@@ -80,12 +79,6 @@
 
 #endif  /* __MCF_atomic  */
 
-__MCF_CXX(extern "C" {)
-#ifndef __MCF_ATOMIC_IMPORT
-#  define __MCF_ATOMIC_IMPORT
-#  define __MCF_ATOMIC_INLINE  __MCF_GNU_INLINE
-#endif
-
 #pragma push_macro("WIDTH")
 #pragma push_macro("INTEGER")
 #pragma push_macro("ORDER")
@@ -98,10 +91,12 @@ __MCF_CXX(extern "C" {)
 #undef ORDER_A
 #undef ORDER_R
 
+__MCF_CXX(extern "C" {)
 #define __MCF_ATOMIC_GENERATOR_STATE_   10001
 #undef __MCFGTHREAD_ATOMIC_
 #include __FILE__
 #undef __MCF_ATOMIC_GENERATOR_STATE_
+__MCF_CXX(})  /* extern "C"  */
 
 #pragma pop_macro("WIDTH")
 #pragma pop_macro("INTEGER")
@@ -109,8 +104,10 @@ __MCF_CXX(extern "C" {)
 #pragma pop_macro("ORDER_A")
 #pragma pop_macro("ORDER_R")
 
-__MCF_CXX(})  /* extern "C"  */
-#elif __MCF_ATOMIC_GENERATOR_STATE_ == 10001
+#else  /* defined __MCF_ATOMIC_GENERATOR_STATE_  */
+#pragma push_macro("__MCF_ATOMIC_GENERATOR_STATE_")
+
+#if __MCF_ATOMIC_GENERATOR_STATE_ == 10001
 
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   10002
@@ -159,9 +156,6 @@ __MCF_CXX(})  /* extern "C"  */
 #  undef ORDER
 #  undef ORDER_A
 #  undef ORDER_R
-
-#  undef __MCF_ATOMIC_GENERATOR_STATE_
-#  define __MCF_ATOMIC_GENERATOR_STATE_   10001
 
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 10002
 
@@ -223,9 +217,6 @@ __MCF_C2(_MCF_signal_fence,ORDER) (void) __MCF_noexcept
   {
     __MCF_atomic_signal_fence(__MCF_C2(__MCF_memory_order,ORDER));
   }
-
-#  undef __MCF_ATOMIC_GENERATOR_STATE_
-#  define __MCF_ATOMIC_GENERATOR_STATE_   10002
 
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 10003
 
@@ -342,4 +333,7 @@ __MCF_C3(_MCF_atomic_xsub_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val) __
   }
 
 #endif  /* __MCF_ATOMIC_GENERATOR_STATE_  */
+
+#pragma pop_macro("__MCF_ATOMIC_GENERATOR_STATE_")
+#endif  /* defined __MCF_ATOMIC_GENERATOR_STATE_  */
 #endif  /* __MCFGTHREAD_ATOMIC_  */
