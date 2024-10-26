@@ -12,7 +12,7 @@
 #include "xglobals.h"
 
 static inline
-int8_t*
+bool*
 do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
   {
     /* Each spinning thread is assigned a byte in the field. If the thread sees
@@ -95,8 +95,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         YieldProcessor();
 
         /* Wait for my turn.  */
-        int8_t cmp = 1;
-        if(!_MCF_atomic_cmpxchg_weak_8_rlx(do_spin_byte_ptr(mutex, my_mask), &cmp, 0))
+        if(_MCF_atomic_xchg_b_rlx(do_spin_byte_ptr(mutex, my_mask), false) == false)
           continue;
 
         /* If this mutex has not been locked, lock it and decrement the
@@ -201,7 +200,7 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
      * rightmost bit should have been cleared, so we need not calculate the
      * bit difference, unlike `_MCF_mutex_lock_slow()`.  */
     if(old.__sp_mask != 0)
-      _MCF_atomic_store_8_rlx(do_spin_byte_ptr(mutex, old.__sp_mask), 1);
+      _MCF_atomic_store_b_rlx(do_spin_byte_ptr(mutex, old.__sp_mask), true);
 
     __MCF_batch_release_common(mutex, wake_one);
   }

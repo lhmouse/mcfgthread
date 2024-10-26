@@ -109,12 +109,11 @@ __MCF_CXX(})  /* extern "C"  */
 
 #if __MCF_ATOMIC_GENERATOR_STATE_ == 10001
 
-#  undef __MCF_ATOMIC_GENERATOR_STATE_
-#  define __MCF_ATOMIC_GENERATOR_STATE_   10002
-
 #  define ORDER   _rlx
 #  define ORDER_A  _rlx
 #  define ORDER_R  _rlx
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   10002
 #  undef __MCFGTHREAD_ATOMIC_
 #  include __FILE__
 #  undef ORDER
@@ -124,6 +123,8 @@ __MCF_CXX(})  /* extern "C"  */
 #  define ORDER   _acq
 #  define ORDER_A  _acq
 #  define ORDER_R  _rlx
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   10002
 #  undef __MCFGTHREAD_ATOMIC_
 #  include __FILE__
 #  undef ORDER
@@ -133,6 +134,8 @@ __MCF_CXX(})  /* extern "C"  */
 #  define ORDER   _rel
 #  define ORDER_A  _rlx
 #  define ORDER_R  _rel
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   10002
 #  undef __MCFGTHREAD_ATOMIC_
 #  include __FILE__
 #  undef ORDER
@@ -142,6 +145,8 @@ __MCF_CXX(})  /* extern "C"  */
 #  define ORDER   _arl
 #  define ORDER_A  _acq
 #  define ORDER_R  _rel
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   10002
 #  undef __MCFGTHREAD_ATOMIC_
 #  include __FILE__
 #  undef ORDER
@@ -151,6 +156,8 @@ __MCF_CXX(})  /* extern "C"  */
 #  define ORDER   _cst
 #  define ORDER_A  _cst
 #  define ORDER_R  _cst
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   10002
 #  undef __MCFGTHREAD_ATOMIC_
 #  include __FILE__
 #  undef ORDER
@@ -159,11 +166,23 @@ __MCF_CXX(})  /* extern "C"  */
 
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 10002
 
+#  define WIDTH   b
+#  define INTEGER  bool
+#  undef __MCFGTHREAD_ATOMIC_
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
-#  define __MCF_ATOMIC_GENERATOR_STATE_   10003
+#  define __MCF_ATOMIC_GENERATOR_STATE_   20001
+#  include __FILE__
+#  undef WIDTH
+#  undef INTEGER
 
 #  define WIDTH   8
 #  define INTEGER  int8_t
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   20001
+#  undef __MCFGTHREAD_ATOMIC_
+#  include __FILE__
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   20002
 #  undef __MCFGTHREAD_ATOMIC_
 #  include __FILE__
 #  undef WIDTH
@@ -171,6 +190,12 @@ __MCF_CXX(})  /* extern "C"  */
 
 #  define WIDTH   16
 #  define INTEGER  int16_t
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   20001
+#  undef __MCFGTHREAD_ATOMIC_
+#  include __FILE__
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   20002
 #  undef __MCFGTHREAD_ATOMIC_
 #  include __FILE__
 #  undef WIDTH
@@ -178,6 +203,12 @@ __MCF_CXX(})  /* extern "C"  */
 
 #  define WIDTH   32
 #  define INTEGER  int32_t
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   20001
+#  undef __MCFGTHREAD_ATOMIC_
+#  include __FILE__
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   20002
 #  undef __MCFGTHREAD_ATOMIC_
 #  include __FILE__
 #  undef WIDTH
@@ -185,6 +216,12 @@ __MCF_CXX(})  /* extern "C"  */
 
 #  define WIDTH   64
 #  define INTEGER  int64_t
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   20001
+#  undef __MCFGTHREAD_ATOMIC_
+#  include __FILE__
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   20002
 #  undef __MCFGTHREAD_ATOMIC_
 #  include __FILE__
 #  undef WIDTH
@@ -192,6 +229,12 @@ __MCF_CXX(})  /* extern "C"  */
 
 #  define WIDTH   ptr
 #  define INTEGER  intptr_t
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   20001
+#  undef __MCFGTHREAD_ATOMIC_
+#  include __FILE__
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   20002
 #  undef __MCFGTHREAD_ATOMIC_
 #  include __FILE__
 #  undef WIDTH
@@ -199,26 +242,23 @@ __MCF_CXX(})  /* extern "C"  */
 
 #  define WIDTH   z
 #  define INTEGER  size_t
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   20001
+#  undef __MCFGTHREAD_ATOMIC_
+#  include __FILE__
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   20002
 #  undef __MCFGTHREAD_ATOMIC_
 #  include __FILE__
 #  undef WIDTH
 #  undef INTEGER
 
-__MCF_ALWAYS_INLINE
-void
-__MCF_C2(_MCF_thread_fence,ORDER) (void) __MCF_noexcept
-  {
-    __MCF_atomic_thread_fence(__MCF_C2(__MCF_memory_order,ORDER));
-  }
+#  undef __MCF_ATOMIC_GENERATOR_STATE_
+#  define __MCF_ATOMIC_GENERATOR_STATE_   20003
+#  undef __MCFGTHREAD_ATOMIC_
+#  include __FILE__
 
-__MCF_ALWAYS_INLINE
-void
-__MCF_C2(_MCF_signal_fence,ORDER) (void) __MCF_noexcept
-  {
-    __MCF_atomic_signal_fence(__MCF_C2(__MCF_memory_order,ORDER));
-  }
-
-#elif __MCF_ATOMIC_GENERATOR_STATE_ == 10003
+#elif __MCF_ATOMIC_GENERATOR_STATE_ == 20001
 
 __MCF_ALWAYS_INLINE
 INTEGER
@@ -316,6 +356,8 @@ __MCF_C3(_MCF_atomic_cmpxchg_weak_p,WIDTH,ORDER) (volatile void* __mem, void* __
     return __succ;
   }
 
+#elif __MCF_ATOMIC_GENERATOR_STATE_ == 20002
+
 __MCF_ALWAYS_INLINE
 INTEGER
 __MCF_C3(_MCF_atomic_xadd_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val) __MCF_noexcept
@@ -330,6 +372,22 @@ __MCF_C3(_MCF_atomic_xsub_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val) __
   {
     return __MCF_atomic_xsub(__MCF_ATOMICIFY(INTEGER, __mem), __val,
                              __MCF_C2(__MCF_memory_order,ORDER));
+  }
+
+#elif __MCF_ATOMIC_GENERATOR_STATE_ == 20003
+
+__MCF_ALWAYS_INLINE
+void
+__MCF_C2(_MCF_thread_fence,ORDER) (void) __MCF_noexcept
+  {
+    __MCF_atomic_thread_fence(__MCF_C2(__MCF_memory_order,ORDER));
+  }
+
+__MCF_ALWAYS_INLINE
+void
+__MCF_C2(_MCF_signal_fence,ORDER) (void) __MCF_noexcept
+  {
+    __MCF_atomic_signal_fence(__MCF_C2(__MCF_memory_order,ORDER));
   }
 
 #endif  /* __MCF_ATOMIC_GENERATOR_STATE_  */
