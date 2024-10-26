@@ -272,7 +272,7 @@ union __MCF_C(__attribute__((__transparent_union__))) __MCF_cxa_dtor_any
 #else
 /* Make these barely compile.  */
 typedef __MCF_cxa_dtor_cdecl __MCF_cxa_dtor_thiscall;
-typedef __MCF_cxa_dtor_cdecl* __MCF_cxa_dtor_any;
+typedef __MCF_cxa_dtor_cdecl* __MCF_cxa_dtor_any_t;
 #endif
 
 /* Declare it here for `__MCF_ASSERT()`.  */
