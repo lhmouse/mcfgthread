@@ -165,7 +165,7 @@ __MCF_CXX(extern "C" {)
 #define __MCF_C2_(x, y)   x##y
 #define __MCF_C2(x, y)   __MCF_C2_(x, y)
 
-#define __MCF_C3_(x, y, z)   x##y
+#define __MCF_C3_(x, y, z)   x##y##z
 #define __MCF_C3(x, y, z)   __MCF_C3_(x, y, z)
 
 /* Some compilers warn about casts between pointers, so launder the pointer via
