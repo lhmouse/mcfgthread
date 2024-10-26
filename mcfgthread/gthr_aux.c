@@ -13,7 +13,7 @@
 
 void
 __fastcall
-__MCF_gthr_do_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_union init_proc, void* arg);
+__MCF_gthr_do_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_t init_proc, void* arg);
 
 __asm__ (
 #if defined __i386__ || defined __amd64__
@@ -155,7 +155,7 @@ do_call_once_seh_uhandler(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx
 
 __MCF_DLLEXPORT
 void
-__MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_union init_proc, void* arg)
+__MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_t init_proc, void* arg)
   {
     __MCF_gthr_do_call_once_seh_take_over(once, init_proc, arg);
   }
