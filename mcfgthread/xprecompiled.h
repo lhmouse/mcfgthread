@@ -24,5 +24,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <limits.h>
+#include <intrin.h>
 
 #endif  /* __MCFGTHREAD_XPRECOMPILED_  */
