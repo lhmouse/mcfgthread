@@ -69,6 +69,12 @@
 #  define __MCF_UPTR_MAX     0xFFFFFFFFU
 #endif
 
+/* Define language-support macros. We start from C89 and adjust these macros
+ * accordingly. The macro `__MCF_nullptr` shall be a literal zero of type
+ * `intptr_t`.  */
+#define __MCF_nullptr    __MCF_IPTR_0
+#define __MCF_noexcept
+
 #define __MCF_C(...)     __VA_ARGS__
 #define __MCF_C99(...)
 #define __MCF_C11(...)
@@ -81,9 +87,6 @@
 #define __MCF_CXX17(...)
 #define __MCF_CXX20(...)
 #define __MCF_CXX23(...)
-
-#define __MCF_noexcept
-#define __MCF_nullptr   __MCF_IPTR_0
 
 #if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 199901L)
 #  undef __MCF_C99
@@ -150,13 +153,6 @@
 #  define __MCF_UNREACHABLE   (__debugbreak(), __MCF__Exit(668))
 #endif
 
-/* Common declarations start here.  */
-__MCF_CXX(extern "C" {)
-#ifndef __MCF_FWD_IMPORT
-#  define __MCF_FWD_IMPORT
-#  define __MCF_FWD_INLINE  __MCF_GNU_INLINE
-#endif
-
 #define __MCF_SET_IF(x, ...)    ((void) ((x) && (*(x) = (__VA_ARGS__))))
 #define __MCF_0_INIT           { __MCF_C(0) }
 
@@ -199,6 +195,12 @@ template<> struct __MCF_static_assert<true> { };
 #define __MCF_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__MCF_EX __func__))
 
 /* Make some forward declarations.  */
+__MCF_CXX(extern "C" {)
+#ifndef __MCF_FWD_IMPORT
+#  define __MCF_FWD_IMPORT
+#  define __MCF_FWD_INLINE  __MCF_GNU_INLINE
+#endif
+
 typedef struct __MCF_dtor_element __MCF_dtor_element;
 typedef struct __MCF_dtor_queue __MCF_dtor_queue;
 typedef struct __MCF_tls_table __MCF_tls_table;
