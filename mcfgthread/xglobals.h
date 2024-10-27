@@ -17,6 +17,7 @@
 #include <winnt.h>
 #include <winternl.h>
 #include <winerror.h>
+#include <ntdef.h>
 #include <sysinfoapi.h>
 #include <profileapi.h>
 #include <realtimeapiset.h>
@@ -25,7 +26,6 @@
 #include <processthreadsapi.h>
 #include <shtypes.h>
 #include <wincon.h>
-#include <ntdef.h>
 
 __MCF_CXX(extern "C" {)
 #ifndef __MCF_XGLOBALS_IMPORT
