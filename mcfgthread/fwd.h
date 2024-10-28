@@ -154,27 +154,24 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_UPTR_MAX     0xFFFFFFFFU
 #endif
 
-#define __MCF_SET_IF(x, ...)    ((void) ((x) && (*(x) = (__VA_ARGS__))))
-#define __MCF_0_INIT           { __MCF_C(0) }
-
-#define __MCF_S_(...)   #__VA_ARGS__
-#define __MCF_S(...)   __MCF_S_(__VA_ARGS__)
-
-#define __MCF_C2_(x, y)   x##y
-#define __MCF_C2(x, y)   __MCF_C2_(x, y)
-
+#define __MCF_S_(...)     #__VA_ARGS__
+#define __MCF_S(...)       __MCF_S_(__VA_ARGS__)
+#define __MCF_C2_(x, y)     x##y
+#define __MCF_C2(x, y)       __MCF_C2_(x, y)
 #define __MCF_C3_(x, y, z)   x##y##z
 #define __MCF_C3(x, y, z)   __MCF_C3_(x, y, z)
+#define __MCF_0_INIT           { __MCF_C(0) }
+#define __MCF_SET_IF(x, ...)    ((void) ((x) && (*(x) = (__VA_ARGS__))))
 
-/* */
+/* For debug builds, `__MCF_UNREACHABLE` shall effect a breakpoint.  */
+__MCF_NEVER_RETURN
+void
+__MCF__Exit(int __status) __MCF_noexcept;
+
 #if defined __MCF_DEBUG
 #  undef __MCF_UNREACHABLE
 #  define __MCF_UNREACHABLE   (__debugbreak(), __MCF__Exit(668))
 #endif
-
-__MCF_NEVER_RETURN
-void
-__MCF__Exit(int __status) __MCF_noexcept;
 
 /* Some compilers warn about casts between pointers, so launder the pointer via
  * an in-between integral type.  */
