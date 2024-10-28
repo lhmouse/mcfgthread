@@ -26,13 +26,13 @@ do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
      * `offset_in_table = ratio / 2^32 * table_size = ratio / (2^32 / table_size)`,
      * where `2^32 / table_size` is a constant.  */
     uint32_t ratio = (uint32_t) ((uintptr_t) mutex / sizeof(void*)) * 0x9E3779B9U;
-    DWORD base = ratio / table_size_reciprocal;
+    ULONG base = ratio / table_size_reciprocal;
     __MCF_ASSERT(base < table_size);
 
     /* The unfortunate GCC `__builtin_ctz()` returns a signed integer which
      * results in terrible machine code, so we have to turn to something else
      * if its argument is not a constant.  */
-    DWORD index;
+    ULONG index;
     _BitScanForward(&index, sp_mask);
 
     return __MCF_g->__mutex_spin_field + (base + index * (table_size / 4U)) % table_size;

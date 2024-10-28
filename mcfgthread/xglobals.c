@@ -21,7 +21,7 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
     (void) disp_ctx;
 
     /* Check for uncaught C++ exceptions.  */
-    DWORD r = rec->ExceptionFlags & EXCEPTION_NONCONTINUABLE;
+    ULONG r = rec->ExceptionFlags & EXCEPTION_NONCONTINUABLE;
     r |= (rec->ExceptionCode & 0x20FFFFFFU) - 0x20474343U;  /* (1 << 29) | 'GCC'  */
     return r ? ExceptionContinueSearch : ExceptionContinueExecution;
   }
@@ -96,7 +96,7 @@ __MCF_batch_release_common(const void* key, size_t count)
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
 int
-__MCF_win32_error_i(DWORD code, int val)
+__MCF_win32_error_i(ULONG code, int val)
   {
     SetLastError(code);
     return val;
@@ -104,7 +104,7 @@ __MCF_win32_error_i(DWORD code, int val)
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
 void*
-__MCF_win32_error_p(DWORD code, void* ptr)
+__MCF_win32_error_p(ULONG code, void* ptr)
   {
     SetLastError(code);
     return ptr;
@@ -181,7 +181,7 @@ __MCF_gthread_initialize_globals(void)
     static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
     UNICODE_STRING gname = RTL_CONSTANT_STRING(gnbuffer);
     __MCF_ASSERT(gnbuffer[25] == L'*');
-    DWORD pid = GetCurrentProcessId();
+    ULONG pid = GetCurrentProcessId();
     do_encode_numeric_field(gnbuffer + 25, 8, pid, L"0123456789ABCDEF");
     __MCF_ASSERT(gnbuffer[34] == L'#');
     UINT64 cookie = (UINT_PTR) EncodePointer((PVOID) ~(UINT_PTR) (pid * 0x100000001ULL)) * 0x9E3779B97F4A7C15ULL;
@@ -294,7 +294,7 @@ __MCF_gthread_on_thread_exit(void)
  * same on both x86 and x86-64.  */
 int
 __stdcall
-__MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
+__MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
   __asm__("__MCF_dll_startup@@Z");
 
 /* When building the shared library, invoke common routines from the DLL
@@ -302,9 +302,9 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
 __MCF_REALIGN_SP
 int
 __stdcall
-__MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
+__MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
   {
-    DWORD dummy1;
+    ULONG dummy1;
     HMODULE dummy2 = reserved;
 
     switch(reason)
@@ -330,7 +330,7 @@ __MCF_dll_startup(PVOID instance, DWORD reason, PVOID reserved)
 static __MCF_REALIGN_SP
 void
 __stdcall
-__MCF_tls_callback(PVOID module, DWORD reason, LPVOID reserved)
+__MCF_tls_callback(PVOID module, ULONG reason, LPVOID reserved)
   {
     (void) module;
     (void) reserved;

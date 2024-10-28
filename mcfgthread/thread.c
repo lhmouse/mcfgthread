@@ -12,7 +12,7 @@
 #include "xglobals.h"
 
 static __MCF_REALIGN_SP
-DWORD
+ULONG
 __stdcall
 do_win32_thread_thunk(LPVOID param)
   {
@@ -84,7 +84,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     }
 
     /* Create the thread now.  */
-    DWORD tid;
+    ULONG tid;
     thrd->__handle = CreateThread(__MCF_nullptr, 0, do_win32_thread_thunk, thrd, 0, &tid);
     if(thrd->__handle == __MCF_nullptr) {
       __MCF_mfree(thrd);
@@ -236,7 +236,7 @@ _MCF_yield(void)
 static __MCF_REALIGN_SP
 BOOL
 __stdcall
-do_sleep_interrupt(DWORD type)
+do_sleep_interrupt(ULONG type)
   {
     (void) type;
 
