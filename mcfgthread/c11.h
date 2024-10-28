@@ -428,7 +428,7 @@ __MCF_C11_INLINE
 void
 __MCF_c11_call_once(once_flag* __once, __MCF_once_callback* __init_proc) __MCF_MAY_THROW
   {
-    __MCF_gthr_call_once_seh0(__once, __init_proc);
+    __MCF_GTHR_CALL_ONCE_SEH(__once, __init_proc, __MCF_nullptr);
   }
 
 __MCF_C11_INLINE
