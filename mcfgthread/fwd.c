@@ -20,19 +20,19 @@ do_append_string(WCHAR** sp, PCWSTR end_of_buffer, WCHAR c)
   }
 
 static
-DWORD
-do_format_message(DWORD code, WCHAR* outptr, PCWSTR end_of_buffer)
+ULONG
+do_format_message(ULONG code, WCHAR* outptr, PCWSTR end_of_buffer)
   {
     return FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | 255,
                           __MCF_nullptr, code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                          outptr, (DWORD) (end_of_buffer - outptr), __MCF_nullptr);
+                          outptr, (ULONG) (end_of_buffer - outptr), __MCF_nullptr);
   }
 
 __MCF_DLLEXPORT
 void
 __MCF_runtime_failure(const char* where)
   {
-    DWORD last_error = GetLastError();
+    ULONG last_error = GetLastError();
     WCHAR buffer[1536];
     WCHAR* sptr = buffer;
     WCHAR* end_of_buffer = buffer + RTL_NUMBER_OF(buffer);
@@ -47,7 +47,7 @@ __MCF_runtime_failure(const char* where)
      * {Application Error}
      * The exception %s (0x%08lx) occurred in the application at location 0x%08lx.  */
     WCHAR* lptr = end_of_buffer - 127;
-    DWORD outlen = do_format_message(574, lptr, end_of_buffer);
+    ULONG outlen = do_format_message(574, lptr, end_of_buffer);
     if((outlen != 0) && (*lptr == L'{')) {
       lptr ++;
 
@@ -64,7 +64,7 @@ __MCF_runtime_failure(const char* where)
     text.MaximumLength = (USHORT) ((UINT_PTR) end_of_buffer - (UINT_PTR) sptr);
 
     /* Get the file name of the executable.  */
-    outlen = GetModuleFileNameW(NULL, sptr, (DWORD) (end_of_buffer - sptr));
+    outlen = GetModuleFileNameW(NULL, sptr, (ULONG) (end_of_buffer - sptr));
     if(outlen != 0) {
       sptr += outlen;
 

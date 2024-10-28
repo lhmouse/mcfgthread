@@ -88,7 +88,7 @@ NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status) __MCF_FN_CONST;
 
 typedef void __stdcall decltype_GetSystemTimePreciseAsFileTime(FILETIME*);
 typedef void __stdcall decltype_QueryInterruptTime(ULONGLONG*);
-typedef LPVOID __stdcall decltype_TlsGetValue(DWORD);
+typedef LPVOID __stdcall decltype_TlsGetValue(ULONG);
 
 /* Declare helper functions here.  */
 __MCF_XGLOBALS_IMPORT
@@ -101,17 +101,17 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
 typedef struct __MCF_seh_i386_node __MCF_seh_i386_node;
 struct __MCF_seh_i386_node
   {
-    DWORD __next;
-    DWORD __filter;
+    ULONG __next;
+    ULONG __filter;
   };
 
 __MCF_ALWAYS_INLINE
 __MCF_seh_i386_node*
 __MCF_seh_i386_install(__MCF_seh_i386_node* node)
   {
-    __asm__ volatile ("mov %0, DWORD PTR fs:[0]" : "=r"(node->__next));
-    node->__filter = (DWORD) __MCF_seh_top;
-    __asm__ volatile ("mov DWORD PTR fs:[0], %0" : : "r"(node));
+    __asm__ volatile ("mov %0, ULONG PTR fs:[0]" : "=r"(node->__next));
+    node->__filter = (ULONG) __MCF_seh_top;
+    __asm__ volatile ("mov ULONG PTR fs:[0], %0" : : "r"(node));
     return node;
   }
 
@@ -120,7 +120,7 @@ void
 __MCF_seh_i386_cleanup(__MCF_seh_i386_node* const* ref)
   {
     __MCF_seh_i386_node* node = *ref;
-    __asm__ volatile ("mov DWORD PTR fs:[0], %0" : : "r"(node->__next));
+    __asm__ volatile ("mov ULONG PTR fs:[0], %0" : : "r"(node->__next));
   }
 
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
@@ -254,11 +254,11 @@ __MCF_mfree_nonnull(void* ptr);
  * They should be subject to tail-call optimization.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_COLD
 int
-__MCF_win32_error_i(DWORD code, int val);
+__MCF_win32_error_i(ULONG code, int val);
 
 __MCF_XGLOBALS_IMPORT __MCF_FN_COLD
 void*
-__MCF_win32_error_p(DWORD code, void* ptr);
+__MCF_win32_error_p(ULONG code, void* ptr);
 
 __MCF_XGLOBALS_IMPORT __MCF_FN_COLD
 void*
@@ -690,7 +690,7 @@ NTSYSAPI NTSTATUS NTAPI NtRaiseHardError(NTSTATUS Status, ULONG NumberOfParamete
 
 __MCF_ALWAYS_INLINE
 int
-__MCF_show_service_notification(const UNICODE_STRING* caption, DWORD options, const UNICODE_STRING* text)
+__MCF_show_service_notification(const UNICODE_STRING* caption, ULONG options, const UNICODE_STRING* text)
   {
     ULONG_PTR params[4] = { (ULONG_PTR) text, (ULONG_PTR) caption, options, 0 };
     ULONG response = 0;
