@@ -164,9 +164,13 @@ __MCF_CXX(extern "C" {)
 #define __MCF_SET_IF(x, ...)    ((void) ((x) && (*(x) = (__VA_ARGS__))))
 
 /* For debug builds, `__MCF_UNREACHABLE` shall effect a breakpoint.  */
+__MCF_NEVER_RETURN
+void
+__MCF__Exit(int __status) __MCF_noexcept;
+
 #if defined __MCF_DEBUG
 #  undef __MCF_UNREACHABLE
-#  define __MCF_UNREACHABLE   (__debugbreak(), __fastfail(7))
+#  define __MCF_UNREACHABLE   (__debugbreak(), __MCF__Exit(668))
 #endif
 
 /* Some compilers warn about casts between pointers, so launder the pointer via
