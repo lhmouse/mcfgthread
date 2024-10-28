@@ -104,10 +104,7 @@ __MCF_CXX(})  /* extern "C"  */
 #pragma pop_macro("ORDER_A")
 #pragma pop_macro("ORDER_R")
 
-#else  /* defined __MCF_ATOMIC_GENERATOR_STATE_  */
-#pragma push_macro("__MCF_ATOMIC_GENERATOR_STATE_")
-
-#if __MCF_ATOMIC_GENERATOR_STATE_ == 10001
+#elif __MCF_ATOMIC_GENERATOR_STATE_ == 10001
 
 #  define ORDER   _rlx
 #  define ORDER_A  _rlx
@@ -390,8 +387,5 @@ __MCF_C2(_MCF_signal_fence,ORDER) (void) __MCF_noexcept
     __MCF_atomic_signal_fence(__MCF_C2(__MCF_memory_order,ORDER));
   }
 
-#endif  /* __MCF_ATOMIC_GENERATOR_STATE_  */
-
-#pragma pop_macro("__MCF_ATOMIC_GENERATOR_STATE_")
 #endif  /* defined __MCF_ATOMIC_GENERATOR_STATE_  */
 #endif  /* __MCFGTHREAD_ATOMIC_  */
