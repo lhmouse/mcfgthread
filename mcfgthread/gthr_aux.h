@@ -61,6 +61,10 @@ __MCF_GTHR_AUX_INLINE
 void
 __MCF_gthr_call_once_seh(_MCF_once* __once, __MCF_cxa_dtor_any_t __init_proc, void* __arg) __MCF_MAY_THROW;
 
+__MCF_ALWAYS_INLINE
+void
+__MCF_gthr_call_once_seh0(_MCF_once* __once, __MCF_once_callback* __init_proc) __MCF_MAY_THROW;
+
 __MCF_GTHR_AUX_IMPORT
 void
 __MCF_gthr_call_once_seh_take_over(_MCF_once* __once, __MCF_cxa_dtor_any_t __init_proc, void* __arg) __MCF_MAY_THROW;
@@ -167,6 +171,13 @@ __MCF_gthr_call_once_seh(_MCF_once* __once, __MCF_cxa_dtor_any_t __init_proc, vo
 
     __MCF_ASSERT(__err == 1);
     __MCF_gthr_call_once_seh_take_over(__once, __init_proc, __arg);
+  }
+
+__MCF_ALWAYS_INLINE
+void
+__MCF_gthr_call_once_seh0(_MCF_once* __once, __MCF_once_callback* __init_proc) __MCF_MAY_THROW
+  {
+    __MCF_gthr_call_once_seh(__once, __MCF_CAST_PTR(__MCF_cxa_dtor_cdecl, __init_proc), __MCF_nullptr);
   }
 
 __MCF_GTHR_AUX_INLINE
