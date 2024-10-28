@@ -7,6 +7,7 @@
 
 #include "../mcfgthread/cxa.h"
 #include "../mcfgthread/thread.h"
+#include "../mcfgthread/exit.h"
 #include <assert.h>
 #include <stdio.h>
 
