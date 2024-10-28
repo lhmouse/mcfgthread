@@ -192,17 +192,8 @@ _MCF_thread*
 _MCF_thread_self(void)
   {
     _MCF_thread* self;
-    const uintptr_t tls_index = __MCF_g->__tls_index;
-    if(tls_index < 64) {
-#if defined __amd64__
-      __asm__ ("mov %0, gs:[0x1480 + %1 * 8]" : "=r"(self) : "r"(tls_index));
-#elif defined __i386__
-      __asm__ ("mov %0, fs:[0xE10 + %1 * 4]" : "=r"(self) : "r"(tls_index));
-#elif defined __aarch64__
-      __asm__ ("ldr %0, [x18, %1, lsl 3]" : "=r"(self) : "r"(0x1480 / 8 + tls_index));
-#else
-#  error Unsupported architecture
-#endif
+    if(__MCF_g->__tls_index < 64) {
+      __MCF_TEB_LOAD_PTR_INDEXED(&self, __MCF_64_32(0x1480, 0x0E10), __MCF_g->__tls_index);
       if(self)
         return self;
     }
