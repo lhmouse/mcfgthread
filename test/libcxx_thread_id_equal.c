@@ -19,7 +19,7 @@ thread_proc(void* param)
     assert(__libcpp_thread_id_equal(__MCF_libcxx_thread_get_current_id(), __libcpp_thread_get_id(&thrd)));
     assert(__libcpp_thread_id_equal(__MCF_libcxx_thread_get_current_id(), _MCF_thread_self_tid()));
 
-    printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
     return __MCF_nullptr;
   }
 
@@ -32,8 +32,8 @@ main(void)
 
     assert(!__libcpp_thread_id_equal(__MCF_libcxx_thread_get_current_id(), __libcpp_thread_get_id(&thrd)));
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     r = __libcpp_thread_join(&thrd);
     assert(r == 0);
-    printf("main wait finished\n");
+    fprintf(stderr, "main wait finished\n");
   }

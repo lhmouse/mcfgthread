@@ -37,10 +37,10 @@ main(void)
     ::_MCF_sleep(&sleep_until);
 
     now = ::_MCF_perf_counter();
-    r = cond.wait_until(xlk, NS::chrono::system_clock::now() + NS::chrono::milliseconds(1100));
+    r = cond.wait_until(xlk, NS::chrono::system_clock::now() + NS::chrono::milliseconds(1116));  // relaxed
     assert(r == NS::cv_status::timeout);
     delta = ::_MCF_perf_counter() - now;
-    assert(delta >= 1100 - 20);
+    assert(delta >= 1100);
     assert(delta <= 1200);
 
     assert(xlk);

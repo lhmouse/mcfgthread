@@ -31,24 +31,18 @@ main(void)
     tm.tm_min = st.wMinute;
     tm.tm_sec = st.wSecond;
     tm.tm_isdst = -1;
-#if defined _WIN32 && defined _USE_32BIT_TIME_T
-    __time64_t ts = _mktime64(&tm);
-#else
-    time_t ts = mktime(&tm);
-#endif
-
-    long long vcrt_now = ts * 1000 + st.wMilliseconds;
-    printf("vcrt_now = %lld\n", vcrt_now);
+    long long vcrt_now = mktime(&tm) * 1000LL + st.wMilliseconds;
+    fprintf(stderr, "vcrt_now = %lld\n", vcrt_now);
 
     long long ms_now = _MCF_utc_now();
     long long ms_delta = ms_now - vcrt_now;
-    printf("_MCF_utc_now() = %lld (delta %+lld)\n", ms_now, ms_delta);
+    fprintf(stderr, "_MCF_utc_now() = %lld (delta %+lld)\n", ms_now, ms_delta);
     assert(ms_delta >= -100);
     assert(ms_delta <= +100);
 
     double hi_now = _MCF_hires_utc_now();
     double hi_delta = hi_now - (double) vcrt_now;
-    printf("_MCF_hires_utc_now() = %.0f (delta %+.3f)\n", hi_now, hi_delta);
+    fprintf(stderr, "_MCF_hires_utc_now() = %.0f (delta %+.3f)\n", hi_now, hi_delta);
     assert(hi_delta >= -100);
     assert(hi_delta <= +100);
   }

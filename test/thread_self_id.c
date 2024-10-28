@@ -19,7 +19,7 @@ thread_proc(_MCF_thread* self)
   {
     assert(_MCF_thread_self_tid() == GetCurrentThreadId());
     assert(self->__tid == GetCurrentThreadId());
-    printf("thread %d quitting\n", self->__tid);
+    fprintf(stderr, "thread %d quitting\n", self->__tid);
   }
 
 int
@@ -30,9 +30,9 @@ main(void)
       assert(threads[k]);
     }
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       _MCF_thread_wait(threads[k], __MCF_nullptr);
-      printf("main wait finished: %d\n", (int)k);
+      fprintf(stderr, "main wait finished: %d\n", (int)k);
     }
   }

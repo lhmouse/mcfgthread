@@ -44,9 +44,9 @@ thread_proc()
     ::_MCF_sem_wait(&start, nullptr);
 
     ::__MCF_gthr_call_once_seh(&once, __MCF_CAST_PTR(__MCF_cxa_dtor_cdecl, once_do_it), (void*) 1);
-    ::printf("thread %d done\n", (int) ::_MCF_thread_self_tid());
+    ::fprintf(stderr, "thread %d done\n", (int) ::_MCF_thread_self_tid());
 
-    ::printf("thread %d quitting\n", (int) ::_MCF_thread_self_tid());
+    ::fprintf(stderr, "thread %d quitting\n", (int) ::_MCF_thread_self_tid());
   }
 
 int
@@ -55,7 +55,7 @@ main(void)
     for(auto& thr : threads)
       thr = NS::thread(thread_proc);
 
-    ::printf("main waiting\n");
+    ::fprintf(stderr, "main waiting\n");
     ::_MCF_sem_signal_some(&start, NTHREADS);
 
     for(auto& thr : threads)

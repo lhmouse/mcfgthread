@@ -23,7 +23,7 @@ thread_proc(_MCF_thread* self)
     assert(eps + 1 == ep1);
 #endif  // x87
 
-    printf("thread %d quitting\n", self->__tid);
+    fprintf(stderr, "thread %d quitting\n", self->__tid);
   }
 
 int
@@ -36,7 +36,7 @@ main(void)
       IsWow64Process2_t* pIsWow64Process2 = __MCF_CAST_PTR(IsWow64Process2_t, GetProcAddress(kernel32, "IsWow64Process2"));
       USHORT wProcess, wNative;
       if(pIsWow64Process2 && pIsWow64Process2(GetCurrentProcess(), &wProcess, &wNative)) {
-        printf("IsWow64Process2: host machine = 0x%.4X\n", wNative);
+        fprintf(stderr, "IsWow64Process2: host machine = 0x%.4X\n", wNative);
 
         // The x87 that is emulated by ARM64 supports up to 53-bit double
         // precision and not the x87 extended precision, so skip this test.
@@ -48,9 +48,9 @@ main(void)
     _MCF_thread* thrd = _MCF_thread_new(thread_proc, __MCF_nullptr, 0);
     assert(thrd);
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     _MCF_thread_wait(thrd, __MCF_nullptr);
-    printf("main wait finished\n");
+    fprintf(stderr, "main wait finished\n");
 
     _MCF_thread_wait(thrd, __MCF_nullptr);
   }

@@ -42,7 +42,7 @@ thread_proc(void* param)
     r = __gthread_recursive_mutex_unlock(&mutex);
     assert(r == 0);
 
-    printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
     return __MCF_nullptr;
   }
 
@@ -55,12 +55,12 @@ main(void)
       assert(threads[k]);
     }
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     _MCF_sem_signal_some(&start, NTHREADS);
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       int r = __gthread_join(threads[k], __MCF_nullptr);
       assert(r == 0);
-      printf("main wait finished: %d\n", (int)k);
+      fprintf(stderr, "main wait finished: %d\n", (int)k);
     }
 
     assert(resource == NTHREADS);

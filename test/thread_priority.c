@@ -42,9 +42,9 @@ main(void)
     _MCF_thread* thrd = _MCF_thread_new(thread_proc, __MCF_nullptr, 0);
     assert(thrd);
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     _MCF_thread_wait(thrd, __MCF_nullptr);
-    printf("main wait finished\n");
+    fprintf(stderr, "main wait finished\n");
 
     _MCF_thread_wait(thrd, __MCF_nullptr);
   }

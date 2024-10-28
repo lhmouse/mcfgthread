@@ -32,7 +32,7 @@ thread_proc(void* param)
     resource = old + 1;
     mtx_unlock(&mutex);
 
-    printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
     return 0;
   }
 
@@ -48,12 +48,12 @@ main(void)
       assert(threads[k]);
     }
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     _MCF_sem_signal_some(&start, NTHREADS);
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       int r = thrd_join(threads[k], __MCF_nullptr);
       assert(r == thrd_success);
-      printf("main wait finished: %d\n", (int)k);
+      fprintf(stderr, "main wait finished: %d\n", (int)k);
     }
 
     assert(resource == NTHREADS);

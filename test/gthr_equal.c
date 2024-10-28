@@ -18,7 +18,7 @@ thread_proc(void* param)
     (void) param;
     assert(__gthread_equal(__gthread_self(), thrd));
 
-    printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
     return __MCF_nullptr;
   }
 
@@ -31,8 +31,8 @@ main(void)
 
     assert(!__gthread_equal(__gthread_self(), thrd));
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     r = __gthread_join(thrd, __MCF_nullptr);
     assert(r == 0);
-    printf("main wait finished\n");
+    fprintf(stderr, "main wait finished\n");
   }

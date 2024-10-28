@@ -20,16 +20,16 @@ main(void)
     _MCF_thread_set_priority(__MCF_nullptr, _MCF_thread_priority_above_normal);
     now = _MCF_perf_counter();
 
-    __MCF_initialize_winnt_timeout_v3(&to, (const int64_t[]){ -1100 });  /* relative  */
+    __MCF_initialize_winnt_timeout_v3(&to, (const int64_t[]){ -1116 });  /* relative  */
     while(to.__li.QuadPart < 0) {
       // repeat
-      printf("  sleep -> %lld\n", to.__li.QuadPart);
+      fprintf(stderr, "  sleep -> %lld\n", to.__li.QuadPart);
       _MCF_sleep_noninterruptible((const int64_t[]){ -37 });
       __MCF_adjust_winnt_timeout_v3(&to);
     }
 
     delta = _MCF_perf_counter() - now;
-    printf("delta = %.6f\n", delta);
-    assert(delta >= 1100 - 40);
+    fprintf(stderr, "delta = %.6f\n", delta);
+    assert(delta >= 1100);
     assert(delta <= 1200);
   }

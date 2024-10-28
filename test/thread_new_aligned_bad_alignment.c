@@ -14,7 +14,7 @@ static
 void
 thread_proc(_MCF_thread* self)
   {
-    printf("thread %d quitting\n", self->__tid);
+    fprintf(stderr, "thread %d quitting\n", self->__tid);
   }
 
 int

@@ -55,7 +55,7 @@ thread_proc(void* param)
       *my_consumed += value_got;
     }
 
-    printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
     return 0;
   }
 
@@ -106,7 +106,7 @@ main(void)
 
     /* Inform end of input  */
     value = -1;
-    printf("main set end of input\n");
+    fprintf(stderr, "main set end of input\n");
 
     err = cnd_broadcast(&cond_produced);
     assert(err == thrd_success);
@@ -117,11 +117,11 @@ main(void)
     /* Wait and sum all values  */
     int total = 0;
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       int r = thrd_join(threads[k], __MCF_nullptr);
       assert(r == thrd_success);
-      printf("main wait finished: %d, consumed %d\n", (int)k, consumed[k]);
+      fprintf(stderr, "main wait finished: %d, consumed %d\n", (int)k, consumed[k]);
       total += consumed[k];
     }
 

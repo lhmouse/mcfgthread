@@ -32,7 +32,7 @@ thread_proc(_MCF_thread* self)
     _MCF_atomic_store_32_rlx(&resource, old + 1);
     _MCF_shared_mutex_unlock(&mutex);
 
-    printf("thread %d quitting\n", self->__tid);
+    fprintf(stderr, "thread %d quitting\n", self->__tid);
   }
 
 int
@@ -43,11 +43,11 @@ main(void)
       assert(threads[k]);
     }
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     _MCF_sem_signal_some(&start, NTHREADS);
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       _MCF_thread_wait(threads[k], __MCF_nullptr);
-      printf("main wait finished: %d\n", (int)k);
+      fprintf(stderr, "main wait finished: %d\n", (int)k);
     }
 
     assert(resource < (int) NTHREADS);

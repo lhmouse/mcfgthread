@@ -14,26 +14,24 @@ int
 main(void)
   {
     double now, delta;
+    time_t sleep_until;
     struct timespec timeout;
     int r;
 
     _MCF_thread_set_priority(__MCF_nullptr, _MCF_thread_priority_above_normal);
 
-    /* Round the time up. The `while` loop is necessary to work around a bug
-     * in Wine, which physical Windows doesn't have.
-     * See https://bugs.winehq.org/show_bug.cgi?id=57035  */
-    int64_t sleep_until = (int64_t) time(__MCF_nullptr) * 1000 + 2000;
-    while(time(__MCF_nullptr) < sleep_until / 1000)
-      _MCF_sleep(&sleep_until);
-
-    now = _MCF_perf_counter();
-    timeout.tv_sec = time(__MCF_nullptr) + 1;
-    timeout.tv_nsec = 300000000;
+    sleep_until = time(__MCF_nullptr) + 2;
+    _MCF_sleep(&(int64_t) { sleep_until * 1000LL - 20 });
+    do { now = _MCF_perf_counter();
+         timeout.tv_sec = time(__MCF_nullptr);
+    } while(timeout.tv_sec < sleep_until);
+    timeout.tv_sec += 1;
+    timeout.tv_nsec = 315999999;  // relaxed
     r = _thrd_sleep_until(&timeout);
     assert(r == 0);
     delta = _MCF_perf_counter() - now;
-    printf("delta = %.6f\n", delta);
-    assert(delta >= 1300 - 40);
+    fprintf(stderr, "delta = %.6f\n", delta);
+    assert(delta >= 1300);
     assert(delta <= 1400);
 
     now = _MCF_perf_counter();
@@ -42,7 +40,7 @@ main(void)
     r = _thrd_sleep_until(&timeout);
     assert(r == 0);
     delta = _MCF_perf_counter() - now;
-    printf("delta = %.6f\n", delta);
+    fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 0);
     assert(delta <= 100);
   }

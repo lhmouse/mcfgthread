@@ -35,21 +35,21 @@ main(void)
     ::_MCF_sleep(&sleep_until);
 
     now = ::_MCF_perf_counter();
-    r = mutex.try_lock_until(NS::chrono::system_clock::now() + NS::chrono::milliseconds(1100));
+    r = mutex.try_lock_until(NS::chrono::system_clock::now() + NS::chrono::milliseconds(1116));  // relaxed
     assert(r == true);
     delta = ::_MCF_perf_counter() - now;
-    ::printf("delta = %.6f\n", delta);
+    ::fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 0);
     assert(delta <= 100);
 
     NS::thread(
      [&] {
        now = ::_MCF_perf_counter();
-       r = mutex.try_lock_until(NS::chrono::system_clock::now() + NS::chrono::milliseconds(1100));
+       r = mutex.try_lock_until(NS::chrono::system_clock::now() + NS::chrono::milliseconds(1116));  // relaxed
        assert(r == false);
        delta = ::_MCF_perf_counter() - now;
-       ::printf("delta = %.6f\n", delta);
-       assert(delta >= 1100 - 20);
+       ::fprintf(stderr, "delta = %.6f\n", delta);
+       assert(delta >= 1100);
        assert(delta <= 1200);
      })
      .join();

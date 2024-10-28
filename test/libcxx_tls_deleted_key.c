@@ -22,7 +22,7 @@ void
 tls_destructor(void* ptr)
   {
     (void) ptr;
-    printf("thread %d tls_destructor\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d tls_destructor\n", (int) _MCF_thread_self_tid());
     __atomic_fetch_add(&count, 1, __ATOMIC_RELAXED);
   }
 
@@ -35,12 +35,12 @@ thread_proc(void* param)
 
     int r = __libcpp_tls_set(key, &count);
     assert(r == 0);
-    printf("thread %d set value\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d set value\n", (int) _MCF_thread_self_tid());
 
     _MCF_sem_signal(&value_set);
     _MCF_sem_wait(&key_deleted, __MCF_nullptr);
 
-    printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
     return __MCF_nullptr;
   }
 
@@ -55,17 +55,17 @@ main(void)
     assert(r == 0);
     assert(thrd);
 
-    printf("main waiting for value_set\n");
+    fprintf(stderr, "main waiting for value_set\n");
     _MCF_sem_signal(&thread_start);
     _MCF_sem_wait(&value_set, __MCF_nullptr);
 
     __libcpp_tls_delete(key);
     key = __MCF_nullptr;
-    printf("main deleted key; waiting for termination\n");
+    fprintf(stderr, "main deleted key; waiting for termination\n");
     _MCF_sem_signal(&key_deleted);
 
     __libcpp_thread_join(&thrd);
-    printf("main wait finished\n");
+    fprintf(stderr, "main wait finished\n");
 
     assert(count == 0);
   }

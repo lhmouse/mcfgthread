@@ -23,7 +23,7 @@ static
 void
 tls_destructor(int* ptr)
   {
-    ::printf("thread %d tls_destructor\n", (int) ::_MCF_thread_self_tid());
+    ::fprintf(stderr, "thread %d tls_destructor\n", (int) ::_MCF_thread_self_tid());
     __atomic_fetch_add(ptr, 1, __ATOMIC_RELAXED);
   }
 
@@ -43,7 +43,7 @@ thread_proc()
     // Add a resource.
     tss_ptr.reset(&resource);
 
-    ::printf("thread %d quitting\n", (int) ::_MCF_thread_self_tid());
+    ::fprintf(stderr, "thread %d quitting\n", (int) ::_MCF_thread_self_tid());
   }
 #endif
 
@@ -56,7 +56,7 @@ main(void)
     for(auto& thr : threads)
       thr = NS::thread(thread_proc);
 
-    ::printf("main waiting\n");
+    ::fprintf(stderr, "main waiting\n");
     ::_MCF_sem_signal_some(&start, NTHREADS);
 
     for(auto& thr : threads)

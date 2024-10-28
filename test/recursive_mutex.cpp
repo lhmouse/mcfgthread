@@ -41,7 +41,7 @@ thread_proc()
     NS::this_thread::sleep_for(NS::chrono::milliseconds(10));
     resource = old + 1;
 
-    ::printf("thread %d quitting\n", (int) ::_MCF_thread_self_tid());
+    ::fprintf(stderr, "thread %d quitting\n", (int) ::_MCF_thread_self_tid());
   }
 
 int
@@ -50,7 +50,7 @@ main(void)
     for(auto& thr : threads)
       thr = NS::thread(thread_proc);
 
-    ::printf("main waiting\n");
+    ::fprintf(stderr, "main waiting\n");
     ::_MCF_sem_signal_some(&start, NTHREADS);
 
     for(auto& thr : threads)

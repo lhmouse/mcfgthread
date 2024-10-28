@@ -37,8 +37,8 @@ thread_proc(LPVOID param)
     assert(r == 0);
     assert(p == &dso_2);
 
-    _MCF_sleep((const int64_t[]) { -1000 });
-    printf("thread %d quitting\n", (int) GetCurrentThreadId());
+    _MCF_sleep((const int64_t[]) { -1001 });
+    fprintf(stderr, "thread %d quitting\n", (int) GetCurrentThreadId());
     (void) param;
     return 0;
   }
@@ -77,9 +77,9 @@ main(void)
     thrd = CreateThread(__MCF_nullptr, 0, thread_proc, __MCF_nullptr, 0, __MCF_nullptr);
     assert(thrd);
 
-    printf("main waiting\n");
+    fprintf(stderr, "main waiting\n");
     WaitForSingleObject(thrd, INFINITE);
-    printf("main wait finished\n");
+    fprintf(stderr, "main wait finished\n");
 
     p = _MCF_tls_get(key);
     assert(p == &dso_2);
