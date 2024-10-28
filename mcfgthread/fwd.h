@@ -15,8 +15,93 @@
 #include <limits.h>
 #include <intrin.h>
 
-#ifndef _WIN32_WINNT
-#  error Only Windows platforms are supported.
+#if !defined _WIN32_WINNT || (_WIN32_WINNT < 0x0601)
+#  error Please define `_WIN32_WINNT` to at least Windows 7.
+#endif
+
+#define __MCF_C(...)     __VA_ARGS__
+#define __MCF_CXX(...)
+#define __MCF_noexcept
+#define __MCF_nullptr    __MCF_IPTR_0
+
+#if defined __cplusplus
+#  undef __MCF_CXX
+#  define __MCF_CXX(...)   __VA_ARGS__
+#  undef __MCF_C
+#  define __MCF_C(...)
+#  undef __MCF_noexcept
+#  define __MCF_noexcept   throw()
+#endif
+
+__MCF_CXX(extern "C" {)
+#ifndef __MCF_FWD_IMPORT
+#  define __MCF_FWD_IMPORT
+#  define __MCF_FWD_INLINE  __MCF_GNU_INLINE
+#endif
+
+/* Define language-support macros. We start from C89 (which doesn't have an
+ * identification macro) and then redefine these macros according to
+ * `__STDC_VERSION__` and `__cplusplus`.  */
+#define __MCF_C99(...)
+#define __MCF_C11(...)
+#define __MCF_C17(...)
+#define __MCF_C23(...)
+
+#define __MCF_CXX11(...)
+#define __MCF_CXX14(...)
+#define __MCF_CXX17(...)
+#define __MCF_CXX20(...)
+#define __MCF_CXX23(...)
+
+#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 199901L)
+#  undef __MCF_C99
+#  define __MCF_C99(...)   __VA_ARGS__
+#endif
+
+#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 201112L)
+#  undef __MCF_C11
+#  define __MCF_C11(...)   __VA_ARGS__
+#endif
+
+#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 201710L)
+#  undef __MCF_C17
+#  define __MCF_C17(...)   __VA_ARGS__
+#endif
+
+#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 202311L)
+#  undef __MCF_C23
+#  define __MCF_C23(...)   __VA_ARGS__
+#  undef __MCF_nullptr
+#  define __MCF_nullptr   nullptr
+#endif
+
+#if defined __cplusplus && (defined _MSC_VER || (__cplusplus >= 201103L))
+#  undef __MCF_CXX11
+#  define __MCF_CXX11(...)   __VA_ARGS__
+#  undef __MCF_noexcept
+#  define __MCF_noexcept   noexcept
+#  undef __MCF_nullptr
+#  define __MCF_nullptr    nullptr
+#endif
+
+#if defined __cplusplus && (defined _MSC_VER || (__cplusplus >= 201402L))
+#  undef __MCF_CXX14
+#  define __MCF_CXX14(...)   __VA_ARGS__
+#endif
+
+#if defined __cplusplus && (__cplusplus >= 201703L)
+#  undef __MCF_CXX17
+#  define __MCF_CXX17(...)   __VA_ARGS__
+#endif
+
+#if defined __cplusplus && (__cplusplus >= 202002L)
+#  undef __MCF_CXX20
+#  define __MCF_CXX20(...)   __VA_ARGS__
+#endif
+
+#if defined __cplusplus && (__cplusplus >= 202302L)
+#  undef __MCF_CXX23
+#  define __MCF_CXX23(...)   __VA_ARGS__
 #endif
 
 /* Define compiler-specific stuff. In the case of clang-cl, prefer GNU
@@ -69,90 +154,6 @@
 #  define __MCF_UPTR_MAX     0xFFFFFFFFU
 #endif
 
-/* Define language-support macros. We start from C89 and adjust these macros
- * accordingly. The macro `__MCF_nullptr` shall be a literal zero of type
- * `intptr_t`.  */
-#define __MCF_nullptr    __MCF_IPTR_0
-#define __MCF_noexcept
-
-#define __MCF_C(...)     __VA_ARGS__
-#define __MCF_C99(...)
-#define __MCF_C11(...)
-#define __MCF_C17(...)
-#define __MCF_C23(...)
-
-#define __MCF_CXX(...)
-#define __MCF_CXX11(...)
-#define __MCF_CXX14(...)
-#define __MCF_CXX17(...)
-#define __MCF_CXX20(...)
-#define __MCF_CXX23(...)
-
-#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 199901L)
-#  undef __MCF_C99
-#  define __MCF_C99(...)   __VA_ARGS__
-#endif
-
-#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 201112L)
-#  undef __MCF_C11
-#  define __MCF_C11(...)   __VA_ARGS__
-#endif
-
-#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 201710L)
-#  undef __MCF_C17
-#  define __MCF_C17(...)   __VA_ARGS__
-#endif
-
-#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 202311L)
-#  undef __MCF_C23
-#  define __MCF_C23(...)   __VA_ARGS__
-#  undef __MCF_nullptr
-#  define __MCF_nullptr   nullptr
-#endif
-
-#if defined __cplusplus
-#  undef __MCF_CXX
-#  define __MCF_CXX(...)   __VA_ARGS__
-#  undef __MCF_C
-#  define __MCF_C(...)
-#  undef __MCF_noexcept
-#  define __MCF_noexcept   throw()
-#endif
-
-#if defined __cplusplus && (__cplusplus >= 201103L)
-#  undef __MCF_CXX11
-#  define __MCF_CXX11(...)   __VA_ARGS__
-#  undef __MCF_noexcept
-#  define __MCF_noexcept   noexcept
-#  undef __MCF_nullptr
-#  define __MCF_nullptr    nullptr
-#endif
-
-#if defined __cplusplus && (__cplusplus >= 201402L)
-#  undef __MCF_CXX14
-#  define __MCF_CXX14(...)   __VA_ARGS__
-#endif
-
-#if defined __cplusplus && (__cplusplus >= 201703L)
-#  undef __MCF_CXX17
-#  define __MCF_CXX17(...)   __VA_ARGS__
-#endif
-
-#if defined __cplusplus && (__cplusplus >= 202002L)
-#  undef __MCF_CXX20
-#  define __MCF_CXX20(...)   __VA_ARGS__
-#endif
-
-#if defined __cplusplus && (__cplusplus >= 202302L)
-#  undef __MCF_CXX23
-#  define __MCF_CXX23(...)   __VA_ARGS__
-#endif
-
-#if defined __MCF_DEBUG
-#  undef __MCF_UNREACHABLE
-#  define __MCF_UNREACHABLE   (__debugbreak(), __MCF__Exit(668))
-#endif
-
 #define __MCF_SET_IF(x, ...)    ((void) ((x) && (*(x) = (__VA_ARGS__))))
 #define __MCF_0_INIT           { __MCF_C(0) }
 
@@ -164,6 +165,16 @@
 
 #define __MCF_C3_(x, y, z)   x##y##z
 #define __MCF_C3(x, y, z)   __MCF_C3_(x, y, z)
+
+/* */
+#if defined __MCF_DEBUG
+#  undef __MCF_UNREACHABLE
+#  define __MCF_UNREACHABLE   (__debugbreak(), __MCF__Exit(668))
+#endif
+
+__MCF_NEVER_RETURN
+void
+__MCF__Exit(int __status) __MCF_noexcept;
 
 /* Some compilers warn about casts between pointers, so launder the pointer via
  * an in-between integral type.  */
@@ -193,13 +204,6 @@ template<> struct __MCF_static_assert<true> { };
  * and `__MCF_CHECK()` effects abnormal termination of the current program.  */
 #define __MCF_ASSERT(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
 #define __MCF_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__MCF_EX __func__))
-
-/* Make some forward declarations.  */
-__MCF_CXX(extern "C" {)
-#ifndef __MCF_FWD_IMPORT
-#  define __MCF_FWD_IMPORT
-#  define __MCF_FWD_INLINE  __MCF_GNU_INLINE
-#endif
 
 typedef struct __MCF_dtor_element __MCF_dtor_element;
 typedef struct __MCF_dtor_queue __MCF_dtor_queue;
@@ -277,11 +281,6 @@ union __MCF_C(__attribute__((__transparent_union__))) __MCF_cxa_dtor_any
 typedef __MCF_cxa_dtor_cdecl __MCF_cxa_dtor_thiscall;
 typedef __MCF_cxa_dtor_cdecl* __MCF_cxa_dtor_any_t;
 #endif
-
-/* Declare it here for `__MCF_ASSERT()`.  */
-__MCF_NEVER_RETURN
-void
-__MCF__Exit(int __status) __MCF_noexcept;
 
 /* Gets the last error number, like `GetLastError()`.  */
 __MCF_FWD_IMPORT __MCF_FN_PURE
