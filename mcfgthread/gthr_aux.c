@@ -42,25 +42,25 @@ __asm__ (
 "  mov ebp, esp                                                    \n\t"
 "  sub esp, 24                                                     \n\t"
 /* Stash `once` for the handler.  */
-"  mov ULONG PTR [ebp - 8], ecx                                    \n\t"
+"  mov DWORD PTR [ebp - 8], ecx                                    \n\t"
 /* Install an SEH handler.  */
-"  mov eax, ULONG PTR fs:[0]                                       \n\t"
-"  lea ecx, ULONG PTR [ebp - 16]                                   \n\t"
-"  mov ULONG PTR [ecx], eax                                        \n\t"
-"  mov ULONG PTR [ecx + 4], OFFSET _do_call_once_seh_uhandler      \n\t"
-"  mov ULONG PTR fs:[0], ecx                                       \n\t"
+"  mov eax, DWORD PTR fs:[0]                                       \n\t"
+"  lea ecx, DWORD PTR [ebp - 16]                                   \n\t"
+"  mov DWORD PTR [ecx], eax                                        \n\t"
+"  mov DWORD PTR [ecx + 4], OFFSET _do_call_once_seh_uhandler      \n\t"
+"  mov DWORD PTR fs:[0], ecx                                       \n\t"
 /* Make the call `(*init_proc) (arg)`. The argument is passed both via the
  * ECX register and on the stack, to allow both `__cdecl` and `__thiscall`
  * functions to work properly.  */
-"  mov ecx, ULONG PTR [ebp + 8]                                    \n\t"
-"  mov ULONG PTR [ebp - 24], ecx                                   \n\t"
+"  mov ecx, DWORD PTR [ebp + 8]                                    \n\t"
+"  mov DWORD PTR [ebp - 24], ecx                                   \n\t"
 "  call edx                                                        \n\t"
 /* Dismantle the SEH handler.  */
-"  mov ecx, ULONG PTR [ebp - 16]                                   \n\t"
-"  mov ULONG PTR fs:[0], ecx                                       \n\t"
+"  mov ecx, DWORD PTR [ebp - 16]                                   \n\t"
+"  mov DWORD PTR fs:[0], ecx                                       \n\t"
 /* Disarm the once flag.  */
-"  mov eax, ULONG PTR [ebp - 8]                                    \n\t"
-"  mov ULONG PTR [ebp - 24], eax                                   \n\t"
+"  mov eax, DWORD PTR [ebp - 8]                                    \n\t"
+"  mov DWORD PTR [ebp - 24], eax                                   \n\t"
 "  call __MCF_once_release                                         \n\t"
 /* Destroy the frame and return.  */
 "  leave                                                           \n\t"
