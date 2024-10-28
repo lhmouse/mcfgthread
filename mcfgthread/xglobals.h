@@ -109,9 +109,9 @@ __MCF_ALWAYS_INLINE
 __MCF_seh_i386_node*
 __MCF_seh_i386_install(__MCF_seh_i386_node* node)
   {
-    __asm__ volatile ("mov %0, DWORD PTR fs:[0]" : "=r"(node->__next));
+    __MCF_TEB_LOAD_32_IMMEDIATE(&(node->__next), 0);
     node->__filter = (ULONG) __MCF_seh_top;
-    __asm__ volatile ("mov DWORD PTR fs:[0], %0" : : "r"(node));
+    __MCF_TEB_STORE_32_IMMEDIATE(0, node);
     return node;
   }
 
@@ -119,8 +119,7 @@ __MCF_ALWAYS_INLINE
 void
 __MCF_seh_i386_cleanup(__MCF_seh_i386_node* const* ref)
   {
-    __MCF_seh_i386_node* node = *ref;
-    __asm__ volatile ("mov DWORD PTR fs:[0], %0" : : "r"(node->__next));
+    __MCF_TEB_STORE_32_IMMEDIATE(0, (*ref)->__next);
   }
 
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \

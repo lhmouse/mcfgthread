@@ -311,31 +311,7 @@ uint32_t
 _MCF_thread_self_tid(void) __MCF_noexcept
   {
     uint32_t __tid;
-#if defined __GNUC__ || defined __clang__
-    /* GCC or Clang  */
-#  if defined __amd64__
-    __asm__ ("{ movl %%gs:0x48, %0 | mov %0, gs:[0x48] }" : "=r"(__tid));
-#  elif defined __i386__
-    __asm__ ("{ movl %%fs:0x24, %0 | mov %0, fs:[0x24] }" : "=r"(__tid));
-#  elif defined __aarch64__
-    __asm__ ("ldr %w0, [x18, #0x48]" : "=r"(__tid));
-#  else
-#    error Unsupported architecture
-#  endif
-#elif defined _MSC_VER
-    /* MSVC  */
-#  if defined _M_X64 && !defined _M_ARM64EC
-    __tid = __readgsdword(0x48);
-#  elif defined _M_IX86
-    __tid = __readfsdword(0x24);
-#  elif defined _M_ARM64 || defined _M_ARM64EC
-    __tid = __readx18dword(0x48);
-#  else
-#    error Unsupported architecture
-#  endif
-#else
-#  error Unsupported compiler
-#endif
+    __MCF_TEB_LOAD_32_IMMEDIATE(&__tid, __MCF_64_32(0x48, 0x24));
     return __tid;
   }
 

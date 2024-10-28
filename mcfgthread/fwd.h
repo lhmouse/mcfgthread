@@ -138,21 +138,226 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_MAY_THROW
 #endif
 
-#if defined _WIN64 || defined _LP64
-#  define __MCF_PTR_BITS     64
-#  define __MCF_IPTR_MIN   (-0x7FFFFFFFFFFFFFFFLL-1)
-#  define __MCF_IPTR_0       0LL
-#  define __MCF_IPTR_MAX     0x7FFFFFFFFFFFFFFFLL
-#  define __MCF_UPTR_0       0ULL
-#  define __MCF_UPTR_MAX     0xFFFFFFFFFFFFFFFFULL
-#else
-#  define __MCF_PTR_BITS     32
-#  define __MCF_IPTR_MIN   (-0x7FFFFFFF-1)
-#  define __MCF_IPTR_0       0
-#  define __MCF_IPTR_MAX     0x7FFFFFFF
-#  define __MCF_UPTR_0       0U
-#  define __MCF_UPTR_MAX     0xFFFFFFFFU
-#endif
+/* Define how the TEB is accessed. Due to technical limitations, the base offset
+ * must be a constant multiple of operand size, and there are different macros
+ * depending on whether the address is immediate.  */
+#if (defined __GNUC__ || defined __clang__) && (defined __amd64__ && !defined __arm64ec__)
+
+#  define __MCF_TEB_LOAD_32_IMMEDIATE(out, offset)  \
+      __asm__ volatile (  \
+         "mov { %%gs:%c1, %k0 | %k0, gs:[%c1] }"  \
+          : "=r"(*(out)) : "e"(offset))
+
+#  define __MCF_TEB_STORE_32_IMMEDIATE(offset, value)  \
+      __asm__ volatile (  \
+         "mov { %k1, %%gs:%c0 | gs:[%c0], %k1 }"  \
+          : : "e"(offset), "r"(value))
+
+#  define __MCF_TEB_LOAD_32_INDEXED(out, offset, index)  \
+      __asm__ volatile (  \
+         "mov { %%gs:%c1(,%q2,4), %k0 | %k0, gs:[%c1+%q2*4] }"  \
+          : "=r"(*(out)) : "e"(offset), "r"(index))
+
+#  define __MCF_TEB_STORE_32_INDEXED(offset, index, value)  \
+      __asm__ volatile (  \
+         "mov { %k2, %%gs:%c0(,%q1,4) | gs:[%c0+%q1*4], %k2 }"  \
+          : : "e"(offset), "r"(index), "r"(value))
+
+#  define __MCF_TEB_LOAD_PTR_IMMEDIATE(out, offset)  \
+      __asm__ volatile (  \
+         "mov { %%gs:%c1, %0 | %0, gs:[%c1] }"  \
+          : "=r"(*(out)) : "e"(offset))
+
+#  define __MCF_TEB_STORE_PTR_IMMEDIATE(offset, value)  \
+      __asm__ volatile (  \
+         "mov { %1, %%gs:%c0 | gs:[%c0], %1 }"  \
+          : : "e"(offset), "r"(value))
+
+#  define __MCF_TEB_LOAD_PTR_INDEXED(out, offset, index)  \
+      __asm__ volatile (  \
+         "mov { %%gs:%c1(,%q2,8), %0 | %0, gs:[%c1+%q2*8] }"  \
+          : "=r"(*(out)) : "e"(offset), "r"(index))
+
+#  define __MCF_TEB_STORE_PTR_INDEXED(offset, index, value)  \
+      __asm__ volatile (  \
+         "mov { %2, %%gs:%c0(,%q1,8) | gs:[%c0+%q1*8], %2 }"  \
+          : : "e"(offset), "r"(index), "r"(value))
+
+#  define __MCF_64_32(x, y)  x
+
+#elif defined _MSC_VER && (defined _M_X64 && !defined _M_ARM64EC)
+
+#  define __MCF_TEB_LOAD_32_IMMEDIATE(out, offset)  \
+      (*(out) = __readgsdword((offset)))
+
+#  define __MCF_TEB_STORE_32_IMMEDIATE(offset, value)  \
+      __writegsdword((offset), (value))
+
+#  define __MCF_TEB_LOAD_32_INDEXED(out, offset, index)  \
+      (*(out) = __readgsdword((offset) + (index) * 4U))
+
+#  define __MCF_TEB_STORE_32_INDEXED(offset, index, value)  \
+      __writegsdword((offset) + (index) * 4U, (value))
+
+#  define __MCF_TEB_LOAD_PTR_IMMEDIATE(out, offset)  \
+      (*(out) = __readgsqword((offset)))
+
+#  define __MCF_TEB_STORE_PTR_IMMEDIATE(offset, value)  \
+      __writegsqword((offset), (value))
+
+#  define __MCF_TEB_LOAD_PTR_INDEXED(out, offset, index)  \
+      (*(out) = __readgsqword((offset) + (index) * 8U))
+
+#  define __MCF_TEB_STORE_PTR_INDEXED(offset, index, value)  \
+      __writegsqword((offset) + (index) * 8U, (value))
+
+#  define __MCF_64_32(x, y)  x
+
+#elif (defined __GNUC__ || defined __clang__) && defined __i386__
+
+#  define __MCF_TEB_LOAD_32_IMMEDIATE(out, offset)  \
+      __asm__ volatile (  \
+         "mov { %%fs:%c1, %k0 | %k0, fs:[%c1] }"  \
+          : "=r"(*(out)) : "e"(offset))
+
+#  define __MCF_TEB_STORE_32_IMMEDIATE(offset, value)  \
+      __asm__ volatile (  \
+         "mov { %k1, %%fs:%c0 | fs:[%c0], %k1 }"  \
+          : : "e"(offset), "r"(value))
+
+#  define __MCF_TEB_LOAD_32_INDEXED(out, offset, index)  \
+      __asm__ volatile (  \
+         "mov { %%fs:%c1(,%k2,4), %k0 | %k0, fs:[%c1+%k2*4] }"  \
+          : "=r"(*(out)) : "e"(offset), "r"(index))
+
+#  define __MCF_TEB_STORE_32_INDEXED(offset, index, value)  \
+      __asm__ volatile (  \
+         "mov { %k1, %%fs:%c0(,%k1,4) | fs:[%c0+%k1*4], %k2 }"  \
+          : : "e"(offset), "r"(index), "r"(value))
+
+#  define __MCF_TEB_LOAD_PTR_IMMEDIATE(out, offset)  \
+      __asm__ volatile (  \
+         "mov { %%fs:%c1, %0 | %0, fs:[%c1] }"  \
+          : "=r"(*(out)) : "e"(offset))
+
+#  define __MCF_TEB_STORE_PTR_IMMEDIATE(offset, value)  \
+      __asm__ volatile (  \
+         "mov { %1, %%fs:%c0 | fs:[%c0], %1 }"  \
+          : : "e"(offset), "r"(value))
+
+#  define __MCF_TEB_LOAD_PTR_INDEXED(out, offset, index)  \
+      __asm__ volatile (  \
+         "mov { %%fs:%c1(,%k2,4), %0 | %0, fs:[%c1+%k2*4] }"  \
+          : "=r"(*(out)) : "e"(offset), "r"(index))
+
+#  define __MCF_TEB_STORE_PTR_INDEXED(offset, index, value)  \
+      __asm__ volatile (  \
+         "mov { %2, %%fs:%c0(,%k1,4) | fs:[%c0+%k1*4], %2 }"  \
+          : : "e"(offset), "r"(index), "r"(value))
+
+#  define __MCF_64_32(x, y)  y
+
+#elif defined _MSC_VER && defined _M_IX86
+
+#  define __MCF_TEB_LOAD_32_IMMEDIATE(out, offset)  \
+      (*(out) = __readfsdword((offset)))
+
+#  define __MCF_TEB_STORE_32_IMMEDIATE(offset, value)  \
+      __writefsdword((offset), (value))
+
+#  define __MCF_TEB_LOAD_32_INDEXED(out, offset, index)  \
+      *(out) = __readfsdword((offset) + (index) * 4U)
+
+#  define __MCF_TEB_STORE_32_INDEXED(offset, index, value)  \
+      __writefsdword((offset) + (index) * 4U, (value))
+
+#  define __MCF_TEB_LOAD_PTR_IMMEDIATE(out, offset)  \
+      (*(out) = __readfsdword((offset)))
+
+#  define __MCF_TEB_STORE_PTR_IMMEDIATE(offset, value)  \
+      __writefsdword((offset), (value))
+
+#  define __MCF_TEB_LOAD_PTR_INDEXED(out, offset, index)  \
+      (*(out) = __readfsdword((offset) + (index) * 4U))
+
+#  define __MCF_TEB_STORE_PTR_INDEXED(offset, index, value)  \
+      __writefsdword((offset) + (index) * 4U, (value))
+
+#  define __MCF_64_32(x, y)  y
+
+#elif (defined __GNUC__ || defined __clang__) && (defined __aarch64__ || defined __arm64ec__)
+
+#  define __MCF_TEB_LOAD_32_IMMEDIATE(out, offset)  \
+      __asm__ volatile (  \
+         "ldr %w0, [x18, %c1]"  \
+          : "=r"(*(out)) : "M"(offset))
+
+#  define __MCF_TEB_STORE_32_IMMEDIATE(offset, value)  \
+      __asm__ volatile (  \
+         "str %w0, [x18, %c1]"  \
+          : : "r"(value), "M"(offset))
+
+#  define __MCF_TEB_LOAD_32_INDEXED(out, offset, index)  \
+      __asm__ volatile (  \
+         "ldr %w0, [x18, %x1, lsl 2]"  \
+          : "=r"(*(out)) : "r"((offset) / 4U + (index)))
+
+#  define __MCF_TEB_STORE_32_INDEXED(offset, index, value)  \
+      __asm__ volatile (  \
+         "str %w0, [x18, %x1, lsl 2]"  \
+          : : "r"(value), "r"((offset) / 4U + (index)))
+
+#  define __MCF_TEB_LOAD_PTR_IMMEDIATE(out, offset)  \
+      __asm__ volatile (  \
+         "ldr %0, [x18, %c1]"  \
+          : "=r"(*(out)) : "M"(offset))
+
+#  define __MCF_TEB_STORE_PTR_IMMEDIATE(offset, value)  \
+      __asm__ volatile (  \
+         "str %0, [x18, %c1]"  \
+          : : "r"(value), "M"(offset))
+
+#  define __MCF_TEB_LOAD_PTR_INDEXED(out, offset, index)  \
+      __asm__ volatile (  \
+         "ldr %0, [x18, %x1, lsl 3]"  \
+          : "=r"(*(out)) : "r"((offset) / 8U + (index)))
+
+#  define __MCF_TEB_STORE_PTR_INDEXED(offset, index, value)  \
+      __asm__ volatile (  \
+         "str %0, [x18, %x1, lsl 3]"  \
+          : : "r"(value), "r"((offset) / 8U + (index)))
+
+#  define __MCF_64_32(x, y)  x
+
+#elif defined _MSC_VER && (defined _M_ARM64 || defined _M_ARM64EC)
+
+#  define __MCF_TEB_LOAD_32_IMMEDIATE(out, offset)  \
+      (*(out) = __readx18dword((offset)))
+
+#  define __MCF_TEB_STORE_32_IMMEDIATE(offset, value)  \
+      __writex18dword((offset), (value))
+
+#  define __MCF_TEB_LOAD_32_INDEXED(out, offset, index)  \
+      (*(out) = __readx18dword((offset) + (index) * 4U))
+
+#  define __MCF_TEB_STORE_32_INDEXED(offset, index, value)  \
+      __writex18dword((offset) + (index) * 4U, (value))
+
+#  define __MCF_TEB_LOAD_PTR_IMMEDIATE(out, offset)  \
+      (*(out) = __readx18qword((offset)))
+
+#  define __MCF_TEB_STORE_PTR_IMMEDIATE(offset, value)  \
+      __writex18qword((offset), (value))
+
+#  define __MCF_TEB_LOAD_PTR_INDEXED(out, offset, index)  \
+      (*(out) = __readx18qword((offset) + (index) * 8U))
+
+#  define __MCF_TEB_STORE_PTR_INDEXED(offset, index, value)  \
+      __writex18qword((offset) + (index) * 8U, (value))
+
+#  define __MCF_64_32(x, y)  x
+
+#endif  /* compiler and target  */
 
 #define __MCF_S_(...)     #__VA_ARGS__
 #define __MCF_S(...)       __MCF_S_(__VA_ARGS__)
@@ -162,6 +367,14 @@ __MCF_CXX(extern "C" {)
 #define __MCF_C3(x, y, z)    __MCF_C3_(x, y, z)
 #define __MCF_0_INIT           { __MCF_C(0) }
 #define __MCF_SET_IF(x, ...)    ((void) ((x) && (*(x) = (__VA_ARGS__))))
+
+/* These are necessary when the header is compiled as C89 or C++98.  */
+#define __MCF_PTR_BITS    __MCF_64_32(64, 32)
+#define __MCF_IPTR_MIN    __MCF_64_32(LLONG_MIN, INT_MIN)
+#define __MCF_IPTR_0      __MCF_64_32(0LL, 0)
+#define __MCF_IPTR_MAX    __MCF_64_32(LLONG_MAX, INT_MAX)
+#define __MCF_UPTR_0      __MCF_64_32(0ULL, 0U)
+#define __MCF_UPTR_MAX    __MCF_64_32(ULLONG_MAX, UINT_MAX)
 
 /* For debug builds, `__MCF_UNREACHABLE` shall effect a breakpoint.  */
 __MCF_NEVER_RETURN
