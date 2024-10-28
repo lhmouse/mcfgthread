@@ -344,7 +344,7 @@ __MCF_LIBCXX_INLINE
 int
 __MCF_libcxx_execute_once(__libcpp_exec_once_flag* __once, __MCF_once_callback* __init_proc) __MCF_MAY_THROW
   {
-    __MCF_gthr_call_once_seh(__once, __MCF_CAST_PTR(__MCF_cxa_dtor_cdecl, __init_proc), __MCF_nullptr);
+    __MCF_gthr_call_once_seh0(__once, __init_proc);
     return 0;
   }
 
