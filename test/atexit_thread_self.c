@@ -33,4 +33,5 @@ main(void)
 
     __MCF_atexit(atexit_function);
     fprintf(stderr, "main exiting\n");
+    __MCF_exit(0);
   }
