@@ -19,6 +19,10 @@
 #  error Please define `_WIN32_WINNT` to at least Windows 7.
 #endif
 
+#if defined __arm__ || defined _M_ARM
+#  error 32-bit ARM target is not supported.
+#endif
+
 #define __MCF_C(...)     __VA_ARGS__
 #define __MCF_CXX(...)
 #define __MCF_noexcept

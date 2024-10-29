@@ -26,27 +26,18 @@
 #include <shtypes.h>
 #include <wincon.h>
 
-__MCF_CXX(extern "C" {)
 #ifndef __MCF_XGLOBALS_IMPORT
 #  define __MCF_XGLOBALS_IMPORT
 #  define __MCF_XGLOBALS_INLINE  __MCF_GNU_INLINE
 #  define __MCF_XGLOBALS_READONLY   const
 #endif
 
-#ifndef _WIN32_WINNT
-#  error Only Windows platforms are supported.
-#endif
-
-#if _WIN32_WINNT < 0x0601
-#  error Please define `_WIN32_WINNT` to at least Windows 7.
-#endif
-
 #if __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
 #  error Windows platforms are assumed to be little-endian.
 #endif
 
-#ifdef __arm__
-#  error 32-bit ARM target is not supported.
+#ifdef __cplusplus
+#  error This internal header is for C only.
 #endif
 
 /* Hard-code these.  */
@@ -703,5 +694,4 @@ __MCF_show_service_notification(const UNICODE_STRING* caption, ULONG options, co
     return !NT_SUCCESS(status) ? -1 : (int) response;
   }
 
-__MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_XGLOBALS_  */
