@@ -7,7 +7,6 @@ like follows:
 
 ```c
 typedef struct __MCF_mutex _MCF_mutex;
-
 struct __MCF_mutex
   {
     uintptr_t __locked : 1;

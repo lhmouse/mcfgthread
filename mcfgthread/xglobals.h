@@ -90,6 +90,10 @@ typedef void __stdcall decltype_GetSystemTimePreciseAsFileTime(FILETIME*);
 typedef void __stdcall decltype_QueryInterruptTime(ULONGLONG*);
 
 /* Declare helper functions here.  */
+typedef struct __MCF_seh_i386_node __MCF_seh_i386_node;
+typedef struct __MCF_winnt_timeout __MCF_winnt_timeout;
+typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
+
 __MCF_XGLOBALS_IMPORT
 EXCEPTION_DISPOSITION
 __cdecl
@@ -97,8 +101,6 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
 
 #if defined __i386__
 /* On x86, SEH is stack-based.  */
-typedef struct __MCF_seh_i386_node __MCF_seh_i386_node;
-
 struct __MCF_seh_i386_node
   {
     ULONG __next;
@@ -165,8 +167,6 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_t dtor, void* arg)
 #endif  /* non-i386 */
 
 /* This structure contains timeout values that will be passed to NT syscalls.  */
-typedef struct __MCF_winnt_timeout __MCF_winnt_timeout;
-
 struct __MCF_winnt_timeout
   {
     LARGE_INTEGER __li;
@@ -278,8 +278,6 @@ void
 __MCF_gthread_on_thread_exit(void);
 
 /* Declare global data.  */
-typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
-
 struct __MCF_crt_xglobals
   {
     __MCF_crt_xglobals* __self_ptr;
