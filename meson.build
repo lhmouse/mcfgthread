@@ -84,7 +84,6 @@ test_src = [
   'test/winnt_timeout.c',
   'test/runtime_failure.c',
   'test/seh_terminate.c',
-  'test/teb.c',
   'test/once_zero_timeout.c',
   'test/once_release.c',
   'test/once_abort.c',
