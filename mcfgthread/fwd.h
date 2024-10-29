@@ -415,6 +415,9 @@ template<> struct __MCF_static_assert<true> { };
 #define __MCF_ASSERT(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
 #define __MCF_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__MCF_EX __func__))
 
+typedef void* __MCF_HANDLE;
+typedef struct timespec __MCF_timespec;
+
 typedef struct __MCF_dtor_element __MCF_dtor_element;
 typedef struct __MCF_dtor_queue __MCF_dtor_queue;
 typedef struct __MCF_tls_table __MCF_tls_table;
@@ -429,9 +432,6 @@ typedef struct __MCF_event _MCF_event;
 typedef struct __MCF_thread _MCF_thread;
 typedef int _MCF_thread_priority;
 typedef struct __MCF_tls_key _MCF_tls_key;
-
-typedef struct timespec __MCF_timespec;
-typedef void* __MCF_HANDLE;
 
 /* See `_MCF_cond_wait()` for details about these callbacks.  */
 typedef intptr_t _MCF_cond_unlock_callback(intptr_t __lock_arg);
