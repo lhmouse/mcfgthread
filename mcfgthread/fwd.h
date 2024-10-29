@@ -145,42 +145,42 @@ __MCF_CXX(extern "C" {)
 
 #  define __MCF_TEB_LOAD_32_IMMEDIATE(out, offset)  \
       __asm__ volatile (  \
-         "mov { %%gs:%c1, %k0 | %k0, gs:[%c1] }"  \
+         "{ mov %%gs:%c1, %k0 | mov %k0, gs:[%c1] }"  \
           : "=r"(*(out)) : "e"(offset))
 
 #  define __MCF_TEB_STORE_32_IMMEDIATE(offset, value)  \
       __asm__ volatile (  \
-         "mov { %k1, %%gs:%c0 | gs:[%c0], %k1 }"  \
+         "{ mov %k1, %%gs:%c0 | mov gs:[%c0], %k1 }"  \
           : : "e"(offset), "r"(value))
 
 #  define __MCF_TEB_LOAD_32_INDEXED(out, offset, index)  \
       __asm__ volatile (  \
-         "mov { %%gs:%c1(,%q2,4), %k0 | %k0, gs:[%c1+%q2*4] }"  \
+         "{ mov %%gs:%c1(,%q2,4), %k0 | mov %k0, gs:[%c1+%q2*4] }"  \
           : "=r"(*(out)) : "e"(offset), "r"(index))
 
 #  define __MCF_TEB_STORE_32_INDEXED(offset, index, value)  \
       __asm__ volatile (  \
-         "mov { %k2, %%gs:%c0(,%q1,4) | gs:[%c0+%q1*4], %k2 }"  \
+         "{ mov %k2, %%gs:%c0(,%q1,4) | mov gs:[%c0+%q1*4], %k2 }"  \
           : : "e"(offset), "r"(index), "r"(value))
 
 #  define __MCF_TEB_LOAD_PTR_IMMEDIATE(out, offset)  \
       __asm__ volatile (  \
-         "mov { %%gs:%c1, %0 | %0, gs:[%c1] }"  \
+         "{ mov %%gs:%c1, %0 | mov %0, gs:[%c1] }"  \
           : "=r"(*(out)) : "e"(offset))
 
 #  define __MCF_TEB_STORE_PTR_IMMEDIATE(offset, value)  \
       __asm__ volatile (  \
-         "mov { %1, %%gs:%c0 | gs:[%c0], %1 }"  \
+         "{ mov %1, %%gs:%c0 | mov gs:[%c0], %1 }"  \
           : : "e"(offset), "r"(value))
 
 #  define __MCF_TEB_LOAD_PTR_INDEXED(out, offset, index)  \
       __asm__ volatile (  \
-         "mov { %%gs:%c1(,%q2,8), %0 | %0, gs:[%c1+%q2*8] }"  \
+         "{ mov %%gs:%c1(,%q2,8), %0 | mov %0, gs:[%c1+%q2*8] }"  \
           : "=r"(*(out)) : "e"(offset), "r"(index))
 
 #  define __MCF_TEB_STORE_PTR_INDEXED(offset, index, value)  \
       __asm__ volatile (  \
-         "mov { %2, %%gs:%c0(,%q1,8) | gs:[%c0+%q1*8], %2 }"  \
+         "{ mov %2, %%gs:%c0(,%q1,8) | mov gs:[%c0+%q1*8], %2 }"  \
           : : "e"(offset), "r"(index), "r"(value))
 
 #  define __MCF_64_32(x, y)  x
@@ -217,42 +217,42 @@ __MCF_CXX(extern "C" {)
 
 #  define __MCF_TEB_LOAD_32_IMMEDIATE(out, offset)  \
       __asm__ volatile (  \
-         "mov { %%fs:%c1, %k0 | %k0, fs:[%c1] }"  \
+         "{ mov %%fs:%c1, %k0 | mov %k0, fs:[%c1] }"  \
           : "=r"(*(out)) : "e"(offset))
 
 #  define __MCF_TEB_STORE_32_IMMEDIATE(offset, value)  \
       __asm__ volatile (  \
-         "mov { %k1, %%fs:%c0 | fs:[%c0], %k1 }"  \
+         "{ mov %k1, %%fs:%c0 | mov fs:[%c0], %k1 }"  \
           : : "e"(offset), "r"(value))
 
 #  define __MCF_TEB_LOAD_32_INDEXED(out, offset, index)  \
       __asm__ volatile (  \
-         "mov { %%fs:%c1(,%k2,4), %k0 | %k0, fs:[%c1+%k2*4] }"  \
+         "{ mov %%fs:%c1(,%k2,4), %k0 | mov %k0, fs:[%c1+%k2*4] }"  \
           : "=r"(*(out)) : "e"(offset), "r"(index))
 
 #  define __MCF_TEB_STORE_32_INDEXED(offset, index, value)  \
       __asm__ volatile (  \
-         "mov { %k1, %%fs:%c0(,%k1,4) | fs:[%c0+%k1*4], %k2 }"  \
+         "{ mov %k1, %%fs:%c0(,%k1,4) | mov fs:[%c0+%k1*4], %k2 }"  \
           : : "e"(offset), "r"(index), "r"(value))
 
 #  define __MCF_TEB_LOAD_PTR_IMMEDIATE(out, offset)  \
       __asm__ volatile (  \
-         "mov { %%fs:%c1, %0 | %0, fs:[%c1] }"  \
+         "{ mov %%fs:%c1, %0 | mov %0, fs:[%c1] }"  \
           : "=r"(*(out)) : "e"(offset))
 
 #  define __MCF_TEB_STORE_PTR_IMMEDIATE(offset, value)  \
       __asm__ volatile (  \
-         "mov { %1, %%fs:%c0 | fs:[%c0], %1 }"  \
+         "{ mov %1, %%fs:%c0 | mov fs:[%c0], %1 }"  \
           : : "e"(offset), "r"(value))
 
 #  define __MCF_TEB_LOAD_PTR_INDEXED(out, offset, index)  \
       __asm__ volatile (  \
-         "mov { %%fs:%c1(,%k2,4), %0 | %0, fs:[%c1+%k2*4] }"  \
+         "{ mov %%fs:%c1(,%k2,4), %0 | mov %0, fs:[%c1+%k2*4] }"  \
           : "=r"(*(out)) : "e"(offset), "r"(index))
 
 #  define __MCF_TEB_STORE_PTR_INDEXED(offset, index, value)  \
       __asm__ volatile (  \
-         "mov { %2, %%fs:%c0(,%k1,4) | fs:[%c0+%k1*4], %2 }"  \
+         "{ mov %2, %%fs:%c0(,%k1,4) | mov fs:[%c0+%k1*4], %2 }"  \
           : : "e"(offset), "r"(index), "r"(value))
 
 #  define __MCF_64_32(x, y)  y
