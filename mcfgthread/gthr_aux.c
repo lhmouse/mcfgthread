@@ -11,24 +11,20 @@
 #include "gthr_aux.h"
 #include "xglobals.h"
 
-__MCF_DLLEXPORT
 void
-__MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_cdecl* init_proc, void* arg);
+__cdecl
+__MCF_gthr_do_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_union init_proc, void* arg);
+
 __asm__ (
-#  ifdef DLL_EXPORT
-".section \".drectve\"  \n\t"
-".ascii \" -export:\\\"__MCF_gthr_call_once_seh_take_over\\\"\"  \n\t"
-#  endif
 #if defined __i386__ || defined __amd64__
 /* This is required by Clang, where `-masm=intel` doesn't affect basic asm.  */
-".intel_syntax noprefix  \n\t"
+".intel_syntax noprefix  \n"
 #endif
 #if defined __i386__
 /* On x86, SEH is stack-based.  */
-".text  \n\t"
-".globl ___MCF_gthr_call_once_seh_take_over  \n\t"
-".def ___MCF_gthr_call_once_seh_take_over; .scl 2; .type 32; .endef  \n\t"
-"___MCF_gthr_call_once_seh_take_over:  \n\t"
+".globl ___MCF_gthr_do_call_once_seh_take_over  \n"
+".def ___MCF_gthr_do_call_once_seh_take_over; .scl 2; .type 32; .endef  \n"
+"___MCF_gthr_do_call_once_seh_take_over:  \n"
 /* The stack is used as follows:
  *
  *    -24: argument to subroutines
@@ -44,35 +40,33 @@ __asm__ (
  *     16: `arg`
  */
 #  define __MCF_SEH_ONCE_PTR_DISPLACEMENT   16
-"  push ebp                                                        \n\t"
-"  mov ebp, esp                                                    \n\t"
-"  sub esp, 24                                                     \n\t"
+"  push ebp  \n"
+"  mov ebp, esp  \n"
 /* Install an SEH handler.  */
-"  mov eax, DWORD PTR fs:[0]                                       \n\t"
-"  lea ecx, DWORD PTR [ebp - 8]                                    \n\t"
-"  mov DWORD PTR [ecx], eax                                        \n\t"
-"  mov DWORD PTR [ecx + 4], OFFSET _do_call_once_seh_uhandler      \n\t"
-"  mov DWORD PTR fs:[0], ecx                                       \n\t"
-/* Make the call `(*init_proc) (arg)`.  */
-"  mov eax, DWORD PTR [ebp + 12]                                   \n\t"
-"  mov ecx, DWORD PTR [ebp + 16]                                   \n\t"
-"  mov DWORD PTR [ebp - 24], ecx                                   \n\t"
-"  call eax                                                        \n\t"
+"  push OFFSET _do_call_once_seh_uhandler  \n"
+"  push fs:[0]  \n"
+"  mov fs:[0], esp  \n"
+/* Make the call `(*init_proc) (arg)`. The argument is passed both via the
+ * ECX register and on the stack, to allow both `__cdecl` and `__thiscall`
+ * functions to work properly.  */
+"  mov ecx, [ebp + 16]  \n"
+"  sub esp, 12  \n"
+"  push ecx  \n"
+"  call [ebp + 12]  \n"
 /* Dismantle the SEH handler.  */
-"  mov ecx, DWORD PTR [ebp - 8]                                    \n\t"
-"  mov DWORD PTR fs:[0], ecx                                       \n\t"
+"  add esp, 16  \n"
+"  pop fs:[0]  \n"
 /* Disarm the once flag with a tail call.  */
-"  leave                                                           \n\t"
-"  jmp __MCF_once_release                                          \n\t"
+"  leave  \n"
+"  jmp __MCF_once_release  \n"
 #else
 /* Otherwise, SEH is table-based. `@unwind` without `@except` works only on
  * x86-64 and not on ARM, so let's keep both for simplicity.  */
-".text  \n\t"
-".globl __MCF_gthr_call_once_seh_take_over  \n\t"
-".def __MCF_gthr_call_once_seh_take_over; .scl 2; .type 32; .endef   \n\t"
-"__MCF_gthr_call_once_seh_take_over:  \n\t"
-".seh_proc __MCF_gthr_call_once_seh_take_over  \n\t"
-".seh_handler do_call_once_seh_uhandler, @except, @unwind  \n\t"
+".globl __MCF_gthr_do_call_once_seh_take_over  \n"
+".def __MCF_gthr_do_call_once_seh_take_over; .scl 2; .type 32; .endef  \n"
+"__MCF_gthr_do_call_once_seh_take_over:  \n"
+".seh_proc __MCF_gthr_do_call_once_seh_take_over  \n"
+".seh_handler do_call_once_seh_uhandler, @except, @unwind  \n"
 #  if defined __amd64__
 /* The stack is used as follows:
  *
@@ -88,22 +82,24 @@ __asm__ (
  *     40: unused
  */
 #  define __MCF_SEH_ONCE_PTR_DISPLACEMENT   16
-"  push rbp                                                        \n\t"
-".seh_pushreg rbp                                                  \n\t"
-"  mov rbp, rsp                                                    \n\t"
-".seh_setframe rbp, 0                                              \n\t"
-"  sub rsp, 32                                                     \n\t"
-".seh_stackalloc 32                                                \n\t"
-".seh_endprologue                                                  \n\t"
+"  push rbp  \n"
+".seh_pushreg rbp  \n"
+"  mov rbp, rsp  \n"
+".seh_setframe rbp, 0  \n"
+"  sub rsp, 32  \n"
+".seh_stackalloc 32  \n"
+".seh_endprologue  \n"
 /* Stash `once` for the handler.  */
-"  mov QWORD PTR [rbp + 16], rcx                                   \n\t"
+"  mov [rbp + 16], rcx  \n"
 /* Make the call `(*init_proc) (arg)`.  */
-"  mov rcx, r8                                                     \n\t"
-"  call rdx                                                        \n\t"
-/* Disarm the once flag with a tail call.  */
-"  mov rcx, QWORD PTR [rbp + 16]                                   \n\t"
-"  leave                                                           \n\t"
-"  jmp _MCF_once_release                                           \n\t"
+"  mov rcx, r8  \n"
+"  call rdx  \n"
+/* Disarm the once flag with a tail call. The x64 stack unwinder recognizes
+ * `add rsp, SIZE` as the start of the epilogue.  */
+"  mov rcx, [rbp + 16]  \n"
+"  add rsp, 32  \n"
+"  pop rbp  \n"
+"  jmp _MCF_once_release  \n"
 #  elif defined __aarch64__
 /* The stack is used as follows:
  *
@@ -114,25 +110,25 @@ __asm__ (
  * ENT 32: establisher frame
  */
 #  define __MCF_SEH_ONCE_PTR_DISPLACEMENT   -16
-"  stp fp, lr, [sp, #-32]!                                         \n\t"
-".seh_save_fplr_x 32                                               \n\t"
-"  mov fp, sp                                                      \n\t"
-".seh_set_fp                                                       \n\t"
-".seh_endprologue                                                  \n\t"
+"  stp fp, lr, [sp, #-32]!  \n"
+".seh_save_fplr_x 32  \n"
+"  mov fp, sp  \n"
+".seh_set_fp  \n"
+".seh_endprologue  \n"
 /* Stash `once` for the handler.  */
-"  str x0, [sp, #16]                                               \n\t"
+"  str x0, [sp, #16]  \n"
 /* Make the call `(*init_proc) (arg)`.  */
-"  mov x0, x2                                                      \n\t"
-"  blr x1                                                          \n\t"
+"  mov x0, x2  \n"
+"  blr x1  \n"
 /* Disarm the once flag with a tail call.  */
-"  ldr x0, [sp, #16]                                               \n\t"
-".seh_startepilogue                                                \n\t"
-"  ldp fp, lr, [sp], #32                                           \n\t"
-".seh_save_fplr_x 32                                               \n\t"
-".seh_endepilogue                                                  \n\t"
-"  b _MCF_once_release                                             \n\t"
+"  ldr x0, [sp, #16]  \n"
+".seh_startepilogue  \n"
+"  ldp fp, lr, [sp], #32  \n"
+".seh_save_fplr_x 32  \n"
+".seh_endepilogue  \n"
+"  b _MCF_once_release  \n"
 #  endif
-".seh_endproc                                                      \n\t"
+".seh_endproc  \n"
 #endif
 );
 
@@ -151,6 +147,13 @@ do_call_once_seh_uhandler(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx
 
     /* Continue unwinding.  */
     return ExceptionContinueSearch;
+  }
+
+__MCF_DLLEXPORT
+void
+__MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_union init_proc, void* arg)
+  {
+    __MCF_gthr_do_call_once_seh_take_over(once, init_proc, arg);
   }
 
 __MCF_DLLEXPORT
