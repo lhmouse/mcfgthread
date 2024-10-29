@@ -12,7 +12,7 @@
 #include "xglobals.h"
 
 void
-__fastcall
+__cdecl
 __MCF_gthr_do_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_t init_proc, void* arg);
 
 __asm__ (
@@ -22,49 +22,43 @@ __asm__ (
 #endif
 #if defined __i386__
 /* On x86, SEH is stack-based.  */
-".globl @__MCF_gthr_do_call_once_seh_take_over@12  \n"
-".def @__MCF_gthr_do_call_once_seh_take_over@12; .scl 2; .type 32; .endef  \n"
-"@__MCF_gthr_do_call_once_seh_take_over@12:  \n"
+".globl ___MCF_gthr_do_call_once_seh_take_over  \n"
+".def ___MCF_gthr_do_call_once_seh_take_over; .scl 2; .type 32; .endef  \n"
+"___MCF_gthr_do_call_once_seh_take_over:  \n"
 /* The stack is used as follows:
  *
  *    -24: argument to subroutines
  *    -20: unused
- *    -16: establisher frame; pointer to previous frame
- *    -12: `do_call_once_seh_uhandler`
- *     -8: `once`
- *     -4: unused
+ *    -16: unused
+ *    -12: unused
+ *     -8: establisher frame; pointer to previous frame
+ *     -4: `do_call_once_seh_uhandler`
  * EBP  0: saved frame pointer
  *      4: return address
- * ENT  8: `arg`
+ * ENT  8: `once`
+ *     12: `init_proc`
+ *     16: `arg`
  */
-#  define __MCF_SEH_ONCE_PTR_DISPLACEMENT   8
+#  define __MCF_SEH_ONCE_PTR_DISPLACEMENT   16
 "  push ebp  \n"
 "  mov ebp, esp  \n"
-"  sub esp, 24  \n"
-/* Stash `once` for the handler.  */
-"  mov DWORD PTR [ebp - 8], ecx  \n"
 /* Install an SEH handler.  */
-"  mov eax, DWORD PTR fs:[0]  \n"
-"  lea ecx, DWORD PTR [ebp - 16]  \n"
-"  mov DWORD PTR [ecx], eax  \n"
-"  mov DWORD PTR [ecx + 4], OFFSET _do_call_once_seh_uhandler  \n"
-"  mov DWORD PTR fs:[0], ecx  \n"
+"  push OFFSET _do_call_once_seh_uhandler  \n"
+"  push fs:[0]  \n"
+"  mov fs:[0], esp  \n"
 /* Make the call `(*init_proc) (arg)`. The argument is passed both via the
  * ECX register and on the stack, to allow both `__cdecl` and `__thiscall`
  * functions to work properly.  */
-"  mov ecx, DWORD PTR [ebp + 8]  \n"
-"  mov DWORD PTR [ebp - 24], ecx  \n"
-"  call edx  \n"
+"  mov ecx, [ebp + 16]  \n"
+"  sub esp, 12  \n"
+"  push ecx  \n"
+"  call [ebp + 12]  \n"
 /* Dismantle the SEH handler.  */
-"  mov ecx, DWORD PTR [ebp - 16]  \n"
-"  mov DWORD PTR fs:[0], ecx  \n"
-/* Disarm the once flag.  */
-"  mov eax, DWORD PTR [ebp - 8]  \n"
-"  mov DWORD PTR [ebp - 24], eax  \n"
-"  call __MCF_once_release  \n"
-/* Destroy the frame and return.  */
+"  add esp, 16  \n"
+"  pop fs:[0]  \n"
+/* Disarm the once flag with a tail call.  */
 "  leave  \n"
-"  ret 4  \n"
+"  jmp __MCF_once_release  \n"
 #else
 /* Otherwise, SEH is table-based. `@unwind` without `@except` works only on
  * x86-64 and not on ARM, so let's keep both for simplicity.  */
