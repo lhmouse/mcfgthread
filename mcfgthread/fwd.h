@@ -15,8 +15,12 @@
 #include <limits.h>
 #include <intrin.h>
 
-#ifndef _WIN32_WINNT
-#  error Only Windows platforms are supported.
+#if !defined _WIN32_WINNT || (_WIN32_WINNT < 0x0601)
+#  error Please define `_WIN32_WINNT` to at least Windows 7.
+#endif
+
+#if defined __arm__ || defined _M_ARM
+#  error 32-bit ARM target is not supported.
 #endif
 
 /* Define compiler-specific stuff. In the case of clang-cl, prefer GNU
