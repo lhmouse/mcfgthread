@@ -96,13 +96,15 @@ __asm__ (
 ".seh_stackalloc 32  \n"
 ".seh_endprologue  \n"
 /* Stash `once` for the handler.  */
-"  mov QWORD PTR [rbp + 16], rcx  \n"
+"  mov [rbp + 16], rcx  \n"
 /* Make the call `(*init_proc) (arg)`.  */
 "  mov rcx, r8  \n"
 "  call rdx  \n"
-/* Disarm the once flag with a tail call.  */
-"  mov rcx, QWORD PTR [rbp + 16]  \n"
-"  leave  \n"
+/* Disarm the once flag with a tail call. The x64 stack unwinder recognizes
+ * `add rsp, SIZE` as the start of the epilogue.  */
+"  mov rcx, [rbp + 16]  \n"
+"  add rsp, 32  \n"
+"  pop rbp  \n"
 "  jmp _MCF_once_release  \n"
 #  elif defined __aarch64__
 /* The stack is used as follows:
