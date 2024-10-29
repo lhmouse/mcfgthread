@@ -20,7 +20,6 @@
 #include <winnt.h>
 #include <winternl.h>
 #include <winerror.h>
-#include <ntdef.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
