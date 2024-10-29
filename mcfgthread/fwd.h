@@ -30,7 +30,6 @@
 #  define __MCF_FN_PURE      __attribute__((__pure__))
 #  define __MCF_ASM_CALL(x)   __asm__(__MCF_S(__USER_LABEL_PREFIX__) #x)
 #  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
-#  define __MCF_UNREACHABLE   __builtin_unreachable()
 #else
 #  define __MCF_EX            /* unsupported */
 #  define __MCF_GNU_INLINE     __inline
@@ -41,7 +40,16 @@
 #  define __MCF_FN_PURE      __declspec(noalias)
 #  define __MCF_ASM_CALL(x)   /* unnecessary */
 #  define __MCF_ALIGNED(x)    __declspec(align(x))
-#  define __MCF_UNREACHABLE   __assume(0)
+#endif
+
+#ifdef __MCF_DEBUG
+#  define __MCF_UNREACHABLE   __MCF_runtime_failure(__MCF_EX __func__)
+#else
+#  ifdef __GNUC__
+#    define __MCF_UNREACHABLE   __builtin_unreachable()
+#  else
+#    define __MCF_UNREACHABLE   __assume(0)
+#  endif
 #endif
 
 #if defined _MSC_VER && defined __cplusplus
@@ -113,11 +121,6 @@
 #if defined __cplusplus && (__cplusplus >= 201402L)
 #  undef __MCF_CXX14
 #  define __MCF_CXX14(...)   __VA_ARGS__
-#endif
-
-#if defined __MCF_DEBUG
-#  undef __MCF_UNREACHABLE
-#  define __MCF_UNREACHABLE   (__debugbreak(), __MCF__Exit(668))
 #endif
 
 /* Common declarations start here.  */
@@ -224,11 +227,6 @@ typedef void __MCF_atexit_callback(void);
 
 /* Define the prototype for `call_once()`.  */
 typedef void __MCF_once_callback(void);
-
-/* Declare it here for `__MCF_ASSERT()`.  */
-__MCF_NEVER_RETURN
-void
-__MCF__Exit(int __status) __MCF_noexcept;
 
 /* Gets the last error number, like `GetLastError()`.  */
 __MCF_FWD_IMPORT __MCF_FN_PURE
