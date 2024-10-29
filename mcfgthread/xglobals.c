@@ -182,7 +182,7 @@ __MCF_gthread_initialize_globals(void)
 
     /* Generate the unique name for this process.  */
     static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
-    UNICODE_STRING gname = RTL_CONSTANT_STRING(gnbuffer);
+    UNICODE_STRING gname = __MCF_NT_STRING_INIT(gnbuffer);
     __MCF_ASSERT(gnbuffer[25] == L'*');
     ULONG pid = GetCurrentProcessId();
     do_encode_numeric_field(gnbuffer + 25, 8, pid, L"0123456789ABCDEF");
