@@ -27,18 +27,18 @@
 #include <shtypes.h>
 #include <wincon.h>
 
-#ifndef __MCF_XGLOBALS_IMPORT
-#  define __MCF_XGLOBALS_IMPORT
-#  define __MCF_XGLOBALS_INLINE  __MCF_GNU_INLINE
-#  define __MCF_XGLOBALS_READONLY   const
-#endif
-
 #if __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
 #  error Windows platforms are assumed to be little-endian.
 #endif
 
 #ifdef __cplusplus
 #  error This internal header is for C only.
+#endif
+
+#ifndef __MCF_XGLOBALS_IMPORT
+#  define __MCF_XGLOBALS_IMPORT
+#  define __MCF_XGLOBALS_INLINE  __MCF_GNU_INLINE
+#  define __MCF_XGLOBALS_READONLY   const
 #endif
 
 /* Hard-code these.  */
