@@ -15,7 +15,6 @@ void
 thread_proc(_MCF_thread* self)
   {
 #if defined __i386__ || defined __amd64__
-    __MCF_STATIC_ASSERT(sizeof(long double) > 8);
     static volatile long double eps = 0x0.000000000000001p0L;
     static volatile long double ep1 = 0x1.000000000000001p0L;
 
@@ -30,6 +29,9 @@ int
 main(void)
   {
     // Check we are running on a real x86 machine, not emulated on ARM64.
+    if(sizeof(long double) == sizeof(double))
+      return 77;
+
     HMODULE kernel32 = GetModuleHandleW(L"KERNEL32.DLL");
     if(kernel32) {
       typedef BOOL WINAPI IsWow64Process2_t(HANDLE, USHORT*, USHORT*);
