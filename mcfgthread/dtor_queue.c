@@ -92,9 +92,9 @@ __MCF_dtor_queue_remove(__MCF_dtor_queue* queue, void* dso)
 
       /* Search forwards and copy all elements not matching `dso`.  */
       if(dso)
-        while(++index != cur_q->__size)
+        while(++ index != cur_q->__size)
           if(dso != cur_q->__data[index].__dso)
-            cur_q->__data[new_size++] = cur_q->__data[index];
+            cur_q->__data[new_size ++] = cur_q->__data[index];
 
       /* Truncate the current block.  */
       count += cur_q->__size - new_size;
