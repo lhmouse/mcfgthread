@@ -461,7 +461,7 @@ typedef void __MCF_cxa_dtor_cdecl(void* __arg);
 #if defined __GNUC__ || defined __clang__
 /* Support both calling conventions with a transparent union.  */
 typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __arg);
-typedef union __MCF_cxa_dtor_any __MCF_cxa_dtor_any_t;
+typedef union __MCF_cxa_dtor_any __MCF_cxa_dtor_any_;
 union __MCF_C(__attribute__((__transparent_union__))) __MCF_cxa_dtor_any
   {
     __MCF_atexit_callback* __no_arg_ptr;
@@ -493,7 +493,7 @@ union __MCF_C(__attribute__((__transparent_union__))) __MCF_cxa_dtor_any
 #else
 /* Make these barely compile.  */
 typedef __MCF_cxa_dtor_cdecl __MCF_cxa_dtor_thiscall;
-typedef __MCF_cxa_dtor_cdecl* __MCF_cxa_dtor_any_t;
+typedef __MCF_cxa_dtor_cdecl* __MCF_cxa_dtor_any_;
 #endif
 
 /* Gets the last error number, like `GetLastError()`.  */

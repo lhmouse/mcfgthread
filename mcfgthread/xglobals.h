@@ -133,7 +133,7 @@ __MCF_seh_i386_cleanup(__MCF_seh_i386_node* const* ref)
  * properly.  */
 __MCF_ALWAYS_INLINE
 void
-__MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_t dtor, void* arg)
+__MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
   {
     /* Parameters are `EAX`, `EDX`, `ECX`, `ESP[4]`.  */
     int eax, edx;
@@ -155,7 +155,7 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_t dtor, void* arg)
 /* This works on x86_64 and ARM64.  */
 __MCF_ALWAYS_INLINE
 void
-__MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_t dtor, void* arg)
+__MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
   {
     (*(dtor.__cdecl_ptr)) (arg);
   }

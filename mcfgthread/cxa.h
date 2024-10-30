@@ -32,7 +32,7 @@ __MCF_cxa_guard_abort(int64_t* __guard) __MCF_noexcept;
 
 __MCF_CXA_IMPORT
 int
-__MCF_cxa_atexit(__MCF_cxa_dtor_any_t __dtor, void* __this, void* __dso) __MCF_noexcept;
+__MCF_cxa_atexit(__MCF_cxa_dtor_any_ __dtor, void* __this, void* __dso) __MCF_noexcept;
 
 __MCF_CXA_IMPORT
 int
@@ -40,7 +40,7 @@ __MCF_atexit(__MCF_atexit_callback* __func) __MCF_noexcept;
 
 __MCF_CXA_IMPORT
 int
-__MCF_cxa_at_quick_exit(__MCF_cxa_dtor_any_t __dtor, void* __this, void* __dso) __MCF_noexcept;
+__MCF_cxa_at_quick_exit(__MCF_cxa_dtor_any_ __dtor, void* __this, void* __dso) __MCF_noexcept;
 
 __MCF_CXA_IMPORT
 int
@@ -48,7 +48,7 @@ __MCF_at_quick_exit(__MCF_atexit_callback* __func) __MCF_noexcept;
 
 __MCF_CXA_IMPORT
 int
-__MCF_cxa_thread_atexit(__MCF_cxa_dtor_any_t __dtor, void* __this, void* __dso) __MCF_noexcept;
+__MCF_cxa_thread_atexit(__MCF_cxa_dtor_any_ __dtor, void* __this, void* __dso) __MCF_noexcept;
 
 __MCF_CXA_IMPORT
 int
