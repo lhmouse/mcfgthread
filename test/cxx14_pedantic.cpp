@@ -8,7 +8,7 @@
 #include "../mcfgthread/cxx11.hpp"
 
 #if __cplusplus < 201402L
-#  error Please compile this file as C++14.
+#  warning Please compile this file as C++14.
 #endif
 
 int
