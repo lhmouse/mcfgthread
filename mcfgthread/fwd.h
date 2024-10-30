@@ -293,42 +293,42 @@ __MCF_CXX(extern "C" {)
 
 #  define __MCF_TEB_LOAD_32_IMMEDIATE(out, offset)  \
       __asm__ volatile (  \
-         "ldr %w0, [x18, %c1]"  \
+         " ldr %w0, [x18, %c1] "  \
           : "=r"(*(out)) : "M"(offset))
 
 #  define __MCF_TEB_STORE_32_IMMEDIATE(offset, value)  \
       __asm__ volatile (  \
-         "str %w0, [x18, %c1]"  \
+         " str %w0, [x18, %c1] "  \
           : : "r"(value), "M"(offset))
 
 #  define __MCF_TEB_LOAD_32_INDEXED(out, offset, index)  \
       __asm__ volatile (  \
-         "ldr %w0, [x18, %x1, lsl #2]"  \
+         " ldr %w0, [x18, %x1, lsl #2] "  \
           : "=r"(*(out)) : "r"((offset) / 4U + (index)))
 
 #  define __MCF_TEB_STORE_32_INDEXED(offset, index, value)  \
       __asm__ volatile (  \
-         "str %w0, [x18, %x1, lsl #2]"  \
+         " str %w0, [x18, %x1, lsl #2] "  \
           : : "r"(value), "r"((offset) / 4U + (index)))
 
 #  define __MCF_TEB_LOAD_PTR_IMMEDIATE(out, offset)  \
       __asm__ volatile (  \
-         "ldr %0, [x18, %c1]"  \
+         " ldr %0, [x18, %c1] "  \
           : "=r"(*(out)) : "M"(offset))
 
 #  define __MCF_TEB_STORE_PTR_IMMEDIATE(offset, value)  \
       __asm__ volatile (  \
-         "str %0, [x18, %c1]"  \
+         " str %0, [x18, %c1] "  \
           : : "r"(value), "M"(offset))
 
 #  define __MCF_TEB_LOAD_PTR_INDEXED(out, offset, index)  \
       __asm__ volatile (  \
-         "ldr %0, [x18, %x1, lsl #3]"  \
+         " ldr %0, [x18, %x1, lsl #3] "  \
           : "=r"(*(out)) : "r"((offset) / 8U + (index)))
 
 #  define __MCF_TEB_STORE_PTR_INDEXED(offset, index, value)  \
       __asm__ volatile (  \
-         "str %0, [x18, %x1, lsl #3]"  \
+         " str %0, [x18, %x1, lsl #3] "  \
           : : "r"(value), "r"((offset) / 8U + (index)))
 
 #  define __MCF_64_32(x, y)  x
