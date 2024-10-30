@@ -322,7 +322,7 @@ extern decltype_TlsGetValue* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue;
  * by the current process with exclusive access, and whose name is generated from
  * its process ID. Additional randomness is introduced to prevent the name from
  * being predicted.  */
-extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY __MCF_g;
+extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY restrict __MCF_g;
 
 /* As `__MCF_crt_xglobals` is shared between all static and shared instances of
  * this library within a single process, we have to involve sort of versioning.  */

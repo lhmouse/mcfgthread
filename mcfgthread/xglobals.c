@@ -316,7 +316,7 @@ __MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
       case DLL_PROCESS_ATTACH:
         __MCF_gthread_initialize_globals();
         __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN | GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, instance, &dummy2));
-        __MCF_CHECK(VirtualProtect(&__MCF_g, sizeof(__MCF_g), PAGE_READONLY, &dummy1));
+        __MCF_CHECK(VirtualProtect((void*) &__MCF_g, sizeof(__MCF_g), PAGE_READONLY, &dummy1));
         break;
 
       case DLL_THREAD_DETACH:
@@ -370,4 +370,4 @@ decltype_TlsGetValue* __MCF_crt_TlsGetValue = __MCF_BAD_PTR;
  * all instances of this pointer in the same process should point to the
  * same memory. The initializer prevents it from being placed into the
  * `.bss` section.  */
-__MCF_crt_xglobals* __MCF_g = __MCF_BAD_PTR;
+__MCF_crt_xglobals* restrict __MCF_g = __MCF_BAD_PTR;
