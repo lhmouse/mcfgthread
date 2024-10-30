@@ -67,7 +67,7 @@ __asm__ (
 "__MCF_gthr_do_call_once_seh_take_over:  \n"
 ".seh_proc __MCF_gthr_do_call_once_seh_take_over  \n"
 ".seh_handler do_call_once_seh_uhandler, @except, @unwind  \n"
-#  if defined __amd64__
+#  if defined __amd64__ && !defined __arm64ec__
 /* The stack is used as follows:
  *
  *    -32: shadow slot for subroutines
@@ -100,7 +100,7 @@ __asm__ (
 "  add rsp, 32  \n"
 "  pop rbp  \n"
 "  jmp _MCF_once_release  \n"
-#  elif defined __aarch64__
+#  elif defined __aarch64__ || defined __arm64ec__
 /* The stack is used as follows:
  *
  *  SP  0: saved FP
