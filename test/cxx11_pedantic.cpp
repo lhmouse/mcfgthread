@@ -8,7 +8,7 @@
 #include "../mcfgthread/cxx11.hpp"
 
 #if __cplusplus < 201103L
-#  error Please compile this file as C++11.
+#  warning Please compile this file as C++11.
 #endif
 
 int
