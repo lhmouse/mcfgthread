@@ -204,40 +204,23 @@ typedef void __MCF_cxa_dtor_cdecl(void* __arg);
 
 #if defined __GNUC__ || defined __clang__
 /* Support both calling conventions with a transparent union.  */
+#  define __MCF_UNION_FIELD_(tag, type, x)  \
+     __MCF_CXX(__MCF_CXX11(constexpr) tag(type x##_) __MCF_noexcept  \
+       : x(x##_) { }) /* <= constructor / field => */ type x  /* no semicolon  */
 typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __arg);
 typedef union __MCF_cxa_dtor_any __MCF_cxa_dtor_any_;
 union __MCF_C(__attribute__((__transparent_union__))) __MCF_cxa_dtor_any
   {
-    __MCF_atexit_callback* __no_arg_ptr;
-    __MCF_cxa_dtor_cdecl* __cdecl_ptr;
-    __MCF_cxa_dtor_thiscall* __thiscall_ptr;
-
-    /* Unfortunately, transparent unions are not supported in C++, and have
-     * to be emulated with constructors.  */
-    __MCF_CXX(
-      __MCF_CXX11(constexpr)
-      __MCF_cxa_dtor_any(__MCF_atexit_callback* __xptr) __MCF_noexcept
-        : __no_arg_ptr(__xptr)
-        { })
-
-    __MCF_CXX(
-      __MCF_CXX11(constexpr)
-      __MCF_cxa_dtor_any(__MCF_cxa_dtor_cdecl* __xptr) __MCF_noexcept
-        : __cdecl_ptr(__xptr)
-        { })
-
-# ifdef __i386__
-    __MCF_CXX(
-      __MCF_CXX11(constexpr)
-      __MCF_cxa_dtor_any(__MCF_cxa_dtor_thiscall* __xptr) __MCF_noexcept
-        : __thiscall_ptr(__xptr)
-        { })
-# endif
+    __MCF_UNION_FIELD_(__MCF_cxa_dtor_any, __MCF_cxa_dtor_cdecl*, __cdecl_ptr);
+    __MCF_UNION_FIELD_(__MCF_cxa_dtor_any, __MCF_atexit_callback*, __no_arg_ptr);
+#  if defined __i386__
+    __MCF_UNION_FIELD_(__MCF_cxa_dtor_any, __MCF_cxa_dtor_thiscall*, __thiscall_ptr);
+#  endif
   };
 #else
 /* Make these barely compile.  */
-typedef __MCF_cxa_dtor_cdecl __MCF_cxa_dtor_thiscall;
-typedef __MCF_cxa_dtor_cdecl* __MCF_cxa_dtor_any_;
+typedef void __MCF_cxa_dtor_thiscall(void* __arg);
+typedef __MCF_cxa_dtor_thiscall* __MCF_cxa_dtor_any_;
 #endif
 
 /* Declare it here for `__MCF_ASSERT()`.  */
