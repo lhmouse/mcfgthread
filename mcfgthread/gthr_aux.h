@@ -59,11 +59,11 @@ __MCF_gthr_unonce(_MCF_once** __oncep) __MCF_noexcept;
  * FIXME: At the moment (2024-03-14) GCC does not support SEH on i686. */
 __MCF_GTHR_AUX_INLINE
 void
-__MCF_gthr_call_once_seh(_MCF_once* __once, __MCF_cxa_dtor_any_t __init_proc, void* __arg) __MCF_MAY_THROW;
+__MCF_gthr_call_once_seh(_MCF_once* __once, __MCF_cxa_dtor_any_ __init_proc, void* __arg) __MCF_MAY_THROW;
 
 __MCF_GTHR_AUX_IMPORT
 void
-__MCF_gthr_call_once_seh_take_over(_MCF_once* __once, __MCF_cxa_dtor_any_t __init_proc, void* __arg) __MCF_MAY_THROW;
+__MCF_gthr_call_once_seh_take_over(_MCF_once* __once, __MCF_cxa_dtor_any_ __init_proc, void* __arg) __MCF_MAY_THROW;
 
 /* This is a type-generic macro. `__init_proc` may be of any calling convention,
  * and may take an arbitrary pointer.  */
@@ -165,7 +165,7 @@ __MCF_gthr_unonce(_MCF_once** __oncep) __MCF_noexcept
 
 __MCF_GTHR_AUX_INLINE
 void
-__MCF_gthr_call_once_seh(_MCF_once* __once, __MCF_cxa_dtor_any_t __init_proc, void* __arg) __MCF_MAY_THROW
+__MCF_gthr_call_once_seh(_MCF_once* __once, __MCF_cxa_dtor_any_ __init_proc, void* __arg) __MCF_MAY_THROW
   {
     int __err = _MCF_once_wait(__once, __MCF_nullptr);
     if(__err == 0)
