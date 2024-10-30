@@ -46,9 +46,9 @@ __asm__ (
 "  push OFFSET _do_call_once_seh_uhandler  \n"
 "  push fs:[0]  \n"
 "  mov fs:[0], esp  \n"
-/* Make the call `(*init_proc) (arg)`. The argument is passed both via the
- * ECX register and on the stack, to allow both `__cdecl` and `__thiscall`
- * functions to work properly.  */
+/* Make the call `(*init_proc) (arg)`. The argument is passed
+ * both via the ECX register and on the stack, to allow both
+ * `__cdecl` and `__thiscall` functions to work properly.  */
 "  mov ecx, [ebp + 16]  \n"
 "  sub esp, 12  \n"
 "  push ecx  \n"
@@ -60,8 +60,9 @@ __asm__ (
 "  leave  \n"
 "  jmp __MCF_once_release  \n"
 #else
-/* Otherwise, SEH is table-based. `@unwind` without `@except` works only on
- * x86-64 and not on ARM, so let's keep both for simplicity.  */
+/* Otherwise, SEH is table-based. `@unwind` without `@except`
+ * works only on x86-64 and not on ARM, so let's keep both for
+ * simplicity.  */
 ".globl __MCF_gthr_do_call_once_seh_take_over  \n"
 ".def __MCF_gthr_do_call_once_seh_take_over; .scl 2; .type 32; .endef  \n"
 "__MCF_gthr_do_call_once_seh_take_over:  \n"
@@ -94,8 +95,8 @@ __asm__ (
 /* Make the call `(*init_proc) (arg)`.  */
 "  mov rcx, r8  \n"
 "  call rdx  \n"
-/* Disarm the once flag with a tail call. The x64 stack unwinder recognizes
- * `add rsp, SIZE` as the start of the epilogue.  */
+/* Disarm the once flag with a tail call. The x64 stack unwinder
+ * recognizes `add rsp, SIZE` as the start of the epilogue.  */
 "  mov rcx, [rbp + 16]  \n"
 "  add rsp, 32  \n"
 "  pop rbp  \n"
