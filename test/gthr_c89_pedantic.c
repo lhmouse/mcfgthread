@@ -25,7 +25,7 @@
 #include "../mcfgthread/tls.h"
 
 #if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 199901L)
-#  error Please compile this file as C89.
+#  warning Please compile this file as C89.
 #endif
 
 int

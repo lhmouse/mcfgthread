@@ -8,11 +8,11 @@
 #include "../mcfgthread/cxx11.hpp"
 
 #ifdef __EXCEPTIONS
-#  error -fno-exceptions
+#  warning -fno-exceptions
 #endif
 
 #ifdef __GXX_RTTI
-#  error -fno-rtti
+#  warning -fno-rtti
 #endif
 
 int
