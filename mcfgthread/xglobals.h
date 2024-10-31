@@ -169,9 +169,10 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ __dtor, void* __arg)
 /* This works on x86_64 and ARM64.  */
 __MCF_ALWAYS_INLINE
 void
-__MCF_invoke_cxa_dtor(__MCF_cxa_dtor_cdecl* __dtor, void* __arg)
+__MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ __dtor, void* __arg)
   {
-    (*__dtor) (__arg);
+    (*(__dtor.__cdecl_ptr)) (__arg);
+
   }
 #endif
 
