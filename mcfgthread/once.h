@@ -36,7 +36,7 @@ struct __MCF_once
  * state.  */
 __MCF_ONCE_INLINE
 void
-_MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT;
+_MCF_once_init(_MCF_once* __once) __MCF_noexcept;
 
 /* Attempts to lock a once-initialization flag.
  *
@@ -58,11 +58,11 @@ _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT;
  * returns 0 immediately.  */
 __MCF_ONCE_IMPORT
 int
-_MCF_once_wait_slow(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+_MCF_once_wait_slow(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_noexcept;
 
 __MCF_ONCE_INLINE
 int
-_MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
+_MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_noexcept;
 
 /* Cancels a once-initialization flag which shall be in the LOCKED state. If
  * the flag has not been locked already, the behavior is undefined.
@@ -72,7 +72,7 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT;
  * return 1.  */
 __MCF_ONCE_IMPORT
 void
-_MCF_once_abort(_MCF_once* __once) __MCF_NOEXCEPT;
+_MCF_once_abort(_MCF_once* __once) __MCF_noexcept;
 
 /* Releases a once-initialization flag which shall be in the LOCKED state. If
  * the flag has not been locked already, the behavior is undefined.
@@ -81,7 +81,7 @@ _MCF_once_abort(_MCF_once* __once) __MCF_NOEXCEPT;
  * are sleeping on this flag, whose calls to `_MCF_once_wait()` will return 0.  */
 __MCF_ONCE_IMPORT
 void
-_MCF_once_release(_MCF_once* __once) __MCF_NOEXCEPT;
+_MCF_once_release(_MCF_once* __once) __MCF_noexcept;
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
@@ -90,7 +90,7 @@ _MCF_once_release(_MCF_once* __once) __MCF_NOEXCEPT;
  * this file.  */
 __MCF_ONCE_INLINE
 void
-_MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT
+_MCF_once_init(_MCF_once* __once) __MCF_noexcept
   {
     _MCF_once __temp = __MCF_0_INIT;
     _MCF_atomic_store_pptr_rel(__once, &__temp);
@@ -98,7 +98,7 @@ _MCF_once_init(_MCF_once* __once) __MCF_NOEXCEPT
 
 __MCF_ONCE_INLINE
 int
-_MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_NOEXCEPT
+_MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt) __MCF_noexcept
   {
 #if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
     _MCF_once __old;

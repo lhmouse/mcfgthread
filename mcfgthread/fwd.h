@@ -83,7 +83,7 @@
 
 #define __MCF_C_DECLARATIONS_BEGIN
 #define __MCF_C_DECLARATIONS_END
-#define __MCF_NOEXCEPT
+#define __MCF_noexcept
 #define __MCF_nullptr   __MCF_IPTR_0
 
 #if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 199901L)
@@ -105,15 +105,15 @@
 #  define __MCF_C_DECLARATIONS_BEGIN   extern "C" {
 #  undef __MCF_C_DECLARATIONS_END
 #  define __MCF_C_DECLARATIONS_END   }
-#  undef __MCF_NOEXCEPT
-#  define __MCF_NOEXCEPT      throw()
+#  undef __MCF_noexcept
+#  define __MCF_noexcept      throw()
 #endif
 
 #if defined __cplusplus && (__cplusplus >= 201103L)
 #  undef __MCF_CXX11
 #  define __MCF_CXX11(...)   __VA_ARGS__
-#  undef __MCF_NOEXCEPT
-#  define __MCF_NOEXCEPT   noexcept
+#  undef __MCF_noexcept
+#  define __MCF_noexcept   noexcept
 #  undef __MCF_nullptr
 #  define __MCF_nullptr   nullptr
 #endif
@@ -186,78 +186,68 @@ typedef void _MCF_thread_procedure(_MCF_thread* __thrd);
 /* Define the prototype for destructors for `_MCF_tls_key_new()`.  */
 typedef void _MCF_tls_dtor(void* __ptr);
 
-/* Note: In the case of i386, the argument is passed both via the ECX register
- * and on the stack, to allow both `__cdecl` and `__thiscall` functions to work
- * properly. The function prototype is declared for compatibility with GCC.  */
-typedef void __MCF_cxa_dtor_cdecl(void* __arg);
-
-#if defined __i386__ && (defined __GNUC__ || defined __clang__)
-/* Support both calling conventions with a transparent union.  */
-typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __arg);
-typedef union __MCF_cxa_dtor_union __MCF_cxa_dtor_union;
-#  ifdef __cplusplus
-union __MCF_cxa_dtor_union
-#  else
-union __attribute__((__transparent_union__)) __MCF_cxa_dtor_union
-#  endif
-  {
-    __MCF_cxa_dtor_cdecl* __cdecl_ptr;
-    __MCF_cxa_dtor_thiscall* __thiscall_ptr;
-
-#  ifdef __cplusplus
-    /* Unfortunately, transparent unions are not supported in C++, and have
-     * to be emulated with constructors.  */
-    __MCF_CXX11(constexpr)
-    __MCF_cxa_dtor_union(__MCF_cxa_dtor_cdecl* __xptr) __MCF_NOEXCEPT
-      : __cdecl_ptr(__xptr)  { }
-
-    __MCF_CXX11(constexpr)
-    __MCF_cxa_dtor_union(__MCF_cxa_dtor_thiscall* __xptr) __MCF_NOEXCEPT
-      : __thiscall_ptr(__xptr)  { }
-#  endif
-  };
-#else
-/* Make these barely compile.  */
-typedef __MCF_cxa_dtor_cdecl __MCF_cxa_dtor_thiscall;
-typedef __MCF_cxa_dtor_cdecl* __MCF_cxa_dtor_union;
-#endif
-
 /* Define the prototype for `atexit()` and `at_quick_exit()`.  */
 typedef void __MCF_atexit_callback(void);
 
 /* Define the prototype for `call_once()`.  */
 typedef void __MCF_once_callback(void);
 
+/* Note: In the case of i386, the argument is passed both via the ECX register
+ * and on the stack, to allow both `__cdecl` and `__thiscall` functions to work
+ * properly. The function prototype is declared for compatibility with GCC.  */
+typedef void __MCF_cxa_dtor_cdecl(void* __arg);
+
+#if defined __GNUC__ || defined __clang__
+/* Support both calling conventions with a transparent union.  */
+#  define __MCF_UNION_FIELD_(tag, type, x)  \
+     __MCF_CXX(__MCF_CXX11(constexpr) tag(type x##_) __MCF_noexcept  \
+       : x(x##_) { }) /* <= constructor / field => */ type x  /* no semicolon  */
+typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __arg);
+typedef union __MCF_cxa_dtor_any __MCF_cxa_dtor_any_;
+union __MCF_C(__attribute__((__transparent_union__))) __MCF_cxa_dtor_any
+  {
+    __MCF_UNION_FIELD_(__MCF_cxa_dtor_any, __MCF_cxa_dtor_cdecl*, __cdecl_ptr);
+    __MCF_UNION_FIELD_(__MCF_cxa_dtor_any, __MCF_atexit_callback*, __no_arg_ptr);
+#  if defined __i386__
+    __MCF_UNION_FIELD_(__MCF_cxa_dtor_any, __MCF_cxa_dtor_thiscall*, __thiscall_ptr);
+#  endif
+  };
+#else
+/* Make these barely compile.  */
+typedef void __MCF_cxa_dtor_thiscall(void* __arg);
+typedef __MCF_cxa_dtor_thiscall* __MCF_cxa_dtor_any_;
+#endif
+
 /* Gets the last error number, like `GetLastError()`.  */
 __MCF_FWD_IMPORT __MCF_FN_PURE
 uint32_t
-_MCF_get_win32_error(void) __MCF_NOEXCEPT;
+_MCF_get_win32_error(void) __MCF_noexcept;
 
 /* Gets the system page size, which is usually 4KiB or 8KiB.  */
 __MCF_FWD_IMPORT __MCF_FN_CONST
 size_t
-_MCF_get_page_size(void) __MCF_NOEXCEPT;
+_MCF_get_page_size(void) __MCF_noexcept;
 
 /* Gets the number of logical processors in the current group.  */
 __MCF_FWD_IMPORT __MCF_FN_CONST
 size_t
-_MCF_get_processor_count(void) __MCF_NOEXCEPT;
+_MCF_get_processor_count(void) __MCF_noexcept;
 
 /* Gets the mask of active processors. Each bit 1 denotes a processor that
  * has been configured into the system.  */
 __MCF_FWD_IMPORT __MCF_FN_CONST
 uintptr_t
-_MCF_get_active_processor_mask(void) __MCF_NOEXCEPT;
+_MCF_get_active_processor_mask(void) __MCF_noexcept;
 
 /* Declare some helper functions.  */
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
-_MCF_minz(size_t __x, size_t __y) __MCF_NOEXCEPT
+_MCF_minz(size_t __x, size_t __y) __MCF_noexcept
   { return (__y < __x) ? __y : __x;  }
 
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
-_MCF_maxz(size_t __x, size_t __y) __MCF_NOEXCEPT
+_MCF_maxz(size_t __x, size_t __y) __MCF_noexcept
   { return (__x < __y) ? __y : __x;  }
 
 __MCF_FWD_IMPORT __MCF_NEVER_RETURN __MCF_NEVER_INLINE

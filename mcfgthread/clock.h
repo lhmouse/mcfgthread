@@ -19,23 +19,23 @@ __MCF_C_DECLARATIONS_BEGIN
 /* Get the number of milliseconds since 1970-01-01T00:00:00Z.  */
 __MCF_CLOCK_IMPORT
 int64_t
-_MCF_utc_now(void) __MCF_NOEXCEPT;
+_MCF_utc_now(void) __MCF_noexcept;
 
 __MCF_CLOCK_IMPORT
 double
-_MCF_hires_utc_now(void) __MCF_NOEXCEPT;
+_MCF_hires_utc_now(void) __MCF_noexcept;
 
 /* Get the number of milliseconds since system startup.
  * This value is monotonic.  */
 __MCF_CLOCK_IMPORT
 int64_t
-_MCF_tick_count(void) __MCF_NOEXCEPT;
+_MCF_tick_count(void) __MCF_noexcept;
 
 /* Get the value of the performance counter in milliseconds.
  * This value is monotonic.  */
 __MCF_CLOCK_IMPORT
 double
-_MCF_perf_counter(void) __MCF_NOEXCEPT;
+_MCF_perf_counter(void) __MCF_noexcept;
 
 __MCF_C_DECLARATIONS_END
 #endif  /* __MCFGTHREAD_CLOCK_  */

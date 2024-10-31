@@ -110,7 +110,7 @@ typedef void __stdcall decltype_QueryInterruptTime(ULONGLONG*);
 __MCF_XGLOBALS_IMPORT
 EXCEPTION_DISPOSITION
 __cdecl
-__MCF_seh_top(EXCEPTION_RECORD* __rec, PVOID __estab_frame, CONTEXT* __ctx, PVOID __disp_ctx) __MCF_NOEXCEPT;
+__MCF_seh_top(EXCEPTION_RECORD* __rec, PVOID __estab_frame, CONTEXT* __ctx, PVOID __disp_ctx) __MCF_noexcept;
 
 #if defined __i386__
 /* On x86, SEH is stack-based.  */
@@ -124,7 +124,7 @@ struct __MCF_seh_i386_node
 
 __MCF_ALWAYS_INLINE
 __MCF_seh_i386_node*
-__MCF_seh_i386_install(__MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
+__MCF_seh_i386_install(__MCF_seh_i386_node* __seh_node) __MCF_noexcept
   {
     __asm__ volatile ("mov %0, fs:[0]" : "=r"(__seh_node->__next));
     __seh_node->__filter = (DWORD) __MCF_seh_top;
@@ -134,7 +134,7 @@ __MCF_seh_i386_install(__MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
 
 __MCF_ALWAYS_INLINE
 void
-__MCF_seh_i386_cleanup(__MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
+__MCF_seh_i386_cleanup(__MCF_seh_i386_node* __seh_node) __MCF_noexcept
   {
     __asm__ volatile ("mov fs:[0], %0" : : "r"(__seh_node->__next));
   }
@@ -153,7 +153,7 @@ __MCF_seh_i386_cleanup(__MCF_seh_i386_node* __seh_node) __MCF_NOEXCEPT
  * properly.  */
 __MCF_ALWAYS_INLINE
 void
-__MCF_invoke_cxa_dtor(__MCF_cxa_dtor_union __dtor, void* __arg)
+__MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ __dtor, void* __arg)
   {
     /* Parameters are `EAX`, `EDX`, `ECX`, `ESP[4]`.  */
     typedef void __dual_dtor_t(int, int, void*, void*) __attribute__((__regparm__(3)));
@@ -186,87 +186,87 @@ struct __MCF_winnt_timeout
 
 __MCF_XGLOBALS_IMPORT
 void
-__MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* __to, const int64_t* __ms_opt) __MCF_NOEXCEPT;
+__MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* __to, const int64_t* __ms_opt) __MCF_noexcept;
 
 __MCF_XGLOBALS_IMPORT
 void
-__MCF_adjust_winnt_timeout_v3(__MCF_winnt_timeout* __to) __MCF_NOEXCEPT;
+__MCF_adjust_winnt_timeout_v3(__MCF_winnt_timeout* __to) __MCF_noexcept;
 
 /* Note this function is subject to tail-call optimization.  */
 __MCF_XGLOBALS_IMPORT
 size_t
-__MCF_batch_release_common(const void* __key, size_t __count) __MCF_NOEXCEPT;
+__MCF_batch_release_common(const void* __key, size_t __count) __MCF_noexcept;
 
 /* Copy a block of memory forward, like `memcpy()`.  */
 __MCF_XGLOBALS_INLINE
 void*
 __cdecl
-__MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
+__MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_noexcept;
 
 /* Copy a block of memory backward.  */
 __MCF_XGLOBALS_INLINE
 void*
 __cdecl
-__MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT;
+__MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_noexcept;
 
 /* Fill a block of memory with the given byte, like `memset()`.  */
 __MCF_XGLOBALS_INLINE
 void*
 __cdecl
-__MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT;
+__MCF_mfill(void* __dst, int __val, size_t __size) __MCF_noexcept;
 
 /* Fill a block of memory with zeroes, like `bzero()`.  */
 __MCF_XGLOBALS_INLINE
 void*
 __cdecl
-__MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT;
+__MCF_mzero(void* __dst, size_t __size) __MCF_noexcept;
 
 /* Allocate a block of zeroed memory, like `calloc()`.  */
 __MCF_XGLOBALS_INLINE
 void*
-__MCF_malloc_0(size_t __size) __MCF_NOEXCEPT __attribute__((__warn_unused_result__, __malloc__, __alloc_size__(1)));
+__MCF_malloc_0(size_t __size) __MCF_noexcept __attribute__((__warn_unused_result__, __malloc__, __alloc_size__(1)));
 
 /* Re-allocate a block of memory, like `realloc()`. If the existent
  * block should be extended, vacuum bytes are filled with zeroes.  */
 __MCF_XGLOBALS_INLINE
 void*
-__MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT __attribute__((__warn_unused_result__, __alloc_size__(2)));
+__MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_noexcept __attribute__((__warn_unused_result__, __alloc_size__(2)));
 
 /* Allocate a copy of a block of memory, like `malloc()` followed by
  * `memcpy()`.  */
 __MCF_XGLOBALS_INLINE
 void*
-__MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT __attribute__((__warn_unused_result__, __alloc_size__(2)));
+__MCF_malloc_copy(const void* __data, size_t __size) __MCF_noexcept __attribute__((__warn_unused_result__, __alloc_size__(2)));
 
 /* Get the size of an allocated block, like `malloc_usable_size()`.  */
 __MCF_XGLOBALS_INLINE
 size_t
-__MCF_msize(const void* __ptr) __MCF_NOEXCEPT __attribute__((__pure__));
+__MCF_msize(const void* __ptr) __MCF_noexcept __attribute__((__pure__));
 
 /* Free a block of memory, like `free()`.  */
 __MCF_XGLOBALS_INLINE
 void
-__MCF_mfree(void* __ptr_opt) __MCF_NOEXCEPT;
+__MCF_mfree(void* __ptr_opt) __MCF_noexcept;
 
 /* These functions set the last error code and return the second argument.
  * They should be subject to tail-call optimization.  */
 __MCF_XGLOBALS_IMPORT
 int
-__MCF_win32_error_i(DWORD __code, int __val) __MCF_NOEXCEPT;
+__MCF_win32_error_i(DWORD __code, int __val) __MCF_noexcept;
 
 __MCF_XGLOBALS_IMPORT
 void*
-__MCF_win32_error_p(DWORD __code, void* __ptr) __MCF_NOEXCEPT;
+__MCF_win32_error_p(DWORD __code, void* __ptr) __MCF_noexcept;
 
 /* These functions are declared here for the sake of completeness, and are not
  * meant to be called directly.  */
 __MCF_XGLOBALS_IMPORT
 void
-__MCF_run_dtors_at_quick_exit(void* __dso) __MCF_NOEXCEPT;
+__MCF_run_dtors_at_quick_exit(void* __dso) __MCF_noexcept;
 
 __MCF_XGLOBALS_IMPORT
 void
-__MCF_run_dtors_atexit(void* __dso) __MCF_NOEXCEPT;
+__MCF_run_dtors_atexit(void* __dso) __MCF_noexcept;
 
 /* Declare global data.  */
 typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
@@ -338,7 +338,7 @@ extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY __MCF_g;
  * this file.  */
 __MCF_ALWAYS_INLINE
 NTSTATUS
-__MCF_keyed_event_wait(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
+__MCF_keyed_event_wait(const void* __key, const LARGE_INTEGER* __timeout) __MCF_noexcept
   {
     NTSTATUS __status = NtWaitForKeyedEvent(NULL, (PVOID) __key, 0, (LARGE_INTEGER*) __timeout);
     __MCF_ASSERT_NT(__status);
@@ -347,7 +347,7 @@ __MCF_keyed_event_wait(const void* __key, const LARGE_INTEGER* __timeout) __MCF_
 
 __MCF_ALWAYS_INLINE
 NTSTATUS
-__MCF_keyed_event_signal(const void* __key, const LARGE_INTEGER* __timeout) __MCF_NOEXCEPT
+__MCF_keyed_event_signal(const void* __key, const LARGE_INTEGER* __timeout) __MCF_noexcept
   {
     NTSTATUS __status = NtReleaseKeyedEvent(NULL, (PVOID) __key, 0, (LARGE_INTEGER*) __timeout);
     __MCF_ASSERT_NT(__status);
@@ -356,7 +356,7 @@ __MCF_keyed_event_signal(const void* __key, const LARGE_INTEGER* __timeout) __MC
 
 __MCF_ALWAYS_INLINE
 void
-__MCF_close_handle(__MCF_HANDLE __handle) __MCF_NOEXCEPT
+__MCF_close_handle(__MCF_HANDLE __handle) __MCF_noexcept
   {
     NTSTATUS __status = NtClose(__handle);
     __MCF_ASSERT_NT(__status);
@@ -365,7 +365,7 @@ __MCF_close_handle(__MCF_HANDLE __handle) __MCF_NOEXCEPT
 __MCF_XGLOBALS_INLINE
 void*
 __cdecl
-__MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
+__MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_noexcept
   {
     __MCF_ASSERT((uintptr_t) __dst - (uintptr_t) __src >= __size);
 #if defined __i386__ || defined __amd64__
@@ -385,7 +385,7 @@ __MCF_mcopy(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
 __MCF_XGLOBALS_INLINE
 void*
 __cdecl
-__MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCEPT
+__MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_noexcept
   {
     __MCF_ASSERT((uintptr_t) __src - (uintptr_t) __dst >= __size);
 #if defined __i386__ || defined __amd64__
@@ -409,7 +409,7 @@ __MCF_mcopy_backward(void* __dst, const void* __src, size_t __size) __MCF_NOEXCE
 __MCF_XGLOBALS_INLINE
 void*
 __cdecl
-__MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
+__MCF_mfill(void* __dst, int __val, size_t __size) __MCF_noexcept
   {
 #if defined __i386__ || defined __amd64__
     PVOID __edi, __ecx;
@@ -428,7 +428,7 @@ __MCF_mfill(void* __dst, int __val, size_t __size) __MCF_NOEXCEPT
 __MCF_XGLOBALS_INLINE
 void*
 __cdecl
-__MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
+__MCF_mzero(void* __dst, size_t __size) __MCF_noexcept
   {
 #if defined __i386__ || defined __amd64__
     PVOID __edi, __ecx;
@@ -446,7 +446,7 @@ __MCF_mzero(void* __dst, size_t __size) __MCF_NOEXCEPT
 
 __MCF_XGLOBALS_INLINE
 void*
-__MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
+__MCF_malloc_0(size_t __size) __MCF_noexcept
   {
     void* __ptr = HeapAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY, __size);
     return __ptr;
@@ -454,7 +454,7 @@ __MCF_malloc_0(size_t __size) __MCF_NOEXCEPT
 
 __MCF_XGLOBALS_INLINE
 void*
-__MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT
+__MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_noexcept
   {
     void* __ptr = HeapReAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY, *__pptr, __size);
     if(__ptr)
@@ -464,7 +464,7 @@ __MCF_mrealloc_0(void** __pptr, size_t __size) __MCF_NOEXCEPT
 
 __MCF_XGLOBALS_INLINE
 void*
-__MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
+__MCF_malloc_copy(const void* __data, size_t __size) __MCF_noexcept
   {
     void* __ptr = HeapAlloc(__MCF_crt_heap, 0, __size);
     if(__ptr)
@@ -474,7 +474,7 @@ __MCF_malloc_copy(const void* __data, size_t __size) __MCF_NOEXCEPT
 
 __MCF_XGLOBALS_INLINE
 size_t
-__MCF_msize(const void* __ptr) __MCF_NOEXCEPT
+__MCF_msize(const void* __ptr) __MCF_noexcept
   {
     size_t __size = HeapSize(__MCF_crt_heap, 0, __ptr);
     __MCF_ASSERT(__size != (size_t) -1);
@@ -483,7 +483,7 @@ __MCF_msize(const void* __ptr) __MCF_NOEXCEPT
 
 __MCF_XGLOBALS_INLINE
 void
-__MCF_mfree(void* __ptr_opt) __MCF_NOEXCEPT
+__MCF_mfree(void* __ptr_opt) __MCF_noexcept
   {
     if(!__ptr_opt)
       return;
