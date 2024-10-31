@@ -27,37 +27,40 @@ __asm__ (
 "___MCF_gthr_do_call_once_seh_take_over:  \n"
 /* The stack is used as follows:
  *
- *    -24: argument to subroutines
- *    -20: unused
+ *    -20: argument to subroutines
  *    -16: unused
  *    -12: unused
  *     -8: establisher frame; pointer to previous frame
  *     -4: `do_call_once_seh_uhandler`
  * EBP  0: saved frame pointer
- *      4: return address
- * ENT  8: `once`
- *     12: `init_proc`
- *     16: `arg`
+ *      4: saved ESI
+ *      8: return address
+ * ENT 12: `once`
+ *     16: `init_proc`
+ *     20: `arg`
  */
-#  define __MCF_SEH_ONCE_PTR_DISPLACEMENT   16
+#  define __MCF_SEH_ONCE_PTR_DISPLACEMENT   20
+"  push esi  \n"
 "  push ebp  \n"
 "  mov ebp, esp  \n"
 /* Install an SEH handler.  */
+"  xor esi, esi  \n"
 "  push OFFSET _do_call_once_seh_uhandler  \n"
-"  push fs:[0]  \n"
-"  mov fs:[0], esp  \n"
+"  push fs:[esi]  \n"
+"  mov fs:[esi], esp  \n"
 /* Make the call `(*init_proc) (arg)`. The argument is passed
  * both via the ECX register and on the stack, to allow both
  * `__cdecl` and `__thiscall` functions to work properly.  */
-"  mov ecx, [ebp + 16]  \n"
-"  sub esp, 12  \n"
+"  mov ecx, [ebp + 20]  \n"
+"  sub esp, 8  \n"
 "  push ecx  \n"
-"  call [ebp + 12]  \n"
+"  call [ebp + 16]  \n"
+"  add esp, 12  \n"
 /* Dismantle the SEH handler.  */
-"  add esp, 16  \n"
-"  pop fs:[0]  \n"
+"  pop fs:[esi]  \n"
 /* Disarm the once flag with a tail call.  */
 "  leave  \n"
+"  pop esi  \n"
 "  jmp __MCF_once_release  \n"
 #else
 /* Otherwise, SEH is table-based. `@unwind` without `@except`
