@@ -377,18 +377,26 @@ __MCF_CXX(extern "C" {)
 /* These are necessary when the header is compiled as C89 or C++98. The check
  * for `_LP64` is for Cygwin and MSYS2.  */
 #ifdef _LP64
-#  define __MCF_INT64    long
-#  define __MCF_INTPTR   long
+#  define __MCF_INT64_    long
+#  define __MCF_INTPTR_   long
 #else
-#  define __MCF_INT64    long long
-#  define __MCF_INTPTR   __MCF_64_32(long long, int)
+#  define __MCF_INT64_    long long
+#  define __MCF_INTPTR_   __MCF_64_32(long long, int)
 #endif
 
+typedef signed char int8_t;
+typedef short int16_t;
+typedef int int32_t;
+typedef __MCF_INT64_ int64_t;
+typedef __MCF_INTPTR_ intptr_t;
+
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned int uint32_t;
+typedef unsigned __MCF_INT64_ uint64_t;
+typedef unsigned __MCF_INTPTR_ uintptr_t;
+
 #if !defined LLONG_MAX
-typedef __MCF_INT64 int64_t;
-typedef __MCF_INTPTR intptr_t;
-typedef unsigned __MCF_INT64 uint64_t;
-typedef unsigned __MCF_INTPTR uintptr_t;
 #  define LLONG_MAX  0x7FFFFFFFFFFFFFFFL
 #  define LLONG_MIN  (-0x7FFFFFFFFFFFFFFFL-1)
 #  define ULLONG_MAX  0xFFFFFFFFFFFFFFFFUL
