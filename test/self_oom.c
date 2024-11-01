@@ -13,6 +13,7 @@
 #define NTHREADS  64U
 static HANDLE threads[NTHREADS];
 
+#if !defined __CYGWIN__
 static
 DWORD
 __stdcall
@@ -25,6 +26,7 @@ thread_proc(void* arg)
     fprintf(stderr, "thread %d quitting\n", _MCF_thread_self_tid());
     return 0;
   }
+#endif
 
 int
 main(void)

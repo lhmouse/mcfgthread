@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-if ! grep -Eoi '^mingw' /proc/version &>/dev/null
+if ! grep -Eoi '^(mingw|msys|cygwin)' /proc/version &>/dev/null
 then
   _cross_file='--cross-file meson.cross.x86_64-w64-mingw32'
 fi

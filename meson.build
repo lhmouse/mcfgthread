@@ -349,12 +349,17 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
       version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
       install: true)
 
-lib_mcfgthread_a = static_library('mcfgthread',
-      c_pch: 'mcfgthread/xprecompiled.h',
-      c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables' ],
-      sources: [ mcfgthread_src_min, mcfgthread_src_ex, ],
-      dependencies: [ dep_kernel32, dep_ntdll ],
-      install: true)
+if host_machine.system() == 'cygwin'
+  warning('Static linking is not supported on Cygwin or MSYS2.')
+  lib_mcfgthread_a = lib_mcfgthread_dll
+else
+  lib_mcfgthread_a = static_library('mcfgthread',
+        c_pch: 'mcfgthread/xprecompiled.h',
+        c_args: [ '-ffreestanding', '-fasynchronous-unwind-tables' ],
+        sources: [ mcfgthread_src_min, mcfgthread_src_ex, ],
+        dependencies: [ dep_kernel32, dep_ntdll ],
+        install: true)
+endif
 
 import('pkgconfig').generate(lib_mcfgthread_dll,
       name: 'mcfgthread',

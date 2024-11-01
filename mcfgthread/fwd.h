@@ -374,7 +374,26 @@ __MCF_CXX(extern "C" {)
 #define __MCF_0_INIT           { __MCF_C(0) }
 #define __MCF_SET_IF(x, ...)    ((void) ((x) && (*(x) = (__VA_ARGS__))))
 
-/* These are necessary when the header is compiled as C89 or C++98.  */
+/* These are necessary when the header is compiled as C89 or C++98. The check
+ * for `_LP64` is for Cygwin and MSYS2.  */
+#ifdef _LP64
+#  define __MCF_INT64    long
+#  define __MCF_INTPTR   long
+#else
+#  define __MCF_INT64    long long
+#  define __MCF_INTPTR   __MCF_64_32(long long, int)
+#endif
+
+#if !defined LLONG_MAX
+typedef __MCF_INT64 int64_t;
+typedef __MCF_INTPTR intptr_t;
+typedef unsigned __MCF_INT64 uint64_t;
+typedef unsigned __MCF_INTPTR uintptr_t;
+#  define LLONG_MAX  0x7FFFFFFFFFFFFFFFL
+#  define LLONG_MIN  (-0x7FFFFFFFFFFFFFFFL-1)
+#  define ULLONG_MAX  0xFFFFFFFFFFFFFFFFUL
+#endif
+
 #define __MCF_PTR_BITS    __MCF_64_32(64, 32)
 #define __MCF_IPTR_MIN    __MCF_64_32(LLONG_MIN, INT_MIN)
 #define __MCF_IPTR_0      __MCF_64_32(0LL, 0)
