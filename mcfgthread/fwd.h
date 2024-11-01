@@ -15,7 +15,9 @@
 #include <limits.h>
 #include <intrin.h>
 
-#if !defined _WIN32_WINNT || (_WIN32_WINNT < 0x0601)
+#if !defined _WIN32_WINNT
+#  define _WIN32_WINNT  0x0601
+#elif _WIN32_WINNT < 0x0601
 #  error Please define `_WIN32_WINNT` to at least Windows 7.
 #endif
 
