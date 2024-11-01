@@ -560,7 +560,9 @@ __MCF_is_process_shutting_down(void)
 
 /* Create a named section of memory.
  * https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwcreatesection  */
-NTSYSAPI NTSTATUS NTAPI NtCreateSection(HANDLE* OutHandle, ACCESS_MASK DesiredAccess, OBJECT_ATTRIBUTES* Attributes, LARGE_INTEGER* MaximumSize, ULONG Protection, ULONG Allocation, HANDLE File);
+NTSYSAPI NTSTATUS NTAPI NtCreateSection(HANDLE* OutHandle, ACCESS_MASK DesiredAccess,
+                                        OBJECT_ATTRIBUTES* Attributes, LARGE_INTEGER* MaximumSize,
+                                        ULONG Protection, ULONG Allocation, HANDLE File);
 
 __MCF_ALWAYS_INLINE
 HANDLE
@@ -574,7 +576,9 @@ __MCF_create_named_section(OBJECT_ATTRIBUTES* Attributes, LONGLONG MaximumSize)
 
 /* Creates another handle to an object.
  * https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-zwduplicateobject  */
-NTSYSAPI NTSTATUS NTAPI NtDuplicateObject(HANDLE SourceProcess, HANDLE SourceHandle, HANDLE TargetProcess, HANDLE* TargetHandle, ACCESS_MASK DesiredAccess, ULONG HandleAttributes, ULONG Options);
+NTSYSAPI NTSTATUS NTAPI NtDuplicateObject(HANDLE SourceProcess, HANDLE SourceHandle, HANDLE TargetProcess,
+                                          HANDLE* TargetHandle, ACCESS_MASK DesiredAccess,
+                                          ULONG HandleAttributes, ULONG Options);
 
 __MCF_ALWAYS_INLINE
 HANDLE
@@ -600,7 +604,9 @@ __MCF_close_handle(HANDLE Handle)
 
 /* Maps a named section of memory into the virtual address space.
  * https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwmapviewofsection  */
-NTSYSAPI NTSTATUS NTAPI NtMapViewOfSection(HANDLE Section, HANDLE Process, PVOID* BaseAddress, ULONG_PTR ZeroBits, SIZE_T CommitSize, LARGE_INTEGER* Offset, SIZE_T* ViewSize, UINT SectionInherit, ULONG Allocation, ULONG Protection);
+NTSYSAPI NTSTATUS NTAPI NtMapViewOfSection(HANDLE Section, HANDLE Process, PVOID* BaseAddress, ULONG_PTR ZeroBits,
+                                           SIZE_T CommitSize, LARGE_INTEGER* Offset, SIZE_T* ViewSize,
+                                           UINT SectionInherit, ULONG Allocation, ULONG Protection);
 
 __MCF_ALWAYS_INLINE
 void
@@ -608,7 +614,8 @@ __MCF_map_view_of_section(HANDLE Section, void** BaseAddress, size_t* ViewSize, 
   {
     HANDLE process = GetCurrentProcess();
     UINT inherit = Inheritable ? 1U : 2U;  /* ViewShare : ViewUnmap */
-    NTSTATUS status = NtMapViewOfSection(Section, process, BaseAddress, 0, 0, __MCF_nullptr, (SIZE_T*) ViewSize, inherit, 0, PAGE_READWRITE);
+    NTSTATUS status = NtMapViewOfSection(Section, process, BaseAddress, 0, 0, __MCF_nullptr,
+                                         (SIZE_T*) ViewSize, inherit, 0, PAGE_READWRITE);
     __MCF_ASSERT(NT_SUCCESS(status));
   }
 
@@ -682,7 +689,8 @@ __MCF_keyed_event_signal(const void* Key, const __MCF_winnt_timeout* Timeout)
 /* Sends a hard-error LPC message to CSRSS.EXE. This function is useful in a DLL
  * entry-point function or a TLS callback, where it is not safe to make a call
  * to `MessageBox()`.  */
-NTSYSAPI NTSTATUS NTAPI NtRaiseHardError(NTSTATUS Status, ULONG NumberOfParameters, ULONG UnicodeStringParameterMask, ULONG_PTR* Parameters, ULONG ResponseOption, ULONG* Response);
+NTSYSAPI NTSTATUS NTAPI NtRaiseHardError(NTSTATUS Status, ULONG NumberOfParameters, ULONG UnicodeStringParameterMask,
+                                         ULONG_PTR* Parameters, ULONG ResponseOption, ULONG* Response);
 
 __MCF_ALWAYS_INLINE
 int

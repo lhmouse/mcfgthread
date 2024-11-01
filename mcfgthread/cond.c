@@ -13,7 +13,8 @@
 
 static __MCF_NEVER_INLINE
 int
-do_unlock_and_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, intptr_t* unlocked, intptr_t lock_arg, const int64_t* timeout_opt)
+do_unlock_and_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, intptr_t* unlocked,
+                   intptr_t lock_arg, const int64_t* timeout_opt)
   {
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
@@ -70,7 +71,8 @@ do_unlock_and_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, intpt
 
 __MCF_DLLEXPORT
 int
-_MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg, const int64_t* timeout_opt)
+_MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt,
+               intptr_t lock_arg, const int64_t* timeout_opt)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     intptr_t unlocked;
