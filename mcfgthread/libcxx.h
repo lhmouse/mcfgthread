@@ -212,7 +212,8 @@ __MCF_libcxx_condvar_wait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx) _
  * `pthread_cond_timedwait()`.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_timedwait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx, const __libcpp_timespec_t* __abs_time) __MCF_noexcept;
+__MCF_libcxx_condvar_timedwait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx,
+                               const __libcpp_timespec_t* __abs_time) __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
 #  define __libcpp_condvar_timedwait  __MCF_libcxx_condvar_timedwait
@@ -500,7 +501,8 @@ __MCF_libcxx_condvar_wait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx) _
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_timedwait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx, const __libcpp_timespec_t* __abs_time) __MCF_noexcept
+__MCF_libcxx_condvar_timedwait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx,
+                               const __libcpp_timespec_t* __abs_time) __MCF_noexcept
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
     int __err = __MCF_gthr_cond_mutex_wait(__cond, __mtx, &__timeout);
