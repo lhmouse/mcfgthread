@@ -7,5 +7,5 @@
 
 #include "xprecompiled.h"
 #define __MCF_ATOMIC_IMPORT  __MCF_DLLEXPORT
-#define __MCF_ATOMIC_INLINE
+#define __MCF_ATOMIC_INLINE  __MCF_DLLEXPORT
 #include "atomic.h"
