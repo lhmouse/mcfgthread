@@ -57,7 +57,7 @@
 #endif
 
 /* Generally speaking, functions are either `__MCF_MAY_THROW` or `noexcept`. This
- * macro is necessary for Visual Studio (but not CL.EXE from command-line), which
+ * macro is necessary for Visual Studio (but not CL.EXE from command line), which
  * defaults to `/EHsc`, which assumes that `extern "C"` functions can't throw C++
  * exceptions. Not only is this behavior not conforming to the C++ standard, it
  * can also result in wrong code about `__MCF_gthr_call_once_seh()`.  */
