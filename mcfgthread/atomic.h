@@ -100,13 +100,10 @@ __MCF_CXX(extern "C" {)
 #include __FILE__
 #undef __MCF_ATOMIC_GENERATOR_STATE_
 
-#pragma pop_macro("WIDTH")
-#pragma pop_macro("INTEGER")
-#pragma pop_macro("ORDER")
-#pragma pop_macro("ORDER_A")
-#pragma pop_macro("ORDER_R")
-
-__MCF_CXX(})  /* extern "C"  */
+#define __MCF_ATOMIC_GENERATOR_STATE_   65535
+#undef __MCFGTHREAD_ATOMIC_
+#include __FILE__
+#undef __MCF_ATOMIC_GENERATOR_STATE_
 
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 10001
 
@@ -467,5 +464,14 @@ __MCF_C2(_MCF_signal_fence,ORDER) (void) __MCF_noexcept
     __MCF_atomic_signal_fence(__MCF_C2(__MCF_memory_order,ORDER));
   }
 
-#endif  /* defined __MCF_ATOMIC_GENERATOR_STATE_  */
+#else  /* `__MCF_ATOMIC_GENERATOR_STATE_` final */
+
+#pragma pop_macro("WIDTH")
+#pragma pop_macro("INTEGER")
+#pragma pop_macro("ORDER")
+#pragma pop_macro("ORDER_A")
+#pragma pop_macro("ORDER_R")
+
+__MCF_CXX(})  /* extern "C"  */
+#endif  /* `__MCF_ATOMIC_GENERATOR_STATE_` defined  */
 #endif  /* __MCFGTHREAD_ATOMIC_  */
