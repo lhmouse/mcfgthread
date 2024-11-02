@@ -264,6 +264,16 @@ __MCF_CXX(})  /* extern "C"  */
 
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 20001
 
+/* Perform an atomic load operation. `mem` shall point to an atomic object of the
+ * specified width. The first function returns the value as an integer. The second
+ * function writes the value into `*res`.
+ *
+ *   [INTEGER]
+ *   _MCF_atomic_load_[WIDTH]_[ORDER] (const volatile void* mem);
+ *
+ *   void
+ *   _MCF_atomic_load_p[WIDTH]_[ORDER] (void* res, const volatile void* mem);
+ */
 __MCF_ATOMIC_INLINE
 INTEGER
 __MCF_C3(_MCF_atomic_load_,WIDTH,ORDER) (const volatile void* __mem) __MCF_noexcept;
@@ -289,6 +299,16 @@ __MCF_C3(_MCF_atomic_load_p,WIDTH,ORDER) (void* __res, const volatile void* __me
     *(INTEGER*) __res = __rval;
   }
 
+/* Perform an atomic store operation. `mem` shall point to an atomic object of the
+ * specified width. The first function stores the integer `val`. The second function
+ * stores the value at `*src`.
+ *
+ *   void
+ *   _MCF_atomic_store_[WIDTH]_[ORDER] (volatile void* mem, [INTEGER] val);
+ *
+ *   void
+ *   _MCF_atomic_store_p[WIDTH]_[ORDER] (volatile void* mem, const void* src);
+ */
 __MCF_ATOMIC_INLINE
 void
 __MCF_C3(_MCF_atomic_store_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val) __MCF_noexcept;
@@ -314,6 +334,17 @@ __MCF_C3(_MCF_atomic_store_p,WIDTH,ORDER) (volatile void* __mem, const void* __s
                        __MCF_C2(__MCF_memory_order,ORDER_R));
   }
 
+/* Perform an atomic exchange operation. `mem` shall point to an atomic object of
+ * the specified width. The first function stores the integer `val` and returns the
+ * old value as an integer. The second function stores the value at `*src` and
+ * writes the old value into `*res`.
+ *
+ *   [INTEGER]
+ *   _MCF_atomic_xchg_[WIDTH]_[ORDER] (volatile void* mem, [INTEGER] val);
+ *
+ *   void
+ *   _MCF_atomic_xchg_p[WIDTH]_[ORDER] (void* res, volatile void* mem, const void* src);
+ */
 __MCF_ATOMIC_INLINE
 INTEGER
 __MCF_C3(_MCF_atomic_xchg_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val) __MCF_noexcept;
@@ -340,6 +371,19 @@ __MCF_C3(_MCF_atomic_xchg_p,WIDTH,ORDER) (void* __res, volatile void* __mem, con
     *(INTEGER*) __res = __rval;
   }
 
+/* Perform a strong atomic compare-and-exchange operation. `mem` shall point to an
+ * atomic object of the specified width. These functions compare the value of the
+ * atomic object with `*cmp`. If they equal, these functions store the integer `val`
+ * or the value at `*src` into `*mem`, and return `true`; otherwise these function
+ * returns `false`. The old value of `*mem` is stored into `*cmp`. For some targets,
+ * these functions may perform the operation as a loop and will not fail spuriously.
+ *
+ *   bool
+ *   _MCF_atomic_cmpxchg_[WIDTH]_[ORDER] (volatile void* mem, [INTEGER]* cmp, [INTEGER] val);
+ *
+ *   bool
+ *   _MCF_atomic_cmpxchg_p[WIDTH]_[ORDER] (volatile void* mem, void* cmp, const void* src);
+ */
 __MCF_ATOMIC_INLINE
 bool
 __MCF_C3(_MCF_atomic_cmpxchg_,WIDTH,ORDER) (volatile void* __mem, INTEGER* __cmp, INTEGER __val) __MCF_noexcept;
@@ -370,6 +414,19 @@ __MCF_C3(_MCF_atomic_cmpxchg_p,WIDTH,ORDER) (volatile void* __mem, void* __cmp, 
     return __succ;
   }
 
+/* Perform a weak atomic compare-and-exchange operation. `mem` shall point to an
+ * atomic object of the specified width. These functions compare the value of the
+ * atomic object with `*cmp`. If they equal, these functions store the integer `val`
+ * or the value at `*src` into `*mem`, and return `true`; otherwise these function
+ * returns `false`. The old value of `*mem` is stored into `*cmp`. For some targets,
+ * these functions may fail spuriously.
+ *
+ *   bool
+ *   _MCF_atomic_cmpxchg_weak_[WIDTH]_[ORDER] (volatile void* mem, [INTEGER]* cmp, [INTEGER] val);
+ *
+ *   bool
+ *   _MCF_atomic_cmpxchg_weak_p[WIDTH]_[ORDER] (volatile void* mem, void* cmp, const void* src);
+ */
 __MCF_ATOMIC_INLINE
 bool
 __MCF_C3(_MCF_atomic_cmpxchg_weak_,WIDTH,ORDER) (volatile void* __mem, INTEGER* __cmp, INTEGER __val) __MCF_noexcept;
@@ -402,6 +459,15 @@ __MCF_C3(_MCF_atomic_cmpxchg_weak_p,WIDTH,ORDER) (volatile void* __mem, void* __
 
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 20002
 
+/* Add `val` to, or subtract `val` from, an atomic integer. `mem` shall point to an
+ * atomic integer of the specified width. These function return the old value.
+ *
+ *   [INTEGER]
+ *   _MCF_atomic_xadd_[WIDTH]_[ORDER] (volatile void* mem, [INTEGER] val);
+ *
+ *   [INTEGER]
+ *   _MCF_atomic_xsub_[WIDTH]_[ORDER] (volatile void* mem, [INTEGER] val);
+ */
 __MCF_ATOMIC_INLINE
 INTEGER
 __MCF_C3(_MCF_atomic_xadd_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val) __MCF_noexcept;
@@ -428,6 +494,12 @@ __MCF_C3(_MCF_atomic_xsub_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val) __
 
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 20003
 
+/* Emit a fence between threads (memory barrier). This ensures that read and write
+ * operations shall happen according to the requested memory order.
+ *
+ *   void
+ *   _MCF_thread_fence_[ORDER] (void);
+ */
 __MCF_ATOMIC_INLINE
 void
 __MCF_C2(_MCF_thread_fence,ORDER) (void) __MCF_noexcept;
@@ -439,6 +511,12 @@ __MCF_C2(_MCF_thread_fence,ORDER) (void) __MCF_noexcept
     __MCF_atomic_thread_fence(__MCF_C2(__MCF_memory_order,ORDER));
   }
 
+/* Emit a fence within the same thread. This generates no machine instructions, but
+ * prevents the compiler from reordering load and store operations.
+ *
+ *   void
+ *   _MCF_signal_fence_[ORDER] (void);
+ */
 __MCF_ATOMIC_INLINE
 void
 __MCF_C2(_MCF_signal_fence,ORDER) (void) __MCF_noexcept;
