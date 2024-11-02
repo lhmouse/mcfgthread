@@ -13,7 +13,10 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <limits.h>
-#include <intrin.h>
+
+#if defined _MSC_VER && !defined __clang__
+#  include <intrin.h>  /* `__readfsdword()` etc.  */
+#endif
 
 #if !defined _WIN32_WINNT
 #  define _WIN32_WINNT  0x0601
