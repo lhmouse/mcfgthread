@@ -323,18 +323,17 @@ mcfgthread_version_o = import('windows').compile_resources(
       args: [ '-I.', '-c65001' ],
       depend_files: [ 'mcfgthread/version.h.in', 'mcfgthread/version.manifest' ])
 
-lib_mcfgthread_dll_c_args = cc.get_supported_arguments(
-      '-D__MCF_BUILDING_DLL', '-mcmodel=small', '-ffreestanding',
-      '-fasynchronous-unwind-tables')
+lib_mcfgthread_c_args = [
+      '-ffreestanding', '-fasynchronous-unwind-tables' ]
 
-lib_mcfgthread_dll_link_args = cc.get_supported_link_arguments(
-      '-nostdlib', '-Wl,--gc-sections', '-Wl,--exclude-all-symbols', '-Wl,--kill-at',
-      '-Wl,--entry,__MCF_dll_startup@@Z', '-Wl,--enable-auto-image-base',
-      '-Wl,--subsystem,windows:6.1')
+lib_mcfgthread_dll_link_args = [
+      '-nostdlib', '-Wl,--entry,__MCF_dll_startup@@Z', '-Wl,--gc-sections',
+      '-Wl,--enable-auto-image-base', '-Wl,--subsystem,windows:6.1',
+      '-Wl,--exclude-all-symbols', '-Wl,--kill-at' ]
 
 lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       c_pch: 'mcfgthread/xprecompiled.h',
-      c_args: lib_mcfgthread_dll_c_args,
+      c_args: lib_mcfgthread_c_args + [ '-D__MCF_BUILDING_DLL', '-mcmodel=small' ],
       link_args: lib_mcfgthread_dll_link_args,
       sources: [ mcfgthread_src_min, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
@@ -344,7 +343,7 @@ lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
 
 lib_mcfgthread_dll = shared_library('mcfgthread',
       c_pch: 'mcfgthread/xprecompiled.h',
-      c_args: lib_mcfgthread_dll_c_args,
+      c_args: lib_mcfgthread_c_args + [ '-D__MCF_BUILDING_DLL', '-mcmodel=small' ],
       link_args: lib_mcfgthread_dll_link_args,
       objects: lib_mcfgthread_minimal_dll.extract_objects(mcfgthread_src_min),
       sources: [ mcfgthread_src_ex, mcfgthread_version_o ],
@@ -359,8 +358,7 @@ if host_machine.system() == 'cygwin'
 else
   lib_mcfgthread_a = static_library('mcfgthread',
         c_pch: 'mcfgthread/xprecompiled.h',
-        c_args: [ '-ffunction-sections', '-ffreestanding',
-                  '-fasynchronous-unwind-tables' ],
+        c_args: lib_mcfgthread_c_args + [ '-ffunction-sections' ],
         sources: [ mcfgthread_src_min, mcfgthread_src_ex, ],
         dependencies: [ dep_kernel32, dep_ntdll ],
         install: true)
