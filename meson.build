@@ -51,6 +51,7 @@ mcfgthread_src_min = [
   'mcfgthread/memmove.c',
   'mcfgthread/memcmp.c',
   'mcfgthread/memset.c',
+  'mcfgthread/atomic.c',
   'mcfgthread/fwd.c',
   'mcfgthread/clock.c',
   'mcfgthread/mutex.c',
