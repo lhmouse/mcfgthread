@@ -37,7 +37,7 @@ VS_VERSION_INFO VERSIONINFO
         VALUE "FileVersion",      _MCF_ABI_VERSION_STRING
         VALUE "FileDescription",  "Cornerstone of the MOST efficient std::thread on Windows"
         VALUE "CompanyName",      "LH_Mouse"
-        VALUE "LegalCopyright",   "Copyleft 2022 - 2024, LH_Mouse. All wrongs reserved."
+        VALUE "LegalCopyright",   "Copyright (C) 2022 - 2024, LH_Mouse. All wrongs reserved."
         VALUE "Comments",         "https://github.com/lhmouse/mcfgthread"
       }
     }

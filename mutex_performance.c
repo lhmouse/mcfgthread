@@ -1,9 +1,6 @@
-/* This file is part of MCF Gthread.
- * Copyright (C) 2022-2024 LH_Mouse. All wrongs reserved.
- *
- * MCF Gthread is free software. Licensing information is included in
- * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
- * to this file.  */
+/* This file is licensed under CC0 for illustrative purposes. You can
+ * do whatever you like with this piece of code. Any warranty, explicit
+ * or implicit, is disclaimed.  */
 
 #include <math.h>
 #include <stdio.h>
