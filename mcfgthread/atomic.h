@@ -83,7 +83,7 @@
 __MCF_CXX(extern "C" {)
 #ifndef __MCF_ATOMIC_IMPORT
 #  define __MCF_ATOMIC_IMPORT
-#  define __MCF_ATOMIC_INLINE  __MCF_GNU_INLINE
+#  define __MCF_ATOMIC_INLINE  __MCF_ALWAYS_INLINE
 #endif
 
 #pragma push_macro("WIDTH")
