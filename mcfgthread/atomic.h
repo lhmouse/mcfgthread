@@ -14,8 +14,7 @@
 
 #if defined __GNUC__ || defined __clang__
 /* Use built-in types.  */
-#  define __MCF_atomic(...)          volatile __VA_ARGS__
-#  define __MCF_ATOMICIFY(T, ...)    ((volatile T*) (__VA_ARGS__))
+#  define __MCF_ATOMICIFY(T, ...)    __MCF_CAST_PTR(volatile T, __VA_ARGS__)
 
 #  define __MCF_memory_order_rlx     __ATOMIC_RELAXED
 #  define __MCF_memory_order_acq     __ATOMIC_ACQUIRE
@@ -36,8 +35,7 @@
 #elif defined __cplusplus && (__cplusplus >= 201103L)
 /* Use the C++11 standard library.  */
 #  include <atomic>
-#  define __MCF_atomic(...)          ::std::atomic<__VA_ARGS__>
-#  define __MCF_ATOMICIFY(T, ...)    ((::std::atomic<T>*) (__VA_ARGS__))
+#  define __MCF_ATOMICIFY(T, ...)    __MCF_CAST_PTR(::std::atomic<T>, __VA_ARGS__)
 
 #  define __MCF_memory_order_rlx     ::std::memory_order_relaxed
 #  define __MCF_memory_order_acq     ::std::memory_order_acquire
@@ -59,8 +57,7 @@
 /* Use the C11 standard library. Microsoft Visual Studio 2022 has experimental
  * support which seems to suffice.  */
 #  include <stdatomic.h>
-#  define __MCF_atomic(...)          _Atomic(__VA_ARGS__)
-#  define __MCF_ATOMICIFY(T, ...)    ((_Atomic T*) (__VA_ARGS__))
+#  define __MCF_ATOMICIFY(T, ...)    __MCF_CAST_PTR(_Atomic T, __VA_ARGS__)
 
 #  define __MCF_memory_order_rlx     memory_order_relaxed
 #  define __MCF_memory_order_acq     memory_order_acquire
