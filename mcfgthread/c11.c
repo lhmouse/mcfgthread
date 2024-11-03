@@ -19,7 +19,7 @@ __MCF_c11_thread_thunk_v2(_MCF_thread* thrd)
     __MCF_c11_thread_record* rec = _MCF_thread_get_data(thrd);
 
     /* Invoke the user-defined procedure and save its result in the record.  */
-    rec->__result = rec->__proc(rec->__arg);
+    rec->__result = (*(rec->__proc)) (rec->__arg);
   }
 
 __MCF_DLLEXPORT
