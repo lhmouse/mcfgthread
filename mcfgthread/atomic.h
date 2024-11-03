@@ -12,6 +12,7 @@
 #include "fwd.h"
 
 #if defined __GNUC__ || defined __clang__
+
 /* Use built-in types.  */
 #  define __MCF_ATOMICIFY(T, ...)    __MCF_CAST_PTR(volatile T, __VA_ARGS__)
 
@@ -31,7 +32,8 @@
 #  define __MCF_atomic_thread_fence(o)        __atomic_thread_fence(o)
 #  define __MCF_atomic_signal_fence(o)        __atomic_signal_fence(o)
 
-#elif defined __cplusplus && (__cplusplus >= 201103L)
+#elif __MCF_CXX11(1+)0
+
 /* Use the C++11 standard library.  */
 #  include <atomic>
 #  define __MCF_ATOMICIFY(T, ...)    __MCF_CAST_PTR(::std::atomic<T>, __VA_ARGS__)
@@ -53,6 +55,7 @@
 #  define __MCF_atomic_signal_fence(o)        ::std::atomic_signal_fence(o)
 
 #else
+
 /* Use the C11 standard library. Microsoft Visual Studio 2022 has experimental
  * support which seems to suffice.  */
 #  include <stdatomic.h>
