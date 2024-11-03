@@ -95,6 +95,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         YieldProcessor();
 
         /* Wait for my turn.  */
+        if(_MCF_atomic_load_b_rlx(do_spin_byte_ptr(mutex, my_mask)) == false)
+          continue;
+
         if(_MCF_atomic_xchg_b_rlx(do_spin_byte_ptr(mutex, my_mask), false) == false)
           continue;
 
