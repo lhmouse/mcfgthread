@@ -11,7 +11,7 @@
 #include "mutex.h"
 #include "xglobals.h"
 
-static inline
+static inline __MCF_FN_CONST
 bool*
 do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
   {
@@ -38,7 +38,7 @@ do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
     return __MCF_g->__mutex_spin_field + (base + index * (table_size / 4U)) % table_size;
   }
 
-static inline
+static inline __MCF_FN_CONST
 uint32_t
 do_adjust_sp_nfail(uint32_t old, int add)
   {
