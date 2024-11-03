@@ -7,7 +7,7 @@
 
 #include "../mcfgthread/cxx11.hpp"
 
-#if __cplusplus < 201402L
+#if 0 __MCF_CXX11(+1) __MCF_CXX14(+2) __MCF_CXX17(+4) != 3
 #  warning Please compile this file as C++14.
 #endif
 

@@ -7,7 +7,7 @@
 
 #include "../mcfgthread/c11.h"
 
-#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 201112L)
+#if 0 __MCF_C99(+1) __MCF_C11(+2) != 1
 #  warning Please compile this file as C99.
 #endif
 
