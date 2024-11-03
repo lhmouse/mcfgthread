@@ -7,7 +7,6 @@
 
 #ifndef __MCFGTHREAD_ATOMIC_
 #define __MCFGTHREAD_ATOMIC_
-
 #if !defined __MCF_ATOMIC_GENERATOR_STATE_
 
 #include "fwd.h"
