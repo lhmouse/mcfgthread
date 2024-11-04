@@ -23,8 +23,8 @@ project('mcfgthread',
 # List of files
 #===========================================================
 mcfgthread_include = [
-  'mcfgthread/atomic.h',
   'mcfgthread/fwd.h',
+  'mcfgthread/atomic.h',
   'mcfgthread/clock.h',
   'mcfgthread/mutex.h',
   'mcfgthread/shared_mutex.h',
@@ -46,13 +46,13 @@ mcfgthread_include = [
 ]
 
 mcfgthread_src_min = [
-  'mcfgthread/xglobals.c',
   'mcfgthread/memcpy.c',
   'mcfgthread/memmove.c',
   'mcfgthread/memcmp.c',
   'mcfgthread/memset.c',
-  'mcfgthread/atomic.c',
+  'mcfgthread/xglobals.c',
   'mcfgthread/fwd.c',
+  'mcfgthread/atomic.c',
   'mcfgthread/clock.c',
   'mcfgthread/mutex.c',
   'mcfgthread/shared_mutex.c',
