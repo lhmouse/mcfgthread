@@ -58,7 +58,7 @@ thread_proc()
 int
 main(void)
   {
-#if !defined __SEH__
+#if !defined __SEH__ && !defined _MSC_VER
     return 77;  // not supported
 #endif
 
