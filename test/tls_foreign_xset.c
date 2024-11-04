@@ -14,8 +14,9 @@ static _MCF_tls_key* key;
 static HANDLE thrd;
 static int dso_1, dso_2;
 
-static __attribute__((__stdcall__))
+static
 DWORD
+__stdcall
 thread_proc(LPVOID param)
   {
     void* p;
