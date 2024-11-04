@@ -23,7 +23,7 @@ main(void)
 
       r = __MCF_dtor_queue_push(&queue, &elem);
       assert(r == 0);
-      fprintf(stderr, "push: %td, size = %td\n", (intptr_t) elem.__this, (intptr_t) queue.__size);
+      fprintf(stderr, "push: %d, size = %d\n", (int) elem.__this, (int) queue.__size);
 
     }
 
@@ -31,7 +31,7 @@ main(void)
       for(intptr_t k = 99;  k >= 0;  --k) {
         r = __MCF_dtor_queue_pop(&elem, &queue, (void*) m);
         assert(r == 0);
-        fprintf(stderr, "pop: %td, size = %td\n", (intptr_t) elem.__this, (intptr_t) queue.__size);
+        fprintf(stderr, "pop: %d, size = %d\n", (int) elem.__this, (int) queue.__size);
 
         assert(elem.__this == (void*) (k * 10 + m));
         assert(elem.__dso == (void*) m);
