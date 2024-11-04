@@ -18,7 +18,7 @@ __MCF_CXX(extern "C" {)
 #endif
 
 /* N1570 7.26.1 Introduction  */
-#if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 201112L)
+#if __MCF_C11(1+)0
 #  define thread_local  _Thread_local
 #endif
 
