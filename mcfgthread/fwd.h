@@ -124,7 +124,6 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_FN_CONST       __attribute__((__const__))
 #  define __MCF_FN_PURE       __attribute__((__pure__))
 #  define __MCF_FN_COLD       __attribute__((__cold__))
-#  define __MCF_ASM_CALL(x)   __asm__(__MCF_S(__USER_LABEL_PREFIX__) #x)
 #  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
 #  define __MCF_UNREACHABLE   __builtin_unreachable()
 #else
@@ -136,7 +135,6 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_FN_CONST       __declspec(noalias)
 #  define __MCF_FN_PURE       __declspec(noalias)
 #  define __MCF_FN_COLD       /* unsupported */
-#  define __MCF_ASM_CALL(x)   /* unnecessary */
 #  define __MCF_ALIGNED(x)    __declspec(align(x))
 #  define __MCF_UNREACHABLE   __assume(0)
 #endif
@@ -182,6 +180,7 @@ __MCF_CXX(extern "C" {)
     __asm__ volatile ("{ mov %2, %%gs:%c0(,%1,8) | mov gs:[%0+%1*8], %2 }" : : "i"(base), "r"(i), "r"(in))
 
 #  define __MCF_64_32(x, y)  x
+#  define __MCF_USYM  ""
 
 #elif defined _MSC_VER && (defined _M_X64 && !defined _M_ARM64EC)
 
@@ -210,6 +209,7 @@ __MCF_CXX(extern "C" {)
     __writegsqword((base) + (i) * 8U, (in))
 
 #  define __MCF_64_32(x, y)  x
+#  define __MCF_USYM  ""
 
 #elif (defined __GNUC__ || defined __clang__) && defined __i386__
 
@@ -238,6 +238,7 @@ __MCF_CXX(extern "C" {)
     __asm__ volatile ("{ mov %2, %%fs:%c0(,%1,4) | mov fs:[%0+%1*4], %2 }" : : "i"(base), "r"(i), "r"(in))
 
 #  define __MCF_64_32(x, y)  y
+#  define __MCF_USYM  "_"
 
 #elif defined _MSC_VER && defined _M_IX86
 
@@ -266,6 +267,7 @@ __MCF_CXX(extern "C" {)
     __writefsdword((base) + (i) * 4U, (in))
 
 #  define __MCF_64_32(x, y)  y
+#  define __MCF_USYM  "_"
 
 #elif (defined __GNUC__ || defined __clang__) && (defined __aarch64__ || defined __arm64ec__)
 
@@ -294,6 +296,7 @@ __MCF_CXX(extern "C" {)
     __asm__ volatile (" str %0, [x18,%w1,uxtw #3] " : : "r"(in), "r"((base) / 8U + (i)))
 
 #  define __MCF_64_32(x, y)  x
+#  define __MCF_USYM  ""
 
 #elif defined _MSC_VER && (defined _M_ARM64 || defined _M_ARM64EC)
 
@@ -322,6 +325,7 @@ __MCF_CXX(extern "C" {)
     __writex18qword((base) + (i) * 8U, (in))
 
 #  define __MCF_64_32(x, y)  x
+#  define __MCF_USYM  ""
 
 #endif  /* compiler and target  */
 
