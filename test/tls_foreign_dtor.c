@@ -25,8 +25,9 @@ tls_destructor(void* ptr)
     _MCF_atomic_xadd_32_rlx(ptr, 1);
   }
 
-static __attribute__((__stdcall__))
+static
 DWORD
+__stdcall
 thread_proc(LPVOID param)
   {
     _MCF_sem_wait(&start, __MCF_nullptr);
