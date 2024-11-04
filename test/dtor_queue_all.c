@@ -23,13 +23,13 @@ main(void)
 
       r = __MCF_dtor_queue_push(&queue, &elem);
       assert(r == 0);
-      fprintf(stderr, "push: %d, size = %d\n", (int) elem.__this, (int) queue.__size);
+      fprintf(stderr, "push: %d, size = %d\n", (int)(intptr_t) elem.__this, (int)(intptr_t) queue.__size);
     }
 
     for(intptr_t k = 1000;  k >= 1;  --k) {
       r = __MCF_dtor_queue_pop(&elem, &queue, __MCF_nullptr);
       assert(r == 0);
-      fprintf(stderr, "pop: %d, size = %d\n", (int) elem.__this, (int) queue.__size);
+      fprintf(stderr, "pop: %d, size = %d\n", (int)(intptr_t) elem.__this, (int)(intptr_t) queue.__size);
 
       assert(elem.__this == (void*) k);
       assert(elem.__dso == (void*) (k % 10));
