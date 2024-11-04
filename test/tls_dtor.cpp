@@ -24,7 +24,7 @@ void
 tls_destructor(int* ptr)
   {
     ::fprintf(stderr, "thread %d tls_destructor\n", (int) ::_MCF_thread_self_tid());
-    __atomic_fetch_add(ptr, 1, __ATOMIC_RELAXED);
+    _MCF_atomic_xadd_32_rlx(ptr, 1);
   }
 
 static NS::thread_specific_ptr<int> tss_ptr(tls_destructor);

@@ -35,14 +35,14 @@ thread_proc(_MCF_thread* self)
       _MCF_once_release(&once);
 
       _MCF_sleep((const int64_t[]) { -100 });
-      __atomic_fetch_add(&num_init, 1, __ATOMIC_RELAXED);
+      _MCF_atomic_xadd_32_rlx(&num_init, 1);
     }
     else if(r == 0) {
       /* Assume `resource` has been initialized.  */
       assert(resource == 1);
 
       _MCF_sleep((const int64_t[]) { -100 });
-      __atomic_fetch_add(&num_ready, 1, __ATOMIC_RELAXED);
+      _MCF_atomic_xadd_32_rlx(&num_ready, 1);
     }
     else
       assert(0);
