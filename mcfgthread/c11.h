@@ -83,9 +83,9 @@ enum __MCF_thrd_error
 /* We are not allowed to define non-reserved names as macros, so do it in a
  * weird way. It's very weird, but it works!  */
 #if defined __GNUC__ || defined __clang__
-#  define __MCF_C11_ALIAS(f)   __typeof__(__MCF_c11_##f) f __asm__(__MCF_USYM "__MCF_c11_" #f)
+#  define __MCF_C11_ALIAS_FN(f)   __typeof__(__MCF_c11_##f) f __asm__(__MCF_USYM "__MCF_c11_" #f)
 #else
-#  define __MCF_C11_ALIAS(f)   static __typeof__(__MCF_c11_##f)* const f = __MCF_c11_##f
+#  define __MCF_C11_ALIAS_FN(f)   static __typeof__(__MCF_c11_##f)* const f = __MCF_c11_##f
 #endif
 
 /* 7.26.2.1 The call_once function  */
@@ -94,7 +94,7 @@ void
 __MCF_c11_call_once(once_flag* __once, __MCF_once_callback* __init_proc) __MCF_MAY_THROW;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(call_once);
+__MCF_C11_ALIAS_FN(call_once);
 #  define __MCF_c11_call_once  call_once
 #endif
 
@@ -104,7 +104,7 @@ int
 __MCF_c11_cnd_broadcast(cnd_t* __cond) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(cnd_broadcast);
+__MCF_C11_ALIAS_FN(cnd_broadcast);
 #  define __MCF_c11_cnd_broadcast  cnd_broadcast
 #endif
 
@@ -114,7 +114,7 @@ void
 __MCF_c11_cnd_destroy(cnd_t* __cond) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(cnd_destroy);
+__MCF_C11_ALIAS_FN(cnd_destroy);
 #  define __MCF_c11_cnd_destroy  cnd_destroy
 #endif
 
@@ -124,7 +124,7 @@ int
 __MCF_c11_cnd_init(cnd_t* __cond) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(cnd_init);
+__MCF_C11_ALIAS_FN(cnd_init);
 #  define __MCF_c11_cnd_init  cnd_init
 #endif
 
@@ -134,7 +134,7 @@ int
 __MCF_c11_cnd_signal(cnd_t* __cond) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(cnd_signal);
+__MCF_C11_ALIAS_FN(cnd_signal);
 #  define __MCF_c11_cnd_signal  cnd_signal
 #endif
 
@@ -144,7 +144,7 @@ int
 __MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const __MCF_timespec* __ts) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(cnd_timedwait);
+__MCF_C11_ALIAS_FN(cnd_timedwait);
 #  define __MCF_c11_cnd_timedwait  cnd_timedwait
 #endif
 
@@ -154,7 +154,7 @@ int
 __MCF_c11_cnd_wait(cnd_t* __cond, mtx_t* __mtx) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(cnd_wait);
+__MCF_C11_ALIAS_FN(cnd_wait);
 #  define __MCF_c11_cnd_wait  cnd_wait
 #endif
 
@@ -164,7 +164,7 @@ void
 __MCF_c11_mtx_destroy(mtx_t* __mtx) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(mtx_destroy);
+__MCF_C11_ALIAS_FN(mtx_destroy);
 #  define __MCF_c11_mtx_destroy  mtx_destroy
 #endif
 
@@ -174,7 +174,7 @@ int
 __MCF_c11_mtx_init(mtx_t* __mtx, int __type) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(mtx_init);
+__MCF_C11_ALIAS_FN(mtx_init);
 #  define __MCF_c11_mtx_init  mtx_init
 #endif
 
@@ -184,7 +184,7 @@ int
 __MCF_c11_mtx_lock(mtx_t* __mtx) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(mtx_lock);
+__MCF_C11_ALIAS_FN(mtx_lock);
 #  define __MCF_c11_mtx_lock  mtx_lock
 #endif
 
@@ -194,7 +194,7 @@ int
 __MCF_c11_mtx_timedlock(mtx_t* __mtx, const __MCF_timespec* __ts) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(mtx_timedlock);
+__MCF_C11_ALIAS_FN(mtx_timedlock);
 #  define __MCF_c11_mtx_timedlock  mtx_timedlock
 #endif
 
@@ -204,7 +204,7 @@ int
 __MCF_c11_mtx_trylock(mtx_t* __mtx) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(mtx_trylock);
+__MCF_C11_ALIAS_FN(mtx_trylock);
 #  define __MCF_c11_mtx_trylock  mtx_trylock
 #endif
 
@@ -214,7 +214,7 @@ int
 __MCF_c11_mtx_unlock(mtx_t* __mtx) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(mtx_unlock);
+__MCF_C11_ALIAS_FN(mtx_unlock);
 #  define __MCF_c11_mtx_unlock  mtx_unlock
 #endif
 
@@ -224,7 +224,7 @@ int
 __MCF_c11_thrd_create(thrd_t* __thrd, thrd_start_t __proc, void* __arg) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(thrd_create);
+__MCF_C11_ALIAS_FN(thrd_create);
 #  define __MCF_c11_thrd_create  thrd_create
 #endif
 
@@ -234,7 +234,7 @@ thrd_t
 __MCF_c11_thrd_current(void) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(thrd_current);
+__MCF_C11_ALIAS_FN(thrd_current);
 #  define __MCF_c11_thrd_current  thrd_current
 #endif
 
@@ -244,7 +244,7 @@ int
 __MCF_c11_thrd_detach(thrd_t __thrd) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(thrd_detach);
+__MCF_C11_ALIAS_FN(thrd_detach);
 #  define __MCF_c11_thrd_detach  thrd_detach
 #endif
 
@@ -254,7 +254,7 @@ int
 __MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(thrd_equal);
+__MCF_C11_ALIAS_FN(thrd_equal);
 #  define __MCF_c11_thrd_equal  thrd_equal
 #endif
 
@@ -264,7 +264,7 @@ void
 __MCF_c11_thrd_exit(int __res) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(thrd_exit);
+__MCF_C11_ALIAS_FN(thrd_exit);
 #  define __MCF_c11_thrd_exit  thrd_exit
 #endif
 
@@ -274,7 +274,7 @@ int
 __MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(thrd_join);
+__MCF_C11_ALIAS_FN(thrd_join);
 #  define __MCF_c11_thrd_join  thrd_join
 #endif
 
@@ -284,7 +284,7 @@ int
 __MCF_c11_thrd_sleep(const __MCF_timespec* __dur, __MCF_timespec* __rem_opt) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(thrd_sleep);
+__MCF_C11_ALIAS_FN(thrd_sleep);
 #  define __MCF_c11_thrd_sleep  thrd_sleep
 #endif
 
@@ -295,7 +295,7 @@ int
 __MCF_c11__thrd_sleep_until(const __MCF_timespec* __ts) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(_thrd_sleep_until);
+__MCF_C11_ALIAS_FN(_thrd_sleep_until);
 #  define __MCF_c11__thrd_sleep_until  _thrd_sleep_until
 #endif
 
@@ -305,7 +305,7 @@ void
 __MCF_c11_thrd_yield(void) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(thrd_yield);
+__MCF_C11_ALIAS_FN(thrd_yield);
 #  define __MCF_c11_thrd_yield  thrd_yield
 #endif
 
@@ -315,7 +315,7 @@ int
 __MCF_c11_tss_create(tss_t* __keyp, tss_dtor_t __dtor_opt) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(tss_create);
+__MCF_C11_ALIAS_FN(tss_create);
 #  define __MCF_c11_tss_create  tss_create
 #endif
 
@@ -325,7 +325,7 @@ void
 __MCF_c11_tss_delete(tss_t __key) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(tss_delete);
+__MCF_C11_ALIAS_FN(tss_delete);
 #  define __MCF_c11_tss_delete  tss_delete
 #endif
 
@@ -335,7 +335,7 @@ void*
 __MCF_c11_tss_get(tss_t __key) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(tss_get);
+__MCF_C11_ALIAS_FN(tss_get);
 #  define __MCF_c11_tss_get  tss_get
 #endif
 
@@ -345,7 +345,7 @@ int
 __MCF_c11_tss_set(tss_t __key, void* __val_opt) __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
-__MCF_C11_ALIAS(tss_set);
+__MCF_C11_ALIAS_FN(tss_set);
 #  define __MCF_c11_tss_set  tss_set
 #endif
 
