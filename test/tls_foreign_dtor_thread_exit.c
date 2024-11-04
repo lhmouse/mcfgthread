@@ -20,8 +20,9 @@ tls_dtor(void* ptr)
     __MCF__Exit(*(int*) ptr);
   }
 
-static __attribute__((__stdcall__))
+static
 DWORD
+__stdcall
 thread_proc(LPVOID param)
   {
     _MCF_tls_key* key = _MCF_tls_key_new(tls_dtor);
