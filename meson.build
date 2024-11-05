@@ -261,11 +261,12 @@ foreach src: test_src
   endif
 
   if basename in [ 'win8.c', 'win10.c', 'self_oom.c', 'mix.c', 'tls_dtor_static.c' ]
+    test_dependencies = [ dep_advapi32, dep_ntdll ]
     test_link_with = lib_mcfgthread_a
   endif
 
   if basename in [ 'memory.c' ]
-    test_dependencies = [ dep_advapi32, dep_ntdll ]
+    test_dependencies = [ dep_ntdll ]
     test_link_with = lib_mcfgthread_minimal_dll
   endif
 
