@@ -40,7 +40,7 @@ mcfgthread_src_min = [
   'mcfgthread/cxa.c', 'mcfgthread/dtor_queue.c', 'mcfgthread/exit.c',
   'mcfgthread/tls.c', 'mcfgthread/gthr_aux.c' ]
 
-mcfgthread_src_full = [
+mcfgthread_src_ex = [
   'mcfgthread/gthr.c', 'mcfgthread/gthr_libobjc.c', 'mcfgthread/c11.c',
   'mcfgthread/libcxx.c' ]
 
@@ -220,7 +220,7 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
       c_args: lib_mcfgthread_c_args + [ '-D__MCF_BUILDING_DLL' ],
       link_args: lib_mcfgthread_dll_link_args,
       objects: lib_mcfgthread_minimal_dll.extract_objects(mcfgthread_src_min),
-      sources: [ mcfgthread_src_full, mcfgthread_version_o ],
+      sources: [ mcfgthread_src_ex, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
       soversion: ver.get('abi_major'),
       version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
@@ -233,7 +233,7 @@ else
   lib_mcfgthread_a = static_library('mcfgthread',
         c_pch: 'mcfgthread/xprecompiled.h',
         c_args: lib_mcfgthread_c_args + [ '-ffunction-sections' ],
-        sources: [ mcfgthread_src_min, mcfgthread_src_full, ],
+        sources: [ mcfgthread_src_min, mcfgthread_src_ex, ],
         dependencies: [ dep_kernel32, dep_ntdll ],
         install: true)
 endif
