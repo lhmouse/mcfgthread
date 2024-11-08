@@ -163,7 +163,7 @@ _MCF_thread_get_priority(const _MCF_thread* __thrd_opt) __MCF_noexcept;
  *
  * The `__priority` argument may be an arbitrary integer within -15 and +15, but
  * specifying an `_MCF_thread_priority_*` constant is recommended. Setting high
- * priority values may require certain priviledges. If the `__thrd_opt` argument
+ * priority values may require certain privileges. If the `__thrd_opt` argument
  * is null, the priority of the current thread will be set. If `__thrd_opt` is
  * not null but doesn't point to a valid thread object, the behavior of this
  * function is undefined.
