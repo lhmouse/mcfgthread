@@ -45,10 +45,10 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     if(align & (align - 1))
       return __MCF_win32_error_p(ERROR_NOT_SUPPORTED, __MCF_nullptr);
 
-    if(align >= 0x100000U)
+    if(align > __MCF_THREAD_MAX_DATA_ALIGNMENT)
       return __MCF_win32_error_p(ERROR_NOT_SUPPORTED, __MCF_nullptr);
 
-    if(size >= 0x7FF00000U)
+    if(size > (INT32_MAX & -__MCF_THREAD_MAX_DATA_ALIGNMENT))
       return __MCF_win32_error_p(ERROR_ARITHMETIC_OVERFLOW, __MCF_nullptr);
 
     /* Calculate the number of bytes to allocate.  */

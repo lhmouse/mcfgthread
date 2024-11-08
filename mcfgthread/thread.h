@@ -41,6 +41,11 @@ struct __MCF_thread
     __MCF_EX __MCF_ALIGNED(__MCF_THREAD_DATA_ALIGNMENT) char __data_storage[0];
   };
 
+/* This is the maximum alignment of user-defined data that is supported by
+ * `_MCF_thread_new_aligned()`. It is defined here for illustration purposes
+ * only and you should not make assumption about it.  */
+#define __MCF_THREAD_MAX_DATA_ALIGNMENT   0x200000U
+
 /* Define thread priority constants, from lowest to highest.
  * These values match Windows APIs and can be passed around as such, but we
  * define only what we find necessary at the moment.  */
