@@ -5,15 +5,25 @@
  * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
+#define __MCF_XGLOBALS_IMPORT
+#define __MCF_XGLOBALS_INLINE  __MCF_GNU_INLINE
+#define __MCF_XGLOBALS_READONLY
 #include "../mcfgthread/xglobals.h"
 #include <assert.h>
 #include <stdio.h>
 #include <windows.h>
 
+#if defined __CYGWIN__
+int
+main(void)
+  {
+    return 77;
+  }
+#else  // __CYGWIN__
+
 #define NTHREADS  64U
 static HANDLE threads[NTHREADS];
 
-#if !defined __CYGWIN__
 static
 DWORD
 __stdcall
@@ -26,20 +36,14 @@ thread_proc(void* arg)
     fprintf(stderr, "thread %d quitting\n", _MCF_thread_self_tid());
     return 0;
   }
-#endif
 
 int
 main(void)
   {
-#if defined __CYGWIN__
-    return 77;
-#else
-    const uint32_t heap_capacity = 1048576;  // 1 MB
-    volatile HANDLE* const heap = (volatile HANDLE*) &__MCF_crt_heap;
-
     // replace global heap
-    *heap = HeapCreate(0, 0, heap_capacity);
-    assert(*heap);
+    const uint32_t heap_capacity = 1048576;
+    __MCF_crt_heap = HeapCreate(0, 0, heap_capacity);
+    assert(&__MCF_crt_heap);
 
     // allocate until oom
     for(uint32_t i = 0;  i < heap_capacity / 16;  ++i)
@@ -57,5 +61,6 @@ main(void)
       CloseHandle(threads[k]);
       fprintf(stderr, "main wait finished: %d\n", (int)k);
     }
-#endif
   }
+
+#endif  // __CYGWIN__
