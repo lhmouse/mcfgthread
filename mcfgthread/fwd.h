@@ -223,7 +223,7 @@ __MCF_CXX(extern "C" {)
     __asm__ ("{ mov %%fs:%c1(,%2,4), %k0 | mov %k0, fs:[%1+%2*4] }" : "=r"(*(out)) : "i"(base), "r"(i) : "memory")
 
 #  define __MCF_TEB_STORE_32_INDEXED(base, i, in)  \
-    __asm__ volatile ("{ mov %k1, %%fs:%c0(,%1,4) | mov fs:[%0+%1*4], %k2 }" : : "i"(base), "r"(i), "r"(in) : "memory")
+    __asm__ volatile ("{ mov %k2, %%fs:%c0(,%1,4) | mov fs:[%0+%1*4], %k2 }" : : "i"(base), "r"(i), "r"(in) : "memory")
 
 #  define __MCF_TEB_LOAD_PTR_IMMEDIATE(out, base)  \
     __asm__ ("{ mov %%fs:%c1, %0 | mov %0, fs:[%1] }" : "=r"(*(out)) : "i"(base) : "memory")
