@@ -23,6 +23,7 @@
 #include "../mcfgthread/sem.h"
 #include "../mcfgthread/thread.h"
 #include "../mcfgthread/tls.h"
+#include "../mcfgthread/shared_mutex.h"
 
 #if 0 __MCF_C99(+1) != 0
 #  warning Please compile this file as C89.
