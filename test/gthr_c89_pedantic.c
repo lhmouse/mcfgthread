@@ -23,6 +23,7 @@
 #include "../mcfgthread/sem.h"
 #include "../mcfgthread/thread.h"
 #include "../mcfgthread/tls.h"
+#include "../mcfgthread/shared_mutex.h"
 
 #if defined __STDC_VERSION__ && (__STDC_VERSION__ >= 199901L)
 #  warning Please compile this file as C89.
