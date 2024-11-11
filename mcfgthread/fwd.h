@@ -113,42 +113,14 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_CXX23(...)   __VA_ARGS__
 #endif
 
-/* Define compiler-specific stuff. In the case of clang-cl, prefer GNU
- * extensions to Microsoft ones.  */
-#if defined __GNUC__ || defined __clang__
-#  define __MCF_EX             __extension__
-#  define __MCF_GNU_INLINE      extern __inline__ __attribute__((__gnu_inline__))
-#  define __MCF_ALWAYS_INLINE   extern __inline__ __attribute__((__gnu_inline__, __always_inline__))
-#  define __MCF_NEVER_INLINE   __attribute__((__noinline__))
-#  define __MCF_NEVER_RETURN   __attribute__((__noreturn__))
-#  define __MCF_FN_CONST       __attribute__((__const__))
-#  define __MCF_FN_PURE       __attribute__((__pure__))
-#  define __MCF_FN_COLD       __attribute__((__cold__))
-#  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
-#  define __MCF_UNREACHABLE   __builtin_unreachable()
-#else
-#  define __MCF_EX             /* unsupported */
-#  define __MCF_GNU_INLINE      __inline
-#  define __MCF_ALWAYS_INLINE   __forceinline
-#  define __MCF_NEVER_INLINE   __declspec(noinline)
-#  define __MCF_NEVER_RETURN   __declspec(noreturn)
-#  define __MCF_FN_CONST       __declspec(noalias)
-#  define __MCF_FN_PURE       __declspec(noalias)
-#  define __MCF_FN_COLD       /* unsupported */
-#  define __MCF_ALIGNED(x)    __declspec(align(x))
-#  define __MCF_UNREACHABLE   __assume(0)
-#endif
-
-/* Generally speaking, functions are either `__MCF_MAY_THROW` or `noexcept`. This
- * macro is necessary for Visual Studio (but not CL.EXE from command line), which
- * defaults to `/EHsc`, which assumes that `extern "C"` functions can't throw C++
- * exceptions. Not only is this behavior not conforming to the C++ standard, it
- * can also result in wrong code about `__MCF_gthr_call_once_seh()`.  */
-#if defined _MSC_VER
-#  define __MCF_MAY_THROW   __MCF_CXX(throw(...))
-#else
-#  define __MCF_MAY_THROW
-#endif
+#define __MCF_S_(...)     #__VA_ARGS__
+#define __MCF_S(...)       __MCF_S_(__VA_ARGS__)
+#define __MCF_C2_(x, y)     x##y
+#define __MCF_C2(x, y)       __MCF_C2_(x, y)
+#define __MCF_C3_(x, y, z)   x##y##z
+#define __MCF_C3(x, y, z)    __MCF_C3_(x, y, z)
+#define __MCF_0_INIT           { __MCF_C(0) }
+#define __MCF_SET_IF(x, ...)    ((void) ((x) && (*(x) = (__VA_ARGS__))))
 
 /* Define how the TEB is accessed. Due to technical limitations, the base offset
  * must be a constant multiple of operand size, and there are different macros
@@ -329,14 +301,44 @@ __MCF_CXX(extern "C" {)
 
 #endif  /* compiler and target  */
 
-#define __MCF_S_(...)     #__VA_ARGS__
-#define __MCF_S(...)       __MCF_S_(__VA_ARGS__)
-#define __MCF_C2_(x, y)     x##y
-#define __MCF_C2(x, y)       __MCF_C2_(x, y)
-#define __MCF_C3_(x, y, z)   x##y##z
-#define __MCF_C3(x, y, z)    __MCF_C3_(x, y, z)
-#define __MCF_0_INIT           { __MCF_C(0) }
-#define __MCF_SET_IF(x, ...)    ((void) ((x) && (*(x) = (__VA_ARGS__))))
+/* Define compiler-specific stuff. In the case of clang-cl, prefer GNU
+ * extensions to Microsoft ones.  */
+#if defined __GNUC__ || defined __clang__
+#  define __MCF_EX             __extension__
+#  define __MCF_GNU_INLINE      extern __inline__ __attribute__((__gnu_inline__))
+#  define __MCF_ALWAYS_INLINE   extern __inline__ __attribute__((__gnu_inline__, __always_inline__))
+#  define __MCF_NEVER_INLINE   __attribute__((__noinline__))
+#  define __MCF_NEVER_RETURN   __attribute__((__noreturn__))
+#  define __MCF_FN_CONST       __attribute__((__const__))
+#  define __MCF_FN_PURE       __attribute__((__pure__))
+#  define __MCF_FN_COLD       __attribute__((__cold__))
+#  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
+#  define __MCF_UNREACHABLE   __builtin_unreachable()
+#  define __MCF_FNA(x, fn)   __typeof__(x) fn __asm__(__MCF_USYM #x)
+#else
+#  define __MCF_EX             /* unsupported */
+#  define __MCF_GNU_INLINE      __inline
+#  define __MCF_ALWAYS_INLINE   __forceinline
+#  define __MCF_NEVER_INLINE   __declspec(noinline)
+#  define __MCF_NEVER_RETURN   __declspec(noreturn)
+#  define __MCF_FN_CONST       __declspec(noalias)
+#  define __MCF_FN_PURE       __declspec(noalias)
+#  define __MCF_FN_COLD       /* unsupported */
+#  define __MCF_ALIGNED(x)    __declspec(align(x))
+#  define __MCF_UNREACHABLE   __assume(0)
+#  define __MCF_FNA(x, fn)   __pragma(comment(linker, "/alternatename:" __MCF_USYM #fn "=" __MCF_USYM #x))
+#endif
+
+/* Generally speaking, functions are either `__MCF_MAY_THROW` or `noexcept`. This
+ * macro is necessary for Visual Studio (but not CL.EXE from command line), which
+ * defaults to `/EHsc`, which assumes that `extern "C"` functions can't throw C++
+ * exceptions. Not only is this behavior not conforming to the C++ standard, it
+ * can also result in wrong code about `__MCF_gthr_call_once_seh()`.  */
+#if defined _MSC_VER
+#  define __MCF_MAY_THROW   __MCF_CXX(throw(...))
+#else
+#  define __MCF_MAY_THROW
+#endif
 
 /* These are necessary when the header is compiled as C89 or C++98. The check
  * for `_LP64` is for Cygwin and MSYS2.  */
@@ -372,14 +374,6 @@ typedef unsigned __MCF_INTPTR_ uintptr_t;
 #define __MCF_IPTR_MAX    __MCF_64_32(LLONG_MAX, INT_MAX)
 #define __MCF_UPTR_0      __MCF_64_32(0ULL, 0U)
 #define __MCF_UPTR_MAX    __MCF_64_32(ULLONG_MAX, UINT_MAX)
-
-/* We are not allowed to define non-reserved names as macros, so function
- * aliases must be defined in a weird way. It's really weird, but it works!  */
-#if defined __GNUC__ || defined __clang__
-#  define __MCF_FNA(x, fn)   __typeof__(x) fn __asm__(__MCF_USYM #x)
-#else
-#  define __MCF_FNA(x, fn)   __pragma(comment(linker, "/alternatename:" __MCF_USYM #fn "=" __MCF_USYM #x))
-#endif
 
 /* For debug builds, `__MCF_UNREACHABLE` shall effect a breakpoint.  */
 __MCF_NEVER_RETURN
