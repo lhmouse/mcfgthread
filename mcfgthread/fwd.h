@@ -378,7 +378,7 @@ typedef unsigned __MCF_INTPTR_ uintptr_t;
 #if defined __GNUC__ || defined __clang__
 #  define __MCF_FNA(x, fn)   __typeof__(x) fn __asm__(__MCF_USYM #x)
 #else
-#  define __MCF_FNA(x, fn)   static __typeof__(x) __MCF_C(*const) __MCF_CXX(&) fn = *x
+#  define __MCF_FNA(x, fn)   __typeof__(x) fn;  __pragma(comment, "/alternatename:" __MCF_USYM #fn "=" __MCF_USYM #x)
 #endif
 
 /* For debug builds, `__MCF_UNREACHABLE` shall effect a breakpoint.  */
