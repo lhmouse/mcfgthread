@@ -317,14 +317,15 @@ __MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
         __MCF_gthread_initialize_globals();
         __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_PIN | GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, instance, &dummy2));
         __MCF_CHECK(VirtualProtect((void*) &__MCF_g, sizeof(__MCF_g), PAGE_READONLY, &dummy1));
-        break;
+        return 1;
 
       case DLL_THREAD_DETACH:
         __MCF_gthread_on_thread_exit();
-        break;
-      }
+        return 1;
 
-    return 1;
+      default:
+        return 1;
+      }
   }
 
 #else  /* __MCF_BUILDING_DLL  */
@@ -343,11 +344,14 @@ __MCF_tls_callback(PVOID module, ULONG reason, LPVOID reserved)
       {
       case DLL_PROCESS_ATTACH:
         __MCF_gthread_initialize_globals();
-        break;
+        return;
 
       case DLL_THREAD_DETACH:
         __MCF_gthread_on_thread_exit();
-        break;
+        return;
+
+      default:
+        return;
       }
   }
 
