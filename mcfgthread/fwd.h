@@ -373,6 +373,14 @@ typedef unsigned __MCF_INTPTR_ uintptr_t;
 #define __MCF_UPTR_0      __MCF_64_32(0ULL, 0U)
 #define __MCF_UPTR_MAX    __MCF_64_32(ULLONG_MAX, UINT_MAX)
 
+/* We are not allowed to define non-reserved names as macros, so function
+ * aliases must be defined in a weird way. It's really weird, but it works!  */
+#if defined __GNUC__ || defined __clang__
+#  define __MCF_FNA(x, fn)   __typeof__(x) fn __asm__(__MCF_USYM #x)
+#else
+#  define __MCF_FNA(x, fn)   static __typeof__(x) __MCF_C(*const) __MCF_CXX(&) fn = *x
+#endif
+
 /* For debug builds, `__MCF_UNREACHABLE` shall effect a breakpoint.  */
 __MCF_NEVER_RETURN
 void
