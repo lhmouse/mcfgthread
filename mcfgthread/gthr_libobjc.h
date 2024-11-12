@@ -24,7 +24,7 @@ __MCF_CXX(extern "C" {)
 typedef void* objc_thread_t;
 
 /* Initialize the threads subsystem.  */
-__MCF_GTHR_LIBOBJC_INLINE __MCF_CXX11(constexpr)
+__MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_init_thread_system(void) __MCF_noexcept;
 
@@ -34,7 +34,7 @@ __MCF_FNA(__MCF_gthr_objc_init_thread_system, __gthread_objc_init_thread_system)
 #endif
 
 /* Close the threads subsystem.  */
-__MCF_GTHR_LIBOBJC_INLINE __MCF_CXX11(constexpr)
+__MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_close_thread_system(void) __MCF_noexcept;
 
@@ -236,14 +236,14 @@ __MCF_FNA(__MCF_gthr_objc_thread_set_data, __gthread_objc_thread_set_data);
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
-__MCF_GTHR_LIBOBJC_INLINE __MCF_CXX11(constexpr)
+__MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_init_thread_system(void) __MCF_noexcept
   {
     return 0;
   }
 
-__MCF_GTHR_LIBOBJC_INLINE __MCF_CXX11(constexpr)
+__MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_close_thread_system(void) __MCF_noexcept
   {

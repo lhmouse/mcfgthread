@@ -241,7 +241,7 @@ __MCF_FNA(__MCF_c11_thrd_detach, thrd_detach);
 #endif
 
 /* 7.26.5.4 The thrd_equal function  */
-__MCF_C11_IMPORT __MCF_FN_PURE __MCF_CXX11(constexpr)
+__MCF_C11_IMPORT __MCF_FN_PURE
 int
 __MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_noexcept;
 
@@ -551,7 +551,7 @@ __MCF_c11_thrd_detach(thrd_t __thrd) __MCF_noexcept
     return thrd_success;
   }
 
-__MCF_C11_INLINE __MCF_CXX11(constexpr)
+__MCF_C11_INLINE
 int
 __MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_noexcept
   {

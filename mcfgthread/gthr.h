@@ -45,7 +45,7 @@ typedef __MCF_gthr_rc_mutex __gthread_recursive_mutex_t;
 /* Informs the runtime that threading support is active.
  * Windows creates new threads for console control handlers, so threading
  * cannot be disabled.  */
-__MCF_GTHR_INLINE __MCF_FN_CONST __MCF_CXX11(constexpr)
+__MCF_GTHR_INLINE __MCF_FN_CONST
 int
 __MCF_gthr_active_p(void) __MCF_noexcept;
 
@@ -344,7 +344,7 @@ __MCF_FNA(__MCF_gthr_self, __gthread_self);
 #endif
 
 /* Checks whether two thread IDs compare equal, like `pthread_equal()`.  */
-__MCF_GTHR_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
+__MCF_GTHR_INLINE __MCF_FN_PURE
 int
 __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_noexcept;
 
@@ -368,7 +368,7 @@ __MCF_FNA(__MCF_gthr_yield, __gthread_yield);
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
-__MCF_GTHR_INLINE __MCF_CXX11(constexpr)
+__MCF_GTHR_INLINE
 int
 __MCF_gthr_active_p(void) __MCF_noexcept
   {
@@ -666,7 +666,7 @@ __MCF_gthr_self(void) __MCF_noexcept
     return _MCF_thread_self();
   }
 
-__MCF_GTHR_INLINE __MCF_CXX11(constexpr)
+__MCF_GTHR_INLINE
 int
 __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_noexcept
   {
