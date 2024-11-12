@@ -80,13 +80,20 @@ NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status) __MCF_FN_CONST;
       .Buffer = (void*) ((s) + __MCF_STATIC_ASSERT_0(  \
          !__builtin_types_compatible_p(__typeof__(1+&*(s)), __typeof__(s))))  }
 
-/* Define macros and types for lazy binding.
- * If a symbol cannot be found during startup, it is set to a null pointer.  */
-#define __MCF_G_LAZY_FIELD(name)   decltype_##name* __f_##name
-
+/* Define macros and types for lazy binding. If a symbol cannot be found
+ * during process startup, it shall be initialized to a null pointer.  */
 typedef void __stdcall decltype_GetSystemTimePreciseAsFileTime(FILETIME*);
 typedef void __stdcall decltype_QueryInterruptTime(ULONGLONG*);
-typedef LPVOID __stdcall decltype_TlsGetValue(ULONG);
+typedef LPVOID __stdcall decltype_TlsGetValue2(ULONG);
+
+#define __MCF_LAZY_D_(name)   decltype_##name* __f_##name
+#define __MCF_LAZY_P_(name)   __f_##name
+
+#define __MCF_LAZY_LOAD(out, dll, name)  \
+    ({ decltype_##name* __temp1 = __MCF_nullptr;  \
+       if(dll) __temp1 = __MCF_CAST_PTR(decltype_##name, GetProcAddress(dll, #name));  \
+       if(__temp1) *(out) = __temp1;  \
+       __temp1;  })
 
 /* Declare helper functions here.  */
 typedef struct __MCF_seh_i386_node __MCF_seh_i386_node;
@@ -301,8 +308,8 @@ struct __MCF_crt_xglobals
     _MCF_cond __interrupt_cond[1];
 
     /* WARNING: Fields hereinafter must be accessed via `__MCF_G_FIELD_OPT`!  */
-    __MCF_G_LAZY_FIELD(GetSystemTimePreciseAsFileTime);
-    __MCF_G_LAZY_FIELD(QueryInterruptTime);
+    __MCF_LAZY_D_(GetSystemTimePreciseAsFileTime);
+    __MCF_LAZY_D_(QueryInterruptTime);
     _MCF_mutex __thread_oom_mtx[1];
     _MCF_thread __thread_oom_self_st;
   };
@@ -313,7 +320,7 @@ extern HANDLE __MCF_XGLOBALS_READONLY __MCF_crt_heap;
 extern double __MCF_XGLOBALS_READONLY __MCF_crt_pf_recip;
 extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_kernelbase;
 extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_ntdll;
-extern decltype_TlsGetValue* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue;
+extern decltype_TlsGetValue2* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue;
 
 /* This is a pointer to the process-specific data.
  * As mcfgthread may be linked statically by user DLLs, we must ensure that, in
@@ -326,21 +333,14 @@ extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY restrict __MCF_g;
 
 /* As `__MCF_crt_xglobals` is shared between all static and shared instances of
  * this library within a single process, we have to involve sort of versioning.  */
-#define __MCF_G_SIZE  \
-    ((uint32_t) __builtin_expect((long) __MCF_g->__self_size, sizeof(__MCF_crt_xglobals)))
-
 #define __MCF_G_FIELD_OPT(field)  \
-    ((__MCF_G_SIZE >= offsetof(__MCF_crt_xglobals, field) + sizeof(__MCF_g->field))  \
+    ((__MCF_g->__self_size >= offsetof(__MCF_crt_xglobals, field) + sizeof(__MCF_g->field))  \
      ? &(__MCF_g->field)  \
      : __MCF_nullptr)
 
-#define __MCF_G_INITIALIZE_LAZY(dll, name)  \
-    (__MCF_g->__f_##name =  \
-        (dll) ? __MCF_CAST_PTR(decltype_##name, GetProcAddress(dll, #name))  \
-              : __MCF_nullptr)
-
-#define __MCF_LAZY_P(name)    (__MCF_G_FIELD_OPT(__f_##name) && __MCF_g->__f_##name)
-#define __MCF_LAZY_REF(name)   (*(__MCF_g->__f_##name))
+#define __MCF_G_HAS_LAZY(name)   (__MCF_G_FIELD_OPT(__MCF_LAZY_P_(name)) && __MCF_g->__MCF_LAZY_P_(name))
+#define __MCF_G_LAZY(name)           (*(__MCF_g->__MCF_LAZY_P_(name)))
+#define __MCF_G_SET_LAZY(dll, name)    __MCF_LAZY_LOAD(&(__MCF_g->__MCF_LAZY_P_(name)), dll, name)
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also

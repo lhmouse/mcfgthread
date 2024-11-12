@@ -177,8 +177,8 @@ __MCF_gthread_initialize_globals(void)
     __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, L"KERNELBASE.DLL", &__MCF_crt_kernelbase));
     __MCF_CHECK(GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, L"NTDLL.DLL", &__MCF_crt_ntdll));
 
-    FARPROC dllfn = GetProcAddress(__MCF_crt_kernelbase, "TlsGetValue2");
-    __MCF_crt_TlsGetValue = dllfn ? __MCF_CAST_PTR(decltype_TlsGetValue, dllfn) : TlsGetValue;
+    __MCF_crt_TlsGetValue = TlsGetValue;
+    __MCF_LAZY_LOAD(&__MCF_crt_TlsGetValue, __MCF_crt_kernelbase, TlsGetValue2);
 
     /* Generate the unique name for this process.  */
     static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
@@ -226,8 +226,8 @@ __MCF_gthread_initialize_globals(void)
     __MCF_CHECK(__MCF_g->__tls_index != UINT32_MAX);
 
     /* Perform lazy binding for newer functions.  */
-    __MCF_G_INITIALIZE_LAZY(__MCF_crt_kernelbase, GetSystemTimePreciseAsFileTime);  /* win8 */
-    __MCF_G_INITIALIZE_LAZY(__MCF_crt_kernelbase, QueryInterruptTime);  /* win10 */
+    __MCF_G_SET_LAZY(__MCF_crt_kernelbase, GetSystemTimePreciseAsFileTime);  /* win8 */
+    __MCF_G_SET_LAZY(__MCF_crt_kernelbase, QueryInterruptTime);  /* win10 */
 
     /* Attach the main thread. The structure should be all zeroes so no
      * initialization is necessary.  */
@@ -368,7 +368,7 @@ double __MCF_crt_pf_recip = 1;
 SYSTEM_INFO __MCF_crt_sysinfo = { .dwPageSize = 1 };
 HMODULE __MCF_crt_kernelbase = __MCF_BAD_PTR;
 HMODULE __MCF_crt_ntdll = __MCF_BAD_PTR;
-decltype_TlsGetValue* __MCF_crt_TlsGetValue = __MCF_BAD_PTR;
+decltype_TlsGetValue2* __MCF_crt_TlsGetValue = __MCF_BAD_PTR;
 
 /* This is a pointer to global data. If this library is linked statically,
  * all instances of this pointer in the same process should point to the

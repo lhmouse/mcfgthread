@@ -42,10 +42,10 @@ __MCF_DLLEXPORT
 double
 _MCF_hires_utc_now(void)
   {
-    if(__MCF_LAZY_P(GetSystemTimePreciseAsFileTime)) {
+    if(__MCF_G_HAS_LAZY(GetSystemTimePreciseAsFileTime)) {
       /* This is available since Windows 8.  */
       ULONGLONG ull;
-      __MCF_LAZY_REF(GetSystemTimePreciseAsFileTime) ((FILETIME*) &ull);
+      __MCF_G_LAZY(GetSystemTimePreciseAsFileTime) ((FILETIME*) &ull);
       return (double) ((int64_t) ull - 116444736000000000) * 0.0001;
     }
 
@@ -62,10 +62,10 @@ __MCF_DLLEXPORT
 int64_t
 _MCF_tick_count(void)
   {
-    if(__MCF_LAZY_P(QueryInterruptTime)) {
+    if(__MCF_G_HAS_LAZY(QueryInterruptTime)) {
       /* This is available since Windows 10.  */
       ULONGLONG ull;
-      __MCF_LAZY_REF(QueryInterruptTime) (&ull);
+      __MCF_G_LAZY(QueryInterruptTime) (&ull);
       return (int64_t) do_divide_by_10000(ull);
     }
 
