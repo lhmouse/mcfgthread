@@ -247,6 +247,11 @@ import('pkgconfig').generate(lib_mcfgthread_dll,
 #===========================================================
 # Rules for tests
 #===========================================================
+test_version_o = import('windows').compile_resources(
+      'test/version.rc',
+      args: [ '-I.', '-c65001' ],
+      depend_files: [ 'mcfgthread/version.manifest' ])
+
 foreach src: test_src
   test_c_args = []
   test_cpp_args = []
@@ -310,10 +315,11 @@ foreach src: test_src
     test_cpp_args = [ '-std=c++14' ]
   endif
 
-  test_exe = executable(src.underscorify(), src,
+  test_exe = executable(src.underscorify(),
                         c_args: test_c_args,
                         cpp_args: test_cpp_args,
                         link_args: test_link_args,
+                        sources: [ src, test_version_o ],
                         dependencies: test_dependencies,
                         link_with: test_link_with,
                         install: false)
