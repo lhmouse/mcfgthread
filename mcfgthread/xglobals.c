@@ -328,6 +328,40 @@ __MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
       }
   }
 
+__declspec(dllexport)
+void*
+__cdecl
+memcpy(void* dst, const void* src, size_t size)
+  {
+    return __MCF_mcopy(dst, src, size);
+  }
+
+__declspec(dllexport)
+void*
+__cdecl
+memmove(void* dst, const void* src, size_t size)
+  {
+    return ((uintptr_t) dst - (uintptr_t) src >= size)
+            ? __MCF_mcopy(dst, src, size)
+            : __MCF_mcopy_backward(dst, src, size);
+  }
+
+__declspec(dllexport)
+int
+__cdecl
+memcmp(const void* src, const void* cmp, size_t size)
+  {
+    return __MCF_mcompare(src, cmp, size);
+  }
+
+__declspec(dllexport)
+void*
+__cdecl
+memset(void* dst, int val, size_t size)
+  {
+    return __MCF_mfill(dst, val, size);
+  }
+
 #else  /* __MCF_BUILDING_DLL  */
 
 /* When building the static library, invoke common routines from a TLS

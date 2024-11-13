@@ -25,20 +25,18 @@ project('mcfgthread',
 mcfgthread_include = [
   'mcfgthread/fwd.h', 'mcfgthread/atomic.h', 'mcfgthread/clock.h',
   'mcfgthread/mutex.h', 'mcfgthread/shared_mutex.h', 'mcfgthread/cond.h',
-  'mcfgthread/once.h', 'mcfgthread/sem.h', 'mcfgthread/event.h',
-  'mcfgthread/thread.h', 'mcfgthread/cxa.h', 'mcfgthread/dtor_queue.h',
-  'mcfgthread/exit.h', 'mcfgthread/tls.h', 'mcfgthread/gthr_aux.h',
-  'mcfgthread/gthr.h', 'mcfgthread/gthr_libobjc.h', 'mcfgthread/c11.h',
-  'mcfgthread/libcxx.h', 'mcfgthread/cxx11.hpp' ]
+  'mcfgthread/once.h', 'mcfgthread/sem.h', 'mcfgthread/event.h', 'mcfgthread/thread.h',
+  'mcfgthread/cxa.h', 'mcfgthread/dtor_queue.h', 'mcfgthread/exit.h',
+  'mcfgthread/tls.h', 'mcfgthread/gthr_aux.h', 'mcfgthread/gthr.h',
+  'mcfgthread/gthr_libobjc.h', 'mcfgthread/c11.h', 'mcfgthread/libcxx.h',
+  'mcfgthread/cxx11.hpp' ]
 
 mcfgthread_src_min = [
-  'mcfgthread/memcpy.c', 'mcfgthread/memmove.c', 'mcfgthread/memcmp.c',
-  'mcfgthread/memset.c', 'mcfgthread/xglobals.c', 'mcfgthread/fwd.c',
-  'mcfgthread/atomic.c', 'mcfgthread/clock.c', 'mcfgthread/mutex.c',
-  'mcfgthread/shared_mutex.c', 'mcfgthread/cond.c', 'mcfgthread/once.c',
-  'mcfgthread/sem.c', 'mcfgthread/event.c', 'mcfgthread/thread.c',
-  'mcfgthread/cxa.c', 'mcfgthread/dtor_queue.c', 'mcfgthread/exit.c',
-  'mcfgthread/tls.c', 'mcfgthread/gthr_aux.c' ]
+  'mcfgthread/xglobals.c', 'mcfgthread/fwd.c', 'mcfgthread/atomic.c',
+  'mcfgthread/clock.c', 'mcfgthread/mutex.c', 'mcfgthread/shared_mutex.c',
+  'mcfgthread/cond.c', 'mcfgthread/once.c', 'mcfgthread/sem.c', 'mcfgthread/event.c',
+  'mcfgthread/thread.c', 'mcfgthread/cxa.c', 'mcfgthread/dtor_queue.c',
+  'mcfgthread/exit.c', 'mcfgthread/tls.c', 'mcfgthread/gthr_aux.c' ]
 
 mcfgthread_src_ex = [
   'mcfgthread/gthr.c', 'mcfgthread/gthr_libobjc.c', 'mcfgthread/c11.c',
