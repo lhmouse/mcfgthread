@@ -91,15 +91,12 @@ __MCF_COND_INLINE
 size_t
 _MCF_cond_signal_some(_MCF_cond* __cond, size_t __max) __MCF_noexcept
   {
-#if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
+#if __MCF_EXPAND_INLINE_DEFINITIONS
     _MCF_cond __old;
-
-    /* If no thread is waiting, don't do anything.  */
     _MCF_atomic_load_pptr_acq(&__old, __cond);
     if(__old.__nsleep == 0)
       return 0;
-#endif  /* speed */
-
+#endif
     return _MCF_cond_signal_some_slow(__cond, __max);
   }
 

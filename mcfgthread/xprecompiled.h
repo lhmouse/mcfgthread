@@ -16,6 +16,8 @@
 #  define __MCF_DLLEXPORT
 #endif
 
+#define __MCF_EXPAND_INLINE_DEFINITIONS   1
+
 #include <minwindef.h>
 #include <winnt.h>
 #include <winternl.h>

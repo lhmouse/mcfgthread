@@ -96,19 +96,14 @@ __MCF_MUTEX_INLINE
 int
 _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_noexcept
   {
-#if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
+#if __MCF_EXPAND_INLINE_DEFINITIONS
     _MCF_mutex __old = { 0, 0, 0, 0 };
     _MCF_mutex __new = { 1, 0, 0, 0 };
-
-    /* This is optimized solely for single-thread code.  */
     if(_MCF_atomic_cmpxchg_weak_pptr_acq(__mutex, &__old, &__new))
       return 0;
-
-    /* If a timeout of zero is specified, don't block at all.  */
-    if(__timeout_opt && (*__timeout_opt == 0) && __old.__locked)
+    else if(__old.__locked && __timeout_opt && (*__timeout_opt == 0))
       return -1;
-#endif  /* speed */
-
+#endif
     return _MCF_mutex_lock_slow(__mutex, __timeout_opt);
   }
 
@@ -116,15 +111,12 @@ __MCF_MUTEX_INLINE
 void
 _MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_noexcept
   {
-#if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
+#if __MCF_EXPAND_INLINE_DEFINITIONS
     _MCF_mutex __old = { 1, 0, 0, 0 };
     _MCF_mutex __new = { 0, 0, 0, 0 };
-
-    /* This is optimized solely for single-thread code.  */
     if(_MCF_atomic_cmpxchg_weak_pptr_rel(__mutex, &__old, &__new))
       return;
-#endif  /* speed */
-
+#endif
     _MCF_mutex_unlock_slow(__mutex);
   }
 

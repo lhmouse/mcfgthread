@@ -375,6 +375,19 @@ typedef unsigned __MCF_INTPTR_ uintptr_t;
 #define __MCF_UPTR_0      __MCF_64_32(0ULL, 0U)
 #define __MCF_UPTR_MAX    __MCF_64_32(ULLONG_MAX, UINT_MAX)
 
+/* I can't find a better name for this macro. It controls whether the complete
+ * definitions of inline functions are compiled. If headers are included by user
+ * code and they are optimizing for size, most fast-path parts are opted out.
+ * Complete definitions are compiled when a user is optimizing for speed, or when
+ * it's inside mcfgthread itself regardless of optimization.  */
+#ifndef __MCF_EXPAND_INLINE_DEFINITIONS
+#  if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
+#    define __MCF_EXPAND_INLINE_DEFINITIONS   1
+#  else
+#    define __MCF_EXPAND_INLINE_DEFINITIONS   0
+#  endif
+#endif
+
 /* For debug builds, `__MCF_UNREACHABLE` shall effect a breakpoint.  */
 __MCF_NEVER_RETURN
 void

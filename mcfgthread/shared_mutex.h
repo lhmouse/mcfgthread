@@ -107,19 +107,14 @@ __MCF_SHARED_MUTEX_INLINE
 int
 _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt) __MCF_noexcept
   {
-#if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
+#if __MCF_EXPAND_INLINE_DEFINITIONS
     _MCF_shared_mutex __old = { 0, 0 };
     _MCF_shared_mutex __new = { 1, 0 };
-
-    /* This is optimized solely for single-thread code.  */
     if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smutex, &__old, &__new))
       return 0;
-
-    /* If a timeout of zero is specified, don't block at all.  */
-    if(__timeout_opt && (*__timeout_opt == 0) && (__old.__nshare == 0x3FFF))
+    else if((__old.__nshare == 0x3FFF) && __timeout_opt && (*__timeout_opt == 0))
       return -1;
-#endif  /* speed */
-
+#endif
     return _MCF_shared_mutex_lock_shared_slow(__smutex, __timeout_opt);
   }
 
@@ -127,19 +122,14 @@ __MCF_SHARED_MUTEX_INLINE
 int
 _MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt) __MCF_noexcept
   {
-#if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
+#if __MCF_EXPAND_INLINE_DEFINITIONS
     _MCF_shared_mutex __old = { 0, 0 };
     _MCF_shared_mutex __new = { 0x3FFF, 0 };
-
-    /* This is optimized solely for single-thread code.  */
     if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smutex, &__old, &__new))
       return 0;
-
-    /* If a timeout of zero is specified, don't block at all.  */
-    if(__timeout_opt && (*__timeout_opt == 0) && (__old.__nshare != 0))
+    else if((__old.__nshare != 0) && __timeout_opt && (*__timeout_opt == 0))
       return -1;
-#endif  /* speed */
-
+#endif
     return _MCF_shared_mutex_lock_exclusive_slow(__smutex, __timeout_opt);
   }
 
@@ -147,15 +137,12 @@ __MCF_SHARED_MUTEX_INLINE
 void
 _MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex) __MCF_noexcept
   {
-#if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
+#if __MCF_EXPAND_INLINE_DEFINITIONS
     _MCF_shared_mutex __old = { 1, 0 };
     _MCF_shared_mutex __new = { 0, 0 };
-
-    /* This is optimized solely for single-thread code.  */
     if(_MCF_atomic_cmpxchg_weak_pptr_rel(__smutex, &__old, &__new))
       return;
-#endif  /* speed */
-
+#endif
     _MCF_shared_mutex_unlock_slow(__smutex);
   }
 
