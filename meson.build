@@ -154,7 +154,7 @@ add_project_arguments(
       '-Wunused-function', '-Wunused-label', '-Wunused-local-typedefs',
       '-Wunused-but-set-variable', '-Wunused-but-set-parameter',
       '-Wunused-const-variable', '-Wno-unused-command-line-argument',
-      '-Wno-dll-attribute-on-redeclaration'),
+      '-Wno-dll-attribute-on-redeclaration', '-Wno-dynamic-exception-spec'),
     language: [ 'c', 'cpp' ])
 
 add_project_arguments(
