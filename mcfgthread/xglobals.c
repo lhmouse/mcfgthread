@@ -328,62 +328,36 @@ __MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
       }
   }
 
-/* GCC requires these functions for a freestanding implementation:
- * https://gcc.gnu.org/onlinedocs/gcc/Standards.html  */
-__MCF_DLLEXPORT
+__declspec(dllexport)
 void*
 __cdecl
-__MCF_memcpy(void* dst, const void* src, size_t size)
-  __asm__(__MCF_USYM "memcpy");
-
-__MCF_DLLEXPORT
-void*
-__cdecl
-__MCF_memcpy(void* dst, const void* src, size_t size)
+memcpy(void* dst, const void* src, size_t size)
   {
     return __MCF_mcopy(dst, src, size);
   }
 
-__MCF_DLLEXPORT
+__declspec(dllexport)
 void*
 __cdecl
-__MCF_memmove(void* dst, const void* src, size_t size)
-  __asm__(__MCF_USYM "memmove");
-
-__MCF_DLLEXPORT
-void*
-__cdecl
-__MCF_memmove(void* dst, const void* src, size_t size)
+memmove(void* dst, const void* src, size_t size)
   {
     return ((uintptr_t) dst - (uintptr_t) src >= size)
             ? __MCF_mcopy(dst, src, size)
             : __MCF_mcopy_backward(dst, src, size);
   }
 
-__MCF_DLLEXPORT
+__declspec(dllexport)
 int
 __cdecl
-__MCF_memcmp(const void* src, const void* cmp, size_t size)
-  __asm__(__MCF_USYM "memcmp");
-
-__MCF_DLLEXPORT
-int
-__cdecl
-__MCF_memcmp(const void* src, const void* cmp, size_t size)
+memcmp(const void* src, const void* cmp, size_t size)
   {
     return __MCF_mcompare(src, cmp, size);
   }
 
-__MCF_DLLEXPORT
+__declspec(dllexport)
 void*
 __cdecl
-__MCF_memset(void* dst, int val, size_t size)
-  __asm__(__MCF_USYM "memset");
-
-__MCF_DLLEXPORT
-void*
-__cdecl
-__MCF_memset(void* dst, int val, size_t size)
+memset(void* dst, int val, size_t size)
   {
     return __MCF_mfill(dst, val, size);
   }
