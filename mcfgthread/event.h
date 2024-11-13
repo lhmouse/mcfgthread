@@ -67,7 +67,7 @@ _MCF_event_get(const _MCF_event* __eventp) __MCF_noexcept;
  * immediately.
  *
  * Returns a desired value which never equals the lowest byte of `__undesired`,
- * or -1 if the operation has timed out, or -2 in case of invalid arguments.  */
+ * or -1 if the operation has timed out.  */
 __MCF_EVENT_IMPORT
 int
 _MCF_event_await_change_slow(_MCF_event* __eventp, int __undesired, const int64_t* __timeout_opt) __MCF_noexcept;
