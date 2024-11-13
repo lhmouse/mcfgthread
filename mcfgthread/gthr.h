@@ -344,7 +344,7 @@ __MCF_FNA(__MCF_gthr_self, __gthread_self);
 #endif
 
 /* Checks whether two thread IDs compare equal, like `pthread_equal()`.  */
-__MCF_GTHR_IMPORT __MCF_FN_PURE
+__MCF_GTHR_IMPORT __MCF_FN_CONST
 int
 __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_noexcept;
 
@@ -368,7 +368,7 @@ __MCF_FNA(__MCF_gthr_yield, __gthread_yield);
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
-__MCF_GTHR_INLINE
+__MCF_GTHR_INLINE __MCF_FN_CONST
 int
 __MCF_gthr_active_p(void) __MCF_noexcept
   {
@@ -400,7 +400,7 @@ __MCF_gthr_key_delete(__gthread_key_t __key) __MCF_noexcept
     return 0;
   }
 
-__MCF_GTHR_INLINE
+__MCF_GTHR_INLINE __MCF_FN_PURE
 void*
 __MCF_gthr_getspecific(__gthread_key_t __key) __MCF_noexcept
   {
@@ -659,14 +659,14 @@ __MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_noexcept
     return 0;
   }
 
-__MCF_GTHR_INLINE
+__MCF_GTHR_INLINE __MCF_FN_CONST
 __gthread_t
 __MCF_gthr_self(void) __MCF_noexcept
   {
     return _MCF_thread_self();
   }
 
-__MCF_GTHR_INLINE
+__MCF_GTHR_INLINE __MCF_FN_CONST
 int
 __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2) __MCF_noexcept
   {

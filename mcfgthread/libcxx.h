@@ -323,7 +323,7 @@ __MCF_FNA(__MCF_libcxx_thread_get_id, __libcpp_thread_get_id);
 #endif
 
 /* Checks whether two thread IDs compare equal, like `pthread_equal()`.  */
-__MCF_LIBCXX_IMPORT __MCF_FN_PURE
+__MCF_LIBCXX_IMPORT __MCF_FN_CONST
 bool
 __MCF_libcxx_thread_id_equal(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_noexcept;
 
@@ -333,7 +333,7 @@ __MCF_FNA(__MCF_libcxx_thread_id_equal, __libcpp_thread_id_equal);
 #endif
 
 /* Checks whether two thread IDs compare less, for standard containers.  */
-__MCF_LIBCXX_IMPORT __MCF_FN_PURE
+__MCF_LIBCXX_IMPORT __MCF_FN_CONST
 bool
 __MCF_libcxx_thread_id_less(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_noexcept;
 
@@ -396,7 +396,7 @@ __MCF_libcxx_tls_delete(__libcpp_tls_key __key) __MCF_noexcept
     return 0;
   }
 
-__MCF_LIBCXX_INLINE
+__MCF_LIBCXX_INLINE __MCF_FN_PURE
 void*
 __MCF_libcxx_tls_get(__libcpp_tls_key __key) __MCF_noexcept
   {
@@ -625,35 +625,35 @@ __MCF_libcxx_thread_detach(const __libcpp_thread_t* __thrdp) __MCF_noexcept
     return 0;
   }
 
-__MCF_LIBCXX_INLINE
+__MCF_LIBCXX_INLINE __MCF_FN_PURE
 bool
 __MCF_libcxx_thread_isnull(const __libcpp_thread_t* __thrdp) __MCF_noexcept
   {
     return *__thrdp == _LIBCPP_NULL_THREAD;
   }
 
-__MCF_LIBCXX_INLINE
+__MCF_LIBCXX_INLINE __MCF_FN_CONST
 __libcpp_thread_id
 __MCF_libcxx_thread_get_current_id(void) __MCF_noexcept
   {
     return _MCF_thread_self_tid();
   }
 
-__MCF_LIBCXX_INLINE
+__MCF_LIBCXX_INLINE __MCF_FN_PURE
 __libcpp_thread_id
 __MCF_libcxx_thread_get_id(const __libcpp_thread_t* __thrdp) __MCF_noexcept
   {
     return _MCF_thread_get_tid(*__thrdp);
   }
 
-__MCF_LIBCXX_INLINE
+__MCF_LIBCXX_INLINE __MCF_FN_CONST
 bool
 __MCF_libcxx_thread_id_equal(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_noexcept
   {
     return __t1 == __t2;
   }
 
-__MCF_LIBCXX_INLINE
+__MCF_LIBCXX_INLINE __MCF_FN_CONST
 bool
 __MCF_libcxx_thread_id_less(__libcpp_thread_id __t1, __libcpp_thread_id __t2) __MCF_noexcept
   {

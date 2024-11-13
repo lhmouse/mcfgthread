@@ -377,7 +377,7 @@ __MCF_gthr_objc_thread_set_priority(int __priority) __MCF_noexcept
     return __err;
   }
 
-__MCF_GTHR_LIBOBJC_INLINE
+__MCF_GTHR_LIBOBJC_INLINE __MCF_FN_PURE
 int
 __MCF_gthr_objc_thread_get_priority(void) __MCF_noexcept
   {
@@ -393,21 +393,21 @@ __MCF_gthr_objc_thread_yield(void) __MCF_noexcept
     _MCF_yield();
   }
 
-__MCF_GTHR_LIBOBJC_INLINE
+__MCF_GTHR_LIBOBJC_INLINE __MCF_NEVER_RETURN
 int
 __MCF_gthr_objc_thread_exit(void) __MCF_noexcept
   {
     _MCF_thread_exit();
   }
 
-__MCF_GTHR_LIBOBJC_INLINE
+__MCF_GTHR_LIBOBJC_INLINE __MCF_FN_CONST
 objc_thread_t
 __MCF_gthr_objc_thread_id(void) __MCF_noexcept
   {
     return (objc_thread_t)(uintptr_t) _MCF_thread_self_tid();
   }
 
-__MCF_GTHR_LIBOBJC_INLINE
+__MCF_GTHR_LIBOBJC_INLINE __MCF_FN_PURE
 void*
 __MCF_gthr_objc_thread_get_data(void) __MCF_noexcept
   {

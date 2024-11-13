@@ -241,7 +241,7 @@ __MCF_FNA(__MCF_c11_thrd_detach, thrd_detach);
 #endif
 
 /* 7.26.5.4 The thrd_equal function  */
-__MCF_C11_IMPORT __MCF_FN_PURE
+__MCF_C11_IMPORT __MCF_FN_CONST
 int
 __MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_noexcept;
 
@@ -522,7 +522,7 @@ __MCF_c11_thrd_create(thrd_t* __thrdp, thrd_start_t __proc, void* __arg) __MCF_n
     return (__thrd == __MCF_nullptr) ? thrd_nomem : thrd_success;
   }
 
-__MCF_C11_INLINE
+__MCF_C11_INLINE __MCF_FN_CONST
 thrd_t
 __MCF_c11_thrd_current(void) __MCF_noexcept
   {
@@ -551,14 +551,14 @@ __MCF_c11_thrd_detach(thrd_t __thrd) __MCF_noexcept
     return thrd_success;
   }
 
-__MCF_C11_INLINE
+__MCF_C11_INLINE __MCF_FN_CONST
 int
 __MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_noexcept
   {
     return __t1 == __t2;
   }
 
-__MCF_C11_INLINE
+__MCF_C11_INLINE __MCF_NEVER_RETURN
 void
 __MCF_c11_thrd_exit(int __result) __MCF_noexcept
   {
@@ -632,7 +632,7 @@ __MCF_c11_tss_delete(tss_t __key) __MCF_noexcept
     _MCF_tls_key_delete(__key);
   }
 
-__MCF_C11_INLINE
+__MCF_C11_INLINE __MCF_FN_PURE
 void*
 __MCF_c11_tss_get(tss_t __key) __MCF_noexcept
   {
