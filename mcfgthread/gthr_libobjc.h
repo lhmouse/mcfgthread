@@ -24,7 +24,7 @@ __MCF_CXX(extern "C" {)
 typedef void* objc_thread_t;
 
 /* Initialize the threads subsystem.  */
-__MCF_GTHR_LIBOBJC_INLINE
+__MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_init_thread_system(void) __MCF_noexcept;
 
@@ -34,7 +34,7 @@ __MCF_FNA(__MCF_gthr_objc_init_thread_system, __gthread_objc_init_thread_system)
 #endif
 
 /* Close the threads subsystem.  */
-__MCF_GTHR_LIBOBJC_INLINE
+__MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_close_thread_system(void) __MCF_noexcept;
 
@@ -152,7 +152,7 @@ __MCF_FNA(__MCF_gthr_objc_condition_broadcast, __gthread_objc_condition_broadcas
 
 /* Create a new thread of execution.
  * This function creates a detached thread.  */
-__MCF_GTHR_LIBOBJC_INLINE
+__MCF_GTHR_LIBOBJC_IMPORT
 objc_thread_t
 __MCF_gthr_objc_thread_detach(__MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_noexcept;
 
@@ -162,7 +162,7 @@ __MCF_FNA(__MCF_gthr_objc_thread_detach, __gthread_objc_thread_detach);
 #endif
 
 /* Set the current thread's priority.  */
-__MCF_GTHR_LIBOBJC_INLINE
+__MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_thread_set_priority(int __priority) __MCF_noexcept;
 
@@ -172,7 +172,7 @@ __MCF_FNA(__MCF_gthr_objc_thread_set_priority, __gthread_objc_thread_set_priorit
 #endif
 
 /* Return the current thread's priority.  */
-__MCF_GTHR_LIBOBJC_INLINE __MCF_FN_PURE
+__MCF_GTHR_LIBOBJC_IMPORT __MCF_FN_PURE
 int
 __MCF_gthr_objc_thread_get_priority(void) __MCF_noexcept;
 
@@ -182,7 +182,7 @@ __MCF_FNA(__MCF_gthr_objc_thread_get_priority, __gthread_objc_thread_get_priorit
 #endif
 
 /* Yield our process time to another thread.  */
-__MCF_GTHR_LIBOBJC_INLINE
+__MCF_GTHR_LIBOBJC_IMPORT
 void
 __MCF_gthr_objc_thread_yield(void) __MCF_noexcept;
 
@@ -192,7 +192,7 @@ __MCF_FNA(__MCF_gthr_objc_thread_yield, __gthread_objc_thread_yield);
 #endif
 
 /* Terminate the current thread.  */
-__MCF_GTHR_LIBOBJC_INLINE __MCF_NEVER_RETURN
+__MCF_GTHR_LIBOBJC_IMPORT __MCF_NEVER_RETURN
 int
 __MCF_gthr_objc_thread_exit(void) __MCF_noexcept;
 
@@ -202,7 +202,7 @@ __MCF_FNA(__MCF_gthr_objc_thread_exit, __gthread_objc_thread_exit);
 #endif
 
 /* Returns an integer value which uniquely describes a thread.  */
-__MCF_GTHR_LIBOBJC_INLINE __MCF_FN_CONST
+__MCF_GTHR_LIBOBJC_IMPORT __MCF_FN_CONST
 objc_thread_t
 __MCF_gthr_objc_thread_id(void) __MCF_noexcept;
 
@@ -212,7 +212,7 @@ __MCF_FNA(__MCF_gthr_objc_thread_id, __gthread_objc_thread_id);
 #endif
 
 /* Returns the thread's local storage pointer.  */
-__MCF_GTHR_LIBOBJC_INLINE __MCF_FN_PURE
+__MCF_GTHR_LIBOBJC_IMPORT __MCF_FN_PURE
 void*
 __MCF_gthr_objc_thread_get_data(void) __MCF_noexcept;
 
@@ -222,7 +222,7 @@ __MCF_FNA(__MCF_gthr_objc_thread_get_data, __gthread_objc_thread_get_data);
 #endif
 
 /* Sets the thread's local storage pointer.  */
-__MCF_GTHR_LIBOBJC_INLINE
+__MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_thread_set_data(void* __value) __MCF_noexcept;
 
