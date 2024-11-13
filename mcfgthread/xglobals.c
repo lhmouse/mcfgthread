@@ -229,9 +229,10 @@ __MCF_gthread_initialize_globals(void)
     __MCF_G_SET_LAZY(__MCF_crt_kernelbase, GetSystemTimePreciseAsFileTime);  /* win8 */
     __MCF_G_SET_LAZY(__MCF_crt_kernelbase, QueryInterruptTime);  /* win10 */
 
-    /* Attach the main thread. The structure should be all zeroes so no
-     * initialization is necessary.  */
+    /* Attach the main thread and make it joinable. The structure should
+     * be all zeroes so no initialization is necessary.  */
     __MCF_thread_attach_foreign(__MCF_g->__main_thread);
+    _MCF_atomic_store_32_rel(__MCF_g->__main_thread->__nref, 2);
   }
 
 __MCF_DLLEXPORT
