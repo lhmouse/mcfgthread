@@ -22,10 +22,10 @@ main(void)
     _MCF_thread_set_priority(__MCF_nullptr, _MCF_thread_priority_above_normal);
 
     r = _MCF_event_await_change(&event, -1, (const int64_t[]){ (int64_t) _MCF_hires_utc_now() + 1116 });  /* absolute  */
-    assert(r == -2);
+    assert(r == 42);
 
     r = _MCF_event_await_change(&event, __MCF_EVENT_VALUE_MAX + 1, (const int64_t[]){ (int64_t) _MCF_hires_utc_now() + 1116 });  /* absolute  */
-    assert(r == -2);
+    assert(r == 42);
 
     now = _MCF_perf_counter();
     r = _MCF_event_await_change(&event, 52, (const int64_t[]){ (int64_t) _MCF_hires_utc_now() + 1116 });  /* absolute  */
