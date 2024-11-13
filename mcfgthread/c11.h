@@ -533,17 +533,12 @@ __MCF_C11_INLINE
 int
 __MCF_c11_thrd_detach(thrd_t __thrd) __MCF_noexcept
   {
-    __MCF_c11_thread_record* __rec;
+    __MCF_c11_thread_record* __rec = __MCF_nullptr;
+    if(__thrd->__proc == __MCF_c11_thread_thunk_v2)
+      __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__thrd);
 
-    /* As there is no type information, we examine the thread procedure to
-     * ensure we don't mistake a thread of a wrong type.  */
-    if(__thrd->__proc != __MCF_c11_thread_thunk_v2)
-      return thrd_error;
-
-    __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__thrd);
-
-    /* Fail if the thread has already been detached.  */
-    if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
+    /* Clear the joinable state. If the thread is not joinable, fail.  */
+    if(__rec && (_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0))
       return thrd_error;
 
     /* Free the thread.  */
@@ -563,18 +558,13 @@ void
 __MCF_c11_thrd_exit(int __result) __MCF_noexcept
   {
     _MCF_thread* __self = _MCF_thread_self();
-    __MCF_c11_thread_record* __rec;
-
-    /* As there is no type information, we examine the thread procedure to
-     * ensure we don't mistake a thread of a wrong type. The current thread
-     * shall terminate even if it is foreign.  */
-    if(__self->__proc != __MCF_c11_thread_thunk_v2)
-      _MCF_thread_exit();
+    int* __resp = __MCF_nullptr;
+    if(__self->__proc == __MCF_c11_thread_thunk_v2)
+      __resp = &(((__MCF_c11_thread_record*) _MCF_thread_get_data(__self))->__result);
 
     /* Set the exit status and exit. Unlike `ExitThread()`, if the last
      * thread exits, the current process exits with zero.  */
-    __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__self);
-    __rec->__result = __result;
+    __MCF_SET_IF(__resp, __result);
     _MCF_thread_exit();
   }
 
@@ -582,31 +572,22 @@ __MCF_C11_INLINE
 int
 __MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_noexcept
   {
-    __MCF_c11_thread_record* __rec;
-    int __err;
+    __MCF_c11_thread_record* __rec = __MCF_nullptr;
+    if(__thrd->__proc == __MCF_c11_thread_thunk_v2)
+      __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__thrd);
 
-    /* As there is no type information, we examine the thread procedure to
-     * ensure we don't mistake a thread of a wrong type.  */
-    if(__thrd->__proc != __MCF_c11_thread_thunk_v2)
-      return thrd_error;
-
-    __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__thrd);
-
-    /* Joining with the calling thread itself would result in deadlocks.  */
     if(__thrd->__tid == _MCF_thread_self_tid())
       return thrd_error;
 
-    /* Fail if the thread has already been detached.  */
-    if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
+    /* Clear the joinable state. If the thread is not joinable, fail.  */
+    if(__rec && (_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0))
       return thrd_error;
 
-    __err = _MCF_thread_wait(__thrd, __MCF_nullptr);
-    __MCF_ASSERT(__err == 0);
-    __MCF_SET_IF(__resp_opt, __rec->__result);
-
-    /* Free the thread.  */
+    /* Wait for the thread to terminate.  */
+    _MCF_thread_wait(__thrd, __MCF_nullptr);
+    __MCF_SET_IF(__resp_opt, __rec ? __rec->__result : 0);
     _MCF_thread_drop_ref(__thrd);
-    return thrd_success;
+    return 0;
   }
 
 __MCF_C11_INLINE

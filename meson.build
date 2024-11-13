@@ -87,7 +87,7 @@ test_src = [
   'test/c11_cnd_timeout.c', 'test/c11_cnd_consumers.c',
   'test/c11_cnd_consumers_recursive.c', 'test/c11_tss_dtor.c', 'test/c11_tss_set.c',
   'test/c11_tss_deleted_key.c', 'test/c11_tss_many.c', 'test/c11_thrd_return.c',
-  'test/c11_thrd_equal.c', 'test/c11_thrd_sleep.c',
+  'test/c11_thrd_equal.c', 'test/c11_thrd_sleep.c', 'test/c11_thrd_join_main.c',
   'test/c11__thrd_sleep_until.c', 'test/atexit_thread_self.c', 'test/atexit_order.c',
   'test/atexit_ignored_on_quick_exit.c', 'test/atexit_ignored_on__Exit.c',
   'test/at_quick_exit_order.c', 'test/at_quick_exit_ignored_on_exit.c',

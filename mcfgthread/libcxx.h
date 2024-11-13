@@ -575,29 +575,20 @@ __MCF_LIBCXX_INLINE
 int
 __MCF_libcxx_thread_join(const __libcpp_thread_t* __thrdp) __MCF_noexcept
   {
+    __MCF_gthr_thread_record* __rec = __MCF_nullptr;
     _MCF_thread* __thrd = *__thrdp;
-    __MCF_gthr_thread_record* __rec;
-    int __err;
+    if(__thrd->__proc == __MCF_gthr_thread_thunk_v2)
+      __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
 
-    /* As there is no type information, we examine the thread procedure to
-     * ensure we don't mistake a thread of a wrong type.  */
-    if(__thrd->__proc != __MCF_gthr_thread_thunk_v2)
-      return EINVAL;
-
-    __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
-
-    /* Joining with the calling thread itself would result in deadlocks.  */
     if(__thrd->__tid == _MCF_thread_self_tid())
       return EDEADLK;
 
-    /* Fail if the thread has already been detached.  */
-    if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
+    /* Clear the joinable state. If the thread is not joinable, fail.  */
+    if(__rec && (_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0))
       return EINVAL;
 
-    __err = _MCF_thread_wait(__thrd, __MCF_nullptr);
-    __MCF_ASSERT(__err == 0);
-
-    /* Free the thread.  */
+    /* Wait for the thread to terminate.  */
+    _MCF_thread_wait(__thrd, __MCF_nullptr);
     _MCF_thread_drop_ref(__thrd);
     return 0;
   }
@@ -606,18 +597,13 @@ __MCF_LIBCXX_INLINE
 int
 __MCF_libcxx_thread_detach(const __libcpp_thread_t* __thrdp) __MCF_noexcept
   {
+    __MCF_gthr_thread_record* __rec = __MCF_nullptr;
     _MCF_thread* __thrd = *__thrdp;
-    __MCF_gthr_thread_record* __rec;
+    if(__thrd->__proc == __MCF_gthr_thread_thunk_v2)
+      __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
 
-    /* As there is no type information, we examine the thread procedure to
-     * ensure we don't mistake a thread of a wrong type.  */
-    if(__thrd->__proc != __MCF_gthr_thread_thunk_v2)
-      return EINVAL;
-
-    __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
-
-    /* Fail if the thread has already been detached.  */
-    if(_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0)
+    /* Clear the joinable state. If the thread is not joinable, fail.  */
+    if(__rec && (_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0))
       return EINVAL;
 
     /* Free the thread.  */
