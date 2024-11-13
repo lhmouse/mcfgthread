@@ -536,7 +536,7 @@ __MCF_libcxx_condvar_timedwait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __m
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
     int __err = __MCF_gthr_cond_mutex_wait(__cond, __mtx, &__timeout);
-    return __err;
+    return (__err != 0) ? ETIMEDOUT : 0;
   }
 
 __MCF_LIBCXX_INLINE
