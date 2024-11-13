@@ -233,7 +233,7 @@ else
   lib_mcfgthread_a = static_library('mcfgthread',
         c_pch: 'mcfgthread/xprecompiled.h',
         c_args: lib_mcfgthread_c_args + [ '-ffunction-sections' ],
-        sources: [ mcfgthread_src_min, mcfgthread_src_ex, ],
+        sources: [ mcfgthread_src_min, mcfgthread_src_ex ],
         dependencies: [ dep_kernel32, dep_ntdll ],
         install: true)
 endif
