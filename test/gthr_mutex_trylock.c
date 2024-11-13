@@ -35,7 +35,7 @@ thread_proc(void* param)
         __gthread_mutex_unlock(&mutex);
         break;
       }
-      else if(r == -1) {
+      else if(r == EBUSY) {
         /* Wait.  */
         _MCF_sleep((const int64_t[]) { -10 });
         continue;

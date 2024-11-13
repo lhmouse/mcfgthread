@@ -10,6 +10,7 @@
 
 #include "fwd.h"
 #include "gthr_aux.h"
+#include <errno.h>
 
 __MCF_CXX(extern "C" {)
 #ifndef __MCF_GTHR_IMPORT
@@ -389,7 +390,7 @@ __MCF_gthr_key_create(__gthread_key_t* __keyp, _MCF_tls_dtor* __dtor_opt) __MCF_
   {
     _MCF_tls_key* __key = _MCF_tls_key_new(__dtor_opt);
     *__keyp = __key;
-    return (__key == __MCF_nullptr) ? -1 : 0;
+    return (__key == __MCF_nullptr) ? ENOMEM : 0;
   }
 
 __MCF_GTHR_INLINE
@@ -412,7 +413,7 @@ int
 __MCF_gthr_setspecific(__gthread_key_t __key, const void* __val_opt) __MCF_noexcept
   {
     int __err = _MCF_tls_set(__key, __val_opt);
-    return __err;
+    return (__err != 0) ? EINVAL : 0;
   }
 
 __MCF_GTHR_INLINE
@@ -446,7 +447,7 @@ __MCF_gthr_mutex_trylock(__gthread_mutex_t* __mtx) __MCF_noexcept
   {
     int64_t __timeout = 0;
     int __err = _MCF_mutex_lock(__mtx, &__timeout);
-    return __err;
+    return (__err != 0) ? EBUSY : 0;
   }
 
 __MCF_GTHR_INLINE
@@ -455,7 +456,7 @@ __MCF_gthr_mutex_timedlock(__gthread_mutex_t* __mtx, const __gthread_time_t* __a
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
     int __err = _MCF_mutex_lock(__mtx, &__timeout);
-    return __err;
+    return (__err != 0) ? ETIMEDOUT : 0;
   }
 
 __MCF_GTHR_INLINE
@@ -506,7 +507,7 @@ __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx) __MCF_no
 
     __timeout = 0;
     __err = __MCF_gthr_rc_mutex_wait(__rmtx, &__timeout);
-    return __err;
+    return (__err != 0) ? EBUSY : 0;
   }
 
 __MCF_GTHR_INLINE
@@ -520,7 +521,7 @@ __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const 
 
     __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
     __err = __MCF_gthr_rc_mutex_wait(__rmtx, &__timeout);
-    return __err;
+    return (__err != 0) ? ETIMEDOUT : 0;
   }
 
 __MCF_GTHR_INLINE
@@ -571,7 +572,7 @@ __MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx, co
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
     int __err = __MCF_gthr_cond_mutex_wait(__cond, __mtx, &__timeout);
-    return __err;
+    return (__err != 0) ? ETIMEDOUT : 0;
   }
 
 __MCF_GTHR_INLINE
@@ -603,7 +604,7 @@ __MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, 
 
     __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk_v2, __rec, sizeof(*__rec));
     *__thrdp = __thrd;
-    return (__thrd == __MCF_nullptr) ? -1 : 0;
+    return (__thrd == __MCF_nullptr) ? EAGAIN : 0;
   }
 
 __MCF_GTHR_INLINE

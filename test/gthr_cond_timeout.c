@@ -35,12 +35,12 @@ main(void)
     timeout.tv_sec += 1;
     timeout.tv_nsec = 115999999;  // relaxed
     r = __gthread_cond_timedwait(&cond, &mutex, &timeout);
-    assert(r == -1);
+    assert(r == ETIMEDOUT);
     delta = _MCF_perf_counter() - now;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1100);
     assert(delta <= 1200);
 
     r = __gthread_mutex_trylock(&mutex);
-    assert(r == -1);
+    assert(r == EBUSY);
   }
