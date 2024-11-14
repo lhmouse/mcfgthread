@@ -21,6 +21,16 @@ __MCF_gthr_do_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_
 #endif
 #if defined __i386__
 /* On x86, SEH is stack-based.  */
+#  ifdef _MSC_VER
+".section .rdata,\"dr\"  \n"
+".globl __load_config_used  \n"
+"__load_config_used:  \n"
+"  .long 72  \n"
+"  .zero 60  \n"
+"  .long ___safe_se_handler_table  \n"
+"  .long ___safe_se_handler_count  \n"
+".text  \n"
+#  endif
 ".globl ___MCF_gthr_do_call_once_seh_take_over  \n"
 ".def ___MCF_gthr_do_call_once_seh_take_over; .scl 2; .type 32; .endef  \n"
 "___MCF_gthr_do_call_once_seh_take_over:  \n"
@@ -44,6 +54,7 @@ __MCF_gthr_do_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_
 "  mov ebp, esp  \n"
 /* Install an SEH handler.  */
 "  xor esi, esi  \n"
+".safeseh _do_call_once_seh_uhandler  \n"
 "  push OFFSET _do_call_once_seh_uhandler  \n"
 "  push fs:[esi]  \n"
 "  mov fs:[esi], esp  \n"

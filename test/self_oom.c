@@ -5,14 +5,6 @@
  * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
-#define __MCF_XGLOBALS_IMPORT
-#define __MCF_XGLOBALS_INLINE  __MCF_GNU_INLINE
-#define __MCF_XGLOBALS_READONLY
-#include "../mcfgthread/xglobals.h"
-#include <assert.h>
-#include <stdio.h>
-#include <windows.h>
-
 #if defined __CYGWIN__
 int
 main(void)
@@ -20,6 +12,15 @@ main(void)
     return 77;
   }
 #else  // __CYGWIN__
+
+#define WIN32_LEAN_AND_MEAN  1
+#include <windows.h>
+#define __MCF_XGLOBALS_IMPORT
+#define __MCF_XGLOBALS_INLINE  __MCF_GNU_INLINE
+#define __MCF_XGLOBALS_READONLY
+#include "../mcfgthread/xglobals.h"
+#include <assert.h>
+#include <stdio.h>
 
 #define NTHREADS  64U
 static HANDLE threads[NTHREADS];

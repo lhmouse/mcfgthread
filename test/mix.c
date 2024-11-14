@@ -5,6 +5,14 @@
  * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
+#if defined __CYGWIN__
+int
+main(void)
+  {
+    return 77;
+  }
+#else  // __CYGWIN__
+
 #include "../mcfgthread/thread.h"
 #include "version.h"
 #include <assert.h>
@@ -13,9 +21,6 @@
 int
 main(void)
   {
-#if defined __CYGWIN__
-    return 77;
-#else
     // load functions from dll
     wchar_t dll_name[100];
     wsprintfW(dll_name, L"libmcfgthread-%d.dll", _MCF_ABI_VERSION_MAJOR);
@@ -59,5 +64,6 @@ main(void)
     assert(_MCF_tls_get(key) == &dummy2);
     assert(pdll_tls_get(key) == &dummy2);
     assert(mdll_tls_get(key) == &dummy2);
-#endif
   }
+
+#endif  // __CYGWIN__

@@ -5,6 +5,14 @@
  * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
+#if defined _MSC_VER
+int
+main(void)
+  {
+    return 77;
+  }
+#else  // _MSC_VER
+
 #include "../mcfgthread/cxx11.hpp"
 
 #if 0 __MCF_CXX11(+1) __MCF_CXX14(+2) != 1
@@ -16,3 +24,5 @@ main(void)
   {
     return 0;
   }
+
+#endif  // _MSC_VER

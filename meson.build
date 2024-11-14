@@ -294,7 +294,7 @@ foreach src: test_src
   endif
 
   if basename in [ 'cxx11_no_exceptions.cpp' ]
-    test_cpp_args = [ '-std=c++11', '-fno-rtti', '-fno-exceptions' ]
+    test_cpp_args = [ '-fno-rtti', '-fno-exceptions' ]
   endif
 
   if basename in [ 'cxx11_pedantic.cpp' ]

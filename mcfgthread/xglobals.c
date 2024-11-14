@@ -329,7 +329,7 @@ __MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
       }
   }
 
-__declspec(dllexport)
+__MCF_DLLEXPORT
 void*
 __cdecl
 memcpy(void* dst, const void* src, size_t size)
@@ -337,7 +337,7 @@ memcpy(void* dst, const void* src, size_t size)
     return __MCF_mcopy(dst, src, size);
   }
 
-__declspec(dllexport)
+__MCF_DLLEXPORT
 void*
 __cdecl
 memmove(void* dst, const void* src, size_t size)
@@ -347,7 +347,7 @@ memmove(void* dst, const void* src, size_t size)
             : __MCF_mcopy_backward(dst, src, size);
   }
 
-__declspec(dllexport)
+__MCF_DLLEXPORT
 int
 __cdecl
 memcmp(const void* src, const void* cmp, size_t size)
@@ -355,7 +355,7 @@ memcmp(const void* src, const void* cmp, size_t size)
     return __MCF_mcompare(src, cmp, size);
   }
 
-__declspec(dllexport)
+__MCF_DLLEXPORT
 void*
 __cdecl
 memset(void* dst, int val, size_t size)
@@ -392,12 +392,13 @@ __MCF_tls_callback(PVOID module, ULONG reason, LPVOID reserved)
 
 /* This requires the main executable be linked with 'tlssup.o'. Such
  * initialization shall happen as early as possible.  */
-static PIMAGE_TLS_CALLBACK __MCF__xl_b __MCF__CRT_ALLOC(".CRT$XLB") = __MCF_tls_callback;
+static const PIMAGE_TLS_CALLBACK __MCF__xl_b __MCF__CRT_ALLOC(".CRT$XLB") = __MCF_tls_callback;
 
 #endif  /* __MCF_BUILDING_DLL  */
 
 /* These are constants that have to be initialized at load time. The
  * initializers prevent them from being placed into the`.bss` section.  */
+int _fltused = 0x9875;
 HANDLE __MCF_crt_heap = __MCF_BAD_PTR;
 double __MCF_crt_pf_recip = 1;
 SYSTEM_INFO __MCF_crt_sysinfo = { .dwPageSize = 1 };

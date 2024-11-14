@@ -5,11 +5,11 @@
  * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
+#define WIN32_LEAN_AND_MEAN  1
+#include <windows.h>
 #include "../mcfgthread/xglobals.h"
 #include <assert.h>
 #include <stdio.h>
-#include <string.h>
-#include <winbase.h>
 
 static char comp[100];
 static char data[100];

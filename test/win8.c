@@ -5,17 +5,23 @@
  * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
-#include "../mcfgthread/xglobals.h"
-#include <assert.h>
+#if defined __CYGWIN__
+int
+main(void)
+  {
+    return 77;
+  }
+#else  // __CYGWIN__
+
+#define WIN32_LEAN_AND_MEAN  1
 #include <windows.h>
 #include <versionhelpers.h>
+#include "../mcfgthread/xglobals.h"
+#include <assert.h>
 
 int
 main(void)
   {
-#if defined __CYGWIN__
-    return 77;
-#else
     if(!IsWindows8OrGreater())
       return 77;  // skip
 
@@ -27,5 +33,6 @@ main(void)
     void* gf = __MCF_G_FIELD_OPT(__f_GetSystemTimePreciseAsFileTime);
     assert(gf);
     assert((INT_PTR) fn == *(INT_PTR*) gf);
-#endif
   }
+
+#endif  // __CYGWIN__

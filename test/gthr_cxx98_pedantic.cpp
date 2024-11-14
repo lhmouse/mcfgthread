@@ -5,6 +5,14 @@
  * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
+#if defined _MSC_VER
+int
+main(void)
+  {
+    return 77;
+  }
+#else  // _MSC_VER
+
 #include "../mcfgthread/atomic.h"
 #include "../mcfgthread/c11.h"
 #include "../mcfgthread/clock.h"
@@ -33,3 +41,5 @@ main(void)
   {
     return 0;
   }
+
+#endif  // _MSC_VER
