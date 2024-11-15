@@ -122,10 +122,11 @@ ver.set('abi_minor', meson.project_version().split('.')[1])
 ver.set_quoted('abi_string', meson.project_version())
 
 cc = meson.get_compiler('c')
-cxx = meson.get_compiler('cpp')
 cc_is_i386 = cc.has_define('__i386__')
 cc_is_amd64 = cc.has_define('__amd64__')
 cc_asm_intel = cc.has_argument('-masm=intel')
+cxx = meson.get_compiler('cpp')
+cxx_ms_link = cxx.get_linker_id() in [ 'link', 'lld-link' ]
 
 if cc_asm_intel
   add_project_arguments('-masm=intel', language: [ 'c', 'cpp' ])
@@ -209,6 +210,7 @@ lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       link_args: lib_mcfgthread_dll_link_args,
       sources: [ mcfgthread_src_min, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
+      name_prefix: 'lib',
       soversion: ver.get('abi_major'),
       version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
       install: true)
@@ -220,6 +222,7 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
       objects: lib_mcfgthread_minimal_dll.extract_objects(mcfgthread_src_min),
       sources: [ mcfgthread_src_ex, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
+      name_prefix: 'lib',
       soversion: ver.get('abi_major'),
       version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
       install: true)
@@ -259,7 +262,7 @@ foreach src: test_src
 
   basename = src.replace('test/', '')
 
-  if src.endswith('.cpp')
+  if cxx_ms_link and src.endswith('.cpp')
     test_link_args = [ '-static-libgcc', '-static-libstdc++' ]
   endif
 
