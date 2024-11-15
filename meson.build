@@ -122,23 +122,7 @@ ver.set('abi_minor', meson.project_version().split('.')[1])
 ver.set_quoted('abi_string', meson.project_version())
 
 cc = meson.get_compiler('c')
-cc_is_i386 = cc.has_define('__i386__')
-cc_is_amd64 = cc.has_define('__amd64__')
-cc_asm_intel = cc.has_argument('-masm=intel')
 cxx = meson.get_compiler('cpp')
-cxx_ms_link = cxx.get_linker_id() in [ 'link', 'lld-link' ]
-
-if cc_asm_intel
-  add_project_arguments('-masm=intel', language: [ 'c', 'cpp' ])
-endif
-
-if cc_is_i386
-  add_project_arguments('-msse2', '-mfpmath=sse', language: [ 'c', 'cpp' ])
-endif
-
-if cc_is_amd64
-  add_project_arguments('-mcmodel=small', language: [ 'c', 'cpp' ])
-endif
 
 if get_option('enable-debug-checks')
   add_project_arguments('-D__MCF_DEBUG', language: [ 'c', 'cpp' ])
@@ -147,15 +131,17 @@ endif
 add_project_arguments(
     '-D_WIN32_WINNT=0x0601', '-D__USE_MINGW_ANSI_STDIO', '-U_FORTIFY_SOURCE',
     cc.get_supported_arguments(
+      '-masm=intel', '-msse2', '-mfpmath=sse', '-mcmodel=small',
       '-fno-stack-protector', '-fstrict-aliasing', '-ffast-math', '-fno-ident',
-      '-fno-omit-frame-pointer', '-Werror=conversion', '-Werror=sign-compare',
-      '-Werror=sign-conversion', '-Werror=write-strings', '-Werror=return-type',
-      '-Werror=double-promotion', '-Wmissing-declarations', '-Wswitch-enum',
-      '-Wmissing-field-initializers', '-Wsuggest-attribute=noreturn', '-Wshadow',
-      '-Wunused-function', '-Wunused-label', '-Wunused-local-typedefs',
-      '-Wunused-but-set-variable', '-Wunused-but-set-parameter',
-      '-Wunused-const-variable', '-Wno-unused-command-line-argument',
-      '-Wno-dll-attribute-on-redeclaration', '-Wno-dynamic-exception-spec'),
+      '-fno-omit-frame-pointer', '-fmerge-all-constants',
+      '-Werror=conversion', '-Werror=sign-compare', '-Werror=sign-conversion',
+      '-Werror=write-strings', '-Werror=return-type', '-Werror=double-promotion',
+      '-Wmissing-declarations', '-Wswitch-enum', '-Wmissing-field-initializers',
+      '-Wsuggest-attribute=noreturn', '-Wshadow', '-Wunused-function',
+      '-Wunused-label', '-Wunused-local-typedefs', '-Wunused-but-set-variable',
+      '-Wunused-but-set-parameter', '-Wunused-const-variable',
+      '-Wno-unused-command-line-argument', '-Wno-dll-attribute-on-redeclaration',
+      '-Wno-dynamic-exception-spec'),
     language: [ 'c', 'cpp' ])
 
 add_project_arguments(
@@ -261,7 +247,7 @@ foreach src: test_src
 
   basename = src.replace('test/', '')
 
-  if not cxx_ms_link and src.endswith('.cpp')
+  if src.endswith('.cpp')
     test_link_args = [ '-static-libgcc', '-static-libstdc++' ]
   endif
 
