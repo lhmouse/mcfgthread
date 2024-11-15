@@ -5,6 +5,14 @@
  * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
+#if !defined __SEH__ && !defined _MSC_VER
+int
+main(void)
+  {
+    return 77;
+  }
+#else  // __SEH__
+
 #include "../mcfgthread/cxx11.hpp"
 #include "../mcfgthread/sem.h"
 #include <assert.h>
@@ -58,10 +66,6 @@ thread_proc()
 int
 main(void)
   {
-#if !defined __SEH__ && !defined _MSC_VER
-    return 77;  // not supported
-#endif
-
     for(auto& thr : threads)
       thr = NS::thread(thread_proc);
 
@@ -73,3 +77,5 @@ main(void)
 
     assert(resource == NTHREADS);
   }
+
+#endif  // __SEH__
