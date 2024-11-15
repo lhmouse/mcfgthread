@@ -22,16 +22,11 @@
 #  define __MCF_DLLEXPORT
 #endif
 
-__MCF_DLLEXPORT void* __cdecl memcpy(void* __dst, const void* __src, size_t __size);
-__MCF_DLLEXPORT void* __cdecl memmove(void* __dst, const void* __src, size_t __size);
-__MCF_DLLEXPORT int __cdecl memcmp(const void* __src, const void* __cmp, size_t __size);
-__MCF_DLLEXPORT void* __cdecl memset(void* __dst, int val, size_t __size);
+#define __MCF_EXPAND_INLINE_DEFINITIONS   1
 
 #include <minwindef.h>
 #include <winnt.h>
 #include <winternl.h>
 #include <winerror.h>
-
-#define __MCF_EXPAND_INLINE_DEFINITIONS   1
 
 #endif  /* __MCFGTHREAD_XPRECOMPILED_  */
