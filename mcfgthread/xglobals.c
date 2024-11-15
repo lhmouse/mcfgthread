@@ -295,24 +295,19 @@ __MCF_gthread_on_thread_exit(void)
 #ifdef __MCF_BUILDING_DLL
 
 /* When building the shared library, invoke common routines from the DLL
- * entry point callback. This has the same signature as `DllMain()`. The
- * symbolic name is fabricated such that it shall remain the same on all
- * targets.  */
-int
-__stdcall
-__MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
-  __asm__("__MCF_dll_startup@@Z");
+ * entry point callback. This has the same signature as `DllMain()`.  */
+#  if defined _MSC_VER
+#    define DllMainCRTStartup  _DllMainCRTStartup
+#  endif
 
 int
 __stdcall
-___MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
-  __asm__("___MCF_dll_startup@@Z")
-  __attribute__((__alias__("__MCF_dll_startup@@Z")));
+DllMainCRTStartup(PVOID instance, ULONG reason, PVOID reserved);
 
 __MCF_REALIGN_SP
 int
 __stdcall
-__MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
+DllMainCRTStartup(PVOID instance, ULONG reason, PVOID reserved)
   {
     ULONG dummy1;
     HMODULE dummy2 = reserved;
@@ -337,9 +332,9 @@ __MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
 
 #  if defined _MSC_VER
 __pragma(comment(linker, "/export:" __MCF_USYM "memcpy,DATA"))
-#else
+#  else
 __attribute__((__dllexport__))
-#endif
+#  endif
 void*
 __cdecl
 memcpy(void* dst, const void* src, size_t size)
@@ -349,9 +344,9 @@ memcpy(void* dst, const void* src, size_t size)
 
 #  if defined _MSC_VER
 __pragma(comment(linker, "/export:" __MCF_USYM "memmove,DATA"))
-#else
+#  else
 __attribute__((__dllexport__))
-#endif
+#  endif
 void*
 __cdecl
 memmove(void* dst, const void* src, size_t size)
