@@ -185,9 +185,15 @@ mcfgthread_version_o = import('windows').compile_resources(
 lib_mcfgthread_c_args = [
       '-ffreestanding', '-fasynchronous-unwind-tables' ]
 
-lib_mcfgthread_dll_link_args = [
-      '-nostdlib', '-Wl,-enable-auto-image-base', '-Wl,-subsystem,windows:6.1',
-      '-Wl,-exclude-all-symbols', '-Wl,-kill-at', '-Wl,-gc-sections' ]
+if cc.get_linker_id() in [ 'link', 'lld-link' ]
+  lib_mcfgthread_dll_link_args = [
+        '-Wl,-nodefaultlib', '-Wl,-dynamicbase', '-Wl,-opt:ref', '-Wl,-opt:icf',
+        '-Xlinker', '-subsystem:windows,6.1' ]
+else
+  lib_mcfgthread_dll_link_args = [
+        '-nostdlib', '-Wl,-enable-auto-image-base', '-Wl,-gc-sections',
+        '-Wl,-subsystem,windows:6.1', '-Wl,-exclude-all-symbols', '-Wl,-kill-at' ]
+endif
 
 lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       c_pch: 'mcfgthread/xprecompiled.h',
