@@ -200,7 +200,7 @@ lib_mcfgthread_c_args = [
       '-ffreestanding', '-fasynchronous-unwind-tables' ]
 
 lib_mcfgthread_dll_link_args = [
-      '-nostdlib', '-Wl,-entry,__MCF_dll_startup@12', '-Wl,-gc-sections',
+      '-nostdlib', '-Wl,-entry,__MCF_dll_startup@@Z', '-Wl,-gc-sections',
       '-Wl,-enable-auto-image-base', '-Wl,-subsystem,windows:6.1',
       '-Wl,-exclude-all-symbols', '-Wl,-kill-at' ]
 

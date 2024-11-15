@@ -301,7 +301,13 @@ __MCF_gthread_on_thread_exit(void)
 int
 __stdcall
 __MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
-  __asm__("__MCF_dll_startup@12");
+  __asm__("__MCF_dll_startup@@Z");
+
+int
+__stdcall
+___MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
+  __asm__("___MCF_dll_startup@@Z")
+  __attribute__((__alias__("__MCF_dll_startup@@Z")));
 
 __MCF_REALIGN_SP
 int
@@ -379,10 +385,6 @@ memset(void* dst, int val, size_t size)
     return __MCF_mfill(dst, val, size);
   }
 
-#  if defined _MSC_VER
-int _fltused = 0x9875;
-#  endif
-
 #  if defined _MSC_VER && defined _M_IX86
 extern const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used;
 extern const PVOID __safe_se_handler_table[];
@@ -394,11 +396,10 @@ const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
     .SEHandlerTable = (ULONG_PTR) __safe_se_handler_table,
     .SEHandlerCount = (ULONG_PTR) &__safe_se_handler_count,
   };
+#  endif
 
-int
-__stdcall
-___MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
-  __attribute__((__alias__("__MCF_dll_startup@12")));
+#  if defined _MSC_VER
+int _fltused = 0x9875;
 #  endif
 
 #else  /* __MCF_BUILDING_DLL  */
