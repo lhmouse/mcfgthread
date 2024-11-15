@@ -379,8 +379,8 @@ __MCF_mcopy_backward(void* dst, const void* src, size_t size)
     PVOID edi, ecx, esi;
     __asm__ volatile (
       "std; "
-      "lea %0, [%0 + %1 - 1]; "
-      "lea %2, [%2 + %1 - 1]; "
+      "lea %0, [%0+%1-1]; "
+      "lea %2, [%2+%1-1]; "
       "rep movsb; "
       "cld; "
       : "=D"(edi), "=c"(ecx), "=S"(esi)
