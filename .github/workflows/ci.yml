@@ -101,7 +101,7 @@ jobs:
            && meson test -t2 -Cbuild_ci
 
   msys2-mingw32:
-    name: MSYS2 native build (i686 GCC)
+    name: MSYS2 native build (x86-32 GCC)
     runs-on: windows-latest
 
     defaults:
@@ -118,7 +118,7 @@ jobs:
     - name: Install dependencies
       run: >-
            pacman -Sy --needed --noconfirm
-           mingw-w64-i686-{{headers,crt,tools}-git,gcc,meson}
+           mingw-w64-i686-{{headers,crt,tools}-git,gcc,meson,ninja}
 
     - name: Run tests
       run: >-
@@ -144,7 +144,7 @@ jobs:
     - name: Install dependencies
       run: >-
            pacman -Sy --needed --noconfirm
-           mingw-w64-clang-x86_64-{{headers,crt,tools}-git,clang,meson}
+           mingw-w64-clang-x86_64-{{headers,crt,tools}-git,clang,meson,ninja}
 
     - name: Run tests
       run: >-
@@ -153,47 +153,55 @@ jobs:
            && meson test -t2 -Cbuild_ci
 
   msvc-x64:
-    name: MSVC native build (x64 Clang-CL)
+    name: MSVC native build (x86-64 Clang-CL)
     runs-on: windows-latest
 
     defaults:
       run:
-        shell: cmd
+        shell: msys2 {0}
 
     steps:
     - uses: actions/checkout@v4
 
+    - uses: msys2/setup-msys2@v2
+      with:
+        msystem: UCRT64
+
     - name: Install dependencies
       run: >-
-           C:\msys64\usr\bin\pacman -Sy --needed --noconfirm
-           mingw-w64-x86_64-meson
+           pacman -Sy --needed --noconfirm
+           mingw-w64-ucrt-x86_64-{meson,ninja}
 
     - name: Run tests
       run: >-
-           C:\msys64\mingw64\bin\meson setup --native-file meson.native.clang-cl
+           meson setup --native-file meson.native.clang-cl
            -Denable-debug-checks=true -Doptimization=1 build_ci
-           && C:\msys64\mingw64\bin\meson compile -Cbuild_ci
-           && C:\msys64\mingw64\bin\meson test -t2 -Cbuild_ci
+           && meson compile -Cbuild_ci
+           && meson test -t2 -Cbuild_ci
 
   msvc-x86:
-    name: MSVC native build (x86 Clang-CL)
+    name: MSVC native build (x86-32 Clang-CL)
     runs-on: windows-latest
 
     defaults:
       run:
-        shell: cmd
+        shell: msys2 {0}
 
     steps:
     - uses: actions/checkout@v4
 
+    - uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW32
+
     - name: Install dependencies
       run: >-
-           C:\msys64\usr\bin\pacman -Sy --needed --noconfirm
-           mingw-w64-i686-meson
+           pacman -Sy --needed --noconfirm
+           mingw-w64-i686-{meson,ninja}
 
     - name: Run tests
       run: >-
-           C:\msys64\mingw32\bin\meson setup --native-file meson.native.clang-cl
+           meson setup --native-file meson.native.clang-cl
            -Denable-debug-checks=true -Doptimization=1 build_ci
-           && C:\msys64\mingw32\bin\meson compile -Cbuild_ci
-           && C:\msys64\mingw32\bin\meson test -t2 -Cbuild_ci
+           && meson compile -Cbuild_ci
+           && meson test -t2 -Cbuild_ci
