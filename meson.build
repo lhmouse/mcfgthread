@@ -262,7 +262,7 @@ foreach src: test_src
 
   basename = src.replace('test/', '')
 
-  if cxx_ms_link and src.endswith('.cpp')
+  if not cxx_ms_link and src.endswith('.cpp')
     test_link_args = [ '-static-libgcc', '-static-libstdc++' ]
   endif
 
