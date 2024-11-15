@@ -294,16 +294,18 @@ __MCF_gthread_on_thread_exit(void)
 
 #ifdef __MCF_BUILDING_DLL
 
-/* Declare the DLL entry point function. This has the same signature as
- * `DllMain()`.The decorated name is fabricated such that is remains the
- * same on both x86 and x86-64.  */
+/* When building the shared library, invoke common routines from the DLL
+ * entry point callback. This has the same signature as `DllMain()`. The
+ * symbolic name is fabricated such that it shall remain the same on all
+ * targets.  */
 int
 __stdcall
 __MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
-  __asm__("__MCF_dll_startup@@Z");
+#  if !defined __i386__
+  __asm__("___MCF_dll_startup@12")
+#  endif
+  ;
 
-/* When building the shared library, invoke common routines from the DLL
- * entry point callback.  */
 __MCF_REALIGN_SP
 int
 __stdcall
