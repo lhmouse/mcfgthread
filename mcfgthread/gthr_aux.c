@@ -45,21 +45,25 @@ __MCF_gthr_do_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_
 "  push esi  \n"
 "  push ebp  \n"
 "  mov ebp, esp  \n"
-/* Install an SEH handler.  */
+"  sub esp, 20  \n"
+/* Initialize the constant zero.  */
 "  xor esi, esi  \n"
-"  push OFFSET _do_call_once_seh_uhandler  \n"
-"  push fs:[esi]  \n"
-"  mov fs:[esi], esp  \n"
+/* Install an SEH handler.  */
+"  mov eax, fs:[esi]  \n"
+"  lea ecx, [ebp - 8]  \n"
+"  mov [ecx], eax  \n"
+"  mov eax, OFFSET _do_call_once_seh_uhandler  \n"
+"  mov [ecx + 4], eax  \n"
+"  mov fs:[esi], ecx  \n"
 /* Make the call `(*init_proc) (arg)`. The argument is passed
  * both via the ECX register and on the stack, to allow both
  * `__cdecl` and `__thiscall` functions to work properly.  */
 "  mov ecx, [ebp + 20]  \n"
-"  sub esp, 8  \n"
-"  push ecx  \n"
+"  mov [ebp - 20], ecx  \n"
 "  call [ebp + 16]  \n"
-"  add esp, 12  \n"
 /* Dismantle the SEH handler.  */
-"  pop fs:[esi]  \n"
+"  mov eax, [ebp - 8]  \n"
+"  mov fs:[esi], eax  \n"
 /* Disarm the once flag with a tail call.  */
 "  leave  \n"
 "  pop esi  \n"

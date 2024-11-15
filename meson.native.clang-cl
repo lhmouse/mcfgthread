@@ -1,0 +1,9 @@
+[built-in options]
+cpp_std = 'c++14'
+
+[binaries]
+c = 'clang'
+cpp = 'clang++'
+ar = 'llvm-ar'
+strip = 'llvm-strip'
+windres = 'llvm-rc'
