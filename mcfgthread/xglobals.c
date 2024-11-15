@@ -363,6 +363,19 @@ memset(void* dst, int val, size_t size)
     return __MCF_mfill(dst, val, size);
   }
 
+#  if defined _MSC_VER
+int _fltused = 0x9875;
+#  endif
+
+#  if defined _MSC_VER && defined _M_IX86
+extern const PVOID __safe_se_handler_table[];
+extern const ULONG __safe_se_handler_count;
+const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
+  { .Size = sizeof(IMAGE_LOAD_CONFIG_DIRECTORY),
+    .SEHandlerTable = (ULONG_PTR) __safe_se_handler_table,
+    .SEHandlerCount = (ULONG_PTR) &__safe_se_handler_count };
+#  endif
+
 #else  /* __MCF_BUILDING_DLL  */
 
 /* When building the static library, invoke common routines from a TLS
@@ -392,13 +405,16 @@ __MCF_tls_callback(PVOID module, ULONG reason, LPVOID reserved)
 
 /* This requires the main executable be linked with 'tlssup.o'. Such
  * initialization shall happen as early as possible.  */
+#  if defined _MSC_VER
+#    pragma section(".CRT$XLB", read)
+#    pragma comment(linker, "/include:" __MCF_USYM "_tls_used")
+#  endif
 static const PIMAGE_TLS_CALLBACK __MCF__xl_b __MCF__CRT_ALLOC(".CRT$XLB") = __MCF_tls_callback;
 
 #endif  /* __MCF_BUILDING_DLL  */
 
 /* These are constants that have to be initialized at load time. The
  * initializers prevent them from being placed into the`.bss` section.  */
-int _fltused = 0x9875;
 HANDLE __MCF_crt_heap = __MCF_BAD_PTR;
 double __MCF_crt_pf_recip = 1;
 SYSTEM_INFO __MCF_crt_sysinfo = { .dwPageSize = 1 };
