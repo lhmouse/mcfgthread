@@ -22,14 +22,13 @@
 #  define __MCF_DLLEXPORT
 #endif
 
-#ifndef _WIN32_WINNT
-#  define _WIN32_WINNT  0x0601
-#endif
-
+#define WIN32_LEAN_AND_MEAN  1
 #define NOMINMAX  1
 #define NOGDI  1
 #define NOMSG  1
-#define WIN32_LEAN_AND_MEAN  1
+#ifndef _WIN32_WINNT
+#  define _WIN32_WINNT  0x0601
+#endif
 #include <windows.h>
 
 #define __MCF_EXPAND_INLINE_DEFINITIONS   1

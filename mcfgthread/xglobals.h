@@ -23,7 +23,6 @@
 #include <heapapi.h>
 #include <libloaderapi.h>
 #include <processthreadsapi.h>
-#include <shtypes.h>
 #include <wincon.h>
 
 #if __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
