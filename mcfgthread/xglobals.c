@@ -301,10 +301,7 @@ __MCF_gthread_on_thread_exit(void)
 int
 __stdcall
 __MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
-#  if !defined __i386__
-  __asm__("___MCF_dll_startup@12")
-#  endif
-  ;
+  __asm__("__MCF_dll_startup@12");
 
 __MCF_REALIGN_SP
 int
@@ -332,7 +329,7 @@ __MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
       }
   }
 
-#ifdef _MSC_VER
+#  if defined _MSC_VER
 __pragma(comment(linker, "/export:" __MCF_USYM "memcpy,DATA"))
 #else
 __attribute__((__dllexport__))
@@ -344,7 +341,7 @@ memcpy(void* dst, const void* src, size_t size)
     return __MCF_mcopy(dst, src, size);
   }
 
-#ifdef _MSC_VER
+#  if defined _MSC_VER
 __pragma(comment(linker, "/export:" __MCF_USYM "memmove,DATA"))
 #else
 __attribute__((__dllexport__))
@@ -358,11 +355,11 @@ memmove(void* dst, const void* src, size_t size)
             : __MCF_mcopy_backward(dst, src, size);
   }
 
-#ifdef _MSC_VER
+#  if defined _MSC_VER
 __pragma(comment(linker, "/export:" __MCF_USYM "memcmp,DATA"))
-#else
+#  else
 __attribute__((__dllexport__))
-#endif
+#  endif
 int
 __cdecl
 memcmp(const void* src, const void* cmp, size_t size)
@@ -370,11 +367,11 @@ memcmp(const void* src, const void* cmp, size_t size)
     return __MCF_mcompare(src, cmp, size);
   }
 
-#ifdef _MSC_VER
+#  if defined _MSC_VER
 __pragma(comment(linker, "/export:" __MCF_USYM "memset,DATA"))
-#else
+#  else
 __attribute__((__dllexport__))
-#endif
+#  endif
 void*
 __cdecl
 memset(void* dst, int val, size_t size)
@@ -397,6 +394,11 @@ const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
     .SEHandlerTable = (ULONG_PTR) __safe_se_handler_table,
     .SEHandlerCount = (ULONG_PTR) &__safe_se_handler_count,
   };
+
+int
+__stdcall
+___MCF_dll_startup(PVOID instance, ULONG reason, PVOID reserved)
+  __attribute__((__alias__("__MCF_dll_startup@12")));
 #  endif
 
 #else  /* __MCF_BUILDING_DLL  */
