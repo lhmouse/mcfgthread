@@ -368,12 +368,16 @@ int _fltused = 0x9875;
 #  endif
 
 #  if defined _MSC_VER && defined _M_IX86
+extern const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used;
 extern const PVOID __safe_se_handler_table[];
 extern const ULONG __safe_se_handler_count;
+
 const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
-  { .Size = sizeof(IMAGE_LOAD_CONFIG_DIRECTORY),
+  {
+    .Size = sizeof(IMAGE_LOAD_CONFIG_DIRECTORY),
     .SEHandlerTable = (ULONG_PTR) __safe_se_handler_table,
-    .SEHandlerCount = (ULONG_PTR) &__safe_se_handler_count };
+    .SEHandlerCount = (ULONG_PTR) &__safe_se_handler_count,
+  };
 #  endif
 
 #else  /* __MCF_BUILDING_DLL  */
