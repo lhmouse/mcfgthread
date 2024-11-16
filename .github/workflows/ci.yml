@@ -174,7 +174,7 @@ jobs:
 
     - name: Run tests
       run: >-
-           meson setup --native-file meson.native.clang-cl
+           meson setup --native-file meson.native.clang
            -Denable-debug-checks=true -Doptimization=1 build_ci
            && meson compile -Cbuild_ci
            && meson test -t2 -Cbuild_ci
@@ -201,7 +201,7 @@ jobs:
 
     - name: Run tests
       run: >-
-           meson setup --native-file meson.native.clang-cl
+           meson setup --native-file meson.native.clang
            -Denable-debug-checks=true -Doptimization=1 build_ci
            && meson compile -Cbuild_ci
            && meson test -t2 -Cbuild_ci
