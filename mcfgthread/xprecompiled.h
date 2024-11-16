@@ -16,7 +16,7 @@
 
 /* Define internal build options, and additionally, work around many problems
  * about Clang-CL and the MSVC standard library.  */
-#ifdef __MCF_BUILDING_DLL
+#ifdef __MCF_IN_DLL
 #  define __MCF_DLLEXPORT  __declspec(dllexport)
 #else
 #  define __MCF_DLLEXPORT

@@ -182,9 +182,6 @@ mcfgthread_version_o = import('windows').compile_resources(
       args: [ '-I.', '-c65001' ],
       depend_files: [ 'mcfgthread/version.h.in', 'mcfgthread/version.manifest' ])
 
-lib_mcfgthread_c_args = [
-      '-ffreestanding', '-fasynchronous-unwind-tables' ]
-
 if cc.get_linker_id() in [ 'link', 'lld-link' ]
   lib_mcfgthread_dll_link_args = [
         '-Wl,-nodefaultlib', '-Wl,-dynamicbase', '-Wl,-opt:ref', '-Wl,-opt:icf',
@@ -197,7 +194,7 @@ endif
 
 lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       c_pch: 'mcfgthread/xprecompiled.h',
-      c_args: lib_mcfgthread_c_args + [ '-D__MCF_BUILDING_DLL' ],
+      c_args: [ '-fasynchronous-unwind-tables', '-ffreestanding', '-D__MCF_IN_DLL' ],
       link_args: lib_mcfgthread_dll_link_args,
       sources: [ mcfgthread_src_min, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
@@ -208,7 +205,7 @@ lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
 
 lib_mcfgthread_dll = shared_library('mcfgthread',
       c_pch: 'mcfgthread/xprecompiled.h',
-      c_args: lib_mcfgthread_c_args + [ '-D__MCF_BUILDING_DLL' ],
+      c_args: [ '-fasynchronous-unwind-tables', '-ffreestanding', '-D__MCF_IN_DLL' ],
       link_args: lib_mcfgthread_dll_link_args,
       objects: lib_mcfgthread_minimal_dll.extract_objects(mcfgthread_src_min),
       sources: [ mcfgthread_src_ex, mcfgthread_version_o ],
@@ -224,7 +221,7 @@ if host_machine.system() == 'cygwin'
 else
   lib_mcfgthread_a = static_library('mcfgthread',
         c_pch: 'mcfgthread/xprecompiled.h',
-        c_args: lib_mcfgthread_c_args + [ '-ffunction-sections' ],
+        c_args: [ '-fasynchronous-unwind-tables', '-ffunction-sections' ],
         sources: [ mcfgthread_src_min, mcfgthread_src_ex ],
         dependencies: [ dep_kernel32, dep_ntdll ],
         install: true)

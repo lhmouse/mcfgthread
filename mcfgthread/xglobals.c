@@ -292,7 +292,7 @@ __MCF_gthread_on_thread_exit(void)
     _MCF_thread_drop_ref_nonnull(self);
   }
 
-#ifdef __MCF_BUILDING_DLL
+#ifdef __MCF_IN_DLL
 
 /* When building the shared library, invoke common routines from the DLL
  * entry point callback. This has the same signature as `DllMain()`.  */
@@ -397,7 +397,7 @@ const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
 int _fltused = 0x9875;
 #  endif
 
-#else  /* __MCF_BUILDING_DLL  */
+#else  /* __MCF_IN_DLL  */
 
 /* When building the static library, invoke common routines from a TLS
  * callback.  */
@@ -432,7 +432,7 @@ __MCF_tls_callback(PVOID module, ULONG reason, LPVOID reserved)
 #  endif
 static const PIMAGE_TLS_CALLBACK __MCF__xl_b __MCF__CRT_ALLOC(".CRT$XLB") = __MCF_tls_callback;
 
-#endif  /* __MCF_BUILDING_DLL  */
+#endif  /* __MCF_IN_DLL  */
 
 /* These are constants that have to be initialized at load time. The
  * initializers prevent them from being placed into the`.bss` section.  */
