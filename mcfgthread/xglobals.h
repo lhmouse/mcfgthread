@@ -18,12 +18,7 @@
 #include <winternl.h>
 #include <winerror.h>
 #include <sysinfoapi.h>
-#include <profileapi.h>
-#include <realtimeapiset.h>
 #include <heapapi.h>
-#include <libloaderapi.h>
-#include <processthreadsapi.h>
-#include <wincon.h>
 
 #if __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
 #  error Windows platforms are assumed to be little-endian.
