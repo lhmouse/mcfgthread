@@ -185,11 +185,11 @@ mcfgthread_version_o = import('windows').compile_resources(
 if cc.get_linker_id() in [ 'link', 'lld-link' ]
   lib_mcfgthread_dll_link_args = [
         '-Wl,-nodefaultlib', '-Wl,-dynamicbase', '-Wl,-opt:ref', '-Wl,-opt:icf',
-        '-Xlinker', '-subsystem:windows,6.1' ]
+        '-Xlinker', '-subsystem:windows,6.1', '-Wl,-kill-at' ]
 else
   lib_mcfgthread_dll_link_args = [
         '-nostdlib', '-Wl,-enable-auto-image-base', '-Wl,-gc-sections',
-        '-Wl,-subsystem,windows:6.1', '-Wl,-exclude-all-symbols', '-Wl,-kill-at' ]
+        '-Wl,-subsystem,windows:6.1', '-Wl,-kill-at', '-Wl,-exclude-all-symbols' ]
 endif
 
 lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
