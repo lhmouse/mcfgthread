@@ -12,7 +12,8 @@
 #include "gthr_aux.h"
 #include <errno.h>
 
-__MCF_CXX(namespace std { extern "C" {)
+__MCF_CXX(namespace std {)
+__MCF_CXX(extern "C" {)
 #ifndef __MCF_LIBCXX_IMPORT
 #  define __MCF_LIBCXX_IMPORT
 #  define __MCF_LIBCXX_INLINE  __MCF_GNU_INLINE
@@ -629,5 +630,6 @@ __MCF_libcxx_thread_yield(void) __MCF_noexcept
     _MCF_yield();
   }
 
-__MCF_CXX(} })  /* extern "C"; namespace std  */
+__MCF_CXX(})  /* extern "C"  */
+__MCF_CXX(})  /* namespace std  */
 #endif  /* __MCFGTHREAD_LIBCXX_  */
