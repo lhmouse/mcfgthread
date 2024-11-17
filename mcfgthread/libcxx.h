@@ -12,10 +12,7 @@
 #include "gthr_aux.h"
 #include <errno.h>
 
-#ifdef _LIBCPP_BEGIN_NAMESPACE_STD
-_LIBCPP_BEGIN_NAMESPACE_STD
-#endif  /* inside libc++  */
-__MCF_C_DECLARATIONS_BEGIN
+__MCF_CXX(namespace std { extern "C" {)
 #ifndef __MCF_LIBCXX_IMPORT
 #  define __MCF_LIBCXX_IMPORT
 #  define __MCF_LIBCXX_INLINE  __MCF_GNU_INLINE
@@ -632,8 +629,5 @@ __MCF_libcxx_thread_yield(void) __MCF_noexcept
     _MCF_yield();
   }
 
-__MCF_C_DECLARATIONS_END
-#ifdef _LIBCPP_END_NAMESPACE_STD
-_LIBCPP_END_NAMESPACE_STD
-#endif  /* inside libc++  */
+__MCF_CXX(} })  /* extern "C"; namespace std  */
 #endif  /* __MCFGTHREAD_LIBCXX_  */
