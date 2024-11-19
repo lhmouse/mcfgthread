@@ -364,7 +364,7 @@ import('pkgconfig').generate(lib_mcfgthread_dll,
 #===========================================================
 # Rules for tests
 #===========================================================
-foreach src: test_src
+foreach src : test_src
   test_c_args = []
   test_cpp_args = []
   test_link_args = []
