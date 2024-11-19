@@ -241,7 +241,7 @@ test_version_o = import('windows').compile_resources(
       args: [ '-I.', '-c65001' ],
       depend_files: [ 'mcfgthread/version.manifest' ])
 
-foreach src: test_src
+foreach src : test_src
   test_c_args = []
   test_cpp_args = []
   test_link_args = []
