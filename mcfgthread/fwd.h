@@ -21,7 +21,7 @@
 #if !defined _WIN32_WINNT
 #  define _WIN32_WINNT  0x0601
 #elif _WIN32_WINNT < 0x0601
-#  error Please define `_WIN32_WINNT` to at least Windows 7.
+#  warning Please define `_WIN32_WINNT` to at least Windows 7.
 #endif
 
 #if defined __arm__ || defined _M_ARM
