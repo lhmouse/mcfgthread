@@ -380,21 +380,20 @@ memset(void* dst, int val, size_t size)
     return __MCF_mfill(dst, val, size);
   }
 
-#  if defined _MSC_VER && defined _M_IX86
 extern const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used;
 extern const PVOID __safe_se_handler_table[];
-extern const ULONG __safe_se_handler_count;
 
-const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
+IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
   {
     .Size = sizeof(IMAGE_LOAD_CONFIG_DIRECTORY),
+#  if defined __i386__
     .SEHandlerTable = (ULONG_PTR) __safe_se_handler_table,
     .SEHandlerCount = (ULONG_PTR) &__safe_se_handler_count,
-  };
 #  endif
+  };
 
 #  if defined _MSC_VER
-int _fltused = 0x9875;
+int _fltused = 0x9875;  /* dunno what it does but LINK complains.  */
 #  endif
 
 #else  /* __MCF_IN_DLL  */
