@@ -380,13 +380,15 @@ memset(void* dst, int val, size_t size)
     return __MCF_mfill(dst, val, size);
   }
 
-extern const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used;
+#  if defined __i386__
 extern const PVOID __safe_se_handler_table[];
+extern const ULONG __safe_se_handler_count;
+#  endif
 
 IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
   {
     .Size = sizeof(IMAGE_LOAD_CONFIG_DIRECTORY),
-#  if defined __i386__
+#  if defined __i386__ && defined _MSC_VER
     .SEHandlerTable = (ULONG_PTR) __safe_se_handler_table,
     .SEHandlerCount = (ULONG_PTR) &__safe_se_handler_count,
 #  endif
