@@ -165,6 +165,35 @@ static
 void
 __MCF_mcfgthread_initialize_globals(void)
   {
+    /* Ensure we don't mess things up.  */
+#if __MCF_PTR_BITS == 64
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __self_ptr) == 0);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __self_size) == 8);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __tls_index) == 12);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __main_thread) == 16);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __cxa_atexit_mtx) == 1616);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __cxa_atexit_queue) == 1624);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __cxa_at_quick_exit_mtx) == 3152);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __cxa_at_quick_exit_queue) == 3160);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __mutex_spin_field) == 4736);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __sleeping_threads) == 6784);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __f_GetSystemTimePreciseAsFileTime) == 6792);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __f_QueryInterruptTime) == 6800);
+#else
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __self_ptr) == 0);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __self_size) == 4);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __tls_index) == 8);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __main_thread) == 16);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __cxa_atexit_mtx) == 816);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __cxa_atexit_queue) == 820);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __cxa_at_quick_exit_mtx) == 1584);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __cxa_at_quick_exit_queue) == 1588);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __mutex_spin_field) == 2368);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __sleeping_threads) == 4416);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __f_GetSystemTimePreciseAsFileTime) == 4420);
+    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __f_QueryInterruptTime) == 4424);
+#endif
+
     /* Initialize static global constants.  */
     GetSystemInfo(&__MCF_crt_sysinfo);
 
