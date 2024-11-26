@@ -44,15 +44,6 @@ struct __MCF_gthr_thread_record
     uintptr_t __reserved_high;
   };
 
-/* Note that this function is obsolescent by `__MCF_gthr_call_once_seh()`, and
- * is kept only for compatibility.
- * This is an auxiliary function for exception handling in `__gthread_once()`.
- * Ideally, if the target function throws exception we would like to allow
- * attempts to retry. Sadly this is not possible in standard C.  */
-__MCF_GTHR_AUX_INLINE
-void
-__MCF_gthr_unonce(_MCF_once** __oncep) __MCF_noexcept;
-
 /* These functions implement `__gthread_once()`. If `__once_fn` initiates stack
  * unwinding, by throwing an exception for example, the state of `*__once` will
  * be restored correctly.
@@ -154,14 +145,6 @@ __MCF_gthr_thread_thunk_v2(_MCF_thread* __thrd) __MCF_noexcept;
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
-__MCF_GTHR_AUX_INLINE
-void
-__MCF_gthr_unonce(_MCF_once** __oncep) __MCF_noexcept
-  {
-    if(*__oncep)
-      _MCF_once_abort(*__oncep);
-  }
-
 __MCF_GTHR_AUX_INLINE
 void
 __MCF_gthr_call_once_seh(_MCF_once* __once, __MCF_cxa_dtor_any_ __init_proc, void* __arg) __MCF_MAY_THROW
