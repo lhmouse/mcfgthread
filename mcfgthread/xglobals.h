@@ -318,6 +318,7 @@ struct __MCF_crt_xglobals
   };
 
 /* These are constants that have to be initialized at load time.  */
+extern const GUID __MCF_crt_gthread_guid;
 extern SYSTEM_INFO __MCF_XGLOBALS_READONLY __MCF_crt_sysinfo;
 extern HANDLE __MCF_XGLOBALS_READONLY __MCF_crt_heap;
 extern double __MCF_XGLOBALS_READONLY __MCF_crt_pf_recip;
