@@ -352,19 +352,14 @@ __MCF_GTHR_LIBOBJC_INLINE
 objc_thread_t
 __MCF_gthr_objc_thread_detach(__MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_noexcept
   {
-    __MCF_gthr_thread_record __rec[1] = __MCF_0_INIT;
-    _MCF_thread* __thrd;
-    uint32_t __tid;
-
-    __rec->__proc = __proc;
-    __rec->__arg = __arg;
-
-    __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk_v2, __rec, sizeof(*__rec));
+    uint32_t __tid = 0;
+    _MCF_thread* __thrd = __MCF_gthr_thread_create_v3(__proc, __arg);
     if(!__thrd)
       return __MCF_nullptr;
 
     __tid = __thrd->__tid;
     _MCF_thread_drop_ref_nonnull(__thrd);
+
     return (objc_thread_t)(uintptr_t) __tid;
   }
 

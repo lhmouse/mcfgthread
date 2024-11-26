@@ -301,12 +301,76 @@ __MCF_gthr_cond_recursive_mutex_wait(_MCF_cond* cond, __MCF_gthr_rc_mutex* rmtx,
                           (intptr_t) rmtx, timeout_opt);
   }
 
-__MCF_DLLEXPORT
+static __MCF_ALIGNED(16)
+const GUID gthread_guid = __MCF_GUID(9FB2D15C,C5F2,4AE7,868D,2769591B8E92);
+
+static
 void
-__MCF_gthr_thread_thunk_v2(_MCF_thread* thrd)
+do_gthr_thread_thunk_v3(_MCF_thread* thrd)
   {
     __MCF_gthr_thread_record* rec = _MCF_thread_get_data(thrd);
+    rec->__arg_or_result = (*(rec->__proc)) (rec->__arg_or_result);
+  }
 
-    /* Invoke the user-defined procedure and save its result in the record.  */
-    rec->__result = (*(rec->__proc)) (rec->__arg);
+static inline
+__MCF_gthr_thread_record*
+do_gthr_get_thread_record(_MCF_thread* thrd)
+  {
+    __MCF_gthr_thread_record* rec = _MCF_thread_get_data(thrd);
+    if(!rec)
+      return __MCF_nullptr;
+
+    /* Check the GUID. As user-defined data are aligned to 16-byte boundaries,
+     * there must be at least 16 bytes available.  */
+    if(__builtin_memcmp(rec->__magic_guid, &gthread_guid, 16) != 0)
+      return __MCF_nullptr;
+
+    /* Assume so. `do_gthr_thread_thunk_v3()` is not shared across modules,
+     * so we should not check it for uniqueness.  */
+    return rec;
+  }
+
+__MCF_DLLEXPORT
+_MCF_thread*
+__MCF_gthr_thread_create_v3(__MCF_gthr_thread_procedure* proc, void* arg)
+  {
+    __MCF_ALIGNED(16) __MCF_gthr_thread_record record;
+    __builtin_memcpy(record.__magic_guid, &gthread_guid, 16);
+    record.__proc = proc;
+    record.__arg_or_result = arg;
+    return _MCF_thread_new(do_gthr_thread_thunk_v3, &record, sizeof(record));
+  }
+
+__MCF_DLLEXPORT
+void
+__MCF_gthr_thread_join_v3(_MCF_thread* thrd, void** resp_opt)
+  {
+    /* Wait for the thread to terminate.  */
+    __MCF_ASSERT(thrd->__tid != _MCF_thread_self_tid());
+    _MCF_thread_wait(thrd, __MCF_nullptr);
+
+    if(resp_opt) {
+      *resp_opt = __MCF_nullptr;
+
+      /* Get the exit code.  */
+      __MCF_gthr_thread_record* rec = do_gthr_get_thread_record(thrd);
+      if(rec)
+        *resp_opt = rec->__arg_or_result;
+    }
+
+    /* Free the thread.  */
+    _MCF_thread_drop_ref(thrd);
+  }
+
+__MCF_DLLEXPORT
+void
+__MCF_gthr_thread_exit_v3(void* resp)
+  {
+    /* Set the exit code.  */
+    __MCF_gthr_thread_record* rec = do_gthr_get_thread_record(_MCF_thread_self());
+    if(rec)
+      rec->__arg_or_result = resp;
+
+    /* Terminate the current thread.  */
+    _MCF_thread_exit();
   }

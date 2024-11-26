@@ -36,12 +36,9 @@ struct __MCF_gthr_rc_mutex
 
 struct __MCF_gthr_thread_record
   {
-    void* __result;
+    uint8_t __magic_guid[16];
     __MCF_gthr_thread_procedure* __proc;
-    void* __arg;
-    uint8_t __joinable[1];
-    uintptr_t __reserved_low;
-    uintptr_t __reserved_high;
+    void* __arg_or_result;
   };
 
 /* These functions implement `__gthread_once()`. If `__once_fn` initiates stack
@@ -135,10 +132,18 @@ __MCF_GTHR_AUX_IMPORT
 int
 __MCF_gthr_cond_recursive_mutex_wait(_MCF_cond* __cond, __MCF_gthr_rc_mutex* __rmtx, int64_t* __timeout_opt) __MCF_noexcept;
 
-/* This is the actual thread function for a gthread.  */
+/* These are auxiliary functions for threads.  */
+__MCF_GTHR_AUX_IMPORT
+_MCF_thread*
+__MCF_gthr_thread_create_v3(__MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_noexcept;
+
 __MCF_GTHR_AUX_IMPORT
 void
-__MCF_gthr_thread_thunk_v2(_MCF_thread* __thrd) __MCF_noexcept;
+__MCF_gthr_thread_join_v3(_MCF_thread* __thrd, void** __resp_opt) __MCF_noexcept;
+
+__MCF_GTHR_AUX_IMPORT __MCF_NEVER_RETURN
+void
+__MCF_gthr_thread_exit_v3(void* __resp) __MCF_noexcept;
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also

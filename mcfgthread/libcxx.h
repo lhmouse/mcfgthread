@@ -554,37 +554,15 @@ __MCF_LIBCXX_INLINE
 int
 __MCF_libcxx_thread_create(__libcpp_thread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_noexcept
   {
-    __MCF_gthr_thread_record __rec[1] = __MCF_0_INIT;
-    _MCF_thread* __thrd;
-
-    __rec->__proc = __proc;
-    __rec->__arg = __arg;
-    __rec->__joinable[0] = 1;
-
-    __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk_v2, __rec, sizeof(*__rec));
-    *__thrdp = __thrd;
-    return (__thrd == __MCF_nullptr) ? EAGAIN : 0;  /* as specified by POSIX  */
+    *__thrdp = __MCF_gthr_thread_create_v3(__proc, __arg);
+    return (*__thrdp == __MCF_nullptr) ? EAGAIN : 0;
   }
 
 __MCF_LIBCXX_INLINE
 int
 __MCF_libcxx_thread_join(const __libcpp_thread_t* __thrdp) __MCF_noexcept
   {
-    __MCF_gthr_thread_record* __rec = __MCF_nullptr;
-    _MCF_thread* __thrd = *__thrdp;
-    if(__thrd->__proc == __MCF_gthr_thread_thunk_v2)
-      __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
-
-    if(__thrd->__tid == _MCF_thread_self_tid())
-      return EDEADLK;
-
-    /* Clear the joinable state. If the thread is not joinable, fail.  */
-    if(__rec && (_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0))
-      return EINVAL;
-
-    /* Wait for the thread to terminate.  */
-    _MCF_thread_wait(__thrd, __MCF_nullptr);
-    _MCF_thread_drop_ref(__thrd);
+    __MCF_gthr_thread_join_v3(*__thrdp, __MCF_nullptr);
     return 0;
   }
 
@@ -592,17 +570,7 @@ __MCF_LIBCXX_INLINE
 int
 __MCF_libcxx_thread_detach(const __libcpp_thread_t* __thrdp) __MCF_noexcept
   {
-    __MCF_gthr_thread_record* __rec = __MCF_nullptr;
-    _MCF_thread* __thrd = *__thrdp;
-    if(__thrd->__proc == __MCF_gthr_thread_thunk_v2)
-      __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
-
-    /* Clear the joinable state. If the thread is not joinable, fail.  */
-    if(__rec && (_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0))
-      return EINVAL;
-
-    /* Free the thread.  */
-    _MCF_thread_drop_ref(__thrd);
+    _MCF_thread_drop_ref(*__thrdp);
     return 0;
   }
 

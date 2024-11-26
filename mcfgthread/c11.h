@@ -56,11 +56,6 @@ typedef _MCF_once once_flag;
 typedef _MCF_cond cnd_t;
 typedef __MCF_c11_mutex mtx_t;
 
-/* This is the actual thread function for a C11 thread.  */
-__MCF_C11_IMPORT
-void
-__MCF_c11_thread_thunk_v2(_MCF_thread* __thrd) __MCF_noexcept;
-
 /* Define enumeration constants.  */
 enum __MCF_mtx_type
   {
@@ -510,16 +505,8 @@ __MCF_C11_INLINE
 int
 __MCF_c11_thrd_create(thrd_t* __thrdp, thrd_start_t __proc, void* __arg) __MCF_noexcept
   {
-    __MCF_c11_thread_record __rec[1] = __MCF_0_INIT;
-    _MCF_thread* __thrd;
-
-    __rec->__proc = __proc;
-    __rec->__arg = __arg;
-    __rec->__joinable[0] = 1;
-
-    __thrd = _MCF_thread_new(__MCF_c11_thread_thunk_v2, __rec, sizeof(*__rec));
-    *__thrdp = __thrd;
-    return (__thrd == __MCF_nullptr) ? thrd_nomem : thrd_success;
+    *__thrdp = __MCF_gthr_thread_create_v3(__MCF_CAST_PTR(__MCF_gthr_thread_procedure, __proc), __arg);
+    return (*__thrdp == __MCF_nullptr) ? thrd_nomem : thrd_success;
   }
 
 __MCF_C11_INLINE __MCF_FN_CONST
@@ -533,15 +520,6 @@ __MCF_C11_INLINE
 int
 __MCF_c11_thrd_detach(thrd_t __thrd) __MCF_noexcept
   {
-    __MCF_c11_thread_record* __rec = __MCF_nullptr;
-    if(__thrd->__proc == __MCF_c11_thread_thunk_v2)
-      __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__thrd);
-
-    /* Clear the joinable state. If the thread is not joinable, fail.  */
-    if(__rec && (_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0))
-      return thrd_error;
-
-    /* Free the thread.  */
     _MCF_thread_drop_ref(__thrd);
     return thrd_success;
   }
@@ -557,37 +535,17 @@ __MCF_C11_INLINE __MCF_NEVER_RETURN
 void
 __MCF_c11_thrd_exit(int __result) __MCF_noexcept
   {
-    _MCF_thread* __self = _MCF_thread_self();
-    int* __resp = __MCF_nullptr;
-    if(__self->__proc == __MCF_c11_thread_thunk_v2)
-      __resp = &(((__MCF_c11_thread_record*) _MCF_thread_get_data(__self))->__result);
-
-    /* Set the exit status and exit. Unlike `ExitThread()`, if the last
-     * thread exits, the current process exits with zero.  */
-    __MCF_SET_IF(__resp, __result);
-    _MCF_thread_exit();
+    __MCF_gthr_thread_exit_v3((void*)(intptr_t) __result);
   }
 
 __MCF_C11_INLINE
 int
 __MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_noexcept
   {
-    __MCF_c11_thread_record* __rec = __MCF_nullptr;
-    if(__thrd->__proc == __MCF_c11_thread_thunk_v2)
-      __rec = (__MCF_c11_thread_record*) _MCF_thread_get_data(__thrd);
-
-    if(__thrd->__tid == _MCF_thread_self_tid())
-      return thrd_error;
-
-    /* Clear the joinable state. If the thread is not joinable, fail.  */
-    if(__rec && (_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0))
-      return thrd_error;
-
-    /* Wait for the thread to terminate.  */
-    _MCF_thread_wait(__thrd, __MCF_nullptr);
-    __MCF_SET_IF(__resp_opt, __rec ? __rec->__result : 0);
-    _MCF_thread_drop_ref(__thrd);
-    return 0;
+    void* __resp;
+    __MCF_gthr_thread_join_v3(__thrd, &__resp);
+    __MCF_SET_IF(__resp_opt, (int)(intptr_t) __resp);
+    return thrd_success;
   }
 
 __MCF_C11_INLINE

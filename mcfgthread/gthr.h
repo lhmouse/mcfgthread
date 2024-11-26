@@ -305,31 +305,31 @@ __MCF_FNA(__MCF_gthr_cond_broadcast, __gthread_cond_broadcast);
 /* Creates a thread, like `pthread_create()`.  */
 __MCF_GTHR_IMPORT
 int
-__MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_noexcept;
+__MCF_gthr_create_v3(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_FNA(__MCF_gthr_create_v2, __gthread_create);
-#  define __MCF_gthr_create_v2  __gthread_create
+__MCF_FNA(__MCF_gthr_create_v3, __gthread_create);
+#  define __MCF_gthr_create_v3  __gthread_create
 #endif
 
 /* Awaits a thread to terminate and gets its result, like `pthread_join()`.  */
 __MCF_GTHR_IMPORT
 int
-__MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_noexcept;
+__MCF_gthr_join_v3(__gthread_t __thrd, void** __resp_opt) __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_FNA(__MCF_gthr_join_v2, __gthread_join);
-#  define __MCF_gthr_join_v2  __gthread_join
+__MCF_FNA(__MCF_gthr_join_v3, __gthread_join);
+#  define __MCF_gthr_join_v3  __gthread_join
 #endif
 
 /* Detaches a thread, like `pthread_detach()`  */
 __MCF_GTHR_IMPORT
 int
-__MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_noexcept;
+__MCF_gthr_detach(__gthread_t __thrd) __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_FNA(__MCF_gthr_detach_v2, __gthread_detach);
-#  define __MCF_gthr_detach_v2  __gthread_detach
+__MCF_FNA(__MCF_gthr_detach, __gthread_detach);
+#  define __MCF_gthr_detach  __gthread_detach
 #endif
 
 /* Gets a thread itself, like `pthread_self()`.
@@ -593,55 +593,24 @@ __MCF_gthr_cond_broadcast(__gthread_cond_t* __cond) __MCF_noexcept
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_create_v2(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_noexcept
+__MCF_gthr_create_v3(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg) __MCF_noexcept
   {
-    __MCF_gthr_thread_record __rec[1] = __MCF_0_INIT;
-    _MCF_thread* __thrd;
-
-    __rec->__proc = __proc;
-    __rec->__arg = __arg;
-    __rec->__joinable[0] = 1;
-
-    __thrd = _MCF_thread_new(__MCF_gthr_thread_thunk_v2, __rec, sizeof(*__rec));
-    *__thrdp = __thrd;
-    return (__thrd == __MCF_nullptr) ? EAGAIN : 0;
+    *__thrdp = __MCF_gthr_thread_create_v3(__proc, __arg);
+    return (*__thrdp == __MCF_nullptr) ? EAGAIN : 0;
   }
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_join_v2(__gthread_t __thrd, void** __resp_opt) __MCF_noexcept
+__MCF_gthr_join_v3(__gthread_t __thrd, void** __resp_opt) __MCF_noexcept
   {
-    __MCF_gthr_thread_record* __rec = __MCF_nullptr;
-    if(__thrd->__proc == __MCF_gthr_thread_thunk_v2)
-      __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
-
-    if(__thrd->__tid == _MCF_thread_self_tid())
-      return EDEADLK;
-
-    /* Clear the joinable state. If the thread is not joinable, fail.  */
-    if(__rec && (_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0))
-      return EINVAL;
-
-    /* Wait for the thread to terminate.  */
-    _MCF_thread_wait(__thrd, __MCF_nullptr);
-    __MCF_SET_IF(__resp_opt, __rec ? __rec->__result : __MCF_nullptr);
-    _MCF_thread_drop_ref(__thrd);
+    __MCF_gthr_thread_join_v3(__thrd, __resp_opt);
     return 0;
   }
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_detach_v2(__gthread_t __thrd) __MCF_noexcept
+__MCF_gthr_detach(__gthread_t __thrd) __MCF_noexcept
   {
-    __MCF_gthr_thread_record* __rec = __MCF_nullptr;
-    if(__thrd->__proc == __MCF_gthr_thread_thunk_v2)
-      __rec = (__MCF_gthr_thread_record*) _MCF_thread_get_data(__thrd);
-
-    /* Clear the joinable state. If the thread is not joinable, fail.  */
-    if(__rec && (_MCF_atomic_xchg_8_rlx(__rec->__joinable, 0) == 0))
-      return EINVAL;
-
-    /* Free the thread.  */
     _MCF_thread_drop_ref(__thrd);
     return 0;
   }

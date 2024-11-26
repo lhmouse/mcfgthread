@@ -58,6 +58,12 @@ NTSYSAPI SIZE_T NTAPI RtlCompareMemory(const void* src, const void* cmp, SIZE_T 
 NTSYSAPI ULONG NTAPI RtlNtStatusToDosError(NTSTATUS status);
 NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status) __MCF_FN_CONST;
 
+/* Initialize a GUID in the canonical form.  */
+#define __MCF_GUID(a8,b4,c4,d4,e12)  \
+    ((GUID) { 0x##a8, 0x##b4, 0x##c4, { (0x##d4 >> 8) & 0xFF, 0x##d4 & 0xFF,  \
+              (0x##e12 >> 40) & 0xFF, (0x##e12 >> 32) & 0xFF, (0x##e12 >> 24) & 0xFF,  \
+              (0x##e12 >> 16) & 0xFF, (0x##e12 >> 8) & 0xFF, 0x##e12 & 0xFF } })
+
 /* Allocate a variable in a specific section.  */
 #define __MCF__CRT_ALLOC(x)  __attribute__((__section__(x), __used__))
 
