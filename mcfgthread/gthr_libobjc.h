@@ -10,8 +10,28 @@
 
 #include "fwd.h"
 #include "gthr_aux.h"
+
 #ifdef _LIBOBJC
 #  include <objc/thr.h>
+#else
+/* These are copied from <objc/thr.h> which seems a public header. These
+ * types have not been updated for more than a decade, so might be stable
+ * after all.  */
+typedef void* objc_thread_t;
+typedef struct objc_mutex* objc_mutex_t;
+typedef struct objc_condition* objc_condition_t;
+
+struct objc_mutex
+  {
+    volatile objc_thread_t owner;
+    volatile int depth;
+    void* backend;
+  };
+
+struct objc_condition
+  {
+    void* backend;
+  };
 #endif
 
 __MCF_CXX(extern "C" {)
@@ -19,9 +39,6 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_GTHR_LIBOBJC_IMPORT
 #  define __MCF_GTHR_LIBOBJC_INLINE  __MCF_GNU_INLINE
 #endif
-
-/* Copy this declaration from GCC libobjc here.  */
-typedef void* objc_thread_t;
 
 /* Initialize the threads subsystem.  */
 __MCF_GTHR_LIBOBJC_IMPORT
@@ -43,13 +60,8 @@ __MCF_FNA(__MCF_gthr_objc_close_thread_system, __gthread_objc_close_thread_syste
 #  define __MCF_gthr_objc_close_thread_system  __gthread_objc_close_thread_system
 #endif
 
-/* Below are functions that depend on libobjc types and are thus
- * provided static inline only. Nevertheless, it is still possible to
- * compile these functions by defining `_LIBOBJC`.  */
-#ifdef _LIBOBJC
-
 /* Allocate a mutex.  */
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_mutex_allocate(objc_mutex_t __objc_mtx) __MCF_noexcept;
 
@@ -59,7 +71,7 @@ __MCF_FNA(__MCF_gthr_objc_mutex_allocate, __gthread_objc_mutex_allocate);
 #endif
 
 /* Deallocate a mutex.  */
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_mutex_deallocate(objc_mutex_t __objc_mtx) __MCF_noexcept;
 
@@ -69,7 +81,7 @@ __MCF_FNA(__MCF_gthr_objc_mutex_deallocate, __gthread_objc_mutex_deallocate);
 #endif
 
 /* Grab a lock on a mutex.  */
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_mutex_lock(objc_mutex_t __objc_mtx) __MCF_noexcept;
 
@@ -79,7 +91,7 @@ __MCF_FNA(__MCF_gthr_objc_mutex_lock, __gthread_objc_mutex_lock);
 #endif
 
 /* Try to grab a lock on a mutex.  */
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_mutex_trylock(objc_mutex_t __objc_mtx) __MCF_noexcept;
 
@@ -89,7 +101,7 @@ __MCF_FNA(__MCF_gthr_objc_mutex_trylock, __gthread_objc_mutex_trylock);
 #endif
 
 /* Unlock the mutex.  */
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_mutex_unlock(objc_mutex_t __objc_mtx) __MCF_noexcept;
 
@@ -99,7 +111,7 @@ __MCF_FNA(__MCF_gthr_objc_mutex_unlock, __gthread_objc_mutex_unlock);
 #endif
 
 /* Allocate a condition.  */
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_condition_allocate(objc_condition_t __objc_cnd) __MCF_noexcept;
 
@@ -109,7 +121,7 @@ __MCF_FNA(__MCF_gthr_objc_condition_allocate, __gthread_objc_condition_allocate)
 #endif
 
 /* Deallocate a condition.  */
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_condition_deallocate(objc_condition_t __objc_cnd) __MCF_noexcept;
 
@@ -119,7 +131,7 @@ __MCF_FNA(__MCF_gthr_objc_condition_deallocate, __gthread_objc_condition_dealloc
 #endif
 
 /* Wait on the condition.  */
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_condition_wait(objc_condition_t __objc_cnd, objc_mutex_t __objc_mtx) __MCF_noexcept;
 
@@ -129,7 +141,7 @@ __MCF_FNA(__MCF_gthr_objc_condition_wait, __gthread_objc_condition_wait);
 #endif
 
 /* Wake up one thread waiting on this condition.  */
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_condition_signal(objc_condition_t __objc_cnd) __MCF_noexcept;
 
@@ -139,7 +151,7 @@ __MCF_FNA(__MCF_gthr_objc_condition_signal, __gthread_objc_condition_signal);
 #endif
 
 /* Wake up all threads waiting on this condition.  */
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_condition_broadcast(objc_condition_t __objc_cnd) __MCF_noexcept;
 
@@ -147,8 +159,6 @@ __MCF_gthr_objc_condition_broadcast(objc_condition_t __objc_cnd) __MCF_noexcept;
 __MCF_FNA(__MCF_gthr_objc_condition_broadcast, __gthread_objc_condition_broadcast);
 #  define __MCF_gthr_objc_condition_broadcast  __gthread_objc_condition_broadcast
 #endif
-
-#endif  /* _LIBOBJC  */
 
 /* Create a new thread of execution.
  * This function creates a detached thread.  */
@@ -250,18 +260,16 @@ __MCF_gthr_objc_close_thread_system(void) __MCF_noexcept
     return 0;
   }
 
-#ifdef _LIBOBJC
-
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_mutex_allocate(objc_mutex_t __objc_mtx) __MCF_noexcept
   {
-    _MCF_mutex* __mtx = (_MCF_mutex*)(void*) &(__objc_mtx->backend);
+    _MCF_mutex* __mtx = __MCF_CAST_PTR(_MCF_mutex, &(__objc_mtx->backend));
     _MCF_mutex_init(__mtx);
     return 0;
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_mutex_deallocate(objc_mutex_t __objc_mtx) __MCF_noexcept
   {
@@ -271,45 +279,45 @@ __MCF_gthr_objc_mutex_deallocate(objc_mutex_t __objc_mtx) __MCF_noexcept
     return 0;
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_mutex_lock(objc_mutex_t __objc_mtx) __MCF_noexcept
   {
-    _MCF_mutex* __mtx = (_MCF_mutex*)(void*) &(__objc_mtx->backend);
+    _MCF_mutex* __mtx = __MCF_CAST_PTR(_MCF_mutex, &(__objc_mtx->backend));
     int __err = _MCF_mutex_lock(__mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_mutex_trylock(objc_mutex_t __objc_mtx) __MCF_noexcept
   {
-    _MCF_mutex* __mtx = (_MCF_mutex*)(void*) &(__objc_mtx->backend);
+    _MCF_mutex* __mtx = __MCF_CAST_PTR(_MCF_mutex, &(__objc_mtx->backend));
     int64_t __timeout = 0;
     int __err = _MCF_mutex_lock(__mtx, &__timeout);
     return __err;
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_mutex_unlock(objc_mutex_t __objc_mtx) __MCF_noexcept
   {
-    _MCF_mutex* __mtx = (_MCF_mutex*)(void*) &(__objc_mtx->backend);
+    _MCF_mutex* __mtx = __MCF_CAST_PTR(_MCF_mutex, &(__objc_mtx->backend));
     _MCF_mutex_unlock(__mtx);
     return 0;
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_condition_allocate(objc_condition_t __objc_cnd) __MCF_noexcept
   {
-    _MCF_cond* __cond = (_MCF_cond*)(void*) &(__objc_cnd->backend);
+    _MCF_cond* __cond = __MCF_CAST_PTR(_MCF_cond, &(__objc_cnd->backend));
     _MCF_cond_init(__cond);
     return 0;
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_condition_deallocate(objc_condition_t __objc_cnd) __MCF_noexcept
   {
@@ -317,36 +325,34 @@ __MCF_gthr_objc_condition_deallocate(objc_condition_t __objc_cnd) __MCF_noexcept
     return 0;
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_condition_wait(objc_condition_t __objc_cnd, objc_mutex_t __objc_mtx) __MCF_noexcept
   {
-    _MCF_cond* __cond = (_MCF_cond*)(void*) &(__objc_cnd->backend);
-    _MCF_mutex* __mtx = (_MCF_mutex*)(void*) &(__objc_mtx->backend);
+    _MCF_cond* __cond = __MCF_CAST_PTR(_MCF_cond, &(__objc_cnd->backend));
+    _MCF_mutex* __mtx = __MCF_CAST_PTR(_MCF_mutex, &(__objc_mtx->backend));
     int __err = __MCF_gthr_cond_mutex_wait(__cond, __mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_condition_signal(objc_condition_t __objc_cnd) __MCF_noexcept
   {
-    _MCF_cond* __cond = (_MCF_cond*)(void*) &(__objc_cnd->backend);
+    _MCF_cond* __cond = __MCF_CAST_PTR(_MCF_cond, &(__objc_cnd->backend));
     _MCF_cond_signal(__cond);
     return 0;
   }
 
-__MCF_ALWAYS_INLINE
+__MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_condition_broadcast(objc_condition_t __objc_cnd) __MCF_noexcept
   {
-    _MCF_cond* __cond = (_MCF_cond*)(void*) &(__objc_cnd->backend);
+    _MCF_cond* __cond = __MCF_CAST_PTR(_MCF_cond, &(__objc_cnd->backend));
     _MCF_cond_signal_all(__cond);
     return 0;
   }
-
-#endif  /* _LIBOBJC  */
 
 __MCF_GTHR_LIBOBJC_INLINE
 objc_thread_t
@@ -402,7 +408,7 @@ __MCF_gthr_objc_thread_id(void) __MCF_noexcept
     return (objc_thread_t)(uintptr_t) _MCF_thread_self_tid();
   }
 
-__MCF_GTHR_LIBOBJC_INLINE __MCF_FN_PURE
+__MCF_GTHR_LIBOBJC_INLINE
 void*
 __MCF_gthr_objc_thread_get_data(void) __MCF_noexcept
   {
