@@ -33,7 +33,7 @@
 #define __MCF_noexcept
 #define __MCF_nullptr    __MCF_IPTR_0
 
-#if defined __cplusplus
+#ifdef __cplusplus
 #  undef __MCF_CXX
 #  define __MCF_CXX(...)   __VA_ARGS__
 #  undef __MCF_C
@@ -334,7 +334,7 @@ __MCF_CXX(extern "C" {)
  * defaults to `/EHsc`, which assumes that `extern "C"` functions can't throw C++
  * exceptions. Not only is this behavior not conforming to the C++ standard, it
  * can also result in wrong code about `__MCF_gthr_call_once_seh()`.  */
-#if defined _MSC_VER
+#ifdef _MSC_VER
 #  define __MCF_MAY_THROW   __MCF_CXX(throw(...))
 #else
 #  define __MCF_MAY_THROW
@@ -362,7 +362,7 @@ typedef unsigned int uint32_t;
 typedef unsigned __MCF_INT64_ uint64_t;
 typedef unsigned __MCF_INTPTR_ uintptr_t;
 
-#if !defined LLONG_MAX
+#ifndef LLONG_MAX
 #  define LLONG_MAX  0x7FFFFFFFFFFFFFFFL
 #  define LLONG_MIN  (-0x7FFFFFFFFFFFFFFFL-1)
 #  define ULLONG_MAX  0xFFFFFFFFFFFFFFFFUL
@@ -393,7 +393,7 @@ __MCF_NEVER_RETURN
 void
 __MCF__Exit(int __status) __MCF_noexcept;
 
-#if defined __MCF_DEBUG
+#ifdef __MCF_DEBUG
 #  undef __MCF_UNREACHABLE
 #  define __MCF_UNREACHABLE   (__debugbreak(), __MCF__Exit(668))
 #endif
