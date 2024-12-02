@@ -11,6 +11,12 @@
 #include "fwd.h"
 #include "gthr_aux.h"
 
+__MCF_CXX(extern "C" {)
+#ifndef __MCF_GTHR_LIBOBJC_IMPORT
+#  define __MCF_GTHR_LIBOBJC_IMPORT
+#  define __MCF_GTHR_LIBOBJC_INLINE  __MCF_GNU_INLINE
+#endif
+
 #ifdef _LIBOBJC
 #  include <objc/thr.h>
 #else
@@ -32,12 +38,6 @@ struct objc_condition
   {
     void* backend;
   };
-#endif
-
-__MCF_CXX(extern "C" {)
-#ifndef __MCF_GTHR_LIBOBJC_IMPORT
-#  define __MCF_GTHR_LIBOBJC_IMPORT
-#  define __MCF_GTHR_LIBOBJC_INLINE  __MCF_GNU_INLINE
 #endif
 
 /* Initialize the threads subsystem.  */
