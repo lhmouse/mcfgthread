@@ -64,9 +64,6 @@ NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status) __MCF_FN_CONST;
               (0x##e12 >> 40) & 0xFF, (0x##e12 >> 32) & 0xFF, (0x##e12 >> 24) & 0xFF,  \
               (0x##e12 >> 16) & 0xFF, (0x##e12 >> 8) & 0xFF, 0x##e12 & 0xFF } })
 
-/* Allocate a variable in a specific section.  */
-#define __MCF__CRT_ALLOC(x)  __attribute__((__section__(x), __used__))
-
 /* Define a non-zero but invalid value. This can be used to mark a pointer
  * to freed memory, or to prevent a static pointer from being placed into
  * the `.bss` section.  */

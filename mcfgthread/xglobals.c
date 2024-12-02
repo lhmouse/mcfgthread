@@ -421,7 +421,7 @@ int _fltused = 0x9875;  /* dunno what it does but LINK complains.  */
 static __MCF_REALIGN_SP
 void
 __stdcall
-__MCF_tls_callback(PVOID module, ULONG reason, LPVOID reserved)
+do_tls_callback(PVOID module, ULONG reason, LPVOID reserved)
   {
     (void) module;
     (void) reserved;
@@ -444,10 +444,12 @@ __MCF_tls_callback(PVOID module, ULONG reason, LPVOID reserved)
 /* This requires the main executable be linked with 'tlssup.o'. Such
  * initialization shall happen as early as possible.  */
 #  if defined _MSC_VER
-#    pragma section(".CRT$XLB", read)
-#    pragma comment(linker, "/include:" __MCF_USYM "_tls_used")
+__pragma(section(".CRT$XLB", read))
+__pragma(comment(linker, "/include:" __MCF_USYM "_tls_used"))
 #  endif
-static const PIMAGE_TLS_CALLBACK __MCF__xl_b __MCF__CRT_ALLOC(".CRT$XLB") = __MCF_tls_callback;
+
+__attribute__((__section__(".CRT$XLB"), __used__))
+const PIMAGE_TLS_CALLBACK __MCF_crt_xl_b = do_tls_callback;
 
 #endif  /* __MCF_IN_DLL  */
 
