@@ -84,7 +84,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_nullptr   nullptr
 #endif
 
-#if defined __cplusplus && (defined _MSC_VER || (__cplusplus >= 201103L))
+#if defined __cplusplus && ((__cplusplus >= 201103L) || (defined _MSC_VER && !defined __clang__))
 #  undef __MCF_CXX11
 #  define __MCF_CXX11(...)   __VA_ARGS__
 #  undef __MCF_noexcept
@@ -93,7 +93,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_nullptr    nullptr
 #endif
 
-#if defined __cplusplus && (defined _MSC_VER || (__cplusplus >= 201402L))
+#if defined __cplusplus && ((__cplusplus >= 201402L) || (defined _MSC_VER && !defined __clang__))
 #  undef __MCF_CXX14
 #  define __MCF_CXX14(...)   __VA_ARGS__
 #endif

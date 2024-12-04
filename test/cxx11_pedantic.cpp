@@ -5,13 +5,13 @@
  * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
-#if defined _MSC_VER
+#if defined _MSC_VER  // MSVC standard library doesn't compile as C++11.
 int
 main(void)
   {
     return 77;
   }
-#else  // _MSC_VER
+#else  // MSVC
 
 #include "../mcfgthread/cxx11.hpp"
 
@@ -25,4 +25,4 @@ main(void)
     return 0;
   }
 
-#endif  // _MSC_VER
+#endif  // MSVC
