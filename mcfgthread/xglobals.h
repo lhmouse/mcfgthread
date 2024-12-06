@@ -230,19 +230,19 @@ __MCF_mequal(const void* src, const void* cmp, size_t size);
 /* Allocate a block of zeroed memory, like `calloc()`.  */
 __MCF_XGLOBALS_INLINE
 void*
-__MCF_malloc_0(size_t size) __attribute__((__warn_unused_result__, __malloc__, __alloc_size__(1)));
+__MCF_malloc_0(size_t size) __attribute__((__malloc__, __alloc_size__(1)));
 
 /* Re-allocate a block of memory, like `realloc()`. If the existent
  * block should be extended, vacuum bytes are filled with zeroes.  */
 __MCF_XGLOBALS_INLINE
 void*
-__MCF_mrealloc_0(void** pptr, size_t size) __attribute__((__warn_unused_result__, __alloc_size__(2)));
+__MCF_mrealloc_0(void** pptr, size_t size) __attribute__((__alloc_size__(2)));
 
 /* Allocate a copy of a block of memory, like `malloc()` followed by
  * `memcpy()`.  */
 __MCF_XGLOBALS_INLINE
 void*
-__MCF_malloc_copy(const void* data, size_t size) __attribute__((__warn_unused_result__, __alloc_size__(2)));
+__MCF_malloc_copy(const void* data, size_t size) __attribute__((__alloc_size__(2)));
 
 /* Get the size of an allocated block, like `malloc_usable_size()`.  */
 __MCF_XGLOBALS_INLINE
@@ -486,8 +486,7 @@ __MCF_XGLOBALS_INLINE
 void*
 __MCF_malloc_0(size_t size)
   {
-    void* ptr = HeapAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY, size);
-    return ptr;
+    return HeapAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY, size);
   }
 
 __MCF_XGLOBALS_INLINE
