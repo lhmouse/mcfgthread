@@ -232,6 +232,13 @@ __MCF_XGLOBALS_INLINE
 void*
 __MCF_malloc_0(size_t size) __attribute__((__malloc__, __alloc_size__(1)));
 
+/* Set the size a block of memory in place, like `truncate()` on files.
+ * If the existent block should be extended, vacuum bytes are filled with
+ * zeroes.  */
+__MCF_XGLOBALS_INLINE
+void*
+__MCF_mresize_0(void* ptr, size_t size) __attribute__((__alloc_size__(2)));
+
 /* Re-allocate a block of memory, like `realloc()`. If the existent
  * block should be extended, vacuum bytes are filled with zeroes.  */
 __MCF_XGLOBALS_INLINE
@@ -487,6 +494,13 @@ void*
 __MCF_malloc_0(size_t size)
   {
     return HeapAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY, size);
+  }
+
+__MCF_XGLOBALS_INLINE
+void*
+__MCF_mresize_0(void* ptr, size_t size)
+  {
+    return HeapReAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY | HEAP_REALLOC_IN_PLACE_ONLY, ptr, size);
   }
 
 __MCF_XGLOBALS_INLINE

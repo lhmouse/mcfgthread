@@ -75,7 +75,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
 
         size_request = (uintptr_t) thrd->__data_opt + size - (uintptr_t) thrd;
         __MCF_ASSERT(size_need <= size_request);
-        HeapReAlloc(__MCF_crt_heap, HEAP_REALLOC_IN_PLACE_ONLY, thrd, size_request);
+        __MCF_mresize_0(thrd, size_request);
       }
 
       /* Copy user-defined data. If this doesn't happen, they are implicit zeroes.  */
