@@ -183,6 +183,9 @@ __MCF_gthread_initialize_globals(void)
     /* Initialize static global constants.  */
     GetSystemInfo(&__MCF_crt_sysinfo);
 
+#ifdef __MCF_DEBUG
+    __MCF_CHECK(HeapSetInformation(NULL, HeapEnableTerminationOnCorruption, __MCF_nullptr, 0));
+#endif
     __MCF_crt_heap = GetProcessHeap();
     __MCF_CHECK(__MCF_crt_heap);
 
