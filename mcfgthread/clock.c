@@ -15,8 +15,10 @@ static inline
 uint64_t
 do_divide_by_10000(uint64_t value)
   {
-#ifdef __SIZEOF_INT128__
+#if defined __SIZEOF_INT128__
     return (uint64_t) ((unsigned __int128) value * 0x68DB8BAC710CBULL >> 64);
+#elif defined _MSC_VER && __MCF_64_32(1, 0)
+    return __umulh(value, 0x68DB8BAC710CBULL);
 #else
     uint64_t temp = (uint32_t) value * 0xBAC710CBULL >> 32;
     uint64_t middle = (uint32_t) value * 0x68DB8ULL;
