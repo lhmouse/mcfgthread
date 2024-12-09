@@ -349,56 +349,6 @@ DllMainCRTStartup(PVOID instance, ULONG reason, PVOID reserved)
       }
   }
 
-#  if defined _MSC_VER
-__pragma(comment(linker, "/export:" __MCF_USYM "memcpy,DATA"))
-#  else
-__attribute__((__dllexport__))
-#  endif
-void*
-__cdecl
-memcpy(void* dst, const void* src, size_t size)
-  {
-    return __MCF_mcopy(dst, src, size);
-  }
-
-#  if defined _MSC_VER
-__pragma(comment(linker, "/export:" __MCF_USYM "memmove,DATA"))
-#  else
-__attribute__((__dllexport__))
-#  endif
-void*
-__cdecl
-memmove(void* dst, const void* src, size_t size)
-  {
-    return ((uintptr_t) dst - (uintptr_t) src >= size)
-            ? __MCF_mcopy(dst, src, size)
-            : __MCF_mcopy_backward(dst, src, size);
-  }
-
-#  if defined _MSC_VER
-__pragma(comment(linker, "/export:" __MCF_USYM "memcmp,DATA"))
-#  else
-__attribute__((__dllexport__))
-#  endif
-int
-__cdecl
-memcmp(const void* src, const void* cmp, size_t size)
-  {
-    return __MCF_mcompare(src, cmp, size);
-  }
-
-#  if defined _MSC_VER
-__pragma(comment(linker, "/export:" __MCF_USYM "memset,DATA"))
-#  else
-__attribute__((__dllexport__))
-#  endif
-void*
-__cdecl
-memset(void* dst, int val, size_t size)
-  {
-    return __MCF_mfill(dst, val, size);
-  }
-
 #  if defined __i386__
 extern const PVOID __safe_se_handler_table[];
 extern const ULONG __safe_se_handler_count;

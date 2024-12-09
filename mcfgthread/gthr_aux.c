@@ -319,7 +319,7 @@ do_gthr_get_thread_record(_MCF_thread* thrd)
 
     /* Check the GUID. As user-defined data are aligned to 16-byte boundaries,
      * there must be at least 16 bytes available.  */
-    if(__builtin_memcmp(rec->__magic_guid, &__MCF_crt_gthread_guid, 16) != 0)
+    if(!__MCF_mequal(rec->__magic_guid, &__MCF_crt_gthread_guid, 16))
       return __MCF_nullptr;
 
     /* Assume so. `do_gthr_thread_thunk_v3()` is not shared across modules,
@@ -331,8 +331,8 @@ __MCF_DLLEXPORT
 _MCF_thread*
 __MCF_gthr_thread_create_v3(__MCF_gthr_thread_procedure* proc, void* arg)
   {
-    __MCF_ALIGNED(16) __MCF_gthr_thread_record record;
-    __builtin_memcpy(record.__magic_guid, &__MCF_crt_gthread_guid, 16);
+    __MCF_gthr_thread_record record;
+    __MCF_mcopy(record.__magic_guid, &__MCF_crt_gthread_guid, 16);
     record.__proc = proc;
     record.__arg_or_result = arg;
     return _MCF_thread_new(do_gthr_thread_thunk_v3, &record, sizeof(record));
