@@ -355,6 +355,12 @@ memcpy(void* dst, const void* src, size_t size)
     return __MCF_mcopy(dst, src, size);
   }
 
+void*
+memset(void* dst, int val, size_t size)
+  {
+    return __MCF_mfill(dst, val, size);
+  }
+
 #  if defined __i386__
 extern const PVOID __safe_se_handler_table[];
 extern const ULONG __safe_se_handler_count;
