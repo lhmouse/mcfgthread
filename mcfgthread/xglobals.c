@@ -349,6 +349,12 @@ DllMainCRTStartup(PVOID instance, ULONG reason, PVOID reserved)
       }
   }
 
+void*
+memcpy(void* dst, const void* src, size_t size)
+  {
+    return __MCF_mcopy(dst, src, size);
+  }
+
 #  if defined __i386__
 extern const PVOID __safe_se_handler_table[];
 extern const ULONG __safe_se_handler_count;
