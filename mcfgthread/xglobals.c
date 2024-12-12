@@ -366,7 +366,8 @@ extern const PVOID __safe_se_handler_table[];
 extern const ULONG __safe_se_handler_count;
 #  endif
 
-IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
+__attribute__((__used__))
+const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
   {
     .Size = sizeof(IMAGE_LOAD_CONFIG_DIRECTORY),
 #  if defined __i386__ && defined _MSC_VER
@@ -376,7 +377,8 @@ IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
   };
 
 #  if defined _MSC_VER
-int _fltused = 0x9875;  /* dunno what it does but LINK complains.  */
+__attribute__((__used__))
+const int _fltused = 0x9875;  /* dunno what it does but LINK complains.  */
 #  endif
 
 #else  /* __MCF_IN_DLL  */
