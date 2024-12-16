@@ -182,7 +182,7 @@ mcfgthread_version_o = import('windows').compile_resources(
       args: [ '-I.', '-c65001' ],
       depend_files: [ 'mcfgthread/version.h.in', 'mcfgthread/version.manifest' ])
 
-if cc.get_linker_id() in [ 'link', 'lld-link' ]
+if cc.has_link_argument('/LTCG')
   lib_mcfgthread_dll_link_args = [
         '-Wl,-nodefaultlib', '-Wl,-dynamicbase', '-Wl,-opt:ref', '-Wl,-opt:icf',
         '-Xlinker', '-subsystem:windows,6.1', '-Wl,-kill-at' ]
