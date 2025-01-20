@@ -17,7 +17,7 @@ on:
 jobs:
   ubuntu-x86-64:
     name: Ubuntu cross build (x86-64 GCC)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
     - uses: actions/checkout@v4
@@ -75,7 +75,7 @@ jobs:
 
   msys2-ucrt64:
     name: MSYS2 native build (x86-64 GCC)
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     defaults:
       run:
@@ -100,8 +100,8 @@ jobs:
            && meson test -t2 -Cbuild_ci
 
   msys2-mingw32:
-    name: MSYS2 native build (i686 GCC)
-    runs-on: windows-latest
+    name: MSYS2 native build (x86-32 GCC)
+    runs-on: windows-2022
 
     defaults:
       run:
@@ -127,7 +127,7 @@ jobs:
 
   msys2-clang64:
     name: MSYS2 native build (x86-64 Clang)
-    runs-on: windows-latest
+    runs-on: windows-2022
 
     defaults:
       run:
