@@ -313,6 +313,7 @@ foreach src : test_src
                         sources: [ src, test_version_o ],
                         dependencies: test_dependencies,
                         link_with: test_link_with,
+                        build_by_default: false,
                         install: false)
 
   test('..' / src, test_exe)
