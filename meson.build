@@ -429,6 +429,7 @@ foreach src : test_src
                         link_args: test_link_args,
                         dependencies: test_dependencies,
                         link_with: test_link_with,
+                        build_by_default: false,
                         install: false)
 
   test('..' / src, test_exe)
