@@ -43,7 +43,7 @@ jobs:
            && meson compile -Cbuild_ci
            && meson test -t15 -Cbuild_ci
 
-  linaro-ubuntu-arm64:
+  ubuntu-arm64:
     name: Ubuntu cross build (ARM64 Clang)
     runs-on: ubuntu-22.04-arm
 
