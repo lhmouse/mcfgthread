@@ -24,19 +24,19 @@ main(void)
     BCryptGenRandom_t* pBCryptGenRandom = __MCF_CAST_PTR(BCryptGenRandom_t, GetProcAddress(bcrypt, "BCryptGenRandom"));
     assert(pBCryptGenRandom);
 
-    HMODULE msvcrt = LoadLibraryW(L"msvcrt.dll");
-    assert(msvcrt);
+    HMODULE ntdll = LoadLibraryW(L"ntdll.dll");
+    assert(ntdll);
 
     typedef void __cdecl memmove_t(void*, const void*, size_t);
-    memmove_t* pmemmove = __MCF_CAST_PTR(memmove_t, GetProcAddress(msvcrt, "memmove"));
+    memmove_t* pmemmove = __MCF_CAST_PTR(memmove_t, GetProcAddress(ntdll, "memmove"));
     assert(pmemmove);
 
     typedef void __cdecl memset_t(void*, int, size_t);
-    memset_t* pmemset = __MCF_CAST_PTR(memset_t, GetProcAddress(msvcrt, "memset"));
+    memset_t* pmemset = __MCF_CAST_PTR(memset_t, GetProcAddress(ntdll, "memset"));
     assert(pmemset);
 
     typedef int __cdecl memcmp_t(const void*, const void*, size_t);
-    memcmp_t* pmemcmp = __MCF_CAST_PTR(memcmp_t, GetProcAddress(msvcrt, "memcmp"));
+    memcmp_t* pmemcmp = __MCF_CAST_PTR(memcmp_t, GetProcAddress(ntdll, "memcmp"));
     assert(pmemcmp);
 
     // __MCF_mfill
