@@ -43,7 +43,7 @@ jobs:
            && meson compile -Cbuild_ci
            && meson test -t15 -Cbuild_ci
 
-  linaro-ubuntu-arm64:
+  ubuntu-arm64:
     name: Ubuntu cross build (ARM64 Clang)
     runs-on: ubuntu-22.04-arm
 
@@ -151,7 +151,7 @@ jobs:
            && meson compile -Cbuild_ci
            && meson test -t2 -Cbuild_ci
 
-  msvc-x64:
+  clang-cl-x64:
     name: MSVC native build (x86-64 Clang-CL)
     runs-on: windows-2022
 
@@ -178,7 +178,7 @@ jobs:
            && meson compile -Cbuild_ci
            && meson test -t2 -Cbuild_ci
 
-  msvc-x86:
+  clang-cl-x86:
     name: MSVC native build (x86-32 Clang-CL)
     runs-on: windows-2022
 
