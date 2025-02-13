@@ -212,7 +212,7 @@ _MCF_thread_self(void)
       return self;
 
     /* Allocate a new thread object with no user-defined data. When out of memory,
-     * use the pre-allocated backup. */
+     * use the pre-allocated backup.  */
     self = __MCF_malloc_0(sizeof(_MCF_thread));
     if(!self) {
       self = __MCF_G_FIELD_OPT(__thread_oom_self_st);
