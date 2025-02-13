@@ -44,7 +44,7 @@ struct __MCF_gthr_thread_record
 /* These functions implement `__gthread_once()`. If `__once_fn` initiates stack
  * unwinding, by throwing an exception for example, the state of `*__once` will
  * be restored correctly.
- * FIXME: At the moment (2024-03-14) GCC does not support SEH on i686. */
+ * FIXME: At the moment (2024-03-14) GCC does not support SEH on i686.  */
 __MCF_GTHR_AUX_INLINE
 void
 __MCF_gthr_call_once_seh(_MCF_once* __once, __MCF_cxa_dtor_any_ __init_proc, void* __arg) __MCF_MAY_THROW;
