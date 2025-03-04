@@ -86,7 +86,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     /* Create the thread now.  */
     ULONG tid;
     thrd->__handle = CreateThread(__MCF_nullptr, 0, do_win32_thread_thunk, thrd, 0, &tid);
-    if(thrd->__handle == __MCF_nullptr) {
+    if(thrd->__handle == NULL) {
       __MCF_mfree_nonnull(thrd);
       return __MCF_nullptr;
     }
