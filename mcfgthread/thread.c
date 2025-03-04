@@ -187,18 +187,11 @@ _MCF_thread_set_priority(_MCF_thread* thrd_opt, _MCF_thread_priority priority)
     return !succ ? -1 : 0;
   }
 
-__MCF_DLLEXPORT
+static __MCF_NEVER_INLINE
 _MCF_thread*
-_MCF_thread_self(void)
+do_thread_self_slow(void)
   {
-    _MCF_thread* self;
-    if(__MCF_g->__tls_index < 64) {
-      __MCF_TEB_LOAD_PTR_INDEXED(&self, __MCF_64_32(0x1480, 0x0E10), __MCF_g->__tls_index);
-      if(self)
-        return self;
-    }
-
-    self = __MCF_crt_TlsGetValue(__MCF_g->__tls_index);
+    _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_g->__tls_index);
     if(self)
       return self;
 
@@ -214,7 +207,24 @@ _MCF_thread_self(void)
       _MCF_mutex_lock(__MCF_g->__thread_oom_mtx, __MCF_nullptr);
     }
 
+    /* Attach the new structure. This will be deallocated in
+     * `_MCF_thread_drop_ref_nonnull()`.  */
     return __MCF_thread_attach_foreign(self);
+  }
+
+__MCF_DLLEXPORT
+_MCF_thread*
+_MCF_thread_self(void)
+  {
+    if(__MCF_g->__tls_index < 64) {
+      _MCF_thread* self;
+      __MCF_TEB_LOAD_PTR_INDEXED(&self, __MCF_64_32(0x1480, 0x0E10), __MCF_g->__tls_index);
+      if(self)
+        return self;
+    }
+
+    /* Go on the slow path with a tail call.  */
+    return do_thread_self_slow();
   }
 
 __MCF_DLLEXPORT
