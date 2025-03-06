@@ -22,7 +22,7 @@ do_win32_thread_thunk(LPVOID param)
     /* Attach the thread.  */
     __MCF_CHECK(TlsSetValue(__MCF_g->__tls_index, self));
 
-#if defined __i386__ || defined __amd64__
+#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
     /* Set x87 precision to 64-bit mantissa (GNU `long double` format).  */
     __asm__ volatile ("fninit");
 #endif
