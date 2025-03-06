@@ -16,7 +16,7 @@ __cdecl
 __MCF_gthr_do_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_proc, void* arg);
 
 __asm__ (
-#if defined __i386__ || defined __amd64__
+#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
 /* This is required by Clang, where `-masm=intel` doesn't affect basic asm.  */
 ".intel_syntax noprefix  \n"
 #endif

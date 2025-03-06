@@ -23,7 +23,7 @@ do_win32_thread_thunk(LPVOID param)
      * `CreateThread()` returns from the other thread.  */
     _MCF_atomic_store_32_rlx(&(self->__tid), (int32_t) _MCF_thread_self_tid());
 
-#if defined __i386__ || defined __amd64__
+#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
     /* Set x87 precision to 64-bit mantissa (GNU `long double` format).  */
     __asm__ volatile ("fninit");
 #endif  /* x86  */
