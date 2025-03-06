@@ -9,23 +9,7 @@
 #define __MCF_THREAD_IMPORT  __MCF_DLLEXPORT
 #define __MCF_THREAD_INLINE  __MCF_DLLEXPORT
 #include "thread.h"
-#include "event.h"
 #include "xglobals.h"
-
-enum __MCF_initialization_result
-  {
-    __MCF_initialization_pending     = 0,
-    __MCF_initialization_successful  = 1,
-    __MCF_initialization_failed      = 2,
-  };
-
-struct __MCF_thread_initializer
-  {
-    _MCF_thread* thrd;
-    _MCF_event start[1];
-    _MCF_event result[1];
-    ULONG win32_error;
-  };
 
 static __MCF_REALIGN_SP
 ULONG
@@ -33,27 +17,20 @@ __stdcall
 do_win32_thread_thunk(LPVOID param)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
-    struct __MCF_thread_initializer* init = param;
-    _MCF_event_await_change(init->start, __MCF_initialization_pending, __MCF_nullptr);
-    _MCF_thread* thrd = init->thrd;
+    _MCF_thread* const self = param;
 
     /* Attach the thread.  */
-    if(!TlsSetValue(__MCF_g->__tls_index, thrd)) {
-      init->win32_error = GetLastError();
-      _MCF_event_set(init->result, __MCF_initialization_failed);
-      return 0;
-    }
-
-    /* Let the creator go, which invalidates `*init`.  */
-    __MCF_ASSERT(thrd->__tid == _MCF_thread_self_tid());
-    _MCF_event_set(init->result, __MCF_initialization_successful);
-    init = __MCF_BAD_PTR;
+    __MCF_CHECK(TlsSetValue(__MCF_g->__tls_index, self));
 
 #if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
     /* Set x87 precision to 64-bit mantissa (GNU `long double` format).  */
     __asm__ volatile ("fninit");
 #endif
-    (* thrd->__proc) (thrd);
+
+    /* `__tid` has to be set in case that this thread begins execution before
+     * `CreateThread()` returns from the other thread.  */
+    _MCF_atomic_store_32_rlx(&(self->__tid), (int32_t) _MCF_thread_self_tid());
+    (* self->__proc) (self);
     return 0;
   }
 
@@ -106,24 +83,17 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
         __MCF_mcopy(thrd->__data_opt, data_opt, size);
     }
 
-    /* Create a thread and wait for its initialization to finish.  */
-    struct __MCF_thread_initializer init = __MCF_0_INIT;
-    init.thrd = thrd;
-    thrd->__handle = CreateThread(__MCF_nullptr, 0, do_win32_thread_thunk, &init, 0, (ULONG*) &(thrd->__tid));
+    /* Create the thread now.  */
+    ULONG tid;
+    thrd->__handle = CreateThread(__MCF_nullptr, 0, do_win32_thread_thunk, thrd, 0, &tid);
     if(thrd->__handle == NULL) {
       __MCF_mfree_nonnull(thrd);
       return __MCF_nullptr;
     }
 
-    _MCF_event_set(init.start, __MCF_initialization_successful);
-    int result = _MCF_event_await_change(init.result, __MCF_initialization_pending, __MCF_nullptr);
-    if(result != __MCF_initialization_successful) {
-      __MCF_close_handle(thrd->__handle);
-      __MCF_mfree_nonnull(thrd);
-      return __MCF_win32_error_p(init.win32_error, __MCF_nullptr);
-    }
-
-    /* Return the initialized thread.  */
+    /* Set `__tid` in case `CreateThread()` returns before the new thread begins
+     * execution. It may be overwritten by the new thread with the same value.  */
+    _MCF_atomic_store_32_rlx(&(thrd->__tid), (int32_t) tid);
     return thrd;
   }
 
