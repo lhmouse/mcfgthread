@@ -10,12 +10,14 @@
 #include <stdio.h>
 
 static __gthread_t thrd;
+static _MCF_mutex mtx = __MCF_0_INIT;
 
 static
 void*
 thread_proc(void* param)
   {
     (void) param;
+    _MCF_mutex_lock(&mtx, __MCF_nullptr);
     assert(__gthread_equal(__gthread_self(), thrd));
 
     printf("thread %d quitting\n", (int) _MCF_thread_self_tid());
@@ -25,7 +27,9 @@ thread_proc(void* param)
 int
 main(void)
   {
+    _MCF_mutex_lock(&mtx, __MCF_nullptr);
     int r = __gthread_create(&thrd, thread_proc, __MCF_nullptr);
+    _MCF_mutex_unlock(&mtx);
     assert(r == 0);
     assert(thrd);
 
