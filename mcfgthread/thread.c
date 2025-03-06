@@ -12,15 +12,15 @@
 #include "event.h"
 #include "xglobals.h"
 
-enum __MCF_initialization_status
+enum initialization_status
   {
-    __MCF_initialization_null       = 0,
-    __MCF_initialization_running    = 1,
-    __MCF_initialization_succeeded  = 2,
-    __MCF_initialization_failed     = 3,
+    initialization_null       = 0,
+    initialization_running    = 1,
+    initialization_succeeded  = 2,
+    initialization_failed     = 3,
   };
 
-struct __MCF_thread_initializer
+struct thread_initializer
   {
     _MCF_thread* thrd;
     _MCF_event status[1];
@@ -33,20 +33,20 @@ __stdcall
 do_win32_thread_thunk(LPVOID param)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
-    struct __MCF_thread_initializer* init = param;
-    _MCF_event_await_change(init->status, __MCF_initialization_null, __MCF_nullptr);
+    struct thread_initializer* init = param;
+    _MCF_event_await_change(init->status, initialization_null, __MCF_nullptr);
     _MCF_thread* thrd = init->thrd;
 
     /* Attach the thread.  */
     if(!TlsSetValue(__MCF_g->__tls_index, thrd)) {
       init->win32_error = GetLastError();
-      _MCF_event_set(init->status, __MCF_initialization_failed);
+      _MCF_event_set(init->status, initialization_failed);
       return 0;
     }
 
     /* Let the creator go, which invalidates `*init`.  */
     __MCF_ASSERT(thrd->__tid == _MCF_thread_self_tid());
-    _MCF_event_set(init->status, __MCF_initialization_succeeded);
+    _MCF_event_set(init->status, initialization_succeeded);
     init = __MCF_BAD_PTR;
 
 #if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
@@ -108,7 +108,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     }
 
     /* Create a thread and wait for its initialization to finish.  */
-    struct __MCF_thread_initializer init = __MCF_0_INIT;
+    struct thread_initializer init = __MCF_0_INIT;
     init.thrd = thrd;
     thrd->__handle = CreateThread(__MCF_nullptr, 0, do_win32_thread_thunk, &init, 0, (ULONG*) &(thrd->__tid));
     if(thrd->__handle == NULL) {
@@ -116,9 +116,9 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
       return __MCF_nullptr;
     }
 
-    _MCF_event_set(init.status, __MCF_initialization_running);
-    int result = _MCF_event_await_change_slow(init.status, __MCF_initialization_running, __MCF_nullptr);
-    if(result != __MCF_initialization_succeeded) {
+    _MCF_event_set(init.status, initialization_running);
+    int result = _MCF_event_await_change_slow(init.status, initialization_running, __MCF_nullptr);
+    if(result != initialization_succeeded) {
       __MCF_close_handle(thrd->__handle);
       __MCF_mfree_nonnull(thrd);
       return __MCF_win32_error_p(init.win32_error, __MCF_nullptr);
