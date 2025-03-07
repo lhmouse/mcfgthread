@@ -136,12 +136,6 @@ __MCF_EVENT_INLINE
 int
 _MCF_event_set(_MCF_event* __eventp, int __value) __MCF_noexcept
   {
-#if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_event __old;
-    _MCF_atomic_load_pptr_acq(&__old, __eventp);
-    if(__old.__value == __value)
-      return 0;
-#endif
     return _MCF_event_set_slow(__eventp, __value);
   }
 
