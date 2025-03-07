@@ -87,9 +87,8 @@ _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __
  * function takes ownership of the thread control structure and assigns it to
  * the calling thread, which shall not have already had a control structure.
  * The caller must initialize the struct properly. The fields `__nref`, `__tid`
- * and `__handle` must be zeroes.
- *
- * Returns `__thrd`. This function will not fail.  */
+ * and `__handle` must be zeroes. In case of an error, the current process is
+ * terminated. This function will not fail.  */
 __MCF_THREAD_IMPORT
 _MCF_thread*
 __MCF_thread_attach_foreign(_MCF_thread* __thrd) __MCF_noexcept;
