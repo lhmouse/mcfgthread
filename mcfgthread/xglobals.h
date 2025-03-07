@@ -103,6 +103,7 @@ __cdecl
 __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
 
 #if defined __i386__
+
 /* On x86, SEH is stack-based.  */
 struct __MCF_seh_i386_node
   {
@@ -155,11 +156,12 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
 #  define __MCF_REALIGN_SP    __attribute__((__force_align_arg_pointer__))
 
 #else
-/* Otherwise, SEH is table-based.  */
+
+/* Otherwise, SEH is table-based. This code must work on both x86_64 and ARM64,
+ * as well as ARM64EC.  */
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
     __asm__ (".seh_handler __MCF_seh_top, @except")  /* no semicolon  */
 
-/* This works on x86_64 and ARM64.  */
 __MCF_ALWAYS_INLINE
 void
 __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
@@ -169,7 +171,7 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
 
 #  define __MCF_REALIGN_SP    /* nothing */
 
-#endif  /* non-i386 */
+#endif  /* defined __i386__ */
 
 /* This structure contains timeout values that will be passed to NT syscalls.  */
 struct __MCF_winnt_timeout
