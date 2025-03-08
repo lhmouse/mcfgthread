@@ -411,15 +411,15 @@ __MCF__Exit(int __status) __MCF_noexcept;
 #ifdef __cplusplus
 extern "C++" {
 template<bool> struct __MCF_static_assert;
-template<> struct __MCF_static_assert<true> { };
+template<> struct __MCF_static_assert<true> { static const int __one = 1; };
 }  /* extern "C++"  */
-#  define __MCF_STATIC_ASSERT_T(...)   ::__MCF_static_assert<bool(__VA_ARGS__)>
+#  define __MCF_STATIC_ASSERT_1(...)   (__MCF_static_assert<(__VA_ARGS__)>::__one)
 #else
-#  define __MCF_STATIC_ASSERT_T(...)   struct { int: 1|-!(__VA_ARGS__); }
+#  define __MCF_STATIC_ASSERT_1(...)   ((int) sizeof(struct { char : 1 | -!(__VA_ARGS__); }))
 #endif
 
-#define __MCF_STATIC_ASSERT_0(...)   (0 & (int) sizeof(__MCF_STATIC_ASSERT_T(__VA_ARGS__)))
-#define __MCF_STATIC_ASSERT(...)    ((void) sizeof(__MCF_STATIC_ASSERT_T(__VA_ARGS__)))
+#  define __MCF_STATIC_ASSERT_0(...)   (__MCF_STATIC_ASSERT_1(__VA_ARGS__) - 1)
+#  define __MCF_STATIC_ASSERT(...)    extern int __MCF_static_assert_true[__MCF_STATIC_ASSERT_1(__VA_ARGS__) - 1]
 
 /* The `__MCF_ASSERT()` and `__MCF_CHECK()` macros perform run-time checks. If
  * an argument yields false, `__MCF_ASSERT()` results in undefined behavior,

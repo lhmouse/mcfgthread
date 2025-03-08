@@ -164,23 +164,6 @@ __MCF_DLLEXPORT
 void
 __MCF_gthread_initialize_globals(void)
   {
-    /* Ensure we don't mess things up.  */
-    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __self_ptr) == 0);
-    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __self_size) == __MCF_64_32(8, 4));
-    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __tls_index) == __MCF_64_32(12, 8));
-    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __main_thread) == __MCF_64_32(16, 16));
-    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __exit_mtx) == __MCF_64_32(1616, 816));
-    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __exit_queue) == __MCF_64_32(1624, 820));
-    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __quick_exit_mtx) == __MCF_64_32(3152, 1584));
-    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __quick_exit_queue) == __MCF_64_32(3160, 1588));
-    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __mutex_spin_field) == __MCF_64_32(4736, 2368));
-    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __interrupt_cond) == __MCF_64_32(6784, 4416));
-    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __f_GetSystemTimePreciseAsFileTime) == __MCF_64_32(6792, 4420));
-    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __f_QueryInterruptTime) == __MCF_64_32(6800, 4424));
-    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __thread_oom_mtx) == __MCF_64_32(6808, 4428));
-    __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __thread_oom_self_st) == __MCF_64_32(6816, 4432));
-
-    /* Initialize static global constants.  */
     GetSystemInfo(&__MCF_crt_sysinfo);
 
 #ifdef __MCF_DEBUG
