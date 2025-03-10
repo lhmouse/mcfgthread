@@ -684,12 +684,16 @@ _MCF_get_active_processor_mask(void) __MCF_noexcept;
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
 _MCF_minz(size_t __x, size_t __y) __MCF_noexcept
-  { return (__y < __x) ? __y : __x;  }
+  {
+    return (__y < __x) ? __y : __x;
+  }
 
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
 _MCF_maxz(size_t __x, size_t __y) __MCF_noexcept
-  { return (__x < __y) ? __y : __x;  }
+  {
+    return (__x < __y) ? __y : __x;
+  }
 
 __MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_FWD_  */
