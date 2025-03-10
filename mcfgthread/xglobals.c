@@ -353,6 +353,7 @@ __attribute__((__used__))
 const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
   {
     .Size = sizeof(IMAGE_LOAD_CONFIG_DIRECTORY),
+    .DependentLoadFlags = LOAD_LIBRARY_SEARCH_SYSTEM32,
 #  if defined __i386__ && defined _MSC_VER
     .SEHandlerTable = (ULONG_PTR) __safe_se_handler_table,
     .SEHandlerCount = (ULONG_PTR) &__safe_se_handler_count,
