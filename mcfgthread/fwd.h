@@ -128,28 +128,68 @@ __MCF_CXX(extern "C" {)
 #if (defined __GNUC__ || defined __clang__) && (defined __amd64__ && !defined __arm64ec__)
 
 #  define __MCF_TEB_LOAD_32_IMMEDIATE(out, base)  \
-    __asm__ ("{ mov %%gs:%c1, %k0 | mov %k0, gs:[%1] }" : "=r"(*(out)) : "i"(base) : "memory")
+    do  \
+      __asm__ (  \
+        "{ mov %%gs:%c1, %k0 | mov %k0, gs:[%1] }"  \
+           : "=r"(*(out)) : "i"(base)  \
+           : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_STORE_32_IMMEDIATE(base, in)  \
-    __asm__ volatile ("{ mov %k1, %%gs:%c0 | mov gs:[%0], %k1 }" : : "i"(base), "r"(in) : "memory")
+    do  \
+      __asm__ volatile (  \
+        "{ mov %k1, %%gs:%c0 | mov gs:[%0], %k1 }"  \
+           : : "i"(base), "r"(in)  \
+           : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_32_INDEXED(out, base, i)  \
-    __asm__ ("{ mov %%gs:%c1(,%2,4), %k0 | mov %k0, gs:[%1+%2*4] }" : "=r"(*(out)) : "i"(base), "r"(i) : "memory")
+    do  \
+      __asm__ (  \
+        "{ mov %%gs:%c1(,%2,4), %k0 | mov %k0, gs:[%1+%2*4] }"  \
+           : "=r"(*(out)) : "i"(base), "r"(i)  \
+           : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_STORE_32_INDEXED(base, i, in)  \
-    __asm__ volatile ("{ mov %k2, %%gs:%c0(,%1,4) | mov gs:[%0+%1*4], %k2 }" : : "i"(base), "r"(i), "r"(in) : "memory")
+    do  \
+      __asm__ volatile (  \
+         "{ mov %k2, %%gs:%c0(,%1,4) | mov gs:[%0+%1*4], %k2 }"  \
+            : : "i"(base), "r"(i), "r"(in)  \
+            : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_PTR_IMMEDIATE(out, base)  \
-    __asm__ ("{ mov %%gs:%c1, %0 | mov %0, gs:[%1] }" : "=r"(*(out)) : "i"(base) : "memory")
+    do  \
+      __asm__ (  \
+         "{ mov %%gs:%c1, %0 | mov %0, gs:[%1] }"  \
+         : "=r"(*(out)) : "i"(base)  \
+         : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_STORE_PTR_IMMEDIATE(base, in)  \
-    __asm__ volatile ("{ mov %1, %%gs:%c0 | mov gs:[%0], %1 }" : : "i"(base), "r"(in) : "memory")
+    do  \
+      __asm__ volatile (  \
+        "{ mov %1, %%gs:%c0 | mov gs:[%0], %1 }"  \
+           : : "i"(base), "r"(in)  \
+           : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_PTR_INDEXED(out, base, i)  \
-    __asm__ ("{ mov %%gs:%c1(,%2,8), %0 | mov %0, gs:[%1+%2*8] }" : "=r"(*(out)) : "i"(base), "r"(i) : "memory")
+    do  \
+      __asm__ (  \
+        "{ mov %%gs:%c1(,%2,8), %0 | mov %0, gs:[%1+%2*8] }"  \
+           : "=r"(*(out)) : "i"(base), "r"(i)  \
+           : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_STORE_PTR_INDEXED(base, i, in)  \
-    __asm__ volatile ("{ mov %2, %%gs:%c0(,%1,8) | mov gs:[%0+%1*8], %2 }" : : "i"(base), "r"(i), "r"(in) : "memory")
+    do  \
+      __asm__ volatile (  \
+        "{ mov %2, %%gs:%c0(,%1,8) | mov gs:[%0+%1*8], %2 }"  \
+           : : "i"(base), "r"(i), "r"(in)  \
+           : "memory");  \
+    while(0)
 
 #  define __MCF_64_32(x, y)  x
 #  define __MCF_USYM  ""
@@ -157,28 +197,44 @@ __MCF_CXX(extern "C" {)
 #elif defined _MSC_VER && (defined _M_X64 && !defined _M_ARM64EC)
 
 #  define __MCF_TEB_LOAD_32_IMMEDIATE(out, base)  \
-    (*(out) = __readgsdword((base)))
+    do  \
+      *(out) = __readgsdword((base));  \
+    while(0)
 
 #  define __MCF_TEB_STORE_32_IMMEDIATE(base, in)  \
-    __writegsdword((base), (in))
+    do  \
+      __writegsdword((base), (in));  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_32_INDEXED(out, base, i)  \
-    (*(out) = __readgsdword((base) + (i) * 4U))
+    do  \
+      *(out) = __readgsdword((base) + (i) * 4U);  \
+    while(0)
 
 #  define __MCF_TEB_STORE_32_INDEXED(base, i, in)  \
-    __writegsdword((base) + (i) * 4U, (in))
+    do  \
+      __writegsdword((base) + (i) * 4U, (in));  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_PTR_IMMEDIATE(out, base)  \
-    (*(out) = __readgsqword((base)))
+    do  \
+      *(out) = __readgsqword((base));  \
+    while(0)
 
 #  define __MCF_TEB_STORE_PTR_IMMEDIATE(base, in)  \
-    __writegsqword((base), (in))
+    do  \
+      __writegsqword((base), (in));  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_PTR_INDEXED(out, base, i)  \
-    (*(out) = __readgsqword((base) + (i) * 8U))
+    do  \
+      *(out) = __readgsqword((base) + (i) * 8U);  \
+    while(0)
 
 #  define __MCF_TEB_STORE_PTR_INDEXED(base, i, in)  \
-    __writegsqword((base) + (i) * 8U, (in))
+    do  \
+      __writegsqword((base) + (i) * 8U, (in));  \
+    while(0)
 
 #  define __MCF_64_32(x, y)  x
 #  define __MCF_USYM  ""
@@ -186,28 +242,68 @@ __MCF_CXX(extern "C" {)
 #elif (defined __GNUC__ || defined __clang__) && defined __i386__
 
 #  define __MCF_TEB_LOAD_32_IMMEDIATE(out, base)  \
-    __asm__ ("{ mov %%fs:%c1, %k0 | mov %k0, fs:[%1] }" : "=r"(*(out)) : "i"(base) : "memory")
+    do  \
+      __asm__ (  \
+        "{ mov %%fs:%c1, %k0 | mov %k0, fs:[%1] }"  \
+           : "=r"(*(out)) : "i"(base)  \
+           : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_STORE_32_IMMEDIATE(base, in)  \
-    __asm__ volatile ("{ mov %k1, %%fs:%c0 | mov fs:[%0], %k1 }" : : "i"(base), "r"(in) : "memory")
+    do  \
+      __asm__ volatile (  \
+        "{ mov %k1, %%fs:%c0 | mov fs:[%0], %k1 }"  \
+           : : "i"(base), "r"(in)  \
+           : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_32_INDEXED(out, base, i)  \
-    __asm__ ("{ mov %%fs:%c1(,%2,4), %k0 | mov %k0, fs:[%1+%2*4] }" : "=r"(*(out)) : "i"(base), "r"(i) : "memory")
+    do  \
+      __asm__ (  \
+        "{ mov %%fs:%c1(,%2,4), %k0 | mov %k0, fs:[%1+%2*4] }"  \
+           : "=r"(*(out)) : "i"(base), "r"(i)  \
+           : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_STORE_32_INDEXED(base, i, in)  \
-    __asm__ volatile ("{ mov %k2, %%fs:%c0(,%1,4) | mov fs:[%0+%1*4], %k2 }" : : "i"(base), "r"(i), "r"(in) : "memory")
+    do  \
+      __asm__ volatile (
+        "{ mov %k2, %%fs:%c0(,%1,4) | mov fs:[%0+%1*4], %k2 }"  \
+           : : "i"(base), "r"(i), "r"(in)  \
+           : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_PTR_IMMEDIATE(out, base)  \
-    __asm__ ("{ mov %%fs:%c1, %0 | mov %0, fs:[%1] }" : "=r"(*(out)) : "i"(base) : "memory")
+    do  \
+      __asm__ (  \
+        "{ mov %%fs:%c1, %0 | mov %0, fs:[%1] }"  \
+           : "=r"(*(out)) : "i"(base)  \
+           : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_STORE_PTR_IMMEDIATE(base, in)  \
-    __asm__ volatile ("{ mov %1, %%fs:%c0 | mov fs:[%0], %1 }" : : "i"(base), "r"(in) : "memory")
+    do  \
+      __asm__ volatile (  \
+        "{ mov %1, %%fs:%c0 | mov fs:[%0], %1 }"  \
+           : : "i"(base), "r"(in)  \
+           : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_PTR_INDEXED(out, base, i)  \
-    __asm__ ("{ mov %%fs:%c1(,%2,4), %0 | mov %0, fs:[%1+%2*4] }" : "=r"(*(out)) : "i"(base), "r"(i) : "memory")
+    do  \
+      __asm__ (  \
+        "{ mov %%fs:%c1(,%2,4), %0 | mov %0, fs:[%1+%2*4] }"  \
+           : "=r"(*(out)) : "i"(base), "r"(i)  \
+           : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_STORE_PTR_INDEXED(base, i, in)  \
-    __asm__ volatile ("{ mov %2, %%fs:%c0(,%1,4) | mov fs:[%0+%1*4], %2 }" : : "i"(base), "r"(i), "r"(in) : "memory")
+    do  \
+      __asm__ volatile (  \
+        "{ mov %2, %%fs:%c0(,%1,4) | mov fs:[%0+%1*4], %2 }"  \
+           : : "i"(base), "r"(i), "r"(in)  \
+           : "memory");  \
+    while(0)
 
 #  define __MCF_64_32(x, y)  y
 #  define __MCF_USYM  "_"
@@ -215,28 +311,44 @@ __MCF_CXX(extern "C" {)
 #elif defined _MSC_VER && defined _M_IX86
 
 #  define __MCF_TEB_LOAD_32_IMMEDIATE(out, base)  \
-    (*(out) = __readfsdword((base)))
+    do  \
+      *(out) = __readfsdword((base));  \
+    while(0)
 
 #  define __MCF_TEB_STORE_32_IMMEDIATE(base, in)  \
-    __writefsdword((base), (in))
+    do  \
+      __writefsdword((base), (in));  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_32_INDEXED(out, base, i)  \
-    *(out) = __readfsdword((base) + (i) * 4U)
+    do  \
+      *(out) = __readfsdword((base) + (i) * 4U);  \
+    while(0)
 
 #  define __MCF_TEB_STORE_32_INDEXED(base, i, in)  \
-    __writefsdword((base) + (i) * 4U, (in))
+    do  \
+      __writefsdword((base) + (i) * 4U, (in));  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_PTR_IMMEDIATE(out, base)  \
-    (*(out) = __readfsdword((base)))
+    do  \
+      *(out) = __readfsdword((base));  \
+    while(0)
 
 #  define __MCF_TEB_STORE_PTR_IMMEDIATE(base, in)  \
-    __writefsdword((base), (in))
+    do  \
+      __writefsdword((base), (in));  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_PTR_INDEXED(out, base, i)  \
-    (*(out) = __readfsdword((base) + (i) * 4U))
+    do  \
+      *(out) = __readfsdword((base) + (i) * 4U);  \
+    while(0)
 
 #  define __MCF_TEB_STORE_PTR_INDEXED(base, i, in)  \
-    __writefsdword((base) + (i) * 4U, (in))
+    do  \
+      __writefsdword((base) + (i) * 4U, (in));  \
+    while(0)
 
 #  define __MCF_64_32(x, y)  y
 #  define __MCF_USYM  "_"
@@ -244,28 +356,68 @@ __MCF_CXX(extern "C" {)
 #elif (defined __GNUC__ || defined __clang__) && (defined __aarch64__ || defined __arm64ec__)
 
 #  define __MCF_TEB_LOAD_32_IMMEDIATE(out, base)  \
-    __asm__ (" ldr %w0, [x18,%1] " : "=r"(*(out)) : "i"(base) : "memory")
+    do  \
+      __asm__ (  \
+        " ldr %w0, [x18, %1] "  \
+          : "=r"(*(out)) : "i"(base)  \
+          : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_STORE_32_IMMEDIATE(base, in)  \
-    __asm__ volatile (" str %w0, [x18,%1] " : : "r"(in), "i"(base) : "memory")
+    do  \
+      __asm__ volatile (  \
+        " str %w0, [x18, %1] "  \
+          : : "r"(in), "i"(base)  \
+          : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_32_INDEXED(out, base, i)  \
-    __asm__ (" ldr %w0, [x18,%w1,uxtw #2] " : "=r"(*(out)) : "r"((base) / 4U + (i)) : "memory")
+    do  \
+      __asm__ (  \
+        " ldr %w0, [x18, %w1, uxtw #2] "  \
+          : "=r"(*(out)) : "r"((base) / 4U + (i))  \
+          : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_STORE_32_INDEXED(base, i, in)  \
-    __asm__ volatile (" str %w0, [x18,%w1,uxtw #2] " : : "r"(in), "r"((base) / 4U + (i)) : "memory")
+    do  \
+      __asm__ volatile (  \
+        " str %w0, [x18,%w1,uxtw #2] "  \
+          : : "r"(in), "r"((base) / 4U + (i))  \
+          : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_PTR_IMMEDIATE(out, base)  \
-    __asm__ (" ldr %0, [x18,%1] " : "=r"(*(out)) : "i"(base) : "memory")
+    do  \
+      __asm__ (  \
+        " ldr %0, [x18, %1] "  \
+          : "=r"(*(out)) : "i"(base)  \
+          : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_STORE_PTR_IMMEDIATE(base, in)  \
-    __asm__ volatile (" str %0, [x18,%1] " : : "r"(in), "i"(base) : "memory")
+    do  \
+      __asm__ volatile (  \
+        " str %0, [x18, %1] "  \
+        : : "r"(in), "i"(base)  \
+        : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_PTR_INDEXED(out, base, i)  \
-    __asm__ (" ldr %0, [x18,%w1,uxtw #3] " : "=r"(*(out)) : "r"((base) / 8U + (i)) : "memory")
+    do  \
+      __asm__ (  \
+        " ldr %0, [x18, %w1, uxtw #3] "  \
+          : "=r"(*(out)) : "r"((base) / 8U + (i))  \
+          : "memory");  \
+    while(0)
 
 #  define __MCF_TEB_STORE_PTR_INDEXED(base, i, in)  \
-    __asm__ volatile (" str %0, [x18,%w1,uxtw #3] " : : "r"(in), "r"((base) / 8U + (i)) : "memory")
+    do  \
+      __asm__ volatile (  \
+        " str %0, [x18, %w1, uxtw #3] "  \
+          : : "r"(in), "r"((base) / 8U + (i))  \
+          : "memory");  \
+    while(0)
 
 #  define __MCF_64_32(x, y)  x
 #  define __MCF_USYM  ""
@@ -273,28 +425,44 @@ __MCF_CXX(extern "C" {)
 #elif defined _MSC_VER && (defined _M_ARM64 || defined _M_ARM64EC)
 
 #  define __MCF_TEB_LOAD_32_IMMEDIATE(out, base)  \
-    (*(out) = __readx18dword((base)))
+    do  \
+      *(out) = __readx18dword((base));  \
+    while(0)
 
 #  define __MCF_TEB_STORE_32_IMMEDIATE(base, in)  \
-    __writex18dword((base), (in))
+    do  \
+      __writex18dword((base), (in));  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_32_INDEXED(out, base, i)  \
-    (*(out) = __readx18dword((base) + (i) * 4U))
+    do  \
+      *(out) = __readx18dword((base) + (i) * 4U);  \
+    while(0)
 
 #  define __MCF_TEB_STORE_32_INDEXED(base, i, in)  \
-    __writex18dword((base) + (i) * 4U, (in))
+    do  \
+      __writex18dword((base) + (i) * 4U, (in));  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_PTR_IMMEDIATE(out, base)  \
-    (*(out) = __readx18qword((base)))
+    do  \
+      *(out) = __readx18qword((base));  \
+    while(0)
 
 #  define __MCF_TEB_STORE_PTR_IMMEDIATE(base, in)  \
-    __writex18qword((base), (in))
+    do  \
+      __writex18qword((base), (in));  \
+    while(0)
 
 #  define __MCF_TEB_LOAD_PTR_INDEXED(out, base, i)  \
-    (*(out) = __readx18qword((base) + (i) * 8U))
+    do  \
+      *(out) = __readx18qword((base) + (i) * 8U);  \
+    while(0)
 
 #  define __MCF_TEB_STORE_PTR_INDEXED(base, i, in)  \
-    __writex18qword((base) + (i) * 8U, (in))
+    do  \
+      __writex18qword((base) + (i) * 8U, (in));  \
+    while(0)
 
 #  define __MCF_64_32(x, y)  x
 #  define __MCF_USYM  ""
