@@ -32,7 +32,7 @@ __asm__ (
 ".globl ___MCF_gthr_do_call_once_seh_take_over  \n"
 ".def ___MCF_gthr_do_call_once_seh_take_over; .scl 2; .type 32; .endef  \n"
 "___MCF_gthr_do_call_once_seh_take_over:  \n"
-#  ifdef _MSC_VER
+#  if defined __SEH__ || defined _MSC_VER
 ".safeseh _do_call_once_seh_uhandler  \n"
 #  endif
 /* The stack is used as follows:
