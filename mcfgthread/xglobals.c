@@ -353,7 +353,15 @@ __attribute__((__used__))
 const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
   {
     .Size = sizeof(IMAGE_LOAD_CONFIG_DIRECTORY),
+
+    /* `/DEPENDENTLOADFLAG`  */
+#  if defined __MINGW64_VERSION_MAJOR && (__MINGW64_VERSION_MAJOR <= 12)
+#    define DependentLoadFlags  Reserved1
+#  endif
     .DependentLoadFlags = LOAD_LIBRARY_SEARCH_SYSTEM32,
+#  undef DependentLoadFlags
+
+    /* `.safeseh`  */
 #  if defined __i386__ && defined _MSC_VER
     .SEHandlerTable = (ULONG_PTR) __safe_se_handler_table,
     .SEHandlerCount = (ULONG_PTR) &__safe_se_handler_count,
