@@ -267,7 +267,7 @@ __MCF_CXX(extern "C" {)
 
 #  define __MCF_TEB_STORE_32_INDEXED(base, i, in)  \
     do  \
-      __asm__ volatile (
+      __asm__ volatile (  \
         "{ mov %k2, %%fs:%c0(,%1,4) | mov fs:[%0+%1*4], %k2 }"  \
            : : "i"(base), "r"(i), "r"(in)  \
            : "memory");  \
