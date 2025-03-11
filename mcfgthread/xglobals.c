@@ -344,7 +344,7 @@ memset(void* dst, int val, size_t size)
     return __MCF_mfill(dst, val, size);
   }
 
-#  if defined __i386__
+#  if defined __i386__ && (defined __SEH__ || defined _MSC_VER)
 extern const PVOID __safe_se_handler_table[];
 extern const ULONG __safe_se_handler_count;
 #  endif
@@ -362,7 +362,7 @@ const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
 #  undef DependentLoadFlags
 
     /* `.safeseh`  */
-#  if defined __i386__ && defined _MSC_VER
+#  if defined __i386__ && (defined __SEH__ || defined _MSC_VER)
     .SEHandlerTable = (ULONG_PTR) __safe_se_handler_table,
     .SEHandlerCount = (ULONG_PTR) &__safe_se_handler_count,
 #  endif

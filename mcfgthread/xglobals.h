@@ -115,7 +115,7 @@ __MCF_ALWAYS_INLINE
 __MCF_seh_i386_node*
 __MCF_seh_i386_install(__MCF_seh_i386_node* node)
   {
-#  ifdef _MSC_VER
+#  if defined __SEH__ || defined _MSC_VER
     __asm__ (".safeseh ___MCF_seh_top");
 #  endif
     __MCF_TEB_LOAD_32_IMMEDIATE(&(node->__next), 0);
