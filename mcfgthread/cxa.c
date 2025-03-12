@@ -97,7 +97,7 @@ __MCF_thread_atexit(__MCF_atexit_callback* func)
 
 static
 void
-do_thread_dtor_queue_finalize(void* dso)
+do_finalize_thread(void* dso)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     __MCF_dtor_element elem;
@@ -118,9 +118,8 @@ __MCF_cxa_finalize(void* dso)
      * non-null DSO handle indicates that a dynamic library is being unloaded.
      * In either case, destructors for thread-local objects shall be called
      * before static ones, in accordance with the ISO C++ standard. (See
-     * [basic.start.term]/2.) Destructors of thread-local keys are not called,
-     * according to POSIX.  */
-    do_thread_dtor_queue_finalize(dso);
+     * [basic.start.term]/2.) Destructors of thread-local keys are not called.  */
+    do_finalize_thread(dso);
     __MCF_run_static_dtors(__MCF_g->__exit_mtx, __MCF_g->__exit_queue, dso);
 
     /* Remove quick exit callbacks that will expire.  */
