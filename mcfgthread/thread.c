@@ -22,8 +22,8 @@ enum initialization_status
 
 struct thread_initializer
   {
-    _MCF_thread* thrd;
     _MCF_event status[1];
+    _MCF_thread* thrd;
     ULONG win32_error;
   };
 
@@ -75,58 +75,58 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     if(size > (INT32_MAX & -__MCF_THREAD_MAX_DATA_ALIGNMENT))
       return __MCF_win32_error_p(ERROR_ARITHMETIC_OVERFLOW, __MCF_nullptr);
 
-    /* Calculate the number of bytes to allocate.  */
+    /* Allocate and initialize the thread control structure.  */
+    struct thread_initializer init;
+    _MCF_event_init(init.status, initialization_null);
+
     size_t real_alignment = _MCF_maxz(__MCF_THREAD_DATA_ALIGNMENT, align);
     size_t size_need = sizeof(_MCF_thread) + size;
     size_t size_request = size_need + real_alignment - MEMORY_ALLOCATION_ALIGNMENT;
     __MCF_ASSERT(size_need <= size_request);
 
-    /* Allocate and initialize the thread control structure.  */
-    _MCF_thread* thrd = __MCF_malloc_0(size_request);
-    if(!thrd)
+    init.thrd = __MCF_malloc_0(size_request);
+    if(!init.thrd)
       return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, __MCF_nullptr);
 
-    _MCF_atomic_store_32_rlx(thrd->__nref, 2);
-    thrd->__proc = proc;
+    _MCF_atomic_store_32_rlx(init.thrd->__nref, 2);
+    init.thrd->__proc = proc;
 
     if(size != 0) {
-      thrd->__data_opt = thrd->__data_storage;
+      init.thrd->__data_opt = init.thrd->__data_storage;
 
       /* Adjust `__data_opt` for over-aligned types. If we have over-allocated
        * memory, give back some. Errors are ignored.  */
       if(size_need != size_request) {
-        thrd->__data_opt = (void*) ((((uintptr_t) thrd->__data_opt - 1) | (real_alignment - 1)) + 1);
+        init.thrd->__data_opt = (void*) ((((uintptr_t) init.thrd->__data_opt - 1) | (real_alignment - 1)) + 1);
 
-        size_request = (uintptr_t) thrd->__data_opt + size - (uintptr_t) thrd;
+        size_request = (uintptr_t) init.thrd->__data_opt + size - (uintptr_t) init.thrd;
         __MCF_ASSERT(size_need <= size_request);
-        __MCF_mresize_0(thrd, size_request);
+        __MCF_mresize_0(init.thrd, size_request);
       }
 
       /* Copy user-defined data. If this doesn't happen, they are implicit zeroes.  */
       if(data_opt)
-        __MCF_mcopy(thrd->__data_opt, data_opt, size);
+        __MCF_mcopy(init.thrd->__data_opt, data_opt, size);
     }
 
     /* Create a thread and wait for its initialization to finish.  */
-    struct thread_initializer init = __MCF_0_INIT;
-    init.thrd = thrd;
-    thrd->__handle = CreateThread(__MCF_nullptr, 0, do_win32_thread_thunk, &init, 0, (ULONG*) &(thrd->__tid));
-    if(thrd->__handle == NULL) {
-      __MCF_mfree_nonnull(thrd);
+    init.thrd->__handle = CreateThread(__MCF_nullptr, 0, do_win32_thread_thunk, &init, 0, (ULONG*) &(init.thrd->__tid));
+    if(init.thrd->__handle == NULL) {
+      __MCF_mfree_nonnull(init.thrd);
       return __MCF_nullptr;
     }
 
     _MCF_event_set(init.status, initialization_running);
     int result = _MCF_event_await_change_slow(init.status, initialization_running, __MCF_nullptr);
     if(result == initialization_orphaned) {
-      __MCF_close_handle(thrd->__handle);
-      __MCF_mfree_nonnull(thrd);
+      __MCF_close_handle(init.thrd->__handle);
+      __MCF_mfree_nonnull(init.thrd);
       return __MCF_win32_error_p(init.win32_error, __MCF_nullptr);
     }
 
     /* Return the initialized thread.  */
     __MCF_ASSERT(result == initialization_succeeded);
-    return thrd;
+    return init.thrd;
   }
 
 __MCF_DLLEXPORT
