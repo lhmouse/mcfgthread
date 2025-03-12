@@ -188,9 +188,8 @@ __MCF_XGLOBALS_IMPORT
 void
 __MCF_adjust_winnt_timeout_v3(__MCF_winnt_timeout* to);
 
-/* Note this function is subject to tail-call optimization.  */
 __MCF_XGLOBALS_IMPORT
-size_t
+void
 __MCF_batch_release_common(const void* key, size_t count);
 
 /* Copy a block of memory forward, like `memcpy()`.  */

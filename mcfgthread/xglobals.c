@@ -77,7 +77,7 @@ __MCF_adjust_winnt_timeout_v3(__MCF_winnt_timeout* to)
   }
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
-size_t
+void
 __MCF_batch_release_common(const void* key, size_t count)
   {
     /* A call to `ExitProcess()` terminates all the other threads, even if
@@ -88,9 +88,6 @@ __MCF_batch_release_common(const void* key, size_t count)
     while((woken_num != count) && !__MCF_is_process_shutting_down())
       if(__MCF_keyed_event_signal(key, &(__MCF_winnt_timeout) { .__li.QuadPart = -1000 }) == 0)
         woken_num ++;
-
-    /* Return the number of threads that have been woken.  */
-    return count;
   }
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
