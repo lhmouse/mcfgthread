@@ -83,12 +83,18 @@ __MCF_THREAD_INLINE
 _MCF_thread*
 _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __size) __MCF_noexcept;
 
-/* Attaches a thread that was not created by `_MCF_thread_new_aligned()`. This
- * function takes ownership of the thread control structure and assigns it to
- * the calling thread, which shall not have already had a control structure.
+/* Attaches a thread that was not created by `_MCF_thread_new_aligned()`.
+ *
+ * This function takes ownership of the thread control structure and assigns it
+ * to the calling thread, which shall not have already had a control structure.
  * The caller must initialize the struct properly. The fields `__nref`, `__tid`
- * and `__handle` must be zeroes. In case of an error, the current process is
- * terminated. This function will not fail.  */
+ * and `__handle` must be zeroes.
+ *
+ * This function will not fail. In case of failure to allocate resources, the
+ * current process is terminated. Be advised, this function can be called
+ * implicitly by the compiler or its runtime library. If proper error handling
+ * is desired, it's recommended to ensure that all threads be created with
+ * `_MCF_thread_new_aligned()`.  */
 __MCF_THREAD_IMPORT
 _MCF_thread*
 __MCF_thread_attach_foreign(_MCF_thread* __thrd) __MCF_noexcept;
