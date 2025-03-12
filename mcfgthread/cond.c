@@ -109,5 +109,6 @@ _MCF_cond_signal_some_slow(_MCF_cond* cond, size_t max)
     }
     while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new));
 
-    return __MCF_batch_release_common(cond, wake_num);
+    __MCF_batch_release_common(cond, wake_num);
+    return wake_num;
   }
