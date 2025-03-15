@@ -121,7 +121,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
 
       __MCF_tls_table temp = *table;
       table->__begin = elem;
-      table->__end = elem + capacity;
+      table->__end = elem + __MCF_msize(elem) / sizeof(__MCF_tls_element);
       table->__size_hint = 0;
 
       while(temp.__begin != temp.__end) {
