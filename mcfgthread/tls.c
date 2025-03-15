@@ -119,16 +119,17 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
       if(!elem)
         return __MCF_win32_error_i(ERROR_NOT_ENOUGH_MEMORY, -1);
 
-      __MCF_tls_table temp = *table;
+      __MCF_tls_element* old_begin = table->__begin;
+      __MCF_tls_element* old_end = table->__end;
+
       table->__begin = elem;
       table->__end = elem + __MCF_msize(elem) / sizeof(__MCF_tls_element);
       table->__size_hint = 0;
 
-      while(temp.__begin != temp.__end) {
-        temp.__end --;
-
-        /* Skip empty buckets.  */
-        _MCF_tls_key* tkey = temp.__end->__key_opt;
+      /* Move elements into the new table.  */
+      while(old_begin != old_end) {
+        old_end --;
+        _MCF_tls_key* tkey = old_end->__key_opt;
         if(!tkey)
           continue;
 
@@ -142,13 +143,13 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
         elem = do_linear_probe_nonempty(table, tkey);
         __MCF_ASSERT(!elem->__key_opt);
         elem->__key_opt = tkey;
-        elem->__value_opt = temp.__end->__value_opt;
+        elem->__value_opt = old_end->__value_opt;
         table->__size_hint ++;
       }
 
       /* Deallocate the old table which should be empty now.  */
-      if(temp.__begin)
-        __MCF_mfree_nonnull(temp.__begin);
+      if(old_begin)
+        __MCF_mfree_nonnull(old_begin);
     }
 
     /* Search for the given key.  */

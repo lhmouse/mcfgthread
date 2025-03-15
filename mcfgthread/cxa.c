@@ -100,12 +100,11 @@ void
 do_finalize_thread(void* dso)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
-    __MCF_dtor_element elem;
-
     _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_g->__tls_index);
     if(!self)
       return;
 
+    __MCF_dtor_element elem;
     while(__MCF_dtor_queue_pop(&elem, self->__atexit_queue, dso) == 0)
       __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
   }

@@ -238,9 +238,6 @@ void
 __MCF_gthread_on_thread_exit(void)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
-    __MCF_dtor_element elem;
-    __MCF_tls_table tls;
-
     _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_g->__tls_index);
     if(!self)
       return;
@@ -254,35 +251,36 @@ __MCF_gthread_on_thread_exit(void)
 
     /* Per-thread atexit callbacks may use TLS, so call them before
      * destructors of thread-local objects.  */
+    __MCF_dtor_element elem;
     while(__MCF_dtor_queue_pop(&elem, self->__atexit_queue, __MCF_nullptr) == 0)
       __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
 
-    /* Call destructors of TLS keys. The TLS table may be modified by
-     * destructors, so swap it out first.  */
     while(self->__tls_table->__begin) {
-      __MCF_mcopy(&tls, self->__tls_table, sizeof(__MCF_tls_table));
-      __MCF_mzero(self->__tls_table, sizeof(__MCF_tls_table));
+      /* Call destructors of TLS keys. The TLS table may be modified by
+       * destructors, so swap it out first.  */
+      __MCF_tls_element* tls_begin = self->__tls_table->__begin;
+      __MCF_tls_element* tls_end = self->__tls_table->__end;
 
-      while(tls.__begin != tls.__end) {
-        tls.__end --;
+      self->__tls_table->__begin = __MCF_nullptr;
+      self->__tls_table->__end = __MCF_nullptr;
+      self->__tls_table->__size_hint = 0;
 
-        /* Skip empty buckets.  */
-        _MCF_tls_key* tkey = tls.__end->__key_opt;
+      while(tls_begin != tls_end) {
+        tls_end --;
+        _MCF_tls_key* tkey = tls_end->__key_opt;
         if(!tkey)
           continue;
 
-        /* Call the destructor only if the value is not a null pointer, as
-         * per POSIX.  */
-        if(!_MCF_atomic_load_8_rlx(tkey->__deleted) && tkey->__dtor_opt && tls.__end->__value_opt)
-          __MCF_invoke_cxa_dtor(tkey->__dtor_opt, tls.__end->__value_opt);
+        /* POSIX requires that the destructor is called only when the key has
+         * not been deleted and the value is not a null pointer.  */
+        if(!_MCF_atomic_load_8_rlx(tkey->__deleted) && tkey->__dtor_opt && tls_end->__value_opt)
+          __MCF_invoke_cxa_dtor(tkey->__dtor_opt, tls_end->__value_opt);
 
-        /* Deallocate the key.  */
         _MCF_tls_key_drop_ref_nonnull(tkey);
       }
 
       /* Deallocate the table which should be empty now.  */
-      if(tls.__begin)
-        __MCF_mfree_nonnull(tls.__begin);
+      __MCF_mfree_nonnull(tls_begin);
     }
 
     /* Poison this value.  */
