@@ -166,18 +166,19 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
     if(thrd == __MCF_g->__main_thread)
       return;
 
-    /* If this is the backup one, clear it for reuse.  */
-    _MCF_thread* oom_self = __MCF_G_FIELD_OPT(__thread_oom_self_st);
-    if(thrd == oom_self) {
-      __MCF_close_handle(thrd->__handle);
-      __MCF_mzero(thrd, sizeof(_MCF_thread));
-      _MCF_mutex_unlock(__MCF_g->__thread_oom_mtx);
-      return;
-    }
-
-    /* Deallocate all associated resources.  */
+    /* Detach the thread structure. The thread-local object table and the exit
+     * callback queue shall have been cleared upon termination of the associated
+     * thread, so they are empty now.  */
     __MCF_close_handle(thrd->__handle);
-    __MCF_mfree_nonnull(thrd);
+    thrd->__handle = NULL;
+    __MCF_ASSERT(thrd->__atexit_queue->__prev == __MCF_nullptr);
+    __MCF_ASSERT(thrd->__tls_table->__begin == __MCF_nullptr);
+
+    /* Deallocate the thread structure.  */
+    if(thrd == __MCF_G_FIELD_OPT(__thread_oom_self_st))
+      _MCF_mutex_unlock(__MCF_g->__thread_oom_mtx);
+    else
+      __MCF_mfree_nonnull(thrd);
   }
 
 __MCF_DLLEXPORT
@@ -227,17 +228,20 @@ do_thread_self_slow(void)
     if(self)
       return self;
 
-    /* Allocate a new thread object with no user-defined data. When out of memory,
-     * use the pre-allocated backup. If it is in use, this thread shall block
-     * until the other thread terminates.  */
+    /* Allocate a new thread object with no user-defined data.  */
     self = __MCF_malloc_0(sizeof(_MCF_thread));
     if(!self) {
       self = __MCF_G_FIELD_OPT(__thread_oom_self_st);
       __MCF_CHECK(self);
+
+      /* When out of memory, use the pre-allocated backup. If it is in use,
+       * this thread shall block until the other thread terminates.  */
       _MCF_mutex_lock(__MCF_g->__thread_oom_mtx, __MCF_nullptr);
+      __MCF_ASSERT(self->__handle == NULL);
+      __MCF_mzero(self, sizeof(_MCF_thread));
     }
 
-    /* Attach the new structure. This will be deallocated in
+    /* Attach the new thread structure. This will be deallocated in
      * `_MCF_thread_drop_ref_nonnull()`.  */
     return __MCF_thread_attach_foreign(self);
   }
