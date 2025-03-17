@@ -292,7 +292,11 @@ __MCF_gthread_on_thread_exit(void)
 
 /* When building the shared library, invoke common routines from the DLL
  * entry point callback. This has the same signature as `DllMain()`.  */
-#  if defined _MSC_VER
+#  if defined __MSYS__
+#    define DllMainCRTStartup  _msys_dll_entry
+#  elif defined __CYGWIN__
+#    define DllMainCRTStartup  _cygwin_dll_entry
+#  elif defined _MSC_VER
 #    define DllMainCRTStartup  _DllMainCRTStartup
 #  endif
 
