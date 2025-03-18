@@ -87,8 +87,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     if(old.__locked == 0)
       return 0;
 
-    uint32_t my_mask = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
-    if(my_mask != 0) {
+    uint32_t lmask = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
+    if(lmask != 0) {
       __MCF_ASSERT(spin_count > 0);
       spin_count *= (int) (__MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_SP_NFAIL_THRESHOLD);
 
@@ -98,7 +98,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 
         /* Wait for my turn. It's the simplest and fastest way to perform
          * just an atomic exchange, on both x86 and ARM.  */
-        if(_MCF_atomic_xchg_b_rlx(do_spin_byte_ptr(mutex, my_mask), false) == false)
+        if(_MCF_atomic_xchg_b_rlx(do_spin_byte_ptr(mutex, lmask), false) == false)
           continue;
 
         /* If this mutex has not been locked, lock it and decrement the
@@ -132,7 +132,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
         new.__locked = 1;
-        new.__sp_mask = old.__sp_mask & ~my_mask;
+        new.__sp_mask = old.__sp_mask & ~lmask;
         new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked - 1);
         new.__nsleep = old.__nsleep + old.__locked;
 #pragma GCC diagnostic pop
@@ -188,6 +188,7 @@ __MCF_DLLEXPORT __MCF_NEVER_INLINE
 void
 _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
   {
+    __MCF_ASSERT(mutex->__locked == 1);
     bool wake_one;
     _MCF_mutex old, new;
 

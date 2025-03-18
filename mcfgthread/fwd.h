@@ -695,5 +695,12 @@ _MCF_maxz(size_t __x, size_t __y) __MCF_noexcept
     return (__x < __y) ? __y : __x;
   }
 
+__MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
+intptr_t
+_MCF_dim(intptr_t __x, intptr_t __y) __MCF_noexcept
+  {
+    return (__x > __y) ? (__x - __y) : 0;
+  }
+
 __MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_FWD_  */

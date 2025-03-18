@@ -38,7 +38,7 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
 
         new.__value = old.__value + 1;
 
-        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(sem, &old, &new))
+        if(_MCF_atomic_cmpxchg_weak_pptr_acq(sem, &old, &new))
           return -1;
       }
 
@@ -60,22 +60,29 @@ __MCF_DLLEXPORT __MCF_NEVER_INLINE
 int
 _MCF_sem_signal_some(_MCF_sem* sem, intptr_t value_add)
   {
-    if(value_add <= 0)
-      return (int) (value_add >> (__MCF_PTR_BITS - 1));  /* value_add ? -1 : 0  */
-
-    /* Get the number of threads to wake up.  */
     size_t wake_num;
     _MCF_sem old, new;
+
+    if(value_add <= 0)
+      return -(int) (value_add < 0);
+
+    /* Get the number of threads to wake up.  */
     _MCF_atomic_load_pptr_rlx(&old, sem);
-    do {
+    for(;;) {
       if(old.__value > __MCF_SEM_VALUE_MAX - value_add)
-        return -2;  /* would overflow  */
+        return -2;
 
-      wake_num = _MCF_minz(-(size_t) (old.__value & (old.__value >> (__MCF_PTR_BITS - 1))), (size_t) value_add);
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wsign-conversion"
+      wake_num = _MCF_minz(_MCF_dim(0, old.__value), value_add);
+#pragma GCC diagnostic pop
       new.__value = old.__value + value_add;
-    }
-    while(!_MCF_atomic_cmpxchg_weak_pptr_rlx(sem, &old, &new));
 
+      if(_MCF_atomic_cmpxchg_weak_pptr_rel(sem, &old, &new))
+        break;
+    }
+
+    /* Wake up these threads.  */
     __MCF_batch_release_common(sem, wake_num);
     return 0;
   }

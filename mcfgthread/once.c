@@ -22,7 +22,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     /* If this flag has not been locked, lock it.
      * Otherwise, allocate a count for the current thread.  */
   try_lock_loop:
-    _MCF_atomic_load_pptr_acq(&old, once);
+    _MCF_atomic_load_pptr_rlx(&old, once);
     for(;;) {
       if(old.__ready != 0)
         return 0;
@@ -34,7 +34,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
       new.__nsleep = old.__nsleep + old.__locked;
 #pragma GCC diagnostic pop
 
-      if(_MCF_atomic_cmpxchg_weak_pptr_arl(once, &old, &new))
+      if(_MCF_atomic_cmpxchg_weak_pptr_acq(once, &old, &new))
         break;
     }
 
@@ -61,7 +61,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         new.__nsleep = old.__nsleep - 1U;
 #pragma GCC diagnostic pop
 
-        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(once, &old, &new))
+        if(_MCF_atomic_cmpxchg_weak_pptr_acq(once, &old, &new))
           return (int) old.__ready - 1;
       }
 
@@ -102,7 +102,7 @@ _MCF_once_abort(_MCF_once* once)
       new.__nsleep = old.__nsleep - wake_one;
 #pragma GCC diagnostic pop
 
-      if(_MCF_atomic_cmpxchg_weak_pptr_rlx(once, &old, &new))
+      if(_MCF_atomic_cmpxchg_weak_pptr_rel(once, &old, &new))
         break;
     }
 
@@ -120,7 +120,7 @@ _MCF_once_release(_MCF_once* once)
     /* Set the `__ready` field and get the number of sleeping threads as an
      * atomic operation.  */
     _MCF_once old, new = { .__ready = 1 };
-    _MCF_atomic_xchg_pptr_arl(&old, once, &new);
+    _MCF_atomic_xchg_pptr_rel(&old, once, &new);
 
     /* Wake up all threads.  */
     __MCF_batch_release_common(once, old.__nsleep);

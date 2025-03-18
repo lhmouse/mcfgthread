@@ -85,7 +85,7 @@ _MCF_event_set_slow(_MCF_event* event, int value)
     /* Set the `__value` field and get the number of sleeping threads as an
      * atomic operation.  */
     _MCF_event old, new = { .__value = (uint8_t) value };
-    _MCF_atomic_xchg_pptr_arl(&old, event, &new);
+    _MCF_atomic_xchg_pptr_rel(&old, event, &new);
 
     /* Wake up all threads.  */
     __MCF_batch_release_common(event, old.__nsleep);

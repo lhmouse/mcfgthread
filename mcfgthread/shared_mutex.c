@@ -26,8 +26,7 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, smutex);
     for(;;) {
-      bool shareable = (old.__nshare < __MCF_SHARED_MUTEX_MAX_SHARE)
-                       && (old.__nsleep == 0);
+      bool shareable = (old.__nshare < __MCF_SHARED_MUTEX_MAX_SHARE) && (old.__nsleep == 0);
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
@@ -150,27 +149,31 @@ __MCF_DLLEXPORT __MCF_NEVER_INLINE
 void
 _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
   {
+    __MCF_ASSERT(smutex->__nshare != 0);
+    bool wake_one;
+    _MCF_shared_mutex old, new;
+
     /* Determine whether the shared mutex has been locked in shared mode
      * (`__nshare` <= `__MCF_SHARED_MUTEX_MAX_SHARE`) or exclusive mode. The
      * last reader (`__nshare` = 1 before the call) or writer (`__nshare` =
      * `__MCF_SHARED_MUTEX_NSHARE_M` before the call) that unlocks a shared
      * mutex shall perform a wakeup operation.  */
-    bool wake_one;
-    _MCF_shared_mutex old, new;
     _MCF_atomic_load_pptr_rlx(&old, smutex);
-    do {
-      bool was_exclusive = old.__nshare == 0x3FFF;
-      bool was_shared = (old.__nshare != 0) && !was_exclusive;
-      __MCF_ASSERT(was_exclusive || was_shared);
-      wake_one = (old.__nsleep != 0) && ((old.__nshare == 1) || was_exclusive);
+    for(;;) {
+      __MCF_ASSERT(old.__nshare != 0);
+      bool exclusive = old.__nshare == 0x3FFF;
+      wake_one = (old.__nsleep != 0) && !((old.__nshare > 1) && (old.__nshare < 0x3FFF));
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-      new.__nshare = old.__nshare - was_shared + was_exclusive;
+      new.__nshare = old.__nshare - !exclusive + exclusive;
       new.__nsleep = old.__nsleep - wake_one;
 #pragma GCC diagnostic pop
-    }
-    while(!_MCF_atomic_cmpxchg_weak_pptr_arl(smutex, &old, &new));
 
+      if(_MCF_atomic_cmpxchg_weak_pptr_arl(smutex, &old, &new))
+        break;
+    }
+
+    /* Wake up a sleeping thread, if any.  */
     __MCF_batch_release_common(smutex, wake_one);
   }
