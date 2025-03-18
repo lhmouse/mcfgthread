@@ -17,24 +17,27 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
   {
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
+    _MCF_shared_mutex old, new;
 
     /* Grant shared access if and only if this shared mutex is either unlocked
      * (`__nshare` = 0), or in shared mode and the share counter won't overflow
      * (`__nshare` < `__MCF_SHARED_MUTEX_MAX_SHARE`). A reader shall not preempt
      * a lock. If shared access can't be granted, allocate a sleeping count.  */
-    _MCF_shared_mutex old, new;
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, smutex);
-    do {
-      bool shareable = (old.__nshare < __MCF_SHARED_MUTEX_MAX_SHARE) && (old.__nsleep == 0);
+    for(;;) {
+      bool shareable = (old.__nshare < __MCF_SHARED_MUTEX_MAX_SHARE)
+                       && (old.__nsleep == 0);
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       new.__nshare = old.__nshare + shareable;
       new.__nsleep = old.__nsleep + !shareable;
 #pragma GCC diagnostic pop
+
+      if(_MCF_atomic_cmpxchg_weak_pptr_acq(smutex, &old, &new))
+        break;
     }
-    while(!_MCF_atomic_cmpxchg_weak_pptr_arl(smutex, &old, &new));
 
     /* If this mutex has been locked by the current thread, succeed.  */
     if(old.__nshare != new.__nshare)
@@ -47,7 +50,10 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, smutex);
-      while(old.__nsleep != 0) {
+      for(;;) {
+        if(old.__nsleep == 0)
+          break;
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
         new.__nshare = old.__nshare;
@@ -79,15 +85,15 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
   {
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
+    _MCF_shared_mutex old, new;
 
     /* Grant exclusive access if and only if this shared mutex is unlocked
      * (`__nshare` = 0). A writer may preempt a lock, even when other threads
      * are waiting. If exclusive access can't be granted, allocate a sleeping
      * count.  */
-    _MCF_shared_mutex old, new;
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, smutex);
-    do {
+    for(;;) {
       bool lockable = old.__nshare == 0;
 
 #pragma GCC diagnostic push
@@ -95,8 +101,10 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
       new.__nshare = old.__nshare - lockable;
       new.__nsleep = old.__nsleep + !lockable;
 #pragma GCC diagnostic pop
+
+      if(_MCF_atomic_cmpxchg_weak_pptr_acq(smutex, &old, &new))
+        break;
     }
-    while(!_MCF_atomic_cmpxchg_weak_pptr_arl(smutex, &old, &new));
 
     /* If this mutex has been locked by the current thread, succeed.  */
     if(old.__nshare == 0)
@@ -109,7 +117,10 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, smutex);
-      while(old.__nsleep != 0) {
+      for(;;) {
+        if(old.__nsleep == 0)
+          break;
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
         new.__nshare = old.__nshare;

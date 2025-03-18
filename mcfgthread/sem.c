@@ -17,9 +17,9 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
   {
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
+    _MCF_sem old, new;
 
     /* Decrement the counter.  */
-    _MCF_sem old, new;
     old.__value = _MCF_atomic_xsub_ptr_rlx(&(sem->__value), 1);
     new.__value = old.__value - 1;
 
@@ -32,7 +32,10 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
     while(err != 0) {
       /* Remove myself from the wait queue. But see below...  */
       _MCF_atomic_load_pptr_rlx(&old, sem);
-      while(old.__value < 0) {
+      for(;;) {
+        if(old.__value >= 0)
+          break;
+
         new.__value = old.__value + 1;
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(sem, &old, &new))

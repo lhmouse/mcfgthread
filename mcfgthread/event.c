@@ -17,13 +17,13 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
   {
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
+    _MCF_event old, new;
 
     /* If this event contains some other value, return immediately.
     *  Otherwise, allocate a count for the current thread.  */
-    _MCF_event old, new;
   try_wait_loop:
     _MCF_atomic_load_pptr_acq(&old, event);
-    do {
+    for(;;) {
       if(old.__value != undesired)
         return old.__value;
 
@@ -33,8 +33,10 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
       new.__reserved_bit = 0;
       new.__nsleep = old.__nsleep + 1U;
 #pragma GCC diagnostic pop
+
+      if(_MCF_atomic_cmpxchg_weak_pptr_arl(event, &old, &new))
+        break;
     }
-    while(!_MCF_atomic_cmpxchg_weak_pptr_arl(event, &old, &new));
 
     /* Try waiting.  */
     int err = __MCF_keyed_event_wait(event, &nt_timeout);
@@ -43,7 +45,10 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, event);
-      while(old.__nsleep != 0) {
+      for(;;) {
+        if(old.__nsleep == 0)
+          break;
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
         new.__value = old.__value;
@@ -77,11 +82,12 @@ _MCF_event_set_slow(_MCF_event* event, int value)
     if((value < 0) || (value > __MCF_EVENT_VALUE_MAX))
       return -1;
 
-    /* Set the `__value` field and release all threads.  */
-    _MCF_event old;
-    _MCF_event new = { (uint8_t) value, 0, 0 };
+    /* Set the `__value` field and get the number of sleeping threads as an
+     * atomic operation.  */
+    _MCF_event old, new = { .__value = (uint8_t) value };
     _MCF_atomic_xchg_pptr_arl(&old, event, &new);
 
+    /* Wake up all threads.  */
     __MCF_batch_release_common(event, old.__nsleep);
     return 0;
   }

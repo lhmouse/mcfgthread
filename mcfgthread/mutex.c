@@ -54,6 +54,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
   {
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
+    int spin_count;
+    _MCF_mutex old, new;
 
     /* If this mutex has not been locked, lock it; otherwise, if `__sp_mask`
      * is less than the number bits in `__sp_nfail` and `__sp_nfail` is less
@@ -62,11 +64,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
      * sleeping count. The spinning failure counter is decremented if the
      * mutex can be locked immediately; and incremented otherwise, no matter
      * whether the current thread is going to spin or not.  */
-    _MCF_mutex old, new;
-    int spin_count;
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, mutex);
-    do {
+    for(;;) {
       spin_count = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
       bool may_spin = (old.__sp_mask != 15U) && (spin_count > 0);
 
@@ -78,8 +78,10 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked * 2 - 1);
       new.__nsleep = old.__nsleep + (old.__locked & !may_spin);
 #pragma GCC diagnostic pop
+
+      if(_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new))
+        break;
     }
-    while(!_MCF_atomic_cmpxchg_weak_pptr_arl(mutex, &old, &new));
 
     /* If this mutex has been locked by the current thread, succeed.  */
     if(old.__locked == 0)
@@ -102,7 +104,10 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         /* If this mutex has not been locked, lock it and decrement the
          * failure counter. Otherwise, do nothing.  */
         _MCF_atomic_load_pptr_rlx(&old, mutex);
-        while(old.__locked == 0) {
+        for(;;) {
+          if(old.__locked != 0)
+            break;
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
           new.__locked = 1;
@@ -123,7 +128,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
        * had unlocked the mutex before we incremented the sleeping counter,
        * we could miss a wakeup and result in deadlocks.  */
       _MCF_atomic_load_pptr_rlx(&old, mutex);
-      do {
+      for(;;) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
         new.__locked = 1;
@@ -131,8 +136,10 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked - 1);
         new.__nsleep = old.__nsleep + old.__locked;
 #pragma GCC diagnostic pop
+
+        if(_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new))
+          break;
       }
-      while(!_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new));
 
       /* If this mutex has been locked by the current thread, succeed.  */
       if(old.__locked == 0)
@@ -146,7 +153,10 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
       _MCF_atomic_load_pptr_rlx(&old, mutex);
-      while(old.__nsleep != 0) {
+      for(;;) {
+        if(old.__nsleep == 0)
+          break;
+
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
         new.__locked = old.__locked;
@@ -178,13 +188,14 @@ __MCF_DLLEXPORT __MCF_NEVER_INLINE
 void
 _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
   {
+    bool wake_one;
+    _MCF_mutex old, new;
+
     /* Clear the `__locked` field and release at most one thread, if any.
      * The right most bit one of the spinning mask is also cleared to enable
      * further threads to spin.  */
-    bool wake_one;
-    _MCF_mutex old, new;
     _MCF_atomic_load_pptr_rlx(&old, mutex);
-    do {
+    for(;;) {
       wake_one = old.__nsleep != 0;
 
 #pragma GCC diagnostic push
@@ -194,8 +205,10 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
       new.__sp_nfail = old.__sp_nfail;
       new.__nsleep = old.__nsleep - wake_one;
 #pragma GCC diagnostic pop
+
+      if(_MCF_atomic_cmpxchg_weak_pptr_rel(mutex, &old, &new))
+        break;
     }
-    while(!_MCF_atomic_cmpxchg_weak_pptr_rel(mutex, &old, &new));
 
     /* Notify a spinning thread, if any. If `__sp_mask` was non-zero, only its
      * rightmost bit should have been cleared, so we need not calculate the
@@ -203,5 +216,6 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
     if(old.__sp_mask != 0)
       _MCF_atomic_store_b_rlx(do_spin_byte_ptr(mutex, old.__sp_mask), true);
 
+    /* Wake up a sleeping thread, if any.  */
     __MCF_batch_release_common(mutex, wake_one);
   }
