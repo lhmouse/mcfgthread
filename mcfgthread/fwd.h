@@ -403,7 +403,7 @@ __MCF__Exit(int __status) __MCF_noexcept;
 #ifdef __cplusplus
 #  define __MCF_CAST_PTR(T, ...)   (reinterpret_cast<T*>(reinterpret_cast< ::intptr_t>(__VA_ARGS__)))
 #else
-#  define __MCF_CAST_PTR(T, ...)   ((T*)(intptr_t) (__VA_ARGS__))
+#  define __MCF_CAST_PTR(T, ...)   (__MCF_EX (T*)(intptr_t) (__VA_ARGS__))
 #endif
 
 /* The `__MCF_STATIC_ASSERT_0()` macro is an expression that yields zero if it
