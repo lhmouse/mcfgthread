@@ -94,7 +94,6 @@ _MCF_once_abort(_MCF_once* once)
     _MCF_atomic_load_pptr_rlx(&old, once);
     for(;;) {
       wake_one = old.__nsleep != 0;
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       new.__ready = old.__ready;

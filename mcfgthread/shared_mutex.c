@@ -27,7 +27,6 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
     _MCF_atomic_load_pptr_rlx(&old, smutex);
     for(;;) {
       bool shareable = (old.__nshare < __MCF_SHARED_MUTEX_MAX_SHARE) && (old.__nsleep == 0);
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       new.__nshare = old.__nshare + shareable;
@@ -94,7 +93,6 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
     _MCF_atomic_load_pptr_rlx(&old, smutex);
     for(;;) {
       bool lockable = old.__nshare == 0;
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       new.__nshare = old.__nshare - lockable;
@@ -163,7 +161,6 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
       __MCF_ASSERT(old.__nshare != 0);
       bool exclusive = old.__nshare == 0x3FFF;
       wake_one = (old.__nsleep != 0) && !((old.__nshare > 1) && (old.__nshare < 0x3FFF));
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       new.__nshare = old.__nshare - !exclusive + exclusive;

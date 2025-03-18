@@ -69,7 +69,6 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     for(;;) {
       spin_count = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
       bool may_spin = (old.__sp_mask != 15U) && (spin_count > 0);
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic warning "-Wsign-conversion"
@@ -198,7 +197,6 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
     _MCF_atomic_load_pptr_rlx(&old, mutex);
     for(;;) {
       wake_one = old.__nsleep != 0;
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       new.__locked = 0;
