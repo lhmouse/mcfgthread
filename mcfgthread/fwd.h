@@ -587,7 +587,7 @@ template<> struct __MCF_static_assert<true> { static const int __one = 1; };
 #endif
 
 #  define __MCF_STATIC_ASSERT_0(...)   (__MCF_STATIC_ASSERT_1(__VA_ARGS__) - 1)
-#  define __MCF_STATIC_ASSERT(...)    typedef int __MCF_static_assert_true[__MCF_STATIC_ASSERT_1(__VA_ARGS__)]
+#  define __MCF_STATIC_ASSERT(...)    extern int __MCF_static_assert_true[__MCF_STATIC_ASSERT_1(__VA_ARGS__)]
 
 /* The `__MCF_ASSERT()` and `__MCF_CHECK()` macros perform run-time checks. If
  * an argument yields false, `__MCF_ASSERT()` results in undefined behavior,
