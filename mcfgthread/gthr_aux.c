@@ -11,15 +11,15 @@
 #include "gthr_aux.h"
 #include "xglobals.h"
 
-void
-__cdecl
-__MCF_gthr_do_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_proc, void* arg);
-
 __MCF_DLLEXPORT
 void
 __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_proc, void* arg)
   {
-    __MCF_gthr_do_call_once_seh_take_over(once, init_proc, arg);
+    /* This can't be declared as a function, otherwise GCC will make the
+     * definition visible externally.  */
+    extern const char do_call_once_seh_take_over[];
+    typedef __typeof__(__MCF_gthr_call_once_seh_take_over) self_type;
+    (* __MCF_CAST_PTR(self_type, do_call_once_seh_take_over)) (once, init_proc, arg);
   }
 
 __asm__ (
@@ -29,9 +29,8 @@ __asm__ (
 #endif
 #if defined __i386__
 /* On x86, SEH is stack-based.  */
-".globl ___MCF_gthr_do_call_once_seh_take_over  \n"
-".def ___MCF_gthr_do_call_once_seh_take_over; .scl 2; .type 32; .endef  \n"
-"___MCF_gthr_do_call_once_seh_take_over:  \n"
+".def _do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
+"_do_call_once_seh_take_over:  \n"
 #  ifdef _MSC_VER
 ".safeseh _do_call_once_seh_uhandler  \n"
 #  endif
@@ -80,10 +79,9 @@ __asm__ (
 /* Otherwise, SEH is table-based. `@unwind` without `@except`
  * works only on x86-64 and not on ARM, so let's keep both for
  * simplicity.  */
-".globl __MCF_gthr_do_call_once_seh_take_over  \n"
-".def __MCF_gthr_do_call_once_seh_take_over; .scl 2; .type 32; .endef  \n"
-"__MCF_gthr_do_call_once_seh_take_over:  \n"
-".seh_proc __MCF_gthr_do_call_once_seh_take_over  \n"
+".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
+"do_call_once_seh_take_over:  \n"
+".seh_proc do_call_once_seh_take_over  \n"
 ".seh_handler do_call_once_seh_uhandler, @except, @unwind  \n"
 #  if defined __amd64__ && !defined __arm64ec__
 /* The stack is used as follows:
