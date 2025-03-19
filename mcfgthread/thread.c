@@ -62,17 +62,16 @@ __MCF_DLLEXPORT
 _MCF_thread*
 _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* data_opt, size_t size)
   {
-    /* Validate arguments.  */
     if(!proc)
       return __MCF_win32_error_p(ERROR_INVALID_PARAMETER, __MCF_nullptr);
 
-    if(align & (align - 1))
-      return __MCF_win32_error_p(ERROR_NOT_SUPPORTED, __MCF_nullptr);
+    if(align & (align - 1))  /* is power of two?  */
+      return __MCF_win32_error_p(ERROR_INVALID_PARAMETER, __MCF_nullptr);
 
     if(align > __MCF_THREAD_MAX_DATA_ALIGNMENT)
       return __MCF_win32_error_p(ERROR_NOT_SUPPORTED, __MCF_nullptr);
 
-    if(size > (INT32_MAX & -__MCF_THREAD_MAX_DATA_ALIGNMENT))
+    if(size > 0x8000000U - __MCF_THREAD_MAX_DATA_ALIGNMENT)
       return __MCF_win32_error_p(ERROR_ARITHMETIC_OVERFLOW, __MCF_nullptr);
 
     /* Allocate and initialize the thread control structure.  */
