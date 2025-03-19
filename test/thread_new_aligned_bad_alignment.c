@@ -22,7 +22,7 @@ main(void)
   {
     _MCF_thread* thrd = _MCF_thread_new_aligned(thread_proc, 3, __MCF_nullptr, 0);
     assert(thrd == __MCF_nullptr);
-    assert(GetLastError() == ERROR_NOT_SUPPORTED);
+    assert(GetLastError() == ERROR_INVALID_PARAMETER);
 
     thrd = _MCF_thread_new_aligned(thread_proc, 0x40000000, __MCF_nullptr, 0);
     assert(thrd == __MCF_nullptr);
