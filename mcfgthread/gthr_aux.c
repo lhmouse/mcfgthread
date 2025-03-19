@@ -11,6 +11,10 @@
 #include "gthr_aux.h"
 #include "xglobals.h"
 
+void
+__cdecl
+__MCF_gthr_do_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_proc, void* arg);
+
 __MCF_DLLEXPORT
 void
 __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_proc, void* arg)
@@ -28,13 +32,16 @@ __asm__ (
 ".globl ___MCF_gthr_do_call_once_seh_take_over  \n"
 ".def ___MCF_gthr_do_call_once_seh_take_over; .scl 2; .type 32; .endef  \n"
 "___MCF_gthr_do_call_once_seh_take_over:  \n"
+#  ifdef _MSC_VER
+".safeseh _do_call_once_seh_uhandler  \n"
+#  endif
 /* The stack is used as follows:
  *
  *    -20: argument to subroutines
  *    -16: unused
  *    -12: unused
  *     -8: establisher frame; pointer to previous frame
- *     -4: `__MCF_gthr_do_call_once_seh_uhandler`
+ *     -4: `do_call_once_seh_uhandler`
  * EBP  0: saved frame pointer
  *      4: saved ESI
  *      8: return address
@@ -53,7 +60,7 @@ __asm__ (
 "  mov eax, fs:[esi]  \n"
 "  lea ecx, [ebp - 8]  \n"
 "  mov [ecx], eax  \n"
-"  mov eax, OFFSET ___MCF_gthr_do_call_once_seh_uhandler  \n"
+"  mov eax, OFFSET _do_call_once_seh_uhandler  \n"
 "  mov [ecx + 4], eax  \n"
 "  mov fs:[esi], ecx  \n"
 /* Make the call `(*init_proc) (arg)`. The argument is passed
@@ -77,7 +84,7 @@ __asm__ (
 ".def __MCF_gthr_do_call_once_seh_take_over; .scl 2; .type 32; .endef  \n"
 "__MCF_gthr_do_call_once_seh_take_over:  \n"
 ".seh_proc __MCF_gthr_do_call_once_seh_take_over  \n"
-".seh_handler __MCF_gthr_do_call_once_seh_uhandler, @except, @unwind  \n"
+".seh_handler do_call_once_seh_uhandler, @except, @unwind  \n"
 #  if defined __amd64__ && !defined __arm64ec__
 /* The stack is used as follows:
  *
@@ -143,9 +150,10 @@ __asm__ (
 #endif
 );
 
+static __attribute__((__used__, __unused__))  /* this must be good code!  */
 EXCEPTION_DISPOSITION
 __cdecl
-__MCF_gthr_do_call_once_seh_uhandler(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
+do_call_once_seh_uhandler(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
   {
     (void) rec;
     (void) ctx;

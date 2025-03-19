@@ -342,18 +342,9 @@ memset(void* dst, int val, size_t size)
     return __MCF_mfill(dst, val, size);
   }
 
-#  ifdef __i386__
-__asm__ (
-".section .rdata, \"dr\"  \n"
-"  .align 4  \n"
-"___MCF_i386_safe_seh_begin:  \n"
-"  .rva ___MCF_seh_top  \n"
-"  .rva ___MCF_gthr_do_call_once_seh_uhandler  \n"
-#  define __MCF_i386_safe_seh_count  2U
-"  .long 0  \n"
-".text  \n"
-);
-extern const ULONG __MCF_i386_safe_seh_begin[];
+#  if defined __i386__ && defined _MSC_VER
+extern ULONG __safe_se_handler_table[];
+extern BYTE __safe_se_handler_count;  /* symbol only  */
 #  endif
 
 __attribute__((__used__))
@@ -369,13 +360,13 @@ const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
 #  undef DependentLoadFlags
 
     /* SAFESEH  */
-#  ifdef __i386__
-    .SEHandlerTable = (ULONG) __MCF_i386_safe_seh_begin,
-    .SEHandlerCount = __MCF_i386_safe_seh_count,
+#  if defined __i386__ && defined _MSC_VER
+    .SEHandlerTable = (ULONG) __safe_se_handler_table,
+    .SEHandlerCount = (ULONG) &__safe_se_handler_count,
 #  endif
   };
 
-#  ifdef _MSC_VER
+#  if defined _MSC_VER
 __attribute__((__used__))
 const int _fltused = 0x9875;  /* dunno what it does but LINK complains.  */
 #  endif
