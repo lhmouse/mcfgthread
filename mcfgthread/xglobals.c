@@ -342,9 +342,18 @@ memset(void* dst, int val, size_t size)
     return __MCF_mfill(dst, val, size);
   }
 
-#  if defined __i386__ && defined _MSC_VER
-extern const PVOID __safe_se_handler_table[];
-extern const ULONG __safe_se_handler_count;
+#  ifdef __i386__
+__asm__ (
+".section .rdata, \"dr\"  \n"
+"  .align 4  \n"
+"___MCF_i386_safe_seh_begin:  \n"
+"  .rva ___MCF_seh_top  \n"
+"  .rva ___MCF_gthr_do_call_once_seh_uhandler  \n"
+#  define __MCF_i386_safe_seh_count  2U
+"  .long 0  \n"
+".text  \n"
+);
+extern const ULONG __MCF_i386_safe_seh_begin[];
 #  endif
 
 __attribute__((__used__))
@@ -352,21 +361,21 @@ const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
   {
     .Size = sizeof(IMAGE_LOAD_CONFIG_DIRECTORY),
 
-    /* `/DEPENDENTLOADFLAG`  */
+    /* DEPENDENTLOADFLAG  */
 #  if defined __MINGW64_VERSION_MAJOR && (__MINGW64_VERSION_MAJOR <= 12)
 #    define DependentLoadFlags  Reserved1
 #  endif
     .DependentLoadFlags = LOAD_LIBRARY_SEARCH_SYSTEM32,
 #  undef DependentLoadFlags
 
-    /* `.safeseh`  */
-#  if defined __i386__ && defined _MSC_VER
-    .SEHandlerTable = (ULONG_PTR) __safe_se_handler_table,
-    .SEHandlerCount = (ULONG_PTR) &__safe_se_handler_count,
+    /* SAFESEH  */
+#  ifdef __i386__
+    .SEHandlerTable = (ULONG) __MCF_i386_safe_seh_begin,
+    .SEHandlerCount = __MCF_i386_safe_seh_count,
 #  endif
   };
 
-#  if defined _MSC_VER
+#  ifdef _MSC_VER
 __attribute__((__used__))
 const int _fltused = 0x9875;  /* dunno what it does but LINK complains.  */
 #  endif
