@@ -115,9 +115,6 @@ __MCF_ALWAYS_INLINE
 __MCF_i386_seh_node*
 __MCF_i386_seh_install(__MCF_i386_seh_node* node)
   {
-#  ifdef _MSC_VER
-    __asm__ (".safeseh ___MCF_seh_top");
-#  endif
     __MCF_TEB_LOAD_32_IMMEDIATE(&(node->__next), 0);
     node->__filter = (ULONG) __MCF_seh_top;
     __MCF_TEB_STORE_32_IMMEDIATE(0, node);
@@ -366,6 +363,16 @@ extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY restrict __MCF_g;
 #define __MCF_G_HAS_LAZY(name)   (__MCF_G_FIELD_OPT(__MCF_LAZY_P_(name)) && __MCF_g->__MCF_LAZY_P_(name))
 #define __MCF_G_LAZY(name)           (*(__MCF_g->__MCF_LAZY_P_(name)))
 #define __MCF_G_SET_LAZY(dll, name)    __MCF_LAZY_LOAD(&(__MCF_g->__MCF_LAZY_P_(name)), dll, name)
+
+/* These functions are defined in 'gthr_aux.c' for private use, and are not
+ * exported from the DLL.  */
+void
+__cdecl
+__MCF_gthr_do_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_proc, void* arg);
+
+EXCEPTION_DISPOSITION
+__cdecl
+__MCF_gthr_do_call_once_seh_uhandler(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
