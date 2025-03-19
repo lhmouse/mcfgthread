@@ -90,11 +90,10 @@ __MCF_runtime_failure(const char* where)
         if((*lptr == L'D') && __MCF_mequal(lptr, L"DebugActiveProcess", 18 * sizeof(WCHAR))) {
           lptr += 18;
           do_append_string(&sptr, end_of_buffer, L'`');
-          const char* lw = where;
-          while(*lw != 0) do_append_string(&sptr, end_of_buffer, (unsigned char) *(lw ++));
+          for(const char* pwh = where;  *pwh;  ++pwh)
+            do_append_string(&sptr, end_of_buffer, (unsigned char) *pwh);
           do_append_string(&sptr, end_of_buffer, L'`');
-        }
-        else
+        } else
           do_append_string(&sptr, end_of_buffer, *(lptr ++));
 
       do_append_string(&sptr, end_of_buffer, L':');
