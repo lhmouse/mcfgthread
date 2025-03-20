@@ -556,16 +556,6 @@ typedef unsigned __MCF_INTPTR_ uintptr_t;
 #  endif
 #endif
 
-/* For debug builds, `__MCF_UNREACHABLE` shall effect a breakpoint.  */
-__MCF_NEVER_RETURN
-void
-__MCF__Exit(int __status) __MCF_noexcept;
-
-#ifdef __MCF_DEBUG
-#  undef __MCF_UNREACHABLE
-#  define __MCF_UNREACHABLE   (__debugbreak(), __MCF__Exit(668))
-#endif
-
 /* Some compilers warn about casts between pointers, so launder the pointer via
  * an in-between integral type.  */
 #ifdef __cplusplus
@@ -595,6 +585,11 @@ template<> struct __MCF_static_assert<true> { static const int __one = 1; };
 __MCF_FWD_IMPORT __MCF_NEVER_RETURN __MCF_NEVER_INLINE __MCF_FN_COLD
 void
 __MCF_runtime_failure(const char* __where) __MCF_noexcept;
+
+#ifdef __MCF_DEBUG
+#  undef __MCF_UNREACHABLE
+#  define __MCF_UNREACHABLE   (__MCF_runtime_failure(__MCF_EX __func__))
+#endif
 
 #define __MCF_ASSERT(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
 #define __MCF_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__MCF_EX __func__))
