@@ -18,7 +18,7 @@ main(void)
 #include <assert.h>
 #include <stdio.h>
 
-#define NTHREADS  10U
+#define NTHREADS  32U
 static thrd_t threads[NTHREADS];
 static once_flag once = ONCE_FLAG_INIT;
 static _MCF_sem start = __MCF_SEM_INIT(NTHREADS);
@@ -30,7 +30,7 @@ once_do_it(void)
   {
     /* Perform initialization.  */
     int old = resource;
-    _MCF_sleep((const int64_t[]) { -200 });
+    _MCF_sleep((const int64_t[]) { -20 });
     resource = old + 1;
 
     _MCF_sleep((const int64_t[]) { -10 });
