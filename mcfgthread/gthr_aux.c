@@ -142,7 +142,6 @@ EXCEPTION_DISPOSITION
 __cdecl
 do_call_once_seh_uhandler(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
   {
-    (void) rec;
     (void) ctx;
     (void) disp_ctx;
 
