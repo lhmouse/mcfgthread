@@ -144,10 +144,10 @@ void
 __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
   {
     /* Parameters are `EAX`, `EDX`, `ECX`, `ESP[4]`.  */
+    typedef void omni_type(int, int, void*, void*) __attribute__((__regparm__(3)));
     int eax, edx;
     __asm__ ("" : "=a"(eax), "=d"(edx));  /* dummy */
-    typedef void dual_dtor_t(int, int, void*, void*) __attribute__((__regparm__(3)));
-    (* __MCF_CAST_PTR(dual_dtor_t, dtor.__cdecl_ptr)) (eax, edx, arg, arg);
+    (* __MCF_CAST_PTR(omni_type, dtor.__cdecl_ptr)) (eax, edx, arg, arg);
   }
 
 /* GCC assumes that ESP is always aligned to a 16-byte boundary, but for MSVC
