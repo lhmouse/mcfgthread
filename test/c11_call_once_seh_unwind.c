@@ -5,12 +5,20 @@
  * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
+#if defined __CYGWIN__
+int
+main(void)
+  {
+    return 77;
+  }
+#else  // __CYGWIN__
+
 #include "../mcfgthread/c11.h"
 #include "../mcfgthread/sem.h"
 #include <assert.h>
 #include <stdio.h>
 
-#define NTHREADS  64U
+#define NTHREADS  10U
 static thrd_t threads[NTHREADS];
 static once_flag once = ONCE_FLAG_INIT;
 static _MCF_sem start = __MCF_SEM_INIT(NTHREADS);
@@ -25,9 +33,29 @@ once_do_it(void)
     _MCF_sleep((const int64_t[]) { -200 });
     resource = old + 1;
 
-    _MCF_sleep((const int64_t[]) { -100 });
+    _MCF_sleep((const int64_t[]) { -10 });
     fprintf(stderr, "thread %d once\n", (int) _MCF_thread_self_tid());
+
+    /* effect access violation.  */
+    *__MCF_CAST_PTR(int, once_do_it) = 42;
+    fprintf(stderr, "never here\n");
   }
+
+static
+void
+__stdcall
+tls_callback(void* instance, unsigned long reason, void* reserved)
+  {
+    (void) instance;
+    (void) reserved;
+
+    /* do test if `DLL_THREAD_DETACH`; exceptions are swallowed by the system.  */
+    if(reason == 3)
+      call_once(&once, once_do_it);
+  }
+
+__attribute__((__section__(".CRT$XLY"), __used__))
+__typeof__(tls_callback)* my_xly = tls_callback;
 
 static
 int
@@ -36,7 +64,7 @@ thread_proc(void* param)
     (void) param;
     _MCF_sem_wait(&start, __MCF_nullptr);
 
-    call_once(&once, once_do_it);
+    /* do test in TLS callback.  */
     fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
     return 0;
   }
@@ -58,5 +86,7 @@ main(void)
       fprintf(stderr, "main wait finished: %d\n", (int)k);
     }
 
-    assert(resource == 1);
+    assert(resource == NTHREADS);
   }
+
+#endif  // __CYGWIN__

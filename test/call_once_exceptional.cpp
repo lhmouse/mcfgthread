@@ -35,6 +35,7 @@ once_do_it(int add)
     resource = old + add;
 
     NS::this_thread::sleep_for(NS::chrono::milliseconds(10));
+    ::fprintf(stderr, "thread %d done\n", (int) ::_MCF_thread_self_tid());
     throw 42;
   }
 
@@ -46,12 +47,9 @@ thread_proc()
 
     try {
       NS::call_once(once, once_do_it, 1);
-
       ::std::terminate();
     }
-    catch(int) {
-      ::fprintf(stderr, "thread %d done\n", (int) ::_MCF_thread_self_tid());
-    }
+    catch(...) {  }
 
     ::fprintf(stderr, "thread %d quitting\n", (int) ::_MCF_thread_self_tid());
   }

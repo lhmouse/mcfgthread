@@ -104,14 +104,14 @@ test_src = [
   'test/shared_timed_mutex_try_lock_exclusive_for.cpp',
   'test/condition_variable_consumers.cpp', 'test/condition_variable_wait_until.cpp',
   'test/condition_variable_wait_for.cpp', 'test/call_once_returning.cpp',
-  'test/call_once_exceptional.cpp', 'test/call_once_seh_returning.cpp',
-  'test/call_once_seh_exceptional.cpp', 'test/recursive_mutex.cpp', 'test/tls_set.cpp',
+  'test/call_once_exceptional.cpp', 'test/recursive_mutex.cpp', 'test/tls_set.cpp',
   'test/recursive_mutex_try_lock.cpp', 'test/recursive_timed_mutex_try_lock_until.cpp',
   'test/recursive_timed_mutex_try_lock_for.cpp', 'test/thread_dtor_terminate.cpp',
   'test/thread_move_assign_terminate.cpp', 'test/thread_move_assign_joined.cpp',
   'test/thread_join_deadlock.cpp', 'test/thread_ctor_throw.cpp', 'test/thread_id.cpp',
   'test/thread_decay_copy.cpp', 'test/this_thread_sleep_until.cpp',
-  'test/this_thread_sleep_for.cpp', 'test/tls_dtor.cpp', 'test/tls_many.cpp' ]
+  'test/this_thread_sleep_for.cpp', 'test/tls_dtor.cpp', 'test/tls_many.cpp',
+  'test/c11_call_once_seh_unwind.c' ]
 
 #===========================================================
 # Global configuration
