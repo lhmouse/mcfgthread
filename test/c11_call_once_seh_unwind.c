@@ -60,7 +60,7 @@ __pragma(comment(linker, "/include:" __MCF_USYM "_tls_used"))
 #endif
 
 __attribute__((__section__(".CRT$XLY"), __used__))
-__typeof__(tls_callback)* my_tls_callback = tls_callback;
+__typeof__(tls_callback)* const my_tls_callback = tls_callback;
 
 static
 int
