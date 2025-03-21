@@ -378,7 +378,7 @@ __cdecl
 __MCF_mcopy(void* dst, const void* src, size_t size)
   {
     __MCF_ASSERT((uintptr_t) dst - (uintptr_t) src >= size);
-#if defined __i386__ || defined __amd64__
+#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
     PVOID edi, ecx, esi;
     __asm__ volatile (
       "rep movsb"
@@ -398,7 +398,7 @@ __cdecl
 __MCF_mcopy_backward(void* dst, const void* src, size_t size)
   {
     __MCF_ASSERT((uintptr_t) src - (uintptr_t) dst >= size);
-#if defined __i386__ || defined __amd64__
+#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
     PVOID edi, ecx, esi;
     __asm__ volatile (
       "std; "
@@ -419,7 +419,7 @@ void*
 __cdecl
 __MCF_mfill(void* dst, int val, size_t size)
   {
-#if defined __i386__ || defined __amd64__
+#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
     PVOID edi, ecx;
     __asm__ volatile (
       "rep stosb"
@@ -438,7 +438,7 @@ void*
 __cdecl
 __MCF_mzero(void* dst, size_t size)
   {
-#if defined __i386__ || defined __amd64__
+#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
     PVOID edi, ecx;
     __asm__ volatile (
       "rep stosb"
@@ -458,7 +458,7 @@ __cdecl
 __MCF_mcompare(const void* src, const void* cmp, size_t size)
   {
     int diff;
-#if defined __i386__ || defined __amd64__
+#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
     /* Perform string comparison with hardware.  */
     PVOID esi, edi, ecx;
     __asm__ (
@@ -486,7 +486,7 @@ __cdecl
 __MCF_mequal(const void* src, const void* cmp, size_t size)
   {
     bool eq;
-#if defined __i386__ || defined __amd64__
+#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
     /* Perform string comparison with hardware.  */
     PVOID esi, edi, ecx;
     __asm__ (
