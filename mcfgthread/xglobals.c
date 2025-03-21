@@ -348,7 +348,7 @@ DllMainCRTStartup(PVOID instance, ULONG reason, PVOID reserved)
 
 __declspec(dllexport)
 void*
-memcpy(void* dst, const void* src, size_t size)
+memcpy(void* restrict dst, const void* restrict src, size_t size)
   {
     return __MCF_mcopy(dst, src, size);
   }
