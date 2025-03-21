@@ -13,7 +13,9 @@
 
 __asm__ (
 #if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
-/* This is required by Clang, where `-masm=intel` doesn't affect basic asm.  */
+/* With Clang 18 `-masm=intel` had no effect on module-level assembly,
+ * which requires this be declared explicitly. Notwithstanding, for x86
+ * our code must always be compiled with `-masm=intel`.  */
 ".intel_syntax noprefix  \n"
 #endif
 #if defined __i386__
