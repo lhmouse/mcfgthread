@@ -14,10 +14,6 @@
 #include <stdbool.h>
 #include <limits.h>
 
-#if defined _MSC_VER && !defined __clang__
-#  include <intrin.h>  /* `__readfsdword()` etc.  */
-#endif
-
 #if !defined _WIN32_WINNT
 #  define _WIN32_WINNT  0x0601
 #elif _WIN32_WINNT < 0x0601
@@ -28,6 +24,9 @@
 #  error 32-bit ARM target is not supported.
 #endif
 
+/* Define language-support macros. We start from C89 (which doesn't have an
+ * identification macro) and then redefine these macros according to
+ * `__STDC_VERSION__` and `__cplusplus`.  */
 #define __MCF_C(...)     __VA_ARGS__
 #define __MCF_CXX(...)
 #define __MCF_noexcept
@@ -42,15 +41,6 @@
 #  define __MCF_noexcept   throw()
 #endif
 
-__MCF_CXX(extern "C" {)
-#ifndef __MCF_FWD_IMPORT
-#  define __MCF_FWD_IMPORT
-#  define __MCF_FWD_INLINE  __MCF_GNU_INLINE
-#endif
-
-/* Define language-support macros. We start from C89 (which doesn't have an
- * identification macro) and then redefine these macros according to
- * `__STDC_VERSION__` and `__cplusplus`.  */
 #define __MCF_C99(...)
 #define __MCF_C11(...)
 #define __MCF_C17(...)
@@ -113,6 +103,12 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_CXX23(...)   __VA_ARGS__
 #endif
 
+__MCF_CXX(extern "C" {)
+#ifndef __MCF_FWD_IMPORT
+#  define __MCF_FWD_IMPORT
+#  define __MCF_FWD_INLINE  __MCF_GNU_INLINE
+#endif
+
 #define __MCF_S_(...)     #__VA_ARGS__
 #define __MCF_S(...)       __MCF_S_(__VA_ARGS__)
 #define __MCF_C2_(x, y)     x##y
@@ -122,9 +118,41 @@ __MCF_CXX(extern "C" {)
 #define __MCF_0_INIT           { __MCF_C(0) }
 #define __MCF_SET_IF(x, ...)    ((void) ((x) && (*(x) = (__VA_ARGS__))))
 
+/* Define compiler-specific stuff. In the case of Clang-CL, prefer GNU
+ * extensions to Microsoft ones.  */
+#if defined __GNUC__ || defined __clang__
+#  define __MCF_EX             __extension__
+#  define __MCF_GNU_INLINE      extern __inline__ __attribute__((__gnu_inline__))
+#  define __MCF_ALWAYS_INLINE   extern __inline__ __attribute__((__gnu_inline__, __always_inline__))
+#  define __MCF_NEVER_INLINE   __attribute__((__noinline__))
+#  define __MCF_NEVER_RETURN   __attribute__((__noreturn__))
+#  define __MCF_FN_CONST       __attribute__((__const__))
+#  define __MCF_FN_PURE       __attribute__((__pure__))
+#  define __MCF_FN_COLD       __attribute__((__cold__))
+#  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
+#  define __MCF_UNREACHABLE   __builtin_unreachable()
+#  define __MCF_FNA(x, fn)   __typeof__(x) fn __asm__(__MCF_USYM #x)
+#else
+#  define __MCF_EX             /* unsupported */
+#  define __MCF_GNU_INLINE      __inline
+#  define __MCF_ALWAYS_INLINE   __forceinline
+#  define __MCF_NEVER_INLINE   __declspec(noinline)
+#  define __MCF_NEVER_RETURN   __declspec(noreturn)
+#  define __MCF_FN_CONST       __declspec(noalias)
+#  define __MCF_FN_PURE       __declspec(noalias)
+#  define __MCF_FN_COLD       /* unsupported */
+#  define __MCF_ALIGNED(x)    __declspec(align(x))
+#  define __MCF_UNREACHABLE   __assume(0)
+#  define __MCF_FNA(x, fn)   __pragma(comment(linker, "/alternatename:" __MCF_USYM #fn "=" __MCF_USYM #x))
+#endif
+
 /* Define how the TEB is accessed. Due to technical limitations, the base offset
  * must be a constant multiple of operand size, and there are different macros
  * depending on whether the address is immediate.  */
+#if defined _MSC_VER && !defined __clang__
+#  include <intrin.h>  /* `__readfsdword()` etc.  */
+#endif
+
 #if (defined __GNUC__ || defined __clang__) && (defined __amd64__ && !defined __arm64ec__)
 
 #  define __MCF_TEB_LOAD_32_IMMEDIATE(out, base)  \
@@ -467,34 +495,6 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_64_32(x, y)  x
 #  define __MCF_USYM  ""
 
-#endif  /* compiler and target  */
-
-/* Define compiler-specific stuff. In the case of clang-cl, prefer GNU
- * extensions to Microsoft ones.  */
-#if defined __GNUC__ || defined __clang__
-#  define __MCF_EX             __extension__
-#  define __MCF_GNU_INLINE      extern __inline__ __attribute__((__gnu_inline__))
-#  define __MCF_ALWAYS_INLINE   extern __inline__ __attribute__((__gnu_inline__, __always_inline__))
-#  define __MCF_NEVER_INLINE   __attribute__((__noinline__))
-#  define __MCF_NEVER_RETURN   __attribute__((__noreturn__))
-#  define __MCF_FN_CONST       __attribute__((__const__))
-#  define __MCF_FN_PURE       __attribute__((__pure__))
-#  define __MCF_FN_COLD       __attribute__((__cold__))
-#  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
-#  define __MCF_UNREACHABLE   __builtin_unreachable()
-#  define __MCF_FNA(x, fn)   __typeof__(x) fn __asm__(__MCF_USYM #x)
-#else
-#  define __MCF_EX             /* unsupported */
-#  define __MCF_GNU_INLINE      __inline
-#  define __MCF_ALWAYS_INLINE   __forceinline
-#  define __MCF_NEVER_INLINE   __declspec(noinline)
-#  define __MCF_NEVER_RETURN   __declspec(noreturn)
-#  define __MCF_FN_CONST       __declspec(noalias)
-#  define __MCF_FN_PURE       __declspec(noalias)
-#  define __MCF_FN_COLD       /* unsupported */
-#  define __MCF_ALIGNED(x)    __declspec(align(x))
-#  define __MCF_UNREACHABLE   __assume(0)
-#  define __MCF_FNA(x, fn)   __pragma(comment(linker, "/alternatename:" __MCF_USYM #fn "=" __MCF_USYM #x))
 #endif
 
 /* Generally speaking, functions are either `__MCF_MAY_THROW` or `noexcept`. This
