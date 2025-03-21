@@ -346,16 +346,34 @@ DllMainCRTStartup(PVOID instance, ULONG reason, PVOID reserved)
       }
   }
 
+__declspec(dllexport)
 void*
 memcpy(void* dst, const void* src, size_t size)
   {
     return __MCF_mcopy(dst, src, size);
   }
 
+__declspec(dllexport)
+void*
+memmove(void* dst, const void* src, size_t size)
+  {
+   return ((uintptr_t) dst - (uintptr_t) src >= size)
+           ? __MCF_mcopy(dst, src, size)
+           : __MCF_mcopy_backward(dst, src, size);
+  }
+
+__declspec(dllexport)
 void*
 memset(void* dst, int val, size_t size)
   {
     return __MCF_mfill(dst, val, size);
+  }
+
+__declspec(dllexport)
+int
+memcmp(const void* src, const void* dst, size_t size)
+  {
+    return __MCF_mcompare(src, dst, size);
   }
 
 #if defined _MSC_VER

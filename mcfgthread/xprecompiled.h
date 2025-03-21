@@ -22,6 +22,17 @@
 #  define __MCF_DLLEXPORT
 #endif
 
+/* When building the DLL, GCC may make implicit calls to these functions, so
+ * we must define and export them. However, Clang requires that the `dllexport`
+ * attribute be applied before a function is called, so declare them as early as
+ * possible.  */
+#ifdef __MCF_IN_DLL
+__declspec(dllexport) void* memcpy(void* __dst, const void* __src, size_t __size);
+__declspec(dllexport) void* memmove(void* __dst, const void* __src, size_t __size);
+__declspec(dllexport) void* memset(void* __dst, int __val, size_t __size);
+__declspec(dllexport) int memcmp(const void* __src, const void* __dst, size_t __size);
+#endif
+
 #define WIN32_LEAN_AND_MEAN  1
 #define NOMINMAX  1
 #define NOGDI  1
