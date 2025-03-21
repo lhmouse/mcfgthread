@@ -47,13 +47,11 @@
 #undef RtlMoveMemory
 #undef RtlFillMemory
 #undef RtlZeroMemory
-#undef RtlCompareMemory
 #undef RtlEqualMemory
 
 NTSYSAPI void NTAPI RtlMoveMemory(void* dst, const void* src, SIZE_T size);
 NTSYSAPI void NTAPI RtlFillMemory(void* dst, SIZE_T size, int c);
 NTSYSAPI void NTAPI RtlZeroMemory(void* dst, SIZE_T size);
-NTSYSAPI SIZE_T NTAPI RtlCompareMemory(const void* src, const void* cmp, SIZE_T size) __MCF_FN_PURE;
 
 NTSYSAPI ULONG NTAPI RtlNtStatusToDosError(NTSTATUS status);
 NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status) __MCF_FN_CONST;
@@ -452,6 +450,19 @@ __MCF_mzero(void* dst, size_t size)
     return dst;
   }
 
+__MCF_ALWAYS_INLINE
+int
+__cdecl
+__MCF_do_std_compare(const void* src, const void* src_end, const void* cmp)
+  {
+    typedef const volatile unsigned char* PCVBYTE;
+    PCVBYTE sptr = src, cptr = cmp;
+    int diff = 0;
+    while((diff == 0) && (sptr != src_end))
+      diff = *(sptr ++) - *(cptr ++);
+    return diff;
+  }
+
 __MCF_XGLOBALS_INLINE
 int
 __cdecl
@@ -472,10 +483,7 @@ __MCF_mcompare(const void* src, const void* cmp, size_t size)
       : "memory"
     );
 #else
-    /* Get the number of matching bytes. If there is a mismatch, get the
-     * difference between the first pair of mismatching bytes.  */
-    SIZE_T pos = RtlCompareMemory(src, cmp, size);
-    diff = (pos != size) ? (*((PBYTE) src + pos) - *((PBYTE) cmp + pos)) : 0;
+    diff = __MCF_do_std_compare(src, (const char*) src + size, cmp);
 #endif
     return diff;
   }
@@ -497,9 +505,7 @@ __MCF_mequal(const void* src, const void* cmp, size_t size)
       : "memory"
     );
 #else
-    /* Check whether the number of matching bytes equals the total number
-     * of bytes.  */
-    eq = RtlCompareMemory(src, cmp, size) == size;
+    eq = __MCF_do_std_compare(src, (const char*) src + size, cmp) == 0;
 #endif
     return eq;
   }
