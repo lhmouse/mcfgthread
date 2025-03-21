@@ -288,6 +288,22 @@ __MCF_gthread_on_thread_exit(void)
     _MCF_thread_drop_ref_nonnull(self);
   }
 
+/* These are constants that have to be initialized at load time. The
+ * initializers prevent them from being placed into the`.bss` section.  */
+GUID __MCF_crt_gthread_guid = __MCF_GUID(9FB2D15C,C5F2,4AE7,868D,2769591B8E92);
+HANDLE __MCF_crt_heap = __MCF_BAD_PTR;
+double __MCF_crt_pf_recip = 1;
+SYSTEM_INFO __MCF_crt_sysinfo = { .dwPageSize = 1 };
+HMODULE __MCF_crt_kernelbase = __MCF_BAD_PTR;
+HMODULE __MCF_crt_ntdll = __MCF_BAD_PTR;
+decltype_TlsGetValue2* __MCF_crt_TlsGetValue = __MCF_BAD_PTR;
+
+/* This is a pointer to global data. If this library is linked statically,
+ * all instances of this pointer in the same process should point to the
+ * same memory. The initializer prevents it from being placed into the
+ * `.bss` section.  */
+__MCF_crt_xglobals* restrict __MCF_g = __MCF_BAD_PTR;
+
 #ifdef __MCF_IN_DLL
 
 /* When building the shared library, invoke common routines from the DLL
@@ -342,6 +358,11 @@ memset(void* dst, int val, size_t size)
     return __MCF_mfill(dst, val, size);
   }
 
+#if defined _MSC_VER
+__attribute__((__used__))
+const int _fltused = 0x9875;  /* dunno what it does but LINK complains.  */
+#endif
+
 #if defined __i386__ && defined _MSC_VER
 extern ULONG __safe_se_handler_table[];
 extern BYTE __safe_se_handler_count;  /* symbol only  */
@@ -365,11 +386,6 @@ const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
     .SEHandlerCount = (ULONG) &__safe_se_handler_count,
 #endif
   };
-
-#if defined _MSC_VER
-__attribute__((__used__))
-const int _fltused = 0x9875;  /* dunno what it does but LINK complains.  */
-#endif
 
 #else  /* __MCF_IN_DLL  */
 
@@ -408,19 +424,3 @@ __attribute__((__section__(".CRT$XLB"), __used__))
 const PIMAGE_TLS_CALLBACK __MCF_crt_xl_b = do_tls_callback;
 
 #endif  /* __MCF_IN_DLL  */
-
-/* These are constants that have to be initialized at load time. The
- * initializers prevent them from being placed into the`.bss` section.  */
-const GUID __MCF_crt_gthread_guid = __MCF_GUID(9FB2D15C,C5F2,4AE7,868D,2769591B8E92);
-HANDLE __MCF_crt_heap = __MCF_BAD_PTR;
-double __MCF_crt_pf_recip = 1;
-SYSTEM_INFO __MCF_crt_sysinfo = { .dwPageSize = 1 };
-HMODULE __MCF_crt_kernelbase = __MCF_BAD_PTR;
-HMODULE __MCF_crt_ntdll = __MCF_BAD_PTR;
-decltype_TlsGetValue2* __MCF_crt_TlsGetValue = __MCF_BAD_PTR;
-
-/* This is a pointer to global data. If this library is linked statically,
- * all instances of this pointer in the same process should point to the
- * same memory. The initializer prevents it from being placed into the
- * `.bss` section.  */
-__MCF_crt_xglobals* restrict __MCF_g = __MCF_BAD_PTR;
