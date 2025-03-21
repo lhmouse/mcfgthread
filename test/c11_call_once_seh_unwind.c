@@ -54,7 +54,11 @@ tls_callback(void* instance, unsigned long reason, void* reserved)
       call_once(&once, once_do_it);
   }
 
-extern char _tls_used;
+#if defined _MSC_VER
+__pragma(section(".CRT$XLY", read))
+__pragma(comment(linker, "/include:" __MCF_USYM "_tls_used"))
+#endif
+
 __attribute__((__section__(".CRT$XLY"), __used__))
 __typeof__(tls_callback)* my_tls_callback = tls_callback;
 
@@ -73,8 +77,6 @@ thread_proc(void* param)
 int
 main(void)
   {
-    fprintf(stderr, "_tls_used = %p\n", &_tls_used);
-
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       int r = thrd_create(&threads[k], thread_proc, __MCF_nullptr);
       assert(r == thrd_success);
