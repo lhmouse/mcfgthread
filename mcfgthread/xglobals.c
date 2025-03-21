@@ -292,13 +292,13 @@ __MCF_gthread_on_thread_exit(void)
 
 /* When building the shared library, invoke common routines from the DLL
  * entry point callback. This has the same signature as `DllMain()`.  */
-#  if defined __MSYS__
-#    define DllMainCRTStartup  _msys_dll_entry
-#  elif defined __CYGWIN__
-#    define DllMainCRTStartup  _cygwin_dll_entry
-#  elif defined _MSC_VER
-#    define DllMainCRTStartup  _DllMainCRTStartup
-#  endif
+#if defined __MSYS__
+#  define DllMainCRTStartup  _msys_dll_entry
+#elif defined __CYGWIN__
+#  define DllMainCRTStartup  _cygwin_dll_entry
+#elif defined _MSC_VER
+#  define DllMainCRTStartup  _DllMainCRTStartup
+#endif
 
 int
 __stdcall
@@ -342,10 +342,10 @@ memset(void* dst, int val, size_t size)
     return __MCF_mfill(dst, val, size);
   }
 
-#  if defined __i386__ && defined _MSC_VER
+#if defined __i386__ && defined _MSC_VER
 extern ULONG __safe_se_handler_table[];
 extern BYTE __safe_se_handler_count;  /* symbol only  */
-#  endif
+#endif
 
 __attribute__((__used__))
 const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
@@ -353,23 +353,23 @@ const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
     .Size = sizeof(IMAGE_LOAD_CONFIG_DIRECTORY),
 
     /* DEPENDENTLOADFLAG  */
-#  if defined __MINGW64_VERSION_MAJOR && (__MINGW64_VERSION_MAJOR <= 12)
-#    define DependentLoadFlags  Reserved1
-#  endif
+#if defined __MINGW64_VERSION_MAJOR && (__MINGW64_VERSION_MAJOR <= 12)
+#  define DependentLoadFlags  Reserved1
+#endif
     .DependentLoadFlags = LOAD_LIBRARY_SEARCH_SYSTEM32,
-#  undef DependentLoadFlags
+#undef DependentLoadFlags
 
     /* SAFESEH  */
-#  if defined __i386__ && defined _MSC_VER
+#if defined __i386__ && defined _MSC_VER
     .SEHandlerTable = (ULONG) __safe_se_handler_table,
     .SEHandlerCount = (ULONG) &__safe_se_handler_count,
-#  endif
+#endif
   };
 
-#  if defined _MSC_VER
+#if defined _MSC_VER
 __attribute__((__used__))
 const int _fltused = 0x9875;  /* dunno what it does but LINK complains.  */
-#  endif
+#endif
 
 #else  /* __MCF_IN_DLL  */
 
@@ -400,11 +400,10 @@ do_tls_callback(PVOID module, ULONG reason, LPVOID reserved)
 
 /* This requires the main executable be linked with 'tlssup.o'. Such
  * initialization shall happen as early as possible.  */
-#  if defined _MSC_VER
-__pragma(section(".CRT$XLB", read))
+#if defined _MSC_VER
 __pragma(comment(linker, "/include:" __MCF_USYM "_tls_used"))
-#  endif
-
+__pragma(section(".CRT$XLB", read))
+#endif
 __attribute__((__section__(".CRT$XLB"), __used__))
 const PIMAGE_TLS_CALLBACK __MCF_crt_xl_b = do_tls_callback;
 
