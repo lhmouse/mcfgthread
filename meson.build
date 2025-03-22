@@ -111,7 +111,7 @@ test_src = [
   'test/thread_join_deadlock.cpp', 'test/thread_ctor_throw.cpp', 'test/thread_id.cpp',
   'test/thread_decay_copy.cpp', 'test/this_thread_sleep_until.cpp',
   'test/this_thread_sleep_for.cpp', 'test/tls_dtor.cpp', 'test/tls_many.cpp',
-  'test/c11_call_once_seh_unwind.c' ]
+   ]
 
 #===========================================================
 # Global configuration
