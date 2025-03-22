@@ -6,11 +6,7 @@
  * to this file.  */
 
 #if !defined __SEH__ && !defined _MSC_VER
-int
-main(void)
-  {
-    return 77;
-  }
+int main(void) { return 77;  }
 #else  // __SEH__
 
 #include "../mcfgthread/cxx11.hpp"

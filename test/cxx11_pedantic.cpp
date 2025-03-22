@@ -6,11 +6,7 @@
  * to this file.  */
 
 #if defined _MSC_VER  // MSVC standard library doesn't compile as C++11.
-int
-main(void)
-  {
-    return 77;
-  }
+int main(void) { return 77;  }
 #else  // MSVC
 
 #include "../mcfgthread/cxx11.hpp"

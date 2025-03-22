@@ -6,11 +6,7 @@
  * to this file.  */
 
 #if defined _MSC_VER && !defined __clang__
-int
-main(void)
-  {
-    return 77;
-  }
+int main(void) { return 77;  }
 #else  // MSVC
 
 #include "../mcfgthread/atomic.h"

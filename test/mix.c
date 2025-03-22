@@ -6,11 +6,7 @@
  * to this file.  */
 
 #if defined __CYGWIN__
-int
-main(void)
-  {
-    return 77;
-  }
+int main(void) { return 77;  }
 #else  // __CYGWIN__
 
 #include "../mcfgthread/thread.h"
