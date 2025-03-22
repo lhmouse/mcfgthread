@@ -26,6 +26,17 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
     return r ? ExceptionContinueSearch : ExceptionContinueExecution;
   }
 
+#ifdef __i386__
+__asm__ (
+#  if defined __MCF_IN_DLL
+".globl ___MCF_i386_se_handler_0000  \n"
+".equiv ___MCF_i386_se_handler_0000, ___MCF_seh_top  \n"
+#  elif defined _MSC_VER
+".safeseh ___MCF_seh_top  \n"
+#  endif
+"");
+#endif
+
 __MCF_DLLEXPORT
 void
 __MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* to, const int64_t* ms_opt)
@@ -376,14 +387,22 @@ memcmp(const void* src, const void* dst, size_t size)
     return __MCF_mcompare(src, dst, size);
   }
 
-#if defined _MSC_VER
+#ifdef _MSC_VER
 __attribute__((__used__))
 const int _fltused = 0x9875;  /* dunno what it does but LINK complains.  */
 #endif
 
-#if defined __i386__ && defined _MSC_VER
-extern ULONG __safe_se_handler_table[];
-extern BYTE __safe_se_handler_count;  /* symbol only  */
+#ifdef __i386__
+extern const ULONG __MCF_i386_se_handle_table[];
+__asm__ (
+".section .rdata  \n"
+"  .align 4  \n"
+"___MCF_i386_se_handle_table:  \n"
+"  .rva       ___MCF_i386_se_handler_0000  \n"
+"  .rva       ___MCF_i386_se_handler_0001  \n"
+#  define __MCF_i386_se_handler_count   2
+".text  \n"
+);
 #endif
 
 __attribute__((__used__))
@@ -399,9 +418,9 @@ const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
 #undef DependentLoadFlags
 
     /* SAFESEH  */
-#if defined __i386__ && defined _MSC_VER
-    .SEHandlerTable = (ULONG) __safe_se_handler_table,
-    .SEHandlerCount = (ULONG) &__safe_se_handler_count,
+#if defined __MCF_i386_se_handler_count
+    .SEHandlerTable = (ULONG) __MCF_i386_se_handle_table,
+    .SEHandlerCount = __MCF_i386_se_handler_count,
 #endif
   };
 
