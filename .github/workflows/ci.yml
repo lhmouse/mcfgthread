@@ -32,16 +32,20 @@ jobs:
            mingw-w64-{x86-64-dev,tools} {gcc,g++,binutils}-mingw-w64-x86-64
            ninja-build python3-pip wine wine-binfmt
 
-    - name: Install newest meson
+    - name: Install newest Meson
       run: >-
            sudo PIP_BREAK_SYSTEM_PACKAGES=1 pip3 install meson
 
-    - name: Run tests
+    - name: Configure
       run: >-
            meson setup --cross-file meson.cross.x86_64-w64-mingw32
            -Denable-debug-checks=true -Doptimization=1 build_ci
-           && meson compile -Cbuild_ci
-           && meson test -t15 -Cbuild_ci --print-errorlogs
+
+    - name: Build
+      run: meson compile -Cbuild_ci
+
+    - name: Run tests
+      run: meson test -t15 -Cbuild_ci --print-errorlogs
 
   ubuntu-arm64:
     name: Ubuntu cross build (ARM64 Clang)
@@ -56,7 +60,7 @@ jobs:
            sudo apt-get install -y --no-install-recommends
            ninja-build python3-pip wine wine-binfmt
 
-    - name: Install newest meson
+    - name: Install newest Meson
       run: >-
            sudo PIP_BREAK_SYSTEM_PACKAGES=1 pip3 install meson
 
@@ -65,13 +69,17 @@ jobs:
            wget 'https://github.com/mstorsjo/llvm-mingw/releases/download/20250114/llvm-mingw-20250114-ucrt-ubuntu-20.04-aarch64.tar.xz'
            && tar -xaf llvm-mingw-20250114-ucrt-ubuntu-20.04-aarch64.tar.xz
 
-    - name: Run tests
+    - name: Configure
       run: >-
            export PATH=$(pwd)/llvm-mingw-20250114-ucrt-ubuntu-20.04-aarch64/bin:$PATH;
            meson setup --cross-file meson.cross.aarch64-w64-mingw32
            -Denable-debug-checks=true -Doptimization=1 build_ci
-           && meson compile -Cbuild_ci
-           && meson test -t20 -Cbuild_ci --print-errorlogs
+
+    - name: Build
+      run: meson compile -Cbuild_ci
+
+    - name: Run tests
+      run: meson test -t20 -Cbuild_ci --print-errorlogs
 
   msys2-ucrt64:
     name: MSYS2 native build (x86-64 GCC)
@@ -93,11 +101,15 @@ jobs:
            pacman -Sy --needed --noconfirm
            mingw-w64-ucrt-x86_64-{{headers,crt,tools}-git,gcc,meson}
 
-    - name: Run tests
+    - name: Configure
       run: >-
            meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
-           && meson compile -Cbuild_ci
-           && meson test -t2 -Cbuild_ci --print-errorlogs
+
+    - name: Build
+      run: meson compile -Cbuild_ci
+
+    - name: Run tests
+      run: meson test -t2 -Cbuild_ci --print-errorlogs
 
   msys2-mingw32:
     name: MSYS2 native build (x86-32 GCC)
@@ -119,11 +131,15 @@ jobs:
            pacman -Sy --needed --noconfirm
            mingw-w64-i686-{{headers,crt,tools}-git,gcc,meson,ninja}
 
-    - name: Run tests
+    - name: Configure
       run: >-
            meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
-           && meson compile -Cbuild_ci
-           && meson test -t2 -Cbuild_ci --print-errorlogs
+
+    - name: Build
+      run: meson compile -Cbuild_ci
+
+    - name: Run tests
+      run: meson test -t2 -Cbuild_ci --print-errorlogs
 
   msys2-clang64:
     name: MSYS2 native build (x86-64 Clang)
@@ -145,11 +161,15 @@ jobs:
            pacman -Sy --needed --noconfirm
            mingw-w64-clang-x86_64-{{headers,crt,tools}-git,clang,meson,ninja}
 
-    - name: Run tests
+    - name: Configure
       run: >-
            meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
-           && meson compile -Cbuild_ci
-           && meson test -t2 -Cbuild_ci --print-errorlogs
+
+    - name: Build
+      run: meson compile -Cbuild_ci
+
+    - name: Run tests
+      run: meson test -t2 -Cbuild_ci --print-errorlogs
 
   clang-cl-x64:
     name: MSVC native build (x86-64 Clang-CL)
@@ -171,12 +191,16 @@ jobs:
            pacman -Sy --needed --noconfirm
            mingw-w64-ucrt-x86_64-{meson,ninja}
 
-    - name: Run tests
+    - name: Configure
       run: >-
            meson setup --native-file meson.native.clang
            -Denable-debug-checks=true -Doptimization=1 build_ci
-           && meson compile -Cbuild_ci
-           && meson test -t2 -Cbuild_ci --print-errorlogs
+
+    - name: Build
+      run: meson compile -Cbuild_ci
+
+    - name: Run tests
+      run: meson test -t2 -Cbuild_ci --print-errorlogs
 
   clang-cl-x86:
     name: MSVC native build (x86-32 Clang-CL)
@@ -198,9 +222,13 @@ jobs:
            pacman -Sy --needed --noconfirm
            mingw-w64-i686-{meson,ninja}
 
-    - name: Run tests
+    - name: Configure
       run: >-
            meson setup --native-file meson.native.clang
            -Denable-debug-checks=true -Doptimization=1 build_ci
-           && meson compile -Cbuild_ci
-           && meson test -t2 -Cbuild_ci --print-errorlogs
+
+    - name: Build
+      run: meson compile -Cbuild_ci
+
+    - name: Run tests
+      run: meson test -t2 -Cbuild_ci --print-errorlogs
