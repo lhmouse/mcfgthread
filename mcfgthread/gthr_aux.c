@@ -22,9 +22,6 @@ __asm__ (
 /* On x86, SEH is stack-based.  */
 ".def _do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
 "_do_call_once_seh_take_over:  \n"
-#  ifdef _MSC_VER
-".safeseh _do_call_once_seh_uhandler  \n"
-#  endif
 /* The stack is used as follows:
  *
  *    -20: argument to subroutines
@@ -154,6 +151,17 @@ do_call_once_seh_uhandler(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx
     /* Continue unwinding.  */
     return ExceptionContinueSearch;
   }
+
+#ifdef __i386__
+__asm__ (
+#  if defined __MCF_IN_DLL
+".globl ___MCF_i386_se_handler_0001  \n"
+".equiv ___MCF_i386_se_handler_0001, _do_call_once_seh_uhandler  \n"
+#  elif defined _MSC_VER
+".safeseh _do_call_once_seh_uhandler  \n"
+#  endif
+"");
+#endif
 
 __MCF_DLLEXPORT
 void
