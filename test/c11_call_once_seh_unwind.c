@@ -37,7 +37,7 @@ once_do_it(void)
     fprintf(stderr, "thread %d once\n", (int) _MCF_thread_self_tid());
 
     /* effect access violation.  */
-    *__MCF_CAST_PTR(int, once_do_it) = 42;
+    *(volatile int*) -4 = 42;
     fprintf(stderr, "never here\n");
   }
 
