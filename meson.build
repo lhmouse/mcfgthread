@@ -186,7 +186,7 @@ mcfgthread_version_o = import('windows').compile_resources(
 if cc.has_link_argument('/LTCG')
   lib_mcfgthread_dll_link_args = [
         '-Wl,-nodefaultlib', '-Wl,-dynamicbase', '-Wl,-opt:ref', '-Wl,-opt:icf',
-        '-Xlinker', '-subsystem:windows,6.1', '-Wl,-kill-at' ]
+        '-Xlinker', '-subsystem:windows,6.1', '-Wl,-kill-at', '-Wl,-safeseh:no' ]
 else
   lib_mcfgthread_dll_link_args = [
         '-nostdlib', '-Wl,-enable-auto-image-base', '-Wl,-gc-sections',
