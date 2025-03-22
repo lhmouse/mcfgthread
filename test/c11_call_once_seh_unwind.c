@@ -17,6 +17,7 @@ main(void)
 #include "../mcfgthread/sem.h"
 #include <assert.h>
 #include <stdio.h>
+#include <windows.h>
 
 #define NTHREADS  32U
 static thrd_t threads[NTHREADS];
@@ -26,7 +27,7 @@ static int resource = 0;
 
 static
 void
-once_do_it(void)
+test_once_do_it(void)
   {
     /* Perform initialization.  */
     int old = resource;
@@ -36,8 +37,8 @@ once_do_it(void)
     _MCF_sleep((const int64_t[]) { -10 });
     fprintf(stderr, "thread %d once\n", (int) _MCF_thread_self_tid());
 
-    /* effect access violation.  */
-    *(volatile int*) -4 = 42;
+    /* do something bad.  */
+    RaiseException(0x20414243, 0, 0, __MCF_nullptr);
     fprintf(stderr, "never here\n");
   }
 
@@ -49,9 +50,9 @@ tls_callback(void* instance, unsigned long reason, void* reserved)
     (void) instance;
     (void) reserved;
 
-    /* do test if `DLL_THREAD_DETACH`; exceptions are swallowed by the system.  */
-    if(reason == 3)
-      call_once(&once, once_do_it);
+    /* exceptions are swallowed by the system.  */
+    if(reason == DLL_THREAD_DETACH)
+      call_once(&once, test_once_do_it);
   }
 
 #if defined _MSC_VER
