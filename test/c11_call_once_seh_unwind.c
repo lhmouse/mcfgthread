@@ -37,8 +37,9 @@ test_once_do_it(void)
     _MCF_sleep((const int64_t[]) { -10 });
     fprintf(stderr, "thread %d once\n", (int) _MCF_thread_self_tid());
 
-    /* do something bad.  */
-    RaiseException(0x20414243, 0, 0, __MCF_nullptr);
+    /* Use the exception for  `OutputDebugStringA()`!  */
+    ULONG_PTR args[2] = { 6, (ULONG_PTR) "meow!" };
+    RaiseException(DBG_PRINTEXCEPTION_C, 0, 2, args);
     fprintf(stderr, "never here\n");
   }
 
