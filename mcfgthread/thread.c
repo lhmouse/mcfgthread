@@ -20,7 +20,7 @@ enum initialization_status
     initialization_orphaned   = 3,
   };
 
-struct thread_initializer
+struct initializer
   {
     _MCF_event status[1];
     _MCF_thread* thrd;
@@ -33,7 +33,7 @@ __stdcall
 do_win32_thread_thunk(LPVOID param)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
-    struct thread_initializer* init = param;
+    struct initializer* init = param;
     _MCF_event_await_change(init->status, initialization_null, __MCF_nullptr);
     _MCF_thread* thrd = init->thrd;
 
@@ -65,7 +65,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     if(!proc)
       return __MCF_win32_error_p(ERROR_INVALID_PARAMETER, __MCF_nullptr);
 
-    if(align & (align - 1))  /* is power of two?  */
+    if(align & (align - 1))  /* power of two?  */
       return __MCF_win32_error_p(ERROR_INVALID_PARAMETER, __MCF_nullptr);
 
     if(align > __MCF_THREAD_MAX_DATA_ALIGNMENT)
@@ -75,7 +75,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
       return __MCF_win32_error_p(ERROR_ARITHMETIC_OVERFLOW, __MCF_nullptr);
 
     /* Allocate and initialize the thread control structure.  */
-    struct thread_initializer init;
+    struct initializer init;
     _MCF_event_init(init.status, initialization_null);
 
     size_t real_alignment = _MCF_maxz(__MCF_THREAD_DATA_ALIGNMENT, align);
