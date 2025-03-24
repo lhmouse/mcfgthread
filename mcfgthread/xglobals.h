@@ -91,7 +91,6 @@ typedef LPVOID __stdcall decltype_TlsGetValue2(ULONG);
        __temp1;  })
 
 /* Declare helper functions here.  */
-typedef struct __MCF_i386_seh_node __MCF_i386_seh_node;
 typedef struct __MCF_winnt_timeout __MCF_winnt_timeout;
 typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
 
@@ -103,33 +102,27 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
 #if defined __i386__
 
 /* On x86, SEH is stack-based.  */
-struct __MCF_i386_seh_node
-  {
-    ULONG __next;
-    ULONG __filter;
-  };
-
 __MCF_ALWAYS_INLINE
-__MCF_i386_seh_node*
-__MCF_i386_seh_install(__MCF_i386_seh_node* node)
+EXCEPTION_REGISTRATION_RECORD*
+__MCF_i386_seh_install(EXCEPTION_REGISTRATION_RECORD* record)
   {
-    __MCF_TEB_LOAD_32_IMMEDIATE(&(node->__next), 0);
-    node->__filter = (ULONG) __MCF_seh_top;
-    __MCF_TEB_STORE_32_IMMEDIATE(0, node);
-    return node;
+    __MCF_TEB_LOAD_32_IMMEDIATE(&(record->Next), 0);
+    __MCF_TEB_STORE_32_IMMEDIATE(0, record);
+    return record;
   }
 
 __MCF_ALWAYS_INLINE
 void
-__MCF_i386_seh_cleanup(__MCF_i386_seh_node* const* ref)
+__MCF_i386_seh_cleanup(EXCEPTION_REGISTRATION_RECORD* const* ref)
   {
-    __MCF_TEB_STORE_32_IMMEDIATE(0, (*ref)->__next);
+    __MCF_TEB_STORE_32_IMMEDIATE(0, (*ref)->Next);
   }
 
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
-    __MCF_i386_seh_node* const __MCF_i386_seh_node__  \
-           __attribute__((__cleanup__(__MCF_i386_seh_cleanup)))  \
-      = __MCF_i386_seh_install(&(__MCF_i386_seh_node) { 0 })  /* no semicolon  */
+    EXCEPTION_REGISTRATION_RECORD* const __MCF_i386_seh_node__  \
+            __attribute__((__cleanup__(__MCF_i386_seh_cleanup)))  \
+      = __MCF_i386_seh_install(&(EXCEPTION_REGISTRATION_RECORD) {  \
+           .Handler = __MCF_CAST_PTR(EXCEPTION_ROUTINE, __MCF_seh_top) })
 
 /* In the case of i386, the argument is passed both via the ECX register and
  * on the stack, to allow both `__cdecl` and `__thiscall` functions to work
