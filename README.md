@@ -5,6 +5,11 @@ implements the _gthread interface set_, which is used internally both by **GCC**
 to provide synchronization of initialization of local static objects, and by
 **libstdc++** to provide C++11 threading facilities.
 
+* **cs4k**: Windows `CRITICAL_SECTION` with a spin count of `4000`
+* **srw**: Windows `SRWLOCK`
+* **boost**: `boost::mutex`
+* **mcf0i**: `_MCF_mutex` without inlining
+
 ![hyperfine](hyperfine.png)
 
 > [!WARNING]
