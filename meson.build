@@ -123,6 +123,7 @@ ver.set_quoted('abi_string', meson.project_version())
 
 cc = meson.get_compiler('c')
 cxx = meson.get_compiler('cpp')
+dlltool = find_program('dlltool', required: true)
 
 if get_option('enable-debug-checks')
   add_project_arguments('-D__MCF_DEBUG', language: [ 'c', 'cpp' ])
@@ -158,12 +159,6 @@ add_project_arguments(
    language: 'cpp')
 
 #===========================================================
-# Dependencies
-#===========================================================
-dep_ntdll = cc.find_library('ntdll')
-dep_kernel32 = cc.find_library('kernel32')
-
-#===========================================================
 # Rules for headers
 #===========================================================
 configure_file(input: 'mcfgthread/version.h.in',
@@ -177,6 +172,28 @@ install_headers(meson.current_build_dir() / 'version.h', subdir: 'mcfgthread')
 #===========================================================
 # Rules for 'lib/libmcfgthread'
 #===========================================================
+if target_machine.cpu() == 'x86'
+  def_kernel32 = 'mcfgthread/kernel32.i386.def'
+  def_ntdll = 'mcfgthread/ntdll.i386.def'
+else
+  def_kernel32 = 'mcfgthread/kernel32.def'
+  def_ntdll = 'mcfgthread/ntdll.def'
+endif
+
+dep_kernel32 = declare_dependency(
+     link_with: custom_target('kernel32',
+        command: [ dlltool, '-k', '-l', '@OUTPUT@', '-d', '@INPUT@' ],
+        output: 'libkernel32.a',
+        input: def_kernel32,
+        install: false))
+
+dep_ntdll = declare_dependency(
+     link_with: custom_target('ntdll',
+        command: [ dlltool, '-k', '-l', '@OUTPUT@', '-d', '@INPUT@' ],
+        output: 'libntdll.a',
+        input: def_ntdll,
+        install: false))
+
 mcfgthread_version_o = import('windows').compile_resources(
       'mcfgthread/version.rc',
       args: [ '-I.', '-c65001' ],
@@ -223,7 +240,6 @@ else
         c_pch: 'mcfgthread/xprecompiled.h',
         c_args: [ '-fasynchronous-unwind-tables', '-ffunction-sections' ],
         sources: [ mcfgthread_src_min, mcfgthread_src_ex ],
-        dependencies: [ dep_kernel32, dep_ntdll ],
         install: true)
 endif
 
