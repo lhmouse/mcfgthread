@@ -162,7 +162,6 @@ add_project_arguments(
 #===========================================================
 dep_ntdll = cc.find_library('ntdll')
 dep_kernel32 = cc.find_library('kernel32')
-dep_advapi32 = cc.find_library('advapi32')
 
 #===========================================================
 # Rules for headers
@@ -246,7 +245,6 @@ foreach src : test_src
   test_c_args = []
   test_cpp_args = []
   test_link_args = []
-  test_dependencies = []
   test_link_with = lib_mcfgthread_dll
 
   basename = src.replace('test/', '')
@@ -257,12 +255,10 @@ foreach src : test_src
 
   if basename in [ 'win8.c', 'win10.c', 'self_oom.c', 'tls_dtor_static.c',
                    'mix.c', 'tls_dtor_static.c' ]
-    test_dependencies = [ dep_advapi32, dep_ntdll ]
     test_link_with = lib_mcfgthread_a
   endif
 
   if basename in [ 'memory.c' ]
-    test_dependencies = [ dep_ntdll ]
     test_link_with = lib_mcfgthread_minimal_dll
   endif
 
@@ -311,7 +307,7 @@ foreach src : test_src
                         cpp_args: test_cpp_args,
                         link_args: test_link_args,
                         sources: [ src, test_version_o ],
-                        dependencies: test_dependencies,
+                        dependencies: [ dep_ntdll ],
                         link_with: test_link_with,
                         build_by_default: false,
                         install: false)
