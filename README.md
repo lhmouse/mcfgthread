@@ -5,6 +5,8 @@ implements the _gthread interface set_, which is used internally both by **GCC**
 to provide synchronization of initialization of local static objects, and by
 **libstdc++** to provide C++11 threading facilities.
 
+![hyperfine](hyperfine.png)
+
 > [!WARNING]
 > This project uses some undocumented NT system calls and is not guaranteed to
 > work on some Windows versions. The author gives no warranty for this project.
