@@ -1,0 +1,24 @@
+;; This file is part of MCF Gthread.
+;; Copyright (C) 2022-2025 LH_Mouse. All wrongs reserved.
+;;
+;; MCF Gthread is free software. Licensing information is included in
+;; LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
+;; to this file.
+
+LIBRARY "NTDLL.DLL"
+EXPORTS
+  NtClose@4
+  NtCreateSection@28
+  NtDelayExecution@8
+  NtDuplicateObject@28
+  NtMapViewOfSection@40
+  NtRaiseHardError@24
+  NtReleaseKeyedEvent@16
+  NtUnmapViewOfSection@8
+  NtWaitForKeyedEvent@16
+  NtWaitForSingleObject@12
+  RtlDllShutdownInProgress@0
+  RtlFillMemory@12
+  RtlMoveMemory@12
+  RtlNtStatusToDosError@4
+  RtlZeroMemory@8
