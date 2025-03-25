@@ -203,12 +203,12 @@ if cc.has_link_argument('/LTCG')
   lib_mcfgthread_dll_link_args = [
         '-Wl,-nodefaultlib', '-Wl,-dynamicbase', '-Wl,-nxcompat', '-Wl,-opt:ref',
         '-Wl,-opt:icf', '-Xlinker', '-subsystem:windows,6.1', '-Wl,-kill-at',
-        '-Wl,-safeseh:no', '-Wl,-largeaddressaware' ]
+        '-Wl,-safeseh:no' ]
 else
   lib_mcfgthread_dll_link_args = [
         '-nostdlib', '-Wl,--dynamicbase', '-Wl,--nxcompat', '-Wl,--gc-sections',
         '-Wl,--subsystem,windows:6.1', '-Wl,--kill-at', '-Wl,--exclude-all-symbols',
-        '-Wl,--disable-auto-import', '-Wl,--large-address-aware' ]
+        '-Wl,--disable-auto-import' ]
 endif
 
 lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
