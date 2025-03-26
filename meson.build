@@ -172,7 +172,7 @@ install_headers(meson.current_build_dir() / 'version.h', subdir: 'mcfgthread')
 #===========================================================
 # Rules for 'lib/libmcfgthread'
 #===========================================================
-if target_machine.cpu() == 'x86'
+if cc.has_define('__i386__')
   def_kernel32 = 'mcfgthread/kernel32.i386.def'
   def_ntdll = 'mcfgthread/ntdll.i386.def'
 else
