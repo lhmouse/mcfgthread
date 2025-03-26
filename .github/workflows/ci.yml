@@ -86,15 +86,13 @@ jobs:
     runs-on: windows-2022
 
     defaults:
-      run:
-        shell: msys2 {0}
+      run: { shell: 'msys2 {0}' }
 
     steps:
     - uses: actions/checkout@v4
 
     - uses: msys2/setup-msys2@v2
-      with:
-        msystem: UCRT64
+      with: { msystem: UCRT64 }
 
     - name: Install dependencies
       run: >-
@@ -116,15 +114,13 @@ jobs:
     runs-on: windows-2022
 
     defaults:
-      run:
-        shell: msys2 {0}
+      run: { shell: 'msys2 {0}' }
 
     steps:
     - uses: actions/checkout@v4
 
     - uses: msys2/setup-msys2@v2
-      with:
-        msystem: MINGW32
+      with: { msystem: MINGW32 }
 
     - name: Install dependencies
       run: >-
@@ -146,15 +142,13 @@ jobs:
     runs-on: windows-2022
 
     defaults:
-      run:
-        shell: msys2 {0}
+      run: { shell: 'msys2 {0}' }
 
     steps:
     - uses: actions/checkout@v4
 
     - uses: msys2/setup-msys2@v2
-      with:
-        msystem: CLANG64
+      with: { msystem: CLANG64 }
 
     - name: Install dependencies
       run: >-
@@ -176,15 +170,13 @@ jobs:
     runs-on: windows-2022
 
     defaults:
-      run:
-        shell: msys2 {0}
+      run: { shell: 'msys2 {0}' }
 
     steps:
     - uses: actions/checkout@v4
 
     - uses: msys2/setup-msys2@v2
-      with:
-        msystem: UCRT64
+      with: { msystem: UCRT64 }
 
     - name: Install dependencies
       run: >-
@@ -207,15 +199,13 @@ jobs:
     runs-on: windows-2022
 
     defaults:
-      run:
-        shell: msys2 {0}
+      run: { shell: 'msys2 {0}' }
 
     steps:
     - uses: actions/checkout@v4
 
     - uses: msys2/setup-msys2@v2
-      with:
-        msystem: MINGW32
+      with: { msystem: MINGW32 }
 
     - name: Install dependencies
       run: >-
