@@ -16,7 +16,7 @@ on:
 
 jobs:
   ubuntu-x86-64:
-    name: Ubuntu cross build (x86-64 GCC)
+    name: Ubuntu cross build (x86-64 GCC; Wine)
     runs-on: ubuntu-22.04
 
     steps:
@@ -43,7 +43,7 @@ jobs:
       run: meson test -t15 -Cbuild_ci --print-errorlogs
 
   ubuntu-arm64:
-    name: Ubuntu cross build (ARM64 Clang)
+    name: Ubuntu cross build (ARM64 Clang; Wine)
     runs-on: ubuntu-22.04-arm
 
     steps:
@@ -162,18 +162,18 @@ jobs:
     runs-on: windows-2022
 
     defaults:
-      run: { shell: 'msys2 {0}' }
+      run: { shell: cmd }
 
     steps:
     - uses: actions/checkout@v4
 
-    - uses: msys2/setup-msys2@v2
-      with: { msystem: UCRT64 }
+    - uses: ilammy/msvc-dev-cmd@v1
+      with: { arch: amd64 }
 
     - name: Install dependencies
       run: >-
-           pacman -Sy --needed --noconfirm
-           mingw-w64-ucrt-x86_64-{meson,ninja}
+           choco uninstall -y llvm &
+           pip3 install --break-system-packages meson ninja
 
     - name: Configure
       run: >-
@@ -191,18 +191,18 @@ jobs:
     runs-on: windows-2022
 
     defaults:
-      run: { shell: 'msys2 {0}' }
+      run: { shell: cmd }
 
     steps:
     - uses: actions/checkout@v4
 
-    - uses: msys2/setup-msys2@v2
-      with: { msystem: MINGW32 }
+    - uses: ilammy/msvc-dev-cmd@v1
+      with: { arch: x86 }
 
     - name: Install dependencies
       run: >-
-           pacman -Sy --needed --noconfirm
-           mingw-w64-i686-{meson,ninja}
+           choco uninstall -y llvm &
+           pip3 install --break-system-packages meson ninja
 
     - name: Configure
       run: >-
