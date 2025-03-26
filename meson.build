@@ -133,7 +133,7 @@ add_project_arguments(
     '-D_WIN32_WINNT=0x0601', '-D__USE_MINGW_ANSI_STDIO', '-U_FORTIFY_SOURCE',
     cc.get_supported_arguments(
       '-masm=intel', '-msse2', '-mfpmath=sse', '-mcmodel=small',
-      '-momit-leaf-frame-pointer',
+      '-momit-leaf-frame-pointer', '-mno-outline-atomics',
       '-fno-stack-protector', '-fstrict-aliasing', '-ffast-math', '-fno-ident',
       '-fno-omit-frame-pointer', '-fmerge-all-constants',
       '-Werror=conversion', '-Werror=sign-compare', '-Werror=sign-conversion',
