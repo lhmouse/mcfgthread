@@ -395,7 +395,7 @@ const int _fltused = 0x9875;  /* dunno what it does but LINK complains.  */
 #ifdef __i386__
 extern const ULONG __MCF_i386_se_handle_table[];
 __asm__ (
-".section .rdata  \n"
+".section .rdata, \"dr\"  \n"
 "  .align 4  \n"
 "___MCF_i386_se_handle_table:  \n"
 "  .rva       ___MCF_i386_se_handler_0000  \n"
