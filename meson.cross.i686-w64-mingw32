@@ -1,10 +1,25 @@
-[properties]
-skip_sanity_check = true
+## No Copyright
+##
+## Permission to use, copy, modify, and/or distribute this software for
+## any purpose with or without fee is hereby granted.
+##
+## THE SOFTWARE IS PROVIDED “AS IS” AND THE AUTHOR DISCLAIMS ALL
+## WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES
+## OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE
+## FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY
+## DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
+## AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
+## OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 [binaries]
 c = 'i686-w64-mingw32-gcc'
+c_ld = 'bfd'
 cpp = 'i686-w64-mingw32-g++'
+cpp_ld = 'bfd'
+as = 'i686-w64-mingw32-as'
 ar = 'i686-w64-mingw32-ar'
+ld = 'i686-w64-mingw32-ld'
+objcopy = 'i686-w64-mingw32-objcopy'
 strip = 'i686-w64-mingw32-strip'
 windres = 'i686-w64-mingw32-windres'
 dlltool = 'i686-w64-mingw32-dlltool'
@@ -16,3 +31,6 @@ system = 'windows'
 cpu_family = 'x86'
 cpu = 'i686'
 endian = 'little'
+
+[properties]
+skip_sanity_check = true
