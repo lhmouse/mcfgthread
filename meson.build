@@ -125,10 +125,6 @@ cc = meson.get_compiler('c')
 cxx = meson.get_compiler('cpp')
 dlltool = find_program('dlltool', required: true)
 
-if get_option('enable-debug-checks')
-  add_project_arguments('-D__MCF_DEBUG', language: [ 'c', 'cpp' ])
-endif
-
 add_project_arguments(
     '-D_WIN32_WINNT=0x0601', '-D__USE_MINGW_ANSI_STDIO', '-U_FORTIFY_SOURCE',
     cc.get_supported_arguments(
@@ -157,6 +153,10 @@ add_project_arguments(
    cxx.get_supported_arguments(
         '-Wno-redundant-move', '-Wzero-as-null-pointer-constant'),
    language: 'cpp')
+
+if get_option('enable-debug-checks')
+  add_project_arguments('-D__MCF_DEBUG', language: [ 'c', 'cpp' ])
+endif
 
 #===========================================================
 # Rules for headers
