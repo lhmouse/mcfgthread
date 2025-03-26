@@ -22,18 +22,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Remove mono runtime
-      run: sudo apt-get purge mono-runtime
-
     - name: Install dependencies
       run: >-
+           sudo apt-get purge mono-runtime &&
            sudo apt-get update &&
            sudo apt-get install -y --no-install-recommends
            mingw-w64-{x86-64-dev,tools} {gcc,g++,binutils}-mingw-w64-x86-64
-           ninja-build python3-pip wine wine-binfmt
-
-    - name: Install newest Meson
-      run: >-
+           ninja-build python3-pip wine wine-binfmt &&
            sudo PIP_BREAK_SYSTEM_PACKAGES=1 pip3 install meson
 
     - name: Configure
@@ -58,10 +53,7 @@ jobs:
       run: >-
            sudo apt-get update &&
            sudo apt-get install -y --no-install-recommends
-           ninja-build python3-pip wine wine-binfmt
-
-    - name: Install newest Meson
-      run: >-
+           wget ninja-build python3-pip wine wine-binfmt &&
            sudo PIP_BREAK_SYSTEM_PACKAGES=1 pip3 install meson
 
     - name: Download llvm-mingw
