@@ -7,12 +7,12 @@
 
 #include "../mcfgthread/cxx11.hpp"
 
-#ifdef __EXCEPTIONS
-#  warning -fno-exceptions
+#if defined __cpp_exceptions || defined __EXCEPTIONS || defined _CPPUNWIND
+#  error -fno-exceptions
 #endif
 
-#ifdef __GXX_RTTI
-#  warning -fno-rtti
+#if defined __cpp_rtti || defined __GXX_RTTI || defined _CPPRTTI
+#  error -fno-rtti
 #endif
 
 int
