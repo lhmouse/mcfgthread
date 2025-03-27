@@ -63,18 +63,18 @@ template<typename _Tp>
 class thread_specific_ptr;  // inspired by boost
 
 // Provide limited support for `-fno-exceptions`.
-#if defined __EXCEPTIONS || defined __cpp_exceptions
+#if defined __cpp_exceptions || defined __EXCEPTIONS || defined _CPPUNWIND
 
 #  define __MCF_THROW_SYSTEM_ERROR(_Code, _Msg)  \
      throw ::std::system_error(static_cast<int>(::std::errc::_Code),  \
                                ::std::generic_category(), _Msg)
 
-#else  // __EXCEPTIONS
+#else  // __cpp_exceptions
 
 #  define __MCF_THROW_SYSTEM_ERROR(_Code, _Msg)  \
      ::__MCF_runtime_failure(_Msg)
 
-#endif  // __EXCEPTIONS
+#endif  // __cpp_exceptions
 
 // Provide `INVOKE` for C++11. [func.require]
 // At the moment, all results are discarded, so the expression always has a
