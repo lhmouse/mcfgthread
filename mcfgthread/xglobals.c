@@ -33,6 +33,7 @@ __asm__ (
 ".equiv ___MCF_i386_se_handler_0000, ___MCF_seh_top  \n"
 #elif defined __i386__ && defined _MSC_VER
 ".safeseh ___MCF_seh_top  \n"
+".text  \n"
 #endif
 );
 
