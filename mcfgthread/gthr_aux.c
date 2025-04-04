@@ -89,6 +89,7 @@ __asm__ (
 ".equiv ___MCF_i386_se_handler_0001, _do_call_once_seh_uhandler  \n"
 #  elif defined _MSC_VER
 ".safeseh _do_call_once_seh_uhandler  \n"
+".text  \n"
 #  endif
 #else
 /* Otherwise, SEH is table-based. `@unwind` without `@except`
