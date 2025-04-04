@@ -26,16 +26,15 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
     return r ? ExceptionContinueSearch : ExceptionContinueExecution;
   }
 
-#ifdef __i386__
 __asm__ (
-#  if defined __MCF_IN_DLL
+""
+#if defined __i386__ && defined __MCF_IN_DLL
 ".globl ___MCF_i386_se_handler_0000  \n"
 ".equiv ___MCF_i386_se_handler_0000, ___MCF_seh_top  \n"
-#  elif defined _MSC_VER
+#elif defined __i386__ && defined _MSC_VER
 ".safeseh ___MCF_seh_top  \n"
-#  endif
-"");
 #endif
+);
 
 __MCF_DLLEXPORT
 void
