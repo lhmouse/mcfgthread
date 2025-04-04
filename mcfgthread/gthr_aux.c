@@ -19,17 +19,15 @@ __asm__ (
 ".intel_syntax noprefix  \n"
 #endif
 #if defined __i386__
-/* On x86, SEH is stack-based.  */
 ".def _do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
-".def _do_call_once_seh_uhandler; .scl 3; .type 32; .endef  \n"
-"_do_call_once_seh_take_over:  \n"
-/* The stack is used as follows:
+".def _do_i386_call_once_on_except; .scl 3; .type 32; .endef  \n"
+/* On x86-32, SEH is stack-based. The stack is used as follows:
  *
  *    -20: argument to subroutines
  *    -16: unused
  *    -12: unused
  *     -8: establisher frame; pointer to previous frame
- *     -4: `do_call_once_seh_uhandler`
+ *     -4: `_do_i386_call_once_on_except`
  * EBP  0: saved frame pointer
  *      4: saved ESI
  *      8: return address
@@ -37,6 +35,7 @@ __asm__ (
  *     16: `init_proc`
  *     20: `arg`
  */
+"_do_call_once_seh_take_over:  \n"
 "  push esi  \n"
 "  push ebp  \n"
 "  mov ebp, esp  \n"
@@ -47,7 +46,7 @@ __asm__ (
 "  mov eax, fs:[esi]  \n"
 "  lea ecx, [ebp - 8]  \n"
 "  mov [ecx], eax  \n"
-"  mov eax, OFFSET _do_call_once_seh_uhandler  \n"
+"  mov eax, OFFSET _do_i386_call_once_on_except  \n"
 "  mov [ecx + 4], eax  \n"
 "  mov fs:[esi], ecx  \n"
 /* Make the call `(*init_proc) (arg)`. The argument is passed
@@ -63,8 +62,9 @@ __asm__ (
 "  leave  \n"
 "  pop esi  \n"
 "  jmp __MCF_once_release  \n"
-/* Define the exception handler.  */
-"_do_call_once_seh_uhandler:  \n"
+/* Define the exception handler, which is called either when an
+ * exception is raised, or the stack is being unwound.  */
+"_do_i386_call_once_on_except:  \n"
 "  push ebp  \n"
 "  mov ebp, esp  \n"
 "  and esp, -16  \n"
@@ -86,22 +86,17 @@ __asm__ (
 "  ret  \n"
 #  if defined __MCF_IN_DLL
 ".globl ___MCF_i386_se_handler_0001  \n"
-".equiv ___MCF_i386_se_handler_0001, _do_call_once_seh_uhandler  \n"
+".equiv ___MCF_i386_se_handler_0001, _do_i386_call_once_on_except  \n"
 #  elif defined _MSC_VER
-".safeseh _do_call_once_seh_uhandler  \n"
+".safeseh _do_i386_call_once_on_except  \n"
 ".text  \n"
 #  endif
-#else
-/* Otherwise, SEH is table-based. `@unwind` without `@except`
- * works only on x86-64 and not on ARM, so let's keep both for
- * simplicity.  */
+#elif defined __amd64__ && !defined __arm64ec__
 ".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
-".def do_call_once_seh_uhandler; .scl 3; .type 32; .endef  \n"
-"do_call_once_seh_take_over:  \n"
-".seh_proc do_call_once_seh_take_over  \n"
-".seh_handler do_call_once_seh_uhandler, @except, @unwind  \n"
-#  if defined __amd64__ && !defined __arm64ec__
-/* The stack is used as follows:
+".def do_amd64_call_once_on_unwind; .scl 3; .type 32; .endef  \n"
+/* On x86-64, SEH is table-based. We register an unwind handler
+ * which is not called when an exception is raised, but is called
+ * when the stack is being unwound. The stack is used as follows:
  *
  *    -32: shadow slot for subroutines
  *    -24: ditto
@@ -114,6 +109,9 @@ __asm__ (
  *     32: shadow slot for `arg` from R8
  *     40: unused
  */
+"do_call_once_seh_take_over:  \n"
+".seh_proc do_call_once_seh_take_over  \n"
+".seh_handler do_amd64_call_once_on_unwind, @unwind  \n"
 "  push rbp  \n"
 ".seh_pushreg rbp  \n"
 "  mov rbp, rsp  \n"
@@ -132,22 +130,39 @@ __asm__ (
 "  add rsp, 32  \n"
 "  pop rbp  \n"
 "  jmp _MCF_once_release  \n"
-/* Define the exception handler.  */
-"do_call_once_seh_uhandler:  \n"
+".seh_endproc  \n"
+/* Define the unwind handler, which is called the stack is being
+ * unwound.  */
+"do_amd64_call_once_on_unwind:  \n"
 "  sub rsp, 40  \n"
-/* Check whether `ExceptionFlags` contains `EXCEPTION_UNWINDING`.  */
-"  mov eax, [rcx + 4]  \n"
-"  test al, 2  \n"
-"  jz 2001f  \n"
 /* Locate the once flag from `EstablisherFrame`, and reset it.  */
 "  mov rcx, [rdx + 16]  \n"
 "  call _MCF_once_abort  \n"
-"2001:  \n"
 /* Return `ExceptionContinueSearch`.  */
 "  mov eax, 1  \n"
 "  add rsp, 40  \n"
 "  ret  \n"
-#  elif defined __aarch64__ || defined __arm64ec__
+#elif defined __aarch64__ || defined __arm64ec__
+".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
+".def do_arm64_call_once_on_except; .scl 3; .type 32; .endef  \n"
+/* On ARM64, SEH is table-based. Unlike x86-64 but like x86-32,
+ * there is only one kind of handler which is called in either
+ * case. The stack is used as follows:
+ *
+ *    -32: shadow slot for subroutines
+ *    -24: ditto
+ *    -16: ditto
+ *     -8: ditto
+ * RBP  0: establisher frame; saved frame pointer
+ *      8: return address
+ * ENT 16: shadow slot for `once` from RCX
+ *     24: shadow slot for `init_proc` from RDX
+ *     32: shadow slot for `arg` from R8
+ *     40: unused
+ */
+"do_call_once_seh_take_over:  \n"
+".seh_proc do_call_once_seh_take_over  \n"
+".seh_handler do_arm64_call_once_on_except, @except  \n"
 /* The stack is used as follows:
  *
  *  SP  0: saved FP
@@ -173,8 +188,9 @@ __asm__ (
 ".seh_save_fplr_x 32  \n"
 ".seh_endepilogue  \n"
 "  b _MCF_once_release  \n"
+".seh_endproc  \n"
 /* Define the exception handler.  */
-"do_call_once_seh_uhandler:  \n"
+"do_arm64_call_once_on_except:  \n"
 "  stp fp, lr, [sp, #-16]!  \n"
 /* Check whether `ExceptionFlags` contains `EXCEPTION_UNWINDING`.  */
 "  ldr w8, [x0, #4]  \n"
@@ -187,8 +203,6 @@ __asm__ (
 "  mov w0, #1  \n"
 "  ldp fp, lr, [sp], #16  \n"
 "  ret  \n"
-#  endif
-".seh_endproc  \n"
 #endif
 );
 
