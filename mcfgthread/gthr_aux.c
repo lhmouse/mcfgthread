@@ -21,6 +21,7 @@ __asm__ (
 #if defined __i386__
 /* On x86, SEH is stack-based.  */
 ".def _do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
+".def _do_call_once_seh_uhandler; .scl 3; .type 32; .endef  \n"
 "_do_call_once_seh_take_over:  \n"
 /* The stack is used as follows:
  *
@@ -36,7 +37,6 @@ __asm__ (
  *     16: `init_proc`
  *     20: `arg`
  */
-#  define __MCF_SEH_ONCE_PTR_DISPLACEMENT   20
 "  push esi  \n"
 "  push ebp  \n"
 "  mov ebp, esp  \n"
@@ -63,11 +63,39 @@ __asm__ (
 "  leave  \n"
 "  pop esi  \n"
 "  jmp __MCF_once_release  \n"
+/* Define the exception handler.  */
+"_do_call_once_seh_uhandler:  \n"
+"  push ebp  \n"
+"  mov ebp, esp  \n"
+"  and esp, -16  \n"
+"  sub esp, 16  \n"
+/* Check whether `ExceptionFlags` contains `EXCEPTION_UNWINDING`.  */
+"  mov ecx, [ebp + 8]  \n"
+"  mov eax, [ecx + 4]  \n"
+"  test al, 2  \n"
+"  jz 1001f  \n"
+/* Locate the once flag from `EstablisherFrame`, and reset it.  */
+"  mov eax, [ebp + 12]  \n"
+"  mov ecx, [eax + 20]  \n"
+"  mov [esp], ecx  \n"
+"  call __MCF_once_abort  \n"
+"1001:  \n"
+/* Return `ExceptionContinueSearch`.  */
+"  mov eax, 1  \n"
+"  leave  \n"
+"  ret  \n"
+#  if defined __MCF_IN_DLL
+".globl ___MCF_i386_se_handler_0001  \n"
+".equiv ___MCF_i386_se_handler_0001, _do_call_once_seh_uhandler  \n"
+#  elif defined _MSC_VER
+".safeseh _do_call_once_seh_uhandler  \n"
+#  endif
 #else
 /* Otherwise, SEH is table-based. `@unwind` without `@except`
  * works only on x86-64 and not on ARM, so let's keep both for
  * simplicity.  */
 ".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
+".def do_call_once_seh_uhandler; .scl 3; .type 32; .endef  \n"
 "do_call_once_seh_take_over:  \n"
 ".seh_proc do_call_once_seh_take_over  \n"
 ".seh_handler do_call_once_seh_uhandler, @except, @unwind  \n"
@@ -85,7 +113,6 @@ __asm__ (
  *     32: shadow slot for `arg` from R8
  *     40: unused
  */
-#  define __MCF_SEH_ONCE_PTR_DISPLACEMENT   16
 "  push rbp  \n"
 ".seh_pushreg rbp  \n"
 "  mov rbp, rsp  \n"
@@ -104,6 +131,21 @@ __asm__ (
 "  add rsp, 32  \n"
 "  pop rbp  \n"
 "  jmp _MCF_once_release  \n"
+/* Define the exception handler.  */
+"do_call_once_seh_uhandler:  \n"
+"  sub rsp, 40  \n"
+/* Check whether `ExceptionFlags` contains `EXCEPTION_UNWINDING`.  */
+"  mov eax, [rcx + 4]  \n"
+"  test al, 2  \n"
+"  jz 2001f  \n"
+/* Locate the once flag from `EstablisherFrame`, and reset it.  */
+"  mov rcx, [rdx + 16]  \n"
+"  call _MCF_once_abort  \n"
+"2001:  \n"
+/* Return `ExceptionContinueSearch`.  */
+"  mov eax, 1  \n"
+"  add rsp, 40  \n"
+"  ret  \n"
 #  elif defined __aarch64__ || defined __arm64ec__
 /* The stack is used as follows:
  *
@@ -113,7 +155,6 @@ __asm__ (
  *     24: unused
  * ENT 32: establisher frame
  */
-#  define __MCF_SEH_ONCE_PTR_DISPLACEMENT   -16
 "  stp fp, lr, [sp, #-32]!  \n"
 ".seh_save_fplr_x 32  \n"
 "  mov fp, sp  \n"
@@ -131,37 +172,24 @@ __asm__ (
 ".seh_save_fplr_x 32  \n"
 ".seh_endepilogue  \n"
 "  b _MCF_once_release  \n"
+/* Define the exception handler.  */
+"do_call_once_seh_uhandler:  \n"
+"  stp fp, lr, [sp, #-16]!  \n"
+/* Check whether `ExceptionFlags` contains `EXCEPTION_UNWINDING`.  */
+"  ldr w8, [x0, #4]  \n"
+"  tbz w8, #1, 3001f  \n"
+/* Locate the once flag from `EstablisherFrame`, and reset it.  */
+"  ldur x0, [x1, #-16]  \n"
+"  bl _MCF_once_abort  \n"
+"3001:  \n"
+/* Return `ExceptionContinueSearch`.  */
+"  mov w0, #1  \n"
+"  ldp fp, lr, [sp], #16  \n"
+"  ret  \n"
 #  endif
 ".seh_endproc  \n"
 #endif
 );
-
-static __attribute__((__used__, __unused__))  /* this must be good code!  */
-EXCEPTION_DISPOSITION
-__cdecl
-do_call_once_seh_uhandler(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
-  {
-    (void) ctx;
-    (void) disp_ctx;
-
-    /* If we are unwinding the stack, restore the once flag.  */
-    if(rec->ExceptionFlags & EXCEPTION_UNWINDING)
-      _MCF_once_abort(*(void**) ((char*) estab_frame + __MCF_SEH_ONCE_PTR_DISPLACEMENT));
-
-    /* Continue unwinding.  */
-    return ExceptionContinueSearch;
-  }
-
-#ifdef __i386__
-__asm__ (
-#  if defined __MCF_IN_DLL
-".globl ___MCF_i386_se_handler_0001  \n"
-".equiv ___MCF_i386_se_handler_0001, _do_call_once_seh_uhandler  \n"
-#  elif defined _MSC_VER
-".safeseh _do_call_once_seh_uhandler  \n"
-#  endif
-"");
-#endif
 
 __MCF_DLLEXPORT
 void
