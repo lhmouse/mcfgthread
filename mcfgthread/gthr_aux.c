@@ -12,12 +12,6 @@
 #include "xglobals.h"
 
 __asm__ (
-#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
-/* With Clang 18 `-masm=intel` had no effect on module-level assembly, which
- * requires this be declared explicitly. Notwithstanding, for x86 our code
- * must always be compiled with `-masm=intel`.  */
-".intel_syntax noprefix  \n"
-#endif
 #if defined __i386__
 /* On x86-32, SEH is stack-based. The stack is used as follows:
  *
@@ -33,6 +27,7 @@ __asm__ (
  *     16: `init_proc`
  *     20: `arg`
  */
+".intel_syntax noprefix  \n"
 ".def _do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
 "_do_call_once_seh_take_over:  \n"
 "  push esi  \n"
@@ -107,6 +102,7 @@ __asm__ (
  *     32: shadow slot for `arg` from R8
  *     40: unused
  */
+".intel_syntax noprefix  \n"
 ".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
 "do_call_once_seh_take_over:  \n"
 ".seh_proc do_call_once_seh_take_over  \n"
