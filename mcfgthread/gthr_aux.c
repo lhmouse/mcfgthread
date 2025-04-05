@@ -19,8 +19,6 @@ __asm__ (
 ".intel_syntax noprefix  \n"
 #endif
 #if defined __i386__
-".def _do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
-".def _do_i386_call_once_on_except; .scl 3; .type 32; .endef  \n"
 /* On x86-32, SEH is stack-based. The stack is used as follows:
  *
  *    -20: argument to subroutines
@@ -35,6 +33,8 @@ __asm__ (
  *     16: `init_proc`
  *     20: `arg`
  */
+".def _do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
+".def _do_i386_call_once_on_except; .scl 3; .type 32; .endef  \n"
 "_do_call_once_seh_take_over:  \n"
 "  push esi  \n"
 "  push ebp  \n"
@@ -92,8 +92,6 @@ __asm__ (
 ".text  \n"
 #  endif
 #elif defined __amd64__ && !defined __arm64ec__
-".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
-".def do_amd64_call_once_on_unwind; .scl 3; .type 32; .endef  \n"
 /* On x86-64, SEH is table-based. We register an unwind handler which is not
  * called when an exception is raised, but is called when the stack is being
  * unwound. The stack is used as follows:
@@ -109,6 +107,8 @@ __asm__ (
  *     32: shadow slot for `arg` from R8
  *     40: unused
  */
+".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
+".def do_amd64_call_once_on_unwind; .scl 3; .type 32; .endef  \n"
 "do_call_once_seh_take_over:  \n"
 ".seh_proc do_call_once_seh_take_over  \n"
 ".seh_handler do_amd64_call_once_on_unwind, @unwind  \n"
@@ -142,8 +142,6 @@ __asm__ (
 "  add rsp, 40  \n"
 "  ret  \n"
 #elif defined __aarch64__ || defined __arm64ec__
-".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
-".def do_arm64_call_once_on_except; .scl 3; .type 32; .endef  \n"
 /* On ARM64, SEH is table-based. Unlike x86-64 but like x86-32, there is only
  * one kind of handler which is called in either case. The stack is used as
  * follows:
@@ -159,6 +157,8 @@ __asm__ (
  *     32: shadow slot for `arg` from R8
  *     40: unused
  */
+".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
+".def do_arm64_call_once_on_except; .scl 3; .type 32; .endef  \n"
 "do_call_once_seh_take_over:  \n"
 ".seh_proc do_call_once_seh_take_over  \n"
 ".seh_handler do_arm64_call_once_on_except, @except  \n"
