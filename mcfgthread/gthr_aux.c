@@ -13,9 +13,9 @@
 
 __asm__ (
 #if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
-/* With Clang 18 `-masm=intel` had no effect on module-level assembly,
- * which requires this be declared explicitly. Notwithstanding, for x86
- * our code must always be compiled with `-masm=intel`.  */
+/* With Clang 18 `-masm=intel` had no effect on module-level assembly, which
+ * requires this be declared explicitly. Notwithstanding, for x86 our code
+ * must always be compiled with `-masm=intel`.  */
 ".intel_syntax noprefix  \n"
 #endif
 #if defined __i386__
@@ -49,9 +49,9 @@ __asm__ (
 "  mov eax, OFFSET _do_i386_call_once_on_except  \n"
 "  mov [ecx + 4], eax  \n"
 "  mov fs:[esi], ecx  \n"
-/* Make the call `(*init_proc) (arg)`. The argument is passed
- * both via the ECX register and on the stack, to allow both
- * `__cdecl` and `__thiscall` functions to work properly.  */
+/* Make the call `(*init_proc) (arg)`. The argument is passed both via the
+ * ECX register and on the stack, to allow both `__cdecl` and `__thiscall`
+ * functions to work properly.  */
 "  mov ecx, [ebp + 20]  \n"
 "  mov [ebp - 20], ecx  \n"
 "  call [ebp + 16]  \n"
@@ -62,8 +62,8 @@ __asm__ (
 "  leave  \n"
 "  pop esi  \n"
 "  jmp __MCF_once_release  \n"
-/* Define the exception handler, which is called either when an
- * exception is raised, or the stack is being unwound.  */
+/* Define the exception handler, which is called either when an exception is
+ * raised, or the stack is being unwound.  */
 "_do_i386_call_once_on_except:  \n"
 "  push ebp  \n"
 "  mov ebp, esp  \n"
@@ -94,9 +94,9 @@ __asm__ (
 #elif defined __amd64__ && !defined __arm64ec__
 ".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
 ".def do_amd64_call_once_on_unwind; .scl 3; .type 32; .endef  \n"
-/* On x86-64, SEH is table-based. We register an unwind handler
- * which is not called when an exception is raised, but is called
- * when the stack is being unwound. The stack is used as follows:
+/* On x86-64, SEH is table-based. We register an unwind handler which is not
+ * called when an exception is raised, but is called when the stack is being
+ * unwound. The stack is used as follows:
  *
  *    -32: shadow slot for subroutines
  *    -24: ditto
@@ -124,15 +124,14 @@ __asm__ (
 /* Make the call `(*init_proc) (arg)`.  */
 "  mov rcx, r8  \n"
 "  call rdx  \n"
-/* Disarm the once flag with a tail call. The x64 stack unwinder
- * recognizes `add rsp, SIZE` as the start of the epilogue.  */
+/* Disarm the once flag with a tail call. The x64 stack unwinder recognizes
+ * `add rsp, SIZE` as the start of the epilogue.  */
 "  mov rcx, [rbp + 16]  \n"
 "  add rsp, 32  \n"
 "  pop rbp  \n"
 "  jmp _MCF_once_release  \n"
 ".seh_endproc  \n"
-/* Define the unwind handler, which is called the stack is being
- * unwound.  */
+/* Define the unwind handler, which is called the stack is being unwound.  */
 "do_amd64_call_once_on_unwind:  \n"
 "  sub rsp, 40  \n"
 /* Locate the once flag from `EstablisherFrame`, and reset it.  */
@@ -145,9 +144,9 @@ __asm__ (
 #elif defined __aarch64__ || defined __arm64ec__
 ".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
 ".def do_arm64_call_once_on_except; .scl 3; .type 32; .endef  \n"
-/* On ARM64, SEH is table-based. Unlike x86-64 but like x86-32,
- * there is only one kind of handler which is called in either
- * case. The stack is used as follows:
+/* On ARM64, SEH is table-based. Unlike x86-64 but like x86-32, there is only
+ * one kind of handler which is called in either case. The stack is used as
+ * follows:
  *
  *    -32: shadow slot for subroutines
  *    -24: ditto
