@@ -34,7 +34,6 @@ __asm__ (
  *     20: `arg`
  */
 ".def _do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
-".def _do_i386_call_once_on_except; .scl 3; .type 32; .endef  \n"
 "_do_call_once_seh_take_over:  \n"
 "  push esi  \n"
 "  push ebp  \n"
@@ -64,6 +63,7 @@ __asm__ (
 "  jmp __MCF_once_release  \n"
 /* Define the exception handler, which is called either when an exception is
  * raised, or the stack is being unwound.  */
+".def _do_i386_call_once_on_except; .scl 3; .type 32; .endef  \n"
 "_do_i386_call_once_on_except:  \n"
 "  push ebp  \n"
 "  mov ebp, esp  \n"
@@ -108,7 +108,6 @@ __asm__ (
  *     40: unused
  */
 ".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
-".def do_amd64_call_once_on_unwind; .scl 3; .type 32; .endef  \n"
 "do_call_once_seh_take_over:  \n"
 ".seh_proc do_call_once_seh_take_over  \n"
 ".seh_handler do_amd64_call_once_on_unwind, @unwind  \n"
@@ -132,6 +131,7 @@ __asm__ (
 "  jmp _MCF_once_release  \n"
 ".seh_endproc  \n"
 /* Define the unwind handler, which is called the stack is being unwound.  */
+".def do_amd64_call_once_on_unwind; .scl 3; .type 32; .endef  \n"
 "do_amd64_call_once_on_unwind:  \n"
 "  sub rsp, 40  \n"
 /* Locate the once flag from `EstablisherFrame`, and reset it.  */
@@ -158,7 +158,6 @@ __asm__ (
  *     40: unused
  */
 ".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
-".def do_arm64_call_once_on_except; .scl 3; .type 32; .endef  \n"
 "do_call_once_seh_take_over:  \n"
 ".seh_proc do_call_once_seh_take_over  \n"
 ".seh_handler do_arm64_call_once_on_except, @except  \n"
@@ -188,7 +187,9 @@ __asm__ (
 ".seh_endepilogue  \n"
 "  b _MCF_once_release  \n"
 ".seh_endproc  \n"
-/* Define the exception handler.  */
+/* Define the exception handler, which is called either when an exception is
+ * raised, or the stack is being unwound.  */
+".def do_arm64_call_once_on_except; .scl 3; .type 32; .endef  \n"
 "do_arm64_call_once_on_except:  \n"
 "  stp fp, lr, [sp, #-16]!  \n"
 /* Check whether `ExceptionFlags` contains `EXCEPTION_UNWINDING`.  */
