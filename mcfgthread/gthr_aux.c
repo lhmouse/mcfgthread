@@ -142,29 +142,16 @@ __asm__ (
  * one kind of handler which is called in either case. The stack is used as
  * follows:
  *
- *    -32: shadow slot for subroutines
- *    -24: ditto
- *    -16: ditto
- *     -8: ditto
- * RBP  0: establisher frame; saved frame pointer
- *      8: return address
- * ENT 16: shadow slot for `once` from RCX
- *     24: shadow slot for `init_proc` from RDX
- *     32: shadow slot for `arg` from R8
- *     40: unused
- */
-".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
-"do_call_once_seh_take_over:  \n"
-".seh_proc do_call_once_seh_take_over  \n"
-".seh_handler do_arm64_call_once_on_except, @except  \n"
-/* The stack is used as follows:
- *
  *  SP  0: saved FP
  *      8: saved LR
  *     16: `once` from X0
  *     24: unused
  * ENT 32: establisher frame
  */
+".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
+"do_call_once_seh_take_over:  \n"
+".seh_proc do_call_once_seh_take_over  \n"
+".seh_handler do_arm64_call_once_on_except, @except  \n"
 "  stp fp, lr, [sp, #-32]!  \n"
 ".seh_save_fplr_x 32  \n"
 "  mov fp, sp  \n"
