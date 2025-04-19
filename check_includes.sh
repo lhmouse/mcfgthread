@@ -23,10 +23,10 @@ fi
 export CPPFLAGS="-D_WIN32_WINNT=0x0601 -Ibuild_debug"
 export CC CXX
 
-find ~+/"mcfgthread" -name "*.[hc]"  \
+find ${PWD}/"mcfgthread" -name "*.[hc]"  \
   | xargs -n 1 -P $(nproc) --  \
     sh -xec '${CC} ${CPPFLAGS} -x c -std=c99 $1 -S -o /dev/null' 0
 
-find ~+/"mcfgthread" -name "*.[hc]pp"  \
+find ${PWD}/"mcfgthread" -name "*.[hc]pp"  \
   | xargs -n 1 -P $(nproc) --  \
     sh -xec '${CXX} ${CPPFLAGS} -x c++ -std=c++11 $1 -S -o /dev/null' 0
