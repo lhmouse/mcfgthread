@@ -402,7 +402,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_TEB_LOAD_32_INDEXED(out, base, i)  \
     do  \
       __asm__ (  \
-        " ldr %w0, [x18, %w1, uxtw #2] "  \
+        " ldr %w0, [x18, %w1, uxtw 2] "  \
           : "=r"(*(out)) : "r"((base) / 4U + (i))  \
           : "memory");  \
     while(0)
@@ -410,7 +410,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_TEB_STORE_32_INDEXED(base, i, in)  \
     do  \
       __asm__ volatile (  \
-        " str %w0, [x18, %w1, uxtw #2] "  \
+        " str %w0, [x18, %w1, uxtw 2] "  \
           : : "r"(in), "r"((base) / 4U + (i))  \
           : "memory");  \
     while(0)
@@ -434,7 +434,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_TEB_LOAD_PTR_INDEXED(out, base, i)  \
     do  \
       __asm__ (  \
-        " ldr %0, [x18, %w1, uxtw #3] "  \
+        " ldr %0, [x18, %w1, uxtw 3] "  \
           : "=r"(*(out)) : "r"((base) / 8U + (i))  \
           : "memory");  \
     while(0)
@@ -442,7 +442,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_TEB_STORE_PTR_INDEXED(base, i, in)  \
     do  \
       __asm__ volatile (  \
-        " str %0, [x18, %w1, uxtw #3] "  \
+        " str %0, [x18, %w1, uxtw 3] "  \
           : : "r"(in), "r"((base) / 8U + (i))  \
           : "memory");  \
     while(0)
