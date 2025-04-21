@@ -152,20 +152,20 @@ __asm__ (
 "do_call_once_seh_take_over:  \n"
 ".seh_proc do_call_once_seh_take_over  \n"
 ".seh_handler do_arm64_call_once_on_except, @except  \n"
-"  stp fp, lr, [sp, #-32]!  \n"
+"  stp fp, lr, [sp, -32]!  \n"
 ".seh_save_fplr_x 32  \n"
 "  mov fp, sp  \n"
 ".seh_set_fp  \n"
 ".seh_endprologue  \n"
 /* Stash `once` for the handler.  */
-"  str x0, [sp, #16]  \n"
+"  str x0, [sp, 16]  \n"
 /* Make the call `(*init_proc) (arg)`.  */
 "  mov x0, x2  \n"
 "  blr x1  \n"
 /* Disarm the once flag with a tail call.  */
-"  ldr x0, [sp, #16]  \n"
+"  ldr x0, [sp, 16]  \n"
 ".seh_startepilogue  \n"
-"  ldp fp, lr, [sp], #32  \n"
+"  ldp fp, lr, [sp], 32  \n"
 ".seh_save_fplr_x 32  \n"
 ".seh_endepilogue  \n"
 "  b _MCF_once_release  \n"
@@ -174,17 +174,17 @@ __asm__ (
  * raised, or the stack is being unwound.  */
 ".def do_arm64_call_once_on_except; .scl 3; .type 32; .endef  \n"
 "do_arm64_call_once_on_except:  \n"
-"  stp fp, lr, [sp, #-16]!  \n"
+"  stp fp, lr, [sp, -16]!  \n"
 /* Check whether `ExceptionFlags` contains `EXCEPTION_UNWINDING`.  */
-"  ldr w8, [x0, #4]  \n"
-"  tbz w8, #1, 3001f  \n"
+"  ldr w8, [x0, 4]  \n"
+"  tbz w8, 1, 3001f  \n"
 /* Locate the once flag from `EstablisherFrame`, and reset it.  */
-"  ldur x0, [x1, #-16]  \n"
+"  ldur x0, [x1, -16]  \n"
 "  bl _MCF_once_abort  \n"
 "3001:  \n"
 /* Return `ExceptionContinueSearch`.  */
-"  mov w0, #1  \n"
-"  ldp fp, lr, [sp], #16  \n"
+"  mov w0, 1  \n"
+"  ldp fp, lr, [sp], 16  \n"
 "  ret  \n"
 #endif
 );
