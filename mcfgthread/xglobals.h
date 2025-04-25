@@ -148,7 +148,7 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
 /* Otherwise, SEH is table-based. This code must work on both x86_64 and ARM64,
  * as well as ARM64EC.  */
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
-    __asm__ (".seh_handler __MCF_seh_top, @except")  /* no semicolon  */
+    __asm__ (".seh_handler __MCF_seh_top, @except, @unwind")  /* no semicolon  */
 
 __MCF_ALWAYS_INLINE
 void

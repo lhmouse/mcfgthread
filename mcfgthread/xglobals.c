@@ -20,10 +20,12 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
     (void) ctx;
     (void) disp_ctx;
 
-    /* Check for uncaught C++ exceptions.  */
-    ULONG r = rec->ExceptionFlags & EXCEPTION_NONCONTINUABLE;
-    r |= (rec->ExceptionCode & 0x20FFFFFFU) - 0x20474343U;  /* (1 << 29) | 'GCC'  */
-    return r ? ExceptionContinueSearch : ExceptionContinueExecution;
+    /* GCC raises `0x20474343` to search for an exception handler, and raises
+     * `0x21474343` to unwind the stack. If the control flow resumes after
+     * `RaiseException()`, `std::terminate()` is called.  */
+    ULONG nonmatch = rec->ExceptionFlags & EXCEPTION_NONCONTINUABLE;
+    nonmatch |= (rec->ExceptionCode & 0x20FFFFFF) ^ 0x20474343;
+    return nonmatch ? ExceptionContinueSearch : ExceptionContinueExecution;
   }
 
 __asm__ (
