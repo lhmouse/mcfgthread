@@ -15,30 +15,30 @@ __asm__ (
 #if defined __i386__
 /* On x86-32, SEH is stack-based. The stack is used as follows:
  *
- *    -20: argument to subroutines
- *    -16: unused
- *    -12: unused
- *     -8: establisher frame; pointer to previous frame
- *     -4: `_do_i386_call_once_on_except`
+ *    -24: argument to subroutines
+ *    -20: unused
+ *    -16: establisher frame; pointer to previous frame
+ *    -12: `_do_i386_call_once_on_except`
+ *     -8: unused
+ *     -4: saved ESI
  * EBP  0: saved frame pointer
- *      4: saved ESI
- *      8: return address
- * ENT 12: `once`
- *     16: `init_proc`
- *     20: `arg`
+ *      4: return address
+ * ENT  8: `once`
+ *     12: `init_proc`
+ *     16: `arg`
  */
 ".intel_syntax noprefix  \n"
 ".def _do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
 "_do_call_once_seh_take_over:  \n"
-"  push esi  \n"
 "  push ebp  \n"
 "  mov ebp, esp  \n"
+"  push esi  \n"
 "  sub esp, 20  \n"
 /* Initialize the constant zero.  */
 "  xor esi, esi  \n"
 /* Install an SEH handler.  */
 "  mov eax, fs:[esi]  \n"
-"  lea ecx, [ebp - 8]  \n"
+"  lea ecx, [ebp - 16]  \n"
 "  mov [ecx], eax  \n"
 "  mov eax, OFFSET _do_i386_call_once_on_except  \n"
 "  mov [ecx + 4], eax  \n"
@@ -46,15 +46,16 @@ __asm__ (
 /* Make the call `(*init_proc) (arg)`. The argument is passed both via the
  * ECX register and on the stack, to allow both `__cdecl` and `__thiscall`
  * functions to work properly.  */
-"  mov ecx, [ebp + 20]  \n"
-"  mov [ebp - 20], ecx  \n"
-"  call [ebp + 16]  \n"
+"  mov ecx, [ebp + 16]  \n"
+"  mov [ebp - 24], ecx  \n"
+"  call [ebp + 12]  \n"
 /* Dismantle the SEH handler.  */
-"  mov eax, [ebp - 8]  \n"
+"  mov eax, [ebp - 16]  \n"
 "  mov fs:[esi], eax  \n"
 /* Disarm the once flag with a tail call.  */
-"  leave  \n"
+"  lea esp, [ebp - 4]  \n"
 "  pop esi  \n"
+"  pop ebp  \n"
 "  jmp __MCF_once_release  \n"
 /* Define the exception handler, which is called either when an exception is
  * raised, or the stack is being unwound.  */
@@ -71,7 +72,7 @@ __asm__ (
 "  jz 1001f  \n"
 /* Locate the once flag from `EstablisherFrame`, and reset it.  */
 "  mov eax, [ebp + 12]  \n"
-"  mov ecx, [eax + 20]  \n"
+"  mov ecx, [eax + 24]  \n"
 "  mov [esp], ecx  \n"
 "  call __MCF_once_abort  \n"
 "1001:  \n"
