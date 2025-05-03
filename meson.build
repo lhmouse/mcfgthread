@@ -234,7 +234,7 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
       version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
       install: true)
 
-if host_machine.system() == 'cygwin'
+if cc.has_define('__CYGWIN__')
   warning('Static linking is not supported on Cygwin or MSYS2.')
   lib_mcfgthread_a = lib_mcfgthread_dll
 else
