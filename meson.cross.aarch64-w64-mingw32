@@ -26,5 +26,11 @@ dlltool = 'aarch64-w64-mingw32-dlltool'
 pkg-config = 'aarch64-w64-mingw32-pkg-config'
 exe_wrapper = 'wine'
 
+[host_machine]
+system = 'windows'
+cpu_family = 'aarch64'
+cpu = 'aarch64'
+endian = 'little'
+
 [properties]
 skip_sanity_check = true
