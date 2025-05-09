@@ -57,7 +57,7 @@ jobs:
 
     - name: Download llvm-mingw
       run: >-
-           wget 'https://github.com/mstorsjo/llvm-mingw/releases/download/20250114/llvm-mingw-20250430-ucrt-ubuntu-22.04-aarch64.tar.xz' &&
+           wget 'https://github.com/mstorsjo/llvm-mingw/releases/download/20250430/llvm-mingw-20250430-ucrt-ubuntu-22.04-aarch64.tar.xz' &&
            tar -xaf llvm-mingw-20250430-ucrt-ubuntu-22.04-aarch64.tar.xz &&
            readlink -fe llvm-mingw-20250430-ucrt-ubuntu-22.04-aarch64/bin | tee -a ${GITHUB_PATH}
 
