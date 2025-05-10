@@ -40,8 +40,7 @@ __asm__ (
 "  mov eax, fs:[esi]  \n"
 "  lea ecx, [ebp - 16]  \n"
 "  mov [ecx], eax  \n"
-"  mov eax, OFFSET _do_i386_call_once_on_except  \n"
-"  mov [ecx + 4], eax  \n"
+"  mov DWORD PTR [ecx + 4], OFFSET _do_i386_call_once_on_except  \n"
 "  mov fs:[esi], ecx  \n"
 /* Make the call `(*init_proc) (arg)`. The argument is passed both via the
  * ECX register and on the stack, to allow both `__cdecl` and `__thiscall`
@@ -61,24 +60,18 @@ __asm__ (
  * raised, or the stack is being unwound.  */
 ".def _do_i386_call_once_on_except; .scl 3; .type 32; .endef  \n"
 "_do_i386_call_once_on_except:  \n"
-"  push ebp  \n"
-"  mov ebp, esp  \n"
-"  and esp, -16  \n"
-"  sub esp, 16  \n"
 /* Check whether `ExceptionFlags` contains `EXCEPTION_UNWINDING`.  */
-"  mov ecx, [ebp + 8]  \n"
-"  mov eax, [ecx + 4]  \n"
-"  test al, 2  \n"
+"  mov ecx, [esp + 4]  \n"
+"  test BYTE PTR [ecx + 4], 2  \n"
 "  jz 1001f  \n"
 /* Locate the once flag from `EstablisherFrame`, and reset it.  */
-"  mov eax, [ebp + 12]  \n"
-"  mov ecx, [eax + 24]  \n"
-"  mov [esp], ecx  \n"
+"  mov eax, [esp + 8]  \n"
+"  push DWORD PTR [eax + 24]  \n"
 "  call __MCF_once_abort  \n"
+"  pop eax  \n"
 "1001:  \n"
 /* Return `ExceptionContinueSearch`.  */
 "  mov eax, 1  \n"
-"  leave  \n"
 "  ret  \n"
 #  if defined __MCF_IN_DLL
 ".globl ___MCF_i386_se_handler_0001  \n"
