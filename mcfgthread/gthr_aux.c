@@ -23,7 +23,7 @@ __asm__ (
  *     -4: saved ESI
  * EBP  0: saved frame pointer
  *      4: return address
- * ENT  8: `once`
+ * CFA  8: `once`
  *     12: `init_proc`
  *     16: `arg`
  */
@@ -91,7 +91,7 @@ __asm__ (
  *     -8: ditto
  * RBP  0: establisher frame; saved frame pointer
  *      8: return address
- * ENT 16: shadow slot for `once` from RCX
+ * CFA 16: shadow slot for `once` from RCX
  *     24: shadow slot for `init_proc` from RDX
  *     32: shadow slot for `arg` from R8
  *     40: unused
@@ -140,7 +140,7 @@ __asm__ (
  *      8: saved LR
  *     16: `once` from X0
  *     24: unused
- * ENT 32: establisher frame
+ * CFA 32: establisher frame
  */
 ".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
 "do_call_once_seh_take_over:  \n"
