@@ -29,7 +29,7 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
   }
 
 __asm__ (
-""
+".text  \n"
 #if defined __i386__ && defined __MCF_IN_DLL
 ".globl ___MCF_i386_se_handler_0000  \n"
 ".equiv ___MCF_i386_se_handler_0000, ___MCF_seh_top  \n"
