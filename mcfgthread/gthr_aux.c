@@ -12,6 +12,7 @@
 #include "xglobals.h"
 
 __asm__ (
+".text  \n"
 #if defined __i386__
 /* On x86-32, SEH is stack-based. The stack is used as follows:
  *
