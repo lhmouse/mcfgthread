@@ -594,6 +594,12 @@ __MCF_runtime_failure(const char* __where) __MCF_noexcept;
 #define __MCF_ASSERT(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
 #define __MCF_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__MCF_EX __func__))
 
+/* For the DWARF2 exception model, if this function returns a non-null
+ * pointer, it shall be passed to `__register_frame_info()`.  */
+__MCF_FWD_IMPORT __MCF_FN_CONST
+const void*
+__MCF_frame_info_opt(void) __MCF_noexcept;
+
 /* Below are public declarations fo users.  */
 typedef void* __MCF_HANDLE;
 typedef struct timespec __MCF_timespec;

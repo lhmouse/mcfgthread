@@ -111,7 +111,7 @@ test_src = [
   'test/thread_join_deadlock.cpp', 'test/thread_ctor_throw.cpp', 'test/thread_id.cpp',
   'test/thread_decay_copy.cpp', 'test/this_thread_sleep_until.cpp',
   'test/this_thread_sleep_for.cpp', 'test/tls_dtor.cpp', 'test/tls_many.cpp',
-  'test/gthr_call_once_unwind_seh.cpp' ]
+  'test/gthr_call_once_unwind.cpp', 'test/gthr_call_once_unwind_static.cpp' ]
 
 #===========================================================
 # Global configuration
@@ -274,7 +274,8 @@ foreach src : test_src
   endif
 
   if basename in [ 'win8.c', 'win10.c', 'self_oom.c', 'tls_dtor_static.c',
-                   'mix.c', 'tls_dtor_static.c' ]
+                   'mix.c', 'tls_dtor_static.c',
+                   'gthr_call_once_unwind_static.cpp' ]
     test_link_with = lib_mcfgthread_a
   endif
 

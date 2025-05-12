@@ -31,9 +31,15 @@ __asm__ (
 ".intel_syntax noprefix  \n"
 ".def _do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
 "_do_call_once_seh_take_over:  \n"
+".cfi_startproc  \n"
+".cfi_personality 0x1B, _do_i386_call_once_dw2_personality  \n"
 "  push ebp  \n"
+".cfi_def_cfa_offset 8  \n"
+".cfi_offset 5, -8  \n"
 "  mov ebp, esp  \n"
+".cfi_def_cfa_register 5  \n"
 "  push esi  \n"
+".cfi_offset 6, -12 \n"
 "  sub esp, 20  \n"
 /* Initialize the constant zero.  */
 "  xor esi, esi  \n"
@@ -55,8 +61,12 @@ __asm__ (
 /* Disarm the once flag with a tail call.  */
 "  lea esp, [ebp - 4]  \n"
 "  pop esi  \n"
+".cfi_restore 6  \n"
 "  pop ebp  \n"
+".cfi_restore 5  \n"
+".cfi_def_cfa 4, 4  \n"
 "  jmp __MCF_once_release  \n"
+".cfi_endproc  \n"
 /* Define the exception handler, which is called either when an exception is
  * raised, or the stack is being unwound.  */
 ".def _do_i386_call_once_on_except; .scl 3; .type 32; .endef  \n"
@@ -81,6 +91,31 @@ __asm__ (
 ".safeseh _do_i386_call_once_on_except  \n"
 ".text  \n"
 #  endif
+/* For the DWARF2 exception model, unwind the stack with the personality
+ * routine, which is documented by Itanium C++ ABI.  */
+".def _do_i386_call_once_dw2_personality; .scl 3; .type 32; .endef  \n"
+"_do_i386_call_once_dw2_personality:  \n"
+/* Check whether the stack is being unwound, which is indicated by the
+ * `_UA_CLEANUP_PHASE` flag.  */
+"  test BYTE PTR [esp + 8], 2  \n"
+"  jz 1002f  \n"
+/* Load EBP (register 5) from the unwind context into ECX. `_Unwind_Context`
+ * is defined in 'libgcc/unwind-dw2.c'.  */
+"  mov eax, [esp + 24]  \n"
+"  mov ecx, [eax + 5 * 4]  \n"
+"  mov ecx, [ecx]  \n"
+/* Dismantle the SEH handler.  */
+"  mov eax, [ecx - 16]  \n"
+"  xor edx, edx  \n"
+"  mov fs:[edx], eax  \n"
+/* Locate the once flag from the frame pointer, and reset it.  */
+"  push DWORD PTR [ecx + 8]  \n"
+"  call __MCF_once_abort  \n"
+"  pop eax  \n"
+"1002:  \n"
+/* Return `_URC_CONTINUE_UNWIND`.  */
+"  mov eax, 8  \n"
+"  ret  \n"
 #elif defined __amd64__ && !defined __arm64ec__
 /* On x86-64, SEH is table-based. We register an unwind handler which is not
  * called when an exception is raised, but is called when the stack is being

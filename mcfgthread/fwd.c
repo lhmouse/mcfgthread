@@ -121,6 +121,26 @@ __MCF_runtime_failure(const char* where)
     __builtin_trap();
   }
 
+#if __MCF_IN_DLL && defined __GCC_HAVE_DWARF2_CFI_ASM && !defined __SEH__
+extern const char eh_probe[];
+__asm__ (
+".section .eh_frame, \"dr\"  \n"
+"_eh_probe:  \n"
+".text  \n"
+);
+#endif
+
+__MCF_DLLEXPORT
+const void*
+__MCF_frame_info_opt(void)
+  {
+#if __MCF_IN_DLL && defined __GCC_HAVE_DWARF2_CFI_ASM && !defined __SEH__
+    return eh_probe;
+#else
+    return __MCF_nullptr;
+#endif
+  }
+
 __MCF_DLLEXPORT
 uint32_t
 _MCF_get_win32_error(void)
