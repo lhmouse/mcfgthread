@@ -7,6 +7,7 @@
 
 LIBRARY "KERNEL32.DLL"
 EXPORTS
+  BaseGetNamedObjectDirectory@4
   CreateThread@24
   DecodePointer@4
   EncodePointer@4
