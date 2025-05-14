@@ -389,12 +389,13 @@ memcmp(const void* src, const void* dst, size_t size)
     return __MCF_mcompare(src, dst, size);
   }
 
-#ifdef _MSC_VER
+#if defined _MSC_VER
+/* Microsoft LINK requires this for a reason.  */
 __attribute__((__used__))
-const int _fltused = 0x9875;  /* dunno what it does but LINK complains.  */
+const int _fltused = 0x9875;
 #endif
 
-#ifdef __i386__
+#if defined __i386__ && defined __MCF_IN_DLL
 extern const ULONG __MCF_i386_se_handle_table[];
 __asm__ (
 ".section .rdata, \"dr\"  \n"
