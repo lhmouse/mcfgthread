@@ -213,7 +213,7 @@ endif
 
 lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       c_pch: 'mcfgthread/xprecompiled.h',
-      c_args: [ '-fasynchronous-unwind-tables', '-ffreestanding', '-D__MCF_IN_DLL' ],
+      c_args: [ '-funwind-tables', '-ffreestanding', '-D__MCF_IN_DLL' ],
       override_options: { 'c_winlibs': '' },
       link_args: lib_mcfgthread_dll_link_args,
       sources: [ mcfgthread_src_min, mcfgthread_version_o ],
@@ -225,7 +225,7 @@ lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
 
 lib_mcfgthread_dll = shared_library('mcfgthread',
       c_pch: 'mcfgthread/xprecompiled.h',
-      c_args: [ '-fasynchronous-unwind-tables', '-ffreestanding', '-D__MCF_IN_DLL' ],
+      c_args: [ '-funwind-tables', '-ffreestanding', '-D__MCF_IN_DLL' ],
       override_options: { 'c_winlibs': '' },
       link_args: lib_mcfgthread_dll_link_args,
       objects: lib_mcfgthread_minimal_dll.extract_objects(mcfgthread_src_min),
@@ -242,7 +242,7 @@ if cc.has_define('__CYGWIN__')
 else
   lib_mcfgthread_a = static_library('mcfgthread',
         c_pch: 'mcfgthread/xprecompiled.h',
-        c_args: [ '-fasynchronous-unwind-tables', '-ffunction-sections' ],
+        c_args: [ '-funwind-tables', '-ffunction-sections' ],
         sources: [ mcfgthread_src_min, mcfgthread_src_ex ],
         install: true)
 endif
