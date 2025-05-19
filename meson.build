@@ -262,12 +262,11 @@ test_version_o = import('windows').compile_resources(
       depend_files: [ 'mcfgthread/version.manifest' ])
 
 foreach src : test_src
+  basename = src.replace('test/', '')
   test_c_args = []
   test_cpp_args = []
   test_link_args = []
   test_link_with = lib_mcfgthread_dll
-
-  basename = src.replace('test/', '')
 
   if src.endswith('.cpp')
     test_link_args = [ '-static-libgcc', '-static-libstdc++' ]
