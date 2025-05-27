@@ -471,11 +471,11 @@ const _load_config_used __attribute__((__used__)) =
   {
     .Size = sizeof(IMAGE_LOAD_CONFIG_DIRECTORY),
     .DependentLoadFlags = LOAD_LIBRARY_SEARCH_SYSTEM32,
-#if defined __MCF_i386_se_handler_count
+#if defined __i386__ && defined __MCF_IN_DLL
     .SEHandlerTable = (ULONG_PTR) __MCF_i386_se_handle_table,
     .SEHandlerCount = __MCF_i386_se_handler_count,
 #endif
-#if defined __MCF_arm64ec_chpe_metadata
+#if defined __arm64ec__
     .CHPEMetadataPointer = (ULONG_PTR) __MCF_arm64ec_chpe_metadata,
 #endif
   };
