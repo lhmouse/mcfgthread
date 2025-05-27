@@ -79,7 +79,6 @@ __asm__ (
 ".equiv @__MCF_safeseh__gthr_once, _do_i386_call_once_on_except  \n"
 #  elif defined _MSC_VER
 ".safeseh _do_i386_call_once_on_except  \n"
-".text  \n"
 #  endif
 ".globl @feat.00  \n"
 ".set @feat.00, 1  \n"
