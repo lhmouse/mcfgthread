@@ -407,7 +407,7 @@ __asm__ (
 );
 #endif
 
-struct IMAGE_LOAD_CONFIG_DIRECTORY_10_0_26100_0
+struct _IMAGE_LOAD_CONFIG_DIRECTORY_10_0_26100_0
   {
     DWORD Size;
     DWORD TimeDateStamp;
