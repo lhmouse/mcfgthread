@@ -391,8 +391,7 @@ memcmp(const void* src, const void* dst, size_t size)
 
 #if defined _MSC_VER
 /* Microsoft LINK requires this for a reason.  */
-__attribute__((__used__))
-const int _fltused = 0x9875;
+const int _fltused __attribute__((__used__)) = 0x9875;
 #endif
 
 #if defined __i386__ && defined __MCF_IN_DLL
@@ -408,17 +407,64 @@ __asm__ (
 );
 #endif
 
-__attribute__((__used__))
-const IMAGE_LOAD_CONFIG_DIRECTORY _load_config_used =
+struct IMAGE_LOAD_CONFIG_DIRECTORY_10_0_26100_0
+  {
+    DWORD Size;
+    DWORD TimeDateStamp;
+    WORD MajorVersion;
+    WORD MinorVersion;
+    DWORD GlobalFlagsClear;
+    DWORD GlobalFlagsSet;
+    DWORD CriticalSectionDefaultTimeout;
+    ULONG_PTR DeCommitFreeBlockThreshold;
+    ULONG_PTR DeCommitTotalFreeThreshold;
+    ULONG_PTR LockPrefixTable;
+    ULONG_PTR MaximumAllocationSize;
+    ULONG_PTR VirtualMemoryThreshold;
+    __MCF_64_32(ULONG_PTR ProcessAffinityMask, DWORD ProcessHeapFlags);
+    __MCF_64_32(DWORD ProcessHeapFlags, DWORD ProcessAffinityMask);
+    WORD CSDVersion;
+    WORD DependentLoadFlags;
+    ULONG_PTR EditList;
+    ULONG_PTR SecurityCookie;
+    ULONG_PTR SEHandlerTable;
+    ULONG_PTR SEHandlerCount;
+    ULONG_PTR GuardCFCheckFunctionPointer;
+    ULONG_PTR GuardCFDispatchFunctionPointer;
+    ULONG_PTR GuardCFFunctionTable;
+    ULONG_PTR GuardCFFunctionCount;
+    DWORD GuardFlags;
+    IMAGE_LOAD_CONFIG_CODE_INTEGRITY CodeIntegrity;
+    ULONG_PTR GuardAddressTakenIatEntryTable;
+    ULONG_PTR GuardAddressTakenIatEntryCount;
+    ULONG_PTR GuardLongJumpTargetTable;
+    ULONG_PTR GuardLongJumpTargetCount;
+    ULONG_PTR DynamicValueRelocTable;
+    ULONG_PTR CHPEMetadataPointer;
+    ULONG_PTR GuardRFFailureRoutine;
+    ULONG_PTR GuardRFFailureRoutineFunctionPointer;
+    DWORD DynamicValueRelocTableOffset;
+    WORD DynamicValueRelocTableSection;
+    WORD Reserved2;
+    ULONG_PTR GuardRFVerifyStackPointerFunctionPointer;
+    DWORD HotPatchTableOffset;
+    DWORD Reserved3;
+    ULONG_PTR EnclaveConfigurationPointer;
+    ULONG_PTR VolatileMetadataPointer;
+    ULONG_PTR GuardEHContinuationTable;
+    ULONG_PTR GuardEHContinuationCount;
+    ULONG_PTR GuardXFGCheckFunctionPointer;
+    ULONG_PTR GuardXFGDispatchFunctionPointer;
+    ULONG_PTR GuardXFGTableDispatchFunctionPointer;
+    ULONG_PTR CastGuardOsDeterminedFailureMode;
+    ULONG_PTR GuardMemcpyFunctionPointer;
+  }
+const _load_config_used __attribute__((__used__)) =
   {
     .Size = sizeof(IMAGE_LOAD_CONFIG_DIRECTORY),
 
     /* DEPENDENTLOADFLAG  */
-#if defined __MINGW64_VERSION_MAJOR && (__MINGW64_VERSION_MAJOR <= 12)
-#  define DependentLoadFlags  Reserved1
-#endif
     .DependentLoadFlags = LOAD_LIBRARY_SEARCH_SYSTEM32,
-#undef DependentLoadFlags
 
     /* SAFESEH  */
 #if defined __MCF_i386_se_handler_count
