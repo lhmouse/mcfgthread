@@ -434,7 +434,10 @@ struct _IMAGE_LOAD_CONFIG_DIRECTORY_10_0_26100_0
     ULONG_PTR GuardCFFunctionTable;
     ULONG_PTR GuardCFFunctionCount;
     DWORD GuardFlags;
-    IMAGE_LOAD_CONFIG_CODE_INTEGRITY CodeIntegrity;
+    WORD CodeIntegrity_Flags;
+    WORD CodeIntegrity_Catalog;
+    DWORD CodeIntegrity_CatalogOffset;
+    DWORD CodeIntegrity_Reserved;
     ULONG_PTR GuardAddressTakenIatEntryTable;
     ULONG_PTR GuardAddressTakenIatEntryCount;
     ULONG_PTR GuardLongJumpTargetTable;
