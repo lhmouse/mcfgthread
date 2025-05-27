@@ -31,12 +31,14 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
 __asm__ (
 ".text  \n"
 #if defined __i386__ && defined __MCF_IN_DLL
-".globl ___MCF_i386_se_handler_0000  \n"
-".equiv ___MCF_i386_se_handler_0000, ___MCF_seh_top  \n"
+".globl @__MCF_safeseh__seh_top  \n"
+".equiv @__MCF_safeseh__seh_top, ___MCF_seh_top  \n"
 #elif defined __i386__ && defined _MSC_VER
 ".safeseh ___MCF_seh_top  \n"
 ".text  \n"
 #endif
+".globl @feat.00  \n"
+".set @feat.00, 1  \n"
 );
 
 __MCF_DLLEXPORT
@@ -400,11 +402,10 @@ __asm__ (
 ".section .rdata, \"dr\"  \n"
 "  .align 4  \n"
 "___MCF_i386_se_handle_table:  \n"
-"  .rva       ___MCF_i386_se_handler_0000  \n"
-"  .rva       ___MCF_i386_se_handler_0001  \n"
-#  define __MCF_i386_se_handler_count   2
-".text  \n"
+"  .rva @__MCF_safeseh__seh_top  \n"
+"  .rva @__MCF_safeseh__gthr_once  \n"
 );
+#  define __MCF_i386_se_handler_count  2
 #endif
 
 #if defined __arm64ec__
