@@ -421,8 +421,8 @@ struct _IMAGE_LOAD_CONFIG_DIRECTORY_10_0_26100_0
     ULONG_PTR LockPrefixTable;
     ULONG_PTR MaximumAllocationSize;
     ULONG_PTR VirtualMemoryThreshold;
-    __MCF_64_32(ULONG_PTR ProcessAffinityMask, DWORD ProcessHeapFlags);
-    __MCF_64_32(DWORD ProcessHeapFlags, DWORD ProcessAffinityMask);
+    ULONG_PTR __MCF_64_32(ProcessAffinityMask, ProcessHeapFlags);
+    DWORD __MCF_64_32(ProcessHeapFlags, ProcessAffinityMask);
     WORD CSDVersion;
     WORD DependentLoadFlags;
     ULONG_PTR EditList;
