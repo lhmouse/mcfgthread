@@ -407,6 +407,11 @@ __asm__ (
 );
 #endif
 
+#if defined __arm64ec__
+extern const BYTE __chpe_metadata[];
+#  define __MCF_arm64ec_chpe_metadata  __chpe_metadata
+#endif
+
 struct _IMAGE_LOAD_CONFIG_DIRECTORY_10_0_26100_0
   {
     DWORD Size;
@@ -465,14 +470,13 @@ struct _IMAGE_LOAD_CONFIG_DIRECTORY_10_0_26100_0
 const _load_config_used __attribute__((__used__)) =
   {
     .Size = sizeof(IMAGE_LOAD_CONFIG_DIRECTORY),
-
-    /* DEPENDENTLOADFLAG  */
     .DependentLoadFlags = LOAD_LIBRARY_SEARCH_SYSTEM32,
-
-    /* SAFESEH  */
 #if defined __MCF_i386_se_handler_count
-    .SEHandlerTable = (ULONG) __MCF_i386_se_handle_table,
+    .SEHandlerTable = (ULONG_PTR) __MCF_i386_se_handle_table,
     .SEHandlerCount = __MCF_i386_se_handler_count,
+#endif
+#if defined __MCF_arm64ec_chpe_metadata
+    .CHPEMetadataPointer = (ULONG_PTR) __MCF_arm64ec_chpe_metadata,
 #endif
   };
 
