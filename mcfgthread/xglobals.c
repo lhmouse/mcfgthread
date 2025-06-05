@@ -408,8 +408,7 @@ __asm__ (
 #endif
 
 #if defined __arm64ec__
-extern const BYTE __chpe_metadata[];
-#  define __MCF_arm64ec_chpe_metadata  __chpe_metadata
+#  define __MCF_arm64ec_chpe_metadata  * not implemented yet *
 #endif
 
 struct _IMAGE_LOAD_CONFIG_DIRECTORY_10_0_26100_0
