@@ -397,21 +397,20 @@ const int _fltused __attribute__((__used__)) = 0x9875;
 #if defined __i386__ && defined __MCF_IN_DLL
 /* On x86-32, the load config directory contains the address and size of the
  * exception handler table. Exception handlers that are not in this table
- * will be rejected by the system. `__MCF_i386_se_handle_table` points to an
+ * will be rejected by the system. `__MCF_i386_se_handler_table` points to an
  * array of RVAs to valid handlers, and the value of (not the value it points
- * to) `__MCF_i386_se_handle_count` is the number of handlers.  */
-extern const ULONG __MCF_i386_se_handle_table[];
-extern char __MCF_i386_se_handle_count[];
+ * to) `__MCF_i386_se_handler_count` is the number of handlers.  */
+extern const ULONG __MCF_i386_se_handler_table[];
+extern char __MCF_i386_se_handler_count[];
 __asm__ (
 ".section .rdata, \"dr\"  \n"
 "  .align 4  \n"
-"___MCF_i386_se_handle_table:  \n"
+"___MCF_i386_se_handler_table:  \n"
 "  .rva @__MCF_safeseh__seh_top  \n"
 "  .rva @__MCF_safeseh__gthr_once  \n"
-".equiv ___MCF_i386_se_handle_count, (. - ___MCF_i386_se_handle_table) / 4  \n"
+".equiv ___MCF_i386_se_handler_count, (. - ___MCF_i386_se_handler_table) / 4  \n"
 ".text  \n"
 );
-#  define __MCF_i386_se_handler_count  2
 #endif
 
 #if defined __arm64ec__
@@ -478,7 +477,7 @@ const _load_config_used __attribute__((__used__)) =
     .Size = sizeof(IMAGE_LOAD_CONFIG_DIRECTORY),
     .DependentLoadFlags = LOAD_LIBRARY_SEARCH_SYSTEM32,
 #if defined __i386__ && defined __MCF_IN_DLL
-    .SEHandlerTable = (ULONG_PTR) __MCF_i386_se_handle_table,
+    .SEHandlerTable = (ULONG_PTR) __MCF_i386_se_handler_table,
     .SEHandlerCount = (ULONG_PTR) __MCF_i386_se_handler_count,
 #endif
 #if defined __arm64ec__
