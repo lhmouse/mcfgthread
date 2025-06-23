@@ -413,7 +413,7 @@ __MCF_C3(_MCF_atomic_cmpxchg_weak_p,WIDTH,ORDER) (volatile void* __mem, void* __
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 20002
 
 /* Add `val` to, or subtract `val` from, an atomic integer. `mem` shall point to an
- * atomic integer of the specified width. These function return the old value.
+ * atomic integer of the specified width. These functions return the old value.
  *
  *   [INTEGER]
  *   _MCF_atomic_xadd_[WIDTH]_[ORDER] (volatile void* mem, [INTEGER] val);
