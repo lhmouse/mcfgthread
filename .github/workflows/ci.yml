@@ -11,12 +11,12 @@ concurrency:
 on:
   push:
     branches:
-    - master
-    - releases/*
+      - master
+      - releases/*
 
   pull_request:
     branches:
-    - master
+      - master
 
 jobs:
   ubuntu-x86-64:
@@ -24,57 +24,57 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: >-
-           sudo apt-get purge mono-runtime &&
-           sudo apt-get install -y --no-install-recommends
-           mingw-w64-{x86-64-dev,tools} {gcc,g++,binutils}-mingw-w64-x86-64
-           ninja-build python3-pip wine wine-binfmt &&
-           sudo PIP_BREAK_SYSTEM_PACKAGES=1 pip3 install meson
+      - name: Install dependencies
+        run: >-
+             sudo apt-get purge mono-runtime &&
+             sudo apt-get install -y --no-install-recommends
+             mingw-w64-{x86-64-dev,tools} {gcc,g++,binutils}-mingw-w64-x86-64
+             ninja-build python3-pip wine wine-binfmt &&
+             sudo PIP_BREAK_SYSTEM_PACKAGES=1 pip3 install meson
 
-    - name: Configure
-      run: >-
-           meson setup --cross-file meson.cross.x86_64-w64-mingw32
-           -Denable-debug-checks=true -Doptimization=1 build_ci
+      - name: Configure
+        run: >-
+             meson setup --cross-file meson.cross.x86_64-w64-mingw32
+             -Denable-debug-checks=true -Doptimization=1 build_ci
 
-    - name: Build
-      run: meson compile -Cbuild_ci
+      - name: Build
+        run: meson compile -Cbuild_ci
 
-    - name: Run tests
-      run: meson test -t15 -Cbuild_ci --print-errorlogs
+      - name: Run tests
+        run: meson test -t15 -Cbuild_ci --print-errorlogs
 
   ubuntu-arm64:
     name: Ubuntu cross build (ARM64 Clang; Wine)
     runs-on: ubuntu-22.04-arm
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: >-
-           sudo apt-get purge mono-runtime &&
-           sudo apt-get install -y --no-install-recommends
-           wget ninja-build python3-pip wine wine-binfmt &&
-           sudo PIP_BREAK_SYSTEM_PACKAGES=1 pip3 install meson
+      - name: Install dependencies
+        run: >-
+             sudo apt-get purge mono-runtime &&
+             sudo apt-get install -y --no-install-recommends
+             wget ninja-build python3-pip wine wine-binfmt &&
+             sudo PIP_BREAK_SYSTEM_PACKAGES=1 pip3 install meson
 
-    - name: Download llvm-mingw
-      run: >-
-           wget 'https://github.com/mstorsjo/llvm-mingw/releases/download/20250430/llvm-mingw-20250430-ucrt-ubuntu-22.04-aarch64.tar.xz' &&
-           tar -xaf llvm-mingw-20250430-ucrt-ubuntu-22.04-aarch64.tar.xz &&
-           readlink -fe llvm-mingw-20250430-ucrt-ubuntu-22.04-aarch64/bin | tee -a ${GITHUB_PATH}
+      - name: Download llvm-mingw
+        run: >-
+             wget 'https://github.com/mstorsjo/llvm-mingw/releases/download/20250430/llvm-mingw-20250430-ucrt-ubuntu-22.04-aarch64.tar.xz' &&
+             tar -xaf llvm-mingw-20250430-ucrt-ubuntu-22.04-aarch64.tar.xz &&
+             readlink -fe llvm-mingw-20250430-ucrt-ubuntu-22.04-aarch64/bin | tee -a ${GITHUB_PATH}
 
-    - name: Configure
-      run: >-
-           meson setup --cross-file meson.cross.aarch64-w64-mingw32
-           -Denable-debug-checks=true -Doptimization=1 build_ci
+      - name: Configure
+        run: >-
+             meson setup --cross-file meson.cross.aarch64-w64-mingw32
+             -Denable-debug-checks=true -Doptimization=1 build_ci
 
-    - name: Build
-      run:  meson compile -Cbuild_ci
+      - name: Build
+        run:  meson compile -Cbuild_ci
 
-    - name: Run tests
-      run: meson test -t20 -Cbuild_ci --print-errorlogs
+      - name: Run tests
+        run: meson test -t20 -Cbuild_ci --print-errorlogs
 
   msys2-ucrt64:
     name: MSYS2 native build (x86-64 GCC)
@@ -84,25 +84,25 @@ jobs:
       run: { shell: 'msys2 {0}' }
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - uses: msys2/setup-msys2@v2
-      with: { msystem: UCRT64 }
+      - uses: msys2/setup-msys2@v2
+        with: { msystem: UCRT64 }
 
-    - name: Install dependencies
-      run: >-
-           pacman -S --needed --noconfirm
-           mingw-w64-ucrt-x86_64-{{headers,crt,tools}-git,gcc,meson}
+      - name: Install dependencies
+        run: >-
+             pacman -S --needed --noconfirm
+             mingw-w64-ucrt-x86_64-{{headers,crt,tools}-git,gcc,meson}
 
-    - name: Configure
-      run: >-
-           meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
+      - name: Configure
+        run: >-
+             meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
 
-    - name: Build
-      run: meson compile -Cbuild_ci
+      - name: Build
+        run: meson compile -Cbuild_ci
 
-    - name: Run tests
-      run: meson test -t2 -Cbuild_ci --print-errorlogs
+      - name: Run tests
+        run: meson test -t2 -Cbuild_ci --print-errorlogs
 
   msys2-mingw32:
     name: MSYS2 native build (x86-32 GCC)
@@ -112,25 +112,25 @@ jobs:
       run: { shell: 'msys2 {0}' }
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - uses: msys2/setup-msys2@v2
-      with: { msystem: MINGW32 }
+      - uses: msys2/setup-msys2@v2
+        with: { msystem: MINGW32 }
 
-    - name: Install dependencies
-      run: >-
-           pacman -S --needed --noconfirm
-           mingw-w64-i686-{{headers,crt,tools}-git,gcc,meson,ninja}
+      - name: Install dependencies
+        run: >-
+             pacman -S --needed --noconfirm
+             mingw-w64-i686-{{headers,crt,tools}-git,gcc,meson,ninja}
 
-    - name: Configure
-      run: >-
-           meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
+      - name: Configure
+        run: >-
+             meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
 
-    - name: Build
-      run: meson compile -Cbuild_ci
+      - name: Build
+        run: meson compile -Cbuild_ci
 
-    - name: Run tests
-      run: meson test -t2 -Cbuild_ci --print-errorlogs
+      - name: Run tests
+        run: meson test -t2 -Cbuild_ci --print-errorlogs
 
   msys2-clang64:
     name: MSYS2 native build (x86-64 Clang)
@@ -140,25 +140,25 @@ jobs:
       run: { shell: 'msys2 {0}' }
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - uses: msys2/setup-msys2@v2
-      with: { msystem: CLANG64 }
+      - uses: msys2/setup-msys2@v2
+        with: { msystem: CLANG64 }
 
-    - name: Install dependencies
-      run: >-
-           pacman -S --needed --noconfirm
-           mingw-w64-clang-x86_64-{{headers,crt,tools}-git,clang,meson,ninja}
+      - name: Install dependencies
+        run: >-
+             pacman -S --needed --noconfirm
+             mingw-w64-clang-x86_64-{{headers,crt,tools}-git,clang,meson,ninja}
 
-    - name: Configure
-      run: >-
-           meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
+      - name: Configure
+        run: >-
+             meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
 
-    - name: Build
-      run: meson compile -Cbuild_ci
+      - name: Build
+        run: meson compile -Cbuild_ci
 
-    - name: Run tests
-      run: meson test -t2 -Cbuild_ci --print-errorlogs
+      - name: Run tests
+        run: meson test -t2 -Cbuild_ci --print-errorlogs
 
   msys2-arm64:
     name: MSYS2 native build (ARM64 Clang)
@@ -168,25 +168,25 @@ jobs:
       run: { shell: 'msys2 {0}' }
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - uses: msys2/setup-msys2@v2
-      with: { msystem: CLANGARM64 }
+      - uses: msys2/setup-msys2@v2
+        with: { msystem: CLANGARM64 }
 
-    - name: Install dependencies
-      run: >-
-           pacman -S --needed --noconfirm
-           mingw-w64-clang-aarch64-{{headers,crt,tools}-git,clang,meson,ninja}
+      - name: Install dependencies
+        run: >-
+             pacman -S --needed --noconfirm
+             mingw-w64-clang-aarch64-{{headers,crt,tools}-git,clang,meson,ninja}
 
-    - name: Configure
-      run: >-
-           meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
+      - name: Configure
+        run: >-
+             meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
 
-    - name: Build
-      run: meson compile -Cbuild_ci
+      - name: Build
+        run: meson compile -Cbuild_ci
 
-    - name: Run tests
-      run: meson test -t2 -Cbuild_ci --print-errorlogs
+      - name: Run tests
+        run: meson test -t2 -Cbuild_ci --print-errorlogs
 
   clang-cl-x64:
     name: MSVC native build (x86-64 Clang-CL)
@@ -196,26 +196,26 @@ jobs:
       run: { shell: cmd }
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - uses: ilammy/msvc-dev-cmd@v1
-      with: { arch: amd64 }
+      - uses: ilammy/msvc-dev-cmd@v1
+        with: { arch: amd64 }
 
-    - name: Install dependencies
-      run: >-
-           choco uninstall -y llvm &
-           pip3 install --break-system-packages meson ninja
+      - name: Install dependencies
+        run: >-
+             choco uninstall -y llvm &
+             pip3 install --break-system-packages meson ninja
 
-    - name: Configure
-      run: >-
-           meson setup --native-file meson.native.clang
-           -Denable-debug-checks=true -Doptimization=1 build_ci
+      - name: Configure
+        run: >-
+             meson setup --native-file meson.native.clang
+             -Denable-debug-checks=true -Doptimization=1 build_ci
 
-    - name: Build
-      run: meson compile -Cbuild_ci
+      - name: Build
+        run: meson compile -Cbuild_ci
 
-    - name: Run tests
-      run: meson test -t2 -Cbuild_ci --print-errorlogs
+      - name: Run tests
+        run: meson test -t2 -Cbuild_ci --print-errorlogs
 
   clang-cl-x86:
     name: MSVC native build (x86-32 Clang-CL)
@@ -225,26 +225,26 @@ jobs:
       run: { shell: cmd }
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - uses: ilammy/msvc-dev-cmd@v1
-      with: { arch: x86 }
+      - uses: ilammy/msvc-dev-cmd@v1
+        with: { arch: x86 }
 
-    - name: Install dependencies
-      run: >-
-           choco uninstall -y llvm &
-           pip3 install --break-system-packages meson ninja
+      - name: Install dependencies
+        run: >-
+             choco uninstall -y llvm &
+             pip3 install --break-system-packages meson ninja
 
-    - name: Configure
-      run: >-
-           meson setup --native-file meson.native.clang
-           -Denable-debug-checks=true -Doptimization=1 build_ci
+      - name: Configure
+        run: >-
+             meson setup --native-file meson.native.clang
+             -Denable-debug-checks=true -Doptimization=1 build_ci
 
-    - name: Build
-      run: meson compile -Cbuild_ci
+      - name: Build
+        run: meson compile -Cbuild_ci
 
-    - name: Run tests
-      run: meson test -t2 -Cbuild_ci --print-errorlogs
+      - name: Run tests
+        run: meson test -t2 -Cbuild_ci --print-errorlogs
 
   clang-cl-arm64:
     name: MSVC native build (ARM64 Clang-CL)
@@ -254,23 +254,23 @@ jobs:
       run: { shell: cmd }
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - uses: ilammy/msvc-dev-cmd@v1
-      with: { arch: arm64 }
+      - uses: ilammy/msvc-dev-cmd@v1
+        with: { arch: arm64 }
 
-    - name: Install dependencies
-      run: >-
-           choco uninstall -y llvm &
-           pip3 install --break-system-packages meson ninja
+      - name: Install dependencies
+        run: >-
+             choco uninstall -y llvm &
+             pip3 install --break-system-packages meson ninja
 
-    - name: Configure
-      run: >-
-           meson setup --native-file meson.native.clang
-           -Denable-debug-checks=true -Doptimization=1 build_ci
+      - name: Configure
+        run: >-
+             meson setup --native-file meson.native.clang
+             -Denable-debug-checks=true -Doptimization=1 build_ci
 
-    - name: Build
-      run: meson compile -Cbuild_ci
+      - name: Build
+        run: meson compile -Cbuild_ci
 
-    - name: Run tests
-      run: meson test -t2 -Cbuild_ci --print-errorlogs
+      - name: Run tests
+        run: meson test -t2 -Cbuild_ci --print-errorlogs
