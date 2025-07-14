@@ -584,7 +584,8 @@ template<> struct __MCF_static_assert<true> { static const int __one = 1; };
  * and `__MCF_CHECK()` effects abnormal termination of the current program.  */
 __MCF_FWD_IMPORT __MCF_NEVER_RETURN __MCF_NEVER_INLINE __MCF_FN_COLD
 void
-__MCF_runtime_failure(const char* __where) __MCF_noexcept;
+__MCF_runtime_failure(const char* __where)
+  __MCF_noexcept;
 
 #ifdef __MCF_DEBUG
 #  undef __MCF_UNREACHABLE
@@ -658,42 +659,49 @@ typedef __MCF_cxa_dtor_thiscall* __MCF_cxa_dtor_any_;
 /* Gets the last error number, like `GetLastError()`.  */
 __MCF_FWD_IMPORT __MCF_FN_PURE
 uint32_t
-_MCF_get_win32_error(void) __MCF_noexcept;
+_MCF_get_win32_error(void)
+  __MCF_noexcept;
 
 /* Gets the system page size, which is usually 4KiB or 8KiB.  */
 __MCF_FWD_IMPORT __MCF_FN_CONST
 size_t
-_MCF_get_page_size(void) __MCF_noexcept;
+_MCF_get_page_size(void)
+  __MCF_noexcept;
 
 /* Gets the number of logical processors in the current group.  */
 __MCF_FWD_IMPORT __MCF_FN_CONST
 size_t
-_MCF_get_processor_count(void) __MCF_noexcept;
+_MCF_get_processor_count(void)
+  __MCF_noexcept;
 
 /* Gets the mask of active processors. Each bit 1 denotes a processor that
  * has been configured into the system.  */
 __MCF_FWD_IMPORT __MCF_FN_CONST
 uintptr_t
-_MCF_get_active_processor_mask(void) __MCF_noexcept;
+_MCF_get_active_processor_mask(void)
+  __MCF_noexcept;
 
 /* Declare some helper functions.  */
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
-_MCF_minz(size_t __x, size_t __y) __MCF_noexcept
+_MCF_minz(size_t __x, size_t __y)
+  __MCF_noexcept
   {
     return (__y < __x) ? __y : __x;
   }
 
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
-_MCF_maxz(size_t __x, size_t __y) __MCF_noexcept
+_MCF_maxz(size_t __x, size_t __y)
+  __MCF_noexcept
   {
     return (__x < __y) ? __y : __x;
   }
 
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 intptr_t
-_MCF_dim(intptr_t __x, intptr_t __y) __MCF_noexcept
+_MCF_dim(intptr_t __x, intptr_t __y)
+  __MCF_noexcept
   {
     return (__x > __y) ? (__x - __y) : 0;
   }

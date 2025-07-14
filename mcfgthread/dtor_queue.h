@@ -40,7 +40,8 @@ struct __MCF_dtor_queue
  * Returns 0 if an element has been pushed, or -1 if out of memory.  */
 __MCF_DTOR_QUEUE_IMPORT
 int
-__MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtor_element* __elem) __MCF_noexcept;
+__MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtor_element* __elem)
+  __MCF_noexcept;
 
 /* Pops the newest element which matches `__dso` from the queue. If `__dso` is
  * null, then any element is considered a match. This function is used to
@@ -50,7 +51,8 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtor_element* __ele
  * Returns 0 if an element has been popped, or -1 if the queue is empty.  */
 __MCF_DTOR_QUEUE_IMPORT
 int
-__MCF_dtor_queue_pop(__MCF_dtor_element* __elem, __MCF_dtor_queue* __queue, void* __dso) __MCF_noexcept;
+__MCF_dtor_queue_pop(__MCF_dtor_element* __elem, __MCF_dtor_queue* __queue, void* __dso)
+  __MCF_noexcept;
 
 /* Removes all elements that match `__dso` from the queue. If `__dso` is null,
  * then any element is considered a match. Refer to the Itanium C++ ABI for
@@ -59,7 +61,8 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* __elem, __MCF_dtor_queue* __queue, void
  * Returns the number of elements that have been removed.  */
 __MCF_DTOR_QUEUE_IMPORT
 size_t
-__MCF_dtor_queue_remove(__MCF_dtor_queue* __queue, void* __dso) __MCF_noexcept;
+__MCF_dtor_queue_remove(__MCF_dtor_queue* __queue, void* __dso)
+  __MCF_noexcept;
 
 __MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_DTOR_QUEUE_  */

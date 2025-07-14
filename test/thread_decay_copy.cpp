@@ -33,19 +33,23 @@ struct probe
         ::abort();
       }
 
-    probe(probe&& r) noexcept
+    probe(probe&& r)
+      noexcept
       {
         this->value = r.value;
         r.value = -1;
       }
 
-    probe& operator=(const probe& r)
+    probe&
+    operator=(const probe& r)
       {
         ::fprintf(stderr, "copy assignment invoked; aborting: %d\n", r.value);
         ::abort();
       }
 
-    probe& operator=(probe&& r) noexcept
+    probe&
+    operator=(probe&& r)
+      noexcept
       {
         if(this == &r) {
           ::fprintf(stderr, "move assignment to self invoked; aborting: %d\n", r.value);

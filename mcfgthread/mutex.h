@@ -43,7 +43,8 @@ struct __MCF_mutex
  * `{0}`, like other structs.  */
 __MCF_MUTEX_INLINE
 void
-_MCF_mutex_init(_MCF_mutex* __mutex) __MCF_noexcept;
+_MCF_mutex_init(_MCF_mutex* __mutex)
+  __MCF_noexcept;
 
 /* Attempts to lock a mutex.
  *
@@ -61,11 +62,13 @@ _MCF_mutex_init(_MCF_mutex* __mutex) __MCF_noexcept;
  * has timed out.  */
 __MCF_MUTEX_IMPORT
 int
-_MCF_mutex_lock_slow(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_noexcept;
+_MCF_mutex_lock_slow(_MCF_mutex* __mutex, const int64_t* __timeout_opt)
+  __MCF_noexcept;
 
 __MCF_MUTEX_INLINE
 int
-_MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_noexcept;
+_MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt)
+  __MCF_noexcept;
 
 /* Releases a mutex. If the mutex has not been locked, the behavior is undefined.
  *
@@ -73,11 +76,13 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_noexcep
  * mutex.  */
 __MCF_MUTEX_IMPORT
 void
-_MCF_mutex_unlock_slow(_MCF_mutex* __mutex) __MCF_noexcept;
+_MCF_mutex_unlock_slow(_MCF_mutex* __mutex)
+  __MCF_noexcept;
 
 __MCF_MUTEX_INLINE
 void
-_MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_noexcept;
+_MCF_mutex_unlock(_MCF_mutex* __mutex)
+  __MCF_noexcept;
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
@@ -86,7 +91,8 @@ _MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_noexcept;
  * this file.  */
 __MCF_MUTEX_INLINE
 void
-_MCF_mutex_init(_MCF_mutex* __mutex) __MCF_noexcept
+_MCF_mutex_init(_MCF_mutex* __mutex)
+  __MCF_noexcept
   {
     _MCF_mutex __temp = __MCF_0_INIT;
     _MCF_atomic_store_pptr_rel(__mutex, &__temp);
@@ -94,7 +100,8 @@ _MCF_mutex_init(_MCF_mutex* __mutex) __MCF_noexcept
 
 __MCF_MUTEX_INLINE
 int
-_MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_noexcept
+_MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt)
+  __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
     _MCF_mutex __old = { 0, 0, 0, 0 };
@@ -109,7 +116,8 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt) __MCF_noexcep
 
 __MCF_MUTEX_INLINE
 void
-_MCF_mutex_unlock(_MCF_mutex* __mutex) __MCF_noexcept
+_MCF_mutex_unlock(_MCF_mutex* __mutex)
+  __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
     _MCF_mutex __old = { 1, 0, 0, 0 };

@@ -34,7 +34,8 @@ struct __MCF_shared_mutex
  * `{0}`, like other structs.  */
 __MCF_SHARED_MUTEX_INLINE
 void
-_MCF_shared_mutex_init(_MCF_shared_mutex* __smutex) __MCF_noexcept;
+_MCF_shared_mutex_init(_MCF_shared_mutex* __smutex)
+  __MCF_noexcept;
 
 /* Attempts to lock a shared mutex in shared mode.
  *
@@ -52,11 +53,13 @@ _MCF_shared_mutex_init(_MCF_shared_mutex* __smutex) __MCF_noexcept;
  * -1 if the operation has timed out.  */
 __MCF_SHARED_MUTEX_IMPORT
 int
-_MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt) __MCF_noexcept;
+_MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt)
+  __MCF_noexcept;
 
 __MCF_SHARED_MUTEX_INLINE
 int
-_MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt) __MCF_noexcept;
+_MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt)
+  __MCF_noexcept;
 
 /* Attempts to lock a shared mutex in exclusive mode.
  *
@@ -73,22 +76,26 @@ _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __time
  * or -1 if the operation has timed out.  */
 __MCF_SHARED_MUTEX_IMPORT
 int
-_MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt) __MCF_noexcept;
+_MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt)
+  __MCF_noexcept;
 
 __MCF_SHARED_MUTEX_INLINE
 int
-_MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt) __MCF_noexcept;
+_MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt)
+  __MCF_noexcept;
 
 /* Releases a shared mutex, in either shared or exclusive mode. This function may
  * be called by a different thread from which locked the same mutex. If the mutex
  * has not been locked, the behavior is undefined.  */
 __MCF_SHARED_MUTEX_IMPORT
 void
-_MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* __smutex) __MCF_noexcept;
+_MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* __smutex)
+  __MCF_noexcept;
 
 __MCF_SHARED_MUTEX_INLINE
 void
-_MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex) __MCF_noexcept;
+_MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex)
+  __MCF_noexcept;
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
@@ -97,7 +104,8 @@ _MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex) __MCF_noexcept;
  * this file.  */
 __MCF_SHARED_MUTEX_INLINE
 void
-_MCF_shared_mutex_init(_MCF_shared_mutex* __smutex) __MCF_noexcept
+_MCF_shared_mutex_init(_MCF_shared_mutex* __smutex)
+  __MCF_noexcept
   {
     _MCF_shared_mutex __temp = __MCF_0_INIT;
     _MCF_atomic_store_pptr_rel(__smutex, &__temp);
@@ -105,7 +113,8 @@ _MCF_shared_mutex_init(_MCF_shared_mutex* __smutex) __MCF_noexcept
 
 __MCF_SHARED_MUTEX_INLINE
 int
-_MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt) __MCF_noexcept
+_MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt)
+  __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
     _MCF_shared_mutex __old = { 0, 0 };
@@ -120,7 +129,8 @@ _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __time
 
 __MCF_SHARED_MUTEX_INLINE
 int
-_MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt) __MCF_noexcept
+_MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt)
+  __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
     _MCF_shared_mutex __old = { 0, 0 };
@@ -135,7 +145,8 @@ _MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smutex, const int64_t* __t
 
 __MCF_SHARED_MUTEX_INLINE
 void
-_MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex) __MCF_noexcept
+_MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex)
+  __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
     _MCF_shared_mutex __old = { 1, 0 };

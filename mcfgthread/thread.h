@@ -77,11 +77,13 @@ enum __MCF_thread_priority __MCF_CXX11(: int)
  * via `_MCF_get_win32_error()`.  */
 __MCF_THREAD_IMPORT
 _MCF_thread*
-_MCF_thread_new_aligned(_MCF_thread_procedure* __proc, size_t __align, const void* __data_opt, size_t __size) __MCF_noexcept;
+_MCF_thread_new_aligned(_MCF_thread_procedure* __proc, size_t __align, const void* __data_opt, size_t __size)
+  __MCF_noexcept;
 
 __MCF_THREAD_INLINE
 _MCF_thread*
-_MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __size) __MCF_noexcept;
+_MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __size)
+  __MCF_noexcept;
 
 /* Attaches a thread that was not created by `_MCF_thread_new_aligned()`.
  *
@@ -97,51 +99,60 @@ _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __
  * `_MCF_thread_new_aligned()`.  */
 __MCF_THREAD_IMPORT
 _MCF_thread*
-__MCF_thread_attach_foreign(_MCF_thread* __thrd) __MCF_noexcept;
+__MCF_thread_attach_foreign(_MCF_thread* __thrd)
+  __MCF_noexcept;
 
 /* Gets a pointer to user-defined data of a thread. If the thread does not have
  * user-defined data, because zero was specified for the `__size` parameter to
  * `_MCF_thread_new()`, a null pointer is returned.  */
 __MCF_THREAD_INLINE __MCF_FN_PURE
 __MCF_CXX(const) void*
-_MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_noexcept;
+_MCF_thread_get_data(const _MCF_thread* __thrd)
+  __MCF_noexcept;
 
 /* Gets the number of references of a thread struct.  */
 __MCF_THREAD_INLINE __MCF_FN_PURE
 int32_t
-_MCF_thread_get_ref(const _MCF_thread* __thrd) __MCF_noexcept;
+_MCF_thread_get_ref(const _MCF_thread* __thrd)
+  __MCF_noexcept;
 
 /* Adds a reference count of a thread structure. This may be useful if you
  * wish to pass a pointer to other code.  */
 __MCF_THREAD_INLINE
 void
-_MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_noexcept;
+_MCF_thread_add_ref(_MCF_thread* __thrd)
+  __MCF_noexcept;
 
 /* Drops a reference count of a thread structure. An active thread owns a
  * reference count of itself and `_MCF_thread_new()` returns another one. When
  * the reference count is reduced to zero, the structure is deallocated.  */
 __MCF_THREAD_IMPORT
 void
-_MCF_thread_drop_ref_nonnull(_MCF_thread* __thrd) __MCF_noexcept;
+_MCF_thread_drop_ref_nonnull(_MCF_thread* __thrd)
+  __MCF_noexcept;
 
 __MCF_THREAD_INLINE
 void
-_MCF_thread_drop_ref(_MCF_thread* __thrd_opt) __MCF_noexcept;
+_MCF_thread_drop_ref(_MCF_thread* __thrd_opt)
+  __MCF_noexcept;
 
 /* Gets the ID of a thread.  */
 __MCF_THREAD_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
 uint32_t
-_MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_noexcept;
+_MCF_thread_get_tid(const _MCF_thread* __thrd)
+  __MCF_noexcept;
 
 /* Gets the handle of a thread.  */
 __MCF_THREAD_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
 __MCF_HANDLE
-_MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_noexcept;
+_MCF_thread_get_handle(const _MCF_thread* __thrd)
+  __MCF_noexcept;
 
 /* Exits from a thread.  */
 __MCF_THREAD_IMPORT __MCF_NEVER_RETURN
 void
-_MCF_thread_exit(void) __MCF_noexcept;
+_MCF_thread_exit(void)
+  __MCF_noexcept;
 
 /* Waits for a thread to finish execution.
  *
@@ -155,7 +166,8 @@ _MCF_thread_exit(void) __MCF_noexcept;
  * timed out.  */
 __MCF_THREAD_IMPORT
 int
-_MCF_thread_wait(const _MCF_thread* __thrd_opt, const int64_t* __timeout_opt) __MCF_noexcept;
+_MCF_thread_wait(const _MCF_thread* __thrd_opt, const int64_t* __timeout_opt)
+  __MCF_noexcept;
 
 /* Gets the priority of a thread.
  *
@@ -167,7 +179,8 @@ _MCF_thread_wait(const _MCF_thread* __thrd_opt, const int64_t* __timeout_opt) __
  * indicate an error.  */
 __MCF_THREAD_IMPORT
 _MCF_thread_priority
-_MCF_thread_get_priority(const _MCF_thread* __thrd_opt) __MCF_noexcept;
+_MCF_thread_get_priority(const _MCF_thread* __thrd_opt)
+  __MCF_noexcept;
 
 /* Sets the priority of a thread.
  *
@@ -181,7 +194,8 @@ _MCF_thread_get_priority(const _MCF_thread* __thrd_opt) __MCF_noexcept;
  * Returns 0 upon success and -1 upon failure.  */
 __MCF_THREAD_IMPORT
 int
-_MCF_thread_set_priority(_MCF_thread* __thrd_opt, _MCF_thread_priority __priority) __MCF_noexcept;
+_MCF_thread_set_priority(_MCF_thread* __thrd_opt, _MCF_thread_priority __priority)
+  __MCF_noexcept;
 
 /* Gets a non-owning pointer to the current thread object. This function never
  * returns a null pointer. If the calling thread was not created by
@@ -189,17 +203,20 @@ _MCF_thread_set_priority(_MCF_thread* __thrd_opt, _MCF_thread_priority __priorit
  * and returned.  */
 __MCF_THREAD_IMPORT __MCF_FN_CONST
 _MCF_thread*
-_MCF_thread_self(void) __MCF_noexcept;
+_MCF_thread_self(void)
+  __MCF_noexcept;
 
 /* Gets the thread ID of the current thread.  */
 __MCF_THREAD_INLINE __MCF_FN_CONST
 uint32_t
-_MCF_thread_self_tid(void) __MCF_noexcept;
+_MCF_thread_self_tid(void)
+  __MCF_noexcept;
 
 /* Gives up the current time slice.  */
 __MCF_THREAD_IMPORT
 void
-_MCF_yield(void) __MCF_noexcept;
+_MCF_yield(void)
+  __MCF_noexcept;
 
 /* Suspends the calling thread for a given amount of time.
  *
@@ -213,7 +230,8 @@ _MCF_yield(void) __MCF_noexcept;
  * Returns 0 if the operation has timed out, or -1 if an interrupt occurred.  */
 __MCF_THREAD_IMPORT
 int
-_MCF_sleep(const int64_t* __timeout_opt) __MCF_noexcept;
+_MCF_sleep(const int64_t* __timeout_opt)
+  __MCF_noexcept;
 
 /* Suspends the calling thread for a given amount of time.
  *
@@ -224,7 +242,8 @@ _MCF_sleep(const int64_t* __timeout_opt) __MCF_noexcept;
  * immediately. If it is null, the function sleeps indefinitely.  */
 __MCF_THREAD_IMPORT
 void
-_MCF_sleep_noninterruptible(const int64_t* __timeout_opt) __MCF_noexcept;
+_MCF_sleep_noninterruptible(const int64_t* __timeout_opt)
+  __MCF_noexcept;
 
 /* Gets a thread-local value. The calling thread shall have been created by
  * `_MCF_thread_new()`, or shall be the main thread.
@@ -233,7 +252,8 @@ _MCF_sleep_noninterruptible(const int64_t* __timeout_opt) __MCF_noexcept;
  * a null pointer otherwise. No return value is reserved to indicate errors.  */
 __MCF_THREAD_INLINE __MCF_FN_PURE
 void*
-_MCF_tls_get(const _MCF_tls_key* __key) __MCF_noexcept;
+_MCF_tls_get(const _MCF_tls_key* __key)
+  __MCF_noexcept;
 
 /* Sets a thread-local value. The calling thread shall have been created by
  * `_MCF_thread_new()`, or shall be the main thread.
@@ -244,11 +264,13 @@ _MCF_tls_get(const _MCF_tls_key* __key) __MCF_noexcept;
  * Returns 0 upon success and -1 upon failure.  */
 __MCF_THREAD_INLINE
 int
-_MCF_tls_xset(_MCF_tls_key* __key, void** __old_value_opt, const void* __value_opt) __MCF_noexcept;
+_MCF_tls_xset(_MCF_tls_key* __key, void** __old_value_opt, const void* __value_opt)
+  __MCF_noexcept;
 
 __MCF_THREAD_INLINE
 int
-_MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt) __MCF_noexcept;
+_MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt)
+  __MCF_noexcept;
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
@@ -257,14 +279,16 @@ _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt) __MCF_noexcept;
  * this file.  */
 __MCF_THREAD_INLINE
 _MCF_thread*
-_MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __size) __MCF_noexcept
+_MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __size)
+  __MCF_noexcept
   {
     return _MCF_thread_new_aligned(__proc, 0, __data_opt, __size);
   }
 
 __MCF_THREAD_INLINE
 __MCF_CXX(const) void*
-_MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_noexcept
+_MCF_thread_get_data(const _MCF_thread* __thrd)
+  __MCF_noexcept
   {
     return __builtin_assume_aligned(__thrd->__data_opt, __MCF_THREAD_DATA_ALIGNMENT);
   }
@@ -272,7 +296,8 @@ _MCF_thread_get_data(const _MCF_thread* __thrd) __MCF_noexcept
 #ifdef __cplusplus
 extern "C++" inline
 void*
-_MCF_thread_get_data(_MCF_thread* __thrd) __MCF_noexcept
+_MCF_thread_get_data(_MCF_thread* __thrd)
+  __MCF_noexcept
   {
     return __builtin_assume_aligned(__thrd->__data_opt, __MCF_THREAD_DATA_ALIGNMENT);
   }
@@ -280,14 +305,16 @@ _MCF_thread_get_data(_MCF_thread* __thrd) __MCF_noexcept
 
 __MCF_THREAD_INLINE
 int32_t
-_MCF_thread_get_ref(const _MCF_thread* __thrd) __MCF_noexcept
+_MCF_thread_get_ref(const _MCF_thread* __thrd)
+  __MCF_noexcept
   {
     return _MCF_atomic_load_32_rlx(__thrd->__nref);
   }
 
 __MCF_THREAD_INLINE
 void
-_MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_noexcept
+_MCF_thread_add_ref(_MCF_thread* __thrd)
+  __MCF_noexcept
   {
     int32_t __old_ref = _MCF_atomic_xadd_32_rlx(__thrd->__nref, 1);
     __MCF_ASSERT(__old_ref < 0x7FFFFFFF);
@@ -296,7 +323,8 @@ _MCF_thread_add_ref(_MCF_thread* __thrd) __MCF_noexcept
 
 __MCF_THREAD_INLINE
 void
-_MCF_thread_drop_ref(_MCF_thread* __thrd_opt) __MCF_noexcept
+_MCF_thread_drop_ref(_MCF_thread* __thrd_opt)
+  __MCF_noexcept
   {
     if(__thrd_opt)
       _MCF_thread_drop_ref_nonnull(__thrd_opt);
@@ -304,21 +332,24 @@ _MCF_thread_drop_ref(_MCF_thread* __thrd_opt) __MCF_noexcept
 
 __MCF_THREAD_INLINE __MCF_CXX11(constexpr)
 uint32_t
-_MCF_thread_get_tid(const _MCF_thread* __thrd) __MCF_noexcept
+_MCF_thread_get_tid(const _MCF_thread* __thrd)
+  __MCF_noexcept
   {
     return __thrd->__tid;
   }
 
 __MCF_THREAD_INLINE __MCF_CXX11(constexpr)
 __MCF_HANDLE
-_MCF_thread_get_handle(const _MCF_thread* __thrd) __MCF_noexcept
+_MCF_thread_get_handle(const _MCF_thread* __thrd)
+  __MCF_noexcept
   {
     return __thrd->__handle;
   }
 
 __MCF_THREAD_INLINE
 uint32_t
-_MCF_thread_self_tid(void) __MCF_noexcept
+_MCF_thread_self_tid(void)
+  __MCF_noexcept
   {
     uint32_t __tid;
     __MCF_TEB_LOAD_32_IMMEDIATE(&__tid, __MCF_64_32(0x48, 0x24));
@@ -327,7 +358,8 @@ _MCF_thread_self_tid(void) __MCF_noexcept
 
 __MCF_THREAD_INLINE
 void*
-_MCF_tls_get(const _MCF_tls_key* __key) __MCF_noexcept
+_MCF_tls_get(const _MCF_tls_key* __key)
+  __MCF_noexcept
   {
     _MCF_thread* __self = _MCF_thread_self();
     return __MCF_tls_table_get(__self->__tls_table, __key);
@@ -335,7 +367,8 @@ _MCF_tls_get(const _MCF_tls_key* __key) __MCF_noexcept
 
 __MCF_THREAD_INLINE
 int
-_MCF_tls_xset(_MCF_tls_key* __key, void** __old_value_opt, const void* __value_opt) __MCF_noexcept
+_MCF_tls_xset(_MCF_tls_key* __key, void** __old_value_opt, const void* __value_opt)
+  __MCF_noexcept
   {
     _MCF_thread* __self = _MCF_thread_self();
     return __MCF_tls_table_xset(__self->__tls_table, __key, __old_value_opt, __value_opt);
@@ -343,7 +376,8 @@ _MCF_tls_xset(_MCF_tls_key* __key, void** __old_value_opt, const void* __value_o
 
 __MCF_THREAD_INLINE
 int
-_MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt) __MCF_noexcept
+_MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt)
+  __MCF_noexcept
   {
     _MCF_thread* __self = _MCF_thread_self();
     return __MCF_tls_table_xset(__self->__tls_table, __key, __MCF_nullptr, __value_opt);

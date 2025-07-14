@@ -118,7 +118,8 @@ constexpr int64_t _Max_ms = 0x7FFFFFFFFFFFFC00;
 // check for overflows before casting.
 __MCF_CXX14(constexpr) inline
 int64_t
-__clamp_duration(const chrono::milliseconds& __ms) noexcept
+__clamp_duration(const chrono::milliseconds& __ms)
+  noexcept
   {
     if(__ms.count() < 0)
       return 0;
@@ -148,7 +149,8 @@ __clamp_duration(const _Duration& __dur)
 // noninterruptible, and this function always returns zero.
 inline
 int
-__sleep_noninterruptible(int64_t* __timeout_opt) noexcept
+__sleep_noninterruptible(int64_t* __timeout_opt)
+  noexcept
   {
     ::_MCF_sleep_noninterruptible(__timeout_opt);
     return 0;
@@ -295,20 +297,23 @@ class mutex
 
     __MCF_CXX14(constexpr)
     native_handle_type
-    native_handle() noexcept
+    native_handle()
+      noexcept
       {
         return this->_M_mtx;
       }
 
     void
-    lock() noexcept  // strengthened
+    lock()
+      noexcept  // strengthened
       {
         int __err = ::_MCF_mutex_lock(this->_M_mtx, nullptr);
         __MCF_ASSERT(__err == 0);
       }
 
     bool
-    try_lock() noexcept  // strengthened
+    try_lock()
+      noexcept  // strengthened
       {
         int64_t __timeout = 0;
         int __err = ::_MCF_mutex_lock(this->_M_mtx, &__timeout);
@@ -332,7 +337,8 @@ class mutex
       }
 
     void
-    unlock() noexcept  // strengthened
+    unlock()
+      noexcept  // strengthened
       {
         ::_MCF_mutex_unlock(this->_M_mtx);
       }
@@ -360,20 +366,23 @@ class shared_mutex
 
     __MCF_CXX14(constexpr)
     native_handle_type
-    native_handle() noexcept
+    native_handle()
+      noexcept
       {
         return this->_M_smtx;
       }
 
     void
-    lock() noexcept  // strengthened
+    lock()
+      noexcept  // strengthened
       {
         int __err = ::_MCF_shared_mutex_lock_exclusive(this->_M_smtx, nullptr);
         __MCF_ASSERT(__err == 0);
       }
 
     bool
-    try_lock() noexcept  // strengthened
+    try_lock()
+      noexcept  // strengthened
       {
         int64_t __timeout = 0;
         int __err = ::_MCF_shared_mutex_lock_exclusive(this->_M_smtx, &__timeout);
@@ -397,20 +406,23 @@ class shared_mutex
       }
 
     void
-    unlock() noexcept  // strengthened
+    unlock()
+      noexcept  // strengthened
       {
         ::_MCF_shared_mutex_unlock(this->_M_smtx);
       }
 
     void
-    lock_shared() noexcept  // strengthened
+    lock_shared()
+      noexcept  // strengthened
       {
         int __err = ::_MCF_shared_mutex_lock_shared(this->_M_smtx, nullptr);
         __MCF_ASSERT(__err == 0);
       }
 
     bool
-    try_lock_shared() noexcept  // strengthened
+    try_lock_shared()
+      noexcept  // strengthened
       {
         int64_t __timeout = 0;
         int __err = ::_MCF_shared_mutex_lock_shared(this->_M_smtx, &__timeout);
@@ -434,7 +446,8 @@ class shared_mutex
       }
 
     void
-    unlock_shared() noexcept  // strengthened
+    unlock_shared()
+      noexcept  // strengthened
       {
         ::_MCF_shared_mutex_unlock(this->_M_smtx);
       }
@@ -459,13 +472,15 @@ class recursive_mutex
 
     __MCF_CXX14(constexpr)
     native_handle_type
-    native_handle() noexcept
+    native_handle()
+      noexcept
       {
         return this->_M_rmtx;
       }
 
     void
-    lock() noexcept  // strengthened
+    lock()
+      noexcept  // strengthened
       {
         int __err = ::__MCF_gthr_rc_mutex_recurse(this->_M_rmtx);
         if(__err != 0)
@@ -474,7 +489,8 @@ class recursive_mutex
       }
 
     bool
-    try_lock() noexcept  // strengthened
+    try_lock()
+      noexcept  // strengthened
       {
         int64_t __timeout = 0;
         int __err = ::__MCF_gthr_rc_mutex_recurse(this->_M_rmtx);
@@ -504,7 +520,8 @@ class recursive_mutex
       }
 
     void
-    unlock() noexcept  // strengthened
+    unlock()
+      noexcept  // strengthened
       {
         ::__MCF_gthr_rc_mutex_release(this->_M_rmtx);
       }
@@ -528,25 +545,29 @@ class condition_variable
 
     __MCF_CXX14(constexpr)
     native_handle_type
-    native_handle() noexcept
+    native_handle()
+      noexcept
       {
         return this->_M_cnd;
       }
 
     void
-    notify_one() noexcept
+    notify_one()
+      noexcept
       {
         ::_MCF_cond_signal(this->_M_cnd);
       }
 
     void
-    notify_all() noexcept
+    notify_all()
+      noexcept
       {
         ::_MCF_cond_signal_all(this->_M_cnd);
       }
 
     void
-    wait(unique_lock_type& __lock) noexcept  // strengthened
+    wait(unique_lock_type& __lock)
+      noexcept  // strengthened
       {
         __MCF_ASSERT(__lock.owns_lock());  // must owning a mutex
         __MCF_ASSERT(__lock.mutex() != nullptr);
@@ -676,9 +697,7 @@ class thread
             static void __deferred_prototype(::_MCF_thread*) noexcept;
             decltype(__deferred_prototype)* __deferred_fn;
             ::_MCF_thread* __thr;
-
-            ~_Thread_sentry() noexcept
-              { (* this->__deferred_fn) (this->__thr);  }
+            ~_Thread_sentry() noexcept { (* this->__deferred_fn) (this->__thr);  }
           };
 
         auto __thread_fn = [](::_MCF_thread* __thr)
@@ -725,7 +744,8 @@ class thread
         __sentry.__deferred_fn = __sentry_complete_thread;
       }
 
-    thread(thread&& __other) noexcept
+    thread(thread&& __other)
+      noexcept
       {
         this->_M_thr = __other._M_thr;
         __other._M_thr = nullptr;
@@ -754,19 +774,22 @@ class thread
 
     __MCF_CXX14(constexpr)
     native_handle_type
-    native_handle() noexcept
+    native_handle()
+      noexcept
       {
         return this->_M_thr;
       }
 
     void
-    swap(thread& __other) noexcept
+    swap(thread& __other)
+      noexcept
       {
         ::std::swap(this->_M_thr, __other._M_thr);
       }
 
     bool
-    joinable() const noexcept
+    joinable()
+      const noexcept
       {
         return this->_M_thr != nullptr;
       }
@@ -787,7 +810,8 @@ class thread
       }
 
     void
-    detach() noexcept  // strengthened
+    detach()
+      noexcept  // strengthened
       {
         __MCF_ASSERT(this->_M_thr);  // must be joinable
 
@@ -797,14 +821,16 @@ class thread
 
     __MCF_CXX14(constexpr)
     id
-    get_id() const noexcept
+    get_id()
+      const noexcept
       {
         return id(this->_M_thr);
       }
 
     static
     unsigned
-    hardware_concurrency() noexcept
+    hardware_concurrency()
+      noexcept
       {
         return (unsigned) ::_MCF_get_processor_count();
       }
@@ -812,14 +838,16 @@ class thread
 
 inline
 void
-swap(thread& __lhs, thread& __rhs) noexcept
+swap(thread& __lhs, thread& __rhs)
+  noexcept
   {
     __lhs.swap(__rhs);
   }
 
 constexpr
 bool
-operator==(thread::id __x, thread::id __y) noexcept
+operator==(thread::id __x, thread::id __y)
+  noexcept
   {
     return __x._M_tid == __y._M_tid;
   }
@@ -828,7 +856,8 @@ operator==(thread::id __x, thread::id __y) noexcept
 
 constexpr
 ::std::strong_ordering
-operator<=>(thread::id __x, thread::id __y) noexcept
+operator<=>(thread::id __x, thread::id __y)
+  noexcept
   {
     return __x._M_tid <=> __y._M_tid;
   }
@@ -837,35 +866,40 @@ operator<=>(thread::id __x, thread::id __y) noexcept
 
 constexpr
 bool
-operator!=(thread::id __x, thread::id __y) noexcept
+operator!=(thread::id __x, thread::id __y)
+  noexcept
   {
     return __x._M_tid != __y._M_tid;
   }
 
 constexpr
 bool
-operator<(thread::id __x, thread::id __y) noexcept
+operator<(thread::id __x, thread::id __y)
+  noexcept
   {
     return __x._M_tid < __y._M_tid;
   }
 
 constexpr
 bool
-operator>(thread::id __x, thread::id __y) noexcept
+operator>(thread::id __x, thread::id __y)
+  noexcept
   {
     return __x._M_tid > __y._M_tid;
   }
 
 constexpr
 bool
-operator<=(thread::id __x, thread::id __y) noexcept
+operator<=(thread::id __x, thread::id __y)
+  noexcept
   {
     return __x._M_tid <= __y._M_tid;
   }
 
 constexpr
 bool
-operator>=(thread::id __x, thread::id __y) noexcept
+operator>=(thread::id __x, thread::id __y)
+  noexcept
   {
     return __x._M_tid >= __y._M_tid;
   }
@@ -884,7 +918,8 @@ namespace this_thread
   {
     inline
     thread::id
-    get_id() noexcept
+    get_id()
+      noexcept
       {
         thread::id __id;
         __id._M_tid = ::_MCF_thread_self_tid();
@@ -893,7 +928,8 @@ namespace this_thread
 
     inline
     void
-    yield() noexcept  // strengthened
+    yield()
+      noexcept  // strengthened
       {
         ::_MCF_yield();
       }
@@ -951,19 +987,22 @@ class thread_specific_ptr
 
     __MCF_CXX14(constexpr)
     native_handle_type
-    native_handle() noexcept
+    native_handle()
+      noexcept
       {
         return this->_M_key;
       }
 
     pointer
-    get() const noexcept
+    get()
+      const noexcept
       {
         return (pointer) ::_MCF_tls_get(this->_M_key);
       }
 
     explicit
-    operator bool() const noexcept
+    operator bool()
+      const noexcept
       {
         return ::_MCF_tls_get(this->_M_key) != nullptr;
       }
@@ -998,7 +1037,8 @@ class thread_specific_ptr
       }
 
     pointer
-    release() noexcept
+    release()
+      noexcept
       {
         void* __ptr_old = nullptr;
         ::_MCF_tls_xset(this->_M_key, &__ptr_old, nullptr);

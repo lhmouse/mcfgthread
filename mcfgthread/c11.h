@@ -78,7 +78,8 @@ enum __MCF_thrd_error
 /* 7.26.2.1 The call_once function  */
 __MCF_C11_IMPORT
 void
-__MCF_c11_call_once(once_flag* __once, __MCF_once_callback* __init_proc) __MCF_MAY_THROW;
+__MCF_c11_call_once(once_flag* __once, __MCF_once_callback* __init_proc)
+  __MCF_MAY_THROW;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_call_once, call_once);
@@ -88,7 +89,8 @@ __MCF_FNA(__MCF_c11_call_once, call_once);
 /* 7.26.3.1 The cnd_broadcast function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_cnd_broadcast(cnd_t* __cond) __MCF_noexcept;
+__MCF_c11_cnd_broadcast(cnd_t* __cond)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_cnd_broadcast, cnd_broadcast);
@@ -98,7 +100,8 @@ __MCF_FNA(__MCF_c11_cnd_broadcast, cnd_broadcast);
 /* 7.26.3.2 The cnd_destroy function  */
 __MCF_C11_IMPORT
 void
-__MCF_c11_cnd_destroy(cnd_t* __cond) __MCF_noexcept;
+__MCF_c11_cnd_destroy(cnd_t* __cond)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_cnd_destroy, cnd_destroy);
@@ -108,7 +111,8 @@ __MCF_FNA(__MCF_c11_cnd_destroy, cnd_destroy);
 /* 7.26.3.3 The cnd_init function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_cnd_init(cnd_t* __cond) __MCF_noexcept;
+__MCF_c11_cnd_init(cnd_t* __cond)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_cnd_init, cnd_init);
@@ -118,7 +122,8 @@ __MCF_FNA(__MCF_c11_cnd_init, cnd_init);
 /* 7.26.3.4 The cnd_signal function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_cnd_signal(cnd_t* __cond) __MCF_noexcept;
+__MCF_c11_cnd_signal(cnd_t* __cond)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_cnd_signal, cnd_signal);
@@ -128,7 +133,8 @@ __MCF_FNA(__MCF_c11_cnd_signal, cnd_signal);
 /* 7.26.3.5 The cnd_timedwait function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const __MCF_timespec* __ts) __MCF_noexcept;
+__MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const __MCF_timespec* __ts)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_cnd_timedwait, cnd_timedwait);
@@ -138,7 +144,8 @@ __MCF_FNA(__MCF_c11_cnd_timedwait, cnd_timedwait);
 /* 7.26.3.6 The cnd_wait function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_cnd_wait(cnd_t* __cond, mtx_t* __mtx) __MCF_noexcept;
+__MCF_c11_cnd_wait(cnd_t* __cond, mtx_t* __mtx)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_cnd_wait, cnd_wait);
@@ -148,7 +155,8 @@ __MCF_FNA(__MCF_c11_cnd_wait, cnd_wait);
 /* 7.26.4.1 The mtx_destroy function  */
 __MCF_C11_IMPORT
 void
-__MCF_c11_mtx_destroy(mtx_t* __mtx) __MCF_noexcept;
+__MCF_c11_mtx_destroy(mtx_t* __mtx)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_mtx_destroy, mtx_destroy);
@@ -158,7 +166,8 @@ __MCF_FNA(__MCF_c11_mtx_destroy, mtx_destroy);
 /* 7.26.4.2 The mtx_init function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_mtx_init(mtx_t* __mtx, int __type) __MCF_noexcept;
+__MCF_c11_mtx_init(mtx_t* __mtx, int __type)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_mtx_init, mtx_init);
@@ -168,7 +177,8 @@ __MCF_FNA(__MCF_c11_mtx_init, mtx_init);
 /* 7.26.4.3 The mtx_lock function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_mtx_lock(mtx_t* __mtx) __MCF_noexcept;
+__MCF_c11_mtx_lock(mtx_t* __mtx)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_mtx_lock, mtx_lock);
@@ -178,7 +188,8 @@ __MCF_FNA(__MCF_c11_mtx_lock, mtx_lock);
 /* 7.26.4.4 The mtx_timedlock function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_mtx_timedlock(mtx_t* __mtx, const __MCF_timespec* __ts) __MCF_noexcept;
+__MCF_c11_mtx_timedlock(mtx_t* __mtx, const __MCF_timespec* __ts)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_mtx_timedlock, mtx_timedlock);
@@ -188,7 +199,8 @@ __MCF_FNA(__MCF_c11_mtx_timedlock, mtx_timedlock);
 /* 7.26.4.5 The mtx_trylock function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_mtx_trylock(mtx_t* __mtx) __MCF_noexcept;
+__MCF_c11_mtx_trylock(mtx_t* __mtx)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_mtx_trylock, mtx_trylock);
@@ -198,7 +210,8 @@ __MCF_FNA(__MCF_c11_mtx_trylock, mtx_trylock);
 /* 7.26.4.6 The mtx_unlock function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_mtx_unlock(mtx_t* __mtx) __MCF_noexcept;
+__MCF_c11_mtx_unlock(mtx_t* __mtx)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_mtx_unlock, mtx_unlock);
@@ -208,7 +221,8 @@ __MCF_FNA(__MCF_c11_mtx_unlock, mtx_unlock);
 /* 7.26.5.1 The thrd_create function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_thrd_create(thrd_t* __thrd, thrd_start_t __proc, void* __arg) __MCF_noexcept;
+__MCF_c11_thrd_create(thrd_t* __thrd, thrd_start_t __proc, void* __arg)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_thrd_create, thrd_create);
@@ -218,7 +232,8 @@ __MCF_FNA(__MCF_c11_thrd_create, thrd_create);
 /* 7.26.5.2 The thrd_current function  */
 __MCF_C11_IMPORT __MCF_FN_CONST
 thrd_t
-__MCF_c11_thrd_current(void) __MCF_noexcept;
+__MCF_c11_thrd_current(void)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_thrd_current, thrd_current);
@@ -228,7 +243,8 @@ __MCF_FNA(__MCF_c11_thrd_current, thrd_current);
 /* 7.26.5.3 The thrd_detach function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_thrd_detach(thrd_t __thrd) __MCF_noexcept;
+__MCF_c11_thrd_detach(thrd_t __thrd)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_thrd_detach, thrd_detach);
@@ -238,7 +254,8 @@ __MCF_FNA(__MCF_c11_thrd_detach, thrd_detach);
 /* 7.26.5.4 The thrd_equal function  */
 __MCF_C11_IMPORT __MCF_FN_CONST
 int
-__MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_noexcept;
+__MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_thrd_equal, thrd_equal);
@@ -248,7 +265,8 @@ __MCF_FNA(__MCF_c11_thrd_equal, thrd_equal);
 /* 7.26.5.5 The thrd_exit function  */
 __MCF_C11_IMPORT __MCF_NEVER_RETURN
 void
-__MCF_c11_thrd_exit(int __res) __MCF_noexcept;
+__MCF_c11_thrd_exit(int __res)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_thrd_exit, thrd_exit);
@@ -258,7 +276,8 @@ __MCF_FNA(__MCF_c11_thrd_exit, thrd_exit);
 /* 7.26.5.6 The thrd_join function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_noexcept;
+__MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_thrd_join, thrd_join);
@@ -268,7 +287,8 @@ __MCF_FNA(__MCF_c11_thrd_join, thrd_join);
 /* 7.26.5.7 The thrd_sleep function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_thrd_sleep(const __MCF_timespec* __dur, __MCF_timespec* __rem_opt) __MCF_noexcept;
+__MCF_c11_thrd_sleep(const __MCF_timespec* __dur, __MCF_timespec* __rem_opt)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_thrd_sleep, thrd_sleep);
@@ -279,7 +299,8 @@ __MCF_FNA(__MCF_c11_thrd_sleep, thrd_sleep);
  * duration. No remaining time is returned.  */
 __MCF_C11_IMPORT
 int
-__MCF_c11__thrd_sleep_until(const __MCF_timespec* __ts) __MCF_noexcept;
+__MCF_c11__thrd_sleep_until(const __MCF_timespec* __ts)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11__thrd_sleep_until, _thrd_sleep_until);
@@ -289,7 +310,8 @@ __MCF_FNA(__MCF_c11__thrd_sleep_until, _thrd_sleep_until);
 /* 7.26.5.8 The thrd_yield function  */
 __MCF_C11_IMPORT
 void
-__MCF_c11_thrd_yield(void) __MCF_noexcept;
+__MCF_c11_thrd_yield(void)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_thrd_yield, thrd_yield);
@@ -299,7 +321,8 @@ __MCF_FNA(__MCF_c11_thrd_yield, thrd_yield);
 /* 7.26.6.1 The tss_create function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_tss_create(tss_t* __keyp, tss_dtor_t __dtor_opt) __MCF_noexcept;
+__MCF_c11_tss_create(tss_t* __keyp, tss_dtor_t __dtor_opt)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_tss_create, tss_create);
@@ -309,7 +332,8 @@ __MCF_FNA(__MCF_c11_tss_create, tss_create);
 /* 7.26.6.2 The tss_delete function  */
 __MCF_C11_IMPORT
 void
-__MCF_c11_tss_delete(tss_t __key) __MCF_noexcept;
+__MCF_c11_tss_delete(tss_t __key)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_tss_delete, tss_delete);
@@ -319,7 +343,8 @@ __MCF_FNA(__MCF_c11_tss_delete, tss_delete);
 /* 7.26.6.3 The tss_get function  */
 __MCF_C11_IMPORT __MCF_FN_PURE
 void*
-__MCF_c11_tss_get(tss_t __key) __MCF_noexcept;
+__MCF_c11_tss_get(tss_t __key)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_tss_get, tss_get);
@@ -329,7 +354,8 @@ __MCF_FNA(__MCF_c11_tss_get, tss_get);
 /* 7.26.6.4 The tss_set function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_tss_set(tss_t __key, void* __val_opt) __MCF_noexcept;
+__MCF_c11_tss_set(tss_t __key, void* __val_opt)
+  __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
 __MCF_FNA(__MCF_c11_tss_set, tss_set);
@@ -343,14 +369,16 @@ __MCF_FNA(__MCF_c11_tss_set, tss_set);
  * this file.  */
 __MCF_C11_INLINE
 void
-__MCF_c11_call_once(once_flag* __once, __MCF_once_callback* __init_proc) __MCF_MAY_THROW
+__MCF_c11_call_once(once_flag* __once, __MCF_once_callback* __init_proc)
+  __MCF_MAY_THROW
   {
     __MCF_GTHR_CALL_ONCE_SEH(__once, __init_proc, __MCF_nullptr);
   }
 
 __MCF_C11_INLINE
 int
-__MCF_c11_cnd_broadcast(cnd_t* __cond) __MCF_noexcept
+__MCF_c11_cnd_broadcast(cnd_t* __cond)
+  __MCF_noexcept
   {
     _MCF_cond_signal_all(__cond);
     return thrd_success;
@@ -358,14 +386,16 @@ __MCF_c11_cnd_broadcast(cnd_t* __cond) __MCF_noexcept
 
 __MCF_C11_INLINE
 void
-__MCF_c11_cnd_destroy(cnd_t* __cond) __MCF_noexcept
+__MCF_c11_cnd_destroy(cnd_t* __cond)
+  __MCF_noexcept
   {
     (void) __cond;
   }
 
 __MCF_C11_INLINE
 int
-__MCF_c11_cnd_init(cnd_t* __cond) __MCF_noexcept
+__MCF_c11_cnd_init(cnd_t* __cond)
+  __MCF_noexcept
   {
     _MCF_cond_init(__cond);
     return thrd_success;
@@ -373,7 +403,8 @@ __MCF_c11_cnd_init(cnd_t* __cond) __MCF_noexcept
 
 __MCF_C11_INLINE
 int
-__MCF_c11_cnd_signal(cnd_t* __cond) __MCF_noexcept
+__MCF_c11_cnd_signal(cnd_t* __cond)
+  __MCF_noexcept
   {
     _MCF_cond_signal(__cond);
     return thrd_success;
@@ -381,7 +412,8 @@ __MCF_c11_cnd_signal(cnd_t* __cond) __MCF_noexcept
 
 __MCF_C11_INLINE
 int
-__MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const __MCF_timespec* __ts) __MCF_noexcept
+__MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const __MCF_timespec* __ts)
+  __MCF_noexcept
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__ts);
     int __err = __MCF_gthr_cond_recursive_mutex_wait(__cond, __mtx->__rc_mtx, &__timeout);
@@ -390,7 +422,8 @@ __MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const __MCF_timespec* __ts)
 
 __MCF_C11_INLINE
 int
-__MCF_c11_cnd_wait(cnd_t* __cond, mtx_t* __mtx) __MCF_noexcept
+__MCF_c11_cnd_wait(cnd_t* __cond, mtx_t* __mtx)
+  __MCF_noexcept
   {
     int __err = __MCF_gthr_cond_recursive_mutex_wait(__cond, __mtx->__rc_mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
@@ -399,14 +432,16 @@ __MCF_c11_cnd_wait(cnd_t* __cond, mtx_t* __mtx) __MCF_noexcept
 
 __MCF_C11_INLINE
 void
-__MCF_c11_mtx_destroy(mtx_t* __mtx) __MCF_noexcept
+__MCF_c11_mtx_destroy(mtx_t* __mtx)
+  __MCF_noexcept
   {
     (void) __mtx;
   }
 
 __MCF_C11_INLINE
 int
-__MCF_c11_mtx_init(mtx_t* __mtx, int __type) __MCF_noexcept
+__MCF_c11_mtx_init(mtx_t* __mtx, int __type)
+  __MCF_noexcept
   {
     switch(__type)
       {
@@ -427,7 +462,8 @@ __MCF_c11_mtx_init(mtx_t* __mtx, int __type) __MCF_noexcept
 
 __MCF_ALWAYS_INLINE
 int
-__MCF_c11_mtx_check_recursion(mtx_t* __mtx) __MCF_noexcept
+__MCF_c11_mtx_check_recursion(mtx_t* __mtx)
+  __MCF_noexcept
   {
     /* Check for recursion.  */
     int __err = __MCF_gthr_rc_mutex_recurse(__mtx->__rc_mtx);
@@ -447,7 +483,8 @@ __MCF_c11_mtx_check_recursion(mtx_t* __mtx) __MCF_noexcept
 
 __MCF_C11_INLINE
 int
-__MCF_c11_mtx_lock(mtx_t* __mtx) __MCF_noexcept
+__MCF_c11_mtx_lock(mtx_t* __mtx)
+  __MCF_noexcept
   {
     int __err = __MCF_c11_mtx_check_recursion(__mtx);
     if(__err != thrd_busy)
@@ -460,7 +497,8 @@ __MCF_c11_mtx_lock(mtx_t* __mtx) __MCF_noexcept
 
 __MCF_C11_INLINE
 int
-__MCF_c11_mtx_timedlock(mtx_t* __mtx, const __MCF_timespec* __ts) __MCF_noexcept
+__MCF_c11_mtx_timedlock(mtx_t* __mtx, const __MCF_timespec* __ts)
+  __MCF_noexcept
   {
     int64_t __timeout;
     int __err;
@@ -479,7 +517,8 @@ __MCF_c11_mtx_timedlock(mtx_t* __mtx, const __MCF_timespec* __ts) __MCF_noexcept
 
 __MCF_C11_INLINE
 int
-__MCF_c11_mtx_trylock(mtx_t* __mtx) __MCF_noexcept
+__MCF_c11_mtx_trylock(mtx_t* __mtx)
+  __MCF_noexcept
   {
     int64_t __timeout;
     int __err;
@@ -495,7 +534,8 @@ __MCF_c11_mtx_trylock(mtx_t* __mtx) __MCF_noexcept
 
 __MCF_C11_INLINE
 int
-__MCF_c11_mtx_unlock(mtx_t* __mtx) __MCF_noexcept
+__MCF_c11_mtx_unlock(mtx_t* __mtx)
+  __MCF_noexcept
   {
     __MCF_gthr_rc_mutex_release(__mtx->__rc_mtx);
     return 0;
@@ -503,7 +543,8 @@ __MCF_c11_mtx_unlock(mtx_t* __mtx) __MCF_noexcept
 
 __MCF_C11_INLINE
 int
-__MCF_c11_thrd_create(thrd_t* __thrdp, thrd_start_t __proc, void* __arg) __MCF_noexcept
+__MCF_c11_thrd_create(thrd_t* __thrdp, thrd_start_t __proc, void* __arg)
+  __MCF_noexcept
   {
     *__thrdp = __MCF_gthr_thread_create_v3(__MCF_CAST_PTR(__MCF_gthr_thread_procedure, __proc), __arg);
     return (*__thrdp == __MCF_nullptr) ? thrd_nomem : thrd_success;
@@ -511,14 +552,16 @@ __MCF_c11_thrd_create(thrd_t* __thrdp, thrd_start_t __proc, void* __arg) __MCF_n
 
 __MCF_C11_INLINE __MCF_FN_CONST
 thrd_t
-__MCF_c11_thrd_current(void) __MCF_noexcept
+__MCF_c11_thrd_current(void)
+  __MCF_noexcept
   {
     return _MCF_thread_self();
   }
 
 __MCF_C11_INLINE
 int
-__MCF_c11_thrd_detach(thrd_t __thrd) __MCF_noexcept
+__MCF_c11_thrd_detach(thrd_t __thrd)
+  __MCF_noexcept
   {
     _MCF_thread_drop_ref(__thrd);
     return thrd_success;
@@ -526,21 +569,24 @@ __MCF_c11_thrd_detach(thrd_t __thrd) __MCF_noexcept
 
 __MCF_C11_INLINE __MCF_FN_CONST
 int
-__MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2) __MCF_noexcept
+__MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2)
+  __MCF_noexcept
   {
     return __t1 == __t2;
   }
 
 __MCF_C11_INLINE __MCF_NEVER_RETURN
 void
-__MCF_c11_thrd_exit(int __result) __MCF_noexcept
+__MCF_c11_thrd_exit(int __result)
+  __MCF_noexcept
   {
     __MCF_gthr_thread_exit_v3((void*)(intptr_t) __result);
   }
 
 __MCF_C11_INLINE
 int
-__MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_noexcept
+__MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt)
+  __MCF_noexcept
   {
     void* __resp;
     __MCF_gthr_thread_join_v3(__thrd, &__resp);
@@ -550,14 +596,16 @@ __MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt) __MCF_noexcept
 
 __MCF_C11_INLINE
 void
-__MCF_c11_thrd_yield(void) __MCF_noexcept
+__MCF_c11_thrd_yield(void)
+  __MCF_noexcept
   {
     _MCF_yield();
   }
 
 __MCF_C11_INLINE
 int
-__MCF_c11_tss_create(tss_t* __keyp, tss_dtor_t __dtor_opt) __MCF_noexcept
+__MCF_c11_tss_create(tss_t* __keyp, tss_dtor_t __dtor_opt)
+  __MCF_noexcept
   {
     _MCF_tls_key* __key = _MCF_tls_key_new(__dtor_opt);
     *__keyp = __key;
@@ -566,21 +614,24 @@ __MCF_c11_tss_create(tss_t* __keyp, tss_dtor_t __dtor_opt) __MCF_noexcept
 
 __MCF_C11_INLINE
 void
-__MCF_c11_tss_delete(tss_t __key) __MCF_noexcept
+__MCF_c11_tss_delete(tss_t __key)
+  __MCF_noexcept
   {
     _MCF_tls_key_delete(__key);
   }
 
 __MCF_C11_INLINE __MCF_FN_PURE
 void*
-__MCF_c11_tss_get(tss_t __key) __MCF_noexcept
+__MCF_c11_tss_get(tss_t __key)
+  __MCF_noexcept
   {
     return _MCF_tls_get(__key);
   }
 
 __MCF_C11_INLINE
 int
-__MCF_c11_tss_set(tss_t __key, void* __val_opt) __MCF_noexcept
+__MCF_c11_tss_set(tss_t __key, void* __val_opt)
+  __MCF_noexcept
   {
     int __err = _MCF_tls_set(__key, __val_opt);
     return (__err != 0) ? thrd_error : thrd_success;
