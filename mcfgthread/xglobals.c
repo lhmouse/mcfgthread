@@ -474,7 +474,7 @@ struct _IMAGE_LOAD_CONFIG_DIRECTORY_10_0_26100_0
   }
 const _load_config_used __attribute__((__used__)) =
   {
-    .Size = sizeof(IMAGE_LOAD_CONFIG_DIRECTORY),
+    .Size = sizeof(_load_config_used),
     .DependentLoadFlags = LOAD_LIBRARY_SEARCH_SYSTEM32,
 #if defined __i386__ && defined __MCF_IN_DLL
     .SEHandlerTable = (ULONG_PTR) __MCF_i386_se_handler_table,
