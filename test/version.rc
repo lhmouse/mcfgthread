@@ -5,6 +5,4 @@
  * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
-#include <winuser.h>
-
-CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "../mcfgthread/version.manifest"
+1 /* CREATEPROCESS_MANIFEST_RESOURCE_ID */ RT_MANIFEST "../mcfgthread/version.manifest"
