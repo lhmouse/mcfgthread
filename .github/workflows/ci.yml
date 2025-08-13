@@ -194,8 +194,8 @@ jobs:
       - name: Run tests
         run: meson test -t2 -Cbuild_ci --print-errorlogs
 
-  clang-cl-x64:
-    name: MSVC native build (x86-64 Clang-CL)
+  llvm-x64:
+    name: LLVM native build (x86-64 Clang)
     runs-on: windows-2022
 
     defaults:
@@ -222,8 +222,8 @@ jobs:
       - name: Run tests
         run: meson test -t2 -Cbuild_ci --print-errorlogs
 
-  clang-cl-x86:
-    name: MSVC native build (x86-32 Clang-CL)
+  llvm-x86:
+    name: LLVM native build (x86-32 Clang)
     runs-on: windows-2022
 
     defaults:
@@ -250,8 +250,8 @@ jobs:
       - name: Run tests
         run: meson test -t2 -Cbuild_ci --print-errorlogs
 
-  clang-cl-arm64:
-    name: MSVC native build (ARM64 Clang-CL)
+  llvm-arm64:
+    name: LLVM native build (ARM64 Clang)
     runs-on: windows-11-arm
 
     defaults:
