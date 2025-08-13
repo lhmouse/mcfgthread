@@ -37,7 +37,7 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup --cross-file meson.cross.x86_64-w64-mingw32
+             meson setup --cross-file meson_cross/gcc.x86_64-w64-mingw32
              -Denable-debug-checks=true -Doptimization=1 build_ci
 
       - name: Build
@@ -69,7 +69,7 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup --cross-file meson.cross.aarch64-w64-mingw32
+             meson setup --cross-file meson_cross/llvm.aarch64-w64-mingw32
              -Denable-debug-checks=true -Doptimization=1 build_ci
 
       - name: Build
@@ -209,12 +209,11 @@ jobs:
 
       - name: Install dependencies
         run: >-
-             choco uninstall -y llvm &
-             pip3 install --break-system-packages meson ninja
+             pip3 install --break-system-packages meson
 
       - name: Configure
         run: >-
-             meson setup --native-file meson.native.clang
+             meson setup --native-file meson_cross/llvm.x86_64-pc-windows-msvc
              -Denable-debug-checks=true -Doptimization=1 build_ci
 
       - name: Build
@@ -238,12 +237,11 @@ jobs:
 
       - name: Install dependencies
         run: >-
-             choco uninstall -y llvm &
-             pip3 install --break-system-packages meson ninja
+             pip3 install --break-system-packages meson
 
       - name: Configure
         run: >-
-             meson setup --native-file meson.native.clang
+             meson setup --native-file meson_cross/llvm.i686-pc-windows-msvc
              -Denable-debug-checks=true -Doptimization=1 build_ci
 
       - name: Build
@@ -267,12 +265,11 @@ jobs:
 
       - name: Install dependencies
         run: >-
-             choco uninstall -y llvm &
-             pip3 install --break-system-packages meson ninja
+             pip3 install --break-system-packages meson
 
       - name: Configure
         run: >-
-             meson setup --native-file meson.native.clang
+             meson setup --native-file meson_cross/llvm.aarch64-pc-windows-msvc
              -Denable-debug-checks=true -Doptimization=1 build_ci
 
       - name: Build

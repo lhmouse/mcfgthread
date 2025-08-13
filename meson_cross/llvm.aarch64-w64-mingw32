@@ -1,0 +1,34 @@
+## No Copyright
+##
+## Permission to use, copy, modify, and/or distribute this software for
+## any purpose with or without fee is hereby granted.
+##
+## THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+## WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES
+## OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE
+## FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY
+## DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
+## AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
+## OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+[binaries]
+c = [ 'clang', '--target=aarch64-w64-mingw32' ]
+c_ld = 'lld'
+cpp = [ 'clang++', '--target=aarch64-w64-mingw32' ]
+cpp_ld = 'lld'
+ar = 'llvm-ar'
+objcopy = [ 'llvm-objcopy', '--target=aarch64-w64-mingw32' ]
+strip = 'llvm-strip'
+windres = 'llvm-rc'
+dlltool = [ 'llvm-dlltool', '-m', 'arm64' ]
+pkg-config = 'aarch64-w64-mingw32-pkg-config'
+exe_wrapper = 'wine'
+
+[host_machine]
+system = 'windows'
+cpu_family = 'aarch64'
+cpu = 'aarch64'
+endian = 'little'
+
+[properties]
+skip_sanity_check = true
