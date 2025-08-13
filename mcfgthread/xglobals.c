@@ -404,7 +404,7 @@ extern const ULONG __MCF_i386_se_handler_table[];
 extern char __MCF_i386_se_handler_count[];
 __asm__ (
 ".section .rdata, \"dr\"  \n"
-"  .align 4  \n"
+"  .p2align 2  \n"
 "___MCF_i386_se_handler_table:  \n"
 "  .rva @__MCF_safeseh__seh_top  \n"
 "  .rva @__MCF_safeseh__gthr_once  \n"
