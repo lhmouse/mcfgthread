@@ -28,7 +28,6 @@ __asm__ (
  *     12: `init_proc`
  *     16: `arg`
  */
-".intel_syntax noprefix  \n"
 ".def _do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
 "_do_call_once_seh_take_over:  \n"
 "  push ebp  \n"
@@ -98,7 +97,6 @@ __asm__ (
  *     32: shadow slot for `arg` from R8
  *     40: unused
  */
-".intel_syntax noprefix  \n"
 ".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
 "do_call_once_seh_take_over:  \n"
 ".seh_proc do_call_once_seh_take_over  \n"

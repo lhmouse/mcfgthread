@@ -14,6 +14,13 @@
 #include <stdbool.h>
 #include <limits.h>
 
+/* With Clang 18-, `-masm=intel` doesn't affect module-level assembly, and
+ * requires this workaround.  */
+#if defined __clang_major__ && (__clang_major__ < 19)  \
+    && (defined __i386__ || (defined __amd64__ && !defined __arm64ec__))
+__asm__ (".intel_syntax noprefix");
+#endif
+
 /* When building the DLL, GCC may make implicit calls to these functions, so
  * we must define and export them. However, Clang requires that the `dllexport`
  * attribute be applied before a function is called, so declare them as early as
