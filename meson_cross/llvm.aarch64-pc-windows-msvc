@@ -12,16 +12,16 @@
 ## OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 [binaries]
-c = 'aarch64-w64-mingw32-clang'
+c = [ 'clang', '--target=aarch64-pc-windows-msvc' ]
 c_ld = 'lld'
-cpp = 'aarch64-w64-mingw32-clang++'
+cpp = [ 'clang++', '--target=aarch64-pc-windows-msvc' ]
 cpp_ld = 'lld'
-ar = 'aarch64-w64-mingw32-ar'
-objcopy = 'aarch64-w64-mingw32-objcopy'
-strip = 'aarch64-w64-mingw32-strip'
-windres = 'aarch64-w64-mingw32-windres'
-dlltool = 'aarch64-w64-mingw32-dlltool'
-pkg-config = 'aarch64-w64-mingw32-pkg-config'
+ar = 'llvm-ar'
+objcopy = [ 'llvm-objcopy', '--target=aarch64-pc-windows-msvc' ]
+strip = 'llvm-strip'
+windres = 'llvm-rc'
+dlltool = [ 'llvm-dlltool', '-m', 'arm64' ]
+pkg-config = 'aarch64-pc-windows-msvc-pkg-config'
 exe_wrapper = 'wine'
 
 [host_machine]

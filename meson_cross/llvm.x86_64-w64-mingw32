@@ -12,12 +12,23 @@
 ## OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 [binaries]
-c = 'clang'
+c = [ 'clang', '--target=x86_64-w64-mingw32' ]
 c_ld = 'lld'
-cpp = 'clang++'
+cpp = [ 'clang++', '--target=x86_64-w64-mingw32' ]
 cpp_ld = 'lld'
 ar = 'llvm-ar'
-objcopy = 'llvm-objcopy'
+objcopy = [ 'llvm-objcopy', '--target=x86_64-w64-mingw32' ]
 strip = 'llvm-strip'
 windres = 'llvm-rc'
-dlltool = 'llvm-dlltool'
+dlltool = [ 'llvm-dlltool', '-m', 'i386:x86-64' ]
+pkg-config = 'x86_64-w64-mingw32-pkg-config'
+exe_wrapper = 'wine'
+
+[host_machine]
+system = 'windows'
+cpu_family = 'x86_64'
+cpu = 'x86_64'
+endian = 'little'
+
+[properties]
+skip_sanity_check = true
