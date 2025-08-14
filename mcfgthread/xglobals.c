@@ -451,7 +451,7 @@ __asm__ (
 "  .rva __os_arm64x_helper6  \n"
 "  .rva __os_arm64x_helper7  \n"
 "  .rva __os_arm64x_helper8  \n"
-/* These are pointers to thunk functions, which will be filled after the image
+/* These are pointers to helper routines, which will be filled after the image
  * is loaded by the operating system.  */
 ".section .00cfg, \"dr\"  \n"
 "  .p2align 3  \n"
