@@ -2,7 +2,7 @@
 
 if ! grep -Eoi '^(mingw|msys|cygwin)' /proc/version &>/dev/null
 then
-  _cross_file='--cross-file meson_cross/gcc.x86_64-w64-mingw32'
+  _cross_file='--cross-file cross/gcc.x86_64-w64-mingw32'
 fi
 
 meson setup ${_cross_file}  \
