@@ -27,7 +27,7 @@ exe_wrapper = 'wine'
 [host_machine]
 system = 'windows'
 cpu_family = 'aarch64'
-cpu = 'aarch64'
+cpu = 'arm64ec'
 endian = 'little'
 
 [properties]
