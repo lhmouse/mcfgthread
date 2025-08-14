@@ -580,7 +580,7 @@ const _load_config_used __attribute__((__used__)) =
   {
     .Size = sizeof(_load_config_used),
     .DependentLoadFlags = LOAD_LIBRARY_SEARCH_SYSTEM32,
-#if defined __i386__ && defined __MCF_IN_DLL
+#if defined __i386__
     .SEHandlerTable = (ULONG_PTR) __MCF_i386_se_handler_table,
     .SEHandlerCount = (ULONG_PTR) __MCF_i386_se_handler_count,
 #endif
