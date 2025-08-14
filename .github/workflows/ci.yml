@@ -199,7 +199,7 @@ jobs:
     runs-on: windows-2022
 
     defaults:
-      run: { shell: cmd }
+      run: { shell: pwsh }
 
     steps:
       - uses: actions/checkout@v4
@@ -227,7 +227,7 @@ jobs:
     runs-on: windows-2022
 
     defaults:
-      run: { shell: cmd }
+      run: { shell: pwsh }
 
     steps:
       - uses: actions/checkout@v4
@@ -255,7 +255,7 @@ jobs:
     runs-on: windows-11-arm
 
     defaults:
-      run: { shell: cmd }
+      run: { shell: pwsh }
 
     steps:
       - uses: actions/checkout@v4
