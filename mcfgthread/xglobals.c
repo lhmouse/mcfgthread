@@ -394,7 +394,7 @@ memcmp(const void* src, const void* dst, size_t size)
 const int _fltused __attribute__((__used__)) = 0x9875;
 #endif
 
-#if defined __i386__ && defined __MCF_IN_DLL
+#if defined __i386__
 /* On x86-32, the load config directory contains the address and size of the
  * exception handler table. Exception handlers that are not in this table
  * will be rejected by the system. `__MCF_i386_se_handler_table` points to an
