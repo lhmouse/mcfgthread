@@ -131,7 +131,7 @@ add_project_arguments(
       '-masm=intel', '-msse2', '-mfpmath=sse', '-mcmodel=small',
       '-momit-leaf-frame-pointer', '-mno-outline-atomics',
       '-fno-stack-protector', '-fstrict-aliasing', '-ffast-math', '-fno-ident',
-      '-fno-omit-frame-pointer', '-fmerge-all-constants',
+      '-fno-omit-frame-pointer', '-fmerge-all-constants', '-fms-runtime-lib=dll',
       '-Werror=conversion', '-Werror=sign-compare', '-Werror=sign-conversion',
       '-Werror=write-strings', '-Werror=return-type', '-Werror=double-promotion',
       '-Wmissing-declarations', '-Wswitch-enum', '-Wmissing-field-initializers',
