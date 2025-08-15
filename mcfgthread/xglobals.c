@@ -497,9 +497,10 @@ __asm__ (
 ".globl __os_arm64x_helper8  \n"
 "__os_arm64x_helper8:  \n"
 "  .quad 0  \n"
-/* This is the ARM64EC Adjustor Thunk.  */
 ".text  \n"
 "  .p2align 2  \n"
+/* This is the ARM64EC Adjustor Thunk. Calls to this function are synthesized
+ * by the compiler.  */
 ".globl __icall_helper_arm64ec  \n"
 ".def __icall_helper_arm64ec; .scl 2; .type 32; .endef  \n"
 "__icall_helper_arm64ec:  \n"
@@ -517,6 +518,25 @@ __asm__ (
 ".seh_save_fplr_x 16  \n"
 ".seh_endepilogue  \n"
 "  br x11  \n"
+".seh_endproc  \n"
+/* This is a common Exit Thunk for functions that return void.  */
+".globl __MCF_arm64ec_exit_thunk_void  \n"
+".def __MCF_arm64ec_exit_thunk_void; .scl 2; .type 32; .endef  \n"
+"__MCF_arm64ec_exit_thunk_void:  \n"
+".seh_proc __MCF_arm64ec_exit_thunk_void  \n"
+"  stp fp, lr, [sp, -48]!  \n"
+".seh_save_fplr_x 48  \n"
+"  mov fp, sp  \n"
+".seh_set_fp  \n"
+".seh_endprologue  \n"
+"  adrp x16, __os_arm64x_dispatch_call_no_redirect  \n"
+"  ldr x16, [x16, :lo12:__os_arm64x_dispatch_call_no_redirect]  \n"
+"  blr x16  \n"
+".seh_startepilogue  \n"
+"  ldp fp, lr, [sp], 48  \n"
+".seh_save_fplr_x 48  \n"
+".seh_endepilogue  \n"
+"  ret  \n"
 ".seh_endproc  \n"
 );
 #endif
