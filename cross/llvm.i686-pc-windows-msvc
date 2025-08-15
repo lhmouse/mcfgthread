@@ -21,6 +21,7 @@ objcopy = [ 'llvm-objcopy', '--target=i686-pc-windows-msvc' ]
 strip = 'llvm-strip'
 windres = 'llvm-rc'
 dlltool = [ 'llvm-dlltool', '-m', 'i386' ]
+
 pkg-config = 'i686-pc-windows-msvc-pkg-config'
 exe_wrapper = 'wine'
 

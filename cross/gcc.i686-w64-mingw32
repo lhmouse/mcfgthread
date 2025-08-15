@@ -21,6 +21,7 @@ objcopy = 'i686-w64-mingw32-objcopy'
 strip = 'i686-w64-mingw32-strip'
 windres = 'i686-w64-mingw32-windres'
 dlltool = 'i686-w64-mingw32-dlltool'
+
 pkg-config = 'i686-w64-mingw32-pkg-config'
 exe_wrapper = 'wine'
 

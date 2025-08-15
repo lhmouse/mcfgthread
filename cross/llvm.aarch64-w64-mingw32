@@ -21,6 +21,7 @@ objcopy = [ 'llvm-objcopy', '--target=aarch64-w64-mingw32' ]
 strip = 'llvm-strip'
 windres = 'llvm-rc'
 dlltool = [ 'llvm-dlltool', '-m', 'arm64' ]
+
 pkg-config = 'aarch64-w64-mingw32-pkg-config'
 exe_wrapper = 'wine'
 
