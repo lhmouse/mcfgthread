@@ -156,10 +156,8 @@ __asm__ (
 /* Make the call `(*init_proc) (arg)`.  */
 "  mov x0, x2  \n"
 #  if defined __arm64ec__
-"  adrp x10, __MCF_arm64ec_exit_thunk_void  \n"
-"  add x10, x10, :lo12:__MCF_arm64ec_exit_thunk_void  \n"
 "  mov x11, x1  \n"
-"  bl __icall_helper_arm64ec  \n"
+"  bl __MCF_arm64ec_icall_helper_p  \n"
 #  else
 "  blr x1  \n"
 #  endif
