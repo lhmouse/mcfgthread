@@ -154,6 +154,15 @@ __asm__ (
 /* Stash `once` for the handler.  */
 "  str x0, [sp, 16]  \n"
 /* Make the call `(*init_proc) (arg)`.  */
+#  if defined __arm64ec__
+"  adrp x9, __os_arm64x_check_icall  \n"
+"  ldr x9, [x9, :lo12:__os_arm64x_check_icall]  \n"
+"  adrp x10, __MCF_arm64ec_exit_thunk_void  \n"
+"  add x10, x10, :lo12:__MCF_arm64ec_exit_thunk_void  \n"
+"  mov x11, x1  \n"
+"  blr x9  \n"
+"  mov x1, x11  \n"
+#  endif
 "  mov x0, x2  \n"
 "  blr x1  \n"
 /* Disarm the once flag with a tail call.  */
