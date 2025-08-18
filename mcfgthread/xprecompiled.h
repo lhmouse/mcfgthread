@@ -25,7 +25,7 @@ __asm__ (".intel_syntax noprefix");
  * we must define and export them. However, Clang requires that the `dllexport`
  * attribute be applied before a function is called, so declare them as early as
  * possible.  */
-#if defined __MCF_IN_DLL && !defined __arm64ec__
+#if defined __MCF_IN_DLL
 __declspec(dllexport) void* memcpy(void* __dst, const void* __src, size_t __size);
 __declspec(dllexport) void* memmove(void* __dst, const void* __src, size_t __size);
 __declspec(dllexport) void* memset(void* __dst, int __val, size_t __size);
