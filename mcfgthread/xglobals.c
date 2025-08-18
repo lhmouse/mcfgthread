@@ -370,7 +370,7 @@ __declspec(dllexport)
 void*
 memmove(void* dst, const void* src, size_t size)
   {
-   return ((uintptr_t) dst - (uintptr_t) src >= size)
+    return ((uintptr_t) dst - (uintptr_t) src >= size)
            ? __MCF_mcopy(dst, src, size)
            : __MCF_mcopy_backward(dst, src, size);
   }
