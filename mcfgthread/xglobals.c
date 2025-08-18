@@ -359,14 +359,21 @@ DllMainCRTStartup(PVOID instance, ULONG reason, PVOID reserved)
       }
   }
 
+/* According to GCC documentation, these functions are required by a
+ * freestanding implementation. When doing a non-emulative build, they are
+ * also exported for reuse.  */
+#if !defined __arm64ec__
 __declspec(dllexport)
+#endif
 void*
 memcpy(void* restrict dst, const void* restrict src, size_t size)
   {
     return __MCF_mcopy(dst, src, size);
   }
 
+#if !defined __arm64ec__
 __declspec(dllexport)
+#endif
 void*
 memmove(void* dst, const void* src, size_t size)
   {
@@ -375,14 +382,18 @@ memmove(void* dst, const void* src, size_t size)
            : __MCF_mcopy_backward(dst, src, size);
   }
 
+#if !defined __arm64ec__
 __declspec(dllexport)
+#endif
 void*
 memset(void* dst, int val, size_t size)
   {
     return __MCF_mfill(dst, val, size);
   }
 
+#if !defined __arm64ec__
 __declspec(dllexport)
+#endif
 int
 memcmp(const void* src, const void* dst, size_t size)
   {
