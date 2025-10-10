@@ -559,9 +559,9 @@ typedef unsigned __MCF_INTPTR_ uintptr_t;
 /* Some compilers warn about casts between pointers, so launder the pointer via
  * an in-between integral type.  */
 #ifdef __cplusplus
-#  define __MCF_CAST_PTR(T, ...)   (reinterpret_cast<T*>(reinterpret_cast< ::intptr_t>(__VA_ARGS__)))
+#  define __MCF_CAST_PTR(T, ...)   (reinterpret_cast<T*>(reinterpret_cast<__MCF_INTPTR_>(__VA_ARGS__)))
 #else
-#  define __MCF_CAST_PTR(T, ...)   (__MCF_EX (T*)(intptr_t) (__VA_ARGS__))
+#  define __MCF_CAST_PTR(T, ...)   (__MCF_EX (T*)(__MCF_INTPTR_) (__VA_ARGS__))
 #endif
 
 /* The `__MCF_STATIC_ASSERT_0()` macro is an expression that yields zero if it
