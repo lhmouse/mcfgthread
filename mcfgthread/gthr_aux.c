@@ -79,8 +79,6 @@ __asm__ (
 #  elif defined _MSC_VER
 ".safeseh _do_i386_call_once_on_except  \n"
 #  endif
-".globl @feat.00  \n"
-".set @feat.00, 1  \n"
 #elif defined __amd64__ && !defined __arm64ec__
 /* On x86-64, SEH is table-based. We register an unwind handler which is not
  * called when an exception is raised, but is called when the stack is being
