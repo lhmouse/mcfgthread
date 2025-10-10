@@ -49,13 +49,13 @@ main(void)
     assert(pdll_tls_get(key) == __MCF_nullptr);
     assert(mdll_tls_get(key) == __MCF_nullptr);
 
-    int dummy1;
+    int dummy1 = 1;
     _MCF_tls_xset(key, __MCF_nullptr, &dummy1);
     assert(_MCF_tls_get(key) == &dummy1);
     assert(pdll_tls_get(key) == &dummy1);
     assert(mdll_tls_get(key) == &dummy1);
 
-    int dummy2;
+    int dummy2 = 2;
     pdll_tls_xset(key, __MCF_nullptr, &dummy2);
     assert(_MCF_tls_get(key) == &dummy2);
     assert(pdll_tls_get(key) == &dummy2);

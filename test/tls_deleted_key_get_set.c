@@ -17,15 +17,16 @@ main(void)
 
     void* p;
     int r;
+    int dummy1 = 1;
 
     p = _MCF_tls_get(key);
     assert(p == __MCF_nullptr);
 
-    r = _MCF_tls_set(key, &r);
+    r = _MCF_tls_set(key, &dummy1);
     assert(r == 0);
 
     p = _MCF_tls_get(key);
-    assert(p == &r);
+    assert(p == &dummy1);
 
     _MCF_tls_key_add_ref(key);
     _MCF_tls_key_delete(key);
@@ -33,7 +34,7 @@ main(void)
     p = _MCF_tls_get(key);
     assert(p == __MCF_nullptr);
 
-    r = _MCF_tls_set(key, &r);
+    r = _MCF_tls_set(key, &dummy1);
     assert(r == -1);
     assert(GetLastError() == ERROR_INVALID_PARAMETER);
 
