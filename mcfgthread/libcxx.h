@@ -412,7 +412,7 @@ int
 __MCF_libcxx_tls_create(__libcpp_tls_key* __keyp, _MCF_tls_dtor* __dtor_opt)
   __MCF_noexcept
   {
-    _MCF_tls_key* __key = _MCF_tls_key_new(__dtor_opt);
+    _MCF_tls_key* __key = __MCF_EX _MCF_tls_key_new(__dtor_opt);
     *__keyp = __key;
     return (__key == __MCF_nullptr) ? ENOMEM : 0;
   }

@@ -607,7 +607,7 @@ int
 __MCF_c11_tss_create(tss_t* __keyp, tss_dtor_t __dtor_opt)
   __MCF_noexcept
   {
-    _MCF_tls_key* __key = _MCF_tls_key_new(__dtor_opt);
+    _MCF_tls_key* __key = __MCF_EX _MCF_tls_key_new(__dtor_opt);
     *__keyp = __key;
     return (__key == __MCF_nullptr) ? thrd_nomem : thrd_success;
   }
