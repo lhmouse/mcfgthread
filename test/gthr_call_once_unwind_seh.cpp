@@ -50,7 +50,7 @@ thread_proc()
     ::_MCF_sem_wait(&start, nullptr);
 
     try {
-      __MCF_GTHR_CALL_ONCE_SEH(&once, once_do_it, (void*) 1);
+      __MCF_gthr_call_once_seh(&once, once_do_it, (void*) 1);
       ::std::terminate();
     }
     catch(...) {  }
