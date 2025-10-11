@@ -44,7 +44,7 @@ main(void)
     // replace global heap
     const uint32_t heap_capacity = 1048576;
     __MCF_crt_heap = HeapCreate(0, 0, heap_capacity);
-    assert(&__MCF_crt_heap);
+    assert(__MCF_crt_heap);
 
     // allocate until oom
     for(uint32_t i = 0;  i < heap_capacity / 16;  ++i)
