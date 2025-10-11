@@ -55,11 +55,6 @@ void
 __MCF_gthr_call_once_seh_take_over(_MCF_once* __once, __MCF_cxa_dtor_any_ __init_proc, void* __arg)
   __MCF_MAY_THROW;
 
-/* This is a type-generic macro. `__init_proc` may be of any calling convention,
- * and may take an arbitrary pointer.  */
-#define __MCF_GTHR_CALL_ONCE_SEH(__once, __init_proc, __arg)  \
-    __MCF_gthr_call_once_seh(__once, __MCF_CAST_PTR(__MCF_cxa_dtor_cdecl, __init_proc), __arg)
-
 /* This is an auxiliary function for converting a `__MCF_timespec` to the
  * number of milliseconds since the Unix epoch, with boundary checking.  */
 __MCF_GTHR_AUX_IMPORT __MCF_FN_PURE
