@@ -74,8 +74,8 @@ __asm__ (
 "  mov eax, 1  \n"
 "  ret  \n"
 #  if defined __MCF_IN_DLL
-".globl @__MCF_safeseh__gthr_once  \n"
-".equiv @__MCF_safeseh__gthr_once, _do_i386_call_once_on_except  \n"
+".globl ___MCF_gthr_do_i386_call_once_on_except  \n"
+".equiv ___MCF_gthr_do_i386_call_once_on_except, _do_i386_call_once_on_except  \n"
 #  elif defined _MSC_VER
 ".safeseh _do_i386_call_once_on_except  \n"
 #  endif

@@ -28,14 +28,11 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
     return nonmatch ? ExceptionContinueSearch : ExceptionContinueExecution;
   }
 
-__asm__ (""
-#if defined __i386__ && defined __MCF_IN_DLL
-".globl @__MCF_safeseh__seh_top  \n"
-".equiv @__MCF_safeseh__seh_top, ___MCF_seh_top  \n"
-#elif defined __i386__ && defined _MSC_VER
-".safeseh ___MCF_seh_top  \n"
+#if defined __i386__ && !defined __MCF_IN_DLL && defined _MSC_VER
+/* In the DLL we build a handler table by hand, but this is still necessary
+ * for the static library.  */
+__asm__ (".safeseh ___MCF_seh_top");
 #endif
-);
 
 __MCF_DLLEXPORT
 void
@@ -407,8 +404,8 @@ __asm__ (
 ".section .rdata, \"dr\"  \n"
 "  .p2align 2  \n"
 "___MCF_i386_se_handler_table:  \n"
-"  .rva @__MCF_safeseh__seh_top  \n"
-"  .rva @__MCF_safeseh__gthr_once  \n"
+"  .rva ___MCF_seh_top  \n"
+"  .rva ___MCF_gthr_do_i386_call_once_on_except  \n"
 ".equiv ___MCF_i386_se_handler_count, (. - ___MCF_i386_se_handler_table) / 4  \n"
 ".text  \n"
 );
