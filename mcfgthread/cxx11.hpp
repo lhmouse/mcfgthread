@@ -9,7 +9,7 @@
 #define __MCFGTHREAD_CXX11_
 
 #include "fwd.h"
-#include "gthr_aux.h"
+#include "gthr.h"
 #include "cxa.h"
 #include "event.h"
 #include "shared_mutex.h"
