@@ -199,16 +199,16 @@ mcfgthread_version_o = import('windows').compile_resources(
       args: [ '-I.', '-c65001' ],
       depend_files: [ 'mcfgthread/version.h.in', 'mcfgthread/version.manifest' ])
 
-if cc.has_link_argument('-Wl,--disable-auto-import')
-  lib_mcfgthread_dll_link_args = [
-        '-nostdlib', '-Wl,--dynamicbase', '-Wl,--nxcompat', '-Wl,--gc-sections',
-        '-Wl,--subsystem,windows:6.1', '-Wl,--kill-at', '-Wl,--exclude-all-symbols',
-        '-Wl,--disable-auto-import' ]
-else
+if cc.has_link_argument('/LTCG')
   lib_mcfgthread_dll_link_args = [
         '-Wl,-nodefaultlib', '-Wl,-dynamicbase', '-Wl,-nxcompat', '-Wl,-opt:ref',
         '-Wl,-opt:icf', '-Xlinker', '-subsystem:windows,6.1', '-Wl,-kill-at',
         '-Wl,-safeseh:no' ]
+else
+  lib_mcfgthread_dll_link_args = [
+        '-nostdlib', '-Wl,--dynamicbase', '-Wl,--nxcompat', '-Wl,--gc-sections',
+        '-Wl,--subsystem,windows:6.1', '-Wl,--kill-at', '-Wl,--exclude-all-symbols',
+        '-Wl,--disable-auto-import' ]
 endif
 
 lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
