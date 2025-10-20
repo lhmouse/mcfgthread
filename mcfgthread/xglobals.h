@@ -154,7 +154,7 @@ __MCF_ALWAYS_INLINE
 void
 __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
   {
-    (*(dtor.__cdecl_ptr)) (arg);
+    (* dtor.__cdecl_ptr) (arg);
   }
 
 #  define __MCF_REALIGN_SP    /* nothing */
