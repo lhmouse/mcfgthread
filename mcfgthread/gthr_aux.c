@@ -37,20 +37,20 @@ __asm__ (
 /* Initialize the constant zero.  */
 "  xor esi, esi  \n"
 /* Install an SEH handler.  */
-"  mov eax, fs:[esi]  \n"
+"  mov eax, DWORD PTR fs:[esi]  \n"
 "  lea ecx, [ebp - 16]  \n"
-"  mov [ecx], eax  \n"
+"  mov DWORD PTR [ecx], eax  \n"
 "  mov DWORD PTR [ecx + 4], OFFSET _do_i386_call_once_on_except  \n"
-"  mov fs:[esi], ecx  \n"
+"  mov DWORD PTR fs:[esi], ecx  \n"
 /* Make the call `(*init_proc) (arg)`. The argument is passed both via the
  * ECX register and on the stack, to allow both `__cdecl` and `__thiscall`
  * functions to work properly.  */
-"  mov ecx, [ebp + 16]  \n"
-"  mov [ebp - 24], ecx  \n"
-"  call [ebp + 12]  \n"
+"  mov ecx, DWORD PTR [ebp + 16]  \n"
+"  mov DWORD PTR [ebp - 24], ecx  \n"
+"  call DWORD PTR [ebp + 12]  \n"
 /* Dismantle the SEH handler.  */
-"  mov eax, [ebp - 16]  \n"
-"  mov fs:[esi], eax  \n"
+"  mov eax, DWORD PTR [ebp - 16]  \n"
+"  mov DWORD PTR fs:[esi], eax  \n"
 /* Disarm the once flag with a tail call.  */
 "  lea esp, [ebp - 4]  \n"
 "  pop esi  \n"
@@ -61,11 +61,11 @@ __asm__ (
 ".def _do_i386_call_once_on_except; .scl 3; .type 32; .endef  \n"
 "_do_i386_call_once_on_except:  \n"
 /* Check whether `ExceptionFlags` contains `EXCEPTION_UNWINDING`.  */
-"  mov ecx, [esp + 4]  \n"
+"  mov ecx, DWORD PTR [esp + 4]  \n"
 "  test BYTE PTR [ecx + 4], 2  \n"
 "  jz 1001f  \n"
 /* Locate the once flag from `EstablisherFrame`, and reset it.  */
-"  mov eax, [esp + 8]  \n"
+"  mov eax, DWORD PTR [esp + 8]  \n"
 "  push DWORD PTR [eax + 24]  \n"
 "  call __MCF_once_abort  \n"
 "  pop eax  \n"
@@ -107,13 +107,13 @@ __asm__ (
 ".seh_stackalloc 32  \n"
 ".seh_endprologue  \n"
 /* Stash `once` for the handler.  */
-"  mov [rbp + 16], rcx  \n"
+"  mov QWORD PTR [rbp + 16], rcx  \n"
 /* Make the call `(*init_proc) (arg)`.  */
 "  mov rcx, r8  \n"
 "  call rdx  \n"
 /* Disarm the once flag with a tail call. The x64 stack unwinder recognizes
  * `add rsp, SIZE` as the start of the epilogue.  */
-"  mov rcx, [rbp + 16]  \n"
+"  mov rcx, QWORD PTR [rbp + 16]  \n"
 "  add rsp, 32  \n"
 "  pop rbp  \n"
 "  jmp _MCF_once_release  \n"
@@ -123,7 +123,7 @@ __asm__ (
 "do_amd64_call_once_on_unwind:  \n"
 "  sub rsp, 40  \n"
 /* Locate the once flag from `EstablisherFrame`, and reset it.  */
-"  mov rcx, [rdx + 16]  \n"
+"  mov rcx, QWORD PTR [rdx + 16]  \n"
 "  call _MCF_once_abort  \n"
 /* Return `ExceptionContinueSearch`.  */
 "  mov eax, 1  \n"
