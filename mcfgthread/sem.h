@@ -97,7 +97,7 @@ int
 _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init)
   __MCF_noexcept
   {
-    _MCF_sem __temp = { 0 };
+    _MCF_sem __temp = __MCF_0_INIT;
 
     if((__value_init < 0) || (__value_init > __MCF_SEM_VALUE_MAX))
       return -1;
