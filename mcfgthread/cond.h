@@ -91,7 +91,7 @@ _MCF_cond_init(_MCF_cond* __cond)
   __MCF_noexcept
   {
     _MCF_cond __temp = __MCF_0_INIT;
-    _MCF_atomic_store_pptr_rel(__cond, &__temp);
+    _MCF_atomic_store_pptr_rlx(__cond, &__temp);
   }
 
 __MCF_COND_INLINE
