@@ -105,7 +105,7 @@ int
 _MCF_event_init(_MCF_event* __eventp, int __value_init)
   __MCF_noexcept
   {
-    _MCF_event __temp = { 0, 0, 0 };
+    _MCF_event __temp = __MCF_0_INIT;
 
     if((__value_init < 0) || (__value_init > __MCF_EVENT_VALUE_MAX))
       return -1;
