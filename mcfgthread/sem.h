@@ -103,7 +103,7 @@ _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init)
       return -1;
 
     __temp.__value = __value_init;
-    _MCF_atomic_store_pptr_rel(__sem, &__temp);
+    _MCF_atomic_store_pptr_rlx(__sem, &__temp);
     return 0;
   }
 

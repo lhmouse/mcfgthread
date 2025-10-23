@@ -111,7 +111,7 @@ _MCF_event_init(_MCF_event* __eventp, int __value_init)
       return -1;
 
     __temp.__value = (uint8_t) __value_init;
-    _MCF_atomic_store_pptr_rel(__eventp, &__temp);
+    _MCF_atomic_store_pptr_rlx(__eventp, &__temp);
     return 0;
   }
 
