@@ -161,10 +161,10 @@ endif
 #===========================================================
 # Rules for headers
 #===========================================================
-configure_file(input: 'mcfgthread/version.h.in',
-               configuration: ver,
+configure_file(configuration: ver,
                output: 'version.h',
-               install: false)
+               install: false,
+               input: 'mcfgthread/version.h.in')
 
 install_headers(mcfgthread_include, preserve_path: true)
 install_headers(meson.current_build_dir() / 'version.h', subdir: 'mcfgthread')
@@ -188,21 +188,21 @@ dep_kernel32 = declare_dependency(
       link_with: custom_target('kernel32',
           command: [ dlltool, '-k', '-l', '@OUTPUT@', '-d', '@INPUT@' ],
           output: 'libkernel32.a',
+          install: false,
           input: configure_file(input: 'mcfgthread/kernel32.def.in',
                                 configuration: stdcall_suffixes,
                                 output: 'kernel32.def',
-                                install: false),
-          install: false))
+                                install: false)))
 
 dep_ntdll = declare_dependency(
       link_with: custom_target('ntdll',
           command: [ dlltool, '-k', '-l', '@OUTPUT@', '-d', '@INPUT@' ],
           output: 'libntdll.a',
+          install: false,
           input: configure_file(input: 'mcfgthread/ntdll.def.in',
                                 configuration: stdcall_suffixes,
                                 output: 'ntdll.def',
-                                install: false),
-          install: false))
+                                install: false)))
 
 mcfgthread_version_o = import('windows').compile_resources(
       'mcfgthread/version.rc',
