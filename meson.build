@@ -173,26 +173,36 @@ install_headers(meson.current_build_dir() / 'version.h', subdir: 'mcfgthread')
 # Rules for 'lib/libmcfgthread'
 #===========================================================
 if cc.has_define('__i386__')
-  def_kernel32 = 'mcfgthread/kernel32.i386.def'
-  def_ntdll = 'mcfgthread/ntdll.i386.def'
+  stdcall_suffixes = { '0': '@0', '4': '@4', '8': '@8', '12': '@12', '16': '@16',
+                       '20': '@20', '24': '@24', '28': '@28', '32': '@32',
+                       '36': '@36', '40': '@40', '44': '@44', '48': '@48',
+                       '52': '@52', '56': '@56', '60': '@60', '64': '@64' }
 else
-  def_kernel32 = 'mcfgthread/kernel32.def'
-  def_ntdll = 'mcfgthread/ntdll.def'
+  stdcall_suffixes = { '0': '', '4': '', '8': '', '12': '', '16': '',
+                       '20': '', '24': '', '28': '', '32': '',
+                       '36': '', '40': '', '44': '', '48': '',
+                       '52': '', '56': '', '60': '', '64': '' }
 endif
 
 dep_kernel32 = declare_dependency(
-     link_with: custom_target('kernel32',
-        command: [ dlltool, '-k', '-l', '@OUTPUT@', '-d', '@INPUT@' ],
-        output: 'libkernel32.a',
-        input: def_kernel32,
-        install: false))
+      link_with: custom_target('kernel32',
+          command: [ dlltool, '-k', '-l', '@OUTPUT@', '-d', '@INPUT@' ],
+          output: 'libkernel32.a',
+          input: configure_file(input: 'mcfgthread/kernel32.def.in',
+                                configuration: stdcall_suffixes,
+                                output: 'kernel32.def',
+                                install: false),
+          install: false))
 
 dep_ntdll = declare_dependency(
-     link_with: custom_target('ntdll',
-        command: [ dlltool, '-k', '-l', '@OUTPUT@', '-d', '@INPUT@' ],
-        output: 'libntdll.a',
-        input: def_ntdll,
-        install: false))
+      link_with: custom_target('ntdll',
+          command: [ dlltool, '-k', '-l', '@OUTPUT@', '-d', '@INPUT@' ],
+          output: 'libntdll.a',
+          input: configure_file(input: 'mcfgthread/ntdll.def.in',
+                                configuration: stdcall_suffixes,
+                                output: 'ntdll.def',
+                                install: false),
+          install: false))
 
 mcfgthread_version_o = import('windows').compile_resources(
       'mcfgthread/version.rc',
