@@ -124,14 +124,12 @@ __MCF_i386_seh_cleanup(EXCEPTION_REGISTRATION_RECORD* const* ref)
       = __MCF_i386_seh_install(&(EXCEPTION_REGISTRATION_RECORD) {  \
            .Handler = __MCF_CAST_PTR(EXCEPTION_ROUTINE, __MCF_seh_top) })
 
-/* In the case of i386, the argument is passed both via the ECX register and
- * on the stack, to allow both `__cdecl` and `__thiscall` functions to work
- * properly.  */
 __MCF_ALWAYS_INLINE
 void
 __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
   {
-    /* Parameters are `EAX`, `EDX`, `ECX`, `ESP[4]`.  */
+    /* The argument is passed both via the ECX register and on the stack, to
+     * allow both `__cdecl` and `__thiscall` functions to work properly.  */
     typedef void omni_type(int, int, void*, void*) __attribute__((__regparm__(3)));
     int eax, edx;
     __asm__ ("" : "=a"(eax), "=d"(edx));  /* dummy */
