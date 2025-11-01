@@ -189,20 +189,20 @@ dep_kernel32 = declare_dependency(
           command: [ dlltool, '-k', '-l', '@OUTPUT@', '-d', '@INPUT@' ],
           output: 'libkernel32.a',
           install: false,
-          input: configure_file(input: 'mcfgthread/kernel32.def.in',
-                                configuration: stdcall_suffixes,
+          input: configure_file(configuration: stdcall_suffixes,
                                 output: 'kernel32.def',
-                                install: false)))
+                                install: false,
+                                input: 'mcfgthread/kernel32.def.in')))
 
 dep_ntdll = declare_dependency(
       link_with: custom_target('ntdll',
           command: [ dlltool, '-k', '-l', '@OUTPUT@', '-d', '@INPUT@' ],
           output: 'libntdll.a',
           install: false,
-          input: configure_file(input: 'mcfgthread/ntdll.def.in',
-                                configuration: stdcall_suffixes,
+          input: configure_file(configuration: stdcall_suffixes,
                                 output: 'ntdll.def',
-                                install: false)))
+                                install: false,
+                                input: 'mcfgthread/ntdll.def.in')))
 
 mcfgthread_version_o = import('windows').compile_resources(
       'mcfgthread/version.rc',
