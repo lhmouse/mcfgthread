@@ -352,7 +352,7 @@ _MCF_thread_self_tid(void)
   __MCF_noexcept
   {
     uint32_t __tid;
-    __MCF_TEB_LOAD_32_IMMEDIATE(&__tid, __MCF_64_32(0x48, 0x24));
+    __MCF_TEB_LD32_IMM(&__tid, __MCF_64_32(0x48, 0x24));
     return __tid;
   }
 
