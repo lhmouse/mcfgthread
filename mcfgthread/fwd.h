@@ -153,34 +153,34 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_ASM_LD_(s, out, ...)   __asm__ (s : "=r"(*(out)) : __VA_ARGS__ : "memory")
 #  define __MCF_ASM_ST_(s, in, ...)   __asm__ volatile (s : : "r"(in), __VA_ARGS__ : "memory")
 #  if defined __amd64__ && !defined __arm64ec__
-#    define __MCF_TEB_LD32_IMM(out, base)       __MCF_ASM_LD_("mov { %%gs:%c1, %k0 | %k0, gs:[%1] }", out, "i"(base))
-#    define __MCF_TEB_ST32_IMM(base, in)        __MCF_ASM_ST_("mov { %k0, %%gs:%c1 | gs:[%1], %k0 }", in, "i"(base))
+#    define __MCF_TEB_LD32_ABS(out, base)       __MCF_ASM_LD_("mov { %%gs:%c1, %k0 | %k0, gs:[%1] }", out, "i"(base))
+#    define __MCF_TEB_ST32_ABS(base, in)        __MCF_ASM_ST_("mov { %k0, %%gs:%c1 | gs:[%1], %k0 }", in, "i"(base))
 #    define __MCF_TEB_LD32_SIB(out, base, i)    __MCF_ASM_LD_("mov { %%gs:%c1(,%2,4), %k0 | %k0, gs:[%1+%2*4] }", out, "i"(base), "r"(i))
 #    define __MCF_TEB_ST32_SIB(base, i, in)     __MCF_ASM_ST_("mov { %k0, %%gs:%c1(,%2,4) | gs:[%1+%2*4], %k0 }", in, "i"(base), "r"(i))
-#    define __MCF_TEB_LDPTR_IMM(out, base)      __MCF_ASM_LD_("mov { %%gs:%c1, %q0 | %q0, gs:[%1] }", out, "i"(base))
-#    define __MCF_TEB_STPTR_IMM(base, in)       __MCF_ASM_ST_("mov { %q0, %%gs:%c1 | gs:[%1], %q0 }", in, "i"(base))
+#    define __MCF_TEB_LDPTR_ABS(out, base)      __MCF_ASM_LD_("mov { %%gs:%c1, %q0 | %q0, gs:[%1] }", out, "i"(base))
+#    define __MCF_TEB_STPTR_ABS(base, in)       __MCF_ASM_ST_("mov { %q0, %%gs:%c1 | gs:[%1], %q0 }", in, "i"(base))
 #    define __MCF_TEB_LDPTR_SIB(out, base, i)   __MCF_ASM_LD_("mov { %%gs:%c1(,%2,8), %q0 | %q0, gs:[%1+%2*8] }", out, "i"(base), "r"(i))
 #    define __MCF_TEB_STPTR_SIB(base, i, in)    __MCF_ASM_ST_("mov { %q0, %%gs:%c1(,%2,8) | gs:[%1+%2*8], %q0 }", in, "i"(base), "r"(i))
 #    define __MCF_64_32(x, y)  x
 #    define __MCF_USYM  ""
 #  elif defined __i386__
-#    define __MCF_TEB_LD32_IMM(out, base)       __MCF_ASM_LD_("mov { %%fs:%c1, %k0 | %k0, fs:[%1] }", out, "i"(base))
-#    define __MCF_TEB_ST32_IMM(base, in)        __MCF_ASM_ST_("mov { %k0, %%fs:%c1 | fs:[%1], %k0 }", in, "i"(base))
+#    define __MCF_TEB_LD32_ABS(out, base)       __MCF_ASM_LD_("mov { %%fs:%c1, %k0 | %k0, fs:[%1] }", out, "i"(base))
+#    define __MCF_TEB_ST32_ABS(base, in)        __MCF_ASM_ST_("mov { %k0, %%fs:%c1 | fs:[%1], %k0 }", in, "i"(base))
 #    define __MCF_TEB_LD32_SIB(out, base, i)    __MCF_ASM_LD_("mov { %%fs:%c1(,%2,4), %k0 | %k0, fs:[%1+%2*4] }", out, "i"(base), "r"(i))
 #    define __MCF_TEB_ST32_SIB(base, i, in)     __MCF_ASM_ST_("mov { %k0, %%fs:%c1(,%2,4) | fs:[%1+%2*4], %k0 }", in, "i"(base), "r"(i))
-#    define __MCF_TEB_LDPTR_IMM(out, base)      __MCF_ASM_LD_("mov { %%fs:%c1, %k0 | %k0, fs:[%1] }", out, "i"(base))
-#    define __MCF_TEB_STPTR_IMM(base, in)       __MCF_ASM_ST_("mov { %k0, %%fs:%c1 | fs:[%1], %k0 }", in, "i"(base))
+#    define __MCF_TEB_LDPTR_ABS(out, base)      __MCF_ASM_LD_("mov { %%fs:%c1, %k0 | %k0, fs:[%1] }", out, "i"(base))
+#    define __MCF_TEB_STPTR_ABS(base, in)       __MCF_ASM_ST_("mov { %k0, %%fs:%c1 | fs:[%1], %k0 }", in, "i"(base))
 #    define __MCF_TEB_LDPTR_SIB(out, base, i)   __MCF_ASM_LD_("mov { %%fs:%c1(,%2,4), %k0 | %k0, fs:[%1+%2*4] }", out, "i"(base), "r"(i))
 #    define __MCF_TEB_STPTR_SIB(base, i, in)    __MCF_ASM_ST_("mov { %k0, %%fs:%c1(,%2,4) | fs:[%1+%2*4], %k0 }", in, "i"(base), "r"(i))
 #    define __MCF_64_32(x, y)  y
 #    define __MCF_USYM  "_"
 #  elif defined __aarch64__ || defined __arm64ec__
-#    define __MCF_TEB_LD32_IMM(out, base)       __MCF_ASM_LD_("ldr %w0, [x18, %1]", out, "i"(base))
-#    define __MCF_TEB_ST32_IMM(base, in)        __MCF_ASM_ST_("str %w0, [x18, %1]", in, "i"(base))
+#    define __MCF_TEB_LD32_ABS(out, base)       __MCF_ASM_LD_("ldr %w0, [x18, %1]", out, "i"(base))
+#    define __MCF_TEB_ST32_ABS(base, in)        __MCF_ASM_ST_("str %w0, [x18, %1]", in, "i"(base))
 #    define __MCF_TEB_LD32_SIB(out, base, i)    __MCF_ASM_LD_("ldr %w0, [x18, %w1, uxtw #2]", out, "r"(((base) >> 2) + (i)))
 #    define __MCF_TEB_ST32_SIB(base, i, in)     __MCF_ASM_ST_("str %w0, [x18, %w1, uxtw #2]", in, "r"(((base) >> 2) + (i)))
-#    define __MCF_TEB_LDPTR_IMM(out, base)      __MCF_ASM_LD_("ldr %x0, [x18, %1]", out, "i"(base))
-#    define __MCF_TEB_STPTR_IMM(base, in)       __MCF_ASM_ST_("str %x0, [x18, %1]", in, "i"(base))
+#    define __MCF_TEB_LDPTR_ABS(out, base)      __MCF_ASM_LD_("ldr %x0, [x18, %1]", out, "i"(base))
+#    define __MCF_TEB_STPTR_ABS(base, in)       __MCF_ASM_ST_("str %x0, [x18, %1]", in, "i"(base))
 #    define __MCF_TEB_LDPTR_SIB(out, base, i)   __MCF_ASM_LD_("ldr %x0, [x18, %w1, uxtw #3]", out, "r"(((base) >> 3) + (i)))
 #    define __MCF_TEB_STPTR_SIB(base, i, in)    __MCF_ASM_ST_("str %x0, [x18, %w1, uxtw #3]", in, "r"(((base) >> 3) + (i)))
 #    define __MCF_64_32(x, y)  x
@@ -189,34 +189,34 @@ __MCF_CXX(extern "C" {)
 #elif defined _MSC_VER
 #  include <intrin.h>
 #  if defined _M_X64 && !defined _M_ARM64EC
-#    define __MCF_TEB_LD32_IMM(out, base)         (*(out) = __readgsdword((base)))
-#    define __MCF_TEB_ST32_IMM(base, in)          (__writegsdword((base), (in)))
+#    define __MCF_TEB_LD32_ABS(out, base)         (*(out) = __readgsdword((base)))
+#    define __MCF_TEB_ST32_ABS(base, in)          (__writegsdword((base), (in)))
 #    define __MCF_TEB_LD32_SIB(out, base, i)      (*(out) = __readgsdword((base) + ((i) << 2)))
 #    define __MCF_TEB_ST32_SIB(base, i, in)       (__writegsdword((base) + ((i) << 2), (in)))
-#    define __MCF_TEB_LDPTR_IMM(out, base)        (*(out) = __readgsqword((base)))
-#    define __MCF_TEB_STPTR_IMM(base, in)         (__writegsqword((base), (in)))
+#    define __MCF_TEB_LDPTR_ABS(out, base)        (*(out) = __readgsqword((base)))
+#    define __MCF_TEB_STPTR_ABS(base, in)         (__writegsqword((base), (in)))
 #    define __MCF_TEB_LDPTR_SIB(out, base, i)     (*(out) = __readgsqword((base) + ((i) << 3)))
 #    define __MCF_TEB_STPTR_SIB(base, i, in)      (__writegsqword((base) + ((i) << 3), (in)))
 #    define __MCF_64_32(x, y)  x
 #    define __MCF_USYM  ""
 #  elif defined _M_IX86
-#    define __MCF_TEB_LD32_IMM(out, base)         (*(out) = __readfsdword((base)))
-#    define __MCF_TEB_ST32_IMM(base, in)          (__writefsdword((base), (in)))
+#    define __MCF_TEB_LD32_ABS(out, base)         (*(out) = __readfsdword((base)))
+#    define __MCF_TEB_ST32_ABS(base, in)          (__writefsdword((base), (in)))
 #    define __MCF_TEB_LD32_SIB(out, base, i)      (*(out) = __readfsdword((base) + ((i) << 2)))
 #    define __MCF_TEB_ST32_SIB(base, i, in)       (__writefsdword((base) + ((i) << 2), (in)))
-#    define __MCF_TEB_LDPTR_IMM(out, base)        (*(out) = __readfsdword((base)))
-#    define __MCF_TEB_STPTR_IMM(base, in)         (__writefsdword((base), (in)))
+#    define __MCF_TEB_LDPTR_ABS(out, base)        (*(out) = __readfsdword((base)))
+#    define __MCF_TEB_STPTR_ABS(base, in)         (__writefsdword((base), (in)))
 #    define __MCF_TEB_LDPTR_SIB(out, base, i)     (*(out) = __readfsdword((base) + ((i) << 2)))
 #    define __MCF_TEB_STPTR_SIB(base, i, in)      (__writefsdword((base) + ((i) << 2), (in)))
 #    define __MCF_64_32(x, y)  y
 #    define __MCF_USYM  "_"
 #  elif defined _M_ARM64 || defined _M_ARM64EC
-#    define __MCF_TEB_LD32_IMM(out, base)         (*(out) = __readx18dword((base)))
-#    define __MCF_TEB_ST32_IMM(base, in)          (__writex18dword((base), (in)))
+#    define __MCF_TEB_LD32_ABS(out, base)         (*(out) = __readx18dword((base)))
+#    define __MCF_TEB_ST32_ABS(base, in)          (__writex18dword((base), (in)))
 #    define __MCF_TEB_LD32_SIB(out, base, i)      (*(out) = __readx18dword((base) + ((i) << 2)))
 #    define __MCF_TEB_ST32_SIB(base, i, in)       (__writex18dword((base) + ((i) << 2), (in)))
-#    define __MCF_TEB_LDPTR_IMM(out, base)        (*(out) = __readx18qword((base)))
-#    define __MCF_TEB_STPTR_IMM(base, in)         (__writex18qword((base), (in)))
+#    define __MCF_TEB_LDPTR_ABS(out, base)        (*(out) = __readx18qword((base)))
+#    define __MCF_TEB_STPTR_ABS(base, in)         (__writex18qword((base), (in)))
 #    define __MCF_TEB_LDPTR_SIB(out, base, i)     (*(out) = __readx18qword((base) + ((i) << 3)))
 #    define __MCF_TEB_STPTR_SIB(base, i, in)      (__writex18qword((base) + ((i) << 3), (in)))
 #    define __MCF_64_32(x, y)  x

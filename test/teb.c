@@ -25,14 +25,14 @@ main(void)
 
 #if __MCF_64_32(64, 32) != 32
     /* 64-bit */
-    __MCF_TEB_LDPTR_IMM(&uptr, 0x40);
+    __MCF_TEB_LDPTR_ABS(&uptr, 0x40);
     assert(uptr == GetCurrentProcessId());
-    __MCF_TEB_LDPTR_IMM(&uptr, 0x48);
+    __MCF_TEB_LDPTR_ABS(&uptr, 0x48);
     assert(uptr == GetCurrentThreadId());
 
-    __MCF_TEB_LD32_IMM(&u32, 0x40);
+    __MCF_TEB_LD32_ABS(&u32, 0x40);
     assert(u32 == GetCurrentProcessId());
-    __MCF_TEB_LD32_IMM(&u32, 0x48);
+    __MCF_TEB_LD32_ABS(&u32, 0x48);
     assert(u32 == GetCurrentThreadId());
 
     assert(TlsSetValue(tls_index, (void*) 0x0123456789ABCDEF));
@@ -54,14 +54,14 @@ main(void)
 
 #if __MCF_64_32(64, 32) != 64
     /* 32-bit */
-    __MCF_TEB_LDPTR_IMM(&uptr, 0x20);
+    __MCF_TEB_LDPTR_ABS(&uptr, 0x20);
     assert(uptr == GetCurrentProcessId());
-    __MCF_TEB_LDPTR_IMM(&uptr, 0x24);
+    __MCF_TEB_LDPTR_ABS(&uptr, 0x24);
     assert(uptr == GetCurrentThreadId());
 
-    __MCF_TEB_LD32_IMM(&u32, 0x20);
+    __MCF_TEB_LD32_ABS(&u32, 0x20);
     assert(u32 == GetCurrentProcessId());
-    __MCF_TEB_LD32_IMM(&u32, 0x24);
+    __MCF_TEB_LD32_ABS(&u32, 0x24);
     assert(u32 == GetCurrentThreadId());
 
     assert(TlsSetValue(tls_index, (void*) 0x89ABCDEF));
