@@ -251,7 +251,7 @@ _MCF_thread_self(void)
   {
     if(__MCF_g->__tls_index < 64) {
       _MCF_thread* self;
-      __MCF_TEB_LOAD_PTR_INDEXED(&self, __MCF_64_32(0x1480, 0x0E10), __MCF_g->__tls_index);
+      __MCF_TEB_LDPTR_SIB(&self, __MCF_64_32(0x1480, 0x0E10), __MCF_g->__tls_index);
       if(self)
         return self;
     }
