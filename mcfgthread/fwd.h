@@ -189,9 +189,9 @@ __MCF_CXX(extern "C" {)
 #else
 #  include <intrin.h>
 #  if defined _M_X64 && !defined _M_ARM64EC
-#    define __MCF_TEB_LD32_ABS(out, base)         (*(uint32_t*) (out) = __readgsdword((base)))
+#    define __MCF_TEB_LD32_ABS(out, base)         (*(unsigned int*) (out) = __readgsdword((base)))
 #    define __MCF_TEB_ST32_ABS(base, in)          (__writegsdword((base), (in)))
-#    define __MCF_TEB_LD32_SIB(out, base, i)      (*(uint32_t*) (out) = __readgsdword((base) + ((i) << 2)))
+#    define __MCF_TEB_LD32_SIB(out, base, i)      (*(unsigned int*) (out) = __readgsdword((base) + ((i) << 2)))
 #    define __MCF_TEB_ST32_SIB(base, i, in)       (__writegsdword((base) + ((i) << 2), (in)))
 #    define __MCF_TEB_LDPTR_ABS(out, base)        (*(void**) (out) = (void*) __readgsqword((base)))
 #    define __MCF_TEB_STPTR_ABS(base, in)         (__writegsqword((base), (unsigned long long) (in)))
@@ -200,9 +200,9 @@ __MCF_CXX(extern "C" {)
 #    define __MCF_64_32(x, y)  x
 #    define __MCF_USYM  ""
 #  elif defined _M_IX86
-#    define __MCF_TEB_LD32_ABS(out, base)         (*(uint32_t*) (out) = __readfsdword((base)))
+#    define __MCF_TEB_LD32_ABS(out, base)         (*(unsigned int*) (out) = __readfsdword((base)))
 #    define __MCF_TEB_ST32_ABS(base, in)          (__writefsdword((base), (in)))
-#    define __MCF_TEB_LD32_SIB(out, base, i)      (*(uint32_t*) (out) = __readfsdword((base) + ((i) << 2)))
+#    define __MCF_TEB_LD32_SIB(out, base, i)      (*(unsigned int*) (out) = __readfsdword((base) + ((i) << 2)))
 #    define __MCF_TEB_ST32_SIB(base, i, in)       (__writefsdword((base) + ((i) << 2), (in)))
 #    define __MCF_TEB_LDPTR_ABS(out, base)        (*(void**) (out) = (void*) __readfsdword((base)))
 #    define __MCF_TEB_STPTR_ABS(base, in)         (__writefsdword((base), (unsigned int) (in)))
@@ -211,9 +211,9 @@ __MCF_CXX(extern "C" {)
 #    define __MCF_64_32(x, y)  y
 #    define __MCF_USYM  "_"
 #  elif defined _M_ARM64 || defined _M_ARM64EC
-#    define __MCF_TEB_LD32_ABS(out, base)         (*(uint32_t*) (out) = __readx18dword((base)))
+#    define __MCF_TEB_LD32_ABS(out, base)         (*(unsigned int*) (out) = __readx18dword((base)))
 #    define __MCF_TEB_ST32_ABS(base, in)          (__writex18dword((base), (in)))
-#    define __MCF_TEB_LD32_SIB(out, base, i)      (*(uint32_t*) (out) = __readx18dword((base) + ((i) << 2)))
+#    define __MCF_TEB_LD32_SIB(out, base, i)      (*(unsigned int*) (out) = __readx18dword((base) + ((i) << 2)))
 #    define __MCF_TEB_ST32_SIB(base, i, in)       (__writex18dword((base) + ((i) << 2), (in)))
 #    define __MCF_TEB_LDPTR_ABS(out, base)        (*(void**) (out) = (void*) __readx18qword((base)))
 #    define __MCF_TEB_STPTR_ABS(base, in)         (__writex18qword((base), (unsigned long long) (in)))
