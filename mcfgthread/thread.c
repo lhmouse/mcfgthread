@@ -16,7 +16,7 @@ enum initialization_status
   {
     initialization_null       = 0,
     initialization_waiting    = 1,
-    initialization_succeeded  = 2,
+    initialization_running    = 2,
     initialization_orphaned   = 3,
   };
 
@@ -46,7 +46,7 @@ do_win32_thread_thunk(LPVOID param)
 
     /* Let the creator go, which invalidates `*init`.  */
     __MCF_ASSERT(thrd->__tid == _MCF_thread_self_tid());
-    _MCF_event_set(init->status, initialization_succeeded);
+    _MCF_event_set(init->status, initialization_running);
     init = __MCF_BAD_PTR;
 
 #if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
@@ -124,7 +124,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     }
 
     /* Return the initialized thread.  */
-    __MCF_ASSERT(result == initialization_succeeded);
+    __MCF_ASSERT(result == initialization_running);
     return init.thrd;
   }
 
