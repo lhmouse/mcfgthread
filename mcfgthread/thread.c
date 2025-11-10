@@ -15,7 +15,7 @@
 enum initialization_status
   {
     initialization_null       = 0,
-    initialization_running    = 1,
+    initialization_waiting    = 1,
     initialization_succeeded  = 2,
     initialization_orphaned   = 3,
   };
@@ -115,8 +115,8 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
       return __MCF_nullptr;
     }
 
-    _MCF_event_set(init.status, initialization_running);
-    int result = _MCF_event_await_change_slow(init.status, initialization_running, __MCF_nullptr);
+    _MCF_event_set(init.status, initialization_waiting);
+    int result = _MCF_event_await_change_slow(init.status, initialization_waiting, __MCF_nullptr);
     if(result == initialization_orphaned) {
       __MCF_close_handle(init.thrd->__handle);
       __MCF_mfree_nonnull(init.thrd);
