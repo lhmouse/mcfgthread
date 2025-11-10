@@ -356,14 +356,14 @@ DllMainCRTStartup(PVOID instance, ULONG reason, PVOID reserved)
 /* According to GCC documentation, these functions are required by a
  * freestanding implementation. When doing a non-emulative build, they are
  * also exported for reuse.  */
-__declspec(dllexport) __attribute__((__flatten__))
+__MCF_DLLEXPORT __attribute__((__flatten__))
 void*
 memcpy(void* restrict dst, const void* restrict src, size_t size)
   {
     return __MCF_mcopy(dst, src, size);
   }
 
-__declspec(dllexport) __attribute__((__flatten__))
+__MCF_DLLEXPORT __attribute__((__flatten__))
 void*
 memmove(void* dst, const void* src, size_t size)
   {
@@ -372,14 +372,14 @@ memmove(void* dst, const void* src, size_t size)
            : __MCF_mcopy_backward(dst, src, size);
   }
 
-__declspec(dllexport) __attribute__((__flatten__))
+__MCF_DLLEXPORT __attribute__((__flatten__))
 void*
 memset(void* dst, int val, size_t size)
   {
     return __MCF_mfill(dst, val, size);
   }
 
-__declspec(dllexport) __attribute__((__flatten__))
+__MCF_DLLEXPORT __attribute__((__flatten__))
 int
 memcmp(const void* src, const void* dst, size_t size)
   {
