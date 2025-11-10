@@ -17,7 +17,7 @@ enum initialization_status
     initialization_null       = 0,
     initialization_waiting    = 1,
     initialization_running    = 2,
-    initialization_orphaned   = 3,
+    initialization_cancelled  = 3,
   };
 
 struct initializer
@@ -40,7 +40,7 @@ do_win32_thread_thunk(LPVOID param)
     /* Attach the thread.  */
     if(!TlsSetValue(__MCF_g->__tls_index, thrd)) {
       init->win32_error = GetLastError();
-      _MCF_event_set(init->status, initialization_orphaned);
+      _MCF_event_set(init->status, initialization_cancelled);
       return 0;
     }
 
@@ -117,7 +117,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
 
     _MCF_event_set(init.status, initialization_waiting);
     int result = _MCF_event_await_change_slow(init.status, initialization_waiting, __MCF_nullptr);
-    if(result == initialization_orphaned) {
+    if(result == initialization_cancelled) {
       __MCF_close_handle(init.thrd->__handle);
       __MCF_mfree_nonnull(init.thrd);
       return __MCF_win32_error_p(init.win32_error, __MCF_nullptr);
