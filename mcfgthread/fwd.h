@@ -30,6 +30,7 @@
 #define __MCF_C(...)     __VA_ARGS__
 #define __MCF_CXX(...)
 #define __MCF_noexcept
+#define __MCF_MAY_THROW
 #define __MCF_nullptr    __MCF_IPTR_0
 
 #ifdef __cplusplus
@@ -39,6 +40,10 @@
 #  define __MCF_C(...)
 #  undef __MCF_noexcept
 #  define __MCF_noexcept   throw()
+#  ifdef _MSC_VER
+#    undef __MCF_MAY_THROW
+#    define __MCF_MAY_THROW   throw(...)
+#  endif
 #endif
 
 #define __MCF_C99(...)
@@ -79,6 +84,8 @@
 #  define __MCF_CXX11(...)   __VA_ARGS__
 #  undef __MCF_noexcept
 #  define __MCF_noexcept   noexcept
+#  undef __MCF_MAY_THROW
+#  define __MCF_MAY_THROW  noexcept(false)
 #  undef __MCF_nullptr
 #  define __MCF_nullptr    nullptr
 #endif
@@ -222,17 +229,6 @@ __MCF_CXX(extern "C" {)
 #    define __MCF_64_32(x, y)  x
 #    define __MCF_USYM  ""
 #  endif
-#endif
-
-/* Generally speaking, functions are either `__MCF_MAY_THROW` or `noexcept`. This
- * macro is necessary for Visual Studio (but not CL.EXE from command line), which
- * defaults to `/EHsc`, which assumes that `extern "C"` functions can't throw C++
- * exceptions. Not only is this behavior not conforming to the C++ standard, it
- * can also result in wrong code about `__MCF_gthr_call_once_seh()`.  */
-#ifdef _MSC_VER
-#  define __MCF_MAY_THROW   __MCF_CXX(throw(...))
-#else
-#  define __MCF_MAY_THROW
 #endif
 
 /* These are necessary when the header is compiled as C89 or C++98. The check
