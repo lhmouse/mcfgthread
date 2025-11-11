@@ -294,7 +294,7 @@ _MCF_thread_get_data(const _MCF_thread* __thrd)
   }
 
 #ifdef __cplusplus
-extern "C++" inline __MCF_CXX14(constexpr) __MCF_FN_PURE
+extern "C++" inline __MCF_FN_PURE
 void*
 _MCF_thread_get_data(_MCF_thread* __thrd)
   __MCF_noexcept
