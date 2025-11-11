@@ -137,13 +137,13 @@ _MCF_thread_drop_ref(_MCF_thread* __thrd_opt)
   __MCF_noexcept;
 
 /* Gets the ID of a thread.  */
-__MCF_THREAD_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
+__MCF_THREAD_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
 uint32_t
 _MCF_thread_get_tid(const _MCF_thread* __thrd)
   __MCF_noexcept;
 
 /* Gets the handle of a thread.  */
-__MCF_THREAD_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
+__MCF_THREAD_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
 __MCF_HANDLE
 _MCF_thread_get_handle(const _MCF_thread* __thrd)
   __MCF_noexcept;
@@ -285,7 +285,7 @@ _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __
     return _MCF_thread_new_aligned(__proc, 0, __data_opt, __size);
   }
 
-__MCF_THREAD_INLINE
+__MCF_THREAD_INLINE __MCF_FN_PURE
 __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd)
   __MCF_noexcept
@@ -294,7 +294,7 @@ _MCF_thread_get_data(const _MCF_thread* __thrd)
   }
 
 #ifdef __cplusplus
-extern "C++" inline
+extern "C++" inline __MCF_CXX14(constexpr) __MCF_FN_PURE
 void*
 _MCF_thread_get_data(_MCF_thread* __thrd)
   __MCF_noexcept
@@ -303,7 +303,7 @@ _MCF_thread_get_data(_MCF_thread* __thrd)
   }
 #endif  /* __cplusplus  */
 
-__MCF_THREAD_INLINE
+__MCF_THREAD_INLINE __MCF_FN_PURE
 int32_t
 _MCF_thread_get_ref(const _MCF_thread* __thrd)
   __MCF_noexcept
@@ -330,7 +330,7 @@ _MCF_thread_drop_ref(_MCF_thread* __thrd_opt)
       _MCF_thread_drop_ref_nonnull(__thrd_opt);
   }
 
-__MCF_THREAD_INLINE __MCF_CXX11(constexpr)
+__MCF_THREAD_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
 uint32_t
 _MCF_thread_get_tid(const _MCF_thread* __thrd)
   __MCF_noexcept
@@ -338,7 +338,7 @@ _MCF_thread_get_tid(const _MCF_thread* __thrd)
     return __thrd->__tid;
   }
 
-__MCF_THREAD_INLINE __MCF_CXX11(constexpr)
+__MCF_THREAD_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
 __MCF_HANDLE
 _MCF_thread_get_handle(const _MCF_thread* __thrd)
   __MCF_noexcept
@@ -346,7 +346,7 @@ _MCF_thread_get_handle(const _MCF_thread* __thrd)
     return __thrd->__handle;
   }
 
-__MCF_THREAD_INLINE
+__MCF_THREAD_INLINE __MCF_FN_CONST
 uint32_t
 _MCF_thread_self_tid(void)
   __MCF_noexcept
@@ -356,7 +356,7 @@ _MCF_thread_self_tid(void)
     return __tid;
   }
 
-__MCF_THREAD_INLINE
+__MCF_THREAD_INLINE __MCF_FN_PURE
 void*
 _MCF_tls_get(const _MCF_tls_key* __key)
   __MCF_noexcept
