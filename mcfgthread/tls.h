@@ -97,7 +97,7 @@ _MCF_tls_key_delete(_MCF_tls_key* __key_opt)
   __MCF_noexcept;
 
 /* Gets the destructor, which may be null if none has been given.  */
-__MCF_TLS_INLINE __MCF_FN_PURE __MCF_CXX11(constexpr)
+__MCF_TLS_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
 _MCF_tls_dtor*
 _MCF_tls_key_get_destructor(const _MCF_tls_key* __key)
   __MCF_noexcept;
@@ -127,7 +127,7 @@ __MCF_tls_table_xset(__MCF_tls_table* __table, _MCF_tls_key* __key, void** __old
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
-__MCF_TLS_INLINE
+__MCF_TLS_INLINE __MCF_FN_PURE
 int32_t
 _MCF_tls_key_get_ref(const _MCF_tls_key* __key)
   __MCF_noexcept
@@ -172,7 +172,7 @@ _MCF_tls_key_delete(_MCF_tls_key* __key_opt)
       _MCF_tls_key_delete_nonnull(__key_opt);
   }
 
-__MCF_TLS_INLINE __MCF_CXX11(constexpr)
+__MCF_TLS_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
 _MCF_tls_dtor*
 _MCF_tls_key_get_destructor(const _MCF_tls_key* __key)
   __MCF_noexcept
