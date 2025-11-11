@@ -230,7 +230,7 @@ __MCF_CXX(extern "C" {)
  * exceptions. Not only is this behavior not conforming to the C++ standard, it
  * can also result in wrong code about `__MCF_gthr_call_once_seh()`.  */
 #ifdef _MSC_VER
-#  define __MCF_MAY_THROW   __MCF_CXX(noexcept(false))
+#  define __MCF_MAY_THROW   __MCF_CXX(throw(...))
 #else
 #  define __MCF_MAY_THROW
 #endif
