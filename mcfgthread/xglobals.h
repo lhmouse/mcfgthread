@@ -106,8 +106,8 @@ __MCF_ALWAYS_INLINE
 EXCEPTION_REGISTRATION_RECORD*
 __MCF_i386_seh_install(EXCEPTION_REGISTRATION_RECORD* record)
   {
-    __MCF_TEB_LD32_ABS(&(record->Next), 0);
-    __MCF_TEB_ST32_ABS(0, record);
+    __MCF_TEB_LOAD_32_ABS(&(record->Next), 0);
+    __MCF_TEB_STORE_32_ABS(0, record);
     return record;
   }
 
@@ -115,7 +115,7 @@ __MCF_ALWAYS_INLINE
 void
 __MCF_i386_seh_cleanup(EXCEPTION_REGISTRATION_RECORD* const* ref)
   {
-    __MCF_TEB_ST32_ABS(0, (*ref)->Next);
+    __MCF_TEB_STORE_32_ABS(0, (*ref)->Next);
   }
 
 #  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
