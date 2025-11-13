@@ -151,7 +151,7 @@ add_project_arguments(
 
 add_project_arguments(
    cxx.get_supported_arguments(
-        '-Wno-redundant-move', '-Wzero-as-null-pointer-constant'),
+      '-Wno-redundant-move', '-Wzero-as-null-pointer-constant'),
    language: 'cpp')
 
 if get_option('enable-debug-checks')
