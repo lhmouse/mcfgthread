@@ -357,25 +357,29 @@ typedef void __MCF_once_callback(void);
  * and on the stack, to allow both `__cdecl` and `__thiscall` functions to work
  * properly. The function prototype is declared for compatibility with GCC.  */
 typedef void __MCF_cxa_dtor_cdecl(void* __arg);
-
 #if defined __GNUC__ || defined __clang__
-/* Support both calling conventions with a transparent union.  */
 __MCF_EX typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __arg);
-#  define __MCF_UNION_FIELD_(tag, type, x)  \
+#else
+typedef void __MCF_cxa_dtor_thiscall(void* __arg);
+#endif
+
+#if defined __GNUC__ || defined __clang__ || defined __cplusplus
+/* Support both calling conventions with a transparent union.  */
+#  define __MCF_TRANSPARENT_UNION   union __MCF_C(__attribute__((__transparent_union__)))
+#  define __MCF_TRANSPARENT_UNION_FIELD(tag, type, x)  \
     __MCF_CXX(__MCF_CXX11(constexpr) tag(type x##_) __MCF_noexcept : x(x##_) { })  \
     /* ^= constructor / field => */ type x  /* no semicolon  */
 typedef union __MCF_cxa_dtor_any __MCF_cxa_dtor_any_;
-union __MCF_C(__attribute__((__transparent_union__))) __MCF_cxa_dtor_any
+__MCF_TRANSPARENT_UNION __MCF_cxa_dtor_any
   {
-    __MCF_UNION_FIELD_(__MCF_cxa_dtor_any, __MCF_cxa_dtor_cdecl*, __cdecl_ptr);
-    __MCF_UNION_FIELD_(__MCF_cxa_dtor_any, __MCF_atexit_callback*, __no_arg_ptr);
+    __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_cxa_dtor_cdecl*, __cdecl_ptr);
+    __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_atexit_callback*, __nullary_ptr);
 #  if defined __i386__
-    __MCF_UNION_FIELD_(__MCF_cxa_dtor_any, __MCF_cxa_dtor_thiscall*, __thiscall_ptr);
+    __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_cxa_dtor_thiscall*, __thiscall_ptr);
 #  endif
   };
 #else
-/* Make these barely compile.  */
-typedef void __MCF_cxa_dtor_thiscall(void* __arg);
+/* Make this barely compile.  */
 typedef __MCF_cxa_dtor_thiscall* __MCF_cxa_dtor_any_;
 #endif
 
