@@ -60,11 +60,13 @@ __MCF_DLLEXPORT __MCF_NEVER_INLINE
 int
 _MCF_sem_signal_some(_MCF_sem* sem, intptr_t value_add)
   {
+    if((value_add < 0) || (value_add > __MCF_SEM_VALUE_MAX))
+      return -1;
+    else if(value_add == 0)
+      return 0;
+
     size_t wake_num;
     _MCF_sem old, new;
-
-    if(value_add <= 0)
-      return -(int) (value_add < 0);
 
     /* Get the number of threads to wake up.  */
     _MCF_atomic_load_pptr_rlx(&old, sem);
