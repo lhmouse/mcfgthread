@@ -360,10 +360,10 @@ typedef void __MCF_cxa_dtor_cdecl(void* __arg);
 
 #if defined __GNUC__ || defined __clang__
 /* Support both calling conventions with a transparent union.  */
-#  define __MCF_UNION_FIELD_(tag, type, x)  \
-     __MCF_CXX(__MCF_CXX11(constexpr) tag(type x##_) __MCF_noexcept  \
-       : x(x##_) { }) /* <= constructor / field => */ type x  /* no semicolon  */
 __MCF_EX typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __arg);
+#  define __MCF_UNION_FIELD_(tag, type, x)  \
+    __MCF_CXX(__MCF_CXX11(constexpr) tag(type x##_) __MCF_noexcept : x(x##_) { })  \
+    /* ^= constructor / field => */ type x  /* no semicolon  */
 typedef union __MCF_cxa_dtor_any __MCF_cxa_dtor_any_;
 union __MCF_C(__attribute__((__transparent_union__))) __MCF_cxa_dtor_any
   {
