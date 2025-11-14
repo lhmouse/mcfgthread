@@ -73,7 +73,6 @@ do_unlock_and_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, intpt
     return 0;
   }
 
-
 __MCF_DLLEXPORT
 int
 _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, _MCF_cond_relock_callback* relock_opt,
