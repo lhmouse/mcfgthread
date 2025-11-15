@@ -353,18 +353,22 @@ typedef void __MCF_atexit_callback(void);
 /* Define the prototype for `call_once()`.  */
 typedef void __MCF_once_callback(void);
 
-/* Note: In the case of i386, the argument is passed both via the ECX register
- * and on the stack, to allow both `__cdecl` and `__thiscall` functions to work
- * properly. The function prototype is declared for compatibility with GCC.  */
+/* Define the prototype for destructors for `__cxa_atexit()`, `__cxa_at_quick_exit()`
+ * and `__cxa_thread_atexit()`.  */
 typedef void __MCF_cxa_dtor_cdecl(void* __arg);
-#if defined __GNUC__ || defined __clang__
+
+/* In the case of i386, the argument is passed both via the ECX register and on
+ * the stack, to allow both `__cdecl` and `__thiscall` functions to work
+ * properly. GCC and Clang accept `__thiscall` on non-member functions as an
+ * extension, but MSVC doesn't so we use `__fastcall` there.  */
+#if (defined __i386__ || defined _M_IX86) && (defined __GNUC__ || defined __clang__)
+#  define __MCF_CXA_DTOR_DUAL_ABI  1
 __MCF_EX typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __arg);
 #else
-typedef void __MCF_cxa_dtor_thiscall(void* __arg);
+typedef void __fastcall __MCF_cxa_dtor_thiscall(void* __arg);
 #endif
 
-#if defined __GNUC__ || defined __clang__ || defined __cplusplus
-/* Support both calling conventions with a transparent union.  */
+#if defined __MCF_CXA_DTOR_DUAL_ABI || defined __cplusplus
 #  define __MCF_TRANSPARENT_UNION   union __MCF_C(__attribute__((__transparent_union__)))
 #  define __MCF_TRANSPARENT_UNION_FIELD(tag, type, x)  \
     __MCF_CXX(__MCF_CXX11(constexpr) tag(type x##_) __MCF_noexcept : x(x##_) { })  \
@@ -379,8 +383,7 @@ __MCF_TRANSPARENT_UNION __MCF_cxa_dtor_any
 #  endif
   };
 #else
-/* Make this barely compile.  */
-typedef __MCF_cxa_dtor_thiscall* __MCF_cxa_dtor_any_;
+typedef __MCF_cxa_dtor_cdecl* __MCF_cxa_dtor_any_;
 #endif
 
 /* Gets the last error number, like `GetLastError()`.  */
