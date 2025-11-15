@@ -361,7 +361,7 @@ typedef void __MCF_cxa_dtor_cdecl(void* __arg);
  * the stack, to allow both `__cdecl` and `__thiscall` functions to work
  * properly. GCC and Clang accept `__thiscall` on non-member functions as an
  * extension, but MSVC doesn't so we use `__fastcall` there.  */
-#if (defined __i386__ || defined _M_IX86) && (defined __GNUC__ || defined __clang__)
+#if defined __GNUC__ || defined __clang__
 #  define __MCF_CXA_DTOR_DUAL_ABI  1
 __MCF_EX typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __arg);
 #else
@@ -378,7 +378,7 @@ __MCF_TRANSPARENT_UNION __MCF_cxa_dtor_any
   {
     __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_cxa_dtor_cdecl*, __cdecl_ptr);
     __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_atexit_callback*, __nullary_ptr);
-#  if defined __i386__
+#  if defined __i386__ || defined _M_IX86
     __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_cxa_dtor_thiscall*, __thiscall_ptr);
 #  endif
   };
