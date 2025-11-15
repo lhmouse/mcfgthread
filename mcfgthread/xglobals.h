@@ -59,6 +59,7 @@ NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status) __MCF_FN_CONST;
 /* Define read-only data that must be placed in `.rdata` despite
  * `-fdata-sections`.  */
 #define __MCF_CRT_RDATA  __attribute__((__used__, __section__(".rdata")))
+#define __MCF_CRT_XL(x)  __attribute__((__used__, __section__(".CRT$XL" #x)))
 
 /* Initialize a GUID in the canonical form.  */
 #define __MCF_GUID(a8,b4,c4,d4,e12)  \

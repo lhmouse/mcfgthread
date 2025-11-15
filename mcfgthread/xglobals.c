@@ -649,7 +649,6 @@ do_tls_callback(PVOID module, ULONG reason, LPVOID reserved)
 __pragma(comment(linker, "/include:" __MCF_USYM "_tls_used"))
 __pragma(section(".CRT$XLB", read))
 #endif
-__attribute__((__section__(".CRT$XLB"), __used__))
-const PIMAGE_TLS_CALLBACK __MCF_crt_xl_b = do_tls_callback;
+const PIMAGE_TLS_CALLBACK __MCF_crt_xl_b __MCF_CRT_XL(B) = do_tls_callback;
 
 #endif  /* __MCF_IN_DLL  */
