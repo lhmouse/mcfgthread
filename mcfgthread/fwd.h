@@ -347,7 +347,7 @@ typedef void _MCF_thread_procedure(_MCF_thread* __thrd);
 /* Define the prototype for destructors for `_MCF_tls_key_new()`.  */
 typedef void _MCF_tls_dtor(void* __ptr);
 
-/* Define the prototype for `atexit()` and `at_quick_exit()`.  */
+/* Define the prototype for destructors for `atexit()` and `at_quick_exit()`.  */
 typedef void __MCF_atexit_callback(void);
 
 /* Define the prototype for `call_once()`.  */
