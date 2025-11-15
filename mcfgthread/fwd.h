@@ -253,18 +253,12 @@ typedef unsigned int uint32_t;
 typedef unsigned __MCF_INT64_ uint64_t;
 typedef unsigned __MCF_INTPTR_ uintptr_t;
 
-#ifndef LLONG_MAX
-#  define LLONG_MAX     9223372036854775807LL
-#  define LLONG_MIN   (-9223372036854775807LL-1)
-#  define ULLONG_MAX   18446744073709551615ULL
-#endif
-
 #define __MCF_PTR_BITS    __MCF_64_32(64, 32)
-#define __MCF_IPTR_MIN    __MCF_64_32(LLONG_MIN, INT_MIN)
+#define __MCF_IPTR_MIN    __MCF_64_32((-9223372036854775807LL-1), (-2147483647-1))
 #define __MCF_IPTR_0      __MCF_64_32(0LL, 0)
-#define __MCF_IPTR_MAX    __MCF_64_32(LLONG_MAX, INT_MAX)
+#define __MCF_IPTR_MAX    __MCF_64_32(9223372036854775807LL, 2147483647)
 #define __MCF_UPTR_0      __MCF_64_32(0ULL, 0U)
-#define __MCF_UPTR_MAX    __MCF_64_32(ULLONG_MAX, UINT_MAX)
+#define __MCF_UPTR_MAX    __MCF_64_32(0xFFFFFFFFFFFFFFFFULL, 0xFFFFFFFFU)
 
 /* I can't find a better name for this macro. It controls whether the complete
  * definitions of inline functions are compiled. If headers are included by user
