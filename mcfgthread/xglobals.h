@@ -56,6 +56,10 @@ NTSYSAPI void NTAPI RtlZeroMemory(void* dst, SIZE_T size);
 NTSYSAPI ULONG NTAPI RtlNtStatusToDosError(NTSTATUS status);
 NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status) __MCF_FN_CONST;
 
+/* Define read-only data that must be placed in `.rdata` despite
+ * `-fdata-sections`.  */
+#define __MCF_CRT_RDATA  __attribute__((__used__, __section__(".rdata")))
+
 /* Initialize a GUID in the canonical form.  */
 #define __MCF_GUID(a8,b4,c4,d4,e12)  \
     ((GUID) { 0x##a8, 0x##b4, 0x##c4, { (0x##d4 >> 8) & 0xFF, 0x##d4 & 0xFF,  \
