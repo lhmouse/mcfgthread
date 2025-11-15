@@ -254,9 +254,9 @@ typedef unsigned __MCF_INT64_ uint64_t;
 typedef unsigned __MCF_INTPTR_ uintptr_t;
 
 #ifndef LLONG_MAX
-#  define LLONG_MAX  0x7FFFFFFFFFFFFFFFL
-#  define LLONG_MIN  (-0x7FFFFFFFFFFFFFFFL-1)
-#  define ULLONG_MAX  0xFFFFFFFFFFFFFFFFUL
+#  define LLONG_MAX     9223372036854775807L
+#  define LLONG_MIN   (-9223372036854775807L-1)
+#  define ULLONG_MAX   18446744073709551615UL
 #endif
 
 #define __MCF_PTR_BITS    __MCF_64_32(64, 32)
