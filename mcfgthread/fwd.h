@@ -377,7 +377,7 @@ __MCF_TRANSPARENT_UNION __MCF_cxa_dtor_any
 #  endif
   };
 #else
-typedef __MCF_cxa_dtor_cdecl* __MCF_cxa_dtor_any_;
+typedef __MCF_cxa_dtor_thiscall* __MCF_cxa_dtor_any_;
 #endif
 
 /* Gets the last error number, like `GetLastError()`.  */
