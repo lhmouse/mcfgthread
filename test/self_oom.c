@@ -28,7 +28,7 @@ thread_proc(void* arg)
   {
     (void) arg;
     Sleep(1000);
-    assert(_MCF_thread_self() == &(__MCF_g->__thread_oom_self_st));
+    assert(_MCF_thread_self() == (void*) &(__MCF_g->__thread_oom_self_st));
     Sleep(100);
     fprintf(stderr, "thread %d quitting\n", _MCF_thread_self_tid());
     return 0;
