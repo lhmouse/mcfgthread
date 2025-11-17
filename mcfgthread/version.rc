@@ -1,33 +1,33 @@
-/* This file is part of MCF Gthread.
- * Copyright (C) 2022-2025 LH_Mouse. All wrongs reserved.
- *
- * MCF Gthread is free software. Licensing information is included in
- * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
- * to this file.  */
+// This file is part of MCF Gthread.
+// Copyright (C) 2022-2025 LH_Mouse. All wrongs reserved.
+//
+// MCF Gthread is free software. Licensing information is included in
+// LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
+// to this file.
 
 #include "version.h"
 
-1 /* VS_VERSION_INFO */  VERSIONINFO
+VS_VERSION_INFO  VERSIONINFO
   PRODUCTVERSION     _MCF_ABI_VERSION_MAJOR, _MCF_ABI_VERSION_MINOR, 0, 0
   FILEVERSION        _MCF_ABI_VERSION_MAJOR, _MCF_ABI_VERSION_MINOR, 0, 0
-  FILEFLAGSMASK      0x3F  /* VS_FFI_FILEFLAGSMASK */
+  FILEFLAGSMASK      0x3F  // VS_FFI_FILEFLAGSMASK
 #ifdef __MCF_DEBUG
-  FILEFLAGS          1  /* VS_FF_DEBUG */
+  FILEFLAGS          1  // VS_FF_DEBUG
 #else
   FILEFLAGS          0
 #endif
-  FILEOS             0x00040004  /* VOS_NT_WINDOWS32 */
-  FILETYPE           2  /* VFT_DLL  */
-  FILESUBTYPE        0  /* VFT2_UNKNOWN  */
+  FILEOS             0x00040004  // VOS_NT_WINDOWS32
+  FILETYPE           2  // VFT_DLL
+  FILESUBTYPE        0  // VFT2_UNKNOWN
   {
     BLOCK "VarFileInfo"
     {
-      VALUE "Translation", 0x0409, 0x04B0  /* English (US), UTF-16  */
+      VALUE "Translation", 0x0409, 0x04B0  // English (US), UTF-16
     }
 
     BLOCK "StringFileInfo"
     {
-      BLOCK "040904B0"  /* English (US), UTF-16  */
+      BLOCK "040904B0"  // English (US), UTF-16
       {
         VALUE "ProductName",      "The MCF Gthread Library"
         VALUE "InternalName",     "libmcfgthread"
@@ -41,4 +41,4 @@
     }
   }
 
-ISOLATIONAWARE_MANIFEST_RESOURCE_ID RT_MANIFEST "version.manifest"
+ISOLATIONAWARE_MANIFEST_RESOURCE_ID  RT_MANIFEST  "version.manifest"
