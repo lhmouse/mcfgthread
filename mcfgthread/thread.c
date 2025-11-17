@@ -79,7 +79,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     _MCF_event_init(init.status, initialization_null);
 
     size_t real_alignment = _MCF_maxz(__MCF_THREAD_DATA_ALIGNMENT, align);
-    size_t size_need = sizeof(_MCF_thread) + size;
+    size_t size_need = offsetof(_MCF_thread, __data_storage) + size;
     size_t size_request = size_need + real_alignment - MEMORY_ALLOCATION_ALIGNMENT;
     __MCF_ASSERT(size_need <= size_request);
 

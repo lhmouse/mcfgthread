@@ -38,7 +38,7 @@ struct __MCF_thread
      * preceding it is reserved for future use. It is not safe to assume the
      * offset of `__data_storage` to be a constant.  */
 #define __MCF_THREAD_DATA_ALIGNMENT   16U
-    __MCF_EX __MCF_ALIGNED(__MCF_THREAD_DATA_ALIGNMENT) char __data_storage[0];
+    __MCF_ALIGNED(__MCF_THREAD_DATA_ALIGNMENT) char __data_storage[1];
   };
 
 /* This is the maximum alignment of user-defined data that is supported by
