@@ -272,8 +272,8 @@ foreach src : test_src
     test_link_args = [ '-static-libgcc', '-static-libstdc++' ]
   endif
 
-  if basename in [ 'win8.c', 'win10.c', 'self_oom.c', 'tls_dtor_static.c',
-                   'mix.c', 'tls_dtor_static.c' ]
+  if basename in [ 'win8.c', 'win10.c', 'self_oom.c', 'mix.c',
+                   'tls_dtor_static.c' ]
     test_link_with = lib_mcfgthread_a
   endif
 
