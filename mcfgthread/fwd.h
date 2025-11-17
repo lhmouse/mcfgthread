@@ -242,15 +242,14 @@ __MCF_CXX(extern "C" {)
 #endif
 
 typedef signed char int8_t;
-typedef short int16_t;
-typedef int int32_t;
-typedef __MCF_INT64_ int64_t;
-typedef __MCF_INTPTR_ intptr_t;
-
 typedef unsigned char uint8_t;
+typedef short int16_t;
 typedef unsigned short uint16_t;
+typedef int int32_t;
 typedef unsigned int uint32_t;
+typedef __MCF_INT64_ int64_t;
 typedef unsigned __MCF_INT64_ uint64_t;
+typedef __MCF_INTPTR_ intptr_t;
 typedef unsigned __MCF_INTPTR_ uintptr_t;
 
 #define __MCF_PTR_BITS    __MCF_64_32(64, 32)
