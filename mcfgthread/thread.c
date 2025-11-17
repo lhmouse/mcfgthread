@@ -162,7 +162,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
       return;
 
     /* The main thread structure is allocated statically and must not be freed.  */
-    if(thrd == __MCF_g->__main_thread)
+    if(thrd == __MCF_CAST_PTR(_MCF_thread, __MCF_g->__main_thread))
       return;
 
     /* Detach the thread structure. The thread-local object table and the exit
@@ -174,7 +174,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
     __MCF_ASSERT(thrd->__tls_table->__begin == __MCF_nullptr);
 
     /* Deallocate the thread structure.  */
-    if(thrd == __MCF_G_FIELD_OPT(__thread_oom_self_st))
+    if(thrd == __MCF_CAST_PTR(_MCF_thread, __MCF_G_FIELD_OPT(__thread_oom_self_st)))
       _MCF_mutex_unlock(__MCF_g->__thread_oom_mtx);
     else
       __MCF_mfree_nonnull(thrd);
@@ -230,7 +230,7 @@ do_thread_self_slow(void)
     /* Allocate a new thread object with no user-defined data.  */
     self = __MCF_malloc_0(sizeof(_MCF_thread));
     if(!self) {
-      self = __MCF_G_FIELD_OPT(__thread_oom_self_st);
+      self = __MCF_CAST_PTR(_MCF_thread, __MCF_G_FIELD_OPT(__thread_oom_self_st));
       __MCF_CHECK(self);
 
       /* When out of memory, use the pre-allocated backup. If it is in use,

@@ -97,6 +97,7 @@ typedef LPVOID __stdcall decltype_TlsGetValue2(ULONG);
 
 /* Declare helper functions here.  */
 typedef struct __MCF_winnt_timeout __MCF_winnt_timeout;
+typedef union __MCF_thread_storage __MCF_thread_storage;
 typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
 
 __MCF_XGLOBALS_IMPORT
@@ -283,6 +284,17 @@ void
 __MCF_gthread_on_thread_exit(void);
 
 /* Declare global data.  */
+union __MCF_thread_storage
+  {
+    char __storage_v1[__MCF_64_32(1600, 800)];
+    struct
+      {
+        int32_t __nref[1];  /* atomic reference count  */
+        uint32_t __tid;  /* thread id  */
+        __MCF_HANDLE __handle;  /* win32 thread handle  */
+      };
+  };
+
 struct __MCF_crt_xglobals
   {
     __MCF_crt_xglobals* __self_ptr;
@@ -290,7 +302,7 @@ struct __MCF_crt_xglobals
     uint32_t __tls_index;
 
     /* the static thread object  */
-    _MCF_thread __main_thread[1];
+    __MCF_thread_storage __main_thread[1];
 
     /* `atexit()` support  */
     _MCF_mutex __exit_mtx[1];
@@ -310,7 +322,7 @@ struct __MCF_crt_xglobals
     __MCF_LAZY_D_(GetSystemTimePreciseAsFileTime);
     __MCF_LAZY_D_(QueryInterruptTime);
     _MCF_mutex __thread_oom_mtx[1];
-    _MCF_thread __thread_oom_self_st;
+    __MCF_thread_storage __thread_oom_self_st;
   };
 
 /* Ensure we don't mess things up.  */
