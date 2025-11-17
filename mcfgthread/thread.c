@@ -223,26 +223,26 @@ static __MCF_NEVER_INLINE
 _MCF_thread*
 do_thread_self_slow(void)
   {
-    _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_g->__tls_index);
+    __MCF_thread_storage* self = __MCF_crt_TlsGetValue(__MCF_g->__tls_index);
     if(self)
-      return self;
+      return (void*) self;
 
     /* Allocate a new thread object with no user-defined data.  */
-    self = __MCF_malloc_0(sizeof(_MCF_thread));
+    self = __MCF_malloc_0(sizeof(__MCF_thread_storage));
     if(!self) {
-      self = __MCF_CAST_PTR(_MCF_thread, __MCF_G_FIELD_OPT(__thread_oom_self_st));
+      self = __MCF_G_FIELD_OPT(__thread_oom_self_st);
       __MCF_CHECK(self);
 
       /* When out of memory, use the pre-allocated backup. If it is in use,
        * this thread shall block until the other thread terminates.  */
       _MCF_mutex_lock(__MCF_g->__thread_oom_mtx, __MCF_nullptr);
       __MCF_ASSERT(self->__handle == NULL);
-      __MCF_mzero(self, sizeof(_MCF_thread));
+      __MCF_mzero(self, sizeof(__MCF_thread_storage));
     }
 
     /* Attach the new thread structure. This will be deallocated in
      * `_MCF_thread_drop_ref_nonnull()`.  */
-    return __MCF_thread_attach_foreign(self);
+    return __MCF_thread_attach_foreign((void*) self);
   }
 
 __MCF_DLLEXPORT
