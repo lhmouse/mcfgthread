@@ -349,6 +349,7 @@ typedef void __MCF_once_callback(void);
 /* Define the prototype for destructors for `__cxa_atexit()`, `__cxa_at_quick_exit()`
  * and `__cxa_thread_atexit()`.  */
 typedef void __MCF_cxa_dtor_cdecl(void* __arg);
+typedef void __fastcall __MCF_cxa_dtor_fastcall(void* __arg);
 
 /* In the case of i386, the argument is passed both via the ECX register and on
  * the stack, to allow both `__cdecl` and `__thiscall` functions to work
@@ -372,6 +373,7 @@ __MCF_TRANSPARENT_UNION __MCF_cxa_dtor_any
     __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_cxa_dtor_cdecl*, __cdecl_ptr);
     __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_atexit_callback*, __nullary_ptr);
 #  if defined __i386__ || defined _M_IX86
+    __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_cxa_dtor_fastcall*, __fastcall_ptr);
     __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_cxa_dtor_thiscall*, __thiscall_ptr);
 #  endif
   };
