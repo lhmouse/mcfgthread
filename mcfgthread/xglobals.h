@@ -286,7 +286,7 @@ __MCF_gthread_on_thread_exit(void);
 /* Declare global data.  */
 union __MCF_thread_storage
   {
-    char __storage_v1[__MCF_64_32(1600, 800)];
+    __MCF_ALIGNED(16) char __storage_v1[__MCF_64_32(1600, 800)];
     struct
       {
         int32_t __nref[1];  /* atomic reference count  */
