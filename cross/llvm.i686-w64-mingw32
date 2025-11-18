@@ -19,7 +19,7 @@ cpp_ld = 'lld'
 ar = 'llvm-ar'
 objcopy = [ 'llvm-objcopy', '--target=i686-w64-mingw32' ]
 strip = 'llvm-strip'
-windres = 'llvm-rc'
+windres = 'llvm-windres'
 dlltool = [ 'llvm-dlltool', '-m', 'i386' ]
 
 pkg-config = 'i686-w64-mingw32-pkg-config'
