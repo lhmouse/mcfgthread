@@ -36,9 +36,6 @@
 /* `NTSTATUS`; ntdef.h  */
 typedef LONG NTSTATUS;
 
-NTSYSAPI ULONG NTAPI RtlNtStatusToDosError(NTSTATUS status);
-NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status) __MCF_FN_CONST;
-
 #define NT_SUCCESS(status)      (((ULONG)(status) & 0x80000000) == 0x00000000)
 #define NT_INFORMATION(status)  (((ULONG)(status) & 0xC0000000) == 0x40000000)
 #define NT_WARNING(status)      (((ULONG)(status) & 0xC0000000) == 0x80000000)
@@ -77,9 +74,36 @@ typedef OBJECT_ATTRIBUTES* POBJECT_ATTRIBUTES;
 #undef RtlZeroMemory
 #undef RtlEqualMemory
 
+/* Declare native APIs that we would like to use.  */
 NTSYSAPI void NTAPI RtlMoveMemory(void* dst, const void* src, SIZE_T size);
 NTSYSAPI void NTAPI RtlFillMemory(void* dst, SIZE_T size, int c);
 NTSYSAPI void NTAPI RtlZeroMemory(void* dst, SIZE_T size);
+
+NTSYSAPI ULONG NTAPI RtlNtStatusToDosError(NTSTATUS status);
+NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status) __MCF_FN_CONST;
+NTSYSAPI BOOLEAN NTAPI RtlDllShutdownInProgress(void) __MCF_FN_PURE;
+NTSYSAPI NTSTATUS NTAPI BaseGetNamedObjectDirectory(HANDLE* OutHandle);
+
+NTSYSAPI NTSTATUS NTAPI NtCreateSection(HANDLE* OutHandle,
+    ACCESS_MASK DesiredAccess, OBJECT_ATTRIBUTES* Attributes, LARGE_INTEGER* MaximumSize,
+    ULONG Protection, ULONG Allocation, HANDLE File);
+NTSYSAPI NTSTATUS NTAPI NtDuplicateObject(HANDLE SourceProcess, HANDLE SourceHandle,
+    HANDLE TargetProcess, HANDLE* TargetHandle, ACCESS_MASK DesiredAccess,
+    ULONG HandleAttributes, ULONG Options);
+NTSYSAPI NTSTATUS NTAPI NtClose(HANDLE Handle);
+NTSYSAPI NTSTATUS NTAPI NtMapViewOfSection(HANDLE Section, HANDLE Process, PVOID* BaseAddress,
+    ULONG_PTR ZeroBits, SIZE_T CommitSize, LARGE_INTEGER* Offset, SIZE_T* ViewSize,
+    UINT SectionInherit, ULONG Allocation, ULONG Protection);
+NTSYSAPI NTSTATUS NTAPI NtUnmapViewOfSection(HANDLE Process, PVOID BaseAddress);
+NTSYSAPI NTSTATUS NTAPI NtWaitForSingleObject(HANDLE Handle, BOOLEAN Alertable,
+    LARGE_INTEGER* Timeout);
+NTSYSAPI NTSTATUS NTAPI NtDelayExecution(BOOLEAN Alertable, LARGE_INTEGER* Timeout);
+NTSYSAPI NTSTATUS NTAPI NtWaitForKeyedEvent(HANDLE KeyedEvent, PVOID Key, BOOLEAN Alertable,
+    LARGE_INTEGER* Timeout);
+NTSYSAPI NTSTATUS NTAPI NtReleaseKeyedEvent(HANDLE KeyedEvent, PVOID Key, BOOLEAN Alertable,
+    LARGE_INTEGER* Timeout);
+NTSYSAPI NTSTATUS NTAPI NtRaiseHardError(NTSTATUS Status, ULONG NumberOfParameters,
+    ULONG UnicodeStringParameterMask, ULONG_PTR* Parameters, ULONG ResponseOption, ULONG* Response);
 
 /* Hard-code these.  */
 #undef GetCurrentProcess
@@ -604,11 +628,6 @@ __MCF_mfree_nonnull(void* ptr)
     __MCF_ASSERT(succ);
   }
 
-/* Gets a handle to the directory for all named objects (mutexes, semaphores,
- * events, etc.) for the current session. The handle is cached in KERNEL32.DLL
- * and must not be closed.  */
-NTSYSAPI NTSTATUS NTAPI BaseGetNamedObjectDirectory(HANDLE* OutHandle);
-
 __MCF_ALWAYS_INLINE
 HANDLE
 __MCF_get_directory_for_named_objects(void)
@@ -619,10 +638,6 @@ __MCF_get_directory_for_named_objects(void)
     return handle;
   }
 
-/* Indicates whether the current process is being shut down. This function has
- * existed since at least Windows 7, but is only documented since Windows 10.  */
-NTSYSAPI BOOLEAN NTAPI RtlDllShutdownInProgress(void);
-
 __MCF_ALWAYS_INLINE
 bool
 __MCF_is_process_shutting_down(void)
@@ -630,27 +645,16 @@ __MCF_is_process_shutting_down(void)
     return RtlDllShutdownInProgress();
   }
 
-/* Create a named section of memory.
- * https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwcreatesection  */
-NTSYSAPI NTSTATUS NTAPI NtCreateSection(HANDLE* OutHandle, ACCESS_MASK DesiredAccess,
-                                        OBJECT_ATTRIBUTES* Attributes, LARGE_INTEGER* MaximumSize,
-                                        ULONG Protection, ULONG Allocation, HANDLE File);
-
 __MCF_ALWAYS_INLINE
 HANDLE
 __MCF_create_named_section(OBJECT_ATTRIBUTES* Attributes, LONGLONG MaximumSize)
   {
     HANDLE handle;
     LARGE_INTEGER size = { .QuadPart = MaximumSize };
-    NTSTATUS status = NtCreateSection(&handle, SECTION_ALL_ACCESS, Attributes, &size, PAGE_READWRITE, SEC_COMMIT, NULL);
+    NTSTATUS status = NtCreateSection(&handle, SECTION_ALL_ACCESS, Attributes, &size,
+                                      PAGE_READWRITE, SEC_COMMIT, NULL);
     return NT_SUCCESS(status) ? handle : __MCF_win32_ntstatus_p(status, NULL);
   }
-
-/* Creates another handle to an object.
- * https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-zwduplicateobject  */
-NTSYSAPI NTSTATUS NTAPI NtDuplicateObject(HANDLE SourceProcess, HANDLE SourceHandle, HANDLE TargetProcess,
-                                          HANDLE* TargetHandle, ACCESS_MASK DesiredAccess,
-                                          ULONG HandleAttributes, ULONG Options);
 
 __MCF_ALWAYS_INLINE
 HANDLE
@@ -658,13 +662,10 @@ __MCF_duplicate_handle(HANDLE SourceHandle)
   {
     HANDLE handle;
     HANDLE process = GetCurrentProcess();
-    NTSTATUS status = NtDuplicateObject(process, SourceHandle, process, &handle, 0, 0, DUPLICATE_SAME_ACCESS);
+    NTSTATUS status = NtDuplicateObject(process, SourceHandle, process, &handle, 0, 0,
+                                        DUPLICATE_SAME_ACCESS);
     return NT_SUCCESS(status) ? handle : __MCF_win32_ntstatus_p(status, NULL);
   }
-
-/* Closes a handle to an object.
- * https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwclose  */
-NTSYSAPI NTSTATUS NTAPI NtClose(HANDLE Handle);
 
 __MCF_ALWAYS_INLINE
 void
@@ -673,12 +674,6 @@ __MCF_close_handle(HANDLE Handle)
     NTSTATUS status = NtClose(Handle);
     __MCF_ASSERT(NT_SUCCESS(status));
   }
-
-/* Maps a named section of memory into the virtual address space.
- * https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwmapviewofsection  */
-NTSYSAPI NTSTATUS NTAPI NtMapViewOfSection(HANDLE Section, HANDLE Process, PVOID* BaseAddress, ULONG_PTR ZeroBits,
-                                           SIZE_T CommitSize, LARGE_INTEGER* Offset, SIZE_T* ViewSize,
-                                           UINT SectionInherit, ULONG Allocation, ULONG Protection);
 
 __MCF_ALWAYS_INLINE
 void
@@ -691,10 +686,6 @@ __MCF_map_view_of_section(HANDLE Section, void** BaseAddress, size_t* ViewSize, 
     __MCF_ASSERT(NT_SUCCESS(status));
   }
 
-/* Unmaps a named section of memory from the virtual address space.
- * https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwunmapviewofsection  */
-NTSYSAPI NTSTATUS NTAPI NtUnmapViewOfSection(HANDLE Process, PVOID BaseAddress);
-
 __MCF_ALWAYS_INLINE
 void
 __MCF_unmap_view_of_section(void* BaseAddress)
@@ -703,10 +694,6 @@ __MCF_unmap_view_of_section(void* BaseAddress)
     NTSTATUS status = NtUnmapViewOfSection(process, BaseAddress);
     __MCF_ASSERT(NT_SUCCESS(status));
   }
-
-/* Waits until an object is signaled.
- * https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-zwwaitforsingleobject  */
-NTSYSAPI NTSTATUS NTAPI NtWaitForSingleObject(HANDLE Handle, BOOLEAN Alertable, LARGE_INTEGER* Timeout);
 
 __MCF_ALWAYS_INLINE
 int
@@ -717,10 +704,6 @@ __MCF_wait_for_single_object(HANDLE Handle, const __MCF_winnt_timeout* Timeout)
     return (status == STATUS_WAIT_0) ? 0 : -1;
   }
 
-/* Suspends the calling thread for the given duration. This function is called by
- * `SleepEx()`.  */
-NTSYSAPI NTSTATUS NTAPI NtDelayExecution(BOOLEAN Alertable, LARGE_INTEGER* Timeout);
-
 __MCF_ALWAYS_INLINE
 void
 __MCF_sleep(const __MCF_winnt_timeout* Timeout)
@@ -728,11 +711,6 @@ __MCF_sleep(const __MCF_winnt_timeout* Timeout)
     NTSTATUS status = NtDelayExecution(false, (LARGE_INTEGER*) &(Timeout->__li));
     __MCF_ASSERT(NT_SUCCESS(status));
   }
-
-/* Suspends the calling thread on the given keyed event object, until another
- * thread calls `NtReleaseKeyedEvent()` on the same object with the same key.
- * The lowest bit of the key must be zero.  */
-NTSYSAPI NTSTATUS NTAPI NtWaitForKeyedEvent(HANDLE KeyedEvent, PVOID Key, BOOLEAN Alertable, LARGE_INTEGER* Timeout);
 
 __MCF_ALWAYS_INLINE
 int
@@ -743,12 +721,6 @@ __MCF_keyed_event_wait(const void* Key, const __MCF_winnt_timeout* Timeout)
     return (status == STATUS_WAIT_0) ? 0 : -1;
   }
 
-/* Wakes another thread which shall be waiting on the given keyed event object
- * for the given key. If no such thread exists, the calling thread is suspended
- * unless a matching thread calls `NtWaitForKeyedEvent()`. The lowest bit of
- * the key must be zero.  */
-NTSYSAPI NTSTATUS NTAPI NtReleaseKeyedEvent(HANDLE KeyedEvent, PVOID Key, BOOLEAN Alertable, LARGE_INTEGER* Timeout);
-
 __MCF_ALWAYS_INLINE
 int
 __MCF_keyed_event_signal(const void* Key, const __MCF_winnt_timeout* Timeout)
@@ -757,12 +729,6 @@ __MCF_keyed_event_signal(const void* Key, const __MCF_winnt_timeout* Timeout)
     __MCF_ASSERT(NT_SUCCESS(status));
     return (status == STATUS_WAIT_0) ? 0 : -1;
   }
-
-/* Sends a hard-error LPC message to CSRSS.EXE. This function is useful in a DLL
- * entry-point function or a TLS callback, where it is not safe to make a call
- * to `MessageBox()`.  */
-NTSYSAPI NTSTATUS NTAPI NtRaiseHardError(NTSTATUS Status, ULONG NumberOfParameters, ULONG UnicodeStringParameterMask,
-                                         ULONG_PTR* Parameters, ULONG ResponseOption, ULONG* Response);
 
 __MCF_ALWAYS_INLINE
 int
