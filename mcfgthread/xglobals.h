@@ -714,7 +714,7 @@ __MCF_wait_for_single_object(HANDLE Handle, const __MCF_winnt_timeout* Timeout)
   {
     NTSTATUS status = NtWaitForSingleObject(Handle, false, (LARGE_INTEGER*) &(Timeout->__li));
     __MCF_ASSERT(NT_SUCCESS(status));
-    return (status != STATUS_WAIT_0) ? -1 : 0;
+    return (status == STATUS_WAIT_0) ? 0 : -1;
   }
 
 /* Suspends the calling thread for the given duration. This function is called by
@@ -740,7 +740,7 @@ __MCF_keyed_event_wait(const void* Key, const __MCF_winnt_timeout* Timeout)
   {
     NTSTATUS status = NtWaitForKeyedEvent(NULL, (PVOID) Key, false, (LARGE_INTEGER*) &(Timeout->__li));
     __MCF_ASSERT(NT_SUCCESS(status));
-    return (status != STATUS_WAIT_0) ? -1 : 0;
+    return (status == STATUS_WAIT_0) ? 0 : -1;
   }
 
 /* Wakes another thread which shall be waiting on the given keyed event object
@@ -755,7 +755,7 @@ __MCF_keyed_event_signal(const void* Key, const __MCF_winnt_timeout* Timeout)
   {
     NTSTATUS status = NtReleaseKeyedEvent(NULL, (PVOID) Key, false, (LARGE_INTEGER*) &(Timeout->__li));
     __MCF_ASSERT(NT_SUCCESS(status));
-    return (status != STATUS_WAIT_0) ? -1 : 0;
+    return (status == STATUS_WAIT_0) ? 0 : -1;
   }
 
 /* Sends a hard-error LPC message to CSRSS.EXE. This function is useful in a DLL
@@ -771,7 +771,7 @@ __MCF_show_service_notification(const UNICODE_STRING* caption, ULONG options, co
     ULONG_PTR params[4] = { (ULONG_PTR) text, (ULONG_PTR) caption, options, 0 };
     ULONG response = 0;
     NTSTATUS status = NtRaiseHardError(0x50000018, 4, 0b0011, params, 1, &response);
-    return !NT_SUCCESS(status) ? -1 : (int) response;
+    return NT_SUCCESS(status) ? (int) response : -1;
   }
 
 #endif  /* __MCFGTHREAD_XGLOBALS_  */
