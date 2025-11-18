@@ -125,34 +125,6 @@ __MCF_CXX(extern "C" {)
 #define __MCF_0_INIT           { __MCF_C(0) }
 #define __MCF_SET_IF(x, ...)    ((void) ((x) && (*(x) = (__VA_ARGS__))))
 
-/* Define compiler-specific stuff. In the case of Clang-CL, prefer GNU
- * extensions to Microsoft ones.  */
-#if defined __GNUC__ || defined __clang__
-#  define __MCF_EX             __extension__
-#  define __MCF_GNU_INLINE      extern __inline__ __attribute__((__gnu_inline__))
-#  define __MCF_ALWAYS_INLINE   extern __inline__ __attribute__((__gnu_inline__, __always_inline__))
-#  define __MCF_NEVER_INLINE   __attribute__((__noinline__))
-#  define __MCF_NEVER_RETURN   __attribute__((__noreturn__))
-#  define __MCF_FN_CONST       __attribute__((__const__))
-#  define __MCF_FN_PURE       __attribute__((__pure__))
-#  define __MCF_FN_COLD       __attribute__((__cold__))
-#  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
-#  define __MCF_UNREACHABLE   __builtin_unreachable()
-#  define __MCF_FNA(x, fn)   __typeof__(x) fn __asm__(__MCF_USYM #x)
-#else
-#  define __MCF_EX             /* unsupported */
-#  define __MCF_GNU_INLINE      __inline
-#  define __MCF_ALWAYS_INLINE   __forceinline
-#  define __MCF_NEVER_INLINE   __declspec(noinline)
-#  define __MCF_NEVER_RETURN   __declspec(noreturn)
-#  define __MCF_FN_CONST       __declspec(noalias)
-#  define __MCF_FN_PURE       __declspec(noalias)
-#  define __MCF_FN_COLD       /* unsupported */
-#  define __MCF_ALIGNED(x)    __declspec(align(x))
-#  define __MCF_UNREACHABLE   __assume(0)
-#  define __MCF_FNA(x, fn)   __pragma(comment(linker, "/alternatename:" __MCF_USYM #fn "=" __MCF_USYM #x))
-#endif
-
 /* Define how the TEB is accessed. Due to technical limitations, the base offset
  * must be a constant multiple of operand size, and there are different macros
  * depending on whether the address is immediate.  */
@@ -229,6 +201,34 @@ __MCF_CXX(extern "C" {)
 #    define __MCF_64_32(x, y)  x
 #    define __MCF_USYM  ""
 #  endif
+#endif
+
+/* Define compiler-specific stuff. In the case of Clang-CL, prefer GNU
+ * extensions to Microsoft ones.  */
+#if defined __GNUC__ || defined __clang__
+#  define __MCF_EX             __extension__
+#  define __MCF_GNU_INLINE      extern __inline__ __attribute__((__gnu_inline__))
+#  define __MCF_ALWAYS_INLINE   extern __inline__ __attribute__((__gnu_inline__, __always_inline__))
+#  define __MCF_NEVER_INLINE   __attribute__((__noinline__))
+#  define __MCF_NEVER_RETURN   __attribute__((__noreturn__))
+#  define __MCF_FN_CONST       __attribute__((__const__))
+#  define __MCF_FN_PURE       __attribute__((__pure__))
+#  define __MCF_FN_COLD       __attribute__((__cold__))
+#  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
+#  define __MCF_UNREACHABLE   __builtin_unreachable()
+#  define __MCF_FNA(x, fn)   __typeof__(x) fn __asm__(__MCF_USYM #x)
+#else
+#  define __MCF_EX             /* unsupported */
+#  define __MCF_GNU_INLINE      __inline
+#  define __MCF_ALWAYS_INLINE   __forceinline
+#  define __MCF_NEVER_INLINE   __declspec(noinline)
+#  define __MCF_NEVER_RETURN   __declspec(noreturn)
+#  define __MCF_FN_CONST       __declspec(noalias)
+#  define __MCF_FN_PURE       __declspec(noalias)
+#  define __MCF_FN_COLD       /* unsupported */
+#  define __MCF_ALIGNED(x)    __declspec(align(x))
+#  define __MCF_UNREACHABLE   __assume(0)
+#  define __MCF_FNA(x, fn)   __pragma(comment(linker, "/alternatename:" __MCF_USYM #fn "=" __MCF_USYM #x))
 #endif
 
 /* These are necessary when the header is compiled as C89 or C++98. The check
