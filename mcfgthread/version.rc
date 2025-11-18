@@ -6,19 +6,21 @@
 // to this file.
 
 #include "version.h"
+#include <winver.h>
+#include <winuser.h>
 
 VS_VERSION_INFO  VERSIONINFO
   PRODUCTVERSION     _MCF_ABI_VERSION_MAJOR, _MCF_ABI_VERSION_MINOR, 0, 0
   FILEVERSION        _MCF_ABI_VERSION_MAJOR, _MCF_ABI_VERSION_MINOR, 0, 0
-  FILEFLAGSMASK      0x3F  // VS_FFI_FILEFLAGSMASK
+  FILEFLAGSMASK      VS_FFI_FILEFLAGSMASK
 #ifdef __MCF_DEBUG
-  FILEFLAGS          1  // VS_FF_DEBUG
+  FILEFLAGS          VS_FF_DEBUG
 #else
   FILEFLAGS          0
 #endif
-  FILEOS             0x00040004  // VOS_NT_WINDOWS32
-  FILETYPE           2  // VFT_DLL
-  FILESUBTYPE        0  // VFT2_UNKNOWN
+  FILEOS             VOS_NT_WINDOWS32
+  FILETYPE           VFT_DLL
+  FILESUBTYPE        VFT2_UNKNOWN
   {
     BLOCK "VarFileInfo"
     {
