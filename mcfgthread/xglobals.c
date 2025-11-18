@@ -199,10 +199,9 @@ __MCF_gthread_initialize_globals(void)
 
     /* Allocate or open storage for global data. We are in the DLL main routine,
      * so locking is not necessary.  */
-    OBJECT_ATTRIBUTES gattrs;
-    HANDLE gdir = __MCF_get_directory_for_named_objects();
-    __MCF_ASSERT(gdir);
-    InitializeObjectAttributes(&gattrs, &gname, OBJ_OPENIF | OBJ_EXCLUSIVE, gdir, __MCF_nullptr);
+    OBJECT_ATTRIBUTES gattrs = { .Length = sizeof(gattrs), .Attributes = 0x00A0 /* OPENIF | EXCLUSIVE */,
+                                 .RootDirectory = __MCF_get_directory_for_named_objects(),
+                                 .ObjectName = &gname };
     HANDLE gfile = __MCF_create_named_section(&gattrs, sizeof(__MCF_crt_xglobals));
     __MCF_CHECK(gfile);
 

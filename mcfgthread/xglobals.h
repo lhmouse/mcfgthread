@@ -15,7 +15,6 @@
 #include "dtor_queue.h"
 #include <minwindef.h>
 #include <winnt.h>
-#include <winternl.h>
 #include <winerror.h>
 #include <sysinfoapi.h>
 #include <heapapi.h>
@@ -34,12 +33,41 @@
 #  define __MCF_XGLOBALS_READONLY   const
 #endif
 
-/* Hard-code these.  */
-#undef GetCurrentProcess
-#undef GetCurrentThread
+/* `NTSTATUS`; ntdef.h  */
+typedef LONG NTSTATUS;
 
-#define GetCurrentProcess()  ((HANDLE) -1)
-#define GetCurrentThread()   ((HANDLE) -2)
+NTSYSAPI ULONG NTAPI RtlNtStatusToDosError(NTSTATUS status);
+NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status) __MCF_FN_CONST;
+
+#define NT_SUCCESS(status)      (((ULONG)(status) & 0x80000000) == 0x00000000)
+#define NT_INFORMATION(status)  (((ULONG)(status) & 0xC0000000) == 0x40000000)
+#define NT_WARNING(status)      (((ULONG)(status) & 0xC0000000) == 0x80000000)
+#define NT_ERROR(status)        (((ULONG)(status) & 0xC0000000) == 0xC0000000)
+
+/* `UNICODE_STRING`; ntdef.h  */
+struct _UNICODE_STRING
+  {
+    USHORT Length;
+    USHORT MaximumLength;
+    PWSTR Buffer;
+  };
+
+typedef struct _UNICODE_STRING UNICODE_STRING;
+typedef UNICODE_STRING* PUNICODE_STRING;
+
+/* `OBJECT_ATTRIBUTES`; ntdef.h  */
+struct _OBJECT_ATTRIBUTES
+  {
+    ULONG Length;
+    HANDLE RootDirectory;
+    PUNICODE_STRING ObjectName;
+    ULONG Attributes;
+    PVOID SecurityDescriptor;
+    PVOID SecurityQualityOfService;
+  };
+
+typedef struct _OBJECT_ATTRIBUTES OBJECT_ATTRIBUTES;
+typedef OBJECT_ATTRIBUTES* POBJECT_ATTRIBUTES;
 
 /* Undefine macros that redirect to standard C functions, so the ones from
  * system DLLs will be called.  */
@@ -53,8 +81,12 @@ NTSYSAPI void NTAPI RtlMoveMemory(void* dst, const void* src, SIZE_T size);
 NTSYSAPI void NTAPI RtlFillMemory(void* dst, SIZE_T size, int c);
 NTSYSAPI void NTAPI RtlZeroMemory(void* dst, SIZE_T size);
 
-NTSYSAPI ULONG NTAPI RtlNtStatusToDosError(NTSTATUS status);
-NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status) __MCF_FN_CONST;
+/* Hard-code these.  */
+#undef GetCurrentProcess
+#define GetCurrentProcess()  ((HANDLE) -1)
+
+#undef GetCurrentThread
+#define GetCurrentThread()   ((HANDLE) -2)
 
 /* Define read-only data that must be placed in `.rdata` despite
  * `-fdata-sections`.  */
