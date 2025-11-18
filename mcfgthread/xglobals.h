@@ -80,8 +80,8 @@ NTSYSAPI void NTAPI RtlFillMemory(void* dst, SIZE_T size, int c);
 NTSYSAPI void NTAPI RtlZeroMemory(void* dst, SIZE_T size);
 
 NTSYSAPI ULONG NTAPI RtlNtStatusToDosError(NTSTATUS status);
-NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status) __MCF_FN_CONST;
-NTSYSAPI BOOLEAN NTAPI RtlDllShutdownInProgress(void) __MCF_FN_PURE;
+__MCF_FN_CONST NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status);
+__MCF_FN_PURE NTSYSAPI BOOLEAN NTAPI RtlDllShutdownInProgress(void);
 NTSYSAPI NTSTATUS NTAPI BaseGetNamedObjectDirectory(HANDLE* OutHandle);
 
 NTSYSAPI NTSTATUS NTAPI NtCreateSection(HANDLE* OutHandle,
@@ -301,9 +301,9 @@ void*
 __MCF_malloc_copy(const void* data, size_t size) __attribute__((__alloc_size__(2)));
 
 /* Get the size of an allocated block, like `malloc_usable_size()`.  */
-__MCF_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE __MCF_FN_CONST
 size_t
-__MCF_msize(const void* ptr) __MCF_FN_PURE;
+__MCF_msize(const void* ptr);
 
 /* Free a block of memory, like `free()`, except that the argument shall not
  * be a null pointer.  */
@@ -605,7 +605,7 @@ __MCF_malloc_copy(const void* data, size_t size)
     return ptr;
   }
 
-__MCF_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE __MCF_FN_CONST
 size_t
 __MCF_msize(const void* ptr)
   {
