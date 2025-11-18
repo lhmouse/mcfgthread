@@ -43,13 +43,13 @@ main(void)
     assert(r == 0);
     r = __MCF_cxa_atexit(cleanup_1, (void*) "dN", __MCF_nullptr);
     assert(r == 0);
-    r = __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*) cleanup_2, (void*) "e2", &dso_2);
+    r = __MCF_cxa_atexit(cleanup_2, (void*) "e2", &dso_2);
     assert(r == 0);
-    r = __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*) cleanup_2, (void*) "f1", &dso_1);
+    r = __MCF_cxa_atexit(cleanup_2, (void*) "f1", &dso_1);
     assert(r == 0);
-    r = __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*) cleanup_2, (void*) "g1", &dso_1);
+    r = __MCF_cxa_atexit(cleanup_2, (void*) "g1", &dso_1);
     assert(r == 0);
-    r = __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*) cleanup_2, (void*) "hN", __MCF_nullptr);
+    r = __MCF_cxa_atexit(cleanup_2, (void*) "hN", __MCF_nullptr);
     assert(r == 0);
     r = __MCF_cxa_atexit(cleanup_1, (void*) "i1", &dso_1);
     assert(r == 0);
@@ -59,13 +59,13 @@ main(void)
     assert(r == 0);
     r = __MCF_cxa_atexit(cleanup_1, (void*) "lN", __MCF_nullptr);
     assert(r == 0);
-    r = __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*) cleanup_2, (void*) "m1", &dso_1);
+    r = __MCF_cxa_atexit(cleanup_2, (void*) "m1", &dso_1);
     assert(r == 0);
-    r = __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*) cleanup_2, (void*) "n2", &dso_2);
+    r = __MCF_cxa_atexit(cleanup_2, (void*) "n2", &dso_2);
     assert(r == 0);
-    r = __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*) cleanup_2, (void*) "o2", &dso_2);
+    r = __MCF_cxa_atexit(cleanup_2, (void*) "o2", &dso_2);
     assert(r == 0);
-    r = __MCF_cxa_atexit((__MCF_cxa_dtor_cdecl*) cleanup_2, (void*) "pN", __MCF_nullptr);
+    r = __MCF_cxa_atexit(cleanup_2, (void*) "pN", __MCF_nullptr);
     assert(r == 0);
 
     assert(strcmp(buffer, "") == 0);
