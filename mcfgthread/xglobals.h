@@ -42,6 +42,7 @@ typedef LONG NTSTATUS;
 #define NT_ERROR(status)        (((ULONG)(status) & 0xC0000000) == 0xC0000000)
 
 /* `UNICODE_STRING`; ntdef.h  */
+typedef struct _UNICODE_STRING UNICODE_STRING;
 struct _UNICODE_STRING
   {
     USHORT Length;
@@ -49,22 +50,17 @@ struct _UNICODE_STRING
     PWSTR Buffer;
   };
 
-typedef struct _UNICODE_STRING UNICODE_STRING;
-typedef UNICODE_STRING* PUNICODE_STRING;
-
 /* `OBJECT_ATTRIBUTES`; ntdef.h  */
+typedef struct _OBJECT_ATTRIBUTES OBJECT_ATTRIBUTES;
 struct _OBJECT_ATTRIBUTES
   {
     ULONG Length;
     HANDLE RootDirectory;
-    PUNICODE_STRING ObjectName;
+    UNICODE_STRING* ObjectName;
     ULONG Attributes;
     PVOID SecurityDescriptor;
     PVOID SecurityQualityOfService;
   };
-
-typedef struct _OBJECT_ATTRIBUTES OBJECT_ATTRIBUTES;
-typedef OBJECT_ATTRIBUTES* POBJECT_ATTRIBUTES;
 
 /* Undefine macros that redirect to standard C functions, so the ones from
  * system DLLs will be called.  */

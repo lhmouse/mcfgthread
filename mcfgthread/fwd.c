@@ -13,7 +13,7 @@
 
 static inline
 void
-do_append_string(WCHAR** sp, PCWSTR end_of_buffer, WCHAR c)
+do_append_string(WCHAR** sp, const WCHAR* end_of_buffer, WCHAR c)
   {
     if(*sp != end_of_buffer)
       *((*sp) ++) = c;
@@ -21,7 +21,7 @@ do_append_string(WCHAR** sp, PCWSTR end_of_buffer, WCHAR c)
 
 static
 ULONG
-do_format_message(ULONG code, WCHAR* outptr, PCWSTR end_of_buffer)
+do_format_message(ULONG code, WCHAR* outptr, const WCHAR* end_of_buffer)
   {
     return FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS | 255,
                           __MCF_nullptr, code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),

@@ -622,7 +622,7 @@ const _load_config_used __MCF_CRT_RDATA =
 static __MCF_REALIGN_SP
 void
 __stdcall
-do_tls_callback(PVOID module, ULONG reason, LPVOID reserved)
+do_tls_callback(PVOID module, ULONG reason, PVOID reserved)
   {
     (void) module;
     (void) reserved;
