@@ -121,28 +121,28 @@ __MCF_runtime_failure(const char* where)
     __builtin_trap();
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_FN_PURE
 uint32_t
 _MCF_get_win32_error(void)
   {
     return GetLastError();
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_FN_CONST
 size_t
 _MCF_get_page_size(void)
   {
     return __MCF_crt_sysinfo.dwPageSize;
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_FN_CONST
 size_t
 _MCF_get_processor_count(void)
   {
     return __MCF_crt_sysinfo.dwNumberOfProcessors;
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_FN_CONST
 uintptr_t
 _MCF_get_active_processor_mask(void)
   {

@@ -520,7 +520,7 @@ __MCF_do_std_compare(const void* src, const void* src_end, const void* cmp)
     return diff;
   }
 
-__MCF_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE __MCF_FN_PURE
 int
 __cdecl
 __MCF_mcompare(const void* src, const void* cmp, size_t size)
@@ -545,7 +545,7 @@ __MCF_mcompare(const void* src, const void* cmp, size_t size)
     return diff;
   }
 
-__MCF_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE __MCF_FN_PURE
 bool
 __cdecl
 __MCF_mequal(const void* src, const void* cmp, size_t size)

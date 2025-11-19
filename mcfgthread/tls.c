@@ -71,7 +71,7 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
     __MCF_ASSERT(false);
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_FN_PURE
 void*
 __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
   {

@@ -197,7 +197,7 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
     (* __MCF_CAST_PTR(self_type, do_call_once_seh_take_over)) (once, init_proc, arg);
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_FN_PURE
 int64_t
 __MCF_gthr_timeout_from_timespec(const __MCF_timespec* abs_time)
   {

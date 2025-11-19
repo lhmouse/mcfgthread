@@ -446,7 +446,7 @@ __MCF_gthr_objc_thread_id(void)
     return (objc_thread_t)(uintptr_t) _MCF_thread_self_tid();
   }
 
-__MCF_GTHR_LIBOBJC_INLINE
+__MCF_GTHR_LIBOBJC_INLINE __MCF_FN_PURE
 void*
 __MCF_gthr_objc_thread_get_data(void)
   __MCF_noexcept
