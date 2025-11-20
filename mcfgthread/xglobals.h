@@ -537,7 +537,7 @@ __MCF_mcompare(const void* src, const void* cmp, size_t size)
       "or eax, ecx; "
       : "=a"(diff), "=S"(esi), "=c"(ecx), "=D"(edi)
       : "1"(src), "2"(size), "3"(cmp)
-      : "memory"
+      : "memory", "cc"
     );
 #else
     diff = __MCF_do_std_compare(src, (const char*) src + size, cmp);
@@ -559,7 +559,7 @@ __MCF_mequal(const void* src, const void* cmp, size_t size)
       "repz cmpsb; "    /* compare DS:[ESI] with ES:[EDI]  */
       : "=@ccz"(eq), "=S"(esi), "=c"(ecx), "=D"(edi)
       : "1"(src), "2"(size), "3"(cmp)
-      : "memory"
+      : "memory", "cc"
     );
 #else
     eq = __MCF_do_std_compare(src, (const char*) src + size, cmp) == 0;
