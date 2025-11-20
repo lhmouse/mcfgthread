@@ -265,11 +265,12 @@ typedef unsigned __MCF_INTPTR_ uintptr_t;
  * Complete definitions are compiled when a user is optimizing for speed, or when
  * it's inside mcfgthread itself regardless of optimization.  */
 #ifndef __MCF_EXPAND_INLINE_DEFINITIONS
-#  if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
-#    define __MCF_EXPAND_INLINE_DEFINITIONS   1
-#  else
-#    define __MCF_EXPAND_INLINE_DEFINITIONS   0
-#  endif
+#  define __MCF_EXPAND_INLINE_DEFINITIONS   0
+#endif
+
+#if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
+#  undef __MCF_EXPAND_INLINE_DEFINITIONS
+#  define __MCF_EXPAND_INLINE_DEFINITIONS   1
 #endif
 
 /* Some compilers warn about casts between pointers, so launder the pointer via
