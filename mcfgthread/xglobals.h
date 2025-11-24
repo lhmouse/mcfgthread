@@ -252,7 +252,7 @@ void
 __MCF_mfree_nonnull(void* ptr);
 
 /* These functions set the last error code and return the second argument.
- * They should be subject to tail-call optimization.  */
+ * They should be eligible for tail-call optimization.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_COLD
 int
 __MCF_win32_error_i(ULONG code, int val);
