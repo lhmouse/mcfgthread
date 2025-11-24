@@ -245,7 +245,7 @@ struct _Invoke_decay_copy<_Callable, _Mine, _Others...>
 // Reference implementation for [thread.once.onceflag]
 struct once_flag
   {
-    ::_MCF_once _M_once[1];
+    __MCF_BR(::_MCF_once) _M_once;
 
     constexpr once_flag() noexcept : _M_once() { }
     once_flag(const once_flag&) = delete;
@@ -283,7 +283,7 @@ call_once(once_flag& __flag, _Callable&& __callable, _Args&&... __args)
 class mutex
   {
   private:
-    ::_MCF_mutex _M_mtx[1] = { };
+    __MCF_BR(::_MCF_mutex) _M_mtx = { };
 
     mutex(const mutex&) = delete;
     mutex& operator=(const mutex&) = delete;
@@ -349,7 +349,7 @@ class mutex
 class shared_mutex
   {
   private:
-    ::_MCF_shared_mutex _M_smtx[1] = { };
+    __MCF_BR(::_MCF_shared_mutex) _M_smtx = { };
 
     shared_mutex(const shared_mutex&) = delete;
     shared_mutex& operator=(const shared_mutex&) = delete;
@@ -458,7 +458,7 @@ class shared_mutex
 class recursive_mutex
   {
   private:
-    ::__MCF_gthr_rc_mutex _M_rmtx[1] = { };
+    __MCF_BR(::__MCF_gthr_rc_mutex) _M_rmtx = { };
 
     recursive_mutex(const recursive_mutex&) = delete;
     recursive_mutex& operator=(const recursive_mutex&) = delete;
@@ -531,7 +531,7 @@ class recursive_mutex
 class condition_variable
   {
   private:
-    ::_MCF_cond _M_cnd[1] = { };
+    __MCF_BR(::_MCF_cond) _M_cnd = { };
 
     condition_variable(const condition_variable&) = delete;
     condition_variable& operator=(const condition_variable&) = delete;
@@ -688,8 +688,8 @@ class thread
 
         struct _My_data
           {
-            _My_invoker _M_invoker[1];
-            ::_MCF_event _M_ctor_status[1];
+            __MCF_BR(_My_invoker) _M_invoker;
+            __MCF_BR(::_MCF_event) _M_ctor_status;
           };
 
         struct _Thread_sentry

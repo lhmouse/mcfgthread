@@ -29,9 +29,9 @@ typedef void* __MCF_gthr_thread_procedure(void* __arg);
 
 struct __MCF_gthr_rc_mutex
   {
-    uint32_t __owner[1];  /* owner thread ID  */
+    __MCF_BR(uint32_t) __owner;  /* owner thread ID  */
     int __depth;  /* recursion depth  */
-    _MCF_mutex __mutex[1];
+    __MCF_BR(_MCF_mutex) __mutex;
   };
 
 struct __MCF_gthr_thread_record

@@ -341,7 +341,7 @@ union __MCF_thread_storage
     __MCF_ALIGNED(16) char __storage_v1[__MCF_64_32(1600, 800)];
     struct
       {
-        int32_t __nref[1];  /* atomic reference count  */
+        __MCF_BR(int32_t) __nref;  /* atomic reference count  */
         uint32_t __tid;  /* thread id  */
         __MCF_HANDLE __handle;  /* win32 thread handle  */
       };
@@ -354,26 +354,26 @@ struct __MCF_crt_xglobals
     uint32_t __tls_index;
 
     /* the static thread object  */
-    __MCF_thread_storage __main_thread[1];
+    __MCF_BR(__MCF_thread_storage) __main_thread;
 
     /* `atexit()` support  */
-    _MCF_mutex __exit_mtx[1];
-    __MCF_dtor_queue __exit_queue[1];
+    __MCF_BR(_MCF_mutex) __exit_mtx;
+    __MCF_BR(__MCF_dtor_queue) __exit_queue;
 
     /* `at_quick_exit()` support  */
-    _MCF_mutex __quick_exit_mtx[1];
-    __MCF_dtor_queue __quick_exit_queue[1];
+    __MCF_BR(_MCF_mutex) __quick_exit_mtx;
+    __MCF_BR(__MCF_dtor_queue) __quick_exit_queue;
 
     /* mutex support  */
     __MCF_ALIGNED(64) bool __mutex_spin_field[2048];
 
     /* thread suspension support  */
-    _MCF_cond __interrupt_cond[1];
+    __MCF_BR(_MCF_cond) __interrupt_cond;
 
     /* WARNING: Fields hereinafter must be accessed via `__MCF_G_FIELD_OPT`!  */
     __MCF_LAZY_D_(GetSystemTimePreciseAsFileTime);
     __MCF_LAZY_D_(QueryInterruptTime);
-    _MCF_mutex __thread_oom_mtx[1];
+    __MCF_BR(_MCF_mutex) __thread_oom_mtx;
     __MCF_thread_storage __thread_oom_self_st;
   };
 
@@ -394,7 +394,7 @@ __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __thread_oom_mtx) == __MCF_64_3
 __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __thread_oom_self_st) == __MCF_64_32(6816, 4432));
 
 /* These are constants that have to be initialized at load time.  */
-extern const GUID __MCF_crt_gthread_guid[1];
+extern __MCF_BR(GUID) const __MCF_crt_gthread_guid;
 extern SYSTEM_INFO __MCF_XGLOBALS_READONLY __MCF_crt_sysinfo;
 extern HANDLE __MCF_XGLOBALS_READONLY __MCF_crt_heap;
 extern double __MCF_XGLOBALS_READONLY __MCF_crt_pf_recip;

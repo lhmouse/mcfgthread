@@ -34,7 +34,7 @@ typedef int __MCF_c11_thread_procedure(void* __arg);
 struct __MCF_c11_mutex
   {
     uint8_t __type;  /* bit mask of `__MCF_mtx_type`  */
-    __MCF_gthr_rc_mutex __rc_mtx[1];
+    __MCF_BR(__MCF_gthr_rc_mutex) __rc_mtx;
   };
 
 struct __MCF_c11_thread_record
@@ -42,7 +42,7 @@ struct __MCF_c11_thread_record
     int __result;
     __MCF_c11_thread_procedure* __proc;
     void* __arg;
-    uint8_t __joinable[1];
+    __MCF_BR(uint8_t) __joinable;
     uintptr_t __reserved_low;
     uintptr_t __reserved_high;
   };

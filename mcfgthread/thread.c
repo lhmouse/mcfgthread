@@ -22,7 +22,7 @@ enum initialization_status
 
 struct initializer
   {
-    _MCF_event status[1];
+    __MCF_BR(_MCF_event) status;
     _MCF_thread* thrd;
     ULONG win32_error;
   };

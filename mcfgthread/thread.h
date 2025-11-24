@@ -22,15 +22,15 @@ __MCF_CXX(extern "C" {)
 /* Define the thread control struct.  */
 struct __MCF_thread
   {
-    int32_t __nref[1];  /* atomic reference count  */
+    __MCF_BR(int32_t) __nref;  /* atomic reference count  */
     uint32_t __tid;  /* thread id  */
     __MCF_HANDLE __handle;  /* win32 thread handle  */
 
     _MCF_thread_procedure* __proc;  /* user-defined thread procedure  */
     void* __data_opt;  /* pointer to user-defined data  */
 
-    __MCF_dtor_queue __atexit_queue[1];  /* for `__cxa_thread_atexit()`  */
-    __MCF_tls_table __tls_table[1];  /* for `_MCF_tls_get()` and `_MCF_tls_set()`  */
+    __MCF_BR(__MCF_dtor_queue) __atexit_queue;  /* for `__cxa_thread_atexit()`  */
+    __MCF_BR(__MCF_tls_table) __tls_table;  /* for `_MCF_tls_get()` and `_MCF_tls_set()`  */
 
     void* __libobjc_tls_data;  /* for GCC libobjc  */
 

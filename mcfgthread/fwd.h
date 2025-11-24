@@ -273,6 +273,10 @@ typedef unsigned __MCF_INTPTR_ uintptr_t;
 #  define __MCF_EXPAND_INLINE_DEFINITIONS   1
 #endif
 
+/* This defines a by-reference variable, in other words, an array of exactly one
+ * object, which is always passed around as a pointer.  */
+#define __MCF_BR(...)    __typeof__(__VA_ARGS__ [1])
+
 /* Some compilers warn about casts between pointers, so launder the pointer via
  * an in-between integral type.  */
 #ifdef __cplusplus
