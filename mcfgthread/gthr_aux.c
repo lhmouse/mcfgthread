@@ -191,6 +191,7 @@ __MCF_USYM "do_call_once_seh_take_over:  \n"
 "  ldp fp, lr, [sp], 16  \n"
 "  ret  \n"
 #endif
+".text"
 );
 
 __MCF_DLLEXPORT __MCF_FN_PURE
