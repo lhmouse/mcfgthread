@@ -11,8 +11,21 @@
 #include "gthr_aux.h"
 #include "xglobals.h"
 
+__MCF_DLLEXPORT
+void
+__MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_proc, void* arg)
+  {
+    /* This can't be declared as a function, otherwise GCC will make the
+     * definition visible externally.  */
+    extern const char do_call_once_seh_take_over[];
+    typedef __typeof__(__MCF_gthr_call_once_seh_take_over) self_type;
+    (* __MCF_CAST_PTR(self_type, do_call_once_seh_take_over)) (once, init_proc, arg);
+  }
+
 __asm__ (
-".text  \n"
+".section .text$" __MCF_USYM "__MCF_gthr_call_once_seh_take_over, \"x\"  \n"
+".def " __MCF_USYM "do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
+__MCF_USYM "do_call_once_seh_take_over:  \n"
 #if defined __i386__
 /* On x86-32, SEH is stack-based. The stack is used as follows:
  *
@@ -28,8 +41,6 @@ __asm__ (
  *     12: `init_proc`
  *     16: `arg`
  */
-".def _do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
-"_do_call_once_seh_take_over:  \n"
 "  push ebp  \n"
 "  mov ebp, esp  \n"
 "  push esi  \n"
@@ -95,8 +106,6 @@ __asm__ (
  *     32: shadow slot for `arg` from R8
  *     40: unused
  */
-".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
-"do_call_once_seh_take_over:  \n"
 ".seh_proc do_call_once_seh_take_over  \n"
 ".seh_handler do_amd64_call_once_on_unwind, @unwind  \n"
 "  push rbp  \n"
@@ -140,8 +149,6 @@ __asm__ (
  *     24: unused
  * CFA 32: establisher frame
  */
-".def do_call_once_seh_take_over; .scl 3; .type 32; .endef  \n"
-"do_call_once_seh_take_over:  \n"
 ".seh_proc do_call_once_seh_take_over  \n"
 ".seh_handler do_arm64_call_once_on_except, @except  \n"
 "  stp fp, lr, [sp, -32]!  \n"
@@ -185,17 +192,6 @@ __asm__ (
 "  ret  \n"
 #endif
 );
-
-__MCF_DLLEXPORT
-void
-__MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_proc, void* arg)
-  {
-    /* This can't be declared as a function, otherwise GCC will make the
-     * definition visible externally.  */
-    extern const char do_call_once_seh_take_over[];
-    typedef __typeof__(__MCF_gthr_call_once_seh_take_over) self_type;
-    (* __MCF_CAST_PTR(self_type, do_call_once_seh_take_over)) (once, init_proc, arg);
-  }
 
 __MCF_DLLEXPORT __MCF_FN_PURE
 int64_t
