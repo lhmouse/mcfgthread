@@ -297,7 +297,7 @@ __MCF_gthread_on_thread_exit(void)
 
 /* These are constants that have to be initialized at load time. The
  * initializers prevent them from being placed into the`.bss` section.  */
-const GUID __MCF_crt_gthread_guid = __MCF_GUID(9FB2D15C,C5F2,4AE7,868D,2769591B8E92);
+const GUID __MCF_crt_gthread_guid[1] = { __MCF_GUID(9FB2D15C,C5F2,4AE7,868D,2769591B8E92) };
 HANDLE __MCF_crt_heap = __MCF_BAD_PTR;
 double __MCF_crt_pf_recip = 1;
 SYSTEM_INFO __MCF_crt_sysinfo = { .dwPageSize = 1 };

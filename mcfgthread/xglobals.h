@@ -394,7 +394,7 @@ __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __thread_oom_mtx) == __MCF_64_3
 __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __thread_oom_self_st) == __MCF_64_32(6816, 4432));
 
 /* These are constants that have to be initialized at load time.  */
-extern const GUID __MCF_crt_gthread_guid;
+extern const GUID __MCF_crt_gthread_guid[1];
 extern SYSTEM_INFO __MCF_XGLOBALS_READONLY __MCF_crt_sysinfo;
 extern HANDLE __MCF_XGLOBALS_READONLY __MCF_crt_heap;
 extern double __MCF_XGLOBALS_READONLY __MCF_crt_pf_recip;
