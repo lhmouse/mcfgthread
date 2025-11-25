@@ -214,8 +214,7 @@ struct _Invoke_decay_copy<_Callable>
   {
     typename ::std::decay<_Callable>::type _M_callable;
 
-    explicit
-    _Invoke_decay_copy(_Callable& __callable)
+    explicit _Invoke_decay_copy(_Callable& __callable)
       : _M_callable(::std::forward<_Callable>(__callable))
       {
       }
@@ -234,8 +233,7 @@ struct _Invoke_decay_copy<_Callable, _Mine, _Others...>
     typename ::std::decay<_Mine>::type _M_mine;
     _Invoke_decay_copy<_Callable, _Others...> _M_next;
 
-    explicit
-    _Invoke_decay_copy(_Callable& __callable, _Mine& __mine, _Others&... __others)
+    explicit _Invoke_decay_copy(_Callable& __callable, _Mine& __mine, _Others&... __others)
       : _M_mine(::std::forward<_Mine>(__mine)), _M_next(__callable, __others...)
       {
       }
@@ -683,8 +681,7 @@ class thread
 
     template<typename _Callable, typename... _Args,
     __MCF_SFINAE_DISABLE_IF(::std::is_same<typename ::std::decay<_Callable>::type, thread>::value)>
-    explicit
-    thread(_Callable&& __callable, _Args&&... __args)
+    explicit thread(_Callable&& __callable, _Args&&... __args)
       {
         using _My_invoker = _Invoke_decay_copy<_Callable, _Args...>;
         enum { _St_zero, _St_constructed, _St_cancelled };
@@ -970,8 +967,7 @@ class thread_specific_ptr
           __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_tls_key_new");
       }
 
-    explicit
-    thread_specific_ptr(_Vfn<_Tp*>* __cleanup_opt)
+    explicit thread_specific_ptr(_Vfn<_Tp*>* __cleanup_opt)
       {
         this->_M_key = ::_MCF_tls_key_new(__MCF_CAST_PTR(::_MCF_tls_dtor, __cleanup_opt));
         if(!this->_M_key)
@@ -1002,8 +998,7 @@ class thread_specific_ptr
         return (pointer) ::_MCF_tls_get(this->_M_key);
       }
 
-    explicit
-    operator bool()
+    explicit operator bool()
       const noexcept
       {
         return ::_MCF_tls_get(this->_M_key) != nullptr;
