@@ -71,35 +71,6 @@ class thread_specific_ptr;  // inspired by boost
 #  define __MCF_THROW_SYSTEM_ERROR(_Code, _Msg)   ::__MCF_runtime_failure(_Msg)
 #endif
 
-// Provide `INVOKE` for C++11. [func.require]
-// At the moment, all results are discarded, so the expression always has a
-// type of `void` for simplicity.
-#if defined __cpp_lib_invoke
-
-#  define __MCF_VOID_INVOKE(_F, ...)   ((void) ::std::invoke(_F, __VA_ARGS__))
-
-#else  // std::invoke
-
-template<class _Member, class _Class, class... _Args>
-__MCF_CXX14(constexpr)
-void
-__void_invoke(_Member _Class::* __memp, _Args&&... __args)
-  {
-    ::std::mem_fn(__memp) (::std::forward<_Args>(__args)...);
-  }
-
-template<class _Callable, class... _Args>
-__MCF_CXX14(constexpr)
-void
-__void_invoke(_Callable&& __callable, _Args&&... __args)
-  {
-    ::std::forward<_Callable>(__callable) (::std::forward<_Args>(__args)...);
-  }
-
-#  define __MCF_VOID_INVOKE(_F, ...)   (::_MCF::__void_invoke(_F, __VA_ARGS__))
-
-#endif  // std::invoke
-
 // Define shortcuts for `enable_if`.
 #define __MCF_SFINAE_ENABLE_IF(...)   typename ::std::enable_if<(bool) (__VA_ARGS__)>::type* = nullptr
 #define __MCF_SFINAE_DISABLE_IF(...)  typename ::std::enable_if<!(bool) (__VA_ARGS__)>::type* = nullptr
@@ -192,6 +163,33 @@ __wait_until(const chrono::time_point<_Clock, _Dur>& __abs_time, _Cond&& __cond,
     return __err;
   }
 
+// Provide `INVOKE` for C++11. [func.require]
+// At the moment, all results are discarded, so the expression always has a
+// type of `void` for simplicity.
+#if defined __cpp_lib_invoke
+
+template<class... _Args>
+constexpr
+void
+__v_invoke(_Args&&... __args)
+  { ::std::invoke(::std::forward<_Args>(__args)...);  }
+
+#else  // __cpp_lib_invoke
+
+template<class _Member, class _Class, class... _Args>
+__MCF_CXX14(constexpr)
+void
+__v_invoke(_Member _Class::* __memp, _Args&&... __args)
+  { ::std::mem_fn(__memp) (::std::forward<_Args>(__args)...);  }
+
+template<class _Callable, class... _Args>
+__MCF_CXX14(constexpr)
+void
+__v_invoke(_Callable&& __callable, _Args&&... __args)
+  { ::std::forward<_Callable>(__callable) (::std::forward<_Args>(__args)...);  }
+
+#endif  // __cpp_lib_invoke
+
 // Create a thread. ISO C++ requires that arguments for the constructor of
 // `std::thread` be passed as decay-copied rvalues. This is the object that
 // saves copies of them and invokes the target function accordingly.
@@ -213,7 +211,7 @@ struct _Invoke_decay_copy<_Callable>
     void
     __do_it(_Args&... __args)
       {
-        __MCF_VOID_INVOKE(::std::move(this->_M_callable), ::std::move(__args)...);
+        _Noadl::__v_invoke(::std::move(this->_M_callable), ::std::move(__args)...);
       }
   };
 
@@ -267,7 +265,7 @@ call_once(once_flag& __flag, _Callable&& __callable, _Args&&... __args)
     // active
     __MCF_ASSERT(__err == 1);
     _Once_sentry __sentry = { ::_MCF_once_abort, __flag._M_once };
-    __MCF_VOID_INVOKE(::std::forward<_Callable>(__callable), ::std::forward<_Args>(__args)...);
+    _Noadl::__v_invoke(::std::forward<_Callable>(__callable), ::std::forward<_Args>(__args)...);
     __sentry.__deferred_fn = ::_MCF_once_release;
   }
 
