@@ -760,7 +760,7 @@ __MCF_show_service_notification(const UNICODE_STRING* caption, ULONG options, co
   {
     ULONG_PTR params[4] = { (ULONG_PTR) text, (ULONG_PTR) caption, options, 0 };
     ULONG response = 0;
-    NTSTATUS status = NtRaiseHardError(0x50000018, 4, 0b0011, params, 1, &response);
+    NTSTATUS status = NtRaiseHardError(0x50000018, ARRAYSIZE(params), 0x03, params, 1, &response);
     return NT_SUCCESS(status) ? (int) response : -1;
   }
 
