@@ -75,6 +75,19 @@ class thread_specific_ptr;  // inspired by boost
 #define __MCF_SFINAE_ENABLE_IF(...)   typename ::std::enable_if<(bool) (__VA_ARGS__)>::type* = nullptr
 #define __MCF_SFINAE_DISABLE_IF(...)  typename ::std::enable_if<!(bool) (__VA_ARGS__)>::type* = nullptr
 
+// Declare prototypes for callback functions.
+#if defined __cpp_noexcept_function_type
+#  define __MCF_NOEXCEPT_ON_TYPEDEF   noexcept
+#else
+#  define __MCF_NOEXCEPT_ON_TYPEDEF
+#endif
+
+template<typename... _Args>
+using _Vfn = void (_Args...);
+
+template<typename... _Args>
+using _Vfn_noexcept = void (_Args...) __MCF_NOEXCEPT_ON_TYPEDEF;
+
 // This is the maximum integer representable as a `double` exact.
 constexpr int64_t _Max_ms = 0x7FFFFFFFFFFFFC00;
 
@@ -252,8 +265,7 @@ call_once(once_flag& __flag, _Callable&& __callable, _Args&&... __args)
   {
     struct _Once_sentry
       {
-        static void __deferred_prototype(::_MCF_once*) noexcept;
-        decltype(__deferred_prototype)* __deferred_fn;
+        _Vfn_noexcept<::_MCF_once*>* __deferred_fn;
         ::_MCF_once* __once;
         ~_Once_sentry() noexcept { (* this->__deferred_fn) (this->__once);  }
       };
@@ -685,8 +697,7 @@ class thread
 
         struct _Thread_sentry
           {
-            static void __deferred_prototype(::_MCF_thread*) noexcept;
-            decltype(__deferred_prototype)* __deferred_fn;
+            _Vfn_noexcept<::_MCF_thread*>* __deferred_fn;
             ::_MCF_thread* __thr;
             ~_Thread_sentry() noexcept { (* this->__deferred_fn) (this->__thr);  }
           };
@@ -960,7 +971,7 @@ class thread_specific_ptr
       }
 
     explicit
-    thread_specific_ptr(void (*__cleanup_opt) (_Tp*))
+    thread_specific_ptr(_Vfn<_Tp*>* __cleanup_opt)
       {
         this->_M_key = ::_MCF_tls_key_new(__MCF_CAST_PTR(::_MCF_tls_dtor, __cleanup_opt));
         if(!this->_M_key)
