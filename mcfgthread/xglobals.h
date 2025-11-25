@@ -441,6 +441,16 @@ __MCF_mcopy(void* dst, const void* src, size_t size)
       : "0"(dst), "1"(size), "2"(src)
       : "memory"
     );
+#elif defined __ARM_FEATURE_MOPS
+    PVOID x0, x1, x2;
+    __asm__ volatile (
+      "cpyfp [%0]!, [%2]!, %1!; "
+      "cpyfm [%0]!, [%2]!, %1!; "
+      "cpyfe [%0]!, [%2]!, %1!; "
+      : "=&r"(x0), "=&r"(x1), "=&r"(x2)
+      : "0"(dst), "1"(size), "2"(src)
+      : "memory"
+    );
 #else
     RtlMoveMemory(dst, src, size);
 #endif
@@ -463,6 +473,16 @@ __MCF_mcopy_backward(void* dst, const void* src, size_t size)
       : "0"((char*) dst + size - 1), "1"(size), "2"((char*) src + size - 1)
       : "memory"
     );
+#elif defined __ARM_FEATURE_MOPS
+    PVOID x0, x1, x2;
+    __asm__ volatile (
+      "cpyp [%0]!, [%2]!, %1!; "
+      "cpym [%0]!, [%2]!, %1!; "
+      "cpye [%0]!, [%2]!, %1!; "
+      : "=&r"(x0), "=&r"(x1), "=&r"(x2)
+      : "0"(dst), "1"(size), "2"(src)
+      : "memory"
+    );
 #else
     RtlMoveMemory(dst, src, size);
 #endif
@@ -480,6 +500,16 @@ __MCF_mfill(void* dst, int val, size_t size)
       "rep stosb"
       : "=D"(edi), "=c"(ecx)
       : "0"(dst), "1"(size), "a"(val)
+      : "memory"
+    );
+#elif defined __ARM_FEATURE_MOPS
+    PVOID x0, x1, x2;
+    __asm__ volatile (
+      "setp [%0]!, %1!, %2; "
+      "setm [%0]!, %1!, %2; "
+      "sete [%0]!, %1!, %2; "
+      : "=&r"(x0), "=&r"(x1), "=&r"(x2)
+      : "0"(dst), "1"(size), "2"(val)
       : "memory"
     );
 #else
