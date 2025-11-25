@@ -262,9 +262,7 @@ call_once(once_flag& __flag, _Callable&& __callable, _Args&&... __args)
         static void __deferred_prototype(::_MCF_once*) noexcept;
         decltype(__deferred_prototype)* __deferred_fn;
         ::_MCF_once* __once;
-
-        ~_Once_sentry() noexcept
-          { (* this->__deferred_fn) (this->__once);  }
+        ~_Once_sentry() noexcept { (* this->__deferred_fn) (this->__once);  }
       };
 
     int __err = ::_MCF_once_wait(__flag._M_once, nullptr);
