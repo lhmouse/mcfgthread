@@ -527,7 +527,6 @@ __MCF_mcompare(const void* src, const void* cmp, size_t size)
   {
     int diff;
 #if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
-    /* Perform string comparison with hardware.  */
     PVOID esi, edi, ecx;
     __asm__ (
       "xor eax, eax; "  /* clear ZF and CF  */
@@ -552,7 +551,6 @@ __MCF_mequal(const void* src, const void* cmp, size_t size)
   {
     bool eq;
 #if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
-    /* Perform string comparison with hardware.  */
     PVOID esi, edi, ecx;
     __asm__ (
       "test ecx, ecx; " /* clear ZF if there is no input  */
