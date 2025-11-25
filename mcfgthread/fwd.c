@@ -35,7 +35,7 @@ __MCF_runtime_failure(const char* where)
     ULONG last_error = GetLastError();
     WCHAR buffer[1536];
     WCHAR* sptr = buffer;
-    WCHAR* end_of_buffer = buffer + RTL_NUMBER_OF(buffer);
+    WCHAR* end_of_buffer = buffer + ARRAYSIZE(buffer);
 
     /* Get a piece of localized text for the caption of the message box.  */
     UNICODE_STRING caption;
