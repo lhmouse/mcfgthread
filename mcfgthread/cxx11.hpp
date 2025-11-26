@@ -249,9 +249,9 @@ struct _Invoke_decay_copy<_Callable, _Mine, _Others...>
 // Reference implementation for [thread.once.onceflag]
 struct once_flag
   {
-    __MCF_BR(::_MCF_once) _M_once;
+    __MCF_BR(::_MCF_once) _M_once = { };
 
-    constexpr once_flag() noexcept : _M_once() { }
+    constexpr once_flag() noexcept = default;
     once_flag(const once_flag&) = delete;
     once_flag& operator=(const once_flag&) = delete;
   };
@@ -287,7 +287,7 @@ class mutex
     __MCF_BR(::_MCF_mutex) _M_mtx = { };
 
   public:
-    constexpr mutex() noexcept { }
+    constexpr mutex() noexcept = default;
     mutex(const mutex&) = delete;
     mutex& operator=(const mutex&) = delete;
 
@@ -352,7 +352,7 @@ class shared_mutex
     __MCF_BR(::_MCF_shared_mutex) _M_smtx = { };
 
   public:
-    constexpr shared_mutex() noexcept { }
+    constexpr shared_mutex() noexcept = default;
     shared_mutex(const shared_mutex&) = delete;
     shared_mutex& operator=(const shared_mutex&) = delete;
 
@@ -460,7 +460,7 @@ class recursive_mutex
     __MCF_BR(::__MCF_gthr_rc_mutex) _M_rmtx = { };
 
   public:
-    constexpr recursive_mutex() noexcept { }  // strengthened
+    constexpr recursive_mutex() noexcept = default;  // strengthened
     recursive_mutex(const recursive_mutex&) = delete;
     recursive_mutex& operator=(const recursive_mutex&) = delete;
 
@@ -532,7 +532,7 @@ class condition_variable
     __MCF_BR(::_MCF_cond) _M_cnd = { };
 
   public:
-    constexpr condition_variable() noexcept { }  // strengthened
+    constexpr condition_variable() noexcept = default;  // strengthened
     condition_variable(const condition_variable&) = delete;
     condition_variable& operator=(const condition_variable&) = delete;
 
@@ -667,10 +667,10 @@ struct _Thread_id
 class thread
   {
   private:
-    ::_MCF_thread* _M_thr;
+    ::_MCF_thread* _M_thr = nullptr;
 
   public:
-    constexpr thread() noexcept : _M_thr() { }
+    constexpr thread() noexcept = default;
     thread(const thread&) = delete;
     thread& operator=(const thread&) = delete;
 
@@ -949,8 +949,7 @@ template<typename _Tp>
 class thread_specific_ptr
   {
   private:
-    ::_MCF_tls_key* _M_key;
-
+    ::_MCF_tls_key* _M_key = nullptr;
 
   public:
     thread_specific_ptr(const thread_specific_ptr&) = delete;
