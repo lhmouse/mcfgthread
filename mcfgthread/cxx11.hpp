@@ -286,11 +286,10 @@ class mutex
   private:
     __MCF_BR(::_MCF_mutex) _M_mtx = { };
 
-    mutex(const mutex&) = delete;
-    mutex& operator=(const mutex&) = delete;
-
   public:
     constexpr mutex() noexcept { }
+    mutex(const mutex&) = delete;
+    mutex& operator=(const mutex&) = delete;
 
     using native_handle_type = ::_MCF_mutex*;
     using lock_guard_type = lock_guard<mutex>;  // extension
@@ -352,11 +351,10 @@ class shared_mutex
   private:
     __MCF_BR(::_MCF_shared_mutex) _M_smtx = { };
 
-    shared_mutex(const shared_mutex&) = delete;
-    shared_mutex& operator=(const shared_mutex&) = delete;
-
   public:
     constexpr shared_mutex() noexcept { }
+    shared_mutex(const shared_mutex&) = delete;
+    shared_mutex& operator=(const shared_mutex&) = delete;
 
     using native_handle_type = ::_MCF_shared_mutex*;
     using lock_guard_type = lock_guard<shared_mutex>;  // extension
@@ -461,11 +459,10 @@ class recursive_mutex
   private:
     __MCF_BR(::__MCF_gthr_rc_mutex) _M_rmtx = { };
 
-    recursive_mutex(const recursive_mutex&) = delete;
-    recursive_mutex& operator=(const recursive_mutex&) = delete;
-
   public:
     constexpr recursive_mutex() noexcept { }  // strengthened
+    recursive_mutex(const recursive_mutex&) = delete;
+    recursive_mutex& operator=(const recursive_mutex&) = delete;
 
     using native_handle_type = ::__MCF_gthr_rc_mutex*;
     using lock_guard_type = lock_guard<recursive_mutex>;  // extension
@@ -534,11 +531,10 @@ class condition_variable
   private:
     __MCF_BR(::_MCF_cond) _M_cnd = { };
 
-    condition_variable(const condition_variable&) = delete;
-    condition_variable& operator=(const condition_variable&) = delete;
-
   public:
     constexpr condition_variable() noexcept { }  // strengthened
+    condition_variable(const condition_variable&) = delete;
+    condition_variable& operator=(const condition_variable&) = delete;
 
     using native_handle_type = ::_MCF_cond*;
     using mutex_type = lock_guard<mutex>;  // extension
@@ -673,11 +669,10 @@ class thread
   private:
     ::_MCF_thread* _M_thr;
 
-    thread(const thread&) = delete;
-    thread& operator=(const thread&) = delete;
-
   public:
     constexpr thread() noexcept : _M_thr() { }
+    thread(const thread&) = delete;
+    thread& operator=(const thread&) = delete;
 
     template<typename _Callable, typename... _Args,
     __MCF_SFINAE_DISABLE_IF(::std::is_same<typename ::std::decay<_Callable>::type, thread>::value)>
@@ -956,10 +951,11 @@ class thread_specific_ptr
   private:
     ::_MCF_tls_key* _M_key;
 
+
+  public:
     thread_specific_ptr(const thread_specific_ptr&) = delete;
     thread_specific_ptr& operator=(const thread_specific_ptr&) = delete;
 
-  public:
     thread_specific_ptr()
       {
         this->_M_key = ::_MCF_tls_key_new(+[](void* __vptr) { delete (_Tp*) __vptr; });
