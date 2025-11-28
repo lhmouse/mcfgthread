@@ -127,31 +127,28 @@ dlltool = find_program('dlltool', required: true)
 
 add_project_arguments(
     '-D_WIN32_WINNT=0x0601', '-D__USE_MINGW_ANSI_STDIO', '-U_FORTIFY_SOURCE',
+    '-fno-stack-protector', '-fno-omit-frame-pointer', '-momit-leaf-frame-pointer',
+    '-fmerge-all-constants', '-fstrict-aliasing', '-ffast-math', '-fdata-sections',
+    '-Werror=conversion', '-Werror=sign-compare', '-Werror=sign-conversion',
+    '-Werror=write-strings', '-Werror=return-type', '-Werror=double-promotion',
+    '-Wmissing-declarations', '-Wswitch-enum', '-Wmissing-field-initializers',
+    '-Wshadow', '-Wunused-function', '-Wunused-label', '-Wunused-local-typedefs',
+    '-Wunused-but-set-variable', '-Wunused-but-set-parameter', '-Wunused-const-variable',
     cc.get_supported_arguments(
-      '-masm=intel', '-msse2', '-mfpmath=sse', '-mcmodel=small',
-      '-momit-leaf-frame-pointer', '-mno-outline-atomics', '-fdata-sections',
-      '-fno-stack-protector', '-fstrict-aliasing', '-ffast-math', '-fno-ident',
-      '-fno-omit-frame-pointer', '-fmerge-all-constants', '-fms-runtime-lib=dll',
-      '-Werror=conversion', '-Werror=sign-compare', '-Werror=sign-conversion',
-      '-Werror=write-strings', '-Werror=return-type', '-Werror=double-promotion',
-      '-Wmissing-declarations', '-Wswitch-enum', '-Wmissing-field-initializers',
-      '-Wsuggest-attribute=noreturn', '-Wshadow', '-Wunused-function',
-      '-Wunused-label', '-Wunused-local-typedefs', '-Wunused-but-set-variable',
-      '-Wunused-but-set-parameter', '-Wunused-const-variable',
-      '-Wno-unused-command-line-argument', '-Wno-dll-attribute-on-redeclaration',
-      '-Wno-dynamic-exception-spec', '-Wno-option-ignored'),
+      '-masm=intel', '-msse2', '-mfpmath=sse', '-mno-outline-atomics', '-mcmodel=small',
+      '-fno-ident', '-fms-runtime-lib=dll', '-Wno-unused-command-line-argument',
+      '-Wsuggest-attribute=noreturn', '-Wno-dll-attribute-on-redeclaration',
+      '-Wno-option-ignored', '-Wno-dynamic-exception-spec'),
     language: [ 'c', 'cpp' ])
 
 add_project_arguments(
-   cc.get_supported_arguments(
-      '-Werror=discarded-qualifiers', '-Werror=strict-prototypes',
-      '-Werror=incompatible-pointer-types', '-Werror=int-conversion',
-      '-Werror=implicit-function-declaration', '-Werror=implicit-int'),
+   '-Werror=discarded-qualifiers', '-Werror=strict-prototypes',
+   '-Werror=incompatible-pointer-types', '-Werror=int-conversion',
+   '-Werror=implicit-function-declaration', '-Werror=implicit-int',
    language: 'c')
 
 add_project_arguments(
-   cxx.get_supported_arguments(
-      '-Wno-redundant-move', '-Wzero-as-null-pointer-constant'),
+   '-Wno-redundant-move', '-Wzero-as-null-pointer-constant',
    language: 'cpp')
 
 if get_option('enable-debug-checks')
