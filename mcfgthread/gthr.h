@@ -52,7 +52,7 @@ __MCF_gthr_active_p(void)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_active_p, __gthread_active_p);
+__MCF_ALT_SYM(__MCF_gthr_active_p, __gthread_active_p);
 #  define __MCF_gthr_active_p  __gthread_active_p
 #endif
 
@@ -63,7 +63,7 @@ __MCF_gthr_once(__gthread_once_t* __once, __MCF_once_callback* __init_proc)
   __MCF_MAY_THROW;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_once, __gthread_once);
+__MCF_ALT_SYM(__MCF_gthr_once, __gthread_once);
 #  define __MCF_gthr_once  __gthread_once
 #endif
 
@@ -74,7 +74,7 @@ __MCF_gthr_key_create(__gthread_key_t* __keyp, _MCF_tls_dtor* __dtor_opt)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_key_create, __gthread_key_create);
+__MCF_ALT_SYM(__MCF_gthr_key_create, __gthread_key_create);
 #  define __MCF_gthr_key_create  __gthread_key_create
 #endif
 
@@ -85,7 +85,7 @@ __MCF_gthr_key_delete(__gthread_key_t __key)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_key_delete, __gthread_key_delete);
+__MCF_ALT_SYM(__MCF_gthr_key_delete, __gthread_key_delete);
 #  define __MCF_gthr_key_delete  __gthread_key_delete
 #endif
 
@@ -96,7 +96,7 @@ __MCF_gthr_getspecific(__gthread_key_t __key)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_getspecific, __gthread_getspecific);
+__MCF_ALT_SYM(__MCF_gthr_getspecific, __gthread_getspecific);
 #  define __MCF_gthr_getspecific  __gthread_getspecific
 #endif
 
@@ -107,7 +107,7 @@ __MCF_gthr_setspecific(__gthread_key_t __key, const void* __val_opt)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_setspecific, __gthread_setspecific);
+__MCF_ALT_SYM(__MCF_gthr_setspecific, __gthread_setspecific);
 #  define __MCF_gthr_setspecific  __gthread_setspecific
 #endif
 
@@ -118,7 +118,7 @@ __MCF_gthr_mutex_init(__gthread_mutex_t* __mtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_mutex_init, __gthread_mutex_init);
+__MCF_ALT_SYM(__MCF_gthr_mutex_init, __gthread_mutex_init);
 #  define __MCF_gthr_mutex_init  __gthread_mutex_init
 #endif
 
@@ -129,7 +129,7 @@ __MCF_gthr_mutex_destroy(__gthread_mutex_t* __mtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_mutex_destroy, __gthread_mutex_destroy);
+__MCF_ALT_SYM(__MCF_gthr_mutex_destroy, __gthread_mutex_destroy);
 #  define __MCF_gthr_mutex_destroy  __gthread_mutex_destroy
 #endif
 
@@ -140,7 +140,7 @@ __MCF_gthr_mutex_lock(__gthread_mutex_t* __mtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_mutex_lock, __gthread_mutex_lock);
+__MCF_ALT_SYM(__MCF_gthr_mutex_lock, __gthread_mutex_lock);
 #  define __MCF_gthr_mutex_lock  __gthread_mutex_lock
 #endif
 
@@ -151,7 +151,7 @@ __MCF_gthr_mutex_trylock(__gthread_mutex_t* __mtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_mutex_trylock, __gthread_mutex_trylock);
+__MCF_ALT_SYM(__MCF_gthr_mutex_trylock, __gthread_mutex_trylock);
 #  define __MCF_gthr_mutex_trylock  __gthread_mutex_trylock
 #endif
 
@@ -162,7 +162,7 @@ __MCF_gthr_mutex_timedlock(__gthread_mutex_t* __mtx, const __gthread_time_t* __a
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_mutex_timedlock, __gthread_mutex_timedlock);
+__MCF_ALT_SYM(__MCF_gthr_mutex_timedlock, __gthread_mutex_timedlock);
 #  define __MCF_gthr_mutex_timedlock  __gthread_mutex_timedlock
 #endif
 
@@ -173,7 +173,7 @@ __MCF_gthr_mutex_unlock(__gthread_mutex_t* __mtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_mutex_unlock, __gthread_mutex_unlock);
+__MCF_ALT_SYM(__MCF_gthr_mutex_unlock, __gthread_mutex_unlock);
 #  define __MCF_gthr_mutex_unlock  __gthread_mutex_unlock
 #endif
 
@@ -184,7 +184,7 @@ __MCF_gthr_recursive_mutex_init(__gthread_recursive_mutex_t* __rmtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_recursive_mutex_init, __gthread_recursive_mutex_init);
+__MCF_ALT_SYM(__MCF_gthr_recursive_mutex_init, __gthread_recursive_mutex_init);
 #  define __MCF_gthr_recursive_mutex_init  __gthread_recursive_mutex_init
 #endif
 
@@ -195,7 +195,7 @@ __MCF_gthr_recursive_mutex_destroy(__gthread_recursive_mutex_t* __rmtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_recursive_mutex_destroy, __gthread_recursive_mutex_destroy);
+__MCF_ALT_SYM(__MCF_gthr_recursive_mutex_destroy, __gthread_recursive_mutex_destroy);
 #  define __MCF_gthr_recursive_mutex_destroy  __gthread_recursive_mutex_destroy
 #endif
 
@@ -206,7 +206,7 @@ __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_recursive_mutex_lock, __gthread_recursive_mutex_lock);
+__MCF_ALT_SYM(__MCF_gthr_recursive_mutex_lock, __gthread_recursive_mutex_lock);
 #  define __MCF_gthr_recursive_mutex_lock  __gthread_recursive_mutex_lock
 #endif
 
@@ -218,7 +218,7 @@ __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_recursive_mutex_trylock, __gthread_recursive_mutex_trylock);
+__MCF_ALT_SYM(__MCF_gthr_recursive_mutex_trylock, __gthread_recursive_mutex_trylock);
 #  define __MCF_gthr_recursive_mutex_trylock  __gthread_recursive_mutex_trylock
 #endif
 
@@ -230,7 +230,7 @@ __MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const 
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_recursive_mutex_timedlock, __gthread_recursive_mutex_timedlock);
+__MCF_ALT_SYM(__MCF_gthr_recursive_mutex_timedlock, __gthread_recursive_mutex_timedlock);
 #  define __MCF_gthr_recursive_mutex_timedlock  __gthread_recursive_mutex_timedlock
 #endif
 
@@ -241,7 +241,7 @@ __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_recursive_mutex_unlock, __gthread_recursive_mutex_unlock);
+__MCF_ALT_SYM(__MCF_gthr_recursive_mutex_unlock, __gthread_recursive_mutex_unlock);
 #  define __MCF_gthr_recursive_mutex_unlock  __gthread_recursive_mutex_unlock
 #endif
 
@@ -253,7 +253,7 @@ __MCF_gthr_cond_init(__gthread_cond_t* __cond)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_cond_init, __gthread_cond_init);
+__MCF_ALT_SYM(__MCF_gthr_cond_init, __gthread_cond_init);
 #  define __MCF_gthr_cond_init  __gthread_cond_init
 #endif
 
@@ -265,7 +265,7 @@ __MCF_gthr_cond_destroy(__gthread_cond_t* __cond)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_cond_destroy, __gthread_cond_destroy);
+__MCF_ALT_SYM(__MCF_gthr_cond_destroy, __gthread_cond_destroy);
 #  define __MCF_gthr_cond_destroy  __gthread_cond_destroy
 #endif
 
@@ -276,7 +276,7 @@ __MCF_gthr_cond_wait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_cond_wait, __gthread_cond_wait);
+__MCF_ALT_SYM(__MCF_gthr_cond_wait, __gthread_cond_wait);
 #  define __MCF_gthr_cond_wait  __gthread_cond_wait
 #endif
 
@@ -287,7 +287,7 @@ __MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mut
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_cond_wait_recursive, __gthread_cond_wait_recursive);
+__MCF_ALT_SYM(__MCF_gthr_cond_wait_recursive, __gthread_cond_wait_recursive);
 #  define __MCF_gthr_cond_wait_recursive  __gthread_cond_wait_recursive
 #endif
 
@@ -299,7 +299,7 @@ __MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx, co
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_cond_timedwait, __gthread_cond_timedwait);
+__MCF_ALT_SYM(__MCF_gthr_cond_timedwait, __gthread_cond_timedwait);
 #  define __MCF_gthr_cond_timedwait  __gthread_cond_timedwait
 #endif
 
@@ -311,7 +311,7 @@ __MCF_gthr_cond_signal(__gthread_cond_t* __cond)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_cond_signal, __gthread_cond_signal);
+__MCF_ALT_SYM(__MCF_gthr_cond_signal, __gthread_cond_signal);
 #  define __MCF_gthr_cond_signal  __gthread_cond_signal
 #endif
 
@@ -323,7 +323,7 @@ __MCF_gthr_cond_broadcast(__gthread_cond_t* __cond)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_cond_broadcast, __gthread_cond_broadcast);
+__MCF_ALT_SYM(__MCF_gthr_cond_broadcast, __gthread_cond_broadcast);
 #  define __MCF_gthr_cond_broadcast  __gthread_cond_broadcast
 #endif
 
@@ -334,7 +334,7 @@ __MCF_gthr_create_v3(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, 
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_create_v3, __gthread_create);
+__MCF_ALT_SYM(__MCF_gthr_create_v3, __gthread_create);
 #  define __MCF_gthr_create_v3  __gthread_create
 #endif
 
@@ -345,7 +345,7 @@ __MCF_gthr_join_v3(__gthread_t __thrd, void** __resp_opt)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_join_v3, __gthread_join);
+__MCF_ALT_SYM(__MCF_gthr_join_v3, __gthread_join);
 #  define __MCF_gthr_join_v3  __gthread_join
 #endif
 
@@ -356,7 +356,7 @@ __MCF_gthr_detach(__gthread_t __thrd)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_detach, __gthread_detach);
+__MCF_ALT_SYM(__MCF_gthr_detach, __gthread_detach);
 #  define __MCF_gthr_detach  __gthread_detach
 #endif
 
@@ -369,7 +369,7 @@ __MCF_gthr_self(void)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_self, __gthread_self);
+__MCF_ALT_SYM(__MCF_gthr_self, __gthread_self);
 #  define __MCF_gthr_self  __gthread_self
 #endif
 
@@ -380,7 +380,7 @@ __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_equal, __gthread_equal);
+__MCF_ALT_SYM(__MCF_gthr_equal, __gthread_equal);
 #  define __MCF_gthr_equal  __gthread_equal
 #endif
 
@@ -391,7 +391,7 @@ __MCF_gthr_yield(void)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
-__MCF_ALT_NAME(__MCF_gthr_yield, __gthread_yield);
+__MCF_ALT_SYM(__MCF_gthr_yield, __gthread_yield);
 #  define __MCF_gthr_yield  __gthread_yield
 #endif
 
