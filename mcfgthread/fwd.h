@@ -216,7 +216,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_FN_COLD       __attribute__((__cold__))
 #  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
 #  define __MCF_UNREACHABLE      __builtin_unreachable()
-#  define __MCF_FNA(x, fn)   extern __typeof__(x) fn __asm__(__MCF_USYM #x)
+#  define __MCF_ALT_NAME(x, fn)   extern __typeof__(x) fn __asm__(__MCF_USYM #x)
 #else
 #  define __MCF_EX             /* unsupported */
 #  define __MCF_GNU_INLINE      __inline
@@ -228,7 +228,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_FN_COLD       /* unsupported */
 #  define __MCF_ALIGNED(x)    __declspec(align(x))
 #  define __MCF_UNREACHABLE      __assume(0)
-#  define __MCF_FNA(x, fn)   __pragma(comment(linker, "/alternatename:" __MCF_USYM #fn "=" __MCF_USYM #x))
+#  define __MCF_ALT_NAME(x, fn)   __pragma(comment(linker, "/alternatename:" __MCF_USYM #fn "=" __MCF_USYM #x))
 #endif
 
 /* These are necessary when the header is compiled as C89 or C++98. The check
