@@ -216,7 +216,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_FN_COLD       __attribute__((__cold__))
 #  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
 #  define __MCF_UNREACHABLE   __builtin_unreachable()
-#  define __MCF_FNA(x, fn)   __typeof__(x) fn __asm__(__MCF_USYM #x)
+#  define __MCF_FNA(x, fn)   extern __typeof__(x) fn __asm__(__MCF_USYM #x)
 #else
 #  define __MCF_EX             /* unsupported */
 #  define __MCF_GNU_INLINE      __inline
