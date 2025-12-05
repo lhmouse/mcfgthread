@@ -119,7 +119,8 @@ __MCF_tls_table_get(const __MCF_tls_table* __table, const _MCF_tls_key* __key)
  * Returns 0 upon success and -1 upon failure.  */
 __MCF_TLS_IMPORT
 int
-__MCF_tls_table_xset(__MCF_tls_table* __table, _MCF_tls_key* __key, void** __old_value_opt, const void* __value_opt)
+__MCF_tls_table_xset(__MCF_tls_table* __table, _MCF_tls_key* __key, void** __old_value_opt,
+                     const void* __value_opt)
   __MCF_noexcept;
 
 /* Define inline functions after all declarations.

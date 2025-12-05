@@ -52,8 +52,9 @@ _MCF_cond_init(_MCF_cond* __cond)
  * wakeup, or -1 if the wait operation has timed out.  */
 __MCF_COND_IMPORT
 int
-_MCF_cond_wait(_MCF_cond* __cond, _MCF_cond_unlock_callback* __unlock_opt, _MCF_cond_relock_callback* __relock_opt,
-               intptr_t __lock_arg, const int64_t* __timeout_opt)
+_MCF_cond_wait(_MCF_cond* __cond, _MCF_cond_unlock_callback* __unlock_opt,
+               _MCF_cond_relock_callback* __relock_opt, intptr_t __lock_arg,
+               const int64_t* __timeout_opt)
   __MCF_noexcept;
 
 /* Wakes up some or all threads that have been put to sleep on this condition

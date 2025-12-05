@@ -295,7 +295,8 @@ __MCF_FNA(__MCF_gthr_cond_wait_recursive, __gthread_cond_wait_recursive);
  * `pthread_cond_timedwait()`.  */
 __MCF_GTHR_IMPORT
 int
-__MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time)
+__MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx,
+                          const __gthread_time_t* __abs_time)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
@@ -621,7 +622,8 @@ __MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mut
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time)
+__MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx,
+                          const __gthread_time_t* __abs_time)
   __MCF_noexcept
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);

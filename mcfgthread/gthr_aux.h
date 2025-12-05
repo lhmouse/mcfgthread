@@ -125,12 +125,14 @@ __MCF_gthr_shared_mutex_relock_exclusive_callback(intptr_t __arg, intptr_t __unl
 
 __MCF_GTHR_AUX_IMPORT
 int
-__MCF_gthr_cond_shared_mutex_wait_shared(_MCF_cond* __cond, _MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
+__MCF_gthr_cond_shared_mutex_wait_shared(_MCF_cond* __cond, _MCF_shared_mutex* __smtx,
+                                         const int64_t* __timeout_opt)
   __MCF_noexcept;
 
 __MCF_GTHR_AUX_IMPORT
 int
-__MCF_gthr_cond_shared_mutex_wait_exclusive(_MCF_cond* __cond, _MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
+__MCF_gthr_cond_shared_mutex_wait_exclusive(_MCF_cond* __cond, _MCF_shared_mutex* __smtx,
+                                            const int64_t* __timeout_opt)
   __MCF_noexcept;
 
 /* These are auxiliary functions for condition variables. The argument is a
@@ -147,7 +149,8 @@ __MCF_gthr_recursive_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked)
 
 __MCF_GTHR_AUX_IMPORT
 int
-__MCF_gthr_cond_recursive_mutex_wait(_MCF_cond* __cond, __MCF_gthr_rc_mutex* __rmtx, const int64_t* __timeout_opt)
+__MCF_gthr_cond_recursive_mutex_wait(_MCF_cond* __cond, __MCF_gthr_rc_mutex* __rmtx,
+                                     const int64_t* __timeout_opt)
   __MCF_noexcept;
 
 /* These are auxiliary functions for threads.  */
