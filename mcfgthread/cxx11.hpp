@@ -121,7 +121,7 @@ __clamp_duration(const _Duration& __dur)
     else if(__ms.count() > _Max_ms)
       return _Max_ms;
     else
-      return (int64_t) (__ms.count() + 0.9999999);
+      return static_cast<int64_t>(__ms.count() + 0.9999999);
   }
 
 // Suspend the current thread until the given timeout. The operation is
