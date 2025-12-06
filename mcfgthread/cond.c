@@ -13,7 +13,7 @@
 
 static __MCF_NEVER_INLINE
 int
-do_unlock_and_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, intptr_t* unlocked,
+do_unlock_and_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt, intptr_t* unlocked,
                    intptr_t lock_arg, const int64_t* timeout_opt)
   {
     __MCF_winnt_timeout nt_timeout;
@@ -21,7 +21,7 @@ do_unlock_and_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, intpt
     _MCF_cond old, new;
 
     /* Allocate a count for the current thread.  */
-    _MCF_atomic_load_pptr_rlx(&old, cond);
+    _MCF_atomic_load_pptr_rlx(&old, cnd);
     for(;;) {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
@@ -29,7 +29,7 @@ do_unlock_and_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, intpt
       new.__nsleep = old.__nsleep + 1U;
 #pragma GCC diagnostic pop
 
-      if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new))
+      if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cnd, &old, &new))
         break;
     }
 
@@ -39,12 +39,12 @@ do_unlock_and_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, intpt
       *unlocked = (* unlock_opt) (lock_arg);
 
     /* Try waiting.  */
-    int err = __MCF_keyed_event_wait(cond, &nt_timeout);
+    int err = __MCF_keyed_event_wait(cnd, &nt_timeout);
     while(err != 0) {
       /* Tell another thread which is going to signal this condition variable
        * that an old waiter has left by decrementing the number of sleeping
        * threads. But see below...  */
-      _MCF_atomic_load_pptr_rlx(&old, cond);
+      _MCF_atomic_load_pptr_rlx(&old, cnd);
       for(;;) {
         if(old.__nsleep == 0)
           break;
@@ -55,7 +55,7 @@ do_unlock_and_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, intpt
         new.__nsleep = old.__nsleep - 1U;
 #pragma GCC diagnostic pop
 
-        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new))
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cnd, &old, &new))
           return -1;
       }
 
@@ -66,7 +66,7 @@ do_unlock_and_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, intpt
        * keyed event before us, so we set the timeout to zero. If we time out
        * once more, the third thread will have incremented the number of
        * sleeping threads and we can try decrementing it again.  */
-      err = __MCF_keyed_event_wait(cond, &(__MCF_winnt_timeout) { 0 });
+      err = __MCF_keyed_event_wait(cnd, &(__MCF_winnt_timeout) { 0 });
     }
 
     /* We have got notified.  */
@@ -75,13 +75,13 @@ do_unlock_and_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt, intpt
 
 __MCF_DLLEXPORT
 int
-_MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
+_MCF_cond_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt,
                _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg,
                const int64_t* timeout_opt)
   {
     __MCF_SEH_DEFINE_TERMINATE_FILTER;
     intptr_t unlocked;
-    int err = do_unlock_and_wait(cond, unlock_opt, &unlocked, lock_arg, timeout_opt);
+    int err = do_unlock_and_wait(cnd, unlock_opt, &unlocked, lock_arg, timeout_opt);
 
     /* If `relock_opt` is provided and the associated mutex has been unlocked,
      * relock it. Sometimes the mutex will be unlocked right after this wait
@@ -97,15 +97,15 @@ _MCF_cond_wait(_MCF_cond* cond, _MCF_cond_unlock_callback* unlock_opt,
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
 size_t
-_MCF_cond_signal_some_slow(_MCF_cond* cond, size_t max)
+_MCF_cond_signal_some_slow(_MCF_cond* cnd, size_t limit)
   {
     size_t wake_num;
     _MCF_cond old, new;
 
     /* Get the number of threads to wake up.  */
-    _MCF_atomic_load_pptr_rlx(&old, cond);
+    _MCF_atomic_load_pptr_rlx(&old, cnd);
     for(;;) {
-      wake_num = _MCF_minz(old.__nsleep, max);
+      wake_num = _MCF_minz(old.__nsleep, limit);
       if(wake_num == 0)
         return 0;
 
@@ -115,11 +115,11 @@ _MCF_cond_signal_some_slow(_MCF_cond* cond, size_t max)
       new.__nsleep = old.__nsleep - wake_num;
 #pragma GCC diagnostic pop
 
-      if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cond, &old, &new))
+      if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cnd, &old, &new))
         break;
     }
 
     /* Wake up these threads.  */
-    __MCF_batch_release_common(cond, wake_num);
+    __MCF_batch_release_common(cnd, wake_num);
     return wake_num;
   }

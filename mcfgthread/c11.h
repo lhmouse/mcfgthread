@@ -89,7 +89,7 @@ __MCF_ALT_SYM(__MCF_c11_call_once, call_once);
 /* 7.26.3.1 The cnd_broadcast function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_cnd_broadcast(cnd_t* __cond)
+__MCF_c11_cnd_broadcast(cnd_t* __cnd)
   __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
@@ -100,7 +100,7 @@ __MCF_ALT_SYM(__MCF_c11_cnd_broadcast, cnd_broadcast);
 /* 7.26.3.2 The cnd_destroy function  */
 __MCF_C11_IMPORT
 void
-__MCF_c11_cnd_destroy(cnd_t* __cond)
+__MCF_c11_cnd_destroy(cnd_t* __cnd)
   __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
@@ -111,7 +111,7 @@ __MCF_ALT_SYM(__MCF_c11_cnd_destroy, cnd_destroy);
 /* 7.26.3.3 The cnd_init function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_cnd_init(cnd_t* __cond)
+__MCF_c11_cnd_init(cnd_t* __cnd)
   __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
@@ -122,7 +122,7 @@ __MCF_ALT_SYM(__MCF_c11_cnd_init, cnd_init);
 /* 7.26.3.4 The cnd_signal function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_cnd_signal(cnd_t* __cond)
+__MCF_c11_cnd_signal(cnd_t* __cnd)
   __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
@@ -133,7 +133,7 @@ __MCF_ALT_SYM(__MCF_c11_cnd_signal, cnd_signal);
 /* 7.26.3.5 The cnd_timedwait function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const __MCF_timespec* __ts)
+__MCF_c11_cnd_timedwait(cnd_t* __cnd, mtx_t* __mtx, const __MCF_timespec* __ts)
   __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
@@ -144,7 +144,7 @@ __MCF_ALT_SYM(__MCF_c11_cnd_timedwait, cnd_timedwait);
 /* 7.26.3.6 The cnd_wait function  */
 __MCF_C11_IMPORT
 int
-__MCF_c11_cnd_wait(cnd_t* __cond, mtx_t* __mtx)
+__MCF_c11_cnd_wait(cnd_t* __cnd, mtx_t* __mtx)
   __MCF_noexcept;
 
 #ifndef __MCF_C11_NO_ALIASES
@@ -377,55 +377,55 @@ __MCF_c11_call_once(once_flag* __once, __MCF_once_callback* __init_proc)
 
 __MCF_C11_INLINE
 int
-__MCF_c11_cnd_broadcast(cnd_t* __cond)
+__MCF_c11_cnd_broadcast(cnd_t* __cnd)
   __MCF_noexcept
   {
-    _MCF_cond_signal_all(__cond);
+    _MCF_cond_signal_all(__cnd);
     return thrd_success;
   }
 
 __MCF_C11_INLINE
 void
-__MCF_c11_cnd_destroy(cnd_t* __cond)
+__MCF_c11_cnd_destroy(cnd_t* __cnd)
   __MCF_noexcept
   {
-    (void) __cond;
+    (void) __cnd;
   }
 
 __MCF_C11_INLINE
 int
-__MCF_c11_cnd_init(cnd_t* __cond)
+__MCF_c11_cnd_init(cnd_t* __cnd)
   __MCF_noexcept
   {
-    _MCF_cond_init(__cond);
+    _MCF_cond_init(__cnd);
     return thrd_success;
   }
 
 __MCF_C11_INLINE
 int
-__MCF_c11_cnd_signal(cnd_t* __cond)
+__MCF_c11_cnd_signal(cnd_t* __cnd)
   __MCF_noexcept
   {
-    _MCF_cond_signal(__cond);
+    _MCF_cond_signal(__cnd);
     return thrd_success;
   }
 
 __MCF_C11_INLINE
 int
-__MCF_c11_cnd_timedwait(cnd_t* __cond, mtx_t* __mtx, const __MCF_timespec* __ts)
+__MCF_c11_cnd_timedwait(cnd_t* __cnd, mtx_t* __mtx, const __MCF_timespec* __ts)
   __MCF_noexcept
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__ts);
-    int __err = __MCF_gthr_cond_recursive_mutex_wait(__cond, __mtx->__rc_mtx, &__timeout);
+    int __err = __MCF_gthr_cond_recursive_mutex_wait(__cnd, __mtx->__rc_mtx, &__timeout);
     return (__err != 0) ? thrd_timedout : thrd_success;
   }
 
 __MCF_C11_INLINE
 int
-__MCF_c11_cnd_wait(cnd_t* __cond, mtx_t* __mtx)
+__MCF_c11_cnd_wait(cnd_t* __cnd, mtx_t* __mtx)
   __MCF_noexcept
   {
-    int __err = __MCF_gthr_cond_recursive_mutex_wait(__cond, __mtx->__rc_mtx, __MCF_nullptr);
+    int __err = __MCF_gthr_cond_recursive_mutex_wait(__cnd, __mtx->__rc_mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return thrd_success;
   }

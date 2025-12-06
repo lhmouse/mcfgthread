@@ -106,11 +106,11 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_once __old;
-    _MCF_atomic_load_pptr_acq(&__old, __once);
-    if(__old.__ready)
+    _MCF_once __old_v;
+    _MCF_atomic_load_pptr_acq(&__old_v, __once);
+    if(__old_v.__ready)
       return 0;
-    else if(__old.__locked && __timeout_opt && (*__timeout_opt == 0))
+    else if(__old_v.__locked && __timeout_opt && (*__timeout_opt == 0))
       return -1;
 #endif
     return _MCF_once_wait_slow(__once, __timeout_opt);

@@ -249,7 +249,7 @@ __MCF_ALT_SYM(__MCF_gthr_recursive_mutex_unlock, __gthread_recursive_mutex_unloc
  * This function exists not in GCC's 'gthr.h' but in 'gthr-posix.h'.  */
 __MCF_GTHR_IMPORT
 int
-__MCF_gthr_cond_init(__gthread_cond_t* __cond)
+__MCF_gthr_cond_init(__gthread_cond_t* __cnd)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
@@ -261,7 +261,7 @@ __MCF_ALT_SYM(__MCF_gthr_cond_init, __gthread_cond_init);
  * This function exists not in GCC's 'gthr.h' but in 'gthr-posix.h'.  */
 __MCF_GTHR_IMPORT
 int
-__MCF_gthr_cond_destroy(__gthread_cond_t* __cond)
+__MCF_gthr_cond_destroy(__gthread_cond_t* __cnd)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
@@ -272,7 +272,7 @@ __MCF_ALT_SYM(__MCF_gthr_cond_destroy, __gthread_cond_destroy);
 /* Waits for a condition variable, like `pthread_cond_wait()`.  */
 __MCF_GTHR_IMPORT
 int
-__MCF_gthr_cond_wait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx)
+__MCF_gthr_cond_wait(__gthread_cond_t* __cnd, __gthread_mutex_t* __mtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
@@ -283,7 +283,7 @@ __MCF_ALT_SYM(__MCF_gthr_cond_wait, __gthread_cond_wait);
 /* Waits for a condition variable, like `pthread_cond_wait()`.  */
 __MCF_GTHR_IMPORT
 int
-__MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mutex_t* __rmtx)
+__MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cnd, __gthread_recursive_mutex_t* __rmtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
@@ -295,7 +295,7 @@ __MCF_ALT_SYM(__MCF_gthr_cond_wait_recursive, __gthread_cond_wait_recursive);
  * `pthread_cond_timedwait()`.  */
 __MCF_GTHR_IMPORT
 int
-__MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx,
+__MCF_gthr_cond_timedwait(__gthread_cond_t* __cnd, __gthread_mutex_t* __mtx,
                           const __gthread_time_t* __abs_time)
   __MCF_noexcept;
 
@@ -308,7 +308,7 @@ __MCF_ALT_SYM(__MCF_gthr_cond_timedwait, __gthread_cond_timedwait);
  * `pthread_cond_signal()`.  */
 __MCF_GTHR_IMPORT
 int
-__MCF_gthr_cond_signal(__gthread_cond_t* __cond)
+__MCF_gthr_cond_signal(__gthread_cond_t* __cnd)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
@@ -320,7 +320,7 @@ __MCF_ALT_SYM(__MCF_gthr_cond_signal, __gthread_cond_signal);
  * `pthread_cond_broadcast()`.  */
 __MCF_GTHR_IMPORT
 int
-__MCF_gthr_cond_broadcast(__gthread_cond_t* __cond)
+__MCF_gthr_cond_broadcast(__gthread_cond_t* __cnd)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
@@ -584,68 +584,68 @@ __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx)
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_cond_init(__gthread_cond_t* __cond)
+__MCF_gthr_cond_init(__gthread_cond_t* __cnd)
   __MCF_noexcept
   {
-    _MCF_cond_init(__cond);
+    _MCF_cond_init(__cnd);
     return 0;
   }
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_cond_destroy(__gthread_cond_t* __cond)
+__MCF_gthr_cond_destroy(__gthread_cond_t* __cnd)
   __MCF_noexcept
   {
-    (void) __cond;
+    (void) __cnd;
     return 0;
   }
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_cond_wait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx)
+__MCF_gthr_cond_wait(__gthread_cond_t* __cnd, __gthread_mutex_t* __mtx)
   __MCF_noexcept
   {
-    int __err = __MCF_gthr_cond_mutex_wait(__cond, __mtx, __MCF_nullptr);
+    int __err = __MCF_gthr_cond_mutex_wait(__cnd, __mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cond, __gthread_recursive_mutex_t* __rmtx)
+__MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cnd, __gthread_recursive_mutex_t* __rmtx)
   __MCF_noexcept
   {
-    int __err = __MCF_gthr_cond_recursive_mutex_wait(__cond, __rmtx, __MCF_nullptr);
+    int __err = __MCF_gthr_cond_recursive_mutex_wait(__cnd, __rmtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_cond_timedwait(__gthread_cond_t* __cond, __gthread_mutex_t* __mtx,
+__MCF_gthr_cond_timedwait(__gthread_cond_t* __cnd, __gthread_mutex_t* __mtx,
                           const __gthread_time_t* __abs_time)
   __MCF_noexcept
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
-    int __err = __MCF_gthr_cond_mutex_wait(__cond, __mtx, &__timeout);
+    int __err = __MCF_gthr_cond_mutex_wait(__cnd, __mtx, &__timeout);
     return (__err != 0) ? ETIMEDOUT : 0;
   }
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_cond_signal(__gthread_cond_t* __cond)
+__MCF_gthr_cond_signal(__gthread_cond_t* __cnd)
   __MCF_noexcept
   {
-    _MCF_cond_signal(__cond);
+    _MCF_cond_signal(__cnd);
     return 0;
   }
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_cond_broadcast(__gthread_cond_t* __cond)
+__MCF_gthr_cond_broadcast(__gthread_cond_t* __cnd)
   __MCF_noexcept
   {
-    _MCF_cond_signal_all(__cond);
+    _MCF_cond_signal_all(__cnd);
     return 0;
   }
 

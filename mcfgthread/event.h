@@ -131,10 +131,10 @@ _MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_event __old;
-    _MCF_atomic_load_pptr_acq(&__old, __eventp);
-    if(__old.__value != __undesired)
-      return __old.__value;
+    _MCF_event __old_v;
+    _MCF_atomic_load_pptr_acq(&__old_v, __eventp);
+    if(__old_v.__value != __undesired)
+      return __old_v.__value;
     else if(__timeout_opt && (*__timeout_opt == 0))
       return -1;
 #endif

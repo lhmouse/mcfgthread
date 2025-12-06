@@ -209,7 +209,7 @@ __MCF_ALT_SYM(__MCF_libcxx_recursive_mutex_unlock, __libcpp_recursive_mutex_unlo
  * This function is currently unused.  */
 __MCF_LIBCXX_IMPORT
 int
-__MCF_libcxx_condvar_init(__libcpp_condvar_t* __cond)
+__MCF_libcxx_condvar_init(__libcpp_condvar_t* __cnd)
   __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
@@ -220,7 +220,7 @@ __MCF_ALT_SYM(__MCF_libcxx_condvar_init, __libcpp_condvar_init);
 /* Destroys a condition variable. This function does nothing.  */
 __MCF_LIBCXX_IMPORT
 int
-__MCF_libcxx_condvar_destroy(__libcpp_condvar_t* __cond)
+__MCF_libcxx_condvar_destroy(__libcpp_condvar_t* __cnd)
   __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
@@ -231,7 +231,7 @@ __MCF_ALT_SYM(__MCF_libcxx_condvar_destroy, __libcpp_condvar_destroy);
 /* Waits for a condition variable, like `pthread_cond_wait()`.  */
 __MCF_LIBCXX_IMPORT
 int
-__MCF_libcxx_condvar_wait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx)
+__MCF_libcxx_condvar_wait(__libcpp_condvar_t* __cnd, __libcpp_mutex_t* __mtx)
   __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
@@ -243,7 +243,7 @@ __MCF_ALT_SYM(__MCF_libcxx_condvar_wait, __libcpp_condvar_wait);
  * `pthread_cond_timedwait()`.  */
 __MCF_LIBCXX_IMPORT
 int
-__MCF_libcxx_condvar_timedwait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx,
+__MCF_libcxx_condvar_timedwait(__libcpp_condvar_t* __cnd, __libcpp_mutex_t* __mtx,
                                const __libcpp_timespec_t* __abs_time)
   __MCF_noexcept;
 
@@ -256,7 +256,7 @@ __MCF_ALT_SYM(__MCF_libcxx_condvar_timedwait, __libcpp_condvar_timedwait);
  * `pthread_cond_signal()`.  */
 __MCF_LIBCXX_IMPORT
 int
-__MCF_libcxx_condvar_signal(__libcpp_condvar_t* __cond)
+__MCF_libcxx_condvar_signal(__libcpp_condvar_t* __cnd)
   __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
@@ -268,7 +268,7 @@ __MCF_ALT_SYM(__MCF_libcxx_condvar_signal, __libcpp_condvar_signal);
  * `pthread_cond_broadcast()`.  */
 __MCF_LIBCXX_IMPORT
 int
-__MCF_libcxx_condvar_broadcast(__libcpp_condvar_t* __cond)
+__MCF_libcxx_condvar_broadcast(__libcpp_condvar_t* __cnd)
   __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
@@ -548,58 +548,58 @@ __MCF_libcxx_recursive_mutex_unlock(__libcpp_recursive_mutex_t* __rmtx)
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_init(__libcpp_condvar_t* __cond)
+__MCF_libcxx_condvar_init(__libcpp_condvar_t* __cnd)
   __MCF_noexcept
   {
-    _MCF_cond_init(__cond);
+    _MCF_cond_init(__cnd);
     return 0;
   }
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_destroy(__libcpp_condvar_t* __cond)
+__MCF_libcxx_condvar_destroy(__libcpp_condvar_t* __cnd)
   __MCF_noexcept
   {
-    (void) __cond;
+    (void) __cnd;
     return 0;
   }
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_wait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx)
+__MCF_libcxx_condvar_wait(__libcpp_condvar_t* __cnd, __libcpp_mutex_t* __mtx)
   __MCF_noexcept
   {
-    int __err = __MCF_gthr_cond_mutex_wait(__cond, __mtx, __MCF_nullptr);
+    int __err = __MCF_gthr_cond_mutex_wait(__cnd, __mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_timedwait(__libcpp_condvar_t* __cond, __libcpp_mutex_t* __mtx,
+__MCF_libcxx_condvar_timedwait(__libcpp_condvar_t* __cnd, __libcpp_mutex_t* __mtx,
                                const __libcpp_timespec_t* __abs_time)
   __MCF_noexcept
   {
     int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
-    int __err = __MCF_gthr_cond_mutex_wait(__cond, __mtx, &__timeout);
+    int __err = __MCF_gthr_cond_mutex_wait(__cnd, __mtx, &__timeout);
     return (__err != 0) ? ETIMEDOUT : 0;
   }
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_signal(__libcpp_condvar_t* __cond)
+__MCF_libcxx_condvar_signal(__libcpp_condvar_t* __cnd)
   __MCF_noexcept
   {
-    _MCF_cond_signal(__cond);
+    _MCF_cond_signal(__cnd);
     return 0;
   }
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_condvar_broadcast(__libcpp_condvar_t* __cond)
+__MCF_libcxx_condvar_broadcast(__libcpp_condvar_t* __cnd)
   __MCF_noexcept
   {
-    _MCF_cond_signal_all(__cond);
+    _MCF_cond_signal_all(__cnd);
     return 0;
   }
 

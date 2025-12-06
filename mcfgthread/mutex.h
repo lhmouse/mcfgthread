@@ -104,11 +104,11 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_mutex __old = { 0, 0, 0, 0 };
-    _MCF_mutex __new = { 1, 0, 0, 0 };
-    if(_MCF_atomic_cmpxchg_weak_pptr_acq(__mutex, &__old, &__new))
+    _MCF_mutex __old_v = { 0, 0, 0, 0 };
+    _MCF_mutex __new_v = { 1, 0, 0, 0 };
+    if(_MCF_atomic_cmpxchg_weak_pptr_acq(__mutex, &__old_v, &__new_v))
       return 0;
-    else if(__old.__locked && __timeout_opt && (*__timeout_opt == 0))
+    else if(__old_v.__locked && __timeout_opt && (*__timeout_opt == 0))
       return -1;
 #endif
     return _MCF_mutex_lock_slow(__mutex, __timeout_opt);
@@ -120,9 +120,9 @@ _MCF_mutex_unlock(_MCF_mutex* __mutex)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_mutex __old = { 1, 0, 0, 0 };
-    _MCF_mutex __new = { 0, 0, 0, 0 };
-    if(_MCF_atomic_cmpxchg_weak_pptr_rel(__mutex, &__old, &__new))
+    _MCF_mutex __old_v = { 1, 0, 0, 0 };
+    _MCF_mutex __new_v = { 0, 0, 0, 0 };
+    if(_MCF_atomic_cmpxchg_weak_pptr_rel(__mutex, &__old_v, &__new_v))
       return;
 #endif
     _MCF_mutex_unlock_slow(__mutex);

@@ -142,26 +142,26 @@ __sleep_noninterruptible(int64_t* __timeout_opt)
 template<typename _Rep, typename _Period, typename _Cond, typename... _Args>
 inline
 int
-__wait_for(const chrono::duration<_Rep, _Period>& __rel_time, _Cond&& __cond, _Args&&... __args)
+__wait_for(const chrono::duration<_Rep, _Period>& __rel_time, _Cond&& __cnd, _Args&&... __args)
   {
     int64_t __timeout = _Noadl::__clamp_duration(__rel_time);
     __timeout *= -1;
-    return __cond(__args..., &__timeout);
+    return __cnd(__args..., &__timeout);
   }
 
 template<typename _Dur, typename _Cond, typename... _Args>
 inline
 int
-__wait_until(const chrono::time_point<chrono::system_clock, _Dur>& __abs_time, _Cond&& __cond, _Args&&... __args)
+__wait_until(const chrono::time_point<chrono::system_clock, _Dur>& __abs_time, _Cond&& __cnd, _Args&&... __args)
   {
     int64_t __timeout = _Noadl::__clamp_duration(__abs_time.time_since_epoch());
-    return __cond(__args..., &__timeout);
+    return __cnd(__args..., &__timeout);
   }
 
 template<typename _Clock, typename _Dur, typename _Cond, typename... _Args>
 inline
 int
-__wait_until(const chrono::time_point<_Clock, _Dur>& __abs_time, _Cond&& __cond, _Args&&... __args)
+__wait_until(const chrono::time_point<_Clock, _Dur>& __abs_time, _Cond&& __cnd, _Args&&... __args)
   {
     int __err;
     int64_t __timeout;
@@ -169,7 +169,7 @@ __wait_until(const chrono::time_point<_Clock, _Dur>& __abs_time, _Cond&& __cond,
     do {
       __timeout = _Noadl::__clamp_duration(__abs_time - _Clock::now());
       __timeout *= -1;
-      __err = __cond(__args..., &__timeout);
+      __err = __cnd(__args..., &__timeout);
     }
     while((__err < 0) && (__timeout != 0));  // loop if timed out
 
@@ -636,13 +636,13 @@ class condition_variable
 // Reference implementation for [thread.condition.nonmember]
 inline
 void
-notify_all_at_thread_exit(condition_variable& __cond, unique_lock<mutex> __lock)
+notify_all_at_thread_exit(condition_variable& __cnd, unique_lock<mutex> __lock)
   {
     __MCF_ASSERT(__lock.owns_lock());  // must owning a mutex
     __MCF_ASSERT(__lock.mutex() != nullptr);
 
     int __err = ::__MCF_cxa_thread_atexit(__MCF_CAST_PTR(__MCF_cxa_dtor_cdecl, ::_MCF_cond_signal_all),
-                                          __cond.native_handle(), &__dso_handle);
+                                          __cnd.native_handle(), &__dso_handle);
     if(__err != 0)
       __MCF_THROW_SYSTEM_ERROR(not_enough_memory, "__MCF_cxa_thread_atexit");
 

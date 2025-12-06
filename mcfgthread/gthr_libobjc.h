@@ -340,8 +340,8 @@ int
 __MCF_gthr_objc_condition_allocate(objc_condition_t __objc_cnd)
   __MCF_noexcept
   {
-    _MCF_cond* __cond = __MCF_CAST_PTR(_MCF_cond, &(__objc_cnd->backend));
-    _MCF_cond_init(__cond);
+    _MCF_cond* __cnd = __MCF_CAST_PTR(_MCF_cond, &(__objc_cnd->backend));
+    _MCF_cond_init(__cnd);
     return 0;
   }
 
@@ -359,9 +359,9 @@ int
 __MCF_gthr_objc_condition_wait(objc_condition_t __objc_cnd, objc_mutex_t __objc_mtx)
   __MCF_noexcept
   {
-    _MCF_cond* __cond = __MCF_CAST_PTR(_MCF_cond, &(__objc_cnd->backend));
+    _MCF_cond* __cnd = __MCF_CAST_PTR(_MCF_cond, &(__objc_cnd->backend));
     _MCF_mutex* __mtx = __MCF_CAST_PTR(_MCF_mutex, &(__objc_mtx->backend));
-    int __err = __MCF_gthr_cond_mutex_wait(__cond, __mtx, __MCF_nullptr);
+    int __err = __MCF_gthr_cond_mutex_wait(__cnd, __mtx, __MCF_nullptr);
     __MCF_ASSERT(__err == 0);
     return 0;
   }
@@ -371,8 +371,8 @@ int
 __MCF_gthr_objc_condition_signal(objc_condition_t __objc_cnd)
   __MCF_noexcept
   {
-    _MCF_cond* __cond = __MCF_CAST_PTR(_MCF_cond, &(__objc_cnd->backend));
-    _MCF_cond_signal(__cond);
+    _MCF_cond* __cnd = __MCF_CAST_PTR(_MCF_cond, &(__objc_cnd->backend));
+    _MCF_cond_signal(__cnd);
     return 0;
   }
 
@@ -381,8 +381,8 @@ int
 __MCF_gthr_objc_condition_broadcast(objc_condition_t __objc_cnd)
   __MCF_noexcept
   {
-    _MCF_cond* __cond = __MCF_CAST_PTR(_MCF_cond, &(__objc_cnd->backend));
-    _MCF_cond_signal_all(__cond);
+    _MCF_cond* __cnd = __MCF_CAST_PTR(_MCF_cond, &(__objc_cnd->backend));
+    _MCF_cond_signal_all(__cnd);
     return 0;
   }
 

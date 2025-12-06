@@ -232,9 +232,9 @@ __MCF_gthr_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
 
 __MCF_DLLEXPORT
 int
-__MCF_gthr_cond_mutex_wait(_MCF_cond* cond, _MCF_mutex* mtx, const int64_t* timeout_opt)
+__MCF_gthr_cond_mutex_wait(_MCF_cond* cnd, _MCF_mutex* mtx, const int64_t* timeout_opt)
   {
-    return _MCF_cond_wait(cond, __MCF_gthr_mutex_unlock_callback,
+    return _MCF_cond_wait(cnd, __MCF_gthr_mutex_unlock_callback,
                           __MCF_gthr_mutex_relock_callback, (intptr_t) mtx,
                           timeout_opt);
   }
@@ -274,20 +274,20 @@ __MCF_gthr_shared_mutex_relock_exclusive_callback(intptr_t arg, intptr_t unlocke
 
 __MCF_DLLEXPORT
 int
-__MCF_gthr_cond_shared_mutex_wait_shared(_MCF_cond* cond, _MCF_shared_mutex* smtx,
+__MCF_gthr_cond_shared_mutex_wait_shared(_MCF_cond* cnd, _MCF_shared_mutex* smtx,
                                          const int64_t* timeout_opt)
   {
-    return _MCF_cond_wait(cond, __MCF_gthr_shared_mutex_unlock_callback,
+    return _MCF_cond_wait(cnd, __MCF_gthr_shared_mutex_unlock_callback,
                           __MCF_gthr_shared_mutex_relock_shared_callback,
                           (intptr_t) smtx, timeout_opt);
   }
 
 __MCF_DLLEXPORT
 int
-__MCF_gthr_cond_shared_mutex_wait_exclusive(_MCF_cond* cond, _MCF_shared_mutex* smtx,
+__MCF_gthr_cond_shared_mutex_wait_exclusive(_MCF_cond* cnd, _MCF_shared_mutex* smtx,
                                             const int64_t* timeout_opt)
   {
-    return _MCF_cond_wait(cond, __MCF_gthr_shared_mutex_unlock_callback,
+    return _MCF_cond_wait(cnd, __MCF_gthr_shared_mutex_unlock_callback,
                           __MCF_gthr_shared_mutex_relock_exclusive_callback,
                           (intptr_t) smtx, timeout_opt);
   }
@@ -324,9 +324,9 @@ __MCF_gthr_recursive_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
 
 __MCF_DLLEXPORT
 int
-__MCF_gthr_cond_recursive_mutex_wait(_MCF_cond* cond, __MCF_gthr_rc_mutex* rmtx, const int64_t* timeout_opt)
+__MCF_gthr_cond_recursive_mutex_wait(_MCF_cond* cnd, __MCF_gthr_rc_mutex* rmtx, const int64_t* timeout_opt)
   {
-    return _MCF_cond_wait(cond, __MCF_gthr_recursive_mutex_unlock_callback,
+    return _MCF_cond_wait(cnd, __MCF_gthr_recursive_mutex_unlock_callback,
                           __MCF_gthr_recursive_mutex_relock_callback,
                           (intptr_t) rmtx, timeout_opt);
   }

@@ -29,7 +29,7 @@ struct __MCF_cond
  * initialized with `{0}`, like other structs.  */
 __MCF_COND_INLINE
 void
-_MCF_cond_init(_MCF_cond* __cond)
+_MCF_cond_init(_MCF_cond* __cnd)
   __MCF_noexcept;
 
 /* Puts the current thread to sleep on a condition variable.
@@ -52,7 +52,7 @@ _MCF_cond_init(_MCF_cond* __cond)
  * wakeup, or -1 if the wait operation has timed out.  */
 __MCF_COND_IMPORT
 int
-_MCF_cond_wait(_MCF_cond* __cond, _MCF_cond_unlock_callback* __unlock_opt,
+_MCF_cond_wait(_MCF_cond* __cnd, _MCF_cond_unlock_callback* __unlock_opt,
                _MCF_cond_relock_callback* __relock_opt, intptr_t __lock_arg,
                const int64_t* __timeout_opt)
   __MCF_noexcept;
@@ -63,22 +63,22 @@ _MCF_cond_wait(_MCF_cond* __cond, _MCF_cond_unlock_callback* __unlock_opt,
  * Returns the number of threads that have been woken up.  */
 __MCF_COND_IMPORT
 size_t
-_MCF_cond_signal_some_slow(_MCF_cond* __cond, size_t __max)
+_MCF_cond_signal_some_slow(_MCF_cond* __cnd, size_t __limit)
   __MCF_noexcept;
 
 __MCF_COND_INLINE
 size_t
-_MCF_cond_signal_some(_MCF_cond* __cond, size_t __max)
+_MCF_cond_signal_some(_MCF_cond* __cnd, size_t __limit)
   __MCF_noexcept;
 
 __MCF_COND_INLINE
 size_t
-_MCF_cond_signal(_MCF_cond* __cond)
+_MCF_cond_signal(_MCF_cond* __cnd)
   __MCF_noexcept;
 
 __MCF_COND_INLINE
 size_t
-_MCF_cond_signal_all(_MCF_cond* __cond)
+_MCF_cond_signal_all(_MCF_cond* __cnd)
   __MCF_noexcept;
 
 /* Define inline functions after all declarations.
@@ -88,41 +88,41 @@ _MCF_cond_signal_all(_MCF_cond* __cond)
  * this file.  */
 __MCF_COND_INLINE
 void
-_MCF_cond_init(_MCF_cond* __cond)
+_MCF_cond_init(_MCF_cond* __cnd)
   __MCF_noexcept
   {
     _MCF_cond __temp = __MCF_0_INIT;
-    _MCF_atomic_store_pptr_rlx(__cond, &__temp);
+    _MCF_atomic_store_pptr_rlx(__cnd, &__temp);
   }
 
 __MCF_COND_INLINE
 size_t
-_MCF_cond_signal_some(_MCF_cond* __cond, size_t __max)
+_MCF_cond_signal_some(_MCF_cond* __cnd, size_t __limit)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_cond __old;
-    _MCF_atomic_load_pptr_acq(&__old, __cond);
-    if(__old.__nsleep == 0)
+    _MCF_cond __old_v;
+    _MCF_atomic_load_pptr_acq(&__old_v, __cnd);
+    if(__old_v.__nsleep == 0)
       return 0;
 #endif
-    return _MCF_cond_signal_some_slow(__cond, __max);
+    return _MCF_cond_signal_some_slow(__cnd, __limit);
   }
 
 __MCF_COND_INLINE
 size_t
-_MCF_cond_signal(_MCF_cond* __cond)
+_MCF_cond_signal(_MCF_cond* __cnd)
   __MCF_noexcept
   {
-    return _MCF_cond_signal_some(__cond, 1);
+    return _MCF_cond_signal_some(__cnd, 1);
   }
 
 __MCF_COND_INLINE
 size_t
-_MCF_cond_signal_all(_MCF_cond* __cond)
+_MCF_cond_signal_all(_MCF_cond* __cnd)
   __MCF_noexcept
   {
-    return _MCF_cond_signal_some(__cond, SIZE_MAX);
+    return _MCF_cond_signal_some(__cnd, SIZE_MAX);
   }
 
 __MCF_CXX(})  /* extern "C"  */
