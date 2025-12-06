@@ -274,7 +274,8 @@ __MCF_gthr_shared_mutex_relock_exclusive_callback(intptr_t arg, intptr_t unlocke
 
 __MCF_DLLEXPORT
 int
-__MCF_gthr_cond_shared_mutex_wait_shared(_MCF_cond* cond, _MCF_shared_mutex* smtx, const int64_t* timeout_opt)
+__MCF_gthr_cond_shared_mutex_wait_shared(_MCF_cond* cond, _MCF_shared_mutex* smtx,
+                                         const int64_t* timeout_opt)
   {
     return _MCF_cond_wait(cond, __MCF_gthr_shared_mutex_unlock_callback,
                           __MCF_gthr_shared_mutex_relock_shared_callback,
@@ -283,7 +284,8 @@ __MCF_gthr_cond_shared_mutex_wait_shared(_MCF_cond* cond, _MCF_shared_mutex* smt
 
 __MCF_DLLEXPORT
 int
-__MCF_gthr_cond_shared_mutex_wait_exclusive(_MCF_cond* cond, _MCF_shared_mutex* smtx, const int64_t* timeout_opt)
+__MCF_gthr_cond_shared_mutex_wait_exclusive(_MCF_cond* cond, _MCF_shared_mutex* smtx,
+                                            const int64_t* timeout_opt)
   {
     return _MCF_cond_wait(cond, __MCF_gthr_shared_mutex_unlock_callback,
                           __MCF_gthr_shared_mutex_relock_exclusive_callback,
