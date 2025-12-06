@@ -142,14 +142,15 @@ add_project_arguments(
     language: [ 'c', 'cpp' ])
 
 add_project_arguments(
-   '-Werror=discarded-qualifiers', '-Werror=strict-prototypes',
-   '-Werror=incompatible-pointer-types', '-Werror=int-conversion',
-   '-Werror=implicit-function-declaration', '-Werror=implicit-int',
-   language: 'c')
+    '-Werror=strict-prototypes', '-Werror=int-conversion', '-Werror=implicit-int',
+    '-Werror=implicit-function-declaration', '-Werror=incompatible-pointer-types',
+    cc.get_supported_arguments(
+      '-Werror=ignored-qualifiers', '-Werror=discarded-qualifiers'),
+    language: 'c')
 
 add_project_arguments(
-   '-Wno-redundant-move', '-Wzero-as-null-pointer-constant',
-   language: 'cpp')
+    '-Wno-redundant-move', '-Wzero-as-null-pointer-constant',
+    language: 'cpp')
 
 if get_option('enable-debug-checks')
   add_project_arguments('-D__MCF_DEBUG', language: [ 'c', 'cpp' ])
