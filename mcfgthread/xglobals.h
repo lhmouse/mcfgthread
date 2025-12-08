@@ -148,10 +148,6 @@ typedef LPVOID __stdcall decltype_TlsGetValue2(ULONG);
        __temp1;  })
 
 /* Declare helper functions here.  */
-typedef struct __MCF_winnt_timeout __MCF_winnt_timeout;
-typedef union __MCF_thread_storage __MCF_thread_storage;
-typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
-
 __MCF_XGLOBALS_IMPORT
 EXCEPTION_DISPOSITION
 __cdecl
@@ -218,6 +214,7 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
 #endif  /* defined __i386__ */
 
 /* This structure contains timeout values that will be passed to NT syscalls.  */
+typedef struct __MCF_winnt_timeout __MCF_winnt_timeout;
 struct __MCF_winnt_timeout
   {
     LARGE_INTEGER __li;
@@ -336,6 +333,7 @@ void
 __MCF_gthread_on_thread_exit(void);
 
 /* Declare global data.  */
+typedef union __MCF_thread_storage __MCF_thread_storage;
 union __MCF_thread_storage
   {
     __MCF_ALIGNED(16) char __storage_v1[__MCF_64_32(1600, 800)];
@@ -347,6 +345,7 @@ union __MCF_thread_storage
       };
   };
 
+typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
 struct __MCF_crt_xglobals
   {
     __MCF_crt_xglobals* __self_ptr;
