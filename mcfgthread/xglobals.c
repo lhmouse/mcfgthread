@@ -493,10 +493,10 @@ __asm__ (
 ".globl __os_arm64x_helper8  \n"
 "__os_arm64x_helper8:  \n"
 "  .quad 0  \n"
-".text  \n"
-"  .p2align 2  \n"
 /* This is the ARM64EC Adjustor Thunk. Calls to this function are synthesized
  * by the compiler.  */
+".section .text$__icall_helper_arm64ec, \"x\"  \n"
+"  .p2align 2  \n"
 ".globl __icall_helper_arm64ec  \n"
 ".def __icall_helper_arm64ec; .scl 2; .type 32; .endef  \n"
 "__icall_helper_arm64ec:  \n"
@@ -544,6 +544,7 @@ __asm__ (
 ".seh_endepilogue  \n"
 "  ret  \n"
 ".seh_endproc  \n"
+".text  \n"
 );
 #endif
 
