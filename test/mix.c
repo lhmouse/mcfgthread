@@ -17,9 +17,18 @@ main(void)
     wchar_t dll_name[100];
     wsprintfW(dll_name, L"libmcfgthread-%d.dll", _MCF_ABI_VERSION_MAJOR);
     HMODULE pdll = LoadLibraryW(dll_name);
+    if(!pdll) {
+      wsprintfW(dll_name, L"v/libmcfgthread-%d.dll", _MCF_ABI_VERSION_MAJOR);
+      pdll = LoadLibraryW(dll_name);
+    }
     assert(pdll);
+
     wsprintfW(dll_name, L"libmcfgthread-minimal-%d.dll", _MCF_ABI_VERSION_MAJOR);
     HMODULE mdll = LoadLibraryW(dll_name);
+    if(!mdll) {
+      wsprintfW(dll_name, L"v/libmcfgthread-minimal-%d.dll", _MCF_ABI_VERSION_MAJOR);
+      mdll = LoadLibraryW(dll_name);
+    }
     assert(mdll);
 
     typedef __typeof__(_MCF_tls_get) tls_get_fn;
