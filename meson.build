@@ -204,8 +204,8 @@ dep_ntdll = declare_dependency(
 
 mcfgthread_version_o = import('windows').compile_resources(
       'mcfgthread/version.rc',
-      args: [ '-I.', '-c65001' ],
-      depend_files: [ 'mcfgthread/version.h.in', 'mcfgthread/version.manifest' ])
+      depend_files: [ 'mcfgthread/version.h.in', 'mcfgthread/version.manifest' ],
+      args: [ '-I.', '-c65001' ])
 
 if cc.get_linker_id() in [ 'link', 'lld-link' ]
   lib_mcfgthread_dll_link_args = [
