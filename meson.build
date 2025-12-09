@@ -219,6 +219,12 @@ else
         '-Wl,--disable-auto-import' ]
 endif
 
+if meson.version().version_compare('>= 1.10.0')
+  dll_build_subdir = { 'build_subdir': 'v' }
+else
+  dll_build_subdir = { }
+endif
+
 lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       c_pch: 'mcfgthread/xprecompiled.h',
       c_args: [ '-funwind-tables', '-ffreestanding', '-D__MCF_IN_DLL' ],
@@ -227,6 +233,7 @@ lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       sources: [ mcfgthread_src_min, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
       name_prefix: 'lib',
+      kwargs: dll_build_subdir,
       soversion: ver.get('abi_major'),
       version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
       install: true)
@@ -240,6 +247,7 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
       sources: [ mcfgthread_src_ex, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
       name_prefix: 'lib',
+      kwargs: dll_build_subdir,
       soversion: ver.get('abi_major'),
       version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
       install: true)
