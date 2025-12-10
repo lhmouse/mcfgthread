@@ -22,6 +22,7 @@ project('mcfgthread',
 #===========================================================
 # List of files
 #===========================================================
+
 mcfgthread_include = [
   'mcfgthread/fwd.h', 'mcfgthread/atomic.h', 'mcfgthread/clock.h',
   'mcfgthread/mutex.h', 'mcfgthread/shared_mutex.h', 'mcfgthread/cond.h',
@@ -116,6 +117,7 @@ test_src = [
 #===========================================================
 # Global configuration
 #===========================================================
+
 ver = configuration_data()
 ver.set('abi_major', meson.project_version().split('.')[0])
 ver.set('abi_minor', meson.project_version().split('.')[1])
@@ -161,6 +163,7 @@ endif
 #===========================================================
 # Rules for headers
 #===========================================================
+
 configure_file(configuration: ver,
                output: 'version.h',
                install: false,
@@ -172,6 +175,7 @@ install_headers(meson.current_build_dir() / 'version.h', subdir: 'mcfgthread')
 #===========================================================
 # Rules for 'lib/libmcfgthread'
 #===========================================================
+
 if cc.has_define('__i386__')
   stdcall_suffixes = { '0': '@0', '4': '@4', '8': '@8', '12': '@12', '16': '@16',
                        '20': '@20', '24': '@24', '28': '@28', '32': '@32',
@@ -277,6 +281,7 @@ import('pkgconfig').generate(lib_mcfgthread_dll,
 #===========================================================
 # Rules for tests
 #===========================================================
+
 test_version_o = import('windows').compile_resources(
       'test/version.rc',
       args: [ '-I.', '-c65001' ],
