@@ -243,7 +243,7 @@ lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       name_prefix: 'lib',
       kwargs: build_subdir_bin,
       soversion: ver.get('abi_major'),
-      version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
+      version: '.'.join(ver.get('abi_major'), ver.get('abi_minor'), '0'),
       install: true)
 
 lib_mcfgthread_dll = shared_library('mcfgthread',
@@ -257,7 +257,7 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
       name_prefix: 'lib',
       kwargs: build_subdir_bin,
       soversion: ver.get('abi_major'),
-      version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
+      version: '.'.join(ver.get('abi_major'), ver.get('abi_minor'), '0'),
       install: true)
 
 if cc.has_define('__CYGWIN__')
