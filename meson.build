@@ -138,7 +138,7 @@ add_project_arguments(
       '-masm=intel', '-msse2', '-mfpmath=sse', '-mno-outline-atomics', '-mcmodel=small',
       '-fno-ident', '-fms-runtime-lib=dll', '-Wno-unused-command-line-argument',
       '-Wsuggest-attribute=noreturn', '-Wno-dll-attribute-on-redeclaration',
-      '-Wno-option-ignored', '-Wno-dynamic-exception-spec'),
+      '-Wno-option-ignored'),
     language: [ 'c', 'cpp' ])
 
 add_project_arguments(
@@ -150,6 +150,8 @@ add_project_arguments(
 
 add_project_arguments(
     '-Wno-redundant-move', '-Wzero-as-null-pointer-constant',
+    cxx.get_supported_arguments(
+      '-Wno-unqualified-std-cast-call', '-Wno-dynamic-exception-spec'),
     language: 'cpp')
 
 if get_option('enable-debug-checks')
