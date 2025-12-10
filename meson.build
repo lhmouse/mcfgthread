@@ -344,6 +344,7 @@ foreach src : test_src
                         sources: [ src, test_version_o ],
                         dependencies: [ dep_ntdll ],
                         link_with: test_link_with,
+                        kwargs: dll_build_subdir,
                         build_by_default: false,
                         install: false)
 

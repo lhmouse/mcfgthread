@@ -14,23 +14,12 @@ int
 main(void)
   {
     // load dlls
-    HMODULE pdll = NULL;
-    HMODULE mdll = NULL;
-    const char* try_dirs[] = { ".", "./v", NULL };
-
-    for(const char** pdir = try_dirs;  !pdll && *pdir;  ++ pdir) {
-      wchar_t path[1024];
-      wsprintfW(path, L"%hs/libmcfgthread-%d.dll", *pdir, _MCF_ABI_VERSION_MAJOR);
-      pdll = LoadLibraryW(path);
-    }
-
-    for(const char** pdir = try_dirs;  !mdll && *pdir;  ++ pdir) {
-      wchar_t path[1024];
-      wsprintfW(path, L"%hs/libmcfgthread-minimal-%d.dll", *pdir, _MCF_ABI_VERSION_MAJOR);
-      mdll = LoadLibraryW(path);
-    }
-
+    wchar_t dll_name[1024];
+    wsprintfW(dll_name, L".\\libmcfgthread-%d.dll", _MCF_ABI_VERSION_MAJOR);
+    HMODULE pdll = LoadLibraryW(dll_name);
     assert(pdll);
+    wsprintfW(dll_name, L".\\libmcfgthread-minimal-%d.dll", _MCF_ABI_VERSION_MAJOR);
+    HMODULE mdll = LoadLibraryW(dll_name);
     assert(mdll);
 
     // load functions from dll
