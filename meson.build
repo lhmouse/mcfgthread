@@ -220,34 +220,36 @@ else
 endif
 
 if meson.version().version_compare('>= 1.10.0')
-  dll_build_subdir = { 'build_subdir': 'v' }
+  build_subdir_bin = { 'build_subdir': 'bin' }
+  build_subdir_lib = { 'build_subdir': 'lib' }
 else
-  dll_build_subdir = { }
+  build_subdir_bin = { }
+  build_subdir_lib = { }
 endif
 
 lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       c_pch: 'mcfgthread/xprecompiled.h',
-      c_args: [ '-funwind-tables', '-ffreestanding', '-D__MCF_IN_DLL' ],
+      c_args: [ '-I.', '-funwind-tables', '-ffreestanding', '-D__MCF_IN_DLL' ],
       override_options: { 'c_winlibs': [] },
       link_args: lib_mcfgthread_dll_link_args,
       sources: [ mcfgthread_src_min, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
       name_prefix: 'lib',
-      kwargs: dll_build_subdir,
+      kwargs: build_subdir_bin,
       soversion: ver.get('abi_major'),
       version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
       install: true)
 
 lib_mcfgthread_dll = shared_library('mcfgthread',
       c_pch: 'mcfgthread/xprecompiled.h',
-      c_args: [ '-funwind-tables', '-ffreestanding', '-D__MCF_IN_DLL' ],
+      c_args: [ '-I.', '-funwind-tables', '-ffreestanding', '-D__MCF_IN_DLL' ],
       override_options: { 'c_winlibs': [] },
       link_args: lib_mcfgthread_dll_link_args,
       objects: lib_mcfgthread_minimal_dll.extract_objects(mcfgthread_src_min),
       sources: [ mcfgthread_src_ex, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
       name_prefix: 'lib',
-      kwargs: dll_build_subdir,
+      kwargs: build_subdir_bin,
       soversion: ver.get('abi_major'),
       version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
       install: true)
@@ -258,8 +260,9 @@ if cc.has_define('__CYGWIN__')
 else
   lib_mcfgthread_a = static_library('mcfgthread',
         c_pch: 'mcfgthread/xprecompiled.h',
-        c_args: [ '-funwind-tables', '-ffunction-sections' ],
+        c_args: [ '-I.', '-funwind-tables', '-ffunction-sections' ],
         sources: [ mcfgthread_src_min, mcfgthread_src_ex ],
+        kwargs: build_subdir_lib,
         install: true)
 endif
 
@@ -344,7 +347,7 @@ foreach src : test_src
                         sources: [ src, test_version_o ],
                         dependencies: [ dep_ntdll ],
                         link_with: test_link_with,
-                        kwargs: dll_build_subdir,
+                        kwargs: build_subdir_bin,
                         build_by_default: false,
                         install: false)
 
