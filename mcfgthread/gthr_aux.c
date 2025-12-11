@@ -11,15 +11,21 @@
 #include "gthr_aux.h"
 #include "xglobals.h"
 
+__MCF_DLLEXPORT
+void
+__MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_proc, void* arg)
+  {
+    /* This can't be declared as a function, otherwise GCC will make the
+     * definition visible externally.  */
+    extern const char do_call_once_seh_take_over[];
+    typedef __typeof__(__MCF_gthr_call_once_seh_take_over) self_type;
+    (* __MCF_CAST_PTR(self_type, do_call_once_seh_take_over)) (once, init_proc, arg);
+  }
+
 __asm__ (
-#if defined __MCF_IN_DLL
-"\n .section .drectve, \"yn\""
-"\n .ascii \" -export:" __MCF_USYM "__MCF_gthr_call_once_seh_take_over\""
-#endif
 "\n .section .text$" __MCF_USYM "__MCF_gthr_call_once_seh_take_over, \"x\""
-"\n .def " __MCF_USYM "__MCF_gthr_call_once_seh_take_over; .scl 2; .type 32; .endef"
-"\n .globl " __MCF_USYM "__MCF_gthr_call_once_seh_take_over"
-"\n " __MCF_USYM "__MCF_gthr_call_once_seh_take_over:"
+"\n .def " __MCF_USYM "do_call_once_seh_take_over; .scl 3; .type 32; .endef"
+"\n " __MCF_USYM "do_call_once_seh_take_over:"
 #if defined __i386__
 /* On x86-32, SEH is stack-based. The stack is used as follows:
  *
@@ -100,7 +106,7 @@ __asm__ (
  *     32: shadow slot for `arg` from R8
  *     40: unused
  */
-"\n .seh_proc __MCF_gthr_call_once_seh_take_over"
+"\n .seh_proc do_call_once_seh_take_over"
 "\n .seh_handler do_amd64_call_once_on_unwind, @unwind"
 "\n   push rbp"
 "\n .seh_pushreg rbp"
@@ -143,7 +149,7 @@ __asm__ (
  *     24: unused
  * CFA 32: establisher frame
  */
-"\n .seh_proc __MCF_gthr_call_once_seh_take_over"
+"\n .seh_proc do_call_once_seh_take_over"
 "\n .seh_handler do_arm64_call_once_on_except, @except"
 "\n   stp fp, lr, [sp, -32]!"
 "\n .seh_save_fplr_x 32"
