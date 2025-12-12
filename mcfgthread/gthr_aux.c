@@ -26,7 +26,7 @@ __asm__ (
 "\n .section .text$" __MCF_USYM "__MCF_gthr_call_once_seh_take_over, \"x\""
 "\n .def " __MCF_USYM "do_call_once_seh_take_over; .scl 3; .type 32; .endef"
 "\n " __MCF_USYM "do_call_once_seh_take_over:"
-#if defined __i386__
+#if defined __MCF_M_X8632_ASM
 /* On x86-32, SEH is stack-based. The stack is used as follows:
  *
  *    -24: argument to subroutines
@@ -90,7 +90,7 @@ __asm__ (
 #  elif defined _MSC_VER
 "\n .safeseh _do_i386_call_once_on_except"
 #  endif
-#elif defined __amd64__ && !defined __arm64ec__
+#elif defined __MCF_M_X8664_ASM
 /* On x86-64, SEH is table-based. We register an unwind handler which is not
  * called when an exception is raised, but is called when the stack is being
  * unwound. The stack is used as follows:
@@ -138,7 +138,7 @@ __asm__ (
 "\n   mov eax, 1"
 "\n   add rsp, 40"
 "\n   ret"
-#elif defined __aarch64__ || defined __arm64ec__
+#elif defined __MCF_M_ARM64_ASM
 /* On ARM64, SEH is table-based. Unlike x86-64 but like x86-32, there is only
  * one kind of handler which is called in either case. The stack is used as
  * follows:
@@ -160,11 +160,11 @@ __asm__ (
 "\n   str x0, [sp, 16]"
 /* Make the call `(*init_proc) (arg)`.  */
 "\n   mov x0, x2"
-#  if defined __arm64ec__
+#  if defined __MCF_M_ARM64
+"\n   blr x1"
+#  else
 "\n   mov x11, x1"
 "\n   bl __MCF_arm64ec_icall_helper_p"
-#  else
-"\n   blr x1"
 #  endif
 /* Disarm the once flag with a tail call.  */
 "\n   ldr x0, [sp, 16]"

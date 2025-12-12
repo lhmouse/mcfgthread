@@ -142,6 +142,8 @@ __MCF_CXX(extern "C" {)
 #    define __MCF_TEB_STORE_PTR_SIB(base, i, in)   __MCF_ASM_ST_("mov { %q0, %%gs:%c1(,%2,8) | gs:[%1+%2*8], %q0 }", in, "i"(base), "r"(i))
 #    define __MCF_64_32(x, y)  x
 #    define __MCF_USYM  ""
+#    define __MCF_M_X8664_ASM  1
+#    define __MCF_M_X8664  1
 #  elif defined __i386__
 #    define __MCF_TEB_LOAD_32_ABS(out, base)       __MCF_ASM_LD_("mov { %%fs:%c1, %k0 | %k0, fs:[%1] }", out, "i"(base))
 #    define __MCF_TEB_STORE_32_ABS(base, in)       __MCF_ASM_ST_("mov { %k0, %%fs:%c1 | fs:[%1], %k0 }", in, "i"(base))
@@ -153,6 +155,8 @@ __MCF_CXX(extern "C" {)
 #    define __MCF_TEB_STORE_PTR_SIB(base, i, in)   __MCF_ASM_ST_("mov { %k0, %%fs:%c1(,%2,4) | fs:[%1+%2*4], %k0 }", in, "i"(base), "r"(i))
 #    define __MCF_64_32(x, y)  y
 #    define __MCF_USYM  "_"
+#    define __MCF_M_X8632_ASM  1
+#    define __MCF_M_X8632  1
 #  elif defined __aarch64__ || defined __arm64ec__
 #    define __MCF_TEB_LOAD_32_ABS(out, base)       __MCF_ASM_LD_("ldr %w0, [x18, %1]", out, "i"(base))
 #    define __MCF_TEB_STORE_32_ABS(base, in)       __MCF_ASM_ST_("str %w0, [x18, %1]", in, "i"(base))
@@ -164,6 +168,13 @@ __MCF_CXX(extern "C" {)
 #    define __MCF_TEB_STORE_PTR_SIB(base, i, in)   __MCF_ASM_ST_("str %x0, [x18, %w1, uxtw #3]", in, "r"(((base) >> 3) + (i)))
 #    define __MCF_64_32(x, y)  x
 #    define __MCF_USYM  ""
+#    define __MCF_M_ARM64_ASM  1
+#    if defined __aarch64__
+#      define __MCF_M_ARM64  1
+#    else
+#      define __MCF_M_X8664  1
+#      define __MCF_M_ARM64EC  1
+#    endif
 #  endif
 #else
 #  include <intrin.h>
@@ -178,6 +189,7 @@ __MCF_CXX(extern "C" {)
 #    define __MCF_TEB_STORE_PTR_SIB(base, i, in)     (__writegsqword((base) + ((i) << 3), (unsigned long long) (in)))
 #    define __MCF_64_32(x, y)  x
 #    define __MCF_USYM  ""
+#    define __MCF_M_X8664  1
 #  elif defined _M_IX86
 #    define __MCF_TEB_LOAD_32_ABS(out, base)         (*(unsigned int*) (out) = __readfsdword((base)))
 #    define __MCF_TEB_STORE_32_ABS(base, in)         (__writefsdword((base), (in)))
@@ -189,6 +201,7 @@ __MCF_CXX(extern "C" {)
 #    define __MCF_TEB_STORE_PTR_SIB(base, i, in)     (__writefsdword((base) + ((i) << 2), (unsigned int) (in)))
 #    define __MCF_64_32(x, y)  y
 #    define __MCF_USYM  "_"
+#    define __MCF_M_X8632  1
 #  elif defined _M_ARM64 || defined _M_ARM64EC
 #    define __MCF_TEB_LOAD_32_ABS(out, base)         (*(unsigned int*) (out) = __readx18dword((base)))
 #    define __MCF_TEB_STORE_32_ABS(base, in)         (__writex18dword((base), (in)))
@@ -200,6 +213,12 @@ __MCF_CXX(extern "C" {)
 #    define __MCF_TEB_STORE_PTR_SIB(base, i, in)     (__writex18qword((base) + ((i) << 3), (unsigned long long) (in)))
 #    define __MCF_64_32(x, y)  x
 #    define __MCF_USYM  ""
+#    if defined __aarch64__
+#      define __MCF_M_ARM64  1
+#    else
+#      define __MCF_M_X8664  1
+#      define __MCF_M_ARM64EC  1
+#    endif
 #  endif
 #endif
 
@@ -377,7 +396,7 @@ __MCF_TRANSPARENT_UNION __MCF_cxa_dtor_any
   {
     __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_cxa_dtor_cdecl*, __cdecl_ptr);
     __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_atexit_callback*, __nullary_ptr);
-#  if defined __i386__ || defined _M_IX86
+#  if defined __MCF_M_X8632
     __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_cxa_dtor_fastcall*, __fastcall_ptr);
     __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_cxa_dtor_thiscall*, __thiscall_ptr);
 #  endif

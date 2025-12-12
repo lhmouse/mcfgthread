@@ -153,7 +153,7 @@ EXCEPTION_DISPOSITION
 __cdecl
 __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
 
-#if defined __i386__
+#if defined __MCF_M_X8632
 
 /* On x86, SEH is stack-based.  */
 __MCF_ALWAYS_INLINE
@@ -195,7 +195,7 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
  * may fault.  */
 #  define __MCF_REALIGN_SP    __attribute__((__force_align_arg_pointer__))
 
-#else
+#else  /* !defined __MCF_M_X8632 */
 
 /* Otherwise, SEH is table-based. This code must work on both x86_64 and ARM64,
  * as well as ARM64EC.  */
@@ -211,7 +211,7 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
 
 #  define __MCF_REALIGN_SP    /* nothing */
 
-#endif  /* defined __i386__ */
+#endif  /* !defined __MCF_M_X8632 */
 
 /* This structure contains timeout values that will be passed to NT syscalls.  */
 typedef struct __MCF_winnt_timeout __MCF_winnt_timeout;
@@ -432,7 +432,7 @@ __cdecl
 __MCF_mcopy(void* dst, const void* src, size_t size)
   {
     __MCF_ASSERT((uintptr_t) dst - (uintptr_t) src >= size);
-#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
+#if defined __MCF_M_X8632_ASM || defined __MCF_M_X8664_ASM
     PVOID edi, ecx, esi;
     __asm__ volatile (
       "rep movsb"
@@ -440,7 +440,7 @@ __MCF_mcopy(void* dst, const void* src, size_t size)
       : "0"(dst), "1"(size), "2"(src)
       : "memory"
     );
-#elif defined __ARM_FEATURE_MOPS
+#elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_MOPS
     PVOID x0, x1, x2;
     __asm__ volatile (
       "cpyfp [%0]!, [%2]!, %1!; "
@@ -462,7 +462,7 @@ __cdecl
 __MCF_mcopy_backward(void* dst, const void* src, size_t size)
   {
     __MCF_ASSERT((uintptr_t) src - (uintptr_t) dst >= size);
-#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
+#if defined __MCF_M_X8632_ASM || defined __MCF_M_X8664_ASM
     PVOID edi, ecx, esi;
     __asm__ volatile (
       "std; "
@@ -472,7 +472,7 @@ __MCF_mcopy_backward(void* dst, const void* src, size_t size)
       : "0"((char*) dst + size - 1), "1"(size), "2"((char*) src + size - 1)
       : "memory"
     );
-#elif defined __ARM_FEATURE_MOPS
+#elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_MOPS
     PVOID x0, x1, x2;
     __asm__ volatile (
       "cpyp [%0]!, [%2]!, %1!; "
@@ -493,7 +493,7 @@ void*
 __cdecl
 __MCF_mfill(void* dst, int val, size_t size)
   {
-#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
+#if defined __MCF_M_X8632_ASM || defined __MCF_M_X8664_ASM
     PVOID edi, ecx;
     __asm__ volatile (
       "rep stosb"
@@ -501,7 +501,7 @@ __MCF_mfill(void* dst, int val, size_t size)
       : "0"(dst), "1"(size), "a"(val)
       : "memory"
     );
-#elif defined __ARM_FEATURE_MOPS
+#elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_MOPS
     PVOID x0, x1, x2;
     __asm__ volatile (
       "setp [%0]!, %1!, %2; "
@@ -522,7 +522,7 @@ void*
 __cdecl
 __MCF_mzero(void* dst, size_t size)
   {
-#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
+#if defined __MCF_M_X8632_ASM || defined __MCF_M_X8664_ASM
     PVOID edi, ecx;
     __asm__ volatile (
       "rep stosb"
@@ -555,7 +555,7 @@ __cdecl
 __MCF_mcompare(const void* src, const void* cmp, size_t size)
   {
     int diff;
-#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
+#if defined __MCF_M_X8632_ASM || defined __MCF_M_X8664_ASM
     PVOID esi, edi, ecx;
     __asm__ (
       "xor eax, eax; "  /* clear ZF and CF  */
@@ -579,7 +579,7 @@ __cdecl
 __MCF_mequal(const void* src, const void* cmp, size_t size)
   {
     bool eq;
-#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
+#if defined __MCF_M_X8632_ASM || defined __MCF_M_X8664_ASM
     PVOID esi, edi, ecx;
     __asm__ (
       "test ecx, ecx; " /* clear ZF if there is no input  */

@@ -28,7 +28,7 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
     return nonmatch ? ExceptionContinueSearch : ExceptionContinueExecution;
   }
 
-#if defined __i386__ && !defined __MCF_IN_DLL && defined _MSC_VER
+#if defined __MCF_M_X8632_ASM && !defined __MCF_IN_DLL && defined _MSC_VER
 /* In the DLL we build a handler table by hand, but this is still necessary
  * for the static library. Safe SEH is only supported by Microsoft LINK, or
  * LLD in LINK mode.  */
@@ -391,7 +391,7 @@ memcmp(const void* src, const void* dst, size_t size)
 const int _fltused __MCF_CRT_RDATA = 0x9875;
 #endif
 
-#if defined __i386__
+#if defined __MCF_M_X8632
 /* On x86-32, the load config directory contains the address and size of the
  * exception handler table. Exception handlers that are not in this table
  * will be rejected by the system. `__MCF_i386_se_handler_table` points to an
@@ -410,7 +410,7 @@ __asm__ (
 );
 #endif
 
-#if defined __arm64ec__
+#if defined __MCF_M_ARM64EC
 /* This section has been heavily modified from 'chpe.S' from mingw-w64. Only
  * symbols that are documented by Microsoft are kept. Original code is declared
  * to be in the Public Domain.  */
@@ -608,11 +608,11 @@ const _load_config_used __MCF_CRT_RDATA =
   {
     .Size = sizeof(_load_config_used),
     .DependentLoadFlags = LOAD_LIBRARY_SEARCH_SYSTEM32,
-#if defined __i386__
+#if defined __MCF_M_X8632
     .SEHandlerTable = (ULONG_PTR) __MCF_i386_se_handler_table,
     .SEHandlerCount = (ULONG_PTR) __MCF_i386_se_handler_count,
 #endif
-#if defined __arm64ec__
+#if defined __MCF_M_ARM64EC
     .CHPEMetadataPointer = (ULONG_PTR) __MCF_arm64ec_chpe_metadata,
 #endif
   };

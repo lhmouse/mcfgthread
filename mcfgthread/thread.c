@@ -49,7 +49,7 @@ do_win32_thread_thunk(LPVOID param)
     _MCF_event_set(init->status, initialization_running);
     init = __MCF_BAD_PTR;
 
-#if defined __i386__ || (defined __amd64__ && !defined __arm64ec__)
+#if defined __MCF_M_X8632_ASM || defined __MCF_M_X8664_ASM
     /* Set x87 precision to 64-bit mantissa (GNU `long double` format).  */
     __asm__ volatile ("fninit");
 #endif
