@@ -176,7 +176,7 @@ install_headers(meson.current_build_dir() / 'version.h', subdir: 'mcfgthread')
 # Rules for 'lib/libmcfgthread'
 #===========================================================
 
-if cc.has_define('__i386__')
+if cc.has_define('__i386__') or cc.has_define('_M_IX86')
   stdcall_suffixes = { '0': '@0', '4': '@4', '8': '@8', '12': '@12', '16': '@16',
                        '20': '@20', '24': '@24', '28': '@28', '32': '@32',
                        '36': '@36', '40': '@40', '44': '@44', '48': '@48',
