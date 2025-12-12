@@ -30,7 +30,8 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
 
 #if defined __i386__ && !defined __MCF_IN_DLL && defined _MSC_VER
 /* In the DLL we build a handler table by hand, but this is still necessary
- * for the static library.  */
+ * for the static library. Safe SEH is only supported by Microsoft LINK, or
+ * LLD in LINK mode.  */
 __asm__ (".safeseh ___MCF_seh_top");
 #endif
 
