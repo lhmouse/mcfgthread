@@ -20,7 +20,7 @@ ar = 'llvm-ar'
 objcopy = [ 'llvm-objcopy', '--target=arm64ec-w64-mingw32' ]
 strip = 'llvm-strip'
 windres = 'llvm-windres'
-dlltool = [ 'llvm-dlltool', '-m', 'arm64' ]
+dlltool = [ 'llvm-dlltool', '-m', 'arm64ec' ]
 
 pkg-config = 'arm64ec-w64-mingw32-pkg-config'
 exe_wrapper = 'wine'
