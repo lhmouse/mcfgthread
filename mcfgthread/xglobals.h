@@ -76,8 +76,8 @@ NTSYSAPI void NTAPI RtlFillMemory(void* dst, SIZE_T size, int c);
 NTSYSAPI void NTAPI RtlZeroMemory(void* dst, SIZE_T size);
 
 NTSYSAPI ULONG NTAPI RtlNtStatusToDosError(NTSTATUS status);
-__MCF_FN_CONST NTSYSAPI ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status);
-__MCF_FN_PURE NTSYSAPI BOOLEAN NTAPI RtlDllShutdownInProgress(void);
+NTSYSAPI __MCF_FN_CONST ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status);
+NTSYSAPI __MCF_FN_PURE BOOLEAN NTAPI RtlDllShutdownInProgress(void);
 NTSYSAPI NTSTATUS NTAPI BaseGetNamedObjectDirectory(HANDLE* OutHandle);
 
 NTSYSAPI NTSTATUS NTAPI NtCreateSection(HANDLE* OutHandle,
