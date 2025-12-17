@@ -19,7 +19,7 @@ cpp_ld = 'lld'
 ar = 'llvm-ar'
 objcopy = [ 'llvm-objcopy', '--target=arm64ec-pc-windows-msvc' ]
 strip = 'llvm-strip'
-windres = 'llvm-rc'
+windres = [ 'llvm-rc', '--target=arm64ec-pc-windows-msvc' ]
 dlltool = [ 'llvm-dlltool', '-m', 'arm64ec' ]
 
 pkg-config = 'arm64ec-pc-windows-msvc-pkg-config'
