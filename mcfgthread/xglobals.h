@@ -62,6 +62,13 @@ struct _OBJECT_ATTRIBUTES
     PVOID SecurityQualityOfService;
   };
 
+/* Hard-code these.  */
+#undef GetCurrentProcess
+#define GetCurrentProcess()  ((HANDLE) -1)
+
+#undef GetCurrentThread
+#define GetCurrentThread()   ((HANDLE) -2)
+
 /* Undefine macros that redirect to standard C functions, so the ones from
  * system DLLs will be called.  */
 #undef RtlCopyMemory
@@ -80,33 +87,101 @@ NTSYSAPI __MCF_FN_CONST ULONG NTAPI RtlNtStatusToDosErrorNoTeb(NTSTATUS status);
 NTSYSAPI __MCF_FN_PURE BOOLEAN NTAPI RtlDllShutdownInProgress(void);
 NTSYSAPI NTSTATUS NTAPI BaseGetNamedObjectDirectory(HANDLE* OutHandle);
 
-NTSYSAPI NTSTATUS NTAPI NtCreateSection(HANDLE* OutHandle,
-    ACCESS_MASK DesiredAccess, OBJECT_ATTRIBUTES* Attributes, LARGE_INTEGER* MaximumSize,
-    ULONG Protection, ULONG Allocation, HANDLE File);
-NTSYSAPI NTSTATUS NTAPI NtDuplicateObject(HANDLE SourceProcess, HANDLE SourceHandle,
-    HANDLE TargetProcess, HANDLE* TargetHandle, ACCESS_MASK DesiredAccess,
-    ULONG HandleAttributes, ULONG Options);
-NTSYSAPI NTSTATUS NTAPI NtClose(HANDLE Handle);
-NTSYSAPI NTSTATUS NTAPI NtMapViewOfSection(HANDLE Section, HANDLE Process, PVOID* BaseAddress,
-    ULONG_PTR ZeroBits, SIZE_T CommitSize, LARGE_INTEGER* Offset, SIZE_T* ViewSize,
-    UINT SectionInherit, ULONG Allocation, ULONG Protection);
-NTSYSAPI NTSTATUS NTAPI NtUnmapViewOfSection(HANDLE Process, PVOID BaseAddress);
-NTSYSAPI NTSTATUS NTAPI NtWaitForSingleObject(HANDLE Handle, BOOLEAN Alertable,
-    LARGE_INTEGER* Timeout);
-NTSYSAPI NTSTATUS NTAPI NtDelayExecution(BOOLEAN Alertable, LARGE_INTEGER* Timeout);
-NTSYSAPI NTSTATUS NTAPI NtWaitForKeyedEvent(HANDLE KeyedEvent, PVOID Key, BOOLEAN Alertable,
-    LARGE_INTEGER* Timeout);
-NTSYSAPI NTSTATUS NTAPI NtReleaseKeyedEvent(HANDLE KeyedEvent, PVOID Key, BOOLEAN Alertable,
-    LARGE_INTEGER* Timeout);
-NTSYSAPI NTSTATUS NTAPI NtRaiseHardError(NTSTATUS Status, ULONG NumberOfParameters,
-    ULONG UnicodeStringParameterMask, ULONG_PTR* Parameters, ULONG ResponseOption, ULONG* Response);
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtCreateSection(
+    OUT HANDLE* SectionHandle,
+    IN ACCESS_MASK DesiredAccess,
+    IN OPTIONAL OBJECT_ATTRIBUTES* ObjectAttributes,
+    IN LARGE_INTEGER* MaximumSize,
+    IN ULONG SectionPageProtection,
+    IN ULONG AllocationAttributes,
+    IN OPTIONAL HANDLE FileHandle);
 
-/* Hard-code these.  */
-#undef GetCurrentProcess
-#define GetCurrentProcess()  ((HANDLE) -1)
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtDuplicateObject(
+    IN HANDLE SourceProcessHandle,
+    IN HANDLE SourceHandle,
+    IN OPTIONAL HANDLE TargetProcessHandle,
+    OUT OPTIONAL HANDLE* TargetHandle,
+    IN ACCESS_MASK DesiredAccess,
+    IN ULONG HandleAttributes,
+    IN ULONG Options);
 
-#undef GetCurrentThread
-#define GetCurrentThread()   ((HANDLE) -2)
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtClose(
+    IN HANDLE Handle);
+
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtMapViewOfSection(
+    IN HANDLE SectionHandle,
+    IN HANDLE ProcessHandle,
+    IN OUT PVOID* BaseAddress,
+    IN ULONG_PTR ZeroBits,
+    IN SIZE_T CommitSize,
+    IN OUT OPTIONAL LARGE_INTEGER* SectionOffset,
+    IN OUT SIZE_T* ViewSize,
+    IN UINT InheritDisposition,
+    IN ULONG AllocationType,
+    IN ULONG Win32Protect);
+
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtUnmapViewOfSection(
+    IN HANDLE ProcessHandle,
+    IN OPTIONAL PVOID BaseAddress);
+
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtWaitForSingleObject(
+    IN HANDLE Handle,
+    IN BOOLEAN Alertable,
+    IN OPTIONAL LARGE_INTEGER* Timeout);
+
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtDelayExecution(
+    IN BOOLEAN Alertable,
+    IN OPTIONAL LARGE_INTEGER* Timeout);
+
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtWaitForKeyedEvent(
+    IN HANDLE KeyedEventHandle,
+    IN PVOID Key,
+    IN BOOLEAN Alertable,
+    IN OPTIONAL LARGE_INTEGER* Timeout);
+
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtReleaseKeyedEvent(
+    IN HANDLE KeyedEventHandle,
+    IN PVOID Key,
+    IN BOOLEAN Alertable,
+    IN OPTIONAL LARGE_INTEGER* Timeout);
+
+NTSYSCALLAPI
+NTSTATUS
+NTAPI
+NtRaiseHardError(
+    IN NTSTATUS Status,
+    IN ULONG NumberOfParameters,
+    IN ULONG UnicodeStringParameterMask,
+    IN OPTIONAL ULONG_PTR* Parameters,
+    IN ULONG ResponseOption,
+    OUT ULONG* Response);
 
 /* Define read-only data that must be placed in `.rdata` despite
  * `-fdata-sections`.  */
@@ -760,7 +835,8 @@ __MCF_show_service_notification(const UNICODE_STRING* caption, ULONG options, co
     ULONG response = 0;
     ULONG_PTR params[4] = { (ULONG_PTR) text, (ULONG_PTR) caption, options, 0 };
     NTSTATUS status = NtRaiseHardError(0x50000018 /* SERVICE_NOTIFICATION | OVERRIDE_ERRORMODE */,
-                                       ARRAYSIZE(params), 0x03, params, 1, &response);
+                                       ARRAYSIZE(params), 0x03, params,
+                                       1 /* OptionOk */, &response);
     return NT_SUCCESS(status) ? (int) response : -1;
   }
 
