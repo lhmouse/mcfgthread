@@ -32,9 +32,6 @@ EXPORTS
   QueryPerformanceFrequency@4@
   QueryUnbiasedInterruptTime@4@
   RaiseFailFastException@12@
-  RtlFillMemory@12@
-  RtlMoveMemory@12@
-  RtlZeroMemory@8@
   SetConsoleCtrlHandler@8@
   SetLastError@4@
   SetThreadPriority@8@
