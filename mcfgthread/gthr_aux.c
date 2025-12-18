@@ -164,7 +164,9 @@ __asm__ (
 "\n   blr x1"
 #  else
 "\n   mov x11, x1"
-"\n   bl __MCF_arm64ec_icall_helper_p"
+"\n   adrp x10, __MCF_arm64ec_exit_thunk_p"
+"\n   add x10, x10, :lo12:__MCF_arm64ec_exit_thunk_p"
+"\n   bl __icall_helper_arm64ec"
 #  endif
 /* Disarm the once flag with a tail call.  */
 "\n   ldr x0, [sp, 16]"

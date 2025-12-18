@@ -518,14 +518,10 @@ __asm__ (
 "\n .seh_endproc"
 /* This is a common wrapper with an Exit Thunk for x86-64 callback functions
  * that return either values in RAX, or void.  */
-"\n .globl __MCF_arm64ec_icall_helper_p"
-"\n .def __MCF_arm64ec_icall_helper_p; .scl 2; .type 32; .endef"
-"\n __MCF_arm64ec_icall_helper_p:"
-"\n   adr x10, do_arm64ec_icall_exit_thunk_p"
-"\n   b __icall_helper_arm64ec"
-"\n .def do_arm64ec_icall_exit_thunk_p; .scl 3; .type 32; .endef"
-"\n do_arm64ec_icall_exit_thunk_p:"
-"\n .seh_proc do_arm64ec_icall_exit_thunk_p"
+"\n .globl __MCF_arm64ec_exit_thunk_p"
+"\n .def __MCF_arm64ec_exit_thunk_p; .scl 2; .type 32; .endef"
+"\n __MCF_arm64ec_exit_thunk_p:"
+"\n .seh_proc __MCF_arm64ec_exit_thunk_p"
 "\n   stp fp, lr, [sp, -16]!"
 "\n .seh_save_fplr_x 16"
 "\n   mov fp, sp"
