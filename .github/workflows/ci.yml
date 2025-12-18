@@ -46,38 +46,6 @@ jobs:
       - name: Run tests
         run: meson test -t15 -Cbuild_ci --print-errorlogs
 
-  ubuntu-arm64:
-    name: Ubuntu cross build (ARM64 Clang; Wine)
-    runs-on: ubuntu-22.04-arm
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install dependencies
-        run: >-
-             sudo apt-get update ;
-             sudo apt-get purge mono-runtime ;
-             sudo apt-get install -y --no-install-recommends
-             wget ninja-build python3-pip wine wine-binfmt &&
-             sudo PIP_BREAK_SYSTEM_PACKAGES=1 pip3 install meson
-
-      - name: Download LLVM MinGW
-        run: >-
-             wget 'https://github.com/mstorsjo/llvm-mingw/releases/download/20251202/llvm-mingw-20251202-ucrt-ubuntu-22.04-aarch64.tar.xz' &&
-             tar -xaf llvm-mingw-20251202-ucrt-ubuntu-22.04-aarch64.tar.xz &&
-             readlink -fe llvm-mingw-20251202-ucrt-ubuntu-22.04-aarch64/bin | tee -a "${GITHUB_PATH}"
-
-      - name: Configure
-        run: >-
-             meson setup --cross-file cross/llvm.aarch64-w64-mingw32
-             -Denable-debug-checks=true -Doptimization=1 build_ci
-
-      - name: Build
-        run:  meson compile -Cbuild_ci
-
-      - name: Run tests
-        run: meson test -t20 -Cbuild_ci --print-errorlogs
-
   msys2-ucrt64:
     name: MSYS2 native build (x86-64 GCC)
     runs-on: windows-2022
@@ -187,40 +155,6 @@ jobs:
       - name: Configure
         run: >-
              meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
-
-      - name: Build
-        run: meson compile -Cbuild_ci
-
-      - name: Run tests
-        run: meson test -t2 -Cbuild_ci --print-errorlogs
-
-  llvm-mingw-arm64ec:
-    name: LLVM MinGW native build (ARM64EC Clang)
-    runs-on: windows-11-arm
-
-    defaults:
-      run: { shell: pwsh }
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: ilammy/msvc-dev-cmd@v1
-        with: { arch: arm64 }
-
-      - name: Install dependencies
-        run: >-
-             pip3 install --break-system-packages meson unzip
-
-      - name: Download LLVM MinGW
-        run: >-
-             curl.exe -LO "https://github.com/mstorsjo/llvm-mingw/releases/download/20251202/llvm-mingw-20251202-ucrt-aarch64.zip" &&
-             unzip llvm-mingw-20251202-ucrt-aarch64.zip &&
-             cvpa llvm-mingw-20251202-ucrt-aarch64/bin | tee -a "${env:GITHUB_PATH}"
-
-      - name: Configure
-        run: >-
-             meson setup --native-file cross/llvm.arm64ec-w64-mingw32
-             -Denable-debug-checks=true -Doptimization=1 build_ci
 
       - name: Build
         run: meson compile -Cbuild_ci
@@ -338,6 +272,72 @@ jobs:
       - name: Configure
         run: >-
              meson setup --native-file cross/llvm.arm64ec-pc-windows-msvc
+             -Denable-debug-checks=true -Doptimization=1 build_ci
+
+      - name: Build
+        run: meson compile -Cbuild_ci
+
+      - name: Run tests
+        run: meson test -t2 -Cbuild_ci --print-errorlogs
+
+  llvm-mingw-arm64:
+    name: LLVM MinGW cross build (ARM64 Clang; Wine)
+    runs-on: ubuntu-22.04-arm
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: >-
+             sudo apt-get update ;
+             sudo apt-get purge mono-runtime ;
+             sudo apt-get install -y --no-install-recommends
+             wget ninja-build python3-pip wine wine-binfmt &&
+             sudo PIP_BREAK_SYSTEM_PACKAGES=1 pip3 install meson
+
+      - name: Download LLVM MinGW
+        run: >-
+             wget 'https://github.com/mstorsjo/llvm-mingw/releases/download/20251202/llvm-mingw-20251202-ucrt-ubuntu-22.04-aarch64.tar.xz' &&
+             tar -xaf llvm-mingw-20251202-ucrt-ubuntu-22.04-aarch64.tar.xz &&
+             readlink -fe llvm-mingw-20251202-ucrt-ubuntu-22.04-aarch64/bin | tee -a "${GITHUB_PATH}"
+
+      - name: Configure
+        run: >-
+             meson setup --cross-file cross/llvm.aarch64-w64-mingw32
+             -Denable-debug-checks=true -Doptimization=1 build_ci
+
+      - name: Build
+        run:  meson compile -Cbuild_ci
+
+      - name: Run tests
+        run: meson test -t20 -Cbuild_ci --print-errorlogs
+
+  llvm-mingw-arm64ec:
+    name: LLVM MinGW native build (ARM64EC Clang)
+    runs-on: windows-11-arm
+
+    defaults:
+      run: { shell: pwsh }
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ilammy/msvc-dev-cmd@v1
+        with: { arch: arm64 }
+
+      - name: Install dependencies
+        run: >-
+             pip3 install --break-system-packages meson unzip
+
+      - name: Download LLVM MinGW
+        run: >-
+             curl.exe -LO "https://github.com/mstorsjo/llvm-mingw/releases/download/20251202/llvm-mingw-20251202-ucrt-aarch64.zip" &&
+             unzip llvm-mingw-20251202-ucrt-aarch64.zip &&
+             cvpa llvm-mingw-20251202-ucrt-aarch64/bin | tee -a "${env:GITHUB_PATH}"
+
+      - name: Configure
+        run: >-
+             meson setup --native-file cross/llvm.arm64ec-w64-mingw32
              -Denable-debug-checks=true -Doptimization=1 build_ci
 
       - name: Build
