@@ -23,7 +23,8 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
   }
 
 __asm__ (
-"\n .section .text$" __MCF_USYM "__MCF_gthr_call_once_seh_take_over, \"x\""
+"\n .section .text$__MCF_gthr_call_once_seh_take_over, \"x\""
+"\n   .p2align 2"
 "\n .def " __MCF_USYM "do_call_once_seh_take_over; .scl 3; .type 32; .endef"
 "\n " __MCF_USYM "do_call_once_seh_take_over:"
 #if defined __MCF_M_X8632_ASM
