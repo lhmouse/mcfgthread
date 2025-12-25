@@ -259,7 +259,7 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
   {
     /* The argument is passed both via the ECX register and on the stack, to
      * allow both `__cdecl` and `__thiscall` functions to work properly.  */
-    typedef void omni_type(int, int, void*, void*) __attribute__((__regparm__(3)));
+    typedef __attribute__((__regparm__(3))) void omni_type(int, int, void*, void*);
     int eax, edx;
     __asm__ ("" : "=a"(eax), "=d"(edx));  /* dummy */
     (* __MCF_CAST_PTR(omni_type, dtor.__cdecl_ptr)) (eax, edx, arg, arg);
