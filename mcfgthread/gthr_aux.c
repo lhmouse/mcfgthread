@@ -58,7 +58,7 @@ __asm__ (
  * ECX register and on the stack, to allow both `__cdecl` and `__thiscall`
  * functions to work properly.  */
 "\n   mov ecx, DWORD PTR [ebp + 16]"
-"\n   mov DWORD PTR [ebp - 24], ecx"
+"\n   mov DWORD PTR [esp], ecx"
 "\n   call DWORD PTR [ebp + 12]"
 /* Dismantle the SEH handler.  */
 "\n   mov eax, DWORD PTR [ebp - 16]"
