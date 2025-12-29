@@ -71,6 +71,9 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* ds
         __MCF_mfree_nonnull(prev);
       } else
         cur_q = prev;
+
+      /* Stop if a matching element has been found, or the end of the queue
+       * has been reached.  */
     } while((err != 0) && cur_q);
     return err;
   }
@@ -105,6 +108,8 @@ __MCF_dtor_queue_remove(__MCF_dtor_queue* queue, void* dso)
         __MCF_mfree_nonnull(prev);
       } else
         cur_q = prev;
+
+      /* Repeat until the end of the queue to delete all matching elements.  */
     } while(cur_q);
     return count;
   }
