@@ -71,9 +71,7 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* ds
         __MCF_mfree_nonnull(prev);
       } else
         cur_q = prev;
-    }
-    while((err != 0) && cur_q);
-
+    } while((err != 0) && cur_q);
     return err;
   }
 
@@ -107,8 +105,6 @@ __MCF_dtor_queue_remove(__MCF_dtor_queue* queue, void* dso)
         __MCF_mfree_nonnull(prev);
       } else
         cur_q = prev;
-    }
-    while(cur_q);
-
+    } while(cur_q);
     return count;
   }
