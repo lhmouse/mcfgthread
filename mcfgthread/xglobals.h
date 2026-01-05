@@ -209,16 +209,16 @@ NtRaiseHardError(
 
 /* Define macros and types for lazy binding. If a symbol cannot be found
  * during process startup, it shall be initialized to a null pointer.  */
-typedef void __stdcall decltype_GetSystemTimePreciseAsFileTime(FILETIME*);
-typedef void __stdcall decltype_QueryInterruptTime(ULONGLONG*);
-typedef LPVOID __stdcall decltype_TlsGetValue2(ULONG);
+typedef void __stdcall typeof_GetSystemTimePreciseAsFileTime(FILETIME*);
+typedef void __stdcall typeof_QueryInterruptTime(ULONGLONG*);
+typedef LPVOID __stdcall typeof_TlsGetValue2(ULONG);
 
-#define __MCF_LAZY_D_(name)   decltype_##name* __f_##name
+#define __MCF_LAZY_D_(name)   typeof_##name* __f_##name
 #define __MCF_LAZY_P_(name)   __f_##name
 
 #define __MCF_LAZY_LOAD(out, dll, name)  \
-    ({ decltype_##name* __temp1 = __MCF_nullptr;  \
-       if(dll) __temp1 = __MCF_CAST_PTR(decltype_##name, GetProcAddress(dll, #name));  \
+    ({ typeof_##name* __temp1 = __MCF_nullptr;  \
+       if(dll) __temp1 = __MCF_CAST_PTR(typeof_##name, GetProcAddress(dll, #name));  \
        if(__temp1) *(out) = __temp1;  \
        __temp1;  })
 
@@ -474,7 +474,7 @@ extern HANDLE __MCF_XGLOBALS_READONLY __MCF_crt_heap;
 extern double __MCF_XGLOBALS_READONLY __MCF_crt_pf_recip;
 extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_kernelbase;
 extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_ntdll;
-extern decltype_TlsGetValue2* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue;
+extern typeof_TlsGetValue2* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue;
 
 /* This is a pointer to the process-specific data.
  * As mcfgthread may be linked statically by user DLLs, we must ensure that, in

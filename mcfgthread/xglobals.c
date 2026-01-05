@@ -304,7 +304,7 @@ double __MCF_crt_pf_recip = 1;
 SYSTEM_INFO __MCF_crt_sysinfo = { .dwPageSize = 1 };
 HMODULE __MCF_crt_kernelbase = __MCF_BAD_PTR;
 HMODULE __MCF_crt_ntdll = __MCF_BAD_PTR;
-decltype_TlsGetValue2* __MCF_crt_TlsGetValue = __MCF_BAD_PTR;
+typeof_TlsGetValue2* __MCF_crt_TlsGetValue = __MCF_BAD_PTR;
 
 /* This is a pointer to global data. If this library is linked statically,
  * all instances of this pointer in the same process should point to the
