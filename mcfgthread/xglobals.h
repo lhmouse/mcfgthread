@@ -218,8 +218,10 @@ typedef LPVOID __stdcall typeof_TlsGetValue2(ULONG);
 
 #define __MCF_LAZY_LOAD(out, dll, name)  \
     ({ typeof_##name* __temp1 = __MCF_nullptr;  \
-       if(dll) __temp1 = __MCF_CAST_PTR(typeof_##name, GetProcAddress(dll, #name));  \
-       if(__temp1) *(out) = __temp1;  \
+       if(dll)  \
+         __temp1 = __MCF_CAST_PTR(typeof_##name, GetProcAddress(dll, #name));  \
+       if(__temp1)  \
+         *(out) = __temp1;  \
        __temp1;  })
 
 /* Declare helper functions here.  */
