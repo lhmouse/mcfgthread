@@ -1,4 +1,4 @@
-## Copyright (C) 2024-2025 by LH_Mouse <lh_mouse@126.com>
+## Copyright (C) 2022-2026 LH_Mouse. All wrongs reserved.
 ##
 ## Permission to use, copy, modify, and/or distribute this
 ## software for any purpose with or without fee is hereby granted.
