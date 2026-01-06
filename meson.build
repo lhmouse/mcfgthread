@@ -14,7 +14,7 @@
 
 project('mcfgthread',
         'c', 'cpp',
-        version: '2.3.alpha',
+        version: '2.3.beta',
         license: 'LGPL-3.0-or-later WITH GCC-exception-3.1',
         default_options: [ 'c_std=c99', 'cpp_std=c++14', 'warning_level=2' ],
         meson_version: '>= 1.3.0')
