@@ -339,7 +339,7 @@ void
 do_gthr_thread_thunk_v3(_MCF_thread* thrd)
   {
     __MCF_gthr_thread_record* rec = _MCF_thread_get_data(thrd);
-    rec->__arg_or_result = (*(rec->__proc)) (rec->__arg_or_result);
+    rec->__arg_or_result = (* rec->__proc) (rec->__arg_or_result);
   }
 
 static inline
