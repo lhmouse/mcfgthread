@@ -92,7 +92,8 @@ __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
 
 __MCF_DLLEXPORT
 int
-__MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value_opt, const void* value_opt)
+__MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value_opt,
+                     const void* value_opt)
   {
     __MCF_SET_IF(old_value_opt, __MCF_nullptr);
 
