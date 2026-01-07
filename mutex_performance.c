@@ -4,7 +4,9 @@
 
 #include <math.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <assert.h>
+#define WIN32_LEAN_AND_MEAN  1
 #include <windows.h>
 
 #if defined USE_SRWLOCK
@@ -89,11 +91,8 @@ main(void)
     assert(start);
 
     my_init(&mutex);
-
-#define xstr1(x)  xstr2(x)
-#define xstr2(x)  #x
     fprintf(stderr, "using `%s`:\n  # of threads    = %d\n  # of iterations = %d\n",
-           xstr1(my_mutex_t), NTHRD, NITER);
+            _CRT_STRINGIZE(my_mutex_t), NTHRD, NITER);
 
     for(intptr_t k = 0;  k < NTHRD;  ++k) {
       threads[k] = CreateThread(NULL, 0, thread_proc, NULL, 0, NULL);
@@ -112,5 +111,5 @@ main(void)
     QueryPerformanceCounter(&t1);
     QueryPerformanceFrequency(&tf);
     fprintf(stderr, "total time:\n  %.3f milliseconds\n",
-           (double) (t1.QuadPart - t0.QuadPart) * 1000 / tf.QuadPart);
+            (double) (t1.QuadPart - t0.QuadPart) * 1000 / tf.QuadPart);
   }
