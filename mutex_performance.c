@@ -54,8 +54,8 @@
 HANDLE start;
 HANDLE threads[NTHRD];
 my_mutex_t mutex;
-volatile double dst = 12345;
-volatile double src = 54321;
+volatile double dst = 1.2345;
+volatile double src = 5.4321;
 LARGE_INTEGER t0, t1, tf;
 
 static
@@ -69,6 +69,7 @@ thread_proc(void* arg)
     for(intptr_t k = 0;  k < NITER;  ++k) {
       my_lock(&mutex);
       double temp = src;
+      src *= 1.001;
       my_unlock(&mutex);
 
       temp = log(temp);
