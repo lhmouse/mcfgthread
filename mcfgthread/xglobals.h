@@ -158,7 +158,7 @@ NTSYSCALLAPI
 NTSTATUS
 NTAPI
 NtWaitForKeyedEvent(
-    IN HANDLE KeyedEventHandle,
+    IN OPTIONAL HANDLE KeyedEventHandle,
     IN PVOID Key,
     IN BOOLEAN Alertable,
     IN OPTIONAL LARGE_INTEGER* Timeout);
@@ -167,7 +167,7 @@ NTSYSCALLAPI
 NTSTATUS
 NTAPI
 NtReleaseKeyedEvent(
-    IN HANDLE KeyedEventHandle,
+    IN OPTIONAL HANDLE KeyedEventHandle,
     IN PVOID Key,
     IN BOOLEAN Alertable,
     IN OPTIONAL LARGE_INTEGER* Timeout);
