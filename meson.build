@@ -225,12 +225,12 @@ else
         '-Wl,--disable-auto-import' ]
 endif
 
-if meson.version().version_compare('>= 1.10.0')
-  build_subdir_bin = { 'build_subdir': 'bin' }
-  build_subdir_lib = { 'build_subdir': 'lib' }
-else
+if meson.version().version_compare('< 1.10.0')
   build_subdir_bin = { }
   build_subdir_lib = { }
+else
+  build_subdir_bin = { 'build_subdir': 'bin' }
+  build_subdir_lib = { 'build_subdir': 'lib' }
 endif
 
 lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
