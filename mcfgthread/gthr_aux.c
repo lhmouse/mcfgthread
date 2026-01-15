@@ -364,7 +364,7 @@ __MCF_DLLEXPORT
 _MCF_thread*
 __MCF_gthr_thread_create_v3(__MCF_gthr_thread_procedure* proc, void* arg)
   {
-    __MCF_gthr_thread_record record;
+    __MCF_ALIGNED(8) __MCF_gthr_thread_record record;
     __builtin_memcpy(record.__magic_guid, __MCF_crt_gthread_guid, 16);
     record.__proc = proc;
     record.__arg_or_result = arg;
