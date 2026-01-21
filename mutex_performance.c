@@ -10,46 +10,35 @@
 #include <windows.h>
 
 #if defined USE_SRWLOCK
-
 #  define my_mutex_t      SRWLOCK
 #  define my_init(m)      InitializeSRWLock(m)
 #  define my_lock(m)      AcquireSRWLockExclusive(m)
 #  define my_unlock(m)    ReleaseSRWLockExclusive(m)
-
 #elif defined USE_CRITICAL_SECTION
-
 #  define my_mutex_t      CRITICAL_SECTION
 #  define my_init(m)      InitializeCriticalSection(m)
 #  define my_lock(m)      EnterCriticalSection(m)
 #  define my_unlock(m)    LeaveCriticalSection(m)
-
 #elif defined USE_WINPTHREAD
-
 #  include <pthread.h>
-
 #  define my_mutex_t      pthread_mutex_t
 #  define my_init(m)      pthread_mutex_init(m, NULL)
 #  define my_lock(m)      pthread_mutex_lock(m)
 #  define my_unlock(m)    pthread_mutex_unlock(m)
-
 #elif defined USE_MCFGTHREAD
-
 #  include <mcfgthread/mutex.h>
-
 #  define my_mutex_t      _MCF_mutex
 #  define my_init(m)      _MCF_mutex_init(m)
 #  define my_lock(m)      _MCF_mutex_lock_slow(m, NULL)
 #  define my_unlock(m)    _MCF_mutex_unlock_slow(m)
-
 #else
-
 #  error No mutex type has been selected.
-
 #endif
 
-
-#define NTHRD  16
-#define NITER  1000000
+#if !defined NTHRD && !defined NITER
+#  define NTHRD  16
+#  define NITER  1000000
+#endif
 
 HANDLE start;
 HANDLE threads[NTHRD];
@@ -69,7 +58,7 @@ thread_proc(void* arg)
     for(intptr_t k = 0;  k < NITER;  ++k) {
       my_lock(&mutex);
       double temp = src;
-      src *= 1.001;
+      src = temp * 1.001;
       my_unlock(&mutex);
 
       temp = log(temp);
