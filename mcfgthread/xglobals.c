@@ -545,7 +545,7 @@ __asm__ (
 );
 #endif
 
-struct _IMAGE_LOAD_CONFIG_DIRECTORY_10_0_26100_0
+struct _IMAGE_LOAD_CONFIG_DIRECTORY_10_0_26100_7175
   {
     DWORD Size;
     DWORD TimeDateStamp;
@@ -599,6 +599,7 @@ struct _IMAGE_LOAD_CONFIG_DIRECTORY_10_0_26100_0
     ULONG_PTR GuardXFGTableDispatchFunctionPointer;
     ULONG_PTR CastGuardOsDeterminedFailureMode;
     ULONG_PTR GuardMemcpyFunctionPointer;
+    ULONG_PTR UmaFunctionPointers;
   }
 const _load_config_used __MCF_CRT_RDATA =
   {
