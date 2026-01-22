@@ -347,28 +347,28 @@ __cdecl
 __MCF_mequal(const void* src, const void* cmp, size_t size);
 
 /* Allocate a block of zeroed memory, like `calloc()`.  */
-__MCF_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE __attribute__((__malloc__, __alloc_size__(1)))
 void*
-__MCF_malloc_0(size_t size) __attribute__((__malloc__, __alloc_size__(1)));
+__MCF_malloc_0(size_t size);
 
 /* Set the size a block of memory in place, like `truncate()` on files.
  * If the existent block should be extended, vacuum bytes are filled with
  * zeroes.  */
-__MCF_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE __attribute__((__alloc_size__(2)))
 void*
-__MCF_mresize_0(void* ptr, size_t size) __attribute__((__alloc_size__(2)));
+__MCF_mresize_0(void* ptr, size_t size);
 
 /* Re-allocate a block of memory, like `realloc()`. If the existent
  * block should be extended, vacuum bytes are filled with zeroes.  */
-__MCF_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE __attribute__((__alloc_size__(2)))
 void*
-__MCF_mrealloc_0(void** pptr, size_t size) __attribute__((__alloc_size__(2)));
+__MCF_mrealloc_0(void** pptr, size_t size);
 
 /* Allocate a copy of a block of memory, like `malloc()` followed by
  * `memcpy()`.  */
-__MCF_XGLOBALS_INLINE
+__MCF_XGLOBALS_INLINE __attribute__((__alloc_size__(2)))
 void*
-__MCF_malloc_copy(const void* data, size_t size) __attribute__((__alloc_size__(2)));
+__MCF_malloc_copy(const void* data, size_t size);
 
 /* Get the size of an allocated block, like `malloc_usable_size()`.  */
 __MCF_XGLOBALS_INLINE __MCF_FN_CONST
