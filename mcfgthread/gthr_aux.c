@@ -21,6 +21,7 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
   {
 #ifdef __MCF_M_X8632
     __MCF_USING_SEH_HANDLER(do_call_once_seh_unwind, (DWORD) once);
+    _MCF_once* saved_once = once;
 #  define do_seh_once_reg(frm, disp)  (((DWORD**) (frm))[2])
 #else
     __MCF_USING_SEH_HANDLER(do_call_once_seh_unwind);
@@ -41,7 +42,7 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
     __MCF_invoke_cxa_dtor(init_proc, arg);
 
     /* Disarm the once flag with a tail call.  */
-    _MCF_once_release(once);
+    _MCF_once_release(saved_once);
   }
 
 static
