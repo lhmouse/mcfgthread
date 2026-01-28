@@ -31,9 +31,9 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
 #  endif
     __asm__ volatile ("" : "+r"(saved_once));
 #  if defined __MCF_M_X8664
-#    define __MCF_UNWINDING_ONCE_PTR(frm, disp)  ((DISPATCHER_CONTEXT*) disp)->ContextRecord->Rsi
+#    define __MCF_UNWINDING_ONCE_PTR(frm, disp)  ((DISPATCHER_CONTEXT*) (disp))->ContextRecord->Rsi
 #  elif defined __MCF_M_ARM64
-#    define __MCF_UNWINDING_ONCE_PTR(frm, disp)  ((DISPATCHER_CONTEXT*) disp)->ContextRecord->X25
+#    define __MCF_UNWINDING_ONCE_PTR(frm, disp)  ((DISPATCHER_CONTEXT*) (disp))->ContextRecord->X25
 #  endif
 #endif
 
