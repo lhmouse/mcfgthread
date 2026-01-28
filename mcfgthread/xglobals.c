@@ -405,7 +405,7 @@ __asm__ (
 "\n   .p2align 2"
 "\n ___MCF_i386_se_handler_table:"
 "\n   .rva ___MCF_seh_top"
-"\n   .rva ___MCF_gthr_do_i386_call_once_on_except"
+"\n   .rva ___MCF_gthr_do_call_once_seh_unwind\n"
 "\n .equiv ___MCF_i386_se_handler_count, (. - ___MCF_i386_se_handler_table) / 4"
 "\n .text"
 );
