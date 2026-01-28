@@ -31,6 +31,10 @@ unwind_done(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_c
     return ExceptionContinueSearch;
   }
 
+#if defined __i386__ && defined _MSC_VER
+__asm__ (".safeseh _unwind_done");
+#endif
+
 static
 void
 once_do_it(void)
