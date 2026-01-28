@@ -13,7 +13,6 @@
 
 __MCF_DLLEXPORT
 EXCEPTION_DISPOSITION
-__cdecl
 __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
   {
     (void) estab_frame;

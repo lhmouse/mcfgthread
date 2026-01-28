@@ -227,7 +227,6 @@ typedef LPVOID __stdcall typeof_TlsGetValue2(ULONG);
 /* Declare helper functions here.  */
 __MCF_XGLOBALS_IMPORT
 EXCEPTION_DISPOSITION
-__cdecl
 __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
 
 #if defined __MCF_M_X8632
