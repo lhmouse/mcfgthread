@@ -11,7 +11,7 @@
 #define __MCF_XGLOBALS_READONLY
 #include "xglobals.h"
 
-__MCF_DLLEXPORT __attribute__((__used__))
+__MCF_DLLEXPORT
 EXCEPTION_DISPOSITION
 __cdecl
 __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
@@ -28,11 +28,13 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
     return nonmatch ? ExceptionContinueSearch : ExceptionContinueExecution;
   }
 
-#if defined __MCF_M_X8632_ASM && !defined __MCF_IN_DLL && defined _MSC_VER
-/* In the DLL we build a handler table by hand, but this is still necessary
- * for the static library. Safe SEH is only supported by Microsoft LINK, or
- * LLD in LINK mode.  */
+#ifdef __MCF_M_X8632
+/* Register the unwind handler. In the DLL we build a handler table by hand
+ * which works on all compilers. In the static library we use the `.safeseh`
+ * directive but it is only supported by Microsoft LINK, or LLD in LINK mode.  */
+#  if !defined __MCF_IN_DLL && defined _MSC_VER
 __asm__ (".safeseh ___MCF_seh_top");
+#  endif
 #endif
 
 __MCF_DLLEXPORT
