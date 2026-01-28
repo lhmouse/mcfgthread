@@ -21,7 +21,7 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
   {
 #ifdef __MCF_M_X8632
     __MCF_USING_SEH_HANDLER(do_call_once_seh_unwind, (DWORD) once);
-#  define __MCF_UNWINDING_ONCE_PTR(frm, disp)  ((DWORD**) (frm))[2]
+#  define do_seh_once_reg(frm, disp)  (((DWORD**) (frm))[2])
 #else
     __MCF_USING_SEH_HANDLER(do_call_once_seh_unwind);
 #  if defined __MCF_M_X8664_ASM
@@ -31,9 +31,9 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
 #  endif
     __asm__ volatile ("" : "+r"(saved_once));
 #  if defined __MCF_M_X8664
-#    define __MCF_UNWINDING_ONCE_PTR(frm, disp)  ((DISPATCHER_CONTEXT*) (disp))->ContextRecord->Rsi
+#    define do_seh_once_reg(frm, disp)  (((DISPATCHER_CONTEXT*) (disp))->ContextRecord->Rsi)
 #  elif defined __MCF_M_ARM64
-#    define __MCF_UNWINDING_ONCE_PTR(frm, disp)  ((DISPATCHER_CONTEXT*) (disp))->ContextRecord->X25
+#    define do_seh_once_reg(frm, disp)  (((DISPATCHER_CONTEXT*) (disp))->ContextRecord->X25)
 #  endif
 #endif
 
@@ -54,7 +54,7 @@ do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, 
 
     /* If the stack is being unwound, reset the once flag.  */
     if(rec->ExceptionFlags & EXCEPTION_UNWIND)
-      _MCF_once_abort((_MCF_once*) __MCF_UNWINDING_ONCE_PTR(estab_frame, disp_ctx));
+      _MCF_once_abort((_MCF_once*) do_seh_once_reg(estab_frame, disp_ctx));
 
     /* Continue unwinding.  */
     return ExceptionContinueSearch;
