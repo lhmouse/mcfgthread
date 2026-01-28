@@ -248,11 +248,11 @@ __MCF_i386_seh_cleanup(EXCEPTION_REGISTRATION_RECORD* const* ref)
     __MCF_TEB_STORE_32_ABS(0, (*ref)->Next);
   }
 
-#  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
+#  define __MCF_USING_SEH_HANDLER(fn)  \
     EXCEPTION_REGISTRATION_RECORD* const __MCF_i386_seh_node__  \
             __attribute__((__cleanup__(__MCF_i386_seh_cleanup)))  \
       = __MCF_i386_seh_install(&(EXCEPTION_REGISTRATION_RECORD) {  \
-           .Handler = __MCF_CAST_PTR(EXCEPTION_ROUTINE, __MCF_seh_top) })
+           .Handler = __MCF_CAST_PTR(EXCEPTION_ROUTINE, fn) })
 
 __MCF_ALWAYS_INLINE
 void
@@ -275,8 +275,8 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
 
 /* Otherwise, SEH is table-based. This code must work on both x86_64 and ARM64,
  * as well as ARM64EC.  */
-#  define __MCF_SEH_DEFINE_TERMINATE_FILTER  \
-    __asm__ (".seh_handler %c0, @except, @unwind" : : "i"(__MCF_seh_top))  /* no semicolon  */
+#  define __MCF_USING_SEH_HANDLER(fn)  \
+    __asm__ (".seh_handler %c0, @except, @unwind" : : "i"(fn))  /* no semicolon  */
 
 __MCF_ALWAYS_INLINE
 void

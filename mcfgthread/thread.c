@@ -32,7 +32,7 @@ ULONG
 __stdcall
 do_win32_thread_thunk(LPVOID param)
   {
-    __MCF_SEH_DEFINE_TERMINATE_FILTER;
+    __MCF_USING_SEH_HANDLER(__MCF_seh_top);
     struct initializer* init = param;
     _MCF_event_await_change(init->status, initialization_null, __MCF_nullptr);
     _MCF_thread* thrd = init->thrd;

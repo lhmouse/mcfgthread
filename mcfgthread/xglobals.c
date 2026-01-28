@@ -139,7 +139,7 @@ __MCF_DLLEXPORT
 void
 __MCF_run_static_dtors(_MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
   {
-    __MCF_SEH_DEFINE_TERMINATE_FILTER;
+    __MCF_USING_SEH_HANDLER(__MCF_seh_top);
     __MCF_dtor_element elem;
 
     while(do_pop_static_dtor(&elem, mtx, queue, dso) == 0)
@@ -246,7 +246,7 @@ __MCF_DLLEXPORT
 void
 __MCF_gthread_on_thread_exit(void)
   {
-    __MCF_SEH_DEFINE_TERMINATE_FILTER;
+    __MCF_USING_SEH_HANDLER(__MCF_seh_top);
     _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_g->__tls_index);
     if(!self)
       return;
