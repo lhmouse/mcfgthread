@@ -57,7 +57,7 @@ thread_proc(void* param)
     record.Handler = (EXCEPTION_ROUTINE*)(DWORD) unwind_done;
     __writefsdword(0, (DWORD) &record);
 #else
-    __asm__ (".seh_handler unwind_done, @except, @unwind");
+    __asm__ (".seh_handler %c0, @except, @unwind" : : "i"(unwind_done));
 #endif
 
     (void) param;
