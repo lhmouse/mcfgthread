@@ -53,9 +53,9 @@ thread_proc(void* param)
   {
 #ifdef __i386__
     EXCEPTION_REGISTRATION_RECORD record;
-    record.Next = (EXCEPTION_REGISTRATION_RECORD*) __readfsdword(0);
+    __MCF_TEB_LOAD_32_ABS(&(record.Next), 0);
     record.Handler = (EXCEPTION_ROUTINE*)(DWORD) unwind_done;
-    __writefsdword(0, (DWORD) &record);
+    __MCF_TEB_STORE_32_ABS(0, &record);
 #else
     __asm__ (".seh_handler %c0, @except, @unwind" : : "i"(unwind_done));
 #endif
