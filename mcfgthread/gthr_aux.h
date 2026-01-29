@@ -180,6 +180,7 @@ __MCF_gthr_call_once_seh(_MCF_once* __once, __MCF_cxa_dtor_any_ __init_proc, voi
 
     __MCF_ASSERT(__err == 1);
     __MCF_gthr_call_once_seh_take_over(__once, __init_proc, __arg);
+    _MCF_signal_fence_acq();
   }
 
 __MCF_GTHR_AUX_INLINE
