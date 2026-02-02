@@ -249,10 +249,10 @@ __MCF_i386_seh_cleanup(EXCEPTION_REGISTRATION_RECORD* const* ref)
   }
 
 #  define __MCF_USING_SEH_HANDLER(fn, ...)  \
-    EXCEPTION_REGISTRATION_RECORD* const __MCF_i386_seh_node__  \
+    EXCEPTION_REGISTRATION_RECORD* const __MCF_i386_seh_record__  \
             __attribute__((__cleanup__(__MCF_i386_seh_cleanup)))  \
-      = __MCF_i386_seh_install(  \
-          (void*)(DWORD []) { 0, (DWORD) (fn) ,##__VA_ARGS__ })  /* no semicolon  */
+      = __MCF_i386_seh_install((EXCEPTION_REGISTRATION_RECORD*)  \
+            (DWORD []) { 0, (DWORD) (fn) ,##__VA_ARGS__ })  /* no semicolon  */
 
 __MCF_ALWAYS_INLINE
 void
