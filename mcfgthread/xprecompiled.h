@@ -14,12 +14,6 @@
 #include <stdbool.h>
 #include <limits.h>
 
-/* With Clang, `-masm=intel` doesn't affect module-level assembly, and requires
- * this workaround.  */
-#if defined __clang__ && (defined __i386__ || (defined __amd64__ && !defined __arm64ec__))
-__asm__ (".intel_syntax noprefix");
-#endif
-
 /* Define internal build options, and additionally, work around many problems
  * about Clang-CL and the MSVC standard library.  */
 #ifdef __MCF_IN_DLL
