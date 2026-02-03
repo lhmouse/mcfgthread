@@ -299,7 +299,7 @@ typedef unsigned __MCF_INTPTR_ uintptr_t;
 /* Some compilers warn about casts between pointers, so launder the pointer via
  * an in-between integral type.  */
 #ifdef __cplusplus
-#  define __MCF_CAST_PTR(T, ...)   (reinterpret_cast<T*>(reinterpret_cast<__MCF_INTPTR_>(__VA_ARGS__)))
+#  define __MCF_CAST_PTR(T, ...)   (reinterpret_cast<T*>(reinterpret_cast<__MCF_INTPTR_>((__VA_ARGS__))))
 #else
 #  define __MCF_CAST_PTR(T, ...)   (__MCF_EX (T*)(__MCF_INTPTR_) (__VA_ARGS__))
 #endif
@@ -313,7 +313,7 @@ template<> struct __MCF_static_assert_helper<true> { static const int __one = 1;
 }  /* extern "C++"  */
 #  define __MCF_STATIC_ASSERT_1(...)   (+::__MCF_static_assert_helper<(__VA_ARGS__)>::__one)
 #elif defined __GNUC__ || defined __clang__
-#  define __MCF_STATIC_ASSERT_1(...)   (__builtin_choose_expr(__VA_ARGS__, 1, __builtin_unreachable()))
+#  define __MCF_STATIC_ASSERT_1(...)   (__builtin_choose_expr((__VA_ARGS__), 1, __builtin_unreachable()))
 #else
 #  define __MCF_STATIC_ASSERT_1(...)   ((int) sizeof(struct { char __one : (__VA_ARGS__) ? 1 : -1; }))
 #endif
