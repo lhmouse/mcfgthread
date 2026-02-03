@@ -311,7 +311,7 @@ extern "C++" {
 template<bool> struct __MCF_static_assert_helper;
 template<> struct __MCF_static_assert_helper<true> { static const int __one = 1; };
 }  /* extern "C++"  */
-#  define __MCF_STATIC_ASSERT_1(...)   (::__MCF_static_assert_helper<(__VA_ARGS__)>::__one + 0)
+#  define __MCF_STATIC_ASSERT_1(...)   (+::__MCF_static_assert_helper<(__VA_ARGS__)>::__one)
 #elif defined __GNUC__ || defined __clang__
 #  define __MCF_STATIC_ASSERT_1(...)   (__builtin_choose_expr(__VA_ARGS__, 1, __builtin_unreachable()))
 #else
