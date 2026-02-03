@@ -306,14 +306,16 @@ typedef unsigned __MCF_INTPTR_ uintptr_t;
 
 /* The `__MCF_STATIC_ASSERT_0()` macro is an expression that yields zero if it
  * compiles anyway. Its argument must be a constant expression.  */
-#ifdef __cplusplus
+#if defined __cplusplus
 extern "C++" {
-template<bool> struct __MCF_static_assert;
-template<> struct __MCF_static_assert<true> { static const int __one = 1; };
+template<bool> struct __MCF_static_assert_helper;
+template<> struct __MCF_static_assert_helper<true> { static const int __one = 1; };
 }  /* extern "C++"  */
-#  define __MCF_STATIC_ASSERT_1(...)   (__MCF_static_assert<(__VA_ARGS__)>::__one)
+#  define __MCF_STATIC_ASSERT_1(...)   (::__MCF_static_assert_helper<(__VA_ARGS__)>::__one + 0)
+#elif defined __GNUC__ || defined __clang__
+#  define __MCF_STATIC_ASSERT_1(...)   (__builtin_choose_expr(__VA_ARGS__, 1, __builtin_unreachable()))
 #else
-#  define __MCF_STATIC_ASSERT_1(...)   (__MCF_EX (int) sizeof(struct { char : 1 | -!(__VA_ARGS__); }))
+#  define __MCF_STATIC_ASSERT_1(...)   ((int) sizeof(struct { char __one : (__VA_ARGS__) ? 1 : -1; }))
 #endif
 
 #define __MCF_STATIC_ASSERT_0(...)   (__MCF_STATIC_ASSERT_1(__VA_ARGS__) - 1)
