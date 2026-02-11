@@ -77,13 +77,13 @@ thread_proc(void* arg)
 int
 main(void)
   {
+    SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
+
+    my_init(&mutex);
     start = CreateEventW(NULL, TRUE, FALSE, NULL);
     assert(start);
 
-    my_init(&mutex);
-    fprintf(stderr, "using `%s`:\n  # of threads    = %d\n  # of iterations = %d\n",
-            _CRT_STRINGIZE(my_mutex_t), NTHRD, NITER);
-
+    fprintf(stderr, "running %d threads with %s\n", NTHRD, _CRT_STRINGIZE(my_mutex_t));
     for(intptr_t k = 0;  k < NTHRD;  ++k) {
       threads[k] = CreateThread(NULL, 0, thread_proc, NULL, 0, NULL);
       assert(threads[k]);
@@ -100,6 +100,7 @@ main(void)
 
     QueryPerformanceCounter(&t1);
     QueryPerformanceFrequency(&tf);
-    fprintf(stderr, "total time:\n  %.3f milliseconds\n",
-            (double) (t1.QuadPart - t0.QuadPart) * 1000 / tf.QuadPart);
+    double result = (double) (t1.QuadPart - t0.QuadPart) * 1.0e9 / tf.QuadPart / NITER;
+    fprintf(stderr, "result: %.3f ns / iteration\n", result);
+    printf("%.3f\n", result);
   }

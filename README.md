@@ -10,12 +10,18 @@ to provide synchronization of initialization of local static objects, and by
 * **boost**: `boost::mutex`
 * **mcf0i**: `_MCF_mutex` without inlining
 
-![hyperfine](doc/hyperfine.png)
-
 > [!WARNING]
 > This project uses some undocumented NT system calls and is not guaranteed to
 > work on some Windows versions. The author gives no warranty for this project.
 > Use it at your own risk.
+
+## Benchmark Result
+
+This is the result of [a benchmark program](doc/mutex_benchmark.c) on Windows
+11 Insider Preview (Dev channel, Build 26300.7760) on an Intel i9 14900K
+processor:
+
+![result_win11_26300_i9_10900k](doc/result_win11_26300_i9_10900k.png)
 
 ## How to Build
 
@@ -50,57 +56,6 @@ ninja test
 > `__MCF_exit()` instead of `exit()` from your program, and 2) calling
 > `__cxa_finalize(&__dso_handle)` followed by `fflush(NULL)` upon receipt of
 > `DLL_PROCESS_DETACH` in your `DllMain()`.
-
-## Benchmarking
-
-* **#THREADS**: number of threads
-* **#ITERATIONS**: number of iterations per thread
-* **SRWLOCK**: Windows `SRWLOCK`
-* **CRITICAL_SECTION**: Windows `CRITICAL_SECTION`
-* **WINPTHREAD**: winpthread `pthread_mutex_t`
-* **MCFGTHREAD**: mcfgthread `_MCF_mutex` without inlining
-
-These are results of [the test program](doc/mutex_performance.c) on an x86-64
-*Windows 10* machine with a 10-core *Intel i9 10900K* processor:
-
-| #THREADS | #ITERATIONS |       SRWLOCK | CRITICAL_SECTION |    WINPTHREAD |    MCFGTHREAD |
-|---------:|------------:|--------------:|-----------------:|--------------:|--------------:|
-|        1 |  20,000,000 |  1541.035 ms  |     1684.556 ms  |**1537.788 ms**|  1539.504 ms  |
-|        2 |  10,000,000 |  1410.687 ms  |     1916.520 ms  |  2135.853 ms  |**1377.103 ms**|
-|        4 |   5,000,000 |  2070.238 ms  |     4613.832 ms  |  2979.166 ms  |**1553.278 ms**|
-|        6 |   3,000,000 |  2500.003 ms  |     5016.650 ms  |  3159.182 ms  |**1409.130 ms**|
-|       10 |   1,500,000 |  2416.953 ms  |     6239.123 ms  |  3004.653 ms  |**1177.269 ms**|
-|       20 |     600,000 |  2266.024 ms  |     8687.350 ms  |  2559.691 ms  |**1001.314 ms**|
-|       60 |     200,000 |**2831.348 ms**|    10164.012 ms  |  3814.880 ms  |  3299.509 ms  |
-|      200 |      60,000 |**2849.850 ms**|    10544.007 ms  |  3825.518 ms  |  3579.925 ms  |
-
-And these are results of the same program on *Wine 6.0.3* on an x86-64
-*Ubuntu 22.04* virtual machine with a 16-core *AMD EPYC2* processor:
-
-| #THREADS | #ITERATIONS |       SRWLOCK | CRITICAL_SECTION |    WINPTHREAD |    MCFGTHREAD |
-|---------:|------------:|--------------:|-----------------:|--------------:|--------------:|
-|        1 |  10,000,000 |  2466.983 ms  |     2574.892 ms  |**2444.599 ms**|  3167.704 ms  |
-|        2 |   5,000,000 |  1940.147 ms  |   **1918.091 ms**|  2078.076 ms  |  2213.607 ms  |
-|        4 |   2,000,000 |  3717.442 ms  |     5356.369 ms  |  3859.484 ms  |**1974.007 ms**|
-|        6 |   1,000,000 |  3517.333 ms  |     4519.209 ms  |  2474.208 ms  |**1582.614 ms**|
-|       10 |     500,000 |  3105.191 ms  |     4706.027 ms  |  2388.662 ms  |**1363.926 ms**|
-|       20 |     200,000 |  2721.077 ms  |     4262.151 ms  |  1966.195 ms  |**1340.997 ms**|
-|       60 |      60,000 |  2397.048 ms  |     3807.141 ms  |  1530.147 ms  |**1511.931 ms**|
-|      200 |      20,000 |  2632.933 ms  |     4148.604 ms  |**1615.904 ms**|  1784.553 ms  |
-
-And these are results of the same program on an ARM *Windows 11* machine with
-an 8-core *Qualcomm Snapdragon 8cx Gen 3* processor, compiled with Clang:
-
-| #THREADS | #ITERATIONS |       SRWLOCK | CRITICAL_SECTION |    WINPTHREAD |    MCFGTHREAD |
-|---------:|------------:|--------------:|-----------------:|--------------:|--------------:|
-|        1 |  10,000,000 |  2105.027 ms  |     2164.209 ms  |  2122.998 ms  |**2033.915 ms**|
-|        2 |   5,000,000 |  1701.007 ms  |     1620.484 ms  |  1547.963 ms  |**1496.309 ms**|
-|        4 |   2,000,000 |**1395.439 ms**|     3067.075 ms  |  2583.215 ms  |  1525.453 ms  |
-|        6 |   1,000,000 |**1181.352 ms**|     4334.280 ms  |  2167.916 ms  |  1354.046 ms  |
-|       10 |     500,000 |  2738.153 ms  |     2799.624 ms  |**2687.904 ms**|  2739.022 ms  |
-|       20 |     100,000 |  3259.999 ms  |   **3220.732 ms**|  3287.581 ms  |  3291.146 ms  |
-|       60 |      30,000 |  2931.157 ms  |     2934.896 ms  |  2938.784 ms  |**2922.015 ms**|
-|      200 |      10,000 |**3197.414 ms**|     3216.323 ms  |  3221.090 ms  |  3229.249 ms  |
 
 ## Implementation details
 
