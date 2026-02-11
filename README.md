@@ -15,13 +15,18 @@ to provide synchronization of initialization of local static objects, and by
 > work on some Windows versions. The author gives no warranty for this project.
 > Use it at your own risk.
 
-## Benchmark Result
+## Benchmark Results
 
-This is the result of [a benchmark program](doc/mutex_benchmark.c) on Windows
-11 Insider Preview (Dev channel, Build 26300.7760) on an Intel i9 14900K
+This is the result of [a benchmark program](doc/benchmark_mutex.c) on Windows
+11 Insider Preview (Dev channel, Build 26300.7760) on an Intel i9-14900K desktop
 processor:
 
-![result_win11_26300_i9_10900k](doc/result_win11_26300_i9_10900k.png)
+![benchmark_result_win11_26300_i9_10900k](doc/benchmark_result_win11_26300_i9_10900k.png)
+
+This is the result on Wine 9.0 on Linux Mint 22 (kernel 6.11 low-latency) on an
+Intel i7-1165G7 mobile processor:
+
+![benchmark_result_wine90_i7_1165g7](doc/benchmark_result_wine90_i7_1165g7.png)
 
 ## How to Build
 
