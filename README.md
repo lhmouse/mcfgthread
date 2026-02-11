@@ -10,7 +10,7 @@ to provide synchronization of initialization of local static objects, and by
 * **boost**: `boost::mutex`
 * **mcf0i**: `_MCF_mutex` without inlining
 
-![hyperfine](hyperfine.png)
+![hyperfine](doc/hyperfine.png)
 
 > [!WARNING]
 > This project uses some undocumented NT system calls and is not guaranteed to
@@ -60,7 +60,7 @@ ninja test
 * **WINPTHREAD**: winpthread `pthread_mutex_t`
 * **MCFGTHREAD**: mcfgthread `_MCF_mutex` without inlining
 
-These are results of [the test program](mutex_performance.c) on an x86-64
+These are results of [the test program](doc/mutex_performance.c) on an x86-64
 *Windows 10* machine with a 10-core *Intel i9 10900K* processor:
 
 | #THREADS | #ITERATIONS |       SRWLOCK | CRITICAL_SECTION |    WINPTHREAD |    MCFGTHREAD |
