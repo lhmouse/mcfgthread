@@ -16,7 +16,7 @@ This is the result of [a benchmark program](doc/benchmark_mutex.c) on Windows
 11 Insider Preview (dev channel, build 26300.7760) on an Intel i9-14900K desktop
 processor (8 P-cores + 16 E-cores, 32 threads):
 
-![benchmark_result_win11_26300_i9_10900k](doc/benchmark_result_win11_26300_i9_10900k.png)
+![benchmark_result_win11_26300_i9_14900k](doc/benchmark_result_win11_26300_i9_14900k.png)
 
 This is the result on Windows 11 Insider Preview (beta channel, build 26220.7755)
 on a Qualcomm Snapdragon 8cx Gen 3 mobile processor processor (8 cores, no
