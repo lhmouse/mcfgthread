@@ -24,10 +24,10 @@ hyper-threading):
 
 ![benchmark_result_win11_26220_snapdragon_8cxg3](doc/benchmark_result_win11_26220_snapdragon_8cxg3.png)
 
-This is the result on Windows 7 SP1 on an Intel i7-7500 desktop processor (4
+This is the result on Windows 7 SP1 on an Intel i7-7700 desktop processor (4
 cores, no hyper-threading):
 
-![benchmark_result_win7_sp1_i5_7500](doc/benchmark_result_win7_sp1_i5_7500.png)
+![benchmark_result_win7_sp1_i7_7700](doc/benchmark_result_win7_sp1_i7_7700.png)
 
 This is the result on Wine 9.0 on Linux Mint 22 (kernel 6.11 low-latency) on an
 Intel i7-1165G7 mobile processor (4 cores, 8 threads):
