@@ -59,6 +59,8 @@ thread_proc(void* arg)
       my_lock(&mutex);
       double temp = src;
       src = temp * 1.001;
+      if(src >= 1.0e300)
+        src = 1.0e-300;
       my_unlock(&mutex);
 
       temp = log(temp);
