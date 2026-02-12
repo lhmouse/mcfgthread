@@ -5,11 +5,6 @@ implements the _gthread interface set_, which is used internally both by **GCC**
 to provide synchronization of initialization of local static objects, and by
 **libstdc++** to provide C++11 threading facilities.
 
-* **cs4k**: Windows `CRITICAL_SECTION` with a spin count of `4000`
-* **srw**: Windows `SRWLOCK`
-* **boost**: `boost::mutex`
-* **mcf0i**: `_MCF_mutex` without inlining
-
 > [!WARNING]
 > This project uses some undocumented NT system calls and is not guaranteed to
 > work on some Windows versions. The author gives no warranty for this project.
@@ -19,7 +14,7 @@ to provide synchronization of initialization of local static objects, and by
 
 This is the result of [a benchmark program](doc/benchmark_mutex.c) on Windows
 11 Insider Preview (dev channel, build 26300.7760) on an Intel i9-14900K desktop
-processor （8 P-cores + 16 E-cores, 32 threads）:
+processor (8 P-cores + 16 E-cores, 32 threads):
 
 ![benchmark_result_win11_26300_i9_10900k](doc/benchmark_result_win11_26300_i9_10900k.png)
 
