@@ -19,14 +19,19 @@ to provide synchronization of initialization of local static objects, and by
 
 This is the result of [a benchmark program](doc/benchmark_mutex.c) on Windows
 11 Insider Preview (dev channel, build 26300.7760) on an Intel i9-14900K desktop
-processor:
+processor （8 P-cores + 16 E-cores, 32 threads）:
 
-![benchmark_result_win11_i9_10900k](doc/benchmark_result_win11_i9_10900k.png)
+![benchmark_result_win11_26300_i9_10900k](doc/benchmark_result_win11_26300_i9_10900k.png)
+
+This is the result on Windows 7 SP1 on an Intel i7-7500 desktop processor (4
+cores, no hyper-threading):
+
+![benchmark_result_win7_sp1_i5_7500](doc/benchmark_result_win7_sp1_i5_7500.png)
 
 This is the result on Wine 9.0 on Linux Mint 22 (kernel 6.11 low-latency) on an
-Intel i7-1165G7 mobile processor:
+Intel i7-1165G7 mobile processor (4 cores, 8 threads):
 
-![benchmark_result_wine90_i7_1165g7](doc/benchmark_result_wine90_i7_1165g7.png)
+![benchmark_result_wine90_linux_i7_1165g7](doc/benchmark_result_wine90_linux_i7_1165g7.png)
 
 ## How to Build
 
