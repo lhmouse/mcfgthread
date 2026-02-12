@@ -29,8 +29,8 @@
 #  include <mcfgthread/mutex.h>
 #  define my_mutex_t      _MCF_mutex
 #  define my_init(m)      _MCF_mutex_init(m)
-#  define my_lock(m)      _MCF_mutex_lock_slow(m, NULL)
-#  define my_unlock(m)    _MCF_mutex_unlock_slow(m)
+#  define my_lock(m)      _MCF_mutex_lock(m, NULL)
+#  define my_unlock(m)    _MCF_mutex_unlock(m)
 #else
 #  error No mutex type has been selected.
 #endif
