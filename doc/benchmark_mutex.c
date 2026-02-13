@@ -92,8 +92,8 @@ main(void)
     }
 
     fprintf(stderr, "main waiting\n");
-    SetEvent(start);
     QueryPerformanceCounter(&t0);
+    SetEvent(start);
 
     for(intptr_t k = 0;  k < NTHRD;  ++k) {
       WaitForSingleObject(threads[k], INFINITE);
