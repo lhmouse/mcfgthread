@@ -70,7 +70,7 @@ ninja test
 
 ## Implementation Details
 
-### The condition variable
+#### The condition variable
 
 A condition variable is implemented as an atomic counter of threads that are
 currently waiting on it. Initially the counter is zero, which means no thread
@@ -83,7 +83,7 @@ counter to tell how many threads that it will have to wake up (note this has to
 be atomic), and release them from the global keyed event, also passing the
 address of the condition variable as the key.
 
-### The primitive mutex
+#### The primitive mutex
 
 A primitive mutex is just a condition variable with a boolean bit, which
 designates whether the mutex is LOCKED. A mutex is initialized to all-bit zeroes
@@ -96,7 +96,7 @@ condition variable. If the thread wishes to unlock this mutex, it clears the
 LOCKED bit and wakes up at most one waiting thread on the condition variable, if
 any.
 
-### The 'real' mutex
+#### The 'real' mutex
 
 In reality, critical sections are fairly small. If a thread fails to lock a
 mutex, it might be able to do so soon, and we don't want it to give up its time
@@ -117,7 +117,7 @@ counter is decremented. This counter provides a heuristic way to determine how
 heavily a mutex is seized. If there have been many spin failures, newcomers will
 not attempt to spin, but will make a syscall to sleep on the mutex directly.
 
-### The once-initialization flag
+#### The once-initialization flag
 
 A once-initialization flag contains a READY byte (this is the first one according
 to Itanium ABI) which indicates whether initialization has completed. The other
