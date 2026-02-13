@@ -68,7 +68,7 @@ ninja test
 > `__cxa_finalize(&__dso_handle)` followed by `fflush(NULL)` upon receipt of
 > `DLL_PROCESS_DETACH` in your `DllMain()`.
 
-## Implementation details
+## Implementation Details
 
 ### The condition variable
 
@@ -132,7 +132,7 @@ perform initialization. If initialization is successful, it sets the READY byte
 and unlocks the primitive mutex, releasing all threads that are waiting on it.
 (Do you remember that a primitive mutex actually contains a condition variable?)
 
-### List of imported functions
+## List of Imported Functions
 
 |Function                       |DLL             |Category                   |
 |:------------------------------|:---------------|:------------------------- |
