@@ -86,7 +86,7 @@ __MCF_batch_release_common(const void* key, size_t count)
      * See <https://github.com/lhmouse/mcfgthread/issues/21>.  */
     size_t woken_num = 0;
     while((woken_num != count) && !__MCF_is_process_shutting_down())
-      if(__MCF_keyed_event_signal(key, &(__MCF_winnt_timeout) { .__li.QuadPart = -1000 }) == 0)
+      if(__MCF_keyed_event_signal(key, &(__MCF_winnt_timeout) { .__li.QuadPart = -10000000 }) == 0)
         woken_num ++;
   }
 
