@@ -606,6 +606,16 @@ __MCF_mzero(void* dst, size_t size)
       : "0"(dst), "1"(size), "a"(0)
       : "memory"
     );
+#elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_MOPS
+    PVOID x0, x1;
+    __asm__ volatile (
+      "setp [%0]!, %1!, xzr; "
+      "setm [%0]!, %1!, xzr; "
+      "sete [%0]!, %1!, xzr; "
+      : "=&r"(x0), "=&r"(x1)
+      : "0"(dst), "1"(size)
+      : "memory"
+    );
 #else
     RtlZeroMemory(dst, size);
 #endif
