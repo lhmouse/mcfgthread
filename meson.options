@@ -15,3 +15,8 @@
 option('enable-debug-checks',
        type: 'boolean', value: false,
        description: 'enable run-time assertions')
+
+option('enable-gc-sections',
+       type: 'boolean', value: true,
+       description: 'remove unreferenced functions and data '
+                    + '(disable this to work around bugs in the linker)')
