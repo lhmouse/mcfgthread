@@ -155,6 +155,7 @@ jobs:
       - name: Configure
         run: >-
              meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
+             -Dc_args="-march=armv8.8-a"
 
       - name: Build
         run: meson compile -Cbuild_ci
@@ -239,6 +240,7 @@ jobs:
         run: >-
              meson setup --native-file cross/llvm.aarch64-pc-windows-msvc
              -Denable-debug-checks=true -Doptimization=1 build_ci
+             -Dc_args="-march=armv8.8-a"
 
       - name: Build
         run: meson compile -Cbuild_ci
