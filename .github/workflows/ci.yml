@@ -280,6 +280,25 @@ jobs:
       - name: Run tests
         run: meson test -t2 -Cbuild_ci --print-errorlogs
 
+      - uses: ilammy/msvc-dev-cmd@v1
+        with: { arch: arm64_x64 }
+
+      - name: Configure emulated x64
+        run: >-
+             meson setup --native-file cross/llvm.x86_64-pc-windows-msvc
+             -Denable-debug-checks=true -Doptimization=1 build_x64
+
+      - name: Build emulated x64
+        run: meson compile -Cbuild_x64
+
+      - name: Run emulated x64 tests
+        run: meson test -t2 -Cbuild_x64 --print-errorlogs
+
+      - name: Run emulated x64 tests, linking against ARM64EC
+        run: >-
+             copy build_ci/bin/*.dll build_x64/bin/ &&
+             meson test -t2 -Cbuild_x64 --no-rebuild --print-errorlogs
+
   llvm-mingw-arm64:
     name: LLVM MinGW cross build (ARM64 Clang; Wine)
     runs-on: ubuntu-22.04-arm
@@ -339,9 +358,26 @@ jobs:
         run: >-
              meson setup --native-file cross/llvm.arm64ec-w64-mingw32
              -Denable-debug-checks=true -Doptimization=1 build_ci
+             -Denable-gc-sections=false
 
       - name: Build
         run: meson compile -Cbuild_ci
 
       - name: Run tests
         run: meson test -t2 -Cbuild_ci --print-errorlogs
+
+      - name: Configure emulated x64
+        run: >-
+             meson setup --native-file cross/llvm.x86_64-w64-mingw32
+             -Denable-debug-checks=true -Doptimization=1 build_x64
+
+      - name: Build emulated x64
+        run: meson compile -Cbuild_x64
+
+      - name: Run emulated x64 tests
+        run: meson test -t2 -Cbuild_x64 --print-errorlogs
+
+      - name: Run emulated x64 tests, linking against ARM64EC
+        run: >-
+             copy build_ci/bin/*.dll build_x64/bin/ &&
+             meson test -t2 -Cbuild_x64 --no-rebuild --print-errorlogs

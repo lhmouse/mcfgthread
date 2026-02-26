@@ -215,14 +215,20 @@ mcfgthread_version_o = import('windows').compile_resources(
 
 if cc.get_linker_id() in [ 'link', 'lld-link' ]
   lib_mcfgthread_dll_link_args = [
-        '-Wl,-nodefaultlib', '-Wl,-dynamicbase', '-Wl,-nxcompat', '-Wl,-opt:ref',
-        '-Wl,-opt:icf', '-Xlinker', '-subsystem:windows,6.1', '-Wl,-kill-at',
-        '-Wl,-safeseh:no' ]
+        '-Wl,-opt:icf', '-Wl,-safeseh:no',
+        '-Wl,-nodefaultlib', '-Wl,-dynamicbase', '-Wl,-nxcompat', '-Wl,-kill-at',
+        '-Xlinker', '-subsystem:windows,6.1' ]
+  if get_option('enable-gc-sections')
+    lib_mcfgthread_dll_link_args += [ '-Wl,-opt:ref' ]
+  endif
 else
   lib_mcfgthread_dll_link_args = [
-        '-nostdlib', '-Wl,--dynamicbase', '-Wl,--nxcompat', '-Wl,--gc-sections',
-        '-Wl,--subsystem,windows:6.1', '-Wl,--kill-at', '-Wl,--exclude-all-symbols',
-        '-Wl,--disable-auto-import' ]
+        '-Wl,--exclude-all-symbols', '-Wl,--disable-auto-import',
+        '-nostdlib', '-Wl,--dynamicbase', '-Wl,--nxcompat', '-Wl,--kill-at',
+        '-Wl,--subsystem,windows:6.1' ]
+  if get_option('enable-gc-sections')
+    lib_mcfgthread_dll_link_args += [ '-Wl,--gc-sections' ]
+  endif
 endif
 
 if meson.version().version_compare('< 1.10.0')
