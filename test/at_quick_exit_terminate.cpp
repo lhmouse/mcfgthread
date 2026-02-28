@@ -14,6 +14,10 @@
 int
 main(void)
   {
+#ifndef __MINGW32__
+    return 77;
+#endif
+
     ::std::set_terminate(
       +[] {
         ::fprintf(stderr, "terminating\n");
