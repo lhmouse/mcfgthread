@@ -19,12 +19,17 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
     (void) ctx;
     (void) disp_ctx;
 
-    /* GCC raises `0x20474343` to search for an exception handler, and raises
-     * `0x21474343` to unwind the stack. If the control flow resumes after
-     * `RaiseException()`, `std::terminate()` is called.  */
-    ULONG nonmatch = rec->ExceptionFlags & EXCEPTION_NONCONTINUABLE;
-    nonmatch |= (rec->ExceptionCode & 0x20FFFFFF) ^ 0x20474343;
-    return nonmatch ? ExceptionContinueSearch : ExceptionContinueExecution;
+    /* GCC raises `0x20474343` to search for an exception handler. If the
+     * control flow resumes after `RaiseException()`, `std::terminate()` will
+     * be called.  */
+    if((rec->ExceptionCode == 0x20474343) && !(rec->ExceptionFlags & EXCEPTION_NONCONTINUABLE))
+      return ExceptionContinueExecution;
+
+    /* In all the other cases, terminate the process. For MSVC we should have
+     * called `__std_terminate()`, but we are not linking against their CRT so
+     * it's unavailable.  */
+    RaiseFailFastException(rec, ctx, 0);
+    __builtin_trap();
   }
 
 #ifdef __MCF_M_X8632
