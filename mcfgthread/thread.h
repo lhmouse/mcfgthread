@@ -12,6 +12,7 @@
 #include "dtor_queue.h"
 #include "tls.h"
 #include "atomic.h"
+#include "teb.h"
 
 __MCF_CXX(extern "C" {)
 #ifndef __MCF_THREAD_IMPORT
@@ -351,9 +352,7 @@ uint32_t
 _MCF_thread_self_tid(void)
   __MCF_noexcept
   {
-    uint32_t __tid;
-    __MCF_TEB_LOAD_32_ABS(&__tid, __MCF_64_32(0x48, 0x24));
-    return __tid;
+    return __MCF_teb_load_32(__MCF_64_32(0x48, 0x24), 0);
   }
 
 __MCF_THREAD_INLINE __MCF_FN_PURE

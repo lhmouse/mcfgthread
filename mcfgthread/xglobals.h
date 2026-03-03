@@ -247,16 +247,15 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
 #  define __MCF_USING_SEH_HANDLER(fn, ...)  \
     EXCEPTION_REGISTRATION_RECORD* const __MCF_i386_seh_record  \
            __attribute__((__cleanup__(__MCF_i386_seh_cleanup)))  \
-      = __MCF_i386_seh_install((DWORD []) { 0, (DWORD) (fn), __VA_ARGS__ })  /* no semicolon  */
+      = __MCF_i386_seh_install(  \
+          (DWORD []) { __MCF_teb_load_32(0, 0), (DWORD) (fn), __VA_ARGS__ })  /* no semicolon  */
 
 __MCF_ALWAYS_INLINE
 EXCEPTION_REGISTRATION_RECORD*
 __MCF_i386_seh_install(DWORD* storage)
   {
     EXCEPTION_REGISTRATION_RECORD* const restrict record = (void*) storage;
-    __MCF_TEB_LOAD_32_ABS(&(record->Next), 0);
-    __MCF_TEB_STORE_32_ABS(0, record);
-    _MCF_signal_fence_acq();
+    __MCF_teb_store_32(0, 0, (DWORD) record);
     return record;
   }
 
@@ -265,8 +264,7 @@ void
 __MCF_i386_seh_cleanup(EXCEPTION_REGISTRATION_RECORD* const* ref)
   {
     EXCEPTION_REGISTRATION_RECORD* const restrict record = *ref;
-    _MCF_signal_fence_rel();
-    __MCF_TEB_STORE_32_ABS(0, record->Next);
+    __MCF_teb_store_32(0, 0, (DWORD) record->Next);
   }
 
 /* Some old code assumes that ESP is always aligned to a 16-byte boundary,
