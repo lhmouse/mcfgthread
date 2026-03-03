@@ -250,8 +250,7 @@ _MCF_thread*
 _MCF_thread_self(void)
   {
     if(__MCF_g->__tls_index < 64) {
-      _MCF_thread* self;
-      __MCF_TEB_LOAD_PTR_SIB(&self, __MCF_64_32(0x1480, 0x0E10), __MCF_g->__tls_index);
+      _MCF_thread* self = __MCF_teb_load_ptr(__MCF_64_32(0x1480, 0x0E10), __MCF_g->__tls_index);
       if(self)
         return self;
     }

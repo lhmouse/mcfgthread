@@ -24,7 +24,7 @@ project('mcfgthread',
 #===========================================================
 
 mcfgthread_include = [
-  'mcfgthread/fwd.h', 'mcfgthread/atomic.h', 'mcfgthread/clock.h',
+  'mcfgthread/fwd.h', 'mcfgthread/atomic.h', 'mcfgthread/teb.h', 'mcfgthread/clock.h',
   'mcfgthread/mutex.h', 'mcfgthread/shared_mutex.h', 'mcfgthread/cond.h',
   'mcfgthread/once.h', 'mcfgthread/sem.h', 'mcfgthread/event.h', 'mcfgthread/thread.h',
   'mcfgthread/cxa.h', 'mcfgthread/dtor_queue.h', 'mcfgthread/exit.h',
