@@ -12,16 +12,13 @@
 #include "fwd.h"
 
 #if defined __GNUC__ || defined __clang__
-
 /* Use built-in types.  */
-#  define __MCF_ATOMICIFY(T, ...)    __MCF_CAST_PTR(volatile T, __VA_ARGS__)
-
-#  define __MCF_memory_order_rlx     __ATOMIC_RELAXED
-#  define __MCF_memory_order_acq     __ATOMIC_ACQUIRE
-#  define __MCF_memory_order_rel     __ATOMIC_RELEASE
-#  define __MCF_memory_order_arl     __ATOMIC_ACQ_REL
-#  define __MCF_memory_order_cst     __ATOMIC_SEQ_CST
-
+#  define __MCF_ATOMICIFY(T, ...)             __MCF_CAST_PTR(volatile T, __VA_ARGS__)
+#  define __MCF_memory_order_rlx              __ATOMIC_RELAXED
+#  define __MCF_memory_order_acq              __ATOMIC_ACQUIRE
+#  define __MCF_memory_order_rel              __ATOMIC_RELEASE
+#  define __MCF_memory_order_arl              __ATOMIC_ACQ_REL
+#  define __MCF_memory_order_cst              __ATOMIC_SEQ_CST
 #  define __MCF_atomic_load(p,o)              __atomic_load_n(p,o)
 #  define __MCF_atomic_store(p,v,o)           __atomic_store_n(p,v,o)
 #  define __MCF_atomic_xchg(p,v,o)            __atomic_exchange_n(p,v,o)
@@ -31,42 +28,34 @@
 #  define __MCF_atomic_xsub(p,v,o)            __atomic_fetch_sub(p,v,o)
 #  define __MCF_atomic_thread_fence(o)        __atomic_thread_fence(o)
 #  define __MCF_atomic_signal_fence(o)        __atomic_signal_fence(o)
-
 #elif __MCF_CXX11(1+)0
-
 /* Use the C++11 standard library.  */
 #  include <atomic>
-#  define __MCF_ATOMICIFY(T, ...)    __MCF_CAST_PTR(::std::atomic<T>, __VA_ARGS__)
-
-#  define __MCF_memory_order_rlx     ::std::memory_order_relaxed
-#  define __MCF_memory_order_acq     ::std::memory_order_acquire
-#  define __MCF_memory_order_rel     ::std::memory_order_release
-#  define __MCF_memory_order_arl     ::std::memory_order_acq_rel
-#  define __MCF_memory_order_cst     ::std::memory_order_seq_cst
-
-#  define __MCF_atomic_load(p,o)              (p)->load(o)
-#  define __MCF_atomic_store(p,v,o)           (p)->store(v,o)
-#  define __MCF_atomic_xchg(p,v,o)            (p)->exchange(v,o)
-#  define __MCF_atomic_cmpxchg(p,c,v,o,f)     (p)->compare_exchange_strong(*(c),v,o,f)
-#  define __MCF_atomic_cmpxchg_w(p,c,v,o,f)   (p)->compare_exchange_weak(*(c),v,o,f)
-#  define __MCF_atomic_xadd(p,v,o)            (p)->fetch_add(v,o)
-#  define __MCF_atomic_xsub(p,v,o)            (p)->fetch_sub(v,o)
+#  define __MCF_ATOMICIFY(T, ...)             __MCF_CAST_PTR(::std::atomic<T>, __VA_ARGS__)
+#  define __MCF_memory_order_rlx              ::std::memory_order_relaxed
+#  define __MCF_memory_order_acq              ::std::memory_order_acquire
+#  define __MCF_memory_order_rel              ::std::memory_order_release
+#  define __MCF_memory_order_arl              ::std::memory_order_acq_rel
+#  define __MCF_memory_order_cst              ::std::memory_order_seq_cst
+#  define __MCF_atomic_load(p,o)              ::std::atomic_load_explicit(p,o)
+#  define __MCF_atomic_store(p,v,o)           ::std::atomic_store_explicit(p,v,o)
+#  define __MCF_atomic_xchg(p,v,o)            ::std::atomic_exchange_explicit(p,v,o)
+#  define __MCF_atomic_cmpxchg(p,c,v,o,f)     ::std::atomic_compare_exchange_strong_explicit(p,c,v,o,f)
+#  define __MCF_atomic_cmpxchg_w(p,c,v,o,f)   ::std::atomic_compare_exchange_weak_explicit(p,c,v,o,f)
+#  define __MCF_atomic_xadd(p,v,o)            ::std::atomic_fetch_add_explicit(p,v,o)
+#  define __MCF_atomic_xsub(p,v,o)            ::std::atomic_fetch_sub_explicit(p,v,o)
 #  define __MCF_atomic_thread_fence(o)        ::std::atomic_thread_fence(o)
 #  define __MCF_atomic_signal_fence(o)        ::std::atomic_signal_fence(o)
-
 #else
-
 /* Use the C11 standard library. Microsoft Visual Studio 2022 has experimental
  * support which seems to suffice.  */
 #  include <stdatomic.h>
-#  define __MCF_ATOMICIFY(T, ...)    __MCF_CAST_PTR(_Atomic T, __VA_ARGS__)
-
-#  define __MCF_memory_order_rlx     memory_order_relaxed
-#  define __MCF_memory_order_acq     memory_order_acquire
-#  define __MCF_memory_order_rel     memory_order_release
-#  define __MCF_memory_order_arl     memory_order_acq_rel
-#  define __MCF_memory_order_cst     memory_order_seq_cst
-
+#  define __MCF_ATOMICIFY(T, ...)             __MCF_CAST_PTR(_Atomic T, __VA_ARGS__)
+#  define __MCF_memory_order_rlx              memory_order_relaxed
+#  define __MCF_memory_order_acq              memory_order_acquire
+#  define __MCF_memory_order_rel              memory_order_release
+#  define __MCF_memory_order_arl              memory_order_acq_rel
+#  define __MCF_memory_order_cst              memory_order_seq_cst
 #  define __MCF_atomic_load(p,o)              atomic_load_explicit(p,o)
 #  define __MCF_atomic_store(p,v,o)           atomic_store_explicit(p,v,o)
 #  define __MCF_atomic_xchg(p,v,o)            atomic_exchange_explicit(p,v,o)
@@ -76,11 +65,13 @@
 #  define __MCF_atomic_xsub(p,v,o)            atomic_fetch_sub_explicit(p,v,o)
 #  define __MCF_atomic_thread_fence(o)        atomic_thread_fence(o)
 #  define __MCF_atomic_signal_fence(o)        atomic_signal_fence(o)
-
-#endif  /* __MCF_atomic  */
+#endif
 
 __MCF_CXX(extern "C" {)
-#define __MCF_ATOMIC_INLINE  __MCF_ALWAYS_INLINE
+#ifndef __MCF_ATOMIC_IMPORT
+#  define __MCF_ATOMIC_IMPORT
+#  define __MCF_ATOMIC_INLINE  __MCF_ALWAYS_INLINE
+#endif
 
 #pragma push_macro("WIDTH")
 #pragma push_macro("INTEGER")
