@@ -251,7 +251,15 @@ _MCF_thread_self(void)
   {
     if(__MCF_g->__tls_index < 64) {
       _MCF_thread* self;
-      __MCF_TEB_LOAD_PTR_SIB(&self, __MCF_64_32(0x1480, 0x0E10), __MCF_g->__tls_index);
+#if defined __MCF_M_X8664_ASM
+      __asm__ ("mov %q0, gs:[0x1480 + %q1 * 8]" : "=r"(self) : "r"((ULONGLONG) __MCF_g->__tls_index));
+#elif defined __MCF_M_X8632_ASM
+      __asm__ ("mov %k0, fs:[0xE10 + %k1 * 4]" : "=r"(self) : "r"(__MCF_g->__tls_index));
+#elif defined __MCF_M_ARM64_ASM
+      __asm__ ("ldr %x0, [x18, %w1, uxtw 3]" : "=r"(self) : "r"(0x1480 / 8 + __MCF_g->__tls_index));
+#else
+#  error unimplemented
+#endif
       if(self)
         return self;
     }

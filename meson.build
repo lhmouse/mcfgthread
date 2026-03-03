@@ -46,7 +46,7 @@ mcfgthread_src_ex = [
 test_src = [
   'test/lazy_load.c', 'test/self_oom.c', 'test/mix.c', 'test/memory.c', 'test/clock.c',
   'test/winnt_timeout.c', 'test/runtime_failure.c',
-  'test/seh_terminate.c', 'test/teb.c', 'test/teb_att.c', 'test/once_zero_timeout.c',
+  'test/seh_terminate.c', 'test/teb.c', 'test/once_zero_timeout.c',
   'test/once_release.c', 'test/once_abort.c', 'test/once_timeout.c',
   'test/mutex_spin_fail.c', 'test/mutex_zero_timeout.c', 'test/mutex_timeout.c',
   'test/mutex.c', 'test/shared_mutex_zero_timeout.c', 'test/shared_mutex_timeout.c',
@@ -327,10 +327,6 @@ foreach src : test_src
 
   if basename in [ 'c11_c99_pedantic.c' ]
     test_c_args = [ '-std=c99', '-Wpedantic' ]
-  endif
-
-  if basename in [ 'teb_att.c' ]
-    test_c_args = [ cc.get_supported_arguments('-masm=att') ]
   endif
 
   if basename in [ 'cxx11_no_exceptions.cpp' ]

@@ -352,7 +352,15 @@ _MCF_thread_self_tid(void)
   __MCF_noexcept
   {
     uint32_t __tid;
-    __MCF_TEB_LOAD_32_ABS(&__tid, __MCF_64_32(0x48, 0x24));
+#if defined __MCF_M_X8664_ASM
+    __asm__ ("mov { %%gs:0x48, %k0 | %k0, gs:[0x48] }" : "=r"(__tid));
+#elif defined __MCF_M_X8632_ASM
+    __asm__ ("mov { %%fs:0x24, %k0 | %k0, fs:[0x24] }" : "=r"(__tid));
+#elif defined __MCF_M_ARM64_ASM
+    __asm__ ("ldr %w0, [x18, 0x48]" : "=r"(__tid));
+#else
+#  error unimplemented
+#endif
     return __tid;
   }
 

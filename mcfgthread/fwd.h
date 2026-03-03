@@ -125,104 +125,7 @@ __MCF_CXX(extern "C" {)
 #define __MCF_0_INIT           { __MCF_C(0) }
 #define __MCF_SET_IF(x, ...)    ((void) ((x) && (*(x) = (__VA_ARGS__))))
 
-/* Define how the TEB is accessed. Due to technical limitations, the base offset
- * must be a constant multiple of operand size, and there are different macros
- * depending on whether the address is immediate.  */
-#if defined __GNUC__ || defined __clang__
-#  define __MCF_ASM_LD_(s, out, ...)   __asm__ (s : "=r"(*(out)) : __VA_ARGS__ : "memory")
-#  define __MCF_ASM_ST_(s, in, ...)   __asm__ volatile (s : : "r"(in), __VA_ARGS__ : "memory")
-#  if defined __amd64__ && !defined __arm64ec__
-#    define __MCF_TEB_LOAD_32_ABS(out, base)       __MCF_ASM_LD_("mov { %%gs:%c1, %k0 | %k0, gs:[%1] }", out, "i"(base))
-#    define __MCF_TEB_STORE_32_ABS(base, in)       __MCF_ASM_ST_("mov { %k0, %%gs:%c1 | gs:[%1], %k0 }", in, "i"(base))
-#    define __MCF_TEB_LOAD_32_SIB(out, base, i)    __MCF_ASM_LD_("mov { %%gs:%c1(,%2,4), %k0 | %k0, gs:[%1+%2*4] }", out, "i"(base), "r"(i))
-#    define __MCF_TEB_STORE_32_SIB(base, i, in)    __MCF_ASM_ST_("mov { %k0, %%gs:%c1(,%2,4) | gs:[%1+%2*4], %k0 }", in, "i"(base), "r"(i))
-#    define __MCF_TEB_LOAD_PTR_ABS(out, base)      __MCF_ASM_LD_("mov { %%gs:%c1, %q0 | %q0, gs:[%1] }", out, "i"(base))
-#    define __MCF_TEB_STORE_PTR_ABS(base, in)      __MCF_ASM_ST_("mov { %q0, %%gs:%c1 | gs:[%1], %q0 }", in, "i"(base))
-#    define __MCF_TEB_LOAD_PTR_SIB(out, base, i)   __MCF_ASM_LD_("mov { %%gs:%c1(,%2,8), %q0 | %q0, gs:[%1+%2*8] }", out, "i"(base), "r"(i))
-#    define __MCF_TEB_STORE_PTR_SIB(base, i, in)   __MCF_ASM_ST_("mov { %q0, %%gs:%c1(,%2,8) | gs:[%1+%2*8], %q0 }", in, "i"(base), "r"(i))
-#    define __MCF_64_32(x, y)  x
-#    define __MCF_USYM  ""
-#    define __MCF_M_X8664_ASM  1
-#    define __MCF_M_X8664  1
-#  elif defined __i386__
-#    define __MCF_TEB_LOAD_32_ABS(out, base)       __MCF_ASM_LD_("mov { %%fs:%c1, %k0 | %k0, fs:[%1] }", out, "i"(base))
-#    define __MCF_TEB_STORE_32_ABS(base, in)       __MCF_ASM_ST_("mov { %k0, %%fs:%c1 | fs:[%1], %k0 }", in, "i"(base))
-#    define __MCF_TEB_LOAD_32_SIB(out, base, i)    __MCF_ASM_LD_("mov { %%fs:%c1(,%2,4), %k0 | %k0, fs:[%1+%2*4] }", out, "i"(base), "r"(i))
-#    define __MCF_TEB_STORE_32_SIB(base, i, in)    __MCF_ASM_ST_("mov { %k0, %%fs:%c1(,%2,4) | fs:[%1+%2*4], %k0 }", in, "i"(base), "r"(i))
-#    define __MCF_TEB_LOAD_PTR_ABS(out, base)      __MCF_ASM_LD_("mov { %%fs:%c1, %k0 | %k0, fs:[%1] }", out, "i"(base))
-#    define __MCF_TEB_STORE_PTR_ABS(base, in)      __MCF_ASM_ST_("mov { %k0, %%fs:%c1 | fs:[%1], %k0 }", in, "i"(base))
-#    define __MCF_TEB_LOAD_PTR_SIB(out, base, i)   __MCF_ASM_LD_("mov { %%fs:%c1(,%2,4), %k0 | %k0, fs:[%1+%2*4] }", out, "i"(base), "r"(i))
-#    define __MCF_TEB_STORE_PTR_SIB(base, i, in)   __MCF_ASM_ST_("mov { %k0, %%fs:%c1(,%2,4) | fs:[%1+%2*4], %k0 }", in, "i"(base), "r"(i))
-#    define __MCF_64_32(x, y)  y
-#    define __MCF_USYM  "_"
-#    define __MCF_M_X8632_ASM  1
-#    define __MCF_M_X8632  1
-#  elif defined __aarch64__ || defined __arm64ec__
-#    define __MCF_TEB_LOAD_32_ABS(out, base)       __MCF_ASM_LD_("ldr %w0, [x18, %1]", out, "i"(base))
-#    define __MCF_TEB_STORE_32_ABS(base, in)       __MCF_ASM_ST_("str %w0, [x18, %1]", in, "i"(base))
-#    define __MCF_TEB_LOAD_32_SIB(out, base, i)    __MCF_ASM_LD_("ldr %w0, [x18, %w1, uxtw #2]", out, "r"(((base) >> 2) + (i)))
-#    define __MCF_TEB_STORE_32_SIB(base, i, in)    __MCF_ASM_ST_("str %w0, [x18, %w1, uxtw #2]", in, "r"(((base) >> 2) + (i)))
-#    define __MCF_TEB_LOAD_PTR_ABS(out, base)      __MCF_ASM_LD_("ldr %x0, [x18, %1]", out, "i"(base))
-#    define __MCF_TEB_STORE_PTR_ABS(base, in)      __MCF_ASM_ST_("str %x0, [x18, %1]", in, "i"(base))
-#    define __MCF_TEB_LOAD_PTR_SIB(out, base, i)   __MCF_ASM_LD_("ldr %x0, [x18, %w1, uxtw #3]", out, "r"(((base) >> 3) + (i)))
-#    define __MCF_TEB_STORE_PTR_SIB(base, i, in)   __MCF_ASM_ST_("str %x0, [x18, %w1, uxtw #3]", in, "r"(((base) >> 3) + (i)))
-#    define __MCF_64_32(x, y)  x
-#    define __MCF_USYM  ""
-#    define __MCF_M_ARM64_ASM  1
-#    if defined __aarch64__
-#      define __MCF_M_ARM64  1
-#    else
-#      define __MCF_M_X8664  1
-#      define __MCF_M_ARM64EC  1
-#    endif
-#  endif
-#else
-#  include <intrin.h>
-#  if defined _M_X64 && !defined _M_ARM64EC
-#    define __MCF_TEB_LOAD_32_ABS(out, base)         (*(unsigned int*) (out) = __readgsdword((base)))
-#    define __MCF_TEB_STORE_32_ABS(base, in)         (__writegsdword((base), (in)))
-#    define __MCF_TEB_LOAD_32_SIB(out, base, i)      (*(unsigned int*) (out) = __readgsdword((base) + ((i) << 2)))
-#    define __MCF_TEB_STORE_32_SIB(base, i, in)      (__writegsdword((base) + ((i) << 2), (in)))
-#    define __MCF_TEB_LOAD_PTR_ABS(out, base)        (*(void**) (out) = (void*) __readgsqword((base)))
-#    define __MCF_TEB_STORE_PTR_ABS(base, in)        (__writegsqword((base), (unsigned long long) (in)))
-#    define __MCF_TEB_LOAD_PTR_SIB(out, base, i)     (*(void**) (out) = (void*) __readgsqword((base) + ((i) << 3)))
-#    define __MCF_TEB_STORE_PTR_SIB(base, i, in)     (__writegsqword((base) + ((i) << 3), (unsigned long long) (in)))
-#    define __MCF_64_32(x, y)  x
-#    define __MCF_USYM  ""
-#    define __MCF_M_X8664  1
-#  elif defined _M_IX86
-#    define __MCF_TEB_LOAD_32_ABS(out, base)         (*(unsigned int*) (out) = __readfsdword((base)))
-#    define __MCF_TEB_STORE_32_ABS(base, in)         (__writefsdword((base), (in)))
-#    define __MCF_TEB_LOAD_32_SIB(out, base, i)      (*(unsigned int*) (out) = __readfsdword((base) + ((i) << 2)))
-#    define __MCF_TEB_STORE_32_SIB(base, i, in)      (__writefsdword((base) + ((i) << 2), (in)))
-#    define __MCF_TEB_LOAD_PTR_ABS(out, base)        (*(void**) (out) = (void*) __readfsdword((base)))
-#    define __MCF_TEB_STORE_PTR_ABS(base, in)        (__writefsdword((base), (unsigned int) (in)))
-#    define __MCF_TEB_LOAD_PTR_SIB(out, base, i)     (*(void**) (out) = (void*) __readfsdword((base) + ((i) << 2)))
-#    define __MCF_TEB_STORE_PTR_SIB(base, i, in)     (__writefsdword((base) + ((i) << 2), (unsigned int) (in)))
-#    define __MCF_64_32(x, y)  y
-#    define __MCF_USYM  "_"
-#    define __MCF_M_X8632  1
-#  elif defined _M_ARM64 || defined _M_ARM64EC
-#    define __MCF_TEB_LOAD_32_ABS(out, base)         (*(unsigned int*) (out) = __readx18dword((base)))
-#    define __MCF_TEB_STORE_32_ABS(base, in)         (__writex18dword((base), (in)))
-#    define __MCF_TEB_LOAD_32_SIB(out, base, i)      (*(unsigned int*) (out) = __readx18dword((base) + ((i) << 2)))
-#    define __MCF_TEB_STORE_32_SIB(base, i, in)      (__writex18dword((base) + ((i) << 2), (in)))
-#    define __MCF_TEB_LOAD_PTR_ABS(out, base)        (*(void**) (out) = (void*) __readx18qword((base)))
-#    define __MCF_TEB_STORE_PTR_ABS(base, in)        (__writex18qword((base), (unsigned long long) (in)))
-#    define __MCF_TEB_LOAD_PTR_SIB(out, base, i)     (*(void**) (out) = (void*) __readx18qword((base) + ((i) << 3)))
-#    define __MCF_TEB_STORE_PTR_SIB(base, i, in)     (__writex18qword((base) + ((i) << 3), (unsigned long long) (in)))
-#    define __MCF_64_32(x, y)  x
-#    define __MCF_USYM  ""
-#    if defined __aarch64__
-#      define __MCF_M_ARM64  1
-#    else
-#      define __MCF_M_X8664  1
-#      define __MCF_M_ARM64EC  1
-#    endif
-#  endif
-#endif
-
-/* Define compiler-specific stuff. In the case of Clang-CL, prefer GNU
+/* Define compiler-specific macros. In the case of Clang-CL, prefer GNU
  * extensions to Microsoft ones.  */
 #if defined __GNUC__ || defined __clang__
 #  define __MCF_EX             __extension__
@@ -236,6 +139,27 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
 #  define __MCF_UNREACHABLE     __builtin_unreachable()
 #  define __MCF_ALT_SYM(x, fn)   extern __typeof__(x) fn __asm__(__MCF_USYM #x)
+#  if defined __amd64__ && !defined __arm64ec__
+#    define __MCF_64_32(x, y)  x
+#    define __MCF_USYM  ""
+#    define __MCF_M_X8664_ASM  1
+#    define __MCF_M_X8664  1
+#  elif defined __i386__
+#    define __MCF_64_32(x, y)  y
+#    define __MCF_USYM  "_"
+#    define __MCF_M_X8632_ASM  1
+#    define __MCF_M_X8632  1
+#  elif defined __aarch64__ || defined __arm64ec__
+#    define __MCF_64_32(x, y)  x
+#    define __MCF_USYM  ""
+#    define __MCF_M_ARM64_ASM  1
+#    if defined __aarch64__
+#      define __MCF_M_ARM64  1
+#    else
+#      define __MCF_M_X8664  1
+#      define __MCF_M_ARM64EC  1
+#    endif
+#  endif
 #else
 #  define __MCF_EX             /* unsupported */
 #  define __MCF_GNU_INLINE      __inline
@@ -248,6 +172,24 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_ALIGNED(x)    __declspec(align(x))
 #  define __MCF_UNREACHABLE     __assume(0)
 #  define __MCF_ALT_SYM(x, fn)   __pragma(comment(linker, "/alternatename:" __MCF_USYM #fn "=" __MCF_USYM #x))
+#  if defined _M_X64 && !defined _M_ARM64EC
+#    define __MCF_64_32(x, y)  x
+#    define __MCF_USYM  ""
+#    define __MCF_M_X8664  1
+#  elif defined _M_IX86
+#    define __MCF_64_32(x, y)  y
+#    define __MCF_USYM  "_"
+#    define __MCF_M_X8632  1
+#  elif defined _M_ARM64 || defined _M_ARM64EC
+#    define __MCF_64_32(x, y)  x
+#    define __MCF_USYM  ""
+#    if defined __aarch64__
+#      define __MCF_M_ARM64  1
+#    else
+#      define __MCF_M_X8664  1
+#      define __MCF_M_ARM64EC  1
+#    endif
+#  endif
 #endif
 
 /* These are necessary when the header is compiled as C89 or C++98. The check
