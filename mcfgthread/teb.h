@@ -53,23 +53,17 @@ __MCF_teb_load_32(uint32_t __offset)
   __MCF_noexcept
   {
 #if defined __clang__ && defined __MCF_M_X8664_ASM
-    return *(__seg_gs uint32_t*) __offset;
+    return *(uint32_t __seg_gs*) __offset;
 #elif defined __clang__ && defined __MCF_M_X8632_ASM
-    return *(__seg_fs uint32_t*) __offset;
-#elif defined __MCF_M_X8664_ASM
-    return *((uint32_t*) __MCF_teb() + __offset / 4);
-#elif defined __MCF_M_X8632_ASM
-    return *((uint32_t*) __MCF_teb() + __offset / 4);
-#elif defined __MCF_M_ARM64_ASM
-    return *((uint32_t*) __MCF_teb() + __offset / 4);
-#elif defined __MCF_M_X8664
+    return *(uint32_t __seg_fs*) __offset;
+#elif defined _MSC_VER && defined __MCF_M_X8664
     return __readgsdword(__offset);
-#elif defined __MCF_M_X8632
+#elif defined _MSC_VER && defined __MCF_M_X8632
     return __readfsdword(__offset);
-#elif defined __MCF_M_ARM64
+#elif defined _MSC_VER && defined __MCF_M_ARM64
     return __readx18dword(__offset);
 #else
-#  error unimplemented
+    return *((uint32_t*) __MCF_teb() + __offset / 4);
 #endif
   }
 
@@ -79,23 +73,17 @@ __MCF_teb_store_32(uint32_t __offset, uint32_t __value)
   __MCF_noexcept
   {
 #if defined __clang__ && defined __MCF_M_X8664_ASM
-    *(__seg_gs uint32_t*) __offset = __value;
+    *( uint32_t __seg_gs*) __offset = __value;
 #elif defined __clang__ && defined __MCF_M_X8632_ASM
-    *(__seg_fs uint32_t*) __offset = __value;
-#elif defined __MCF_M_X8664_ASM
-    *((uint32_t*) __MCF_teb() + __offset / 4) = __value;
-#elif defined __MCF_M_X8632_ASM
-    *((uint32_t*) __MCF_teb() + __offset / 4) = __value;
-#elif defined __MCF_M_ARM64_ASM
-    *((uint32_t*) __MCF_teb() + __offset / 4) = __value;
-#elif defined __MCF_M_X8664
+    *( uint32_t __seg_fs*) __offset = __value;
+#elif defined _MSC_VER && defined __MCF_M_X8664
     __writegsdword(__offset, __value);
-#elif defined __MCF_M_X8632
+#elif defined _MSC_VER && defined __MCF_M_X8632
     __writefsdword(__offset, __value);
-#elif defined __MCF_M_ARM64
+#elif defined _MSC_VER && defined __MCF_M_ARM64
     __writex18dword(__offset, __value);
 #else
-#  error unimplemented
+    *((uint32_t*) __MCF_teb() + __offset / 4) = __value;
 #endif
   }
 
@@ -105,23 +93,17 @@ __MCF_teb_load_ptr(uint32_t __offset)
   __MCF_noexcept
   {
 #if defined __clang__ && defined __MCF_M_X8664_ASM
-    return (void*) *(__seg_gs uint64_t*) __offset;
+    return *(void* __seg_gs*) __offset;
 #elif defined __clang__ && defined __MCF_M_X8632_ASM
-    return (void*) *(__seg_fs uint32_t*) __offset;
-#elif defined __MCF_M_X8664_ASM
-    return (void*) *((uint64_t*) __MCF_teb() + __offset / 8);
-#elif defined __MCF_M_X8632_ASM
-    return (void*) *((uint32_t*) __MCF_teb() + __offset / 4);
-#elif defined __MCF_M_ARM64_ASM
-    return (void*) *((uint64_t*) __MCF_teb() + __offset / 8);
-#elif defined __MCF_M_X8664
+    return *(void* __seg_fs*) __offset;
+#elif defined _MSC_VER && defined __MCF_M_X8664
     return (void*) __readgsqword(__offset);
-#elif defined __MCF_M_X8632
+#elif defined _MSC_VER && defined __MCF_M_X8632
     return (void*) __readfsdword(__offset);
-#elif defined __MCF_M_ARM64
+#elif defined _MSC_VER && defined __MCF_M_ARM64
     return (void*) __readx18qword(__offset);
 #else
-#  error unimplemented
+    return *((void**) __MCF_teb() + __offset / sizeof(void*));
 #endif
   }
 
@@ -131,23 +113,17 @@ __MCF_teb_store_ptr(uint32_t __offset, const void* __value)
   __MCF_noexcept
   {
 #if defined __clang__ && defined __MCF_M_X8664_ASM
-    *(__seg_gs uint64_t*) __offset = (uint64_t) __value;
+    *(const void* __seg_gs*) __offset = __value;
 #elif defined __clang__ && defined __MCF_M_X8632_ASM
-    *(__seg_fs uint32_t*) __offset = (uint32_t) __value;
-#elif defined __MCF_M_X8664_ASM
-    *((uint64_t*) __MCF_teb() + __offset / 8) = (uint64_t) __value;
-#elif defined __MCF_M_X8632_ASM
-    *((uint32_t*) __MCF_teb() + __offset / 4) = (uint32_t) __value;
-#elif defined __MCF_M_ARM64_ASM
-    *((uint64_t*) __MCF_teb() + __offset / 8) = (uint64_t) __value;
-#elif defined __MCF_M_X8664
+    *(const void* __seg_fs*) __offset = __value;
+#elif defined _MSC_VER && defined __MCF_M_X8664
     __writegsqword(__offset, (uint64_t) __value);
-#elif defined __MCF_M_X8632
+#elif defined _MSC_VER && defined __MCF_M_X8632
     __writefsdword(__offset, (uint32_t) __value);
-#elif defined __MCF_M_ARM64
+#elif defined _MSC_VER && defined __MCF_M_ARM64
     __writex18qword(__offset, (uint64_t) __value);
 #else
-#  error unimplemented
+    *((const void**) __MCF_teb() + __offset / sizeof(void*)) = __value;
 #endif
   }
 
