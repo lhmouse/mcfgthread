@@ -248,14 +248,14 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
     EXCEPTION_REGISTRATION_RECORD* const __MCF_i386_seh_record  \
            __attribute__((__cleanup__(__MCF_i386_seh_cleanup)))  \
       = __MCF_i386_seh_install(  \
-          (DWORD []) { __MCF_teb_load_32(0, 0), (DWORD) (fn), __VA_ARGS__ })  /* no semicolon  */
+          (DWORD []) { __MCF_teb_load_32(0), (DWORD) (fn), __VA_ARGS__ })  /* no semicolon  */
 
 __MCF_ALWAYS_INLINE
 EXCEPTION_REGISTRATION_RECORD*
 __MCF_i386_seh_install(DWORD* storage)
   {
     EXCEPTION_REGISTRATION_RECORD* const restrict record = (void*) storage;
-    __MCF_teb_store_32(0, 0, (DWORD) record);
+    __MCF_teb_store_32(0, (DWORD) record);
     return record;
   }
 
@@ -264,7 +264,7 @@ void
 __MCF_i386_seh_cleanup(EXCEPTION_REGISTRATION_RECORD* const* ref)
   {
     EXCEPTION_REGISTRATION_RECORD* const restrict record = *ref;
-    __MCF_teb_store_32(0, 0, (DWORD) record->Next);
+    __MCF_teb_store_32(0, (DWORD) record->Next);
   }
 
 /* Some old code assumes that ESP is always aligned to a 16-byte boundary,
