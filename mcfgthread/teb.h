@@ -127,5 +127,33 @@ __MCF_teb_store_ptr(uint32_t __offset, const void* __value)
 #endif
   }
 
+__MCF_TEB_INLINE __MCF_FN_CONST
+void*
+__MCF_peb(void)
+  __MCF_noexcept
+  {
+#if defined __MCF_M_X8664_ASM
+    void* __peb;
+    __asm__ ("mov { %%gs:0x60, %0 | %0, gs:[0x60] }" : "=r"(__peb));
+    return __peb;
+#elif defined __MCF_M_X8632_ASM
+    void* __peb;
+    __asm__ ("mov { %%fs:0x30, %0 | %0, fs:[0x30] }" : "=r"(__peb));
+    return __peb;
+#elif defined __MCF_M_ARM64_ASM
+    void* __peb;
+    __asm__ ("ldr %0, [x18, 0x60]" : "=r"(__peb));
+    return __peb;
+#elif defined __MCF_M_X8664
+    return (void*) __readgsqword(0x60);
+#elif defined __MCF_M_X8632
+    return (void*) __readfsdword(0x30);
+#elif defined __MCF_M_ARM64
+    return (void*) __readx18qword(0x60);
+#else
+#  error unimplemented
+#endif
+  }
+
 __MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_TEB_  */

@@ -36,6 +36,12 @@ main(void)
     __MCF_teb_store_32(0x1480 + tls_index * 8, 0x21436587);
     __MCF_teb_store_32(0x1480 + tls_index * 8 + 4, 0xA9CBED0F);
     assert(TlsGetValue(tls_index) == (void*) 0xA9CBED0F21436587);
+
+    void* rtl_user_process_parameters = *(void**) ((char*) __MCF_peb() + 0x20);
+    assert(rtl_user_process_parameters != NULL);
+    assert(GetStdHandle(STD_INPUT_HANDLE) == *(HANDLE*) ((char*) rtl_user_process_parameters + 0x20));
+    assert(GetStdHandle(STD_OUTPUT_HANDLE) == *(HANDLE*) ((char*) rtl_user_process_parameters + 0x28));
+    assert(GetStdHandle(STD_ERROR_HANDLE) == *(HANDLE*) ((char*) rtl_user_process_parameters + 0x30));
 #endif
 
 #if __MCF_64_32(64, 32) != 64
@@ -52,5 +58,11 @@ main(void)
 
     __MCF_teb_store_32(0x0E10 + tls_index * 4, 0x21436587);
     assert(TlsGetValue(tls_index) == (void*) 0x21436587);
+
+    void* rtl_user_process_parameters = *(void**) ((char*) __MCF_peb() + 0x10);
+    assert(rtl_user_process_parameters != NULL);
+    assert(GetStdHandle(STD_INPUT_HANDLE) == *(HANDLE*) ((char*) rtl_user_process_parameters + 0x18));
+    assert(GetStdHandle(STD_OUTPUT_HANDLE) == *(HANDLE*) ((char*) rtl_user_process_parameters + 0x1C));
+    assert(GetStdHandle(STD_ERROR_HANDLE) == *(HANDLE*) ((char*) rtl_user_process_parameters + 0x20));
 #endif
   }
