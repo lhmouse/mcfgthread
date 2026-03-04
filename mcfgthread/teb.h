@@ -239,15 +239,13 @@ __MCF_teb_load_ptr(uint32_t __base, uint32_t __index)
     if(__builtin_constant_p(__base) && __builtin_constant_p(__index))
       __asm__ (
         "ldr %x0, [x18, %1]"
-        : "=r"(__value)
-        : "i"(__base + __index * 8)
+        : "=r"(__value) : "i"(__base + __index * 8)
         : "memory"
       );
     else
       __asm__ (
         "ldr %x0, [x18, %w1, uxtw 3]"
-        : "=r"(__value)
-        : "r"(__base / 8 + __index)
+        : "=r"(__value) : "r"(__base / 8 + __index)
         : "memory"
       );
 #elif defined __MCF_M_X8664
