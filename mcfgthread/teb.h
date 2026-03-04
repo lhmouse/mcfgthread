@@ -73,9 +73,9 @@ __MCF_teb_store_32(uint32_t __offset, uint32_t __value)
   __MCF_noexcept
   {
 #if defined __clang__ && defined __MCF_M_X8664_ASM
-    *( uint32_t __seg_gs*) __offset = __value;
+    *(uint32_t __seg_gs*) __offset = __value;
 #elif defined __clang__ && defined __MCF_M_X8632_ASM
-    *( uint32_t __seg_fs*) __offset = __value;
+    *(uint32_t __seg_fs*) __offset = __value;
 #elif defined _MSC_VER && !defined __clang__ && defined __MCF_M_X8664
     __writegsdword(__offset, __value);
 #elif defined _MSC_VER && !defined __clang__ && defined __MCF_M_X8632
