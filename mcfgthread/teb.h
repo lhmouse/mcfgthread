@@ -32,13 +32,13 @@ __MCF_teb_load_32(uint32_t __base, uint32_t __index)
         : "=r"(__value) : "i"(__base + __index * 4)
         : "memory"
       );
-    else if(__builtin_constant_p(__base) && !__builtin_constant_p(__index))
+    else if(__builtin_constant_p(__base))
       __asm__ (
         "mov { %%gs:%a1(,%2,4), %k0 | %k0, gs:[%1+%2*4] }"
         : "=r"(__value) : "i"(__base), "r"((uint64_t) __index)
         : "memory"
       );
-    else if(!__builtin_constant_p(__base) && __builtin_constant_p(__index))
+    else if(__builtin_constant_p(__index))
       __asm__ (
         "mov { %%gs:%a2(%1), %k0 | %k0, gs:[%1+%2] }"
         : "=r"(__value) : "r"((uint64_t) __base), "i"(__index * 4)
@@ -57,13 +57,13 @@ __MCF_teb_load_32(uint32_t __base, uint32_t __index)
         : "=r"(__value) : "i"(__base + __index * 4)
         : "memory"
       );
-    else if(__builtin_constant_p(__base) && !__builtin_constant_p(__index))
+    else if(__builtin_constant_p(__base))
       __asm__ (
         "mov { %%fs:%a1(,%2,4), %k0 | %k0, fs:[%1+%2*4] }"
         : "=r"(__value) : "i"(__base), "r"(__index)
         : "memory"
       );
-    else if(!__builtin_constant_p(__base) && __builtin_constant_p(__index))
+    else if(__builtin_constant_p(__index))
       __asm__ (
         "mov { %%fs:%a2(%1), %k0 | %k0, fs:[%1+%2] }"
         : "=r"(__value) : "r"(__base), "i"(__index * 4)
@@ -112,13 +112,13 @@ __MCF_teb_store_32(uint32_t __base, uint32_t __index, uint32_t __value)
         : : "r"(__value), "i"(__base + __index * 4)
         : "memory"
       );
-    else if(__builtin_constant_p(__base) && !__builtin_constant_p(__index))
+    else if(__builtin_constant_p(__base))
       __asm__ volatile (
         "mov { %k0, %%gs:%a1(,%2,4) | gs:[%1+%2*4], %k0 }"
         : : "r"(__value), "i"(__base), "r"((uint64_t) __index)
         : "memory"
       );
-    else if(!__builtin_constant_p(__base) && __builtin_constant_p(__index))
+    else if(__builtin_constant_p(__index))
       __asm__ volatile (
         "mov { %k0, %%gs:%a2(%1) | gs:[%1+%2], %k0 }"
         : : "r"(__value), "r"((uint64_t) __base), "i"(__index * 4)
@@ -137,13 +137,13 @@ __MCF_teb_store_32(uint32_t __base, uint32_t __index, uint32_t __value)
         : : "r"(__value), "i"(__base + __index * 4)
         : "memory"
       );
-    else if(__builtin_constant_p(__base) && !__builtin_constant_p(__index))
+    else if(__builtin_constant_p(__base))
       __asm__ volatile (
         "mov { %k0, %%fs:%a1(,%2,4) | fs:[%1+%2*4], %k0 }"
         : : "r"(__value), "i"(__base), "r"(__index)
         : "memory"
       );
-    else if(!__builtin_constant_p(__base) && __builtin_constant_p(__index))
+    else if(__builtin_constant_p(__index))
       __asm__ volatile (
         "mov { %k0, %%fs:%a2(%1) | fs:[%1+%2], %k0 }"
         : : "r"(__value), "r"(__base), "i"(__index * 4)
