@@ -56,11 +56,11 @@ __MCF_teb_load_32(uint32_t __offset)
     return *(uint32_t __seg_gs*) __offset;
 #elif defined __clang__ && defined __MCF_M_X8632_ASM
     return *(uint32_t __seg_fs*) __offset;
-#elif defined _MSC_VER && defined __MCF_M_X8664
+#elif defined _MSC_VER && !defined __clang__ && defined __MCF_M_X8664
     return __readgsdword(__offset);
-#elif defined _MSC_VER && defined __MCF_M_X8632
+#elif defined _MSC_VER && !defined __clang__ && defined __MCF_M_X8632
     return __readfsdword(__offset);
-#elif defined _MSC_VER && defined __MCF_M_ARM64
+#elif defined _MSC_VER && !defined __clang__ && defined __MCF_M_ARM64
     return __readx18dword(__offset);
 #else
     return *((uint32_t*) __MCF_teb() + __offset / 4);
@@ -76,11 +76,11 @@ __MCF_teb_store_32(uint32_t __offset, uint32_t __value)
     *( uint32_t __seg_gs*) __offset = __value;
 #elif defined __clang__ && defined __MCF_M_X8632_ASM
     *( uint32_t __seg_fs*) __offset = __value;
-#elif defined _MSC_VER && defined __MCF_M_X8664
+#elif defined _MSC_VER && !defined __clang__ && defined __MCF_M_X8664
     __writegsdword(__offset, __value);
-#elif defined _MSC_VER && defined __MCF_M_X8632
+#elif defined _MSC_VER && !defined __clang__ && defined __MCF_M_X8632
     __writefsdword(__offset, __value);
-#elif defined _MSC_VER && defined __MCF_M_ARM64
+#elif defined _MSC_VER && !defined __clang__ && defined __MCF_M_ARM64
     __writex18dword(__offset, __value);
 #else
     *((uint32_t*) __MCF_teb() + __offset / 4) = __value;
@@ -96,11 +96,11 @@ __MCF_teb_load_ptr(uint32_t __offset)
     return *(void* __seg_gs*) __offset;
 #elif defined __clang__ && defined __MCF_M_X8632_ASM
     return *(void* __seg_fs*) __offset;
-#elif defined _MSC_VER && defined __MCF_M_X8664
+#elif defined _MSC_VER && !defined __clang__ && defined __MCF_M_X8664
     return (void*) __readgsqword(__offset);
-#elif defined _MSC_VER && defined __MCF_M_X8632
+#elif defined _MSC_VER && !defined __clang__ && defined __MCF_M_X8632
     return (void*) __readfsdword(__offset);
-#elif defined _MSC_VER && defined __MCF_M_ARM64
+#elif defined _MSC_VER && !defined __clang__ && defined __MCF_M_ARM64
     return (void*) __readx18qword(__offset);
 #else
     return *((void**) __MCF_teb() + __offset / sizeof(void*));
@@ -116,11 +116,11 @@ __MCF_teb_store_ptr(uint32_t __offset, const void* __value)
     *(const void* __seg_gs*) __offset = __value;
 #elif defined __clang__ && defined __MCF_M_X8632_ASM
     *(const void* __seg_fs*) __offset = __value;
-#elif defined _MSC_VER && defined __MCF_M_X8664
+#elif defined _MSC_VER && !defined __clang__ && defined __MCF_M_X8664
     __writegsqword(__offset, (uint64_t) __value);
-#elif defined _MSC_VER && defined __MCF_M_X8632
+#elif defined _MSC_VER && !defined __clang__ && defined __MCF_M_X8632
     __writefsdword(__offset, (uint32_t) __value);
-#elif defined _MSC_VER && defined __MCF_M_ARM64
+#elif defined _MSC_VER && !defined __clang__ && defined __MCF_M_ARM64
     __writex18qword(__offset, (uint64_t) __value);
 #else
     *((const void**) __MCF_teb() + __offset / sizeof(void*)) = __value;
