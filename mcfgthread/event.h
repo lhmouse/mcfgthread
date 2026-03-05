@@ -133,7 +133,7 @@ _MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __
 #if __MCF_EXPAND_INLINE_DEFINITIONS
     _MCF_event __old_v;
     _MCF_atomic_load_pptr_acq(&__old_v, __eventp);
-    if(__old_v.__value != __undesired)
+    if(__old_v.__value != (uint8_t) __undesired)
       return __old_v.__value;
     else if(__timeout_opt && (*__timeout_opt == 0))
       return -1;
