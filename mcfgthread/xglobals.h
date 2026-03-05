@@ -438,7 +438,7 @@ union __MCF_thread_storage
     struct
       {
         __MCF_BR(int32_t) __nref;  /* atomic reference count  */
-        uint32_t __tid;  /* thread id  */
+        int32_t __tid;  /* thread id  */
         __MCF_HANDLE __handle;  /* win32 thread handle  */
       };
   };
