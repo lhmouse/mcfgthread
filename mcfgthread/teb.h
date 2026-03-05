@@ -24,7 +24,11 @@ void*
 __MCF_teb(void)
   __MCF_noexcept
   {
-#if defined __MCF_M_X8664_ASM
+#if defined __clang__ && defined __MCF_M_X8664_ASM
+    return *(void* __seg_gs*) 0x30;
+#elif defined __clang__ && defined __MCF_M_X8632_ASM
+    return *(void* __seg_fs*) 0x18;
+#elif defined __MCF_M_X8664_ASM
     void* __teb;
     __asm__ ("mov { %%gs:0x30, %0 | %0, gs:[0x30] }" : "=r"(__teb));
     return __teb;
