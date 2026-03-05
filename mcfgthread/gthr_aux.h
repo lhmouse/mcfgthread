@@ -207,6 +207,7 @@ void
 __MCF_gthr_rc_mutex_release(__MCF_gthr_rc_mutex* __rmtx) __MCF_noexcept
   {
     /* Reduce a level of recursion.  */
+    __MCF_ASSERT(__rmtx->__owner[0] != 0);
     __MCF_ASSERT(__rmtx->__depth > 0);
     __rmtx->__depth --;
     if(__rmtx->__depth != 0)
