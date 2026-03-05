@@ -13,7 +13,7 @@
 #define NTHREADS  64U
 static __libcpp_thread_t threads[NTHREADS];
 static __libcpp_mutex_t mutex = _LIBCPP_MUTEX_INITIALIZER;
-static _MCF_sem start = __MCF_SEM_INIT(NTHREADS);
+static _MCF_sem start = __MCF_SEM_INIT(0);
 static int resource = 0;
 
 static

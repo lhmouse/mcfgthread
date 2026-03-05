@@ -13,7 +13,7 @@
 #define NTHREADS  64U
 static __gthread_t threads[NTHREADS];
 static __gthread_recursive_mutex_t mutex = __GTHREAD_RECURSIVE_MUTEX_INIT;
-static _MCF_sem start = __MCF_SEM_INIT(NTHREADS);
+static _MCF_sem start = __MCF_SEM_INIT(0);
 static int resource = 0;
 
 static

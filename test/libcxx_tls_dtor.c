@@ -13,7 +13,7 @@
 #define NTHREADS  64U
 static __libcpp_thread_t threads[NTHREADS];
 static __libcpp_tls_key key;
-static _MCF_sem start = __MCF_SEM_INIT(NTHREADS);
+static _MCF_sem start = __MCF_SEM_INIT(0);
 static int count;
 
 static
