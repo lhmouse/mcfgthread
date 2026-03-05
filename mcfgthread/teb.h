@@ -63,7 +63,7 @@ __MCF_teb_load_32(uint32_t __offset)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM && defined __clang__
-    return *(uint32_t __seg_gs*) __offset;
+    return *(uint32_t __seg_gs*)(uint64_t) __offset;
 #elif defined __MCF_M_X8632_ASM && defined __clang__
     return *(uint32_t __seg_fs*) __offset;
 #elif defined __MCF_M_X8664 && defined _MSC_VER && !defined __clang__
@@ -83,7 +83,7 @@ __MCF_teb_store_32(uint32_t __offset, uint32_t __value)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM && defined __clang__
-    *(uint32_t __seg_gs*) __offset = __value;
+    *(uint32_t __seg_gs*)(uint64_t) __offset = __value;
 #elif defined __MCF_M_X8632_ASM && defined __clang__
     *(uint32_t __seg_fs*) __offset = __value;
 #elif defined __MCF_M_X8664 && defined _MSC_VER && !defined __clang__
@@ -103,7 +103,7 @@ __MCF_teb_load_ptr(uint32_t __offset)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM && defined __clang__
-    return *(void* __seg_gs*) __offset;
+    return *(void* __seg_gs*)(uint64_t) __offset;
 #elif defined __MCF_M_X8632_ASM && defined __clang__
     return *(void* __seg_fs*) __offset;
 #elif defined __MCF_M_X8664 && defined _MSC_VER && !defined __clang__
@@ -123,7 +123,7 @@ __MCF_teb_store_ptr(uint32_t __offset, const void* __value)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM && defined __clang__
-    *(const void* __seg_gs*) __offset = __value;
+    *(const void* __seg_gs*)(uint64_t) __offset = __value;
 #elif defined __MCF_M_X8632_ASM && defined __clang__
     *(const void* __seg_fs*) __offset = __value;
 #elif defined __MCF_M_X8664 && defined _MSC_VER && !defined __clang__
