@@ -393,7 +393,7 @@ void*
 __MCF_malloc_copy(const void* data, size_t size);
 
 /* Get the size of an allocated block, like `malloc_usable_size()`.  */
-__MCF_XGLOBALS_INLINE __MCF_FN_CONST
+__MCF_XGLOBALS_INLINE __MCF_FN_PURE
 size_t
 __MCF_msize(const void* ptr);
 
@@ -736,7 +736,7 @@ __MCF_malloc_copy(const void* data, size_t size)
     return ptr;
   }
 
-__MCF_XGLOBALS_INLINE __MCF_FN_CONST
+__MCF_XGLOBALS_INLINE __MCF_FN_PURE
 size_t
 __MCF_msize(const void* ptr)
   {
