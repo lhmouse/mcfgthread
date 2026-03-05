@@ -352,7 +352,7 @@ uint32_t
 _MCF_thread_self_tid(void)
   __MCF_noexcept
   {
-    return __MCF_teb_load_32(__MCF_64_32(0x48, 0x24));
+    return __MCF_tid();
   }
 
 __MCF_THREAD_INLINE __MCF_FN_PURE

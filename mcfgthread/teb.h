@@ -173,5 +173,77 @@ __MCF_peb(void)
 #endif
   }
 
+__MCF_TEB_INLINE __MCF_FN_CONST
+uint32_t
+__MCF_tid(void)
+  __MCF_noexcept
+  {
+#if defined __MCF_M_X8664_ASM
+#  if defined __clang__
+    return *(uint32_t __seg_gs*) 0x48;
+#  else
+    uint32_t __tid;
+    __asm__ ("mov { %%gs:0x48, %0 | %0, gs:[0x48] }" : "=r"(__tid));
+    return __tid;
+#  endif
+#elif defined __MCF_M_X8632_ASM
+#  if defined __clang__
+    return *(uint32_t __seg_fs*) 0x24;
+#  else
+    uint32_t __tid;
+    __asm__ ("mov { %%fs:0x24, %0 | %0, fs:[0x24] }" : "=r"(__tid));
+    return __tid;
+#  endif
+#elif defined __MCF_M_ARM64_ASM
+    uint32_t __tid;
+    __asm__ ("ldr %0, [x18, 0x48]" : "=r"(__tid));
+    return __tid;
+#elif defined __MCF_M_X8664
+    return __readgsdword(0x48);
+#elif defined __MCF_M_X8632
+    return __readfsdword(0x24);
+#elif defined __MCF_M_ARM64
+    return __readx18dword(0x48);
+#else
+    return *((char*) __MCF_teb() + __MCF_64_32(0x48, 0x24));
+#endif
+  }
+
+__MCF_TEB_INLINE __MCF_FN_CONST
+uint32_t
+__MCF_pid(void)
+  __MCF_noexcept
+  {
+#if defined __MCF_M_X8664_ASM
+#  if defined __clang__
+    return *(uint32_t __seg_gs*) 0x40;
+#  else
+    uint32_t __pid;
+    __asm__ ("mov { %%gs:0x40, %0 | %0, gs:[0x40] }" : "=r"(__pid));
+    return __pid;
+#  endif
+#elif defined __MCF_M_X8632_ASM
+#  if defined __clang__
+    return *(uint32_t __seg_fs*) 0x20;
+#  else
+    uint32_t __pid;
+    __asm__ ("mov { %%fs:0x20, %0 | %0, fs:[0x20] }" : "=r"(__pid));
+    return __pid;
+#  endif
+#elif defined __MCF_M_ARM64_ASM
+    uint32_t __pid;
+    __asm__ ("ldr %0, [x18, 0x40]" : "=r"(__pid));
+    return __pid;
+#elif defined __MCF_M_X8664
+    return __readgsdword(0x40);
+#elif defined __MCF_M_X8632
+    return __readfsdword(0x20);
+#elif defined __MCF_M_ARM64
+    return __readx18dword(0x40);
+#else
+    return *((char*) __MCF_teb() + __MCF_64_32(0x40, 0x20));
+#endif
+  }
+
 __MCF_CXX(})  /* extern "C"  */
 #endif  /* __MCFGTHREAD_TEB_  */
