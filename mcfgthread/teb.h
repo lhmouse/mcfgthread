@@ -183,7 +183,7 @@ __MCF_tid(void)
     return *(uint32_t __seg_gs*) 0x48;
 #  else
     uint32_t __tid;
-    __asm__ ("mov { %%gs:0x48, %0 | %0, gs:[0x48] }" : "=r"(__tid));
+    __asm__ ("mov { %%gs:0x48, %k0 | %k0, gs:[0x48] }" : "=r"(__tid));
     return __tid;
 #  endif
 #elif defined __MCF_M_X8632_ASM
@@ -191,12 +191,12 @@ __MCF_tid(void)
     return *(uint32_t __seg_fs*) 0x24;
 #  else
     uint32_t __tid;
-    __asm__ ("mov { %%fs:0x24, %0 | %0, fs:[0x24] }" : "=r"(__tid));
+    __asm__ ("mov { %%fs:0x24, %k0 | %k0, fs:[0x24] }" : "=r"(__tid));
     return __tid;
 #  endif
 #elif defined __MCF_M_ARM64_ASM
     uint32_t __tid;
-    __asm__ ("ldr %0, [x18, 0x48]" : "=r"(__tid));
+    __asm__ ("ldr %w0, [x18, 0x48]" : "=r"(__tid));
     return __tid;
 #elif defined __MCF_M_X8664
     return __readgsdword(0x48);
@@ -219,7 +219,7 @@ __MCF_pid(void)
     return *(uint32_t __seg_gs*) 0x40;
 #  else
     uint32_t __pid;
-    __asm__ ("mov { %%gs:0x40, %0 | %0, gs:[0x40] }" : "=r"(__pid));
+    __asm__ ("mov { %%gs:0x40, %k0 | %k0, gs:[0x40] }" : "=r"(__pid));
     return __pid;
 #  endif
 #elif defined __MCF_M_X8632_ASM
@@ -227,12 +227,12 @@ __MCF_pid(void)
     return *(uint32_t __seg_fs*) 0x20;
 #  else
     uint32_t __pid;
-    __asm__ ("mov { %%fs:0x20, %0 | %0, fs:[0x20] }" : "=r"(__pid));
+    __asm__ ("mov { %%fs:0x20, %k0 | %k0, fs:[0x20] }" : "=r"(__pid));
     return __pid;
 #  endif
 #elif defined __MCF_M_ARM64_ASM
     uint32_t __pid;
-    __asm__ ("ldr %0, [x18, 0x40]" : "=r"(__pid));
+    __asm__ ("ldr %w0, [x18, 0x40]" : "=r"(__pid));
     return __pid;
 #elif defined __MCF_M_X8664
     return __readgsdword(0x40);
