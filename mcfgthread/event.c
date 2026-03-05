@@ -82,12 +82,24 @@ _MCF_event_set_slow(_MCF_event* event, int value)
     if((value < 0) || (value > __MCF_EVENT_VALUE_MAX))
       return -1;
 
-    /* Set the `__value` field and get the number of sleeping threads as an
-     * atomic operation.  */
-    _MCF_event old, new = { .__value = (uint8_t) value };
-    _MCF_atomic_xchg_pptr_rel(&old, event, &new);
+    size_t wake_num;
+    _MCF_event old, new;
 
-    /* Wake up all threads.  */
-    __MCF_batch_release_common(event, old.__nsleep);
+    /* Get the number of threads to wake up.  */
+    _MCF_atomic_load_pptr_rlx(&old, event);
+    for(;;) {
+      if(old.__value == (uint8_t) value)
+        return 0;
+
+      wake_num = old.__nsleep;
+      new.__value = (uint8_t) value;
+      new.__nsleep = 0;
+
+      if(_MCF_atomic_cmpxchg_weak_pptr_rel(event, &old, &new))
+        break;
+    }
+
+    /* Wake up these threads.  */
+    __MCF_batch_release_common(event, wake_num);
     return 0;
   }
