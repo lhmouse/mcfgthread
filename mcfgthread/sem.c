@@ -20,7 +20,7 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
     _MCF_sem old, new;
 
     /* Decrement the counter.  */
-    old.__value = _MCF_atomic_xsub_ptr_rlx(&(sem->__value), 1);
+    old.__value = _MCF_atomic_xsub_ptr_acq(&(sem->__value), 1);
     new.__value = old.__value - 1;
 
     /* If the new value is non-negative, the calling thread should leave.  */
