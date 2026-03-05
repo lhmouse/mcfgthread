@@ -666,7 +666,7 @@ __MCF_mcompare(const void* src, const void* cmp, size_t size)
 #if defined __MCF_M_X8632_ASM || defined __MCF_M_X8664_ASM
     PVOID esi, edi, ecx;
     __asm__ (
-      "xor eax, eax; "  /* clear ZF and CF  */
+      "xor eax, eax; "  /* set ZF and CF  */
       "repz cmpsb; "    /* compare DS:[ESI] with ES:[EDI]  */
       "setnz al; "      /* EAX = 0 if equal, 1 if less or greater  */
       "sbb ecx, ecx; "  /* ECX = 0 if equal or greater, -1 if less  */
@@ -690,7 +690,7 @@ __MCF_mequal(const void* src, const void* cmp, size_t size)
 #if defined __MCF_M_X8632_ASM || defined __MCF_M_X8664_ASM
     PVOID esi, edi, ecx;
     __asm__ (
-      "test ecx, ecx; " /* clear ZF if there is no input  */
+      "test ecx, ecx; " /* set ZF if there is no input  */
       "repz cmpsb; "    /* compare DS:[ESI] with ES:[EDI]  */
       : "=@ccz"(eq), "=S"(esi), "=c"(ecx), "=D"(edi)
       : "1"(src), "2"(size), "3"(cmp)
