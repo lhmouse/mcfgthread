@@ -27,11 +27,11 @@ main(void)
     HMODULE ntdll = LoadLibraryW(L"ntdll.dll");
     assert(ntdll);
 
-    typedef void __cdecl memmove_t(void*, const void*, size_t);
+    typedef void* __cdecl memmove_t(void*, const void*, size_t);
     memmove_t* pmemmove = __MCF_CAST_PTR(memmove_t, GetProcAddress(ntdll, "memmove"));
     assert(pmemmove);
 
-    typedef void __cdecl memset_t(void*, int, size_t);
+    typedef void* __cdecl memset_t(void*, int, size_t);
     memset_t* pmemset = __MCF_CAST_PTR(memset_t, GetProcAddress(ntdll, "memset"));
     assert(pmemset);
 
