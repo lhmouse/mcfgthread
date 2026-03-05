@@ -17,6 +17,7 @@
 #include <winnt.h>
 #include <winerror.h>
 #include <sysinfoapi.h>
+#include <libloaderapi.h>
 #include <heapapi.h>
 
 #if __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
