@@ -45,7 +45,7 @@ do_win32_thread_thunk(LPVOID param)
     }
 
     /* Let the creator go, which invalidates `*init`.  */
-    __MCF_ASSERT(thrd->__tid == _MCF_thread_self_tid());
+    __MCF_ASSERT(thrd->__tid == __MCF_tid());
     _MCF_event_set(init->status, initialization_running);
     init = __MCF_BAD_PTR;
 
@@ -140,7 +140,7 @@ __MCF_thread_attach_foreign(_MCF_thread* thrd)
     __MCF_CHECK(__MCF_crt_TlsGetValue(__MCF_g->__tls_index) == __MCF_nullptr);
 
     /* Initialize thread identity fields.  */
-    thrd->__tid = _MCF_thread_self_tid();
+    thrd->__tid = __MCF_tid();
     thrd->__handle = __MCF_duplicate_handle(GetCurrentThread());
     __MCF_CHECK(thrd->__handle);
 

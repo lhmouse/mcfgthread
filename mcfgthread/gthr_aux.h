@@ -29,7 +29,7 @@ typedef void* __MCF_gthr_thread_procedure(void* __arg);
 
 struct __MCF_gthr_rc_mutex
   {
-    __MCF_BR(uint32_t) __owner;  /* owner thread ID  */
+    __MCF_BR(int32_t) __owner;  /* owner thread ID  */
     int __depth;  /* recursion depth  */
     __MCF_BR(_MCF_mutex) __mutex;
   };
@@ -199,7 +199,7 @@ __MCF_gthr_rc_mutex_recurse(__MCF_gthr_rc_mutex* __rmtx)
   __MCF_noexcept
   {
     /* Check whether the mutex has already been owned.  */
-    if(_MCF_atomic_load_32_rlx(__rmtx->__owner) != (int32_t) _MCF_thread_self_tid())
+    if(_MCF_atomic_load_32_rlx(__rmtx->__owner) != __MCF_tid())
       return -1;
 
     /* Increment the recursion count.  */
@@ -220,7 +220,7 @@ __MCF_gthr_rc_mutex_wait(__MCF_gthr_rc_mutex* __rmtx, const int64_t* __timeout_o
 
     /* The calling thread owns the mutex now.  */
     __MCF_ASSERT(__rmtx->__owner[0] == 0);
-    _MCF_atomic_store_32_rlx(__rmtx->__owner, (int32_t) _MCF_thread_self_tid());
+    _MCF_atomic_store_32_rlx(__rmtx->__owner, __MCF_tid());
     __MCF_ASSERT(__rmtx->__depth == 0);
     __rmtx->__depth = 1;
     return 0;

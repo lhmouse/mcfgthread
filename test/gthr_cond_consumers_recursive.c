@@ -38,12 +38,12 @@ thread_proc(void* param)
         assert(err == 0);
         assert(mutex.__mutex[0].__locked);
         assert(mutex.__depth == 3);
-        assert(mutex.__owner[0] == _MCF_thread_self_tid());
+        assert(mutex.__owner[0] == __MCF_tid());
       }
 
       /* Consume it  */
       int value_got = value;
-      //printf("thread %d got %d\n", (int) _MCF_thread_self_tid(), value_got);
+      //printf("thread %d got %d\n", __MCF_tid(), value_got);
       if(value_got > 0)
         value = 0;
 
@@ -93,7 +93,7 @@ main(void)
         assert(err == 0);
         assert(mutex.__mutex[0].__locked);
         assert(mutex.__depth == 3);
-        assert(mutex.__owner[0] == _MCF_thread_self_tid());
+        assert(mutex.__owner[0] == __MCF_tid());
       }
 
       /* Produce one  */
@@ -109,7 +109,7 @@ main(void)
       assert(err == 0);
       assert(mutex.__mutex[0].__locked);
       assert(mutex.__depth == 3);
-      assert(mutex.__owner[0] == _MCF_thread_self_tid());
+      assert(mutex.__owner[0] == __MCF_tid());
     }
 
     /* Inform end of input  */

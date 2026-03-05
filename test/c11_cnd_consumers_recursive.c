@@ -38,7 +38,7 @@ thread_proc(void* param)
         assert(err == thrd_success);
         assert(mutex.__rc_mtx[0].__mutex[0].__locked);
         assert(mutex.__rc_mtx[0].__depth == 3);
-        assert(mutex.__rc_mtx[0].__owner[0] == _MCF_thread_self_tid());
+        assert(mutex.__rc_mtx[0].__owner[0] == __MCF_tid());
       }
 
       /* Consume it  */
@@ -100,7 +100,7 @@ main(void)
         assert(err == thrd_success);
         assert(mutex.__rc_mtx[0].__mutex[0].__locked);
         assert(mutex.__rc_mtx[0].__depth == 3);
-        assert(mutex.__rc_mtx[0].__owner[0] == _MCF_thread_self_tid());
+        assert(mutex.__rc_mtx[0].__owner[0] == __MCF_tid());
       }
 
       /* Produce one  */
@@ -116,7 +116,7 @@ main(void)
       assert(err == thrd_success);
       assert(mutex.__rc_mtx[0].__mutex[0].__locked);
       assert(mutex.__rc_mtx[0].__depth == 3);
-      assert(mutex.__rc_mtx[0].__owner[0] == _MCF_thread_self_tid());
+      assert(mutex.__rc_mtx[0].__owner[0] == __MCF_tid());
     }
 
     /* Inform end of input  */

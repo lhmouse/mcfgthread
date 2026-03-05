@@ -197,13 +197,14 @@ __MCF_gthr_recursive_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
     /* Relock the mutex and restore the depth counter.  */
     _MCF_mutex_lock(rmtx->__mutex, __MCF_nullptr);
     __MCF_ASSERT(rmtx->__owner[0] == 0);
-    _MCF_atomic_store_32_rlx(rmtx->__owner, (int32_t) _MCF_thread_self_tid());
+    _MCF_atomic_store_32_rlx(rmtx->__owner, __MCF_tid());
     rmtx->__depth = (int) unlocked;
   }
 
 __MCF_DLLEXPORT
 int
-__MCF_gthr_cond_recursive_mutex_wait(_MCF_cond* cnd, __MCF_gthr_rc_mutex* rmtx, const int64_t* timeout_opt)
+__MCF_gthr_cond_recursive_mutex_wait(_MCF_cond* cnd, __MCF_gthr_rc_mutex* rmtx,
+                                     const int64_t* timeout_opt)
   {
     return _MCF_cond_wait(cnd, __MCF_gthr_recursive_mutex_unlock_callback,
                           __MCF_gthr_recursive_mutex_relock_callback,
@@ -252,7 +253,7 @@ void
 __MCF_gthr_thread_join_v3(_MCF_thread* thrd, void** resp_opt)
   {
     /* Wait for the thread to terminate.  */
-    __MCF_ASSERT(thrd->__tid != _MCF_thread_self_tid());
+    __MCF_ASSERT(thrd->__tid != __MCF_tid());
     _MCF_thread_wait(thrd, __MCF_nullptr);
 
     if(resp_opt) {

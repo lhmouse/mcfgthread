@@ -27,7 +27,7 @@ main(void)
     r = mtx_trylock(&mutex);
     assert(r == thrd_busy);
 
-    mutex.__rc_mtx[0].__owner[0] = _MCF_thread_self_tid();
+    mutex.__rc_mtx[0].__owner[0] = __MCF_tid();
     r = mtx_unlock(&mutex);
     assert(r == thrd_success);
 

@@ -24,7 +24,7 @@ __MCF_CXX(extern "C" {)
 struct __MCF_thread
   {
     __MCF_BR(int32_t) __nref;  /* atomic reference count  */
-    uint32_t __tid;  /* thread id  */
+    int32_t __tid;  /* thread id  */
     __MCF_HANDLE __handle;  /* win32 thread handle  */
 
     _MCF_thread_procedure* __proc;  /* user-defined thread procedure  */
@@ -336,7 +336,7 @@ uint32_t
 _MCF_thread_get_tid(const _MCF_thread* __thrd)
   __MCF_noexcept
   {
-    return __thrd->__tid;
+    return (uint32_t) __thrd->__tid;
   }
 
 __MCF_THREAD_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
@@ -352,7 +352,7 @@ uint32_t
 _MCF_thread_self_tid(void)
   __MCF_noexcept
   {
-    return __MCF_tid();
+    return (uint32_t) __MCF_tid();
   }
 
 __MCF_THREAD_INLINE __MCF_FN_PURE
