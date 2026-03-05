@@ -185,7 +185,7 @@ __MCF_peb(void)
 #elif defined __MCF_M_ARM64
     return (void*) __readx18qword(0x60);
 #else
-    return *((char*) __MCF_teb() + __MCF_64_32(0x60, 0x30));
+    return *(void**) ((char*) __MCF_teb() + __MCF_64_32(0x60, 0x30));
 #endif
   }
 
