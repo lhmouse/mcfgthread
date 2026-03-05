@@ -29,7 +29,7 @@ thread_proc(_MCF_thread* self)
       // Check whether a deadlock has occurred.
       //   https://github.com/lhmouse/mcfgthread/issues/86
       int32_t c1 = _MCF_atomic_load_32_rlx(&signal_count);
-      if(signal_count & 1) {
+      if(c1 & 1) {
         // Main thread is waiting.
         _MCF_sleep((const int64_t[]){ -10 });
         int32_t c2 = _MCF_atomic_load_32_rlx(&signal_count);
