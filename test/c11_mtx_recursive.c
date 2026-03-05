@@ -13,7 +13,7 @@
 #define NTHREADS  64U
 static thrd_t threads[NTHREADS];
 static mtx_t mutex;
-static _MCF_sem start = __MCF_SEM_INIT(NTHREADS);
+static _MCF_sem start = __MCF_SEM_INIT(0);
 static int resource = 0;
 
 static

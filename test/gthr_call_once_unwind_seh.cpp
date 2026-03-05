@@ -26,7 +26,7 @@ namespace NS = ::_MCF;
 constexpr std::size_t NTHREADS = 64U;
 static std::vector<NS::thread> threads(NTHREADS);
 static _MCF_once once;
-static ::_MCF_sem start = __MCF_SEM_INIT(NTHREADS);
+static ::_MCF_sem start = __MCF_SEM_INIT(0);
 static int resource = 0;
 
 static
