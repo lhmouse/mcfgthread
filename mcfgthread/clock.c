@@ -16,13 +16,13 @@ uint64_t
 do_divide_by_10000(uint64_t value)
   {
 #if defined __SIZEOF_INT128__
-    return (uint64_t) ((unsigned __int128) value * 0x68DB8BAC710CBULL >> 64);
+    return (uint64_t) ((unsigned __int128) value * 0x68DB8BAC710CCULL >> 64);
 #elif defined _MSC_VER && __MCF_64_32(1, 0)
-    return __umulh(value, 0x68DB8BAC710CBULL);
+    return __umulh(value, 0x68DB8BAC710CCULL);
 #else
-    uint64_t temp = (uint32_t) value * 0xBAC710CBULL >> 32;
+    uint64_t temp = (uint32_t) value * 0xBAC710CCULL >> 32;
     uint64_t middle = (uint32_t) value * 0x68DB8ULL;
-    temp = ((value >> 32) * 0xBAC710CBULL + (uint32_t) middle + temp) >> 32;
+    temp = ((value >> 32) * 0xBAC710CCULL + (uint32_t) middle + temp) >> 32;
     return temp + (middle >> 32) + (value >> 32) * 0x68DB8ULL;
 #endif
   }
