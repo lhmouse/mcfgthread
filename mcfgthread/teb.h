@@ -25,7 +25,9 @@ __MCF_teb(void)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM
-#  if defined __clang__
+#  if defined __FSGSBASE__
+    return (void*) __builtin_ia32_rdgsbase64();
+#  elif defined __clang__
     return *(void* __seg_gs*) 0x30;
 #  else
     void* __teb;
