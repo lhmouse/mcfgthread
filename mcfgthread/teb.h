@@ -143,13 +143,21 @@ __MCF_peb(void)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM
+#  if defined __clang__
+    return *(void* __seg_gs*) 0x60;
+#  else
     void* __peb;
     __asm__ ("mov { %%gs:0x60, %0 | %0, gs:[0x60] }" : "=r"(__peb));
     return __peb;
+#  endif
 #elif defined __MCF_M_X8632_ASM
+#  if defined __clang__
+    return *(void* __seg_fs*) 0x30;
+#  else
     void* __peb;
     __asm__ ("mov { %%fs:0x30, %0 | %0, fs:[0x30] }" : "=r"(__peb));
     return __peb;
+#  endif
 #elif defined __MCF_M_ARM64_ASM
     void* __peb;
     __asm__ ("ldr %0, [x18, 0x60]" : "=r"(__peb));
@@ -161,7 +169,7 @@ __MCF_peb(void)
 #elif defined __MCF_M_ARM64
     return (void*) __readx18qword(0x60);
 #else
-#  error unimplemented
+    return *((char*) __MCF_teb() + __MCF_64_32(0x60, 0x30));
 #endif
   }
 
