@@ -35,6 +35,8 @@
 
 /* `NTSTATUS`; ntdef.h  */
 typedef LONG NTSTATUS;
+typedef struct _UNICODE_STRING UNICODE_STRING;
+typedef struct _OBJECT_ATTRIBUTES OBJECT_ATTRIBUTES;
 
 #define NT_SUCCESS(status)      (((ULONG)(status) & 0x80000000) == 0x00000000)
 #define NT_INFORMATION(status)  (((ULONG)(status) & 0xC0000000) == 0x40000000)
@@ -42,7 +44,6 @@ typedef LONG NTSTATUS;
 #define NT_ERROR(status)        (((ULONG)(status) & 0xC0000000) == 0xC0000000)
 
 /* `UNICODE_STRING`; ntdef.h  */
-typedef struct _UNICODE_STRING UNICODE_STRING;
 struct _UNICODE_STRING
   {
     USHORT Length;
@@ -51,7 +52,6 @@ struct _UNICODE_STRING
   };
 
 /* `OBJECT_ATTRIBUTES`; ntdef.h  */
-typedef struct _OBJECT_ATTRIBUTES OBJECT_ATTRIBUTES;
 struct _OBJECT_ATTRIBUTES
   {
     ULONG Length;
@@ -290,8 +290,11 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
 
 #endif  /* !defined __MCF_M_X8632 */
 
-/* This structure contains timeout values that will be passed to NT syscalls.  */
 typedef struct __MCF_winnt_timeout __MCF_winnt_timeout;
+typedef union __MCF_thread_storage __MCF_thread_storage;
+typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
+
+/* This structure contains timeout values that will be passed to NT syscalls.  */
 struct __MCF_winnt_timeout
   {
     LARGE_INTEGER __li;
@@ -410,7 +413,6 @@ void
 __MCF_gthread_on_thread_exit(void);
 
 /* Declare global data.  */
-typedef union __MCF_thread_storage __MCF_thread_storage;
 union __MCF_thread_storage
   {
     __MCF_ALIGNED(16) char __storage_v1[__MCF_64_32(1600, 800)];
@@ -422,7 +424,6 @@ union __MCF_thread_storage
       };
   };
 
-typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
 struct __MCF_crt_xglobals
   {
     __MCF_crt_xglobals* __self_ptr;
