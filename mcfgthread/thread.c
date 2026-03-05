@@ -109,7 +109,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     }
 
     /* Create a thread and wait for its initialization to finish.  */
-    init.thrd->__handle = CreateThread(__MCF_nullptr, 0, do_win32_thread_thunk, &init, 0, (ULONG*) &(init.thrd->__tid));
+    init.thrd->__handle = CreateThread(__MCF_nullptr, 0, do_win32_thread_thunk, &init, 0, (void*) &(init.thrd->__tid));
     if(init.thrd->__handle == NULL) {
       __MCF_mfree_nonnull(init.thrd);
       return __MCF_nullptr;
