@@ -132,6 +132,7 @@ add_project_arguments(
     '-D_WIN32_WINNT=0x0601', '-D__USE_MINGW_ANSI_STDIO', '-U_FORTIFY_SOURCE',
     '-fno-stack-protector', '-fno-omit-frame-pointer', '-momit-leaf-frame-pointer',
     '-fmerge-all-constants', '-fstrict-aliasing', '-ffast-math', '-fdata-sections',
+    '-funwind-tables',
     '-Werror=conversion', '-Werror=sign-compare', '-Werror=sign-conversion',
     '-Werror=write-strings', '-Werror=return-type', '-Werror=double-promotion',
     '-Wmissing-declarations', '-Wswitch-enum', '-Wmissing-field-initializers',
@@ -242,7 +243,7 @@ endif
 
 lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       c_pch: 'mcfgthread/xprecompiled.h',
-      c_args: [ '-I.', '-funwind-tables', '-ffreestanding', '-D__MCF_IN_DLL' ],
+      c_args: [ '-I.', '-ffreestanding', '-D__MCF_IN_DLL' ],
       override_options: { 'c_winlibs': [] },
       link_args: lib_mcfgthread_dll_link_args,
       sources: [ mcfgthread_src_min, mcfgthread_version_o ],
@@ -255,7 +256,7 @@ lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
 
 lib_mcfgthread_dll = shared_library('mcfgthread',
       c_pch: 'mcfgthread/xprecompiled.h',
-      c_args: [ '-I.', '-funwind-tables', '-ffreestanding', '-D__MCF_IN_DLL' ],
+      c_args: [ '-I.', '-ffreestanding', '-D__MCF_IN_DLL' ],
       override_options: { 'c_winlibs': [] },
       link_args: lib_mcfgthread_dll_link_args,
       objects: lib_mcfgthread_minimal_dll.extract_objects(mcfgthread_src_min),
@@ -273,7 +274,7 @@ if cc.has_define('__CYGWIN__')
 else
   lib_mcfgthread_a = static_library('mcfgthread',
         c_pch: 'mcfgthread/xprecompiled.h',
-        c_args: [ '-I.', '-funwind-tables', '-ffunction-sections' ],
+        c_args: [ '-I.', '-ffunction-sections' ],
         sources: [ mcfgthread_src_min, mcfgthread_src_ex ],
         kwargs: build_subdir_lib,
         install: true)
