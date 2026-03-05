@@ -103,7 +103,7 @@ __MCF_teb_load_ptr(uint32_t __offset)
 #elif defined _MSC_VER && !defined __clang__ && defined __MCF_M_ARM64
     return (void*) __readx18qword(__offset);
 #else
-    return *((void**) __MCF_teb() + __offset / sizeof(void*));
+    return *((void**) __MCF_teb() + __offset / __MCF_64_32(8, 4));
 #endif
   }
 
@@ -123,7 +123,7 @@ __MCF_teb_store_ptr(uint32_t __offset, const void* __value)
 #elif defined _MSC_VER && !defined __clang__ && defined __MCF_M_ARM64
     __writex18qword(__offset, (uint64_t) __value);
 #else
-    *((const void**) __MCF_teb() + __offset / sizeof(void*)) = __value;
+    *((const void**) __MCF_teb() + __offset / __MCF_64_32(8, 4)) = __value;
 #endif
   }
 
