@@ -19,6 +19,8 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_TEB_INLINE  __MCF_ALWAYS_INLINE
 #endif
 
+/* Get a pointer to the thread environment block of the current thread in
+ * the flat address space.  */
 __MCF_TEB_INLINE __MCF_FN_CONST
 void*
 __MCF_teb(void)
@@ -57,46 +59,55 @@ __MCF_teb(void)
 #endif
   }
 
+/* Load a 32-bit integer at `__offset` of the environment block of the
+ * current thread. This function may operate on TEB directly and may be more
+ * efficient than accessing through `__MCF_teb()`.  */
 __MCF_TEB_INLINE __MCF_FN_PURE
-uint32_t
+int32_t
 __MCF_teb_load_32(uint32_t __offset)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM && defined __clang__
-    return *(uint32_t __seg_gs*)(uint64_t) __offset;
+    return *(int32_t __seg_gs*)(uint64_t) __offset;
 #elif defined __MCF_M_X8632_ASM && defined __clang__
-    return *(uint32_t __seg_fs*) __offset;
+    return *(int32_t __seg_fs*) __offset;
 #elif defined __MCF_M_X8664 && defined _MSC_VER && !defined __clang__
-    return __readgsdword(__offset);
+    return (int32_t) __readgsdword(__offset);
 #elif defined __MCF_M_X8632 && defined _MSC_VER && !defined __clang__
-    return __readfsdword(__offset);
+    return (int32_t) __readfsdword(__offset);
 #elif defined __MCF_M_ARM64 && defined _MSC_VER && !defined __clang__
-    return __readx18dword(__offset);
+    return (int32_t) __readx18dword(__offset);
 #else
-    return *((uint32_t*) __MCF_teb() + __offset / 4);
+    return *((int32_t*) __MCF_teb() + __offset / 4);
 #endif
   }
 
+/* Stores a 32-bit integer at `__offset` of the environment block of the
+ * current thread. This function may operate on TEB directly and may be more
+ * efficient than accessing through `__MCF_teb()`.  */
 __MCF_TEB_INLINE
 void
-__MCF_teb_store_32(uint32_t __offset, uint32_t __value)
+__MCF_teb_store_32(uint32_t __offset, int32_t __value)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM && defined __clang__
-    *(uint32_t __seg_gs*)(uint64_t) __offset = __value;
+    *(int32_t __seg_gs*)(uint64_t) __offset = __value;
 #elif defined __MCF_M_X8632_ASM && defined __clang__
-    *(uint32_t __seg_fs*) __offset = __value;
+    *(int32_t __seg_fs*) __offset = __value;
 #elif defined __MCF_M_X8664 && defined _MSC_VER && !defined __clang__
-    __writegsdword(__offset, __value);
+    __writegsdword(__offset, (uint32_t) __value);
 #elif defined __MCF_M_X8632 && defined _MSC_VER && !defined __clang__
-    __writefsdword(__offset, __value);
+    __writefsdword(__offset, (uint32_t) __value);
 #elif defined __MCF_M_ARM64 && defined _MSC_VER && !defined __clang__
-    __writex18dword(__offset, __value);
+    __writex18dword(__offset, (uint32_t) __value);
 #else
-    *((uint32_t*) __MCF_teb() + __offset / 4) = __value;
+    *((int32_t*) __MCF_teb() + __offset / 4) = __value;
 #endif
   }
 
+/* Load a generic pointer at `__offset` of the environment block of the
+ * current thread. This function may operate on TEB directly and may be more
+ * efficient than accessing through `__MCF_teb()`.  */
 __MCF_TEB_INLINE __MCF_FN_PURE
 void*
 __MCF_teb_load_ptr(uint32_t __offset)
@@ -117,6 +128,9 @@ __MCF_teb_load_ptr(uint32_t __offset)
 #endif
   }
 
+/* Stores a generic pointer at `__offset` of the environment block of the
+ * current thread. This function may operate on TEB directly and may be more
+ * efficient than accessing through `__MCF_teb()`.  */
 __MCF_TEB_INLINE
 void
 __MCF_teb_store_ptr(uint32_t __offset, const void* __value)
@@ -137,6 +151,8 @@ __MCF_teb_store_ptr(uint32_t __offset, const void* __value)
 #endif
   }
 
+/* Get a pointer to the process environment block of the current process in
+ * the flat address space.  */
 __MCF_TEB_INLINE __MCF_FN_CONST
 void*
 __MCF_peb(void)
@@ -173,75 +189,79 @@ __MCF_peb(void)
 #endif
   }
 
+/* Get the ID of the current thread. This is the same value as
+ * `GetCurrentThreadId()`, but as a signed integer.  */
 __MCF_TEB_INLINE __MCF_FN_CONST
-uint32_t
+int32_t
 __MCF_tid(void)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    return *(uint32_t __seg_gs*) 0x48;
+    return *(int32_t __seg_gs*) 0x48;
 #  else
-    uint32_t __tid;
+    int32_t __tid;
     __asm__ ("mov { %%gs:0x48, %k0 | %k0, gs:[0x48] }" : "=r"(__tid));
     return __tid;
 #  endif
 #elif defined __MCF_M_X8632_ASM
 #  if defined __clang__
-    return *(uint32_t __seg_fs*) 0x24;
+    return *(int32_t __seg_fs*) 0x24;
 #  else
-    uint32_t __tid;
+    int32_t __tid;
     __asm__ ("mov { %%fs:0x24, %k0 | %k0, fs:[0x24] }" : "=r"(__tid));
     return __tid;
 #  endif
 #elif defined __MCF_M_ARM64_ASM
-    uint32_t __tid;
+    int32_t __tid;
     __asm__ ("ldr %w0, [x18, 0x48]" : "=r"(__tid));
     return __tid;
 #elif defined __MCF_M_X8664
-    return __readgsdword(0x48);
+    return (int32_t) __readgsdword(0x48);
 #elif defined __MCF_M_X8632
-    return __readfsdword(0x24);
+    return (int32_t) __readfsdword(0x24);
 #elif defined __MCF_M_ARM64
-    return __readx18dword(0x48);
+    return (int32_t) __readx18dword(0x48);
 #else
-    return *((char*) __MCF_teb() + __MCF_64_32(0x48, 0x24));
+    return *(int32_t*) ((char*) __MCF_teb() + __MCF_64_32(0x48, 0x24));
 #endif
   }
 
+/* Get the ID of the current process. This is the same value as
+ * `GetCurrentProcessId()`, but as a signed integer.  */
 __MCF_TEB_INLINE __MCF_FN_CONST
-uint32_t
+int32_t
 __MCF_pid(void)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    return *(uint32_t __seg_gs*) 0x40;
+    return *(int32_t __seg_gs*) 0x40;
 #  else
-    uint32_t __pid;
+    int32_t __pid;
     __asm__ ("mov { %%gs:0x40, %k0 | %k0, gs:[0x40] }" : "=r"(__pid));
     return __pid;
 #  endif
 #elif defined __MCF_M_X8632_ASM
 #  if defined __clang__
-    return *(uint32_t __seg_fs*) 0x20;
+    return *(int32_t __seg_fs*) 0x20;
 #  else
-    uint32_t __pid;
+    int32_t __pid;
     __asm__ ("mov { %%fs:0x20, %k0 | %k0, fs:[0x20] }" : "=r"(__pid));
     return __pid;
 #  endif
 #elif defined __MCF_M_ARM64_ASM
-    uint32_t __pid;
+    int32_t __pid;
     __asm__ ("ldr %w0, [x18, 0x40]" : "=r"(__pid));
     return __pid;
 #elif defined __MCF_M_X8664
-    return __readgsdword(0x40);
+    return (int32_t) __readgsdword(0x40);
 #elif defined __MCF_M_X8632
-    return __readfsdword(0x20);
+    return (int32_t) __readfsdword(0x20);
 #elif defined __MCF_M_ARM64
-    return __readx18dword(0x40);
+    return (int32_t) __readx18dword(0x40);
 #else
-    return *((char*) __MCF_teb() + __MCF_64_32(0x40, 0x20));
+    return *(int32_t*) ((char*) __MCF_teb() + __MCF_64_32(0x40, 0x20));
 #endif
   }
 
