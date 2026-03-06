@@ -136,9 +136,6 @@ __MCF_thread_attach_foreign(_MCF_thread* thrd)
     __MCF_ASSERT(thrd->__tid == 0);
     __MCF_ASSERT(thrd->__handle == __MCF_nullptr);
 
-    /* Ensure the thread has not been attached.  */
-    __MCF_CHECK(__MCF_crt_TlsGetValue(__MCF_G(__tls_index)) == __MCF_nullptr);
-
     /* Initialize thread identity fields.  */
     thrd->__tid = __MCF_tid();
     thrd->__handle = __MCF_duplicate_handle(GetCurrentThread());
