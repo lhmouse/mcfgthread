@@ -454,7 +454,7 @@ struct __MCF_crt_xglobals
     /* thread suspension support  */
     __MCF_BR(_MCF_cond) __interrupt_cond;
 
-    /* WARNING: Fields hereinafter must be accessed via `__MCF_G_FIELD_OPT`!  */
+    /* WARNING: Fields hereinafter must be accessed via `__MCF_G_OPT`!  */
     __MCF_LAZY_D_(GetSystemTimePreciseAsFileTime);
     __MCF_LAZY_D_(QueryInterruptTime);
     __MCF_BR(_MCF_mutex) __thread_oom_mtx;
@@ -498,12 +498,12 @@ extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY restrict __MCF_g;
 
 /* As `__MCF_crt_xglobals` is shared between all static and shared instances of
  * this library within a single process, we have to involve sort of versioning.  */
-#define __MCF_G_FIELD_OPT(field)  \
-    ((__MCF_g->__self_size >= offsetof(__MCF_crt_xglobals, field) + sizeof(__MCF_g->field))  \
-     ? &(__MCF_g->field)  \
-     : (void*) __MCF_nullptr)
+#define __MCF_G(field)     (__MCF_g->field)
+#define __MCF_G_OPT(field)  ((__MCF_g->__self_size >= offsetof(__MCF_crt_xglobals, field)  \
+                                                      + sizeof(__MCF_g->field))  \
+                             ? &(__MCF_g->field) : (void*) __MCF_nullptr)
 
-#define __MCF_G_HAS_LAZY(name)   (__MCF_G_FIELD_OPT(__MCF_LAZY_P_(name)) && __MCF_g->__MCF_LAZY_P_(name))
+#define __MCF_G_HAS_LAZY(name)   (__MCF_G_OPT(__MCF_LAZY_P_(name)) && __MCF_g->__MCF_LAZY_P_(name))
 #define __MCF_G_LAZY(name)           (*(__MCF_g->__MCF_LAZY_P_(name)))
 #define __MCF_G_SET_LAZY(dll, name)    __MCF_LAZY_LOAD(&(__MCF_g->__MCF_LAZY_P_(name)), dll, name)
 

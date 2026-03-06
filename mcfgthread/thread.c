@@ -38,7 +38,7 @@ do_win32_thread_thunk(LPVOID param)
     _MCF_thread* thrd = init->thrd;
 
     /* Attach the thread.  */
-    if(!TlsSetValue(__MCF_g->__tls_index, thrd)) {
+    if(!TlsSetValue(__MCF_G(__tls_index), thrd)) {
       init->win32_error = GetLastError();
       _MCF_event_set(init->status, initialization_cancelled);
       return 0;
@@ -137,7 +137,7 @@ __MCF_thread_attach_foreign(_MCF_thread* thrd)
     __MCF_ASSERT(thrd->__handle == __MCF_nullptr);
 
     /* Ensure the thread has not been attached.  */
-    __MCF_CHECK(__MCF_crt_TlsGetValue(__MCF_g->__tls_index) == __MCF_nullptr);
+    __MCF_CHECK(__MCF_crt_TlsGetValue(__MCF_G(__tls_index)) == __MCF_nullptr);
 
     /* Initialize thread identity fields.  */
     thrd->__tid = __MCF_tid();
@@ -148,7 +148,7 @@ __MCF_thread_attach_foreign(_MCF_thread* thrd)
     _MCF_atomic_store_32_rel(thrd->__nref, 1);
 
     /* Attach the thread now.  */
-    __MCF_CHECK(TlsSetValue(__MCF_g->__tls_index, thrd));
+    __MCF_CHECK(TlsSetValue(__MCF_G(__tls_index), thrd));
     return thrd;
   }
 
@@ -162,7 +162,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
       return;
 
     /* The main thread structure is allocated statically and must not be freed.  */
-    if(thrd == __MCF_g->__main_thread)
+    if(thrd == __MCF_G(__main_thread))
       return;
 
     /* Detach the thread structure. The thread-local object table and the exit
@@ -174,8 +174,8 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
     __MCF_ASSERT(thrd->__tls_table->__begin == __MCF_nullptr);
 
     /* Deallocate the thread structure.  */
-    if(thrd == __MCF_G_FIELD_OPT(__thread_oom_self_st))
-      _MCF_mutex_unlock(__MCF_g->__thread_oom_mtx);
+    if(thrd == __MCF_G_OPT(__thread_oom_self_st))
+      _MCF_mutex_unlock(__MCF_G(__thread_oom_mtx));
     else
       __MCF_mfree_nonnull(thrd);
   }
@@ -223,19 +223,19 @@ static __MCF_NEVER_INLINE
 _MCF_thread*
 do_thread_self_slow(void)
   {
-    _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_g->__tls_index);
+    _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_G(__tls_index));
     if(self)
       return self;
 
     /* Allocate a minimum thread object with no user-defined data.  */
     self = __MCF_malloc_0(sizeof(__MCF_thread_base));
     if(!self) {
-      self = __MCF_G_FIELD_OPT(__thread_oom_self_st);
+      self = __MCF_G_OPT(__thread_oom_self_st);
       __MCF_CHECK(self);
 
       /* When out of memory, use the pre-allocated backup. If it is in use,
        * this thread shall block until the other thread terminates.  */
-      _MCF_mutex_lock(__MCF_g->__thread_oom_mtx, __MCF_nullptr);
+      _MCF_mutex_lock(__MCF_G(__thread_oom_mtx), __MCF_nullptr);
       __MCF_ASSERT(self->__handle == NULL);
       __MCF_mzero(self, sizeof(__MCF_thread_base));
     }
@@ -249,7 +249,7 @@ __MCF_DLLEXPORT __MCF_FN_CONST
 _MCF_thread*
 _MCF_thread_self(void)
   {
-    uint32_t index = __MCF_g->__tls_index;
+    uint32_t index = __MCF_G(__tls_index);
     if(index < 64) {
       /* This is the same as `TlsGetValue2()`.  */
       _MCF_thread* self = __MCF_teb_load_ptr(__MCF_64_32(0x1480, 0x0E10) + index * __MCF_64_32(8, 4));
@@ -276,7 +276,7 @@ do_sleep_interrupt(ULONG type)
     (void) type;
 
     /* Notify all threads that are sleeping.  */
-    _MCF_cond_signal_all(__MCF_g->__interrupt_cond);
+    _MCF_cond_signal_all(__MCF_G(__interrupt_cond));
     return false;
   }
 
@@ -306,7 +306,7 @@ __MCF_DLLEXPORT
 int
 _MCF_sleep(const int64_t* timeout_opt)
   {
-    int err = _MCF_cond_wait(__MCF_g->__interrupt_cond, do_sleep_unlock, do_sleep_relock, 0, timeout_opt);
+    int err = _MCF_cond_wait(__MCF_G(__interrupt_cond), do_sleep_unlock, do_sleep_relock, 0, timeout_opt);
     return err ^ -1;
   }
 

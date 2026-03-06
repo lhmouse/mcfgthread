@@ -19,7 +19,7 @@ do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
      * this byte hold a value of zero, it continues spinning; otherwise, it
      * makes an attempt to lock the mutex where it is spinning. As the number
      * of spinning iterations is limited, this mechanism need not be reliable.  */
-    static const uint32_t table_size = sizeof(__MCF_g->__mutex_spin_field);
+    static const uint32_t table_size = sizeof(__MCF_G(__mutex_spin_field));
     static const uint32_t table_size_reciprocal = 0x100000000U / table_size;
 
     /* We use an `uint32_t` as a fixed-point ratio within [0,1). Hence
@@ -35,7 +35,7 @@ do_spin_byte_ptr(const _MCF_mutex* mutex, uint32_t sp_mask)
     ULONG index;
     _BitScanForward(&index, sp_mask);
 
-    return __MCF_g->__mutex_spin_field + (base + index * (table_size / 4U)) % table_size;
+    return __MCF_G(__mutex_spin_field) + (base + index * (table_size / 4U)) % table_size;
   }
 
 static inline __MCF_FN_CONST

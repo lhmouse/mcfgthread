@@ -44,10 +44,10 @@ int
 __MCF_cxa_atexit(__MCF_cxa_dtor_any_ dtor, void* this, void* dso)
   {
     /* Push the element to the global queue.  */
-    _MCF_mutex_lock(__MCF_g->__exit_mtx, __MCF_nullptr);
+    _MCF_mutex_lock(__MCF_G(__exit_mtx), __MCF_nullptr);
     __MCF_dtor_element elem = { dtor.__cdecl_ptr, this, dso };
-    int err = __MCF_dtor_queue_push(__MCF_g->__exit_queue, &elem);
-    _MCF_mutex_unlock(__MCF_g->__exit_mtx);
+    int err = __MCF_dtor_queue_push(__MCF_G(__exit_queue), &elem);
+    _MCF_mutex_unlock(__MCF_G(__exit_mtx));
     return err;
   }
 
@@ -63,10 +63,10 @@ int
 __MCF_cxa_at_quick_exit(__MCF_cxa_dtor_any_ dtor, void* this, void* dso)
   {
     /* Push the element to the global queue.  */
-    _MCF_mutex_lock(__MCF_g->__quick_exit_mtx, __MCF_nullptr);
+    _MCF_mutex_lock(__MCF_G(__quick_exit_mtx), __MCF_nullptr);
     __MCF_dtor_element elem = { dtor.__cdecl_ptr, this, dso };
-    int err = __MCF_dtor_queue_push(__MCF_g->__quick_exit_queue, &elem);
-    _MCF_mutex_unlock(__MCF_g->__quick_exit_mtx);
+    int err = __MCF_dtor_queue_push(__MCF_G(__quick_exit_queue), &elem);
+    _MCF_mutex_unlock(__MCF_G(__quick_exit_mtx));
     return err;
   }
 
@@ -100,7 +100,7 @@ void
 do_finalize_thread(void* dso)
   {
     __MCF_USING_SEH_HANDLER(__MCF_seh_top);
-    _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_g->__tls_index);
+    _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_G(__tls_index));
     if(!self)
       return;
 
@@ -119,10 +119,10 @@ __MCF_cxa_finalize(void* dso)
      * before static ones, in accordance with the ISO C++ standard. (See
      * [basic.start.term]/2.) Destructors of thread-local keys are not called.  */
     do_finalize_thread(dso);
-    __MCF_run_static_dtors(__MCF_g->__exit_mtx, __MCF_g->__exit_queue, dso);
+    __MCF_run_static_dtors(__MCF_G(__exit_mtx), __MCF_G(__exit_queue), dso);
 
     /* Remove quick exit callbacks that will expire.  */
-    _MCF_mutex_lock(__MCF_g->__quick_exit_mtx, __MCF_nullptr);
-    __MCF_dtor_queue_remove(__MCF_g->__quick_exit_queue, dso);
-    _MCF_mutex_unlock(__MCF_g->__quick_exit_mtx);
+    _MCF_mutex_lock(__MCF_G(__quick_exit_mtx), __MCF_nullptr);
+    __MCF_dtor_queue_remove(__MCF_G(__quick_exit_queue), dso);
+    _MCF_mutex_unlock(__MCF_G(__quick_exit_mtx));
   }

@@ -223,9 +223,9 @@ __MCF_gthread_initialize_globals(void)
     __MCF_ASSERT(gmem_base);
     __MCF_g = gmem_base;
 
-    if(__MCF_g->__self_ptr) {
+    if(__MCF_G(__self_ptr)) {
       /* Reuse the existent region and close excess handles.  */
-      __MCF_g = __MCF_g->__self_ptr;
+      __MCF_g = __MCF_G(__self_ptr);
       __MCF_unmap_view_of_section(gmem_base);
       __MCF_close_handle(gfile);
       return;
@@ -233,12 +233,12 @@ __MCF_gthread_initialize_globals(void)
 
     /* The region is new, so initialize it.  */
     __MCF_CHECK(gmem_size >= sizeof(__MCF_crt_xglobals));
-    __MCF_g->__self_ptr = __MCF_g;
-    __MCF_g->__self_size = sizeof(__MCF_crt_xglobals);
+    __MCF_G(__self_ptr) = __MCF_g;
+    __MCF_G(__self_size) = sizeof(__MCF_crt_xglobals);
 
     /* Allocate a TLS slot for this library.  */
-    __MCF_g->__tls_index = TlsAlloc();
-    __MCF_CHECK(__MCF_g->__tls_index != UINT32_MAX);
+    __MCF_G(__tls_index) = TlsAlloc();
+    __MCF_CHECK(__MCF_G(__tls_index) != UINT32_MAX);
 
     /* Perform lazy binding for newer functions.  */
     __MCF_G_SET_LAZY(__MCF_crt_kernel32, GetSystemTimePreciseAsFileTime);  /* win8 */
@@ -246,8 +246,8 @@ __MCF_gthread_initialize_globals(void)
 
     /* Attach the main thread and make it joinable. The structure should
      * be all zeroes so no initialization is necessary.  */
-    __MCF_thread_attach_foreign(__MCF_g->__main_thread);
-    _MCF_atomic_store_32_rel(__MCF_g->__main_thread->__nref, 2);
+    __MCF_thread_attach_foreign(__MCF_G(__main_thread));
+    _MCF_atomic_store_32_rel(__MCF_G(__main_thread)->__nref, 2);
   }
 
 __MCF_DLLEXPORT
@@ -255,7 +255,7 @@ void
 __MCF_gthread_on_thread_exit(void)
   {
     __MCF_USING_SEH_HANDLER(__MCF_seh_top);
-    _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_g->__tls_index);
+    _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_G(__tls_index));
     if(!self)
       return;
 
@@ -301,7 +301,7 @@ __MCF_gthread_on_thread_exit(void)
     }
 
     /* Poison this value.  */
-    TlsSetValue(__MCF_g->__tls_index, __MCF_BAD_PTR);
+    TlsSetValue(__MCF_G(__tls_index), __MCF_BAD_PTR);
     _MCF_thread_drop_ref_nonnull(self);
   }
 
