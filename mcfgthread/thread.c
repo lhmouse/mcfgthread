@@ -166,14 +166,14 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
      * callback queue shall have been cleared upon termination of the associated
      * thread, so they are empty now.  */
     __MCF_close_handle(thrd->__handle);
-    thrd->__handle = NULL;
-    __MCF_ASSERT(thrd->__atexit_queue->__prev == __MCF_nullptr);
-    __MCF_ASSERT(thrd->__tls_table->__begin == __MCF_nullptr);
+    __MCF_ASSERT(thrd->__atexit_queue[0].__prev == __MCF_nullptr);
+    __MCF_ASSERT(thrd->__tls_table[0].__begin == __MCF_nullptr);
 
-    /* Deallocate the thread structure.  */
-    if(thrd == __MCF_G_OPT(__thread_oom_self_st))
+    if(thrd == __MCF_G_OPT(__thread_oom_self_st)) {
+      /* If this is the OOM backup, clear it for reuse.  */
+      __MCF_mzero(thrd, sizeof(__MCF_thread_base));
       _MCF_mutex_unlock(__MCF_G(__thread_oom_mtx));
-    else
+    } else
       __MCF_mfree_nonnull(thrd);
   }
 
@@ -224,17 +224,14 @@ do_thread_self_slow(void)
     if(self)
       return self;
 
-    /* Allocate a minimum thread object with no user-defined data.  */
     self = __MCF_malloc_0(sizeof(__MCF_thread_base));
     if(!self) {
+      /* When out of memory, use the static backup. If it is in use, this
+       * thread shall block until the other thread frees it.  */
       self = __MCF_G_OPT(__thread_oom_self_st);
       __MCF_CHECK(self);
-
-      /* When out of memory, use the pre-allocated backup. If it is in use,
-       * this thread shall block until the other thread terminates.  */
       _MCF_mutex_lock(__MCF_G(__thread_oom_mtx), __MCF_nullptr);
       __MCF_ASSERT(self->__handle == NULL);
-      __MCF_mzero(self, sizeof(__MCF_thread_base));
     }
 
     /* Attach the new thread structure. This will be deallocated in
