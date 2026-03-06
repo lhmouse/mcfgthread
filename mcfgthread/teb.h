@@ -19,46 +19,6 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_TEB_INLINE  __MCF_ALWAYS_INLINE
 #endif
 
-/* Get a pointer to the thread environment block of the current thread in
- * the flat address space.  */
-__MCF_TEB_INLINE __MCF_FN_CONST
-void*
-__MCF_teb(void)
-  __MCF_noexcept
-  {
-#if defined __MCF_M_X8664_ASM
-#  if defined __FSGSBASE__
-    return (void*) __builtin_ia32_rdgsbase64();
-#  elif defined __clang__
-    return *(void* __seg_gs*) 0x30;
-#  else
-    void* __teb;
-    __asm__ ("mov { %%gs:0x30, %0 | %0, gs:[0x30] }" : "=r"(__teb));
-    return __teb;
-#  endif
-#elif defined __MCF_M_X8632_ASM
-#  if defined __clang__
-    return *(void* __seg_fs*) 0x18;
-#  else
-    void* __teb;
-    __asm__ ("mov { %%fs:0x18, %0 | %0, fs:[0x18] }" : "=r"(__teb));
-    return __teb;
-#  endif
-#elif defined __MCF_M_ARM64_ASM
-    register void* __teb __asm__("x18");
-    __asm__ ("" : "=r"(__teb));
-    return __teb;
-#elif defined __MCF_M_X8664
-    return (void*) __readgsqword(0x30);
-#elif defined __MCF_M_X8632
-    return (void*) __readfsdword(0x18);
-#elif defined __MCF_M_ARM64
-    return (void*) __readx18qword(0x30);
-#else
-#  error unimplemented
-#endif
-  }
-
 /* Load a 32-bit integer at `__offset` of the environment block of the
  * current thread. This function may operate on TEB directly and may be more
  * efficient than accessing through `__MCF_teb()`.  */
@@ -67,18 +27,36 @@ int32_t
 __MCF_teb_load_32(uint32_t __offset)
   __MCF_noexcept
   {
-#if defined __MCF_M_X8664_ASM && defined __clang__
+#if defined __MCF_M_X8664_ASM
+#  if defined __clang__
     return *(int32_t __seg_gs*)(uint64_t) __offset;
-#elif defined __MCF_M_X8632_ASM && defined __clang__
+#  else
+    int32_t __value;
+    __asm__ ("gs; .insn 0x8B, %k0, %a1"  /* 65 8B := mov R, gs:M */
+        : "=r"(__value) : "Ts"((uint64_t) __offset) : "memory");
+    return __value;
+#  endif
+#elif defined __MCF_M_X8632_ASM
+#  if defined __clang__
     return *(int32_t __seg_fs*) __offset;
-#elif defined __MCF_M_X8664 && defined _MSC_VER && !defined __clang__
+#  else
+    int32_t __value;
+    __asm__ ("fs; .insn 0x8B, %k0, %a1"  /* 64 8B := mov R, fs:M */
+        : "=r"(__value) : "Ts"(__offset) : "memory");
+    return __value;
+#  endif
+#elif defined __MCF_M_ARM64_ASM
+    register char* __teb __asm__("x18");
+    __asm__ ("" : "=r"(__teb));
+    return *(int32_t*) (__teb + __offset);
+#elif defined __MCF_M_X8664
     return (int32_t) __readgsdword(__offset);
-#elif defined __MCF_M_X8632 && defined _MSC_VER && !defined __clang__
+#elif defined __MCF_M_X8632
     return (int32_t) __readfsdword(__offset);
-#elif defined __MCF_M_ARM64 && defined _MSC_VER && !defined __clang__
+#elif defined __MCF_M_ARM64
     return (int32_t) __readx18dword(__offset);
 #else
-    return *((int32_t*) __MCF_teb() + __offset / 4);
+#  error unimplemented
 #endif
   }
 
@@ -90,18 +68,32 @@ void
 __MCF_teb_store_32(uint32_t __offset, int32_t __value)
   __MCF_noexcept
   {
-#if defined __MCF_M_X8664_ASM && defined __clang__
+#if defined __MCF_M_X8664_ASM
+#  if defined __clang__
     *(int32_t __seg_gs*)(uint64_t) __offset = __value;
-#elif defined __MCF_M_X8632_ASM && defined __clang__
+#  else
+    __asm__ volatile ("gs; .insn 0x89, %k0, %a1"  /* 65 89 := mov gs:M, R */
+        : : "r"(__value), "Ts"((uint64_t) __offset) : "memory");
+#  endif
+#elif defined __MCF_M_X8632_ASM
+#  if defined __clang__
     *(int32_t __seg_fs*) __offset = __value;
-#elif defined __MCF_M_X8664 && defined _MSC_VER && !defined __clang__
+#  else
+    __asm__ volatile ("fs; .insn 0x89, %k0, %a1"  /* 64 89 := mov fs:M, R */
+        : : "r"(__value), "Ts"(__offset) : "memory");
+#  endif
+#elif defined __MCF_M_ARM64_ASM
+    register char* __teb __asm__("x18");
+    __asm__ ("" : "=r"(__teb));
+    *(int32_t*) (__teb + __offset) = __value;
+#elif defined __MCF_M_X8664
     __writegsdword(__offset, (uint32_t) __value);
-#elif defined __MCF_M_X8632 && defined _MSC_VER && !defined __clang__
+#elif defined __MCF_M_X8632
     __writefsdword(__offset, (uint32_t) __value);
-#elif defined __MCF_M_ARM64 && defined _MSC_VER && !defined __clang__
+#elif defined __MCF_M_ARM64
     __writex18dword(__offset, (uint32_t) __value);
 #else
-    *((int32_t*) __MCF_teb() + __offset / 4) = __value;
+#  error unimplemented
 #endif
   }
 
@@ -113,18 +105,36 @@ void*
 __MCF_teb_load_ptr(uint32_t __offset)
   __MCF_noexcept
   {
-#if defined __MCF_M_X8664_ASM && defined __clang__
+#if defined __MCF_M_X8664_ASM
+#  if defined __clang__
     return *(void* __seg_gs*)(uint64_t) __offset;
-#elif defined __MCF_M_X8632_ASM && defined __clang__
+#  else
+    void* __value;
+    __asm__ ("gs; .insn 0x8B, %0, %a1" /* 65 8B := mov R, gs:M */
+        : "=r"(__value) : "Ts"((uint64_t) __offset) : "memory");
+    return __value;
+#  endif
+#elif defined __MCF_M_X8632_ASM
+#  if defined __clang__
     return *(void* __seg_fs*) __offset;
-#elif defined __MCF_M_X8664 && defined _MSC_VER && !defined __clang__
+#  else
+    void* __value;
+    __asm__ ("fs; .insn 0x8B, %0, %a1"  /* 64 8B := mov R, fs:M */
+        : "=r"(__value) : "Ts"(__offset) : "memory");
+    return __value;
+#  endif
+#elif defined __MCF_M_ARM64_ASM
+    register char* __teb __asm__("x18");
+    __asm__ ("" : "=r"(__teb));
+    return *(void**) (__teb + __offset);
+#elif defined __MCF_M_X8664
     return (void*) __readgsqword(__offset);
-#elif defined __MCF_M_X8632 && defined _MSC_VER && !defined __clang__
+#elif defined __MCF_M_X8632
     return (void*) __readfsdword(__offset);
-#elif defined __MCF_M_ARM64 && defined _MSC_VER && !defined __clang__
+#elif defined __MCF_M_ARM64
     return (void*) __readx18qword(__offset);
 #else
-    return *((void**) __MCF_teb() + __offset / __MCF_64_32(8, 4));
+#  error unimplemented
 #endif
   }
 
@@ -136,18 +146,32 @@ void
 __MCF_teb_store_ptr(uint32_t __offset, const void* __value)
   __MCF_noexcept
   {
-#if defined __MCF_M_X8664_ASM && defined __clang__
+#if defined __MCF_M_X8664_ASM
+#  if defined __clang__
     *(const void* __seg_gs*)(uint64_t) __offset = __value;
-#elif defined __MCF_M_X8632_ASM && defined __clang__
+#  else
+    __asm__ volatile ("gs; .insn 0x89, %0, %a1"  /* 65 89 := mov gs:M, R */
+        : : "r"(__value), "Ts"((uint64_t) __offset) : "memory");
+#  endif
+#elif defined __MCF_M_X8632_ASM
+#  if defined __clang__
     *(const void* __seg_fs*) __offset = __value;
-#elif defined __MCF_M_X8664 && defined _MSC_VER && !defined __clang__
+#  else
+    __asm__ volatile ("fs; .insn 0x89, %0, %a1"  /* 64 89 := mov fs:M, R */
+        : : "r"(__value), "Ts"(__offset) : "memory");
+#  endif
+#elif defined __MCF_M_ARM64_ASM
+    register char* __teb __asm__("x18");
+    __asm__ ("" : "=r"(__teb));
+    *(const void**) (__teb + __offset) = __value;
+#elif defined __MCF_M_X8664
     __writegsqword(__offset, (uint64_t) __value);
-#elif defined __MCF_M_X8632 && defined _MSC_VER && !defined __clang__
+#elif defined __MCF_M_X8632
     __writefsdword(__offset, (uint32_t) __value);
-#elif defined __MCF_M_ARM64 && defined _MSC_VER && !defined __clang__
+#elif defined __MCF_M_ARM64
     __writex18qword(__offset, (uint64_t) __value);
 #else
-    *((const void**) __MCF_teb() + __offset / __MCF_64_32(8, 4)) = __value;
+#  error unimplemented
 #endif
   }
 
@@ -158,72 +182,24 @@ void*
 __MCF_peb(void)
   __MCF_noexcept
   {
-#if defined __MCF_M_X8664_ASM
-#  if defined __clang__
-    return *(void* __seg_gs*) 0x60;
-#  else
-    void* __peb;
-    __asm__ ("mov { %%gs:0x60, %0 | %0, gs:[0x60] }" : "=r"(__peb));
-    return __peb;
-#  endif
-#elif defined __MCF_M_X8632_ASM
-#  if defined __clang__
-    return *(void* __seg_fs*) 0x30;
-#  else
-    void* __peb;
-    __asm__ ("mov { %%fs:0x30, %0 | %0, fs:[0x30] }" : "=r"(__peb));
-    return __peb;
-#  endif
-#elif defined __MCF_M_ARM64_ASM
-    void* __peb;
-    __asm__ ("ldr %0, [x18, 0x60]" : "=r"(__peb));
-    return __peb;
-#elif defined __MCF_M_X8664
-    return (void*) __readgsqword(0x60);
-#elif defined __MCF_M_X8632
-    return (void*) __readfsdword(0x30);
-#elif defined __MCF_M_ARM64
-    return (void*) __readx18qword(0x60);
-#else
-    return *(void**) ((char*) __MCF_teb() + __MCF_64_32(0x60, 0x30));
-#endif
+    return __MCF_teb_load_ptr(__MCF_64_32(0x60, 0x30));
   }
 
-/* Get the ID of the current thread. This is the same value as
- * `GetCurrentThreadId()`, but as a signed integer.  */
+/* Get a pointer to the thread environment block of the current thread in
+ * the flat address space.  */
 __MCF_TEB_INLINE __MCF_FN_CONST
-int32_t
-__MCF_tid(void)
+void*
+__MCF_teb(void)
   __MCF_noexcept
   {
-#if defined __MCF_M_X8664_ASM
-#  if defined __clang__
-    return *(int32_t __seg_gs*) 0x48;
-#  else
-    int32_t __tid;
-    __asm__ ("mov { %%gs:0x48, %k0 | %k0, gs:[0x48] }" : "=r"(__tid));
-    return __tid;
-#  endif
-#elif defined __MCF_M_X8632_ASM
-#  if defined __clang__
-    return *(int32_t __seg_fs*) 0x24;
-#  else
-    int32_t __tid;
-    __asm__ ("mov { %%fs:0x24, %k0 | %k0, fs:[0x24] }" : "=r"(__tid));
-    return __tid;
-#  endif
+#if defined __MCF_M_X8664_ASM && defined __FSGSBASE__
+    return (void*) __builtin_ia32_rdgsbase64();
 #elif defined __MCF_M_ARM64_ASM
-    int32_t __tid;
-    __asm__ ("ldr %w0, [x18, 0x48]" : "=r"(__tid));
-    return __tid;
-#elif defined __MCF_M_X8664
-    return (int32_t) __readgsdword(0x48);
-#elif defined __MCF_M_X8632
-    return (int32_t) __readfsdword(0x24);
-#elif defined __MCF_M_ARM64
-    return (int32_t) __readx18dword(0x48);
+    register char* __teb __asm__("x18");
+    __asm__ ("" : "=r"(__teb));
+    return __teb;
 #else
-    return *(int32_t*) ((char*) __MCF_teb() + __MCF_64_32(0x48, 0x24));
+    return __MCF_teb_load_ptr(__MCF_64_32(0x30, 0x18));
 #endif
   }
 
@@ -234,35 +210,17 @@ int32_t
 __MCF_pid(void)
   __MCF_noexcept
   {
-#if defined __MCF_M_X8664_ASM
-#  if defined __clang__
-    return *(int32_t __seg_gs*) 0x40;
-#  else
-    int32_t __pid;
-    __asm__ ("mov { %%gs:0x40, %k0 | %k0, gs:[0x40] }" : "=r"(__pid));
-    return __pid;
-#  endif
-#elif defined __MCF_M_X8632_ASM
-#  if defined __clang__
-    return *(int32_t __seg_fs*) 0x20;
-#  else
-    int32_t __pid;
-    __asm__ ("mov { %%fs:0x20, %k0 | %k0, fs:[0x20] }" : "=r"(__pid));
-    return __pid;
-#  endif
-#elif defined __MCF_M_ARM64_ASM
-    int32_t __pid;
-    __asm__ ("ldr %w0, [x18, 0x40]" : "=r"(__pid));
-    return __pid;
-#elif defined __MCF_M_X8664
-    return (int32_t) __readgsdword(0x40);
-#elif defined __MCF_M_X8632
-    return (int32_t) __readfsdword(0x20);
-#elif defined __MCF_M_ARM64
-    return (int32_t) __readx18dword(0x40);
-#else
-    return *(int32_t*) ((char*) __MCF_teb() + __MCF_64_32(0x40, 0x20));
-#endif
+    return __MCF_teb_load_32(__MCF_64_32(0x40, 0x20));
+  }
+
+/* Get the ID of the current thread. This is the same value as
+ * `GetCurrentThreadId()`, but as a signed integer.  */
+__MCF_TEB_INLINE __MCF_FN_CONST
+int32_t
+__MCF_tid(void)
+  __MCF_noexcept
+  {
+    return __MCF_teb_load_32(__MCF_64_32(0x48, 0x24));
   }
 
 __MCF_CXX(})  /* extern "C"  */
