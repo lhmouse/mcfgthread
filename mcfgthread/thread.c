@@ -79,7 +79,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     _MCF_event_init(init.status, initialization_null);
 
     size_t real_alignment = _MCF_maxz(__MCF_THREAD_DATA_ALIGNMENT, align);
-    size_t size_need = offsetof(_MCF_thread, __data_storage) + size;
+    size_t size_need = sizeof(__MCF_thread_base) + size;
     size_t size_request = size_need + real_alignment - MEMORY_ALLOCATION_ALIGNMENT;
     __MCF_ASSERT(size_need <= size_request);
 
@@ -91,7 +91,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     init.thrd->__proc = proc;
 
     if(size != 0) {
-      init.thrd->__data_opt = init.thrd->__data_storage;
+      init.thrd->__data_opt = init.thrd + 1;
 
       /* Adjust `__data_opt` for over-aligned types. If we have over-allocated
        * memory, give back some. Errors are ignored.  */
@@ -162,7 +162,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
       return;
 
     /* The main thread structure is allocated statically and must not be freed.  */
-    if(thrd == (void*) __MCF_g->__main_thread)
+    if(thrd == __MCF_g->__main_thread)
       return;
 
     /* Detach the thread structure. The thread-local object table and the exit
@@ -174,7 +174,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
     __MCF_ASSERT(thrd->__tls_table->__begin == __MCF_nullptr);
 
     /* Deallocate the thread structure.  */
-    if(thrd == (void*) __MCF_G_FIELD_OPT(__thread_oom_self_st))
+    if(thrd == __MCF_G_FIELD_OPT(__thread_oom_self_st))
       _MCF_mutex_unlock(__MCF_g->__thread_oom_mtx);
     else
       __MCF_mfree_nonnull(thrd);
@@ -223,12 +223,12 @@ static __MCF_NEVER_INLINE
 _MCF_thread*
 do_thread_self_slow(void)
   {
-    __MCF_thread_storage* self = __MCF_crt_TlsGetValue(__MCF_g->__tls_index);
+    _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_g->__tls_index);
     if(self)
-      return (void*) self;
+      return self;
 
-    /* Allocate a new thread object with no user-defined data.  */
-    self = __MCF_malloc_0(sizeof(__MCF_thread_storage));
+    /* Allocate a minimum thread object with no user-defined data.  */
+    self = __MCF_malloc_0(sizeof(__MCF_thread_base));
     if(!self) {
       self = __MCF_G_FIELD_OPT(__thread_oom_self_st);
       __MCF_CHECK(self);
@@ -237,12 +237,12 @@ do_thread_self_slow(void)
        * this thread shall block until the other thread terminates.  */
       _MCF_mutex_lock(__MCF_g->__thread_oom_mtx, __MCF_nullptr);
       __MCF_ASSERT(self->__handle == NULL);
-      __MCF_mzero(self, sizeof(__MCF_thread_storage));
+      __MCF_mzero(self, sizeof(__MCF_thread_base));
     }
 
     /* Attach the new thread structure. This will be deallocated in
      * `_MCF_thread_drop_ref_nonnull()`.  */
-    return __MCF_thread_attach_foreign((void*) self);
+    return __MCF_thread_attach_foreign(self);
   }
 
 __MCF_DLLEXPORT __MCF_FN_CONST

@@ -310,7 +310,6 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
 #endif  /* !defined __MCF_M_X8632 */
 
 typedef struct __MCF_winnt_timeout __MCF_winnt_timeout;
-typedef union __MCF_thread_storage __MCF_thread_storage;
 typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
 
 /* This structure contains timeout values that will be passed to NT syscalls.  */
@@ -432,17 +431,6 @@ void
 __MCF_gthread_on_thread_exit(void);
 
 /* Declare global data.  */
-union __MCF_thread_storage
-  {
-    __MCF_ALIGNED(16) char __storage_v1[__MCF_64_32(1600, 800)];
-    struct
-      {
-        __MCF_BR(int32_t) __nref;  /* atomic reference count  */
-        int32_t __tid;  /* thread id  */
-        __MCF_HANDLE __handle;  /* win32 thread handle  */
-      };
-  };
-
 struct __MCF_crt_xglobals
   {
     __MCF_crt_xglobals* __self_ptr;
@@ -450,7 +438,7 @@ struct __MCF_crt_xglobals
     uint32_t __tls_index;
 
     /* the static thread object  */
-    __MCF_BR(__MCF_thread_storage) __main_thread;
+    __MCF_BR(__MCF_thread_base) __main_thread;
 
     /* `atexit()` support  */
     __MCF_BR(_MCF_mutex) __exit_mtx;
@@ -470,7 +458,7 @@ struct __MCF_crt_xglobals
     __MCF_LAZY_D_(GetSystemTimePreciseAsFileTime);
     __MCF_LAZY_D_(QueryInterruptTime);
     __MCF_BR(_MCF_mutex) __thread_oom_mtx;
-    __MCF_thread_storage __thread_oom_self_st;
+    __MCF_thread_base __thread_oom_self_st;
   };
 
 /* Ensure we don't mess things up.  */

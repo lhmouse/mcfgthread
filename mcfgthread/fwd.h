@@ -287,6 +287,7 @@ typedef struct __MCF_dtor_element __MCF_dtor_element;
 typedef struct __MCF_dtor_queue __MCF_dtor_queue;
 typedef struct __MCF_tls_table __MCF_tls_table;
 typedef struct __MCF_tls_element __MCF_tls_element;
+typedef struct __MCF_thread_base __MCF_thread_base;
 
 typedef struct __MCF_cond _MCF_cond;
 typedef struct __MCF_mutex _MCF_mutex;
@@ -294,7 +295,7 @@ typedef struct __MCF_shared_mutex _MCF_shared_mutex;
 typedef struct __MCF_once _MCF_once;
 typedef struct __MCF_sem _MCF_sem;
 typedef struct __MCF_event _MCF_event;
-typedef struct __MCF_thread _MCF_thread;
+typedef struct __MCF_thread_base _MCF_thread;
 typedef int _MCF_thread_priority;
 typedef struct __MCF_tls_key _MCF_tls_key;
 

@@ -21,9 +21,9 @@ __MCF_CXX(extern "C" {)
 #endif
 
 /* Define the thread control struct.  */
-struct __MCF_thread
+struct __MCF_thread_base
   {
-    __MCF_BR(int32_t) __nref;  /* atomic reference count  */
+    __MCF_ALIGNED(16) __MCF_BR(int32_t) __nref;  /* atomic reference count  */
     int32_t __tid;  /* thread id  */
     __MCF_HANDLE __handle;  /* win32 thread handle  */
 
@@ -34,13 +34,11 @@ struct __MCF_thread
     __MCF_BR(__MCF_tls_table) __tls_table;  /* for `_MCF_tls_get()` and `_MCF_tls_set()`  */
 
     void* __libobjc_tls_data;  /* for GCC libobjc  */
-
-    /* `__data_opt` shall always point to `__data_storage` below. The space
-     * preceding it is reserved for future use. It is not safe to assume the
-     * offset of `__data_storage` to be a constant.  */
-#define __MCF_THREAD_DATA_ALIGNMENT   16U
-    __MCF_ALIGNED(__MCF_THREAD_DATA_ALIGNMENT) char __data_storage[1];
   };
+
+/* This is the default alignment of user-defined data that is guaranteed by
+ * `_MCF_thread_new_aligned()`.  */
+#define __MCF_THREAD_DATA_ALIGNMENT   16U
 
 /* This is the maximum alignment of user-defined data that is supported by
  * `_MCF_thread_new_aligned()`. It is defined here for illustration purposes
