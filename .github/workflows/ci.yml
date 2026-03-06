@@ -21,7 +21,7 @@ on:
 jobs:
   ubuntu-x86-64:
     name: Ubuntu cross build (x86-64 GCC; Wine)
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v4
