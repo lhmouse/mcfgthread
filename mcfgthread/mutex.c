@@ -188,6 +188,7 @@ void
 _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
   {
     __MCF_ASSERT(mutex->__locked == 1);
+
     bool wake_one;
     _MCF_mutex old, new;
 

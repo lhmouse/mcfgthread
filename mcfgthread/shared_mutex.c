@@ -148,6 +148,7 @@ void
 _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
   {
     __MCF_ASSERT(smutex->__nshare != 0);
+
     bool wake_one;
     _MCF_shared_mutex old, new;
 
