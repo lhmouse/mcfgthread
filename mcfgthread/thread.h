@@ -60,15 +60,13 @@ enum __MCF_thread_priority __MCF_CXX11(: int)
     __MCF_thread_priority_end
   };
 
-/* Creates a thread. The `__nref` member is initialized to 2, because a running
- * thread holds a reference to itself.
- *
- * If `__size` is specified as non-zero, storage for user-defined data is
- * reserved. The storage is initialized to zeroes. If `__data_opt` is non-null,
- * it is used to initialize the storage before the new thread begins execution.
- * The `__align` parameter specifies the alignment of user-defined data. If it
- * is not zero, then it must be a power of two; otherwise this function fails
- * with `ERROR_NOT_SUPPORTED`.
+/* Creates a thread. The `__nref` member is initialized to 2, since a running
+ * thread holds a reference to itself. If `__size` is specified as non-zero,
+ * storage for user-defined data is reserved. The storage is initialized to
+ * zeroes. If `__data_opt` is non-null, it is used to initialize the storage
+ * before the new thread begins execution. The `__align` parameter specifies
+ * the alignment of user-defined data. If it is not zero, then it must be a
+ * power of two; otherwise this function fails with `ERROR_NOT_SUPPORTED`.
  *
  * Returns a new thread control structure. The caller is required to call
  * `_MCF_thread_drop_ref()` when it is no longer needed. If the thread cannot
@@ -85,7 +83,6 @@ _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __
   __MCF_noexcept;
 
 /* Attaches a thread that was not created by `_MCF_thread_new_aligned()`.
- *
  * This function takes ownership of the thread control structure and assigns it
  * to the calling thread, which shall not have already had a control structure.
  * The caller must initialize the struct properly. The fields `__nref`, `__tid`
@@ -153,13 +150,12 @@ void
 _MCF_thread_exit(void)
   __MCF_noexcept;
 
-/* Waits for a thread to finish execution.
- *
- * If the `__timeout_opt` argument points to a positive integer, it denotes the
- * expiration time in number of milliseconds since 1970-01-01T00:00:00Z. If it
- * points to a negative integer, the absolute value of it denotes the number of
- * milliseconds to wait. If it points to zero, the function returns immediately
- * without waiting. If it is null, the function waits indefinitely.
+/* Waits for a thread to finish execution. If the `__timeout_opt` argument
+ * points to a positive integer, it denotes the expiration time in number of
+ * milliseconds since 1970-01-01T00:00:00Z. If it points to a negative integer,
+ * the absolute value of it denotes the number of milliseconds to wait. If it
+ * points to zero, the function returns immediately without waiting. If it is
+ * null, the function waits indefinitely.
  *
  * Returns 0 if the thread has terminated, or -1 if the wait operation has
  * timed out.  */
@@ -168,11 +164,9 @@ int
 _MCF_thread_wait(const _MCF_thread* __thrd_opt, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Gets the priority of a thread.
- *
- * If the `__thrd_opt` argument is null, the priority of the current thread is
- * returned. If `__thrd_opt` is not null but doesn't point to a valid thread
- * object, the behavior is undefined.
+/* Gets the priority of a thread. If the `__thrd_opt` argument is null, the
+ * priority of the current thread is returned. If `__thrd_opt` is not null but
+ * doesn't point to a valid thread object, the behavior is undefined.
  *
  * Returns the thread priority as an enumerator. No value has been reserved to
  * indicate an error.  */
@@ -181,14 +175,12 @@ _MCF_thread_priority
 _MCF_thread_get_priority(const _MCF_thread* __thrd_opt)
   __MCF_noexcept;
 
-/* Sets the priority of a thread.
- *
- * The `__priority` argument may be an arbitrary integer within -15 and +15, but
- * specifying an `_MCF_thread_priority_*` constant is recommended. Setting high
- * priority values may require certain privileges. If the `__thrd_opt` argument
- * is null, the priority of the current thread will be set. If `__thrd_opt` is
- * not null but doesn't point to a valid thread object, the behavior of this
- * function is undefined.
+/* Sets the priority of a thread. The `__priority` argument may be an arbitrary
+ * integer within -15 and +15, but specifying an `_MCF_thread_priority_*`
+ * constant is recommended. Setting high priority values may require certain
+ * privileges. If the `__thrd_opt` argument is null, the priority of the
+ * current thread will be set. If `__thrd_opt` is not null but doesn't point to
+ * a valid thread object, the behavior of this function is undefined.
  *
  * Returns 0 upon success and -1 upon failure.  */
 __MCF_THREAD_IMPORT
@@ -217,14 +209,13 @@ void
 _MCF_yield(void)
   __MCF_noexcept;
 
-/* Suspends the calling thread for a given amount of time.
- *
- * If the `__timeout_opt` argument points to a positive integer, it denotes the
- * expiration time in number of milliseconds since 1970-01-01T00:00:00Z. If it
- * points to a negative integer, the absolute value of it denotes the number of
- * milliseconds to sleep. If it points to a value of zero, the function returns
- * immediately. If it is null, the function sleeps indefinitely. This operation
- * can be interrupted by Ctrl-C events.
+/* Suspends the calling thread for a given amount of time. If the `__timeout_opt`
+ * argument points to a positive integer, it denotes the expiration time in
+ * number of milliseconds since 1970-01-01T00:00:00Z. If it points to a negative
+ * integer, the absolute value of it denotes the number of milliseconds to sleep.
+ * If it points to a value of zero, the function returns immediately. If it is
+ * null, the function sleeps indefinitely. This operation can be interrupted by
+ * Ctrl-C events.
  *
  * Returns 0 if the operation has timed out, or -1 if an interrupt occurred.  */
 __MCF_THREAD_IMPORT
@@ -232,13 +223,12 @@ int
 _MCF_sleep(const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Suspends the calling thread for a given amount of time.
- *
- * If the `__timeout_opt` argument points to a positive integer, it denotes the
- * expiration time in number of milliseconds since 1970-01-01T00:00:00Z. If it
- * points to a negative integer, the absolute value of it denotes the number of
- * milliseconds to sleep. If it points to a value of zero, the function returns
- * immediately. If it is null, the function sleeps indefinitely.  */
+/* Suspends the calling thread for a given amount of time. If the `__timeout_opt`
+ * argument points to a positive integer, it denotes the expiration time in
+ * number of milliseconds since 1970-01-01T00:00:00Z. If it points to a negative
+ * integer, the absolute value of it denotes the number of milliseconds to sleep.
+ * If it points to a value of zero, the function returns immediately. If it is
+ * null, the function sleeps indefinitely.  */
 __MCF_THREAD_IMPORT
 void
 _MCF_sleep_noninterruptible(const int64_t* __timeout_opt)
@@ -255,10 +245,9 @@ _MCF_tls_get(const _MCF_tls_key* __key)
   __MCF_noexcept;
 
 /* Sets a thread-local value. The calling thread shall have been created by
- * `_MCF_thread_new()`, or shall be the main thread.
- *
- * If `__old_value_opt` is not a null pointer and the new value has been set,
- * its old value is stored into `*__old_value_opt`.
+ * `_MCF_thread_new()`, or shall be the main thread. If `__old_value_opt` is
+ * not a null pointer and the new value has been set, its old value is stored
+ * into `*__old_value_opt`.
  *
  * Returns 0 upon success and -1 upon failure.  */
 __MCF_THREAD_INLINE
