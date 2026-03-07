@@ -86,6 +86,7 @@ _MCF_once_abort(_MCF_once* once)
   {
     __MCF_ASSERT(once->__ready == 0);
     __MCF_ASSERT(once->__locked == 1);
+
     bool wake_one;
     _MCF_once old, new;
 
@@ -116,10 +117,16 @@ _MCF_once_release(_MCF_once* once)
     __MCF_ASSERT(once->__ready == 0);
     __MCF_ASSERT(once->__locked == 1);
 
+    size_t wake_num;
+    _MCF_once old, new;
+
     /* Set the `__ready` field and get the number of sleeping threads as an
      * atomic operation.  */
-    _MCF_once old, new = { .__ready = 1 };
+    new.__ready = 1;
+    new.__locked = 0;
+    new.__nsleep = 0;
     _MCF_atomic_xchg_pptr_rel(&old, once, &new);
+    wake_num = old.__nsleep;
 
     /* Wake up all threads.  */
     __MCF_batch_release_common(once, old.__nsleep);
