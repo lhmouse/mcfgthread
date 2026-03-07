@@ -129,5 +129,5 @@ _MCF_once_release(_MCF_once* once)
     wake_num = old.__nsleep;
 
     /* Wake up all threads.  */
-    __MCF_batch_release_common(once, old.__nsleep);
+    __MCF_batch_release_common(once, wake_num);
   }
