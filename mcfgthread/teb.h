@@ -27,37 +27,35 @@ int32_t
 __MCF_teb_load_32(uint32_t __offset)
   __MCF_noexcept
   {
+    int32_t __value;
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    return *(int32_t __seg_gs*)(uint64_t) __offset;
+    __value = *(int32_t __seg_gs*)(uint64_t) __offset;
 #  else
-    int32_t __value;
     __asm__ ("gs; .insn 0x8B, %k0, %a1"  /* 65 8B := mov R, gs:M */
         : "=r"(__value) : "Ts"((uint64_t) __offset) : "memory");
-    return __value;
 #  endif
 #elif defined __MCF_M_X8632_ASM
 #  if defined __clang__
-    return *(int32_t __seg_fs*) __offset;
+    __value = *(int32_t __seg_fs*) __offset;
 #  else
-    int32_t __value;
     __asm__ ("fs; .insn 0x8B, %k0, %a1"  /* 64 8B := mov R, fs:M */
         : "=r"(__value) : "Ts"(__offset) : "memory");
-    return __value;
 #  endif
 #elif defined __MCF_M_ARM64_ASM
     register char* __teb __asm__("x18");
     __asm__ ("" : "=r"(__teb));
-    return *(int32_t*) (__teb + __offset);
+    __value = *(int32_t*) (__teb + __offset);
 #elif defined __MCF_M_X8664
-    return (int32_t) __readgsdword(__offset);
+    __value = (int32_t) __readgsdword(__offset);
 #elif defined __MCF_M_X8632
-    return (int32_t) __readfsdword(__offset);
+    __value = (int32_t) __readfsdword(__offset);
 #elif defined __MCF_M_ARM64
-    return (int32_t) __readx18dword(__offset);
+    __value = (int32_t) __readx18dword(__offset);
 #else
 #  error unimplemented
 #endif
+    return __value;
   }
 
 /* Stores a 32-bit integer at `__offset` of the environment block of the
@@ -105,37 +103,35 @@ void*
 __MCF_teb_load_ptr(uint32_t __offset)
   __MCF_noexcept
   {
+    void* __value;
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    return *(void* __seg_gs*)(uint64_t) __offset;
+    __value = *(void* __seg_gs*)(uint64_t) __offset;
 #  else
-    void* __value;
     __asm__ ("gs; .insn 0x8B, %0, %a1"  /* 65 8B := mov R, gs:M */
         : "=r"(__value) : "Ts"((uint64_t) __offset) : "memory");
-    return __value;
 #  endif
 #elif defined __MCF_M_X8632_ASM
 #  if defined __clang__
-    return *(void* __seg_fs*) __offset;
+    __value = *(void* __seg_fs*) __offset;
 #  else
-    void* __value;
     __asm__ ("fs; .insn 0x8B, %0, %a1"  /* 64 8B := mov R, fs:M */
         : "=r"(__value) : "Ts"(__offset) : "memory");
-    return __value;
 #  endif
 #elif defined __MCF_M_ARM64_ASM
     register char* __teb __asm__("x18");
     __asm__ ("" : "=r"(__teb));
-    return *(void**) (__teb + __offset);
+    __value = *(void**) (__teb + __offset);
 #elif defined __MCF_M_X8664
-    return (void*) __readgsqword(__offset);
+    __value = (void*) __readgsqword(__offset);
 #elif defined __MCF_M_X8632
-    return (void*) __readfsdword(__offset);
+    __value = (void*) __readfsdword(__offset);
 #elif defined __MCF_M_ARM64
-    return (void*) __readx18qword(__offset);
+    __value = (void*) __readx18qword(__offset);
 #else
 #  error unimplemented
 #endif
+    return __value;
   }
 
 /* Stores a generic pointer at `__offset` of the environment block of the
