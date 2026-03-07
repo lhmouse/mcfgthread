@@ -110,7 +110,7 @@ __MCF_teb_load_ptr(uint32_t __offset)
     return *(void* __seg_gs*)(uint64_t) __offset;
 #  else
     void* __value;
-    __asm__ ("gs; .insn 0x8B, %0, %a1" /* 65 8B := mov R, gs:M */
+    __asm__ ("gs; .insn 0x8B, %0, %a1"  /* 65 8B := mov R, gs:M */
         : "=r"(__value) : "Ts"((uint64_t) __offset) : "memory");
     return __value;
 #  endif
