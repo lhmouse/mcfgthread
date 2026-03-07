@@ -74,7 +74,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 #pragma GCC diagnostic warning "-Wsign-conversion"
       new.__locked = 1;
       new.__sp_mask = old.__sp_mask | (old.__sp_mask + (old.__locked & may_spin));
-      new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, old.__locked * 2 - 1);
+      new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked * 2 - 1);
       new.__nsleep = old.__nsleep + (old.__locked & !may_spin);
 #pragma GCC diagnostic pop
 
