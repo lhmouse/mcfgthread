@@ -19,8 +19,8 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_TEB_INLINE  __MCF_ALWAYS_INLINE
 #endif
 
-/* Load a 32-bit integer at `__offset` of the environment block of the
- * current thread. This function may operate on TEB directly and may be more
+/* Load a 32-bit integer at `__offset` of the thread environment block (TEB) of
+ * the current thread. This function may operate on TEB directly and may be more
  * efficient than accessing through `__MCF_teb()`.  */
 __MCF_TEB_INLINE __MCF_FN_PURE
 int32_t
@@ -58,9 +58,9 @@ __MCF_teb_load_32(uint32_t __offset)
     return __value;
   }
 
-/* Stores a 32-bit integer at `__offset` of the environment block of the
- * current thread. This function may operate on TEB directly and may be more
- * efficient than accessing through `__MCF_teb()`.  */
+/* Stores a 32-bit integer at `__offset` of the thread environment block (TEB)
+ * of the current thread. This function may operate on TEB directly and may be
+ * more efficient than accessing through `__MCF_teb()`.  */
 __MCF_TEB_INLINE
 void
 __MCF_teb_store_32(uint32_t __offset, int32_t __value)
@@ -95,9 +95,9 @@ __MCF_teb_store_32(uint32_t __offset, int32_t __value)
 #endif
   }
 
-/* Load a generic pointer at `__offset` of the environment block of the
- * current thread. This function may operate on TEB directly and may be more
- * efficient than accessing through `__MCF_teb()`.  */
+/* Load a generic pointer at `__offset` of the thread environment block (TEB)
+ * of the current thread. This function may operate on TEB directly and may be
+ * more efficient than accessing through `__MCF_teb()`.  */
 __MCF_TEB_INLINE __MCF_FN_PURE
 void*
 __MCF_teb_load_ptr(uint32_t __offset)
@@ -134,9 +134,9 @@ __MCF_teb_load_ptr(uint32_t __offset)
     return __value;
   }
 
-/* Stores a generic pointer at `__offset` of the environment block of the
- * current thread. This function may operate on TEB directly and may be more
- * efficient than accessing through `__MCF_teb()`.  */
+/* Stores a generic pointer at `__offset` of the thread environment block (TEB)
+ * of the current thread. This function may operate on TEB directly and may be
+ * more efficient than accessing through `__MCF_teb()`.  */
 __MCF_TEB_INLINE
 void
 __MCF_teb_store_ptr(uint32_t __offset, const void* __value)
@@ -171,8 +171,8 @@ __MCF_teb_store_ptr(uint32_t __offset, const void* __value)
 #endif
   }
 
-/* Get a pointer to the process environment block of the current process in
- * the flat address space.  */
+/* Get a pointer to the process environment block of the current process in the
+ * flat address space.  */
 __MCF_TEB_INLINE __MCF_FN_CONST
 void*
 __MCF_peb(void)
@@ -181,8 +181,8 @@ __MCF_peb(void)
     return __MCF_teb_load_ptr(__MCF_64_32(0x60, 0x30));
   }
 
-/* Get a pointer to the thread environment block of the current thread in
- * the flat address space.  */
+/* Get a pointer to the thread environment block of the current thread in the
+ * flat address space.  */
 __MCF_TEB_INLINE __MCF_FN_CONST
 void*
 __MCF_teb(void)
