@@ -68,14 +68,15 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     _MCF_atomic_load_pptr_rlx(&old, mutex);
     for(;;) {
       spin_count = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
-      bool may_spin = (old.__sp_mask != 15U) && (spin_count > 0);
+      bool should_spin = old.__locked && (old.__sp_mask != 15U) && (spin_count > 0);
+      bool should_sleep = old.__locked && !should_spin;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
 #pragma GCC diagnostic warning "-Wsign-conversion"
       new.__locked = 1;
-      new.__sp_mask = old.__sp_mask | (old.__sp_mask + (old.__locked & may_spin));
+      new.__sp_mask = old.__sp_mask | (old.__sp_mask + should_spin);
       new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked * 2 - 1);
-      new.__nsleep = old.__nsleep + (old.__locked & !may_spin);
+      new.__nsleep = old.__nsleep + should_sleep;
 #pragma GCC diagnostic pop
 
       if(_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new))
