@@ -117,12 +117,17 @@ _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __time
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_shared_mutex __old_v = { 0, 0 };
-    _MCF_shared_mutex __new_v = { 1, 0 };
-    if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smutex, &__old_v, &__new_v))
-      return 0;
-    else if((__old_v.__nshare == 0x3FFF) && __timeout_opt && (*__timeout_opt == 0))
-      return -1;
+    _MCF_shared_mutex __old_v;
+    _MCF_atomic_load_pptr_rlx(&__old_v, __smutex);
+    if(__old_v.__nshare < __MCF_SHARED_MUTEX_MAX_SHARE) {
+      _MCF_shared_mutex __new_v = __old_v;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+      __new_v.__nshare = __old_v.__nshare + 1U;
+#pragma GCC diagnostic pop
+      if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smutex, &__old_v, &__new_v))
+        return 0;
+    }
 #endif
     return _MCF_shared_mutex_lock_shared_slow(__smutex, __timeout_opt);
   }
@@ -133,12 +138,14 @@ _MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smutex, const int64_t* __t
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_shared_mutex __old_v = { 0, 0 };
-    _MCF_shared_mutex __new_v = { 0x3FFF, 0 };
-    if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smutex, &__old_v, &__new_v))
-      return 0;
-    else if((__old_v.__nshare != 0) && __timeout_opt && (*__timeout_opt == 0))
-      return -1;
+    _MCF_shared_mutex __old_v;
+    _MCF_atomic_load_pptr_rlx(&__old_v, __smutex);
+    if(__old_v.__nshare == 0) {
+      _MCF_shared_mutex __new_v = __old_v;
+      __new_v.__nshare = 0x3FFFU;
+      if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smutex, &__old_v, &__new_v))
+        return 0;
+    }
 #endif
     return _MCF_shared_mutex_lock_exclusive_slow(__smutex, __timeout_opt);
   }
@@ -149,10 +156,18 @@ _MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_shared_mutex __old_v = { 1, 0 };
-    _MCF_shared_mutex __new_v = { 0, 0 };
-    if(_MCF_atomic_cmpxchg_weak_pptr_rel(__smutex, &__old_v, &__new_v))
-      return;
+    _MCF_shared_mutex __old_v;
+    _MCF_atomic_load_pptr_rlx(&__old_v, __smutex);
+    __MCF_ASSERT(__old_v.__nshare != 0);
+    if(__old_v.__nsleep == 0) {
+      _MCF_shared_mutex __new_v = __old_v;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+      __new_v.__nshare = (__old_v.__nshare != 0x3FFFU) ? (__old_v.__nshare - 1U) : 0U;
+#pragma GCC diagnostic pop
+      if(_MCF_atomic_cmpxchg_weak_pptr_rel(__smutex, &__old_v, &__new_v))
+        return;
+    }
 #endif
     _MCF_shared_mutex_unlock_slow(__smutex);
   }
