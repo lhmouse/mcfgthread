@@ -163,7 +163,7 @@ _MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex)
       _MCF_shared_mutex __new_v = __old_v;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-      __new_v.__nshare = (__old_v.__nshare != 0x3FFFU) ? (__old_v.__nshare - 1U) : 0U;
+      __new_v.__nshare = __old_v.__nshare + ((__old_v.__nshare + 1U) >> 14) * 2U - 1U;
 #pragma GCC diagnostic pop
       if(_MCF_atomic_cmpxchg_weak_pptr_rel(__smutex, &__old_v, &__new_v))
         return;

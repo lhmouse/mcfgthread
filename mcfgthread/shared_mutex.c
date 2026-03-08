@@ -164,7 +164,7 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
       wake_one = (old.__nsleep != 0) && !((old.__nshare > 1) && (old.__nshare < 0x3FFFU));
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
-      new.__nshare = old.__nshare - !exclusive + exclusive;
+      new.__nshare = old.__nshare + exclusive * 2U - 1U;
       new.__nsleep = old.__nsleep - wake_one;
 #pragma GCC diagnostic pop
 
