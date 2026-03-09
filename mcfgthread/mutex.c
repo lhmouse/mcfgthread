@@ -61,8 +61,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
      * is less than the number bits in `__sp_nfail` and `__sp_nfail` is less
      * than `__MCF_MUTEX_SP_NFAIL_THRESHOLD`, which means the current thread
      * is allowed to spin, allocate a spinning bit; otherwise, allocate a
-     * sleeping count. The spinning failure counter is usually not updated;
-     * but if we won't do a spinning attempt, it should be incremented anyway.  */
+     * sleeping count. The spinning failure counter is decremented if the
+     * mutex can be locked immediately; and incremented otherwise, no matter
+     * whether the current thread is going to spin or not.  */
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, mutex);
     for(;;) {
@@ -74,7 +75,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 #pragma GCC diagnostic warning "-Wsign-conversion"
       new.__locked = 1;
       new.__sp_mask = old.__sp_mask | (old.__sp_mask + should_spin);
-      new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, should_sleep);
+      new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked * 2 - 1);
       new.__nsleep = old.__nsleep + should_sleep;
 #pragma GCC diagnostic pop
 
@@ -132,7 +133,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
 #pragma GCC diagnostic ignored "-Wconversion"
         new.__locked = 1;
         new.__sp_mask = old.__sp_mask & ~lmask;
-        new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked * 2 - 1);
+        new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked - 1);
         new.__nsleep = old.__nsleep + old.__locked;
 #pragma GCC diagnostic pop
 

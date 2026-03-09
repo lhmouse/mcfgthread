@@ -5,6 +5,7 @@
  * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
+#define __MCF_EXPAND_INLINE_DEFINITIONS 1
 #include "../mcfgthread/mutex.h"
 #include <assert.h>
 #include <stdio.h>
@@ -18,7 +19,6 @@ main(void)
     assert(mutex.__sp_mask == 0);
     assert(mutex.__sp_nfail == 0);
 
-    fprintf(stderr, "try succeeding: fast\n");
     assert(_MCF_mutex_lock(&mutex, (const int64_t[]){ -100 }) == 0);
     assert(mutex.__locked == 1);
     assert(mutex.__sp_nfail == 0);
@@ -35,18 +35,23 @@ main(void)
     assert(mutex.__locked == 1);
     assert(mutex.__sp_nfail == 15);
 
-    fprintf(stderr, "try succeeding: fast\n");
-    _MCF_mutex_unlock(&mutex);
-    assert(mutex.__locked == 0);
-    assert(_MCF_mutex_lock(&mutex, (const int64_t[]){ -100 }) == 0);
-    assert(mutex.__sp_nfail == 15);
+    for(size_t count = 15;  count >= 1;  --count) {
+      fprintf(stderr, "try succeeding: fast %d\n", (int) count);
+      _MCF_mutex_unlock(&mutex);
+      assert(mutex.__locked == 0);
+      assert(_MCF_mutex_lock(&mutex, (const int64_t[]){ -100 >> count }) == 0);
+      assert(mutex.__sp_nfail == count);
 
-    // TODO: Need to figure how to test spin success.
-    // for(size_t count = 15;  count >= 1;  --count) {
-    //   fprintf(stderr, "try succeeding: %d\n", (int) count);
-    //   _MCF_mutex_unlock(&mutex);
-    //   assert(mutex.__locked == 0);
-    //   assert(_MCF_mutex_lock(&mutex, (const int64_t[]){ -100 }) == 0);
-    //   assert(mutex.__sp_nfail == count - 1);
-    // }
+      fprintf(stderr, "try succeeding: slow %d\n", (int) count);
+      _MCF_mutex_unlock_slow(&mutex);
+      assert(mutex.__locked == 0);
+      assert(_MCF_mutex_lock_slow(&mutex, (const int64_t[]){ -100 >> count }) == 0);
+      assert(mutex.__sp_nfail == count - 1);
+    }
+
+    fprintf(stderr, "try succeeding: final\n");
+    _MCF_mutex_unlock_slow(&mutex);
+    assert(mutex.__locked == 0);
+    assert(_MCF_mutex_lock_slow(&mutex, (const int64_t[]){ -100 }) == 0);
+    assert(mutex.__sp_nfail == 0);
   }
