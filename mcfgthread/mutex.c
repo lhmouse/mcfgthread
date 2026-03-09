@@ -100,20 +100,21 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
          * failure counter. Otherwise, do nothing.  */
         _MCF_atomic_load_pptr_rlx(&old, mutex);
         for(;;) {
-          if(old.__locked != 0)
-            break;
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
           new.__locked = 1;
-          new.__sp_mask = old.__sp_mask;
-          new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, -1);
+          new.__sp_mask = old.__sp_mask ^ ((old.__sp_mask ^ (0U - old.__locked)) & my_mask);
+          new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked - 1);
           new.__nsleep = old.__nsleep;
 #pragma GCC diagnostic pop
 
           if(_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new))
-            return 0;
+            break;
         }
+
+        /* If this mutex has been locked by the current thread, succeed.  */
+        if(old.__locked == 0)
+          return 0;
       }
 
       /* We have wasted some time, so return the spinning mask and allocate
