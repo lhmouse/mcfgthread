@@ -11,8 +11,10 @@
 
 #include "fwd.h"
 
+/* Define macros to use atomic operations. If the compiler has builtin support,
+ * then it should be preferred; otherwise the standard library is used.
+ * Microsoft Visual Studio 2022 has experimental support which seems to suffice.  */
 #if defined __GNUC__ || defined __clang__
-/* Use built-in types.  */
 #  define __MCF_ATOMICIFY(T, ...)             __MCF_CAST_PTR(volatile T, __VA_ARGS__)
 #  define __MCF_memory_order_rlx              __ATOMIC_RELAXED
 #  define __MCF_memory_order_acq              __ATOMIC_ACQUIRE
@@ -28,43 +30,28 @@
 #  define __MCF_atomic_xsub(p,v,o)            __atomic_fetch_sub(p,v,o)
 #  define __MCF_atomic_thread_fence(o)        __atomic_thread_fence(o)
 #  define __MCF_atomic_signal_fence(o)        __atomic_signal_fence(o)
-#elif __MCF_CXX11(1+)0
-/* Use the C++11 standard library.  */
-#  include <atomic>
-#  define __MCF_ATOMICIFY(T, ...)             __MCF_CAST_PTR(::std::atomic<T>, __VA_ARGS__)
-#  define __MCF_memory_order_rlx              ::std::memory_order_relaxed
-#  define __MCF_memory_order_acq              ::std::memory_order_acquire
-#  define __MCF_memory_order_rel              ::std::memory_order_release
-#  define __MCF_memory_order_arl              ::std::memory_order_acq_rel
-#  define __MCF_memory_order_cst              ::std::memory_order_seq_cst
-#  define __MCF_atomic_load(p,o)              ::std::atomic_load_explicit(p,o)
-#  define __MCF_atomic_store(p,v,o)           ::std::atomic_store_explicit(p,v,o)
-#  define __MCF_atomic_xchg(p,v,o)            ::std::atomic_exchange_explicit(p,v,o)
-#  define __MCF_atomic_cmpxchg(p,c,v,o,f)     ::std::atomic_compare_exchange_strong_explicit(p,c,v,o,f)
-#  define __MCF_atomic_cmpxchg_w(p,c,v,o,f)   ::std::atomic_compare_exchange_weak_explicit(p,c,v,o,f)
-#  define __MCF_atomic_xadd(p,v,o)            ::std::atomic_fetch_add_explicit(p,v,o)
-#  define __MCF_atomic_xsub(p,v,o)            ::std::atomic_fetch_sub_explicit(p,v,o)
-#  define __MCF_atomic_thread_fence(o)        ::std::atomic_thread_fence(o)
-#  define __MCF_atomic_signal_fence(o)        ::std::atomic_signal_fence(o)
 #else
-/* Use the C11 standard library. Microsoft Visual Studio 2022 has experimental
- * support which seems to suffice.  */
-#  include <stdatomic.h>
-#  define __MCF_ATOMICIFY(T, ...)             __MCF_CAST_PTR(_Atomic T, __VA_ARGS__)
-#  define __MCF_memory_order_rlx              memory_order_relaxed
-#  define __MCF_memory_order_acq              memory_order_acquire
-#  define __MCF_memory_order_rel              memory_order_release
-#  define __MCF_memory_order_arl              memory_order_acq_rel
-#  define __MCF_memory_order_cst              memory_order_seq_cst
-#  define __MCF_atomic_load(p,o)              atomic_load_explicit(p,o)
-#  define __MCF_atomic_store(p,v,o)           atomic_store_explicit(p,v,o)
-#  define __MCF_atomic_xchg(p,v,o)            atomic_exchange_explicit(p,v,o)
-#  define __MCF_atomic_cmpxchg(p,c,v,o,f)     atomic_compare_exchange_strong_explicit(p,c,v,o,f)
-#  define __MCF_atomic_cmpxchg_w(p,c,v,o,f)   atomic_compare_exchange_weak_explicit(p,c,v,o,f)
-#  define __MCF_atomic_xadd(p,v,o)            atomic_fetch_add_explicit(p,v,o)
-#  define __MCF_atomic_xsub(p,v,o)            atomic_fetch_sub_explicit(p,v,o)
-#  define __MCF_atomic_thread_fence(o)        atomic_thread_fence(o)
-#  define __MCF_atomic_signal_fence(o)        atomic_signal_fence(o)
+#  if __MCF_CXX11(1+)0
+#    include <atomic>
+#    define __MCF_ATOMICIFY(T, ...)           __MCF_CAST_PTR(::std::atomic<T>, __VA_ARGS__)
+#  else
+#    include <stdatomic.h>
+#    define __MCF_ATOMICIFY(T, ...)           __MCF_CAST_PTR(_Atomic T, __VA_ARGS__)
+#  endif
+#  define __MCF_memory_order_rlx              __MCF_CXX11(::std::)memory_order_relaxed
+#  define __MCF_memory_order_acq              __MCF_CXX11(::std::)memory_order_acquire
+#  define __MCF_memory_order_rel              __MCF_CXX11(::std::)memory_order_release
+#  define __MCF_memory_order_arl              __MCF_CXX11(::std::)memory_order_acq_rel
+#  define __MCF_memory_order_cst              __MCF_CXX11(::std::)memory_order_seq_cst
+#  define __MCF_atomic_load(p,o)              __MCF_CXX11(::std::)atomic_load_explicit(p,o)
+#  define __MCF_atomic_store(p,v,o)           __MCF_CXX11(::std::)atomic_store_explicit(p,v,o)
+#  define __MCF_atomic_xchg(p,v,o)            __MCF_CXX11(::std::)atomic_exchange_explicit(p,v,o)
+#  define __MCF_atomic_cmpxchg(p,c,v,o,f)     __MCF_CXX11(::std::)atomic_compare_exchange_strong_explicit(p,c,v,o,f)
+#  define __MCF_atomic_cmpxchg_w(p,c,v,o,f)   __MCF_CXX11(::std::)atomic_compare_exchange_weak_explicit(p,c,v,o,f)
+#  define __MCF_atomic_xadd(p,v,o)            __MCF_CXX11(::std::)atomic_fetch_add_explicit(p,v,o)
+#  define __MCF_atomic_xsub(p,v,o)            __MCF_CXX11(::std::)atomic_fetch_sub_explicit(p,v,o)
+#  define __MCF_atomic_thread_fence(o)        __MCF_CXX11(::std::)atomic_thread_fence(o)
+#  define __MCF_atomic_signal_fence(o)        __MCF_CXX11(::std::)atomic_signal_fence(o)
 #endif
 
 __MCF_CXX(extern "C" {)
