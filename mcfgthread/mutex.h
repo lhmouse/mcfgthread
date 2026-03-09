@@ -103,10 +103,10 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_mutex __old_v;
+    _MCF_mutex __old_v, __new_v;
     _MCF_atomic_load_pptr_rlx(&__old_v, __mutex);
     if(__old_v.__locked == 0) {
-      _MCF_mutex __new_v = __old_v;
+      __new_v = __old_v;
       __new_v.__locked = 1;
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
@@ -125,11 +125,11 @@ _MCF_mutex_unlock(_MCF_mutex* __mutex)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_mutex __old_v;
+    _MCF_mutex __old_v, __new_v;
     _MCF_atomic_load_pptr_rlx(&__old_v, __mutex);
     __MCF_ASSERT(__old_v.__locked != 0);
     if((__old_v.__sp_mask == 0) && (__old_v.__nsleep == 0)) {
-      _MCF_mutex __new_v = __old_v;
+      __new_v = __old_v;
       __new_v.__locked = 0;
       if(_MCF_atomic_cmpxchg_weak_pptr_rel(__mutex, &__old_v, &__new_v))
         return;
