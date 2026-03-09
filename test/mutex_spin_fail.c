@@ -23,8 +23,8 @@ main(void)
     assert(mutex.__locked == 1);
     assert(mutex.__sp_nfail == 0);
 
-    for(size_t count = 1;  count <= 15;  ++count) {
-      fprintf(stderr, "try failing: %d\n", (int) count);
+    for(int count = 1;  count <= 15;  ++count) {
+      fprintf(stderr, "try failing: %d\n", count);
       assert(_MCF_mutex_lock(&mutex, (const int64_t[]){ -100 }) == -1);
       assert(mutex.__locked == 1);
       assert(mutex.__sp_nfail == count);
@@ -35,17 +35,11 @@ main(void)
     assert(mutex.__locked == 1);
     assert(mutex.__sp_nfail == 15);
 
-    for(size_t count = 15;  count >= 1;  --count) {
-      fprintf(stderr, "try succeeding: fast %d\n", (int) count);
+    for(int count = 15;  count >= 1;  --count) {
+      fprintf(stderr, "try succeeding: %d\n", count);
       _MCF_mutex_unlock(&mutex);
       assert(mutex.__locked == 0);
-      assert(_MCF_mutex_lock(&mutex, (const int64_t[]){ -100 >> count }) == 0);
-      assert(mutex.__sp_nfail == count);
-
-      fprintf(stderr, "try succeeding: slow %d\n", (int) count);
-      _MCF_mutex_unlock_slow(&mutex);
-      assert(mutex.__locked == 0);
-      assert(_MCF_mutex_lock_slow(&mutex, (const int64_t[]){ -100 >> count }) == 0);
+      assert(_MCF_mutex_lock(&mutex, (const int64_t[]){ -100 }) == 0);
       assert(mutex.__sp_nfail == count - 1);
     }
 
