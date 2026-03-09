@@ -58,9 +58,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     _MCF_mutex old, new;
 
     /* If this mutex has not been locked, lock it; otherwise, if `__sp_mask`
-     * is less than the number bits in `__sp_nfail` and `__sp_nfail` is less
-     * than `__MCF_MUTEX_SP_NFAIL_THRESHOLD`, which means the current thread
-     * is allowed to spin, allocate a spinning bit; otherwise, allocate a
+     * contains at least one zero bit and `__sp_nfail` is less than
+     * `__MCF_MUTEX_SP_NFAIL_THRESHOLD`, which means the current thread is
+     * allowed to spin, allocate a spinning bit; otherwise, allocate a
      * sleeping count. The spinning failure counter is decremented if the
      * mutex can be locked immediately.  */
   try_lock_loop:
