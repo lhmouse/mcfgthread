@@ -30,7 +30,7 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       new.__nshare = old.__nshare + shareable;
-      new.__nsleep = old.__nsleep + !shareable;
+      new.__nsleep = old.__nsleep + 1U - shareable;
 #pragma GCC diagnostic pop
 
       if(_MCF_atomic_cmpxchg_weak_pptr_acq(smutex, &old, &new))
@@ -96,7 +96,7 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wconversion"
       new.__nshare = old.__nshare - lockable;
-      new.__nsleep = old.__nsleep + !lockable;
+      new.__nsleep = old.__nsleep + 1U - lockable;
 #pragma GCC diagnostic pop
 
       if(_MCF_atomic_cmpxchg_weak_pptr_acq(smutex, &old, &new))
