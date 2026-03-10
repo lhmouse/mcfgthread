@@ -54,7 +54,7 @@ do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, 
     (void) disp_ctx;
 
     /* If the stack is being unwound, reset the once flag.  */
-    if(rec->ExceptionFlags & EXCEPTION_UNWIND)
+    if(rec->ExceptionFlags & EXCEPTION_UNWINDING)
       _MCF_once_abort((_MCF_once*) do_seh_once_reg(estab_frame, disp_ctx));
 
     /* Continue unwinding.  */
