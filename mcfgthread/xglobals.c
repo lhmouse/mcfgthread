@@ -61,6 +61,7 @@ __MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* to, const int64_t* ms_opt
         return;
 
       to->__li.QuadPart = (11644473600000 + *ms_opt) * 10000;
+      __MCF_ASSERT(to->__li.QuadPart > 0);
     }
     else if(*ms_opt < 0) {
       /* If `*ms_opt` is negative, it denotes the number of milliseconds to
@@ -69,6 +70,7 @@ __MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* to, const int64_t* ms_opt
         return;
 
       to->__li.QuadPart = *ms_opt * 10000;
+      __MCF_ASSERT(to->__li.QuadPart < 0);
       QueryUnbiasedInterruptTime(&(to->__since));
     }
     else
