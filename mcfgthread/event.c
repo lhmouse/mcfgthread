@@ -27,12 +27,9 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
       if(old.__value != (uint8_t) undesired)
         return old.__value;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
       new.__value = old.__value;
       new.__reserved_bit = 0;
-      new.__nsleep = old.__nsleep + 1U;
-#pragma GCC diagnostic pop
+      new.__nsleep = (old.__nsleep + 1U) & (__MCF_UPTR_MAX >> 9);
 
       if(_MCF_atomic_cmpxchg_weak_pptr_arl(event, &old, &new))
         break;
@@ -49,12 +46,9 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
         if(old.__nsleep == 0)
           break;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
         new.__value = old.__value;
         new.__reserved_bit = 0;
-        new.__nsleep = old.__nsleep - 1U;
-#pragma GCC diagnostic pop
+        new.__nsleep = (old.__nsleep - 1U) & (__MCF_UPTR_MAX >> 9);
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(event, &old, &new))
           return -1;

@@ -64,14 +64,10 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
       sp_budget = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
       bool should_spin = old.__locked && (old.__sp_mask != 15U) && (sp_budget > 0);
       bool should_sleep = old.__locked && !should_spin;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-#pragma GCC diagnostic warning "-Wsign-conversion"
       new.__locked = 1;
-      new.__sp_mask = old.__sp_mask | (old.__sp_mask + should_spin);
-      new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked - 1 + should_sleep);
-      new.__nsleep = old.__nsleep + should_sleep;
-#pragma GCC diagnostic pop
+      new.__sp_mask = (old.__sp_mask | (old.__sp_mask + should_spin)) & 0x0FU;
+      new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked - 1 + should_sleep) & 0x0FU;
+      new.__nsleep = (old.__nsleep + should_sleep) & (__MCF_UPTR_MAX >> 9);
 
       if(_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new))
         break;
@@ -100,13 +96,10 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
          * failure counter. Otherwise, do nothing.  */
         _MCF_atomic_load_pptr_rlx(&old, mutex);
         for(;;) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
           new.__locked = 1;
-          new.__sp_mask = old.__sp_mask ^ ((old.__sp_mask ^ (0U - old.__locked)) & my_mask);
-          new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked - 1);
+          new.__sp_mask = (old.__sp_mask ^ ((old.__sp_mask ^ (0U - old.__locked)) & my_mask)) & 0x0FU;
+          new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked - 1) & 0x0FU;
           new.__nsleep = old.__nsleep;
-#pragma GCC diagnostic pop
 
           if(_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new))
             break;
@@ -125,13 +118,10 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
        * we could miss a wakeup and result in deadlocks.  */
       _MCF_atomic_load_pptr_rlx(&old, mutex);
       for(;;) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
         new.__locked = 1;
-        new.__sp_mask = old.__sp_mask & (15U - my_mask);
-        new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked * 2 - 1);
-        new.__nsleep = old.__nsleep + old.__locked;
-#pragma GCC diagnostic pop
+        new.__sp_mask = (old.__sp_mask & (15U - my_mask)) & 0x0FU;
+        new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked * 2 - 1) & 0x0FU;
+        new.__nsleep = (old.__nsleep + old.__locked) & (__MCF_UPTR_MAX >> 9);
 
         if(_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new))
           break;
@@ -153,13 +143,10 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         if(old.__nsleep == 0)
           break;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
         new.__locked = old.__locked;
         new.__sp_mask = old.__sp_mask;
         new.__sp_nfail = old.__sp_nfail;
-        new.__nsleep = old.__nsleep - 1U;
-#pragma GCC diagnostic pop
+        new.__nsleep = (old.__nsleep - 1U) & (__MCF_UPTR_MAX >> 9);
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(mutex, &old, &new))
           return -1;
@@ -195,13 +182,10 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
     _MCF_atomic_load_pptr_rlx(&old, mutex);
     for(;;) {
       wake_one = old.__nsleep != 0;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
       new.__locked = 0;
-      new.__sp_mask = old.__sp_mask & (old.__sp_mask - 1U);
+      new.__sp_mask = (old.__sp_mask & (old.__sp_mask - 1U)) & 0x0FU;
       new.__sp_nfail = old.__sp_nfail;
-      new.__nsleep = old.__nsleep - wake_one;
-#pragma GCC diagnostic pop
+      new.__nsleep = (old.__nsleep - wake_one) & (__MCF_UPTR_MAX >> 9);
 
       if(_MCF_atomic_cmpxchg_weak_pptr_rel(mutex, &old, &new))
         break;

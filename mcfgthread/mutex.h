@@ -108,10 +108,7 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt)
     if(__old_v.__locked == 0) {
       __new_v = __old_v;
       __new_v.__locked = 1;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-      __new_v.__sp_nfail = __old_v.__sp_nfail - ((__old_v.__sp_nfail + 15U) >> 4);
-#pragma GCC diagnostic pop
+      __new_v.__sp_nfail = (__old_v.__sp_nfail - ((__old_v.__sp_nfail + 15U) >> 4)) & 0x0FU;
       if(_MCF_atomic_cmpxchg_weak_pptr_acq(__mutex, &__old_v, &__new_v))
         return 0;
     }
