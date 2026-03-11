@@ -62,11 +62,10 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     _MCF_atomic_load_pptr_rlx(&old, mutex);
     for(;;) {
       sp_budget = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
-      bool should_spin = old.__locked && (old.__sp_mask != 15U) && (sp_budget > 0);
-      bool should_sleep = old.__locked && !should_spin;
+      bool should_sleep = old.__locked && ((sp_budget <= 0) || (old.__sp_mask == 15U));
       new.__locked = 1;
-      new.__sp_mask = (old.__sp_mask | (old.__sp_mask + should_spin)) & 0x0FU;
-      new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked - 1 + should_sleep) & 0x0FU;
+      new.__sp_mask = (old.__sp_mask | (old.__sp_mask + (UINT) old.__locked - should_sleep)) & 0x0FU;
+      new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked + should_sleep - 1) & 0x0FU;
       new.__nsleep = (old.__nsleep + should_sleep) & (__MCF_UPTR_MAX >> 9);
 
       if(_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new))
