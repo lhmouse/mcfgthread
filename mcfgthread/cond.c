@@ -23,11 +23,8 @@ do_unlock_and_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt, intptr
     /* Allocate a count for the current thread.  */
     _MCF_atomic_load_pptr_rlx(&old, cnd);
     for(;;) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
       new.__reserved_bits = 0;
-      new.__nsleep = old.__nsleep + 1U;
-#pragma GCC diagnostic pop
+      new.__nsleep = (old.__nsleep + 1U) & (__MCF_UPTR_MAX >> 9);
 
       if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cnd, &old, &new))
         break;
@@ -49,11 +46,8 @@ do_unlock_and_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt, intptr
         if(old.__nsleep == 0)
           break;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
         new.__reserved_bits = 0;
-        new.__nsleep = old.__nsleep - 1U;
-#pragma GCC diagnostic pop
+        new.__nsleep = (old.__nsleep - 1U) & (__MCF_UPTR_MAX >> 9);
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cnd, &old, &new))
           return -1;
@@ -109,11 +103,8 @@ _MCF_cond_signal_some_slow(_MCF_cond* cnd, size_t limit)
       if(wake_num == 0)
         return 0;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
       new.__reserved_bits = 0;
-      new.__nsleep = old.__nsleep - wake_num;
-#pragma GCC diagnostic pop
+      new.__nsleep = (old.__nsleep - wake_num) & (__MCF_UPTR_MAX >> 9);
 
       if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cnd, &old, &new))
         break;

@@ -27,11 +27,8 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
     _MCF_atomic_load_pptr_rlx(&old, smutex);
     for(;;) {
       bool shareable = (old.__nshare < __MCF_SHARED_MUTEX_MAX_SHARE) && (old.__nsleep == 0);
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-      new.__nshare = old.__nshare + shareable;
-      new.__nsleep = old.__nsleep + 1U - shareable;
-#pragma GCC diagnostic pop
+      new.__nshare = (old.__nshare + shareable) & 0x3FFFU;
+      new.__nsleep = (old.__nsleep + 1U - shareable) & (__MCF_UPTR_MAX >> 14);
 
       if(_MCF_atomic_cmpxchg_weak_pptr_acq(smutex, &old, &new))
         break;
@@ -52,11 +49,8 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
         if(old.__nsleep == 0)
           break;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
         new.__nshare = old.__nshare;
-        new.__nsleep = old.__nsleep - 1U;
-#pragma GCC diagnostic pop
+        new.__nsleep = (old.__nsleep - 1U) & (__MCF_UPTR_MAX >> 14);
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smutex, &old, &new))
           return -1;
@@ -93,11 +87,8 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
     _MCF_atomic_load_pptr_rlx(&old, smutex);
     for(;;) {
       bool lockable = old.__nshare == 0;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-      new.__nshare = old.__nshare - lockable;
-      new.__nsleep = old.__nsleep + 1U - lockable;
-#pragma GCC diagnostic pop
+      new.__nshare = (old.__nshare - lockable) & 0x3FFFU;
+      new.__nsleep = (old.__nsleep + 1U - lockable) & (__MCF_UPTR_MAX >> 14);
 
       if(_MCF_atomic_cmpxchg_weak_pptr_acq(smutex, &old, &new))
         break;
@@ -118,11 +109,8 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
         if(old.__nsleep == 0)
           break;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
         new.__nshare = old.__nshare;
-        new.__nsleep = old.__nsleep - 1U;
-#pragma GCC diagnostic pop
+        new.__nsleep = (old.__nsleep - 1U) & (__MCF_UPTR_MAX >> 14);
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smutex, &old, &new))
           return -1;
@@ -162,11 +150,8 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
       __MCF_ASSERT(old.__nshare != 0);
       bool exclusive = old.__nshare == 0x3FFFU;
       wake_one = (old.__nsleep != 0) && !((old.__nshare > 1) && (old.__nshare < 0x3FFFU));
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-      new.__nshare = old.__nshare + exclusive * 2U - 1U;
-      new.__nsleep = old.__nsleep - wake_one;
-#pragma GCC diagnostic pop
+      new.__nshare = (old.__nshare + exclusive * 2U - 1U) & 0x3FFFU;
+      new.__nsleep = (old.__nsleep - wake_one) & (__MCF_UPTR_MAX >> 14);
 
       if(_MCF_atomic_cmpxchg_weak_pptr_arl(smutex, &old, &new))
         break;

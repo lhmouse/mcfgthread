@@ -121,10 +121,7 @@ _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __time
     _MCF_atomic_load_pptr_rlx(&__old_v, __smutex);
     if(__old_v.__nshare < __MCF_SHARED_MUTEX_MAX_SHARE) {
       __new_v = __old_v;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-      __new_v.__nshare = __old_v.__nshare + 1U;
-#pragma GCC diagnostic pop
+      __new_v.__nshare = (__old_v.__nshare + 1U) & 0x3FFFU;
       if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smutex, &__old_v, &__new_v))
         return 0;
     }
@@ -161,10 +158,7 @@ _MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex)
     __MCF_ASSERT(__old_v.__nshare != 0);
     if(__old_v.__nsleep == 0) {
       __new_v = __old_v;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-      __new_v.__nshare = __old_v.__nshare + ((__old_v.__nshare + 1U) >> 14) * 2U - 1U;
-#pragma GCC diagnostic pop
+      __new_v.__nshare = (__old_v.__nshare + ((__old_v.__nshare + 1U) >> 14) * 2U - 1U) & 0x3FFFU;
       if(_MCF_atomic_cmpxchg_weak_pptr_rel(__smutex, &__old_v, &__new_v))
         return;
     }

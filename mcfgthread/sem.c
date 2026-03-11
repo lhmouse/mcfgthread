@@ -74,10 +74,8 @@ _MCF_sem_signal_some(_MCF_sem* sem, intptr_t value_add)
       if(old.__value > __MCF_SEM_VALUE_MAX - value_add)
         return -2;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wsign-conversion"
-      wake_num = _MCF_minz(_MCF_dim(0, old.__value), value_add);
-#pragma GCC diagnostic pop
+      uintptr_t nsleep = -(uintptr_t) (old.__value & (old.__value >> (__MCF_PTR_BITS - 1)));
+      wake_num = _MCF_minz(nsleep, (size_t) value_add);
       new.__value = old.__value + value_add;
 
       if(_MCF_atomic_cmpxchg_weak_pptr_rel(sem, &old, &new))

@@ -27,12 +27,9 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
       if(old.__ready != 0)
         return 0;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
       new.__ready = old.__ready;
       new.__locked = 1;
-      new.__nsleep = old.__nsleep + old.__locked;
-#pragma GCC diagnostic pop
+      new.__nsleep = (old.__nsleep + old.__locked) & (__MCF_UPTR_MAX >> 9);
 
       if(_MCF_atomic_cmpxchg_weak_pptr_acq(once, &old, &new))
         break;
@@ -54,12 +51,9 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         if(old.__nsleep == 0)
           break;
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
         new.__ready = old.__ready;
         new.__locked = old.__locked;
-        new.__nsleep = old.__nsleep - 1U;
-#pragma GCC diagnostic pop
+        new.__nsleep = (old.__nsleep - 1U) & (__MCF_UPTR_MAX >> 9);
 
         if(_MCF_atomic_cmpxchg_weak_pptr_acq(once, &old, &new))
           return (int) old.__ready - 1;
@@ -95,12 +89,9 @@ _MCF_once_abort(_MCF_once* once)
     _MCF_atomic_load_pptr_rlx(&old, once);
     for(;;) {
       wake_one = old.__nsleep != 0;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
       new.__ready = old.__ready;
       new.__locked = 0;
-      new.__nsleep = old.__nsleep - wake_one;
-#pragma GCC diagnostic pop
+      new.__nsleep = (old.__nsleep - wake_one) & (__MCF_UPTR_MAX >> 9);
 
       if(_MCF_atomic_cmpxchg_weak_pptr_rel(once, &old, &new))
         break;
