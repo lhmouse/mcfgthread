@@ -18,6 +18,12 @@ processor (8 P-cores + 16 E-cores, 32 threads):
 
 ![benchmark_result_win11_26300_i9_14900k](doc/benchmark_result_win11_26300_i9_14900k.png)
 
+This is the result on Windows 11 (24H2, build 26100.4652) on an AMD Ryzen 9
+7900X desktop processor (12 cores, 24 threads; special thanks to @nmreadelf
+for testing!):
+
+![benchmark_result_win11_26100_ryzen9_7900x](doc/benchmark_result_win11_26100_ryzen9_7900x.png)
+
 This is the result on Windows 11 Insider Preview (beta channel, build 26220.7755)
 on a Qualcomm Snapdragon 8cx Gen 3 mobile processor processor (8 cores, no
 hyper-threading):
