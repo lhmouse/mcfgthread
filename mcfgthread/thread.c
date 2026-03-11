@@ -78,9 +78,9 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     struct initializer init;
     _MCF_event_init(init.status, initialization_null);
 
-    size_t real_alignment = _MCF_maxz(__MCF_THREAD_DATA_ALIGNMENT, align);
+    size_t real_align = _MCF_maxz(__MCF_THREAD_DATA_ALIGNMENT, align);
     size_t size_need = sizeof(__MCF_thread_base) + size;
-    size_t size_request = size_need + real_alignment - MEMORY_ALLOCATION_ALIGNMENT;
+    size_t size_request = size_need + real_align - MEMORY_ALLOCATION_ALIGNMENT;
     __MCF_ASSERT(size_need <= size_request);
 
     init.thrd = __MCF_malloc_0(size_request);
@@ -96,7 +96,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
       /* Adjust `__data_opt` for over-aligned types. If we have over-allocated
        * memory, give back some. Errors are ignored.  */
       if(size_need != size_request) {
-        init.thrd->__data_opt = (void*) ((((uintptr_t) init.thrd->__data_opt - 1) | (real_alignment - 1)) + 1);
+        init.thrd->__data_opt = (void*) ((((uintptr_t) init.thrd->__data_opt - 1) | (real_align - 1)) + 1);
 
         size_request = (uintptr_t) init.thrd->__data_opt + size - (uintptr_t) init.thrd;
         __MCF_ASSERT(size_need <= size_request);
