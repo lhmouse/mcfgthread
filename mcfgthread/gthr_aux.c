@@ -92,8 +92,6 @@ intptr_t
 __MCF_gthr_mutex_unlock_callback(intptr_t arg)
   {
     _MCF_mutex* mtx = (_MCF_mutex*) arg;
-
-    /* Unlock the mutex. The return value is unused.  */
     _MCF_mutex_unlock_slow(mtx);
     return 0;
   }
@@ -103,9 +101,7 @@ void
 __MCF_gthr_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
   {
     _MCF_mutex* mtx = (_MCF_mutex*) arg;
-
-    /* Relock the mutex. The `unlocked` value is unused.  */
-    (void) unlocked;
+    __MCF_ASSERT(unlocked == 0);
     _MCF_mutex_lock_slow(mtx, __MCF_nullptr);
   }
 
@@ -123,8 +119,6 @@ intptr_t
 __MCF_gthr_shared_mutex_unlock_callback(intptr_t arg)
   {
     _MCF_shared_mutex* smtx = (_MCF_shared_mutex*) arg;
-
-    /* Unlock the shared mutex. The return value is unused.  */
     _MCF_shared_mutex_unlock_slow(smtx);
     return 0;
   }
@@ -134,9 +128,7 @@ void
 __MCF_gthr_shared_mutex_relock_shared_callback(intptr_t arg, intptr_t unlocked)
   {
     _MCF_shared_mutex* smtx = (_MCF_shared_mutex*) arg;
-
-    /* Relock the shared mutex. The `unlocked` value is unused.  */
-    (void) unlocked;
+    __MCF_ASSERT(unlocked == 0);
     _MCF_shared_mutex_lock_shared_slow(smtx, __MCF_nullptr);
   }
 
@@ -145,9 +137,7 @@ void
 __MCF_gthr_shared_mutex_relock_exclusive_callback(intptr_t arg, intptr_t unlocked)
   {
     _MCF_shared_mutex* smtx = (_MCF_shared_mutex*) arg;
-
-    /* Relock the shared mutex. The `unlocked` value is unused.  */
-    (void) unlocked;
+    __MCF_ASSERT(unlocked == 0);
     _MCF_shared_mutex_lock_exclusive_slow(smtx, __MCF_nullptr);
   }
 
@@ -176,14 +166,11 @@ intptr_t
 __MCF_gthr_recursive_mutex_unlock_callback(intptr_t arg)
   {
     __MCF_gthr_rc_mutex* rmtx = (__MCF_gthr_rc_mutex*) arg;
-
-    /* Clear the depth counter and return it.  */
-    intptr_t unlocked = (intptr_t)(unsigned) rmtx->__depth;
+    intptr_t unlocked = rmtx->__depth;
+    __MCF_ASSERT(unlocked > 0);
     rmtx->__depth = 0;
     _MCF_atomic_store_32_rlx(rmtx->__owner, 0);
     _MCF_mutex_unlock_slow(rmtx->__mutex);
-
-    __MCF_ASSERT(unlocked > 0);
     return unlocked;
   }
 
@@ -191,13 +178,11 @@ __MCF_DLLEXPORT
 void
 __MCF_gthr_recursive_mutex_relock_callback(intptr_t arg, intptr_t unlocked)
   {
-    __MCF_ASSERT(unlocked > 0);
     __MCF_gthr_rc_mutex* rmtx = (__MCF_gthr_rc_mutex*) arg;
-
-    /* Relock the mutex and restore the depth counter.  */
     _MCF_mutex_lock_slow(rmtx->__mutex, __MCF_nullptr);
     __MCF_ASSERT(rmtx->__owner[0] == 0);
     _MCF_atomic_store_32_rlx(rmtx->__owner, __MCF_tid());
+    __MCF_ASSERT(unlocked > 0);
     rmtx->__depth = (int) unlocked;
   }
 
