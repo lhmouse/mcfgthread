@@ -244,10 +244,10 @@ __MCF_DLLEXPORT __MCF_FN_CONST
 _MCF_thread*
 _MCF_thread_self(void)
   {
-    uint32_t index = __MCF_G(__tls_index);
-    if(index < 64) {
+    uint32_t i = __MCF_G(__tls_index);
+    if(i < 64) {
       /* This is the same as `TlsGetValue2()`.  */
-      _MCF_thread* self = __MCF_teb_load_ptr(__MCF_64_32(0x1480, 0x0E10) + index * __MCF_64_32(8, 4));
+      _MCF_thread* self = __MCF_teb_load_ptr(__MCF_64_32(0x1480 + i * 8, 0x0E10 + i * 4));
       if(self)
         return self;
     }
