@@ -23,8 +23,8 @@ enum initialization_status
 struct initializer
   {
     __MCF_BR(_MCF_event) status;
-    _MCF_thread* thrd;
     ULONG win32_error;
+    _MCF_thread* thrd;
   };
 
 static __MCF_REALIGN_SP
