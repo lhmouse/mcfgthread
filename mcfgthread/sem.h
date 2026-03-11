@@ -97,14 +97,14 @@ int
 _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init)
   __MCF_noexcept
   {
-    _MCF_sem __temp = __MCF_0_INIT;
-
     if((__value_init < 0) || (__value_init > __MCF_SEM_VALUE_MAX))
       return -1;
-
-    __temp.__value = __value_init;
-    _MCF_atomic_store_pptr_rlx(__sem, &__temp);
-    return 0;
+    else {
+      _MCF_sem __temp = __MCF_0_INIT;
+      __temp.__value = __value_init;
+      _MCF_atomic_store_pptr_rlx(__sem, &__temp);
+      return 0;
+    }
   }
 
 __MCF_SEM_INLINE
