@@ -32,14 +32,14 @@ __MCF_teb_load_32(uint32_t __offset)
 #  if defined __clang__
     __value = *(int32_t __seg_gs*)(uint64_t) __offset;
 #  else
-    __asm__ ("gs; .insn 0x8B, %k0, %a1"  /* 65 8B := mov R, R/gs:M */
+    __asm__ ("gs; .insn 0x8B, %k0, %a1"  /* 8B := mov R, R/M */
         : "=r"(__value) : "Ts"((uint64_t) __offset) : "memory");
 #  endif
 #elif defined __MCF_M_X8632_ASM
 #  if defined __clang__
     __value = *(int32_t __seg_fs*) __offset;
 #  else
-    __asm__ ("fs; .insn 0x8B, %k0, %a1"  /* 64 8B := mov R, R/fs:M */
+    __asm__ ("fs; .insn 0x8B, %k0, %a1"  /* 8B := mov R, R/M */
         : "=r"(__value) : "Ts"(__offset) : "memory");
 #  endif
 #elif defined __MCF_M_ARM64_ASM
@@ -70,14 +70,14 @@ __MCF_teb_store_32(uint32_t __offset, int32_t __value)
 #  if defined __clang__
     *(int32_t __seg_gs*)(uint64_t) __offset = __value;
 #  else
-    __asm__ volatile ("gs; .insn 0x89, %k0, %a1"  /* 65 89 := mov R/gs:M, R */
+    __asm__ volatile ("gs; .insn 0x89, %k0, %a1"  /* 89 := mov R/M, R */
         : : "r"(__value), "Ts"((uint64_t) __offset) : "memory");
 #  endif
 #elif defined __MCF_M_X8632_ASM
 #  if defined __clang__
     *(int32_t __seg_fs*) __offset = __value;
 #  else
-    __asm__ volatile ("fs; .insn 0x89, %k0, %a1"  /* 64 89 := mov R/fs:M, R */
+    __asm__ volatile ("fs; .insn 0x89, %k0, %a1"  /* 89 := mov R/M, R */
         : : "r"(__value), "Ts"(__offset) : "memory");
 #  endif
 #elif defined __MCF_M_ARM64_ASM
@@ -108,14 +108,14 @@ __MCF_teb_load_ptr(uint32_t __offset)
 #  if defined __clang__
     __value = *(void* __seg_gs*)(uint64_t) __offset;
 #  else
-    __asm__ ("gs; .insn 0x8B, %0, %a1"  /* 65 8B := mov R, R/gs:M */
+    __asm__ ("gs; .insn 0x8B, %0, %a1"  /* 8B := mov R, R/M */
         : "=r"(__value) : "Ts"((uint64_t) __offset) : "memory");
 #  endif
 #elif defined __MCF_M_X8632_ASM
 #  if defined __clang__
     __value = *(void* __seg_fs*) __offset;
 #  else
-    __asm__ ("fs; .insn 0x8B, %0, %a1"  /* 64 8B := mov R, R/fs:M */
+    __asm__ ("fs; .insn 0x8B, %0, %a1"  /* 8B := mov R, R/M */
         : "=r"(__value) : "Ts"(__offset) : "memory");
 #  endif
 #elif defined __MCF_M_ARM64_ASM
@@ -146,14 +146,14 @@ __MCF_teb_store_ptr(uint32_t __offset, const void* __value)
 #  if defined __clang__
     *(const void* __seg_gs*)(uint64_t) __offset = __value;
 #  else
-    __asm__ volatile ("gs; .insn 0x89, %0, %a1"  /* 65 89 := mov R/gs:M, R */
+    __asm__ volatile ("gs; .insn 0x89, %0, %a1"  /* 89 := mov R/M, R */
         : : "r"(__value), "Ts"((uint64_t) __offset) : "memory");
 #  endif
 #elif defined __MCF_M_X8632_ASM
 #  if defined __clang__
     *(const void* __seg_fs*) __offset = __value;
 #  else
-    __asm__ volatile ("fs; .insn 0x89, %0, %a1"  /* 64 89 := mov R/fs:M, R */
+    __asm__ volatile ("fs; .insn 0x89, %0, %a1"  /* 89 := mov R/M, R */
         : : "r"(__value), "Ts"(__offset) : "memory");
 #  endif
 #elif defined __MCF_M_ARM64_ASM
