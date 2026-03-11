@@ -12,15 +12,18 @@
 #include "event.h"
 #include "xglobals.h"
 
-enum initialization_status
+typedef enum thread_init_status thread_init_status;
+typedef struct thread_init thread_init;
+
+enum thread_init_status
   {
-    initialization_null       = 0,
-    initialization_waiting    = 1,
-    initialization_running    = 2,
-    initialization_cancelled  = 3,
+    thread_init_null       = 0,
+    thread_init_waiting    = 1,
+    thread_init_running    = 2,
+    thread_init_cancelled  = 3,
   };
 
-struct initializer
+struct thread_init
   {
     __MCF_BR(_MCF_event) status;
     ULONG win32_error;
@@ -33,20 +36,20 @@ __stdcall
 do_win32_thread_thunk(LPVOID param)
   {
     __MCF_USING_SEH_HANDLER(__MCF_seh_top);
-    struct initializer* init = param;
-    _MCF_event_await_change(init->status, initialization_null, __MCF_nullptr);
+    thread_init* init = param;
+    _MCF_event_await_change(init->status, thread_init_null, __MCF_nullptr);
     _MCF_thread* thrd = init->thrd;
 
     /* Attach the thread.  */
     if(!TlsSetValue(__MCF_G(__tls_index), thrd)) {
       init->win32_error = GetLastError();
-      _MCF_event_set(init->status, initialization_cancelled);
+      _MCF_event_set(init->status, thread_init_cancelled);
       return 0;
     }
 
     /* Let the creator go, which invalidates `*init`.  */
     __MCF_ASSERT(thrd->__tid == __MCF_tid());
-    _MCF_event_set(init->status, initialization_running);
+    _MCF_event_set(init->status, thread_init_running);
     init = __MCF_BAD_PTR;
 
 #if defined __MCF_M_X8632_ASM || defined __MCF_M_X8664_ASM
@@ -75,8 +78,8 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
       return __MCF_win32_error_p(ERROR_ARITHMETIC_OVERFLOW, __MCF_nullptr);
 
     /* Allocate and initialize the thread control structure.  */
-    struct initializer init;
-    _MCF_event_init(init.status, initialization_null);
+    thread_init init;
+    _MCF_event_init(init.status, thread_init_null);
 
     size_t real_align = _MCF_maxz(__MCF_THREAD_DATA_ALIGNMENT, align);
     size_t size_need = sizeof(__MCF_thread_base) + size;
@@ -116,16 +119,16 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
       return __MCF_nullptr;
     }
 
-    _MCF_event_set(init.status, initialization_waiting);
-    int result = _MCF_event_await_change_slow(init.status, initialization_waiting, __MCF_nullptr);
-    if(result == initialization_cancelled) {
+    _MCF_event_set(init.status, thread_init_waiting);
+    int result = _MCF_event_await_change_slow(init.status, thread_init_waiting, __MCF_nullptr);
+    if(result == thread_init_cancelled) {
       __MCF_close_handle(init.thrd->__handle);
       __MCF_mfree_nonnull(init.thrd);
       return __MCF_win32_error_p(init.win32_error, __MCF_nullptr);
     }
 
     /* Return the initialized thread.  */
-    __MCF_ASSERT(result == initialization_running);
+    __MCF_ASSERT(result == thread_init_running);
     return init.thrd;
   }
 
