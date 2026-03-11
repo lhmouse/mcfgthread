@@ -35,7 +35,7 @@ struct __MCF_tls_table
 struct __MCF_tls_key
   {
     __MCF_BR(int32_t) __nref;  /* atomic reference count  */
-    __MCF_BR(uint8_t) __deleted;  /* deleted?  */
+    __MCF_BR(bool) __deleted;  /* deleted?  */
     uint8_t __reserved_bytes[3];
     _MCF_tls_dtor* __dtor_opt;  /* destructor, optional  */
   };
@@ -160,7 +160,7 @@ void
 _MCF_tls_key_delete_nonnull(_MCF_tls_key* __key)
   __MCF_noexcept
   {
-    _MCF_atomic_store_8_rlx(__key->__deleted, 1);
+    _MCF_atomic_store_b_rlx(__key->__deleted, true);
     _MCF_tls_key_drop_ref_nonnull(__key);
   }
 

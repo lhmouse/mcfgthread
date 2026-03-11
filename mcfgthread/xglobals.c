@@ -292,7 +292,7 @@ __MCF_gthread_on_thread_exit(void)
 
         /* POSIX requires that the destructor is called only when the key has
          * not been deleted and the value is not a null pointer.  */
-        if(!_MCF_atomic_load_8_rlx(tkey->__deleted) && tkey->__dtor_opt && tls_end->__value_opt)
+        if(!_MCF_atomic_load_b_rlx(tkey->__deleted) && tkey->__dtor_opt && tls_end->__value_opt)
           __MCF_invoke_cxa_dtor(tkey->__dtor_opt, tls_end->__value_opt);
 
         _MCF_tls_key_drop_ref_nonnull(tkey);

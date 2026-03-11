@@ -75,7 +75,7 @@ __MCF_DLLEXPORT __MCF_FN_PURE
 void*
 __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
   {
-    if(_MCF_atomic_load_8_rlx(key->__deleted))
+    if(_MCF_atomic_load_b_rlx(key->__deleted))
       return __MCF_nullptr;
 
     if(table->__begin == table->__end)
@@ -97,7 +97,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
   {
     __MCF_SET_IF(old_value_opt, __MCF_nullptr);
 
-    if(_MCF_atomic_load_8_rlx(key->__deleted))
+    if(_MCF_atomic_load_b_rlx(key->__deleted))
       return __MCF_win32_error_i(ERROR_INVALID_PARAMETER, -1);
 
     if(!value_opt && (table->__begin == table->__end)) {
@@ -113,7 +113,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
       __MCF_tls_element* elem;
 
       for(elem = table->__begin;  elem != table->__end;  elem ++)
-        if(elem->__key_opt && !_MCF_atomic_load_8_rlx(elem->__key_opt->__deleted))
+        if(elem->__key_opt && !_MCF_atomic_load_b_rlx(elem->__key_opt->__deleted))
           capacity += 3;
 
       elem = __MCF_malloc_0(capacity * sizeof(__MCF_tls_element));
@@ -134,7 +134,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
         if(!tkey)
           continue;
 
-        if(_MCF_atomic_load_8_rlx(tkey->__deleted)) {
+        if(_MCF_atomic_load_b_rlx(tkey->__deleted)) {
           /* If the key has been deleted, don't relocate it; free it.  */
           _MCF_tls_key_drop_ref_nonnull(tkey);
           continue;
