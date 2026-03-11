@@ -109,7 +109,8 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     }
 
     /* Create a thread and wait for its initialization to finish.  */
-    init.thrd->__handle = CreateThread(__MCF_nullptr, 0, do_win32_thread_thunk, &init, 0, (void*) &(init.thrd->__tid));
+    init.thrd->__handle = CreateThread(__MCF_nullptr, 0, do_win32_thread_thunk, &init, 0,
+                                       (void*) &(init.thrd->__tid));
     if(init.thrd->__handle == NULL) {
       __MCF_mfree_nonnull(init.thrd);
       return __MCF_nullptr;
@@ -300,7 +301,8 @@ __MCF_DLLEXPORT
 int
 _MCF_sleep(const int64_t* timeout_opt)
   {
-    int err = _MCF_cond_wait(__MCF_G(__interrupt_cond), do_sleep_unlock, do_sleep_relock, 0, timeout_opt);
+    int err = _MCF_cond_wait(__MCF_G(__interrupt_cond), do_sleep_unlock,
+                             do_sleep_relock, 0, timeout_opt);
     return err ^ -1;
   }
 
