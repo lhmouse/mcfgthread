@@ -184,8 +184,7 @@ NtRaiseHardError(
     IN ULONG ResponseOption,
     OUT ULONG* Response);
 
-/* Define read-only data that must be placed in `.rdata` despite
- * `-fdata-sections`.  */
+/* Define data that must be placed in `.rdata` despite `-fdata-sections`.  */
 #define __MCF_CRT_RDATA  __attribute__((__used__, __section__(".rdata")))
 #define __MCF_CRT_XL(x)  __attribute__((__used__, __section__(".CRT$XL" #x)))
 
