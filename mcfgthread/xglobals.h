@@ -279,8 +279,7 @@ __MCF_ALWAYS_INLINE
 void
 __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
   {
-    register int eax __asm__("eax");
-    register int edx __asm__("edx");
+    register int eax __asm__("eax"), edx __asm__("edx");
     __asm__ ("" : "=r"(eax), "=r"(edx));
     typedef __attribute__((__regparm__(3))) void omni_type(int, int, void*, void*);
     (* __MCF_CAST_PTR(omni_type, dtor.__cdecl_ptr)) (eax, edx, arg, arg);
