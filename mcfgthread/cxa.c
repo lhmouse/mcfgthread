@@ -44,10 +44,10 @@ int
 __MCF_cxa_atexit(__MCF_cxa_dtor_any_ dtor, void* this, void* dso)
   {
     /* Push the element to the global queue.  */
-    _MCF_mutex_lock(__MCF_G(__exit_mtx), __MCF_nullptr);
+    _MCF_mutex_lock_slow(__MCF_G(__exit_mtx), __MCF_nullptr);
     __MCF_dtor_element elem = { dtor.__cdecl_ptr, this, dso };
     int err = __MCF_dtor_queue_push(__MCF_G(__exit_queue), &elem);
-    _MCF_mutex_unlock(__MCF_G(__exit_mtx));
+    _MCF_mutex_unlock_slow(__MCF_G(__exit_mtx));
     return err;
   }
 
@@ -63,10 +63,10 @@ int
 __MCF_cxa_at_quick_exit(__MCF_cxa_dtor_any_ dtor, void* this, void* dso)
   {
     /* Push the element to the global queue.  */
-    _MCF_mutex_lock(__MCF_G(__quick_exit_mtx), __MCF_nullptr);
+    _MCF_mutex_lock_slow(__MCF_G(__quick_exit_mtx), __MCF_nullptr);
     __MCF_dtor_element elem = { dtor.__cdecl_ptr, this, dso };
     int err = __MCF_dtor_queue_push(__MCF_G(__quick_exit_queue), &elem);
-    _MCF_mutex_unlock(__MCF_G(__quick_exit_mtx));
+    _MCF_mutex_unlock_slow(__MCF_G(__quick_exit_mtx));
     return err;
   }
 
@@ -122,7 +122,7 @@ __MCF_cxa_finalize(void* dso)
     __MCF_run_static_dtors(__MCF_G(__exit_mtx), __MCF_G(__exit_queue), dso);
 
     /* Remove quick exit callbacks that will expire.  */
-    _MCF_mutex_lock(__MCF_G(__quick_exit_mtx), __MCF_nullptr);
+    _MCF_mutex_lock_slow(__MCF_G(__quick_exit_mtx), __MCF_nullptr);
     __MCF_dtor_queue_remove(__MCF_G(__quick_exit_queue), dso);
-    _MCF_mutex_unlock(__MCF_G(__quick_exit_mtx));
+    _MCF_mutex_unlock_slow(__MCF_G(__quick_exit_mtx));
   }

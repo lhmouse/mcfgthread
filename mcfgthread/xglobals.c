@@ -136,9 +136,9 @@ int
 __fastcall
 do_pop_static_dtor(__MCF_dtor_element* elem, _MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
   {
-    _MCF_mutex_lock(mtx, __MCF_nullptr);
+    _MCF_mutex_lock_slow(mtx, __MCF_nullptr);
     int err = __MCF_dtor_queue_pop(elem, queue, dso);
-    _MCF_mutex_unlock(mtx);
+    _MCF_mutex_unlock_slow(mtx);
     return err;
   }
 

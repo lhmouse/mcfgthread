@@ -43,13 +43,13 @@ do_win32_thread_thunk(LPVOID param)
     /* Attach the thread.  */
     if(!TlsSetValue(__MCF_G(__tls_index), thrd)) {
       init->win32_error = GetLastError();
-      _MCF_event_set(init->status, thread_init_cancelled);
+      _MCF_event_set_slow(init->status, thread_init_cancelled);
       return 0;
     }
 
     /* Let the creator go, which invalidates `*init`.  */
     __MCF_ASSERT(thrd->__tid == __MCF_tid());
-    _MCF_event_set(init->status, thread_init_running);
+    _MCF_event_set_slow(init->status, thread_init_running);
     init = __MCF_BAD_PTR;
 
 #if defined __MCF_M_X8632_ASM || defined __MCF_M_X8664_ASM
@@ -119,7 +119,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
       return __MCF_nullptr;
     }
 
-    _MCF_event_set(init.status, thread_init_waiting);
+    _MCF_event_set_slow(init.status, thread_init_waiting);
     int result = _MCF_event_await_change_slow(init.status, thread_init_waiting, __MCF_nullptr);
     if(result == thread_init_cancelled) {
       __MCF_close_handle(init.thrd->__handle);
@@ -176,7 +176,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
     if(thrd == __MCF_G_OPT(__thread_oom_self_st)) {
       /* If this is the OOM backup, clear it for reuse.  */
       __MCF_mzero(thrd, sizeof(__MCF_thread_base));
-      _MCF_mutex_unlock(__MCF_G(__thread_oom_mtx));
+      _MCF_mutex_unlock_slow(__MCF_G(__thread_oom_mtx));
     } else
       __MCF_mfree_nonnull(thrd);
   }
@@ -234,7 +234,7 @@ do_thread_self_slow(void)
        * thread shall block until the other thread frees it.  */
       self = __MCF_G_OPT(__thread_oom_self_st);
       __MCF_CHECK(self);
-      _MCF_mutex_lock(__MCF_G(__thread_oom_mtx), __MCF_nullptr);
+      _MCF_mutex_lock_slow(__MCF_G(__thread_oom_mtx), __MCF_nullptr);
       __MCF_ASSERT(self->__handle == NULL);
     }
 
@@ -274,7 +274,7 @@ do_sleep_interrupt(ULONG type)
     (void) type;
 
     /* Notify all threads that are sleeping.  */
-    _MCF_cond_signal_all(__MCF_G(__interrupt_cond));
+    _MCF_cond_signal_some_slow(__MCF_G(__interrupt_cond), SIZE_MAX);
     return false;
   }
 
