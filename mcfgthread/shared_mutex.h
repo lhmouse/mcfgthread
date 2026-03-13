@@ -161,7 +161,7 @@ _MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex)
     _MCF_atomic_load_pptr_rlx(&__old_bits, __smutex);
     __MCF_ASSERT((__old_bits & 0x3FFFU) != 0);  /* __nshare != 0 */
     if(__old_bits <= 0x3FFFU) {  /* __nsleep == 0 */
-      __new_bits = (__old_bits - 1U) & (((uint32_t) __old_bits + 0xFFFFC001U) >> 14);
+      __new_bits = (__old_bits - 1U) & (((uint32_t) __old_bits - 0x3FFFU) >> 14);
       if(_MCF_atomic_cmpxchg_weak_pptr_rel(__smutex, &__old_bits, &__new_bits))
         return;
     }
