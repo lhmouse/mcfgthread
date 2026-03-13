@@ -15,7 +15,7 @@
  * then it should be preferred; otherwise the standard library is used.
  * Microsoft Visual Studio 2022 has experimental support which seems to suffice.  */
 #if defined __GNUC__ || defined __clang__
-#  define __MCF_ATOMICIFY(T, ...)             __MCF_CAST_PTR(volatile T, __VA_ARGS__)
+#  define __MCF_ATOMIC(...)                   volatile __VA_ARGS__
 #  define __MCF_memory_order_rlx              __ATOMIC_RELAXED
 #  define __MCF_memory_order_acq              __ATOMIC_ACQUIRE
 #  define __MCF_memory_order_rel              __ATOMIC_RELEASE
@@ -33,10 +33,10 @@
 #else
 #  if __MCF_CXX11(1+)0
 #    include <atomic>
-#    define __MCF_ATOMICIFY(T, ...)           __MCF_CAST_PTR(::std::atomic<T>, __VA_ARGS__)
+#    define __MCF_ATOMIC(...)                 ::std::atomic<__VA_ARGS__>
 #  else
 #    include <stdatomic.h>
-#    define __MCF_ATOMICIFY(T, ...)           __MCF_CAST_PTR(_Atomic T, __VA_ARGS__)
+#    define __MCF_ATOMIC(...)                 _Atomic __VA_ARGS__
 #  endif
 #  define __MCF_memory_order_rlx              __MCF_CXX11(::std::)memory_order_relaxed
 #  define __MCF_memory_order_acq              __MCF_CXX11(::std::)memory_order_acquire
@@ -65,12 +65,20 @@ __MCF_CXX(extern "C" {)
 #pragma push_macro("ORDER")
 #pragma push_macro("ORDER_A")
 #pragma push_macro("ORDER_R")
+#pragma push_macro("E_ATOMICIFY")
+#pragma push_macro("E_ORDER")
+#pragma push_macro("E_ORDER_A")
+#pragma push_macro("E_ORDER_R")
 
 #undef WIDTH
 #undef INTEGER
 #undef ORDER
 #undef ORDER_A
 #undef ORDER_R
+#undef E_ATOMICIFY
+#undef E_ORDER
+#undef E_ORDER_A
+#undef E_ORDER_R
 
 #define __MCF_ATOMIC_GENERATOR_STATE_   10001
 #undef __MCFGTHREAD_ATOMIC_
@@ -140,6 +148,11 @@ __MCF_CXX(extern "C" {)
 #  undef ORDER_R
 
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 10002
+
+#  define E_ATOMICIFY(...)  __MCF_CAST_PTR(__MCF_ATOMIC(INTEGER), __VA_ARGS__)
+#  define E_ORDER           __MCF_C2(__MCF_memory_order,ORDER)
+#  define E_ORDER_A         __MCF_C2(__MCF_memory_order,ORDER_A)
+#  define E_ORDER_R         __MCF_C2(__MCF_memory_order,ORDER_R)
 
 #  define WIDTH   b
 #  define INTEGER  bool
@@ -233,6 +246,11 @@ __MCF_CXX(extern "C" {)
 #  undef __MCFGTHREAD_ATOMIC_
 #  include __FILE__
 
+#  undef E_ATOMICIFY
+#  undef E_ORDER
+#  undef E_ORDER_A
+#  undef E_ORDER_R
+
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 20001
 
 /* Perform an atomic load operation. `mem` shall point to an atomic object of the
@@ -250,8 +268,7 @@ INTEGER
 __MCF_C3(_MCF_atomic_load_,WIDTH,ORDER) (const volatile void* __mem)
   __MCF_noexcept
   {
-    return __MCF_atomic_load(__MCF_ATOMICIFY(INTEGER, __mem),
-                             __MCF_C2(__MCF_memory_order,ORDER_A));
+    return __MCF_atomic_load(E_ATOMICIFY(__mem), E_ORDER_A);
   }
 
 __MCF_ATOMIC_INLINE
@@ -259,8 +276,7 @@ void
 __MCF_C3(_MCF_atomic_load_p,WIDTH,ORDER) (void* __res, const volatile void* __mem)
   __MCF_noexcept
   {
-    INTEGER __rval = __MCF_atomic_load(__MCF_ATOMICIFY(INTEGER, __mem),
-                                       __MCF_C2(__MCF_memory_order,ORDER_A));
+    INTEGER __rval = __MCF_atomic_load(E_ATOMICIFY(__mem), E_ORDER_A);
     *(INTEGER*) __res = __rval;
   }
 
@@ -279,8 +295,7 @@ void
 __MCF_C3(_MCF_atomic_store_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
   __MCF_noexcept
   {
-    __MCF_atomic_store(__MCF_ATOMICIFY(INTEGER, __mem), __val,
-                       __MCF_C2(__MCF_memory_order,ORDER_R));
+    __MCF_atomic_store(E_ATOMICIFY(__mem), __val, E_ORDER_R);
   }
 
 __MCF_ATOMIC_INLINE
@@ -289,8 +304,7 @@ __MCF_C3(_MCF_atomic_store_p,WIDTH,ORDER) (volatile void* __mem, const void* __s
   __MCF_noexcept
   {
     INTEGER __val = *(const INTEGER*) __src;
-    __MCF_atomic_store(__MCF_ATOMICIFY(INTEGER, __mem), __val,
-                       __MCF_C2(__MCF_memory_order,ORDER_R));
+    __MCF_atomic_store(E_ATOMICIFY(__mem), __val, E_ORDER_R);
   }
 
 /* Perform an atomic exchange operation. `mem` shall point to an atomic object of
@@ -309,8 +323,7 @@ INTEGER
 __MCF_C3(_MCF_atomic_xchg_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
   __MCF_noexcept
   {
-    return __MCF_atomic_xchg(__MCF_ATOMICIFY(INTEGER, __mem), __val,
-                             __MCF_C2(__MCF_memory_order,ORDER));
+    return __MCF_atomic_xchg(E_ATOMICIFY(__mem), __val, E_ORDER);
   }
 
 __MCF_ATOMIC_INLINE
@@ -319,8 +332,7 @@ __MCF_C3(_MCF_atomic_xchg_p,WIDTH,ORDER) (void* __res, volatile void* __mem, con
   __MCF_noexcept
   {
     INTEGER __val = *(const INTEGER*) __src;
-    INTEGER __rval = __MCF_atomic_xchg(__MCF_ATOMICIFY(INTEGER, __mem), __val,
-                                       __MCF_C2(__MCF_memory_order,ORDER));
+    INTEGER __rval = __MCF_atomic_xchg(E_ATOMICIFY(__mem), __val, E_ORDER);
     *(INTEGER*) __res = __rval;
   }
 
@@ -342,9 +354,7 @@ bool
 __MCF_C3(_MCF_atomic_cmpxchg_,WIDTH,ORDER) (volatile void* __mem, INTEGER* __cmp, INTEGER __val)
   __MCF_noexcept
   {
-    return __MCF_atomic_cmpxchg(__MCF_ATOMICIFY(INTEGER, __mem), __cmp, __val,
-                                __MCF_C2(__MCF_memory_order,ORDER),
-                                __MCF_C2(__MCF_memory_order,ORDER_A));
+    return __MCF_atomic_cmpxchg(E_ATOMICIFY(__mem), __cmp, __val, E_ORDER, E_ORDER_A);
   }
 
 __MCF_ATOMIC_INLINE
@@ -354,9 +364,7 @@ __MCF_C3(_MCF_atomic_cmpxchg_p,WIDTH,ORDER) (volatile void* __mem, void* __cmp, 
   {
     INTEGER __cval = *(const INTEGER*) __cmp;
     INTEGER __val = *(const INTEGER*) __src;
-    bool __succ = __MCF_atomic_cmpxchg(__MCF_ATOMICIFY(INTEGER, __mem), &__cval, __val,
-                                       __MCF_C2(__MCF_memory_order,ORDER),
-                                       __MCF_C2(__MCF_memory_order,ORDER_A));
+    bool __succ = __MCF_atomic_cmpxchg(E_ATOMICIFY(__mem), &__cval, __val, E_ORDER, E_ORDER_A);
     *(INTEGER*) __cmp = __cval;
     return __succ;
   }
@@ -379,9 +387,7 @@ bool
 __MCF_C3(_MCF_atomic_cmpxchg_weak_,WIDTH,ORDER) (volatile void* __mem, INTEGER* __cmp, INTEGER __val)
   __MCF_noexcept
   {
-    return __MCF_atomic_cmpxchg_w(__MCF_ATOMICIFY(INTEGER, __mem), __cmp, __val,
-                                  __MCF_C2(__MCF_memory_order,ORDER),
-                                  __MCF_C2(__MCF_memory_order,ORDER_A));
+    return __MCF_atomic_cmpxchg_w(E_ATOMICIFY(__mem), __cmp, __val, E_ORDER, E_ORDER_A);
   }
 
 __MCF_ATOMIC_INLINE
@@ -391,9 +397,7 @@ __MCF_C3(_MCF_atomic_cmpxchg_weak_p,WIDTH,ORDER) (volatile void* __mem, void* __
   {
     INTEGER __cval = *(const INTEGER*) __cmp;
     INTEGER __val = *(const INTEGER*) __src;
-    bool __succ = __MCF_atomic_cmpxchg_w(__MCF_ATOMICIFY(INTEGER, __mem), &__cval, __val,
-                                         __MCF_C2(__MCF_memory_order,ORDER),
-                                         __MCF_C2(__MCF_memory_order,ORDER_A));
+    bool __succ = __MCF_atomic_cmpxchg_w(E_ATOMICIFY(__mem), &__cval, __val, E_ORDER, E_ORDER_A);
     *(INTEGER*) __cmp = __cval;
     return __succ;
   }
@@ -414,8 +418,7 @@ INTEGER
 __MCF_C3(_MCF_atomic_xadd_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
   __MCF_noexcept
   {
-    return __MCF_atomic_xadd(__MCF_ATOMICIFY(INTEGER, __mem), __val,
-                             __MCF_C2(__MCF_memory_order,ORDER));
+    return __MCF_atomic_xadd(E_ATOMICIFY(__mem), __val, E_ORDER);
   }
 
 __MCF_ATOMIC_INLINE
@@ -423,8 +426,7 @@ INTEGER
 __MCF_C3(_MCF_atomic_xsub_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
   __MCF_noexcept
   {
-    return __MCF_atomic_xsub(__MCF_ATOMICIFY(INTEGER, __mem), __val,
-                             __MCF_C2(__MCF_memory_order,ORDER));
+    return __MCF_atomic_xsub(E_ATOMICIFY(__mem), __val, E_ORDER);
   }
 
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 20003
@@ -444,7 +446,7 @@ void
 __MCF_C2(_MCF_thread_fence,ORDER) (void)
   __MCF_noexcept
   {
-    __MCF_atomic_thread_fence(__MCF_C2(__MCF_memory_order,ORDER));
+    __MCF_atomic_thread_fence(E_ORDER);
   }
 
 __MCF_ATOMIC_INLINE
@@ -452,7 +454,7 @@ void
 __MCF_C2(_MCF_signal_fence,ORDER) (void)
   __MCF_noexcept
   {
-    __MCF_atomic_signal_fence(__MCF_C2(__MCF_memory_order,ORDER));
+    __MCF_atomic_signal_fence(E_ORDER);
   }
 
 #else  /* `__MCF_ATOMIC_GENERATOR_STATE_` final */
@@ -462,6 +464,10 @@ __MCF_C2(_MCF_signal_fence,ORDER) (void)
 #pragma pop_macro("ORDER")
 #pragma pop_macro("ORDER_A")
 #pragma pop_macro("ORDER_R")
+#pragma pop_macro("E_ATOMICIFY")
+#pragma pop_macro("E_ORDER")
+#pragma pop_macro("E_ORDER_A")
+#pragma pop_macro("E_ORDER_R")
 
 __MCF_CXX(})  /* extern "C"  */
 #endif  /* `__MCF_ATOMIC_GENERATOR_STATE_` defined  */
