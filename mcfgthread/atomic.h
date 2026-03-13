@@ -277,7 +277,7 @@ __MCF_C3(_MCF_atomic_load_p,WIDTH,ORDER) (void* __res, const volatile void* __me
   __MCF_noexcept
   {
     INTEGER __rval = __MCF_atomic_load(E_ATOMICIFY(__mem), E_ORDER_A);
-    *(INTEGER*) __res = __rval;
+    __MCF_COPY_REGISTER(*(INTEGER*) __res, __rval);
   }
 
 /* Perform an atomic store operation. `mem` shall point to an atomic object of the
@@ -303,7 +303,8 @@ void
 __MCF_C3(_MCF_atomic_store_p,WIDTH,ORDER) (volatile void* __mem, const void* __src)
   __MCF_noexcept
   {
-    INTEGER __val = *(const INTEGER*) __src;
+    INTEGER __val;
+    __MCF_COPY_REGISTER(__val, *(const INTEGER*) __src);
     __MCF_atomic_store(E_ATOMICIFY(__mem), __val, E_ORDER_R);
   }
 
@@ -331,9 +332,10 @@ void
 __MCF_C3(_MCF_atomic_xchg_p,WIDTH,ORDER) (void* __res, volatile void* __mem, const void* __src)
   __MCF_noexcept
   {
-    INTEGER __val = *(const INTEGER*) __src;
-    INTEGER __rval = __MCF_atomic_xchg(E_ATOMICIFY(__mem), __val, E_ORDER);
-    *(INTEGER*) __res = __rval;
+    INTEGER __rval, __val;
+    __MCF_COPY_REGISTER(__val, *(const INTEGER*) __src);
+    __rval = __MCF_atomic_xchg(E_ATOMICIFY(__mem), __val, E_ORDER);
+    __MCF_COPY_REGISTER(*(INTEGER*) __res, __rval);
   }
 
 /* Perform a strong atomic compare-and-exchange operation. `mem` shall point to an
@@ -362,11 +364,13 @@ bool
 __MCF_C3(_MCF_atomic_cmpxchg_p,WIDTH,ORDER) (volatile void* __mem, void* __cmp, const void* __src)
   __MCF_noexcept
   {
-    INTEGER __cval = *(const INTEGER*) __cmp;
-    INTEGER __val = *(const INTEGER*) __src;
-    bool __succ = __MCF_atomic_cmpxchg(E_ATOMICIFY(__mem), &__cval, __val, E_ORDER, E_ORDER_A);
-    *(INTEGER*) __cmp = __cval;
-    return __succ;
+    bool __rval;
+    INTEGER __cval, __val;
+    __MCF_COPY_REGISTER(__cval, *(INTEGER*) __cmp);
+    __MCF_COPY_REGISTER(__val, *(const INTEGER*) __src);
+    __rval = __MCF_atomic_cmpxchg(E_ATOMICIFY(__mem), &__cval, __val, E_ORDER, E_ORDER_A);
+    __MCF_COPY_REGISTER(*(INTEGER*) __cmp, __cval);
+    return __rval;
   }
 
 /* Perform a weak atomic compare-and-exchange operation. `mem` shall point to an
@@ -395,11 +399,13 @@ bool
 __MCF_C3(_MCF_atomic_cmpxchg_weak_p,WIDTH,ORDER) (volatile void* __mem, void* __cmp, const void* __src)
   __MCF_noexcept
   {
-    INTEGER __cval = *(const INTEGER*) __cmp;
-    INTEGER __val = *(const INTEGER*) __src;
-    bool __succ = __MCF_atomic_cmpxchg_w(E_ATOMICIFY(__mem), &__cval, __val, E_ORDER, E_ORDER_A);
-    *(INTEGER*) __cmp = __cval;
-    return __succ;
+    bool __rval;
+    INTEGER __cval, __val;
+    __MCF_COPY_REGISTER(__cval, *(INTEGER*) __cmp);
+    __MCF_COPY_REGISTER(__val, *(const INTEGER*) __src);
+    __rval = __MCF_atomic_cmpxchg_w(E_ATOMICIFY(__mem), &__cval, __val, E_ORDER, E_ORDER_A);
+    __MCF_COPY_REGISTER(*(INTEGER*) __cmp, __cval);
+    return __rval;
   }
 
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 20002
