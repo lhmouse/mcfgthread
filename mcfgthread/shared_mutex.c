@@ -25,18 +25,21 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
      * a lock. If shared access can't be granted, allocate a sleeping count.  */
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, smutex);
-    for(;;) {
-      bool shareable = (old.__nshare < __MCF_SHARED_MUTEX_MAX_SHARE) && (old.__nsleep == 0);
-      new.__nshare = (old.__nshare + shareable) & 0x3FFFU;
-      new.__nsleep = (old.__nsleep + 1U - shareable) & (__MCF_UPTR_MAX >> 14);
+    for(;;)
+      if((old.__nshare < __MCF_SHARED_MUTEX_MAX_SHARE) && (old.__nsleep == 0)) {
+        new.__nshare = (old.__nshare + 1U) & 0x3FFFU;
+        new.__nsleep = old.__nsleep;
 
-      if(_MCF_atomic_cmpxchg_weak_pptr_acq(smutex, &old, &new))
-        break;
-    }
+        if(_MCF_atomic_cmpxchg_weak_pptr_acq(smutex, &old, &new))
+          return 0;
+      }
+      else {
+        new.__nshare = old.__nshare;
+        new.__nsleep = (old.__nsleep + 1U) & (__MCF_UPTR_MAX >> 14);
 
-    /* If this mutex has been locked by the current thread, succeed.  */
-    if(old.__nshare != new.__nshare)
-      return 0;
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smutex, &old, &new))
+          break;
+      }
 
     /* Try waiting.  */
     int err = __MCF_keyed_event_wait(smutex, &nt_timeout);
@@ -85,18 +88,21 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
      * count.  */
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, smutex);
-    for(;;) {
-      bool lockable = old.__nshare == 0;
-      new.__nshare = (old.__nshare - lockable) & 0x3FFFU;
-      new.__nsleep = (old.__nsleep + 1U - lockable) & (__MCF_UPTR_MAX >> 14);
+    for(;;)
+      if(old.__nshare == 0) {
+        new.__nshare = 0x3FFFU;
+        new.__nsleep = old.__nsleep;
 
-      if(_MCF_atomic_cmpxchg_weak_pptr_acq(smutex, &old, &new))
-        break;
-    }
+        if(_MCF_atomic_cmpxchg_weak_pptr_acq(smutex, &old, &new))
+          return 0;
+      }
+      else {
+        new.__nshare = old.__nshare;
+        new.__nsleep = (old.__nsleep + 1U) & (__MCF_UPTR_MAX >> 14);
 
-    /* If this mutex has been locked by the current thread, succeed.  */
-    if(old.__nshare == 0)
-      return 0;
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smutex, &old, &new))
+          break;
+      }
 
     /* Try waiting.  */
     int err = __MCF_keyed_event_wait(smutex, &nt_timeout);
@@ -148,12 +154,11 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
     _MCF_atomic_load_pptr_rlx(&old, smutex);
     for(;;) {
       __MCF_ASSERT(old.__nshare != 0);
-      bool exclusive = old.__nshare == 0x3FFFU;
       wake_one = (old.__nsleep != 0) && !((old.__nshare > 1) && (old.__nshare < 0x3FFFU));
-      new.__nshare = (old.__nshare + exclusive * 2U - 1U) & 0x3FFFU;
+      new.__nshare = (old.__nshare - 1U) & ((old.__nshare - 0x3FFEU + __MCF_UPTR_MAX) >> 14) & 0x3FFFU;
       new.__nsleep = (old.__nsleep - wake_one) & (__MCF_UPTR_MAX >> 14);
 
-      if(_MCF_atomic_cmpxchg_weak_pptr_arl(smutex, &old, &new))
+      if(_MCF_atomic_cmpxchg_weak_pptr_rel(smutex, &old, &new))
         break;
     }
 
