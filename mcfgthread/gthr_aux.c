@@ -198,7 +198,7 @@ __MCF_gthr_cond_recursive_mutex_wait(_MCF_cond* cnd, __MCF_gthr_rc_mutex* rmtx,
 
 static
 void
-do_gthr_thread_thunk_v3(_MCF_thread* thrd)
+do_gthread_routine(_MCF_thread* thrd)
   {
     __MCF_gthr_thread_record* rec = _MCF_thread_get_data(thrd);
     rec->__arg_or_result = (* rec->__proc) (rec->__arg_or_result);
@@ -217,7 +217,7 @@ do_gthr_get_thread_record(_MCF_thread* thrd)
     if(!__MCF_mequal(rec->__magic_guid, __MCF_crt_gthread_guid, 16))
       return __MCF_nullptr;
 
-    /* Assume so. `do_gthr_thread_thunk_v3()` is not shared across modules,
+    /* Assume so. `do_gthread_routine()` is not shared across modules,
      * so we should not check it for uniqueness.  */
     return rec;
   }
@@ -230,7 +230,7 @@ __MCF_gthr_thread_create_v3(__MCF_gthr_thread_procedure* proc, void* arg)
     __builtin_memcpy(record.__magic_guid, __MCF_crt_gthread_guid, 16);
     record.__proc = proc;
     record.__arg_or_result = arg;
-    return _MCF_thread_new(do_gthr_thread_thunk_v3, &record, sizeof(record));
+    return _MCF_thread_new(do_gthread_routine, &record, sizeof(record));
   }
 
 __MCF_DLLEXPORT
