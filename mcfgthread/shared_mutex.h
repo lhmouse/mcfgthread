@@ -117,12 +117,13 @@ _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __time
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_shared_mutex __old_v, __new_v;
-    _MCF_atomic_load_pptr_rlx(&__old_v, __smutex);
-    if(__old_v.__nshare < __MCF_SHARED_MUTEX_MAX_SHARE) {
-      __new_v = __old_v;
-      __new_v.__nshare = (__old_v.__nshare + 1U) & 0x3FFFU;
-      if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smutex, &__old_v, &__new_v))
+    /* Use raw integers to work around issues about missed optimizations.
+     * See <https://github.com/lhmouse/mcfgthread/issues/320>.  */
+    uintptr_t __old_bits, __new_bits;
+    _MCF_atomic_load_pptr_rlx(&__old_bits, __smutex);
+    if(__old_bits < __MCF_SHARED_MUTEX_MAX_SHARE) {  /* (__nshare < MAX) && (__nsleep == 0) */
+      __new_bits = __old_bits + 1U;
+      if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smutex, &__old_bits, &__new_bits))
         return 0;
     }
 #endif
@@ -135,12 +136,13 @@ _MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smutex, const int64_t* __t
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_shared_mutex __old_v, __new_v;
-    _MCF_atomic_load_pptr_rlx(&__old_v, __smutex);
-    if(__old_v.__nshare == 0) {
-      __new_v = __old_v;
-      __new_v.__nshare = 0x3FFFU;
-      if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smutex, &__old_v, &__new_v))
+    /* Use raw integers to work around issues about missed optimizations.
+     * See <https://github.com/lhmouse/mcfgthread/issues/320>.  */
+    uintptr_t __old_bits, __new_bits;
+    _MCF_atomic_load_pptr_rlx(&__old_bits, __smutex);
+    if((__old_bits & 0x3FFFU) == 0) {  /* __nshare == 0 */
+      __new_bits = __old_bits + 0x3FFFU;
+      if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smutex, &__old_bits, &__new_bits))
         return 0;
     }
 #endif
@@ -153,13 +155,14 @@ _MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_shared_mutex __old_v, __new_v;
-    _MCF_atomic_load_pptr_rlx(&__old_v, __smutex);
-    __MCF_ASSERT(__old_v.__nshare != 0);
-    if(__old_v.__nsleep == 0) {
-      __new_v = __old_v;
-      __new_v.__nshare = (__old_v.__nshare + ((__old_v.__nshare + 1U) >> 14) * 2U - 1U) & 0x3FFFU;
-      if(_MCF_atomic_cmpxchg_weak_pptr_rel(__smutex, &__old_v, &__new_v))
+    /* Use raw integers to work around issues about missed optimizations.
+     * See <https://github.com/lhmouse/mcfgthread/issues/320>.  */
+    uintptr_t __old_bits, __new_bits;
+    _MCF_atomic_load_pptr_rlx(&__old_bits, __smutex);
+    __MCF_ASSERT((__old_bits & 0x3FFFU) != 0);  /* __nshare != 0 */
+    if(__old_bits <= 0x3FFFU) {  /* __nsleep == 0 */
+      __new_bits = (__old_bits - 1U) & ((__old_bits - 0x3FFEU + __MCF_UPTR_MAX) >> 14);
+      if(_MCF_atomic_cmpxchg_weak_pptr_rel(__smutex, &__old_bits, &__new_bits))
         return;
     }
 #endif
