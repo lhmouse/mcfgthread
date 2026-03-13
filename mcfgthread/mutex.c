@@ -60,27 +60,42 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
      * mutex can be locked immediately.  */
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, mutex);
-    for(;;) {
-      sp_budget = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
-      bool should_sleep = old.__locked && ((sp_budget <= 0) || (old.__sp_mask == 15U));
-      new.__locked = 1;
-      new.__sp_mask = (old.__sp_mask | (old.__sp_mask + (UINT) old.__locked - should_sleep)) & 0x0FU;
-      new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked + should_sleep - 1) & 0x0FU;
-      new.__nsleep = (old.__nsleep + should_sleep) & (__MCF_UPTR_MAX >> 9);
+    for(;;)
+      if(old.__locked == 0) {
+        new.__locked = 1;
+        new.__sp_mask = old.__sp_mask;
+        new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, -1) & 0x0FU;
+        new.__nsleep = old.__nsleep;
 
-      if(_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new))
-        break;
-    }
+        if(_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new))
+          return 0;
+      }
+      else if((old.__sp_mask != 15U) && (old.__sp_nfail < __MCF_MUTEX_SP_NFAIL_THRESHOLD)) {
+        sp_budget = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
+        new.__locked = 1;
+        new.__sp_mask = (old.__sp_mask | (old.__sp_mask + 1U)) & 0x0FU;
+        new.__sp_nfail = old.__sp_nfail;
+        new.__nsleep = old.__nsleep;
 
-    /* If this mutex has been locked by the current thread, succeed.  */
-    if(old.__locked == 0)
-      return 0;
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(mutex, &old, &new))
+          break;
+      }
+      else {
+        sp_budget = 0;
+        new.__locked = 1;
+        new.__sp_mask = old.__sp_mask;
+        new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, +1) & 0x0FU;
+        new.__nsleep = (old.__nsleep + 1U) & (__MCF_UPTR_MAX >> 9);
+
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(mutex, &old, &new))
+          break;
+      }
 
     /* Check whether the current thread is allowed to spin. Only one bit in
      * `new.__sp_mask` may have been set.  */
-    uint32_t my_mask = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
-    if(my_mask != 0) {
-      __MCF_ASSERT(sp_budget > 0);
+    if(sp_budget > 0) {
+      uint32_t my_mask = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
+      __MCF_ASSERT(my_mask != 0);
       int sp_rem = sp_budget * (int) (__MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_SP_NFAIL_THRESHOLD);
       while(sp_rem > 0) {
         sp_rem --;
@@ -94,19 +109,25 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         /* If this mutex has not been locked, lock it and decrement the
          * failure counter. Otherwise, do nothing.  */
         _MCF_atomic_load_pptr_rlx(&old, mutex);
-        for(;;) {
-          new.__locked = 1;
-          new.__sp_mask = (old.__sp_mask ^ ((old.__sp_mask ^ (0U - old.__locked)) & my_mask)) & 0x0FU;
-          new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked - 1) & 0x0FU;
-          new.__nsleep = old.__nsleep;
+        for(;;)
+          if(old.__locked == 0) {
+            new.__locked = 1;
+            new.__sp_mask = old.__sp_mask & (15U - my_mask) & 0x0FU;
+            new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, -1) & 0x0FU;
+            new.__nsleep = old.__nsleep;
 
-          if(_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new))
-            break;
-        }
+            if(_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new))
+              return 0;
+          }
+          else {
+            new.__locked = 1;
+            new.__sp_mask = (old.__sp_mask | my_mask) & 0x0FU;
+            new.__sp_nfail = old.__sp_nfail;
+            new.__nsleep = old.__nsleep;
 
-        /* If this mutex has been locked by the current thread, succeed.  */
-        if(old.__locked == 0)
-          return 0;
+            if(_MCF_atomic_cmpxchg_weak_pptr_rlx(mutex, &old, &new))
+              break;
+          }
       }
 
       /* We have wasted some time, so return the spinning mask and allocate
@@ -116,19 +137,25 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
        * had unlocked the mutex before we incremented the sleeping counter,
        * we could miss a wakeup and result in deadlocks.  */
       _MCF_atomic_load_pptr_rlx(&old, mutex);
-      for(;;) {
-        new.__locked = 1;
-        new.__sp_mask = (old.__sp_mask & (15U - my_mask)) & 0x0FU;
-        new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, (int) old.__locked * 2 - 1) & 0x0FU;
-        new.__nsleep = (old.__nsleep + old.__locked) & (__MCF_UPTR_MAX >> 9);
+      for(;;)
+        if(old.__locked == 0) {
+          new.__locked = 1;
+          new.__sp_mask = (old.__sp_mask & (15U - my_mask)) & 0x0FU;
+          new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, -1) & 0x0FU;
+          new.__nsleep = old.__nsleep;
 
-        if(_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new))
-          break;
-      }
+          if(_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new))
+            return 0;
+        }
+        else {
+          new.__locked = 1;
+          new.__sp_mask = (old.__sp_mask & (15U - my_mask)) & 0x0FU;
+          new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, +1) & 0x0FU;
+          new.__nsleep = (old.__nsleep + 1U) & (__MCF_UPTR_MAX >> 9);
 
-      /* If this mutex has been locked by the current thread, succeed.  */
-      if(old.__locked == 0)
-        return 0;
+          if(_MCF_atomic_cmpxchg_weak_pptr_rlx(mutex, &old, &new))
+            break;
+        }
     }
 
     /* Try waiting.  */
