@@ -281,8 +281,8 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
   {
     register int eax __asm__("eax"), edx __asm__("edx");
     __asm__ ("" : "=r"(eax), "=r"(edx));
-    typedef __attribute__((__regparm__(3))) void omni_type(int, int, void*, void*);
-    (* __MCF_CAST_PTR(omni_type, dtor.__cdecl_ptr)) (eax, edx, arg, arg);
+    typedef __attribute__((__regparm__(3))) void xfn(int, int, void*, void*);
+    (* __MCF_CAST_PTR(xfn, dtor.__cdecl_ptr)) (eax, edx, arg, arg);
   }
 
 #else  /* !defined __MCF_M_X8632 */
