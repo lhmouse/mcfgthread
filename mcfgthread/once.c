@@ -19,26 +19,30 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
     _MCF_once old, new;
 
-    /* If this flag has not been locked, lock it.
-     * Otherwise, allocate a count for the current thread.  */
+    /* If this flag has not been locked, lock it and return 1 to allow
+     * initialization of protected resources. Otherwise, allocate a count
+     * for the current thread.  */
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, once);
-    for(;;) {
+    for(;;)
       if(old.__ready != 0)
         return 0;
+      else if(old.__locked == 0) {
+        new.__ready = 0;
+        new.__locked = 1;
+        new.__nsleep = old.__nsleep;
 
-      new.__ready = old.__ready;
-      new.__locked = 1;
-      new.__nsleep = (old.__nsleep + old.__locked) & (__MCF_UPTR_MAX >> 9);
+        if(_MCF_atomic_cmpxchg_weak_pptr_acq(once, &old, &new))
+          return 1;
+      }
+      else {
+        new.__ready = 0;
+        new.__locked = 1;
+        new.__nsleep = (old.__nsleep + 1U) & (__MCF_UPTR_MAX >> 9);
 
-      if(_MCF_atomic_cmpxchg_weak_pptr_acq(once, &old, &new))
-        break;
-    }
-
-    /* If this flag has been changed from UNLOCKED to LOCKED, return 1 to
-     * allow initialization of protected resources.  */
-    if(old.__locked == 0)
-      return 1;
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(once, &old, &new))
+          break;
+      }
 
     /* Try waiting.  */
     int err = __MCF_keyed_event_wait(once, &nt_timeout);
