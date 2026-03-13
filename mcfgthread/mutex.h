@@ -108,7 +108,7 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt)
     uintptr_t __old_bits, __new_bits;
     _MCF_atomic_load_pptr_rlx(&__old_bits, __mutex);
     if((__old_bits & 1) == 0) {  /* __locked == 0 */
-      __new_bits = __old_bits + 1U - ((((__old_bits >> 4) & 0x1EU) + 0x1EU) & 0x20U);
+      __new_bits = __old_bits + 1U - (((((uint32_t) __old_bits >> 4) & 0x1EU) + 0x1EU) & 0x20U);
       if(_MCF_atomic_cmpxchg_weak_pptr_acq(__mutex, &__old_bits, &__new_bits))
         return 0;
     }
