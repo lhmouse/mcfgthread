@@ -103,13 +103,13 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_mutex __old_v, __new_v;
-    _MCF_atomic_load_pptr_rlx(&__old_v, __mutex);
-    if(__old_v.__locked == 0) {
-      __new_v = __old_v;
-      __new_v.__locked = 1;
-      __new_v.__sp_nfail = (__old_v.__sp_nfail - ((__old_v.__sp_nfail + 15U) >> 4)) & 0x0FU;
-      if(_MCF_atomic_cmpxchg_weak_pptr_acq(__mutex, &__old_v, &__new_v))
+    /* Use raw integers to work around issues about missed optimizations.
+     * See <https://github.com/lhmouse/mcfgthread/issues/320>.  */
+    uintptr_t __old_bits, __new_bits;
+    _MCF_atomic_load_pptr_rlx(&__old_bits, __mutex);
+    if((__old_bits & 1) == 0) {  /* __locked == 0 */
+      __new_bits = __old_bits + 1U - ((((__old_bits >> 4) & 0x1EU) + 0x1EU) & 0x20U);
+      if(_MCF_atomic_cmpxchg_weak_pptr_acq(__mutex, &__old_bits, &__new_bits))
         return 0;
     }
 #endif
@@ -122,13 +122,14 @@ _MCF_mutex_unlock(_MCF_mutex* __mutex)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_mutex __old_v, __new_v;
-    _MCF_atomic_load_pptr_rlx(&__old_v, __mutex);
-    __MCF_ASSERT(__old_v.__locked != 0);
-    if((__old_v.__sp_mask == 0) && (__old_v.__nsleep == 0)) {
-      __new_v = __old_v;
-      __new_v.__locked = 0;
-      if(_MCF_atomic_cmpxchg_weak_pptr_rel(__mutex, &__old_v, &__new_v))
+    /* Use raw integers to work around issues about missed optimizations.
+     * See <https://github.com/lhmouse/mcfgthread/issues/320>.  */
+    uintptr_t __old_bits, __new_bits;
+    _MCF_atomic_load_pptr_rlx(&__old_bits, __mutex);
+    __MCF_ASSERT((__old_bits & 1) != 0);  /* __locked != 0 */
+    if((__old_bits & (__MCF_UPTR_MAX - 0x1E1U)) == 0) {  /* (__sp_mask == 0) && (__nsleep == 0) */
+      __new_bits = __old_bits - 1U;
+      if(_MCF_atomic_cmpxchg_weak_pptr_rel(__mutex, &__old_bits, &__new_bits))
         return;
     }
 #endif
