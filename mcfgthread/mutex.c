@@ -49,7 +49,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
   {
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
-    int sp_budget;
+    uint32_t sp_budget;
     _MCF_mutex old, new;
 
     /* If this mutex has not been locked, lock it; otherwise, if `__sp_mask`
@@ -71,7 +71,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
           return 0;
       }
       else if((old.__sp_mask != 15U) && (old.__sp_nfail < __MCF_MUTEX_SP_NFAIL_THRESHOLD)) {
-        sp_budget = (int) (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail);
+        sp_budget = __MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail;
         new.__locked = 1;
         new.__sp_mask = (old.__sp_mask | (old.__sp_mask + 1U)) & 0x0FU;
         new.__sp_nfail = old.__sp_nfail;
@@ -96,7 +96,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     if(sp_budget > 0) {
       uint32_t my_mask = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
       __MCF_ASSERT(my_mask != 0);
-      int sp_rem = sp_budget * (int) (__MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_SP_NFAIL_THRESHOLD);
+      uint32_t sp_rem = sp_budget * (__MCF_MUTEX_MAX_SPIN_COUNT / __MCF_MUTEX_SP_NFAIL_THRESHOLD);
       while(sp_rem > 0) {
         sp_rem --;
         YieldProcessor();
