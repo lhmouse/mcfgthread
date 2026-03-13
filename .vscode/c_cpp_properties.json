@@ -1,0 +1,50 @@
+{
+    "configurations": [
+        {
+            "name": "MINGW32",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "_UNICODE",
+                "_WIN32_WINNT=0x0601"
+            ],
+            "windowsSdkVersion": "10.0.26100.0",
+            "compilerPath": "C:/MSYS64/mingw32/bin/gcc.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17"
+        },
+        {
+            "name": "MINGW64",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "_UNICODE",
+                "_WIN32_WINNT=0x0601"
+            ],
+            "windowsSdkVersion": "10.0.26100.0",
+            "compilerPath": "C:/MSYS64/mingw64/bin/gcc.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17"
+        },
+        {
+            "name": "CLANG64",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "_UNICODE",
+                "_WIN32_WINNT=0x0601"
+            ],
+            "windowsSdkVersion": "10.0.26100.0",
+            "compilerPath": "C:/MSYS64/clang64/bin/clang.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17"
+        }
+    ],
+    "version": 4
+}
