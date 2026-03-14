@@ -47,10 +47,14 @@ __MCF_DLLEXPORT
 int
 _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
   {
-    __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
+    __MCF_winnt_timeout nt_timeout = __MCF_0_INIT;
     uint32_t sp_budget;
     _MCF_mutex old, new;
+
+    /* Initialize the timeout value if a non-zero duration is specified. A
+     * null pointer denotes infinity.  */
+    if(!timeout_opt || (*timeout_opt != 0))
+      __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     /* If this mutex has not been locked, lock it; otherwise, if `__sp_mask`
      * contains at least one zero bit and `__sp_nfail` is less than

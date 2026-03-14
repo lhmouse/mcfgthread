@@ -15,9 +15,13 @@ __MCF_DLLEXPORT
 int
 _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
   {
-    __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
+    __MCF_winnt_timeout nt_timeout = __MCF_0_INIT;
     _MCF_once old, new;
+
+    /* Initialize the timeout value if a non-zero duration is specified. A
+     * null pointer denotes infinity.  */
+    if(!timeout_opt || (*timeout_opt != 0))
+      __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     /* If this flag has not been locked, lock it and return 1 to allow
      * initialization of protected resources. Otherwise, allocate a count
