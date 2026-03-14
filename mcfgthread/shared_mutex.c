@@ -15,9 +15,13 @@ __MCF_DLLEXPORT
 int
 _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* timeout_opt)
   {
-    __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
+    __MCF_winnt_timeout nt_timeout = __MCF_0_INIT;
     _MCF_shared_mutex old, new;
+
+    /* Initialize the timeout value if a non-zero duration is specified. A
+     * null pointer denotes infinity.  */
+    if(!timeout_opt || (*timeout_opt != 0))
+      __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     /* Grant shared access if and only if this shared mutex is either unlocked
      * (`__nshare` = 0), or in shared mode and the share counter won't overflow
@@ -78,9 +82,13 @@ __MCF_DLLEXPORT
 int
 _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* timeout_opt)
   {
-    __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
+    __MCF_winnt_timeout nt_timeout = __MCF_0_INIT;
     _MCF_shared_mutex old, new;
+
+    /* Initialize the timeout value if a non-zero duration is specified. A
+     * null pointer denotes infinity.  */
+    if(!timeout_opt || (*timeout_opt != 0))
+      __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     /* Grant exclusive access if and only if this shared mutex is unlocked
      * (`__nshare` = 0). A writer may preempt a lock, even when other threads

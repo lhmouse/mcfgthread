@@ -16,9 +16,13 @@ int
 do_unlock_and_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt, intptr_t* unlocked,
                    intptr_t lock_arg, const int64_t* timeout_opt)
   {
-    __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
+    __MCF_winnt_timeout nt_timeout = __MCF_0_INIT;
     _MCF_cond old, new;
+
+    /* Initialize the timeout value if a non-zero duration is specified. A
+     * null pointer denotes infinity.  */
+    if(!timeout_opt || (*timeout_opt != 0))
+      __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     /* Allocate a count for the current thread.  */
     _MCF_atomic_load_pptr_rlx(&old, cnd);

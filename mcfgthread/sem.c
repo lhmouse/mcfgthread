@@ -15,9 +15,13 @@ __MCF_DLLEXPORT
 int
 _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
   {
-    __MCF_winnt_timeout nt_timeout;
-    __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
+    __MCF_winnt_timeout nt_timeout = __MCF_0_INIT;
     _MCF_sem old, new;
+
+    /* Initialize the timeout value if a non-zero duration is specified. A
+     * null pointer denotes infinity.  */
+    if(!timeout_opt || (*timeout_opt != 0))
+      __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     /* Decrement the counter.  */
     old.__value = _MCF_atomic_xsub_ptr_acq(&(sem->__value), 1);
