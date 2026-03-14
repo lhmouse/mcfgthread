@@ -24,12 +24,23 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
       __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
     /* Decrement the counter.  */
-    old.__value = _MCF_atomic_xsub_ptr_acq(&(sem->__value), 1);
-    new.__value = old.__value - 1;
+    _MCF_atomic_load_pptr_rlx(&old, sem);
+    for(;;)
+      if(old.__value > 0) {
+        new.__value = old.__value - 1;
 
-    /* If the new value is non-negative, the calling thread should leave.  */
-    if(new.__value >= 0)
-      return 0;
+        if(_MCF_atomic_cmpxchg_weak_pptr_acq(sem, &old, &new))
+          return 0;
+      }
+      else if(nt_timeout.__li.QuadPart == 0) {
+        return -1;
+      }
+      else {
+        new.__value = old.__value - 1;
+
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(sem, &old, &new))
+          break;
+      }
 
     /* Try waiting.  */
     int err = __MCF_keyed_event_wait(sem, &nt_timeout);

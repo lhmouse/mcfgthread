@@ -74,6 +74,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
         if(_MCF_atomic_cmpxchg_weak_pptr_acq(mutex, &old, &new))
           return 0;
       }
+      else if(nt_timeout.__li.QuadPart == 0) {
+        return -1;
+      }
       else if((old.__sp_mask != 15U) && (old.__sp_nfail < __MCF_MUTEX_SP_NFAIL_THRESHOLD)) {
         sp_budget = __MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail;
         new.__locked = 1;
