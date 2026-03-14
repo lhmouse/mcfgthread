@@ -68,6 +68,7 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
     }
 
     /* We have got notified.  */
+    _MCF_thread_fence_acq();
     return 0;
   }
 

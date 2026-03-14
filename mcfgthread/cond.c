@@ -68,6 +68,7 @@ do_unlock_and_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt, intptr
     }
 
     /* We have got notified.  */
+    _MCF_thread_fence_acq();
     return 0;
   }
 
