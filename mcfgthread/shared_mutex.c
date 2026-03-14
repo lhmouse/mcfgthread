@@ -37,6 +37,9 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
         if(_MCF_atomic_cmpxchg_weak_pptr_acq(smutex, &old, &new))
           return 0;
       }
+      else if(nt_timeout.__li.QuadPart == 0) {
+        return -1;
+      }
       else {
         new.__nshare = old.__nshare;
         new.__nsleep = (old.__nsleep + 1U) & (__MCF_UPTR_MAX >> 14);
@@ -103,6 +106,9 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
 
         if(_MCF_atomic_cmpxchg_weak_pptr_acq(smutex, &old, &new))
           return 0;
+      }
+      else if(nt_timeout.__li.QuadPart == 0) {
+        return -1;
       }
       else {
         new.__nshare = old.__nshare;

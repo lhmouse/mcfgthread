@@ -29,8 +29,9 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, once);
     for(;;)
-      if(old.__ready != 0)
+      if(old.__ready != 0) {
         return 0;
+      }
       else if(old.__locked == 0) {
         new.__ready = 0;
         new.__locked = 1;
@@ -38,6 +39,9 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
 
         if(_MCF_atomic_cmpxchg_weak_pptr_acq(once, &old, &new))
           return 1;
+      }
+      else if(nt_timeout.__li.QuadPart == 0) {
+        return -1;
       }
       else {
         new.__ready = 0;
