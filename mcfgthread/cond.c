@@ -97,16 +97,19 @@ __MCF_DLLEXPORT __MCF_NEVER_INLINE
 size_t
 _MCF_cond_signal_some_slow(_MCF_cond* cnd, size_t limit)
   {
+    if(limit == 0)
+      return 0;
+
     size_t wake_num;
     _MCF_cond old, new;
 
     /* Get the number of threads to wake up.  */
     _MCF_atomic_load_pptr_rlx(&old, cnd);
     for(;;) {
-      wake_num = _MCF_minz(old.__nsleep, limit);
-      if(wake_num == 0)
+      if(old.__nsleep == 0)
         return 0;
 
+      wake_num = _MCF_minz(old.__nsleep, limit);
       new.__reserved_bits = 0;
       new.__nsleep = (old.__nsleep - wake_num) & (__MCF_UPTR_MAX >> 9);
 
