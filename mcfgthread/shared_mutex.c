@@ -23,14 +23,12 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
     if(!timeout_opt || (*timeout_opt != 0))
       __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
-    /* Grant shared access if and only if this shared mutex is either unlocked
-     * (`__nshare` = 0), or in shared mode and the share counter won't overflow
-     * (`__nshare` < `__MCF_SHARED_MUTEX_MAX_SHARE`). A reader shall not preempt
-     * a lock. If shared access can't be granted, allocate a sleeping count.  */
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, smutex);
     for(;;)
       if((old.__nshare < __MCF_SHARED_MUTEX_MAX_SHARE) && (old.__nsleep == 0)) {
+        /* The mutex is either not locked or locked in shared mode, and no
+         * thread is requesting exclusive access, so grant shared access.  */
         new.__nshare = (old.__nshare + 1U) & 0x3FFFU;
         new.__nsleep = old.__nsleep;
 
@@ -38,9 +36,12 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
           return 0;
       }
       else if(nt_timeout.__li.QuadPart == 0) {
+        /* Shared access can't be granted, and we are not willing to wait, so
+         * fail.  */
         return -1;
       }
       else {
+        /* Allocate a sleeping count for the current thread.  */
         new.__nshare = old.__nshare;
         new.__nsleep = (old.__nsleep + 1U) & (__MCF_UPTR_MAX >> 14);
 
@@ -93,14 +94,11 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
     if(!timeout_opt || (*timeout_opt != 0))
       __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
-    /* Grant exclusive access if and only if this shared mutex is unlocked
-     * (`__nshare` = 0). A writer may preempt a lock, even when other threads
-     * are waiting. If exclusive access can't be granted, allocate a sleeping
-     * count.  */
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, smutex);
     for(;;)
       if(old.__nshare == 0) {
+        /* The mutex is not locked, so grant exclusive access.  */
         new.__nshare = 0x3FFFU;
         new.__nsleep = old.__nsleep;
 
@@ -108,9 +106,12 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
           return 0;
       }
       else if(nt_timeout.__li.QuadPart == 0) {
+        /* Exclusive access can't be granted, and we are not willing to wait,
+         * so fail.  */
         return -1;
       }
       else {
+        /* Allocate a sleeping count for the current thread.  */
         new.__nshare = old.__nshare;
         new.__nsleep = (old.__nsleep + 1U) & (__MCF_UPTR_MAX >> 14);
 

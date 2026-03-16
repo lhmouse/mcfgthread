@@ -24,9 +24,10 @@ do_unlock_and_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt, intptr
     if(!timeout_opt || (*timeout_opt != 0))
       __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
-    /* Allocate a count for the current thread.  */
     _MCF_atomic_load_pptr_rlx(&old, cnd);
     for(;;) {
+      /* Allocate a count for the current thread. A condition variable is on
+       * the slow path, so this always happens.  */
       new.__reserved_bits = 0;
       new.__nsleep = (old.__nsleep + 1U) & (__MCF_UPTR_MAX >> 9);
 

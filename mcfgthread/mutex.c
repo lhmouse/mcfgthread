@@ -56,16 +56,13 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
     if(!timeout_opt || (*timeout_opt != 0))
       __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
-    /* If this mutex has not been locked, lock it; otherwise, if `__sp_mask`
-     * contains at least one zero bit and `__sp_nfail` is less than
-     * `__MCF_MUTEX_SP_NFAIL_THRESHOLD`, which means the current thread is
-     * allowed to spin, allocate a spinning bit; otherwise, allocate a
-     * sleeping count. The spinning failure counter is decremented if the
-     * mutex can be locked immediately.  */
   try_lock_loop:
     _MCF_atomic_load_pptr_rlx(&old, mutex);
     for(;;)
       if(old.__locked == 0) {
+        /* The mutex is not locked, so lock it. The spinning failure counter
+         * should be decremented, as this is the only chance that it could
+         * ever be decremented after heavy contention.  */
         new.__locked = 1;
         new.__sp_mask = old.__sp_mask;
         new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, -1) & 0x0FU;
@@ -75,9 +72,12 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
           return 0;
       }
       else if(nt_timeout.__li.QuadPart == 0) {
+        /* The mutex is locked and we are not willing to wait, so fail.  */
         return -1;
       }
       else if((old.__sp_mask != 15U) && (old.__sp_nfail < __MCF_MUTEX_SP_NFAIL_THRESHOLD)) {
+        /* The mutex is locked, but a spare spinning slot is available, so
+         * allocate a slot and try spinning.  */
         sp_budget = __MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail;
         new.__locked = 1;
         new.__sp_mask = (old.__sp_mask | (old.__sp_mask + 1U)) & 0x0FU;
@@ -88,6 +88,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mutex, const int64_t* timeout_opt)
           break;
       }
       else {
+        /* The mutex is locked, and no spare spinning slot is available, so
+         * mark this operation as a spinning failure and allocate a sleeping
+         * count.  */
         sp_budget = 0;
         new.__locked = 1;
         new.__sp_mask = old.__sp_mask;

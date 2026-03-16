@@ -23,18 +23,19 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
     if(!timeout_opt || (*timeout_opt != 0))
       __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
-    /* If this event contains some other value, return immediately.
-    *  Otherwise, allocate a count for the current thread.  */
   try_wait_loop:
     _MCF_atomic_load_pptr_acq(&old, event);
     for(;;)
       if(old.__value != (uint8_t) undesired) {
+        /* It is desired that the value is not `undesired`, so return it.  */
         return old.__value;
       }
       else if(nt_timeout.__li.QuadPart == 0) {
+        /* The value is undesired and we are not willing to wait, so fail.  */
         return -1;
       }
       else {
+        /* Allocate a sleeping count for the current thread.  */
         new.__value = old.__value;
         new.__reserved_bit = 0;
         new.__nsleep = (old.__nsleep + 1U) & (__MCF_UPTR_MAX >> 9);

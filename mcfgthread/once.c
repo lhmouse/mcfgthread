@@ -23,16 +23,16 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
     if(!timeout_opt || (*timeout_opt != 0))
       __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
-    /* If this flag has not been locked, lock it and return 1 to allow
-     * initialization of protected resources. Otherwise, allocate a count
-     * for the current thread.  */
   try_lock_loop:
     _MCF_atomic_load_pptr_acq(&old, once);
     for(;;)
       if(old.__ready != 0) {
+        /* Initialization has completed, so succeed.  */
         return 0;
       }
       else if(old.__locked == 0) {
+        /* Initialization has not started and this thread is the first comer,
+         * so lock the flag and let the caller do initialization.  */
         new.__ready = 0;
         new.__locked = 1;
         new.__nsleep = old.__nsleep;
@@ -41,9 +41,12 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
           return 1;
       }
       else if(nt_timeout.__li.QuadPart == 0) {
+        /* Another thread is doing initialization and we are not willing to
+         * wait, so fail.  */
         return -1;
       }
       else {
+        /* Allocate a sleeping count for the current thread.  */
         new.__ready = 0;
         new.__locked = 1;
         new.__nsleep = (old.__nsleep + 1U) & (__MCF_UPTR_MAX >> 9);
