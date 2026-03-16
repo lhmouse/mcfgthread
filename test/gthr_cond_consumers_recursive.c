@@ -64,7 +64,7 @@ thread_proc(void* param)
       *my_consumed += value_got;
     }
 
-    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", __MCF_tid());
     return __MCF_nullptr;
   }
 

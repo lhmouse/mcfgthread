@@ -26,7 +26,7 @@ thread_proc(void* param)
     for(;;) {
       int r = mtx_trylock(&mutex);
       if(r == thrd_success) {
-        fprintf(stderr, "thread %d got %d\n", (int) _MCF_thread_self_tid(), r);
+        fprintf(stderr, "thread %d got %d\n", __MCF_tid(), r);
 
         r = mtx_lock(&mutex);
         assert(r == 0);
@@ -51,7 +51,7 @@ thread_proc(void* param)
         assert(0);
     }
 
-    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", __MCF_tid());
     return 0;
   }
 

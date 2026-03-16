@@ -21,7 +21,7 @@ thread_proc(void* param)
     assert(__libcpp_thread_id_equal(__MCF_libcxx_thread_get_current_id(), __libcpp_thread_get_id(&thrd)));
     assert(__libcpp_thread_id_equal(__MCF_libcxx_thread_get_current_id(), _MCF_thread_self_tid()));
 
-    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", __MCF_tid());
     return __MCF_nullptr;
   }
 

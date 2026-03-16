@@ -36,10 +36,10 @@ thread_proc(void* param)
     _MCF_sem_wait(&start, __MCF_nullptr);
 
     int err = __gthread_once(&once, once_do_it);
-    fprintf(stderr, "thread %d got %d\n", (int) _MCF_thread_self_tid(), err);
+    fprintf(stderr, "thread %d got %d\n", __MCF_tid(), err);
     assert(err == 0);
 
-    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", __MCF_tid());
     return __MCF_nullptr;
   }
 

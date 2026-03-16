@@ -42,7 +42,7 @@ thread_proc(void* param)
     r = __gthread_recursive_mutex_unlock(&mutex);
     assert(r == 0);
 
-    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", __MCF_tid());
     return __MCF_nullptr;
   }
 

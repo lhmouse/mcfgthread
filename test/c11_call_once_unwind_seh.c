@@ -45,7 +45,7 @@ once_do_it(void)
     resource = old + 1;
 
     _MCF_sleep((const int64_t[]) { -10 });
-    fprintf(stderr, "thread %d once\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d once\n", __MCF_tid());
 
     RtlUnwind(__MCF_nullptr, __MCF_nullptr, __MCF_nullptr, __MCF_nullptr);
     abort();
@@ -66,7 +66,7 @@ thread_proc(void* param)
     _MCF_sem_wait(&start, __MCF_nullptr);
 
     call_once(&once, once_do_it);
-    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", __MCF_tid());
     ExitThread(0);
   }
 

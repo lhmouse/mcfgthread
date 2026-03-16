@@ -20,7 +20,7 @@ thread_proc(void* param)
     _MCF_mutex_lock(&mtx, __MCF_nullptr);
     assert(__gthread_equal(__gthread_self(), thrd));
 
-    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", __MCF_tid());
     return __MCF_nullptr;
   }
 

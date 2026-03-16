@@ -43,7 +43,7 @@ thread_proc(void* param)
 
       /* Consume it  */
       int value_got = value;
-      //printf("thread %d got %d\n", (int) _MCF_thread_self_tid(), value_got);
+      //printf("thread %d got %d\n", __MCF_tid(), value_got);
       if(value_got > 0)
         value = 0;
 
@@ -64,7 +64,7 @@ thread_proc(void* param)
       *my_consumed += value_got;
     }
 
-    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", __MCF_tid());
     return 0;
   }
 

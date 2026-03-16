@@ -19,7 +19,7 @@ thread_proc(void* param)
     (void) param;
     _MCF_sleep((const int64_t[]) { -500 });
 
-    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", __MCF_tid());
     return magic;
   }
 

@@ -22,7 +22,7 @@ void
 tls_destructor(void* ptr)
   {
     (void) ptr;
-    fprintf(stderr, "thread %d tls_destructor\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d tls_destructor\n", __MCF_tid());
     _MCF_atomic_xadd_32_rlx(&count, 1);
   }
 
@@ -35,12 +35,12 @@ thread_proc(void* param)
 
     int r = __gthread_setspecific(key, &count);
     assert(r == 0);
-    fprintf(stderr, "thread %d set value\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d set value\n", __MCF_tid());
 
     _MCF_sem_signal(&value_set);
     _MCF_sem_wait(&key_deleted, __MCF_nullptr);
 
-    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", __MCF_tid());
     return __MCF_nullptr;
   }
 

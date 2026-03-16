@@ -32,7 +32,7 @@ thread_proc(void* param)
     resource = old + 1;
     __gthread_mutex_unlock(&mutex);
 
-    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", __MCF_tid());
     return __MCF_nullptr;
   }
 

@@ -14,7 +14,7 @@ static
 void
 thread_atexit_proc(void* arg)
   {
-    fprintf(stderr, "thread %d atexit\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d atexit\n", __MCF_tid());
     *(int*) arg = 42;
   }
 

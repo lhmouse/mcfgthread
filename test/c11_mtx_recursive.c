@@ -42,7 +42,7 @@ thread_proc(void* param)
     r = mtx_unlock(&mutex);
     assert(r == thrd_success);
 
-    fprintf(stderr, "thread %d quitting\n", (int) _MCF_thread_self_tid());
+    fprintf(stderr, "thread %d quitting\n", __MCF_tid());
     return 0;
   }
 
