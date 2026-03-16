@@ -538,7 +538,7 @@ __MCF_c11_mtx_unlock(mtx_t* __mtx)
   __MCF_noexcept
   {
     __MCF_gthr_rc_mutex_release(__mtx->__rc_mtx);
-    return 0;
+    return thrd_success;
   }
 
 __MCF_C11_INLINE
