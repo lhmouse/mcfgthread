@@ -27,7 +27,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
      * initialization of protected resources. Otherwise, allocate a count
      * for the current thread.  */
   try_lock_loop:
-    _MCF_atomic_load_pptr_rlx(&old, once);
+    _MCF_atomic_load_pptr_acq(&old, once);
     for(;;)
       if(old.__ready != 0) {
         return 0;
