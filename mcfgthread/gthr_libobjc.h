@@ -182,7 +182,7 @@ __MCF_FNA(__MCF_gthr_objc_thread_set_priority, __gthread_objc_thread_set_priorit
 #endif
 
 /* Return the current thread's priority.  */
-__MCF_GTHR_LIBOBJC_IMPORT __MCF_FN_PURE
+__MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_thread_get_priority(void) __MCF_noexcept;
 
@@ -378,7 +378,7 @@ __MCF_gthr_objc_thread_set_priority(int __priority) __MCF_noexcept
     return __err;
   }
 
-__MCF_GTHR_LIBOBJC_INLINE __MCF_FN_PURE
+__MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_thread_get_priority(void) __MCF_noexcept
   {
