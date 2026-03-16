@@ -19,7 +19,7 @@ atexit_function(void)
   {
     _MCF_thread* cmp = _MCF_thread_self();
     assert(cmp);
-    fprintf(stderr, "atexit thread = %p, tid = %d\n", (void*) cmp, (int) cmp->__tid);
+    fprintf(stderr, "atexit thread = %p, tid = %d\n", cmp, cmp->__tid);
 
     assert(cmp == thr);
     assert(cmp->__tid == thr->__tid);
@@ -30,7 +30,7 @@ main(void)
   {
     thr = _MCF_thread_self();
     assert(thr);
-    fprintf(stderr, "main thread = %p, tid = %d\n", (void*) thr, (int) thr->__tid);
+    fprintf(stderr, "main thread = %p, tid = %d\n", thr, thr->__tid);
 
     __MCF_atexit(atexit_function);
     fprintf(stderr, "main exiting\n");
