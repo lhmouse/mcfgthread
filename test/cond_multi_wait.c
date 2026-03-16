@@ -33,10 +33,7 @@ thread_proc(_MCF_thread* self)
         // Main thread is waiting.
         _MCF_sleep((const int64_t[]){ -10 });
         int32_t c2 = _MCF_atomic_load_32_rlx(&signal_count);
-        if(c1 == c2) {
-          fprintf(stderr, "maybe deadlock\n");
-          break;
-        }
+        assert(c1 != c2);
       }
     }
   }
