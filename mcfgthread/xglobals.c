@@ -166,10 +166,9 @@ do_hex_encode(wchar_t* ptr, unsigned width, uint64_t value, const wchar_t* digit
 static
 uint64_t
 __fastcall
-do_get_cookie(void)
+do_make_cookie(uint32_t seed)
   {
-    uint32_t pid = (uint32_t) __MCF_pid();
-    uintptr_t xid = __MCF_64_32(pid * 0x100000001ULL, pid) ^ __MCF_UPTR_MAX;
+    uintptr_t xid = __MCF_64_32(seed * 0x100000001ULL, seed) ^ __MCF_UPTR_MAX;
     return (uintptr_t) EncodePointer((PVOID) xid) * 0x9E3779B97F4A7C15ULL;
   }
 
@@ -200,11 +199,12 @@ __MCF_gthread_initialize_globals(void)
 
     /* Generate the unique name for this process.  */
     static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
+    const uint32_t pid = (uint32_t) __MCF_pid();
     UNICODE_STRING gname = __MCF_NT_STRING_INIT(gnbuffer);
     __MCF_ASSERT(gnbuffer[25] == L'*');
-    do_hex_encode(gnbuffer + 25, 8, (uint32_t) __MCF_pid(), L"0123456789ABCDEF");
+    do_hex_encode(gnbuffer + 25, 8, pid, L"0123456789ABCDEF");
     __MCF_ASSERT(gnbuffer[34] == L'#');
-    do_hex_encode(gnbuffer + 34, 16, do_get_cookie(), L"GHJKLMNPQRSTUWXY");
+    do_hex_encode(gnbuffer + 34, 16, do_make_cookie(pid), L"GHJKLMNPQRSTUWXY");
     __MCF_ASSERT(gnbuffer[50] == 0);
 
     /* Allocate or open storage for global data. We are in the DLL main routine,
