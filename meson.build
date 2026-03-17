@@ -45,7 +45,7 @@ mcfgthread_src_ex = [
 
 test_src = [
   'test/lazy_load.c', 'test/self_oom.c', 'test/mix.c', 'test/memory.c', 'test/clock.c',
-  'test/winnt_timeout.c', 'test/runtime_failure.c',
+  'test/winnt_timeout.c', 'test/runtime_failure.c', 'test/xglobals_name.c',
   'test/seh_terminate.c', 'test/teb.c', 'test/teb_att.c', 'test/once_zero_timeout.c',
   'test/once_release.c', 'test/once_abort.c', 'test/once_timeout.c',
   'test/mutex_spin_fail.c', 'test/mutex_zero_timeout.c', 'test/mutex_timeout.c',
@@ -306,7 +306,8 @@ foreach src : test_src
     test_link_args = [ '-static-libgcc', '-static-libstdc++' ]
   endif
 
-  if basename in [ 'lazy_load.c', 'self_oom.c', 'mix.c', 'tls_dtor_static.c' ]
+  if basename in [ 'lazy_load.c', 'self_oom.c', 'mix.c', 'xglobals_name.c',
+                   'tls_dtor_static.c' ]
     test_link_with = lib_mcfgthread_a
   endif
 
