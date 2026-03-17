@@ -135,7 +135,7 @@ __MCF_win32_ntstatus_p(NTSTATUS status, void* ptr)
 static
 int
 __fastcall
-do_pop_static_dtor(__MCF_dtor_element* elem, _MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
+do_pop_dtor(__MCF_dtor_element* elem, _MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
   {
     _MCF_mutex_lock_slow(mtx, __MCF_nullptr);
     int err = __MCF_dtor_queue_pop(elem, queue, dso);
@@ -150,7 +150,7 @@ __MCF_run_static_dtors(_MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
     __MCF_USING_SEH_HANDLER(__MCF_seh_top);
     __MCF_dtor_element elem;
 
-    while(do_pop_static_dtor(&elem, mtx, queue, dso) == 0)
+    while(do_pop_dtor(&elem, mtx, queue, dso) == 0)
       __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
   }
 
