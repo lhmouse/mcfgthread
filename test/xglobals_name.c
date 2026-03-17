@@ -23,6 +23,18 @@ main(void)
     if(!__MCF_crt_ntdll || !__MCF_crt_kernelbase || !__MCF_crt_kernel32)
       return 77;
 
+    typedef NTSTATUS NTAPI BaseGetNamedObjectDirectory_t(HANDLE*);
+    BaseGetNamedObjectDirectory_t* pfnBaseGetNamedObjectDirectory =
+        (BaseGetNamedObjectDirectory_t*)(INT_PTR) GetProcAddress(
+             __MCF_crt_kernel32, "BaseGetNamedObjectDirectory");
+    assert(pfnBaseGetNamedObjectDirectory);
+
+    typedef NTSTATUS NTAPI NtOpenSection_t(HANDLE*, ACCESS_MASK, OBJECT_ATTRIBUTES*);
+    NtOpenSection_t* pfnNtOpenSection =
+        (NtOpenSection_t*)(INT_PTR) GetProcAddress(
+             __MCF_crt_ntdll, "NtOpenSection");
+    assert(pfnNtOpenSection);
+
     WCHAR gname_str[128] = L"Local\\__MCF_crt_xglobals_";
     WCHAR* eptr = gname_str + wcslen(gname_str);
     UINT32 pid = GetCurrentProcessId();
@@ -42,21 +54,11 @@ main(void)
 
     OBJECT_ATTRIBUTES attrs = { .Length = sizeof(OBJECT_ATTRIBUTES),
                                 .ObjectName = &gname };
-
-    typedef NTSTATUS NTAPI BaseGetNamedObjectDirectory_t(HANDLE*);
-    BaseGetNamedObjectDirectory_t* pfnBaseGetNamedObjectDirectory =
-        (BaseGetNamedObjectDirectory_t*)(INT_PTR) GetProcAddress(
-             __MCF_crt_kernel32, "BaseGetNamedObjectDirectory");
-    assert(pfnBaseGetNamedObjectDirectory);
     assert(pfnBaseGetNamedObjectDirectory(&attrs.RootDirectory) == STATUS_SUCCESS);
 
-    typedef NTSTATUS NTAPI NtOpenSection_t(HANDLE*, ACCESS_MASK, OBJECT_ATTRIBUTES*);
-    NtOpenSection_t* pfnNtOpenSection =
-        (NtOpenSection_t*)(INT_PTR) GetProcAddress(
-             __MCF_crt_ntdll, "NtOpenSection");
-    assert(pfnNtOpenSection);
     HANDLE hmap;
-    assert(pfnNtOpenSection(&hmap, SECTION_ALL_ACCESS, &attrs) == STATUS_ACCESS_DENIED);
+    // FIXME: Wine doesn't check `OBJ_EXCLUSIVE`.
+    // assert(pfnNtOpenSection(&hmap, SECTION_ALL_ACCESS, &attrs) == STATUS_ACCESS_DENIED);
     attrs.Attributes = OBJ_EXCLUSIVE;
     assert(pfnNtOpenSection(&hmap, SECTION_ALL_ACCESS, &attrs) == STATUS_SUCCESS);
 
