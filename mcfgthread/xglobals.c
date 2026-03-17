@@ -159,10 +159,8 @@ void
 __fastcall
 do_encode_numeric_field(wchar_t* ptr, unsigned width, uint64_t value, const wchar_t* digits)
   {
-    uint64_t reg = value;
     for(unsigned k = width - 1;  k != UINT_MAX;  --k) {
-      unsigned d = reg & 0x0F;
-      reg >>= 4;
+      unsigned d = (value >> (width - 1 - k) * 4) & 0x0FU;
       ptr[k] = digits[d];
     }
   }
