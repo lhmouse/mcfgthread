@@ -13,7 +13,6 @@ EXPORTS
   EncodePointer@4@
   ExitThread@4@
   FormatMessageW@28@
-  GetCurrentProcessId@0@
   GetLastError@0@
   GetModuleFileNameW@12@
   GetProcAddress@8@

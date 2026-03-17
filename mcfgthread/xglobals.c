@@ -194,10 +194,9 @@ __MCF_gthread_initialize_globals(void)
     static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
     UNICODE_STRING gname = __MCF_NT_STRING_INIT(gnbuffer);
     __MCF_ASSERT(gnbuffer[25] == L'*');
-    ULONG pid = GetCurrentProcessId();
-    do_encode_numeric_field(gnbuffer + 25, 8, pid, L"0123456789ABCDEF");
+    do_encode_numeric_field(gnbuffer + 25, 8, (ULONG) __MCF_pid(), L"0123456789ABCDEF");
     __MCF_ASSERT(gnbuffer[34] == L'#');
-    UINT64 cookie = (UINT_PTR) EncodePointer((PVOID) ~(UINT_PTR) (pid * 0x100000001ULL)) * 0x9E3779B97F4A7C15ULL;
+    UINT64 cookie = (UINT_PTR) EncodePointer((PVOID) ~(UINT_PTR) ((ULONG) __MCF_pid() * 0x100000001ULL)) * 0x9E3779B97F4A7C15ULL;
     do_encode_numeric_field(gnbuffer + 34, 16, cookie, L"GHJKLMNPQRSTUWXY");
     __MCF_ASSERT(gnbuffer[50] == 0);
 
