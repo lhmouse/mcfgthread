@@ -12,25 +12,17 @@
 #include <stdio.h>
 #include <assert.h>
 
-NTSYSAPI
-NTSTATUS
-NTAPI
-BaseGetNamedObjectDirectory(
-  OUT HANDLE* NamedObjectDirectory);
-
-NTSYSAPI
-NTSTATUS
-NTAPI
-NtOpenSection(
-  OUT HANDLE* SectionHandle,
-  IN ACCESS_MASK DesiredAccess,
-  IN OBJECT_ATTRIBUTES* ObjectAttributes);
-
+extern HANDLE __MCF_crt_ntdll;
+extern HANDLE __MCF_crt_kernelbase;
+extern HANDLE __MCF_crt_kernel32;
 extern void* __MCF_g;
 
 int
 main(void)
   {
+    if(!__MCF_crt_ntdll || !__MCF_crt_kernelbase || !__MCF_crt_kernel32)
+      return 77;
+
     WCHAR gname_str[128] = L"Local\\__MCF_crt_xglobals_";
     WCHAR* eptr = gname_str + wcslen(gname_str);
     UINT32 pid = GetCurrentProcessId();
@@ -47,14 +39,26 @@ main(void)
     UNICODE_STRING gname = { .Length = (USHORT) ((eptr - gname_str) * 2),
                              .MaximumLength = sizeof(gname_str),
                              .Buffer = gname_str };
+
     OBJECT_ATTRIBUTES attrs = { .Length = sizeof(OBJECT_ATTRIBUTES),
                                 .ObjectName = &gname };
-    assert(BaseGetNamedObjectDirectory(&attrs.RootDirectory) == STATUS_SUCCESS);
 
+    typedef NTSTATUS NTAPI BaseGetNamedObjectDirectory_t(HANDLE*);
+    BaseGetNamedObjectDirectory_t* pfnBaseGetNamedObjectDirectory =
+        (BaseGetNamedObjectDirectory_t*)(INT_PTR) GetProcAddress(
+             __MCF_crt_kernel32, "BaseGetNamedObjectDirectory");
+    assert(pfnBaseGetNamedObjectDirectory);
+    assert(pfnBaseGetNamedObjectDirectory(&attrs.RootDirectory) == STATUS_SUCCESS);
+
+    typedef NTSTATUS NTAPI NtOpenSection_t(HANDLE*, ACCESS_MASK, OBJECT_ATTRIBUTES*);
+    NtOpenSection_t* pfnNtOpenSection =
+        (NtOpenSection_t*)(INT_PTR) GetProcAddress(
+             __MCF_crt_ntdll, "NtOpenSection");
+    assert(pfnNtOpenSection);
     HANDLE hmap;
-    assert(NtOpenSection(&hmap, SECTION_ALL_ACCESS, &attrs) == STATUS_ACCESS_DENIED);
+    assert(pfnNtOpenSection(&hmap, SECTION_ALL_ACCESS, &attrs) == STATUS_ACCESS_DENIED);
     attrs.Attributes = OBJ_EXCLUSIVE;
-    assert(NtOpenSection(&hmap, SECTION_ALL_ACCESS, &attrs) == STATUS_SUCCESS);
+    assert(pfnNtOpenSection(&hmap, SECTION_ALL_ACCESS, &attrs) == STATUS_SUCCESS);
 
     char* gmem = MapViewOfFile(hmap, FILE_MAP_ALL_ACCESS, 0, 0, 0);
     assert(gmem);
