@@ -16,7 +16,7 @@ __MCF_DLLEXPORT
 int
 __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
   {
-    if(queue->__size == __MCF_DTOR_QUEUE_BLOCK_SIZE) {
+    if(queue->__size == ARRAYSIZE(queue->__data)) {
       __MCF_dtor_queue* prev = __MCF_malloc_copy(queue, sizeof(__MCF_dtor_queue));
       if(!prev)
         return __MCF_win32_error_i(ERROR_NOT_ENOUGH_MEMORY, -1);
@@ -29,7 +29,7 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
 
     /* There is room in the current block, so append it there.  */
     uint32_t index = queue->__size;
-    __MCF_ASSERT(index < __MCF_DTOR_QUEUE_BLOCK_SIZE);
+    __MCF_ASSERT(index < ARRAYSIZE(queue->__data));
     queue->__data[index] = *elem;
     queue->__size ++;
     return 0;

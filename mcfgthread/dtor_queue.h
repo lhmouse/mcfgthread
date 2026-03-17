@@ -28,9 +28,7 @@ struct __MCF_dtor_queue
   {
     __MCF_dtor_queue* __prev;
     uint32_t __size;
-
-#define __MCF_DTOR_QUEUE_BLOCK_SIZE  63U
-    __MCF_dtor_element __data[__MCF_DTOR_QUEUE_BLOCK_SIZE];
+    __MCF_dtor_element __data[63];
   };
 
 /* Appends an element to the queue. `__elem->__dtor` shall not be null. This
