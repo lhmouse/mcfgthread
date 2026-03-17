@@ -101,7 +101,7 @@ __MCF_batch_release_common(const void* key, size_t count)
      * they are waiting. We don't release the keyed event in this case, as it
      * blocks the calling thread infinitely if there is no thread to wake up.
      * See <https://github.com/lhmouse/mcfgthread/issues/21>.  */
-    static __MCF_winnt_timeout one_second = { .__li.QuadPart = -10000000 };
+    static const __MCF_winnt_timeout one_second = { .__li.QuadPart = -10000000 };
     size_t remaining = count;
     while((remaining != 0) && !__MCF_is_process_shutting_down())
       if(__MCF_keyed_event_signal(key, &one_second) == 0)
