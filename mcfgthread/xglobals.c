@@ -156,21 +156,14 @@ __MCF_run_static_dtors(_MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
 static
 void
 __fastcall
-do_encode_numeric_field(wchar_t* ptr, size_t width, uint64_t value, const wchar_t* digits)
+do_encode_numeric_field(wchar_t* ptr, unsigned width, uint64_t value, const wchar_t* digits)
   {
-    wchar_t* eptr = ptr + width;
     uint64_t reg = value;
-
-    /* Write significant figures backwards.  */
-    while((ptr != eptr) && (reg != 0)) {
-      uint32_t d = reg & 0x0F;
+    for(unsigned k = width - 1;  k != UINT_MAX;  --k) {
+      unsigned d = reg & 0x0F;
       reg >>= 4;
-      *--eptr = digits[d];
+      ptr[k] = digits[d];
     }
-
-    /* Fill the rest with zeroes.  */
-    while(ptr != eptr)
-      *--eptr = digits[0];
   }
 
 __MCF_DLLEXPORT
