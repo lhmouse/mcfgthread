@@ -157,12 +157,20 @@ __MCF_run_static_dtors(_MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
 static
 void
 __fastcall
-do_encode_numeric_field(wchar_t* ptr, unsigned width, uint64_t value, const wchar_t* digits)
+do_hex_encode(wchar_t* ptr, unsigned width, uint64_t value, const wchar_t* digits)
   {
-    for(unsigned k = width - 1;  k != UINT_MAX;  --k) {
-      unsigned d = (value >> (width - 1 - k) * 4) & 0x0FU;
-      ptr[k] = digits[d];
-    }
+    for(unsigned k = 0;  k != width;  ++k)
+      ptr[k] = digits[(value >> (width - 1 - k) * 4) & 0x0FU];
+  }
+
+static
+uint64_t
+__fastcall
+do_get_cookie(void)
+  {
+    uint32_t pid = (uint32_t) __MCF_pid();
+    uintptr_t xid = __MCF_64_32(pid * 0x100000001ULL, pid) ^ __MCF_UPTR_MAX;
+    return (uintptr_t) EncodePointer((PVOID) xid) * 0x9E3779B97F4A7C15ULL;
   }
 
 __MCF_DLLEXPORT
@@ -194,10 +202,9 @@ __MCF_gthread_initialize_globals(void)
     static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
     UNICODE_STRING gname = __MCF_NT_STRING_INIT(gnbuffer);
     __MCF_ASSERT(gnbuffer[25] == L'*');
-    do_encode_numeric_field(gnbuffer + 25, 8, (ULONG) __MCF_pid(), L"0123456789ABCDEF");
+    do_hex_encode(gnbuffer + 25, 8, (uint32_t) __MCF_pid(), L"0123456789ABCDEF");
     __MCF_ASSERT(gnbuffer[34] == L'#');
-    UINT64 cookie = (UINT_PTR) EncodePointer((PVOID) ~(UINT_PTR) ((ULONG) __MCF_pid() * 0x100000001ULL)) * 0x9E3779B97F4A7C15ULL;
-    do_encode_numeric_field(gnbuffer + 34, 16, cookie, L"GHJKLMNPQRSTUWXY");
+    do_hex_encode(gnbuffer + 34, 16, do_get_cookie(), L"GHJKLMNPQRSTUWXY");
     __MCF_ASSERT(gnbuffer[50] == 0);
 
     /* Allocate or open storage for global data. We are in the DLL main routine,
