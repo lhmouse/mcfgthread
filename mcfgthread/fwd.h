@@ -183,7 +183,7 @@ __MCF_CXX(extern "C" {)
 #  elif defined _M_ARM64 || defined _M_ARM64EC
 #    define __MCF_64_32(x, y)  x
 #    define __MCF_USYM  ""
-#    if defined __aarch64__
+#    if defined _M_ARM64
 #      define __MCF_M_ARM64  1
 #    else
 #      define __MCF_M_X8664  1
