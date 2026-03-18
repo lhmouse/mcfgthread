@@ -12,15 +12,14 @@
 #include <stdio.h>
 #include <assert.h>
 
-extern HANDLE __MCF_crt_ntdll;
-extern HANDLE __MCF_crt_kernelbase;
-extern HANDLE __MCF_crt_kernel32;
+extern HMODULE __MCF_crt_ntdll;
+extern HMODULE __MCF_crt_kernel32;
 extern void* __MCF_g;
 
 int
 main(void)
   {
-    if(!__MCF_crt_ntdll || !__MCF_crt_kernelbase || !__MCF_crt_kernel32)
+    if(!__MCF_crt_ntdll || !__MCF_crt_kernel32)
       return 77;
 
     typedef NTSTATUS NTAPI BaseGetNamedObjectDirectory_t(HANDLE*);
