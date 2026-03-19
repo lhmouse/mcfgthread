@@ -293,8 +293,15 @@ typedef unsigned __MCF_INTPTR_ uintptr_t;
 #endif
 
 /* This defines a by-reference variable, in other words, an array of exactly one
- * object, which is always passed around as a pointer.  */
-#define __MCF_BR(...)    __typeof__(__VA_ARGS__ [1])
+ * element, which is always passed around as a pointer.  */
+#if defined __cplusplus
+extern "C++" {
+template<typename _Tp> struct __MCF_make_br { typedef _Tp __type[1]; };
+}  /* extern "C++"  */
+#define __MCF_BR(...)   typename ::__MCF_make_br<__VA_ARGS__>::__type
+#else
+#define __MCF_BR(...)   __typeof__(__VA_ARGS__ [1])
+#endif
 
 /* Some compilers warn about casts between pointers, so launder the pointer via
  * an in-between integral type.  */
