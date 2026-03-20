@@ -111,7 +111,8 @@ test_src = [
   'test/thread_move_assign_terminate.cpp', 'test/thread_move_assign_joined.cpp',
   'test/thread_join_deadlock.cpp', 'test/thread_ctor_throw.cpp', 'test/thread_id.cpp',
   'test/thread_decay_copy.cpp', 'test/this_thread_sleep_until.cpp',
-  'test/this_thread_sleep_for.cpp', 'test/tls_dtor.cpp', 'test/tls_many.cpp' ]
+  'test/this_thread_sleep_for.cpp', 'test/tls_dtor.cpp', 'test/tls_many.cpp',
+  'test/shared_mutex_rw_multi.c' ]
 
 #===========================================================
 # Global configuration
