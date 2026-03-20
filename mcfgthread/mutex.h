@@ -17,8 +17,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_MUTEX_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Define the mutex struct.
- * This takes up the same storage as a pointer.  */
+/* Define the mutex struct, which takes up the same storage as a pointer.  */
 struct __MCF_mutex
   {
     __MCF_EX uintptr_t __locked : 1;
@@ -46,7 +45,6 @@ _MCF_mutex_init(_MCF_mutex* __mutex)
   __MCF_noexcept;
 
 /* Attempts to lock a mutex.
- *
  * This a simple mutex that is not recursive and performs no error checking. If
  * the caller attempts to lock a mutex which it has already held, deadlocks may
  * occur.

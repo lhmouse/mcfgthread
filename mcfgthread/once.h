@@ -17,8 +17,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_ONCE_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Define the once flag struct.
- * This takes up the same storage as a pointer.  */
+/* Define the once flag struct, which takes up the same storage as a pointer.  */
 struct __MCF_once
   {
     __MCF_EX uintptr_t __ready : 8;  /* this conforms to the Itanium C++ ABI  */

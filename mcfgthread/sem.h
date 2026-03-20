@@ -17,8 +17,8 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_SEM_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Define the semaphore struct.
- * This takes up the same storage as a pointer.  */
+/* Define the semaphore struct, which contains just a signed integer, same as
+ * what can be found in any operating system book.  */
 struct __MCF_sem
   {
     intptr_t __value;

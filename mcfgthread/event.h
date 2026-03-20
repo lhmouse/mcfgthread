@@ -17,8 +17,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_EVENT_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Define the event struct.
- * This takes up the same storage as a pointer.  */
+/* Define the event struct, which takes up the same storage as a pointer.  */
 struct __MCF_event
   {
     __MCF_EX uintptr_t __value : 8;

@@ -17,8 +17,8 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_COND_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Define the condition variable struct.
- * This takes up the same storage as a pointer.  */
+/* Define the condition variable struct, which takes up the same storage as a
+ * pointer.  */
 struct __MCF_cond
   {
     __MCF_EX uintptr_t __reserved_bits : 9;

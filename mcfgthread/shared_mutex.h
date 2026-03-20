@@ -17,8 +17,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_SHARED_MUTEX_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Define the shared mutex struct.
- * This takes up the same storage as a pointer.  */
+/* Define the shared mutex struct, which takes up the same storage as a pointer.  */
 struct __MCF_shared_mutex
   {
     __MCF_EX uintptr_t __nshare : 14;  /* number of sharing threads  */
@@ -38,7 +37,6 @@ _MCF_shared_mutex_init(_MCF_shared_mutex* __smutex)
   __MCF_noexcept;
 
 /* Attempts to lock a shared mutex in shared mode.
- *
  * A shared mutex is not recursive and performs no error checking. If the caller
  * attempts to lock a mutex which it has already held and there is another thread
  * waiting for exclusive access, deadlocks may occur.
@@ -62,7 +60,6 @@ _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __time
   __MCF_noexcept;
 
 /* Attempts to lock a shared mutex in exclusive mode.
- *
  * A shared mutex is not recursive and performs no error checking. If the caller
  * attempts to lock a mutex which it has already held, deadlocks may occur.
  *
