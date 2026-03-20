@@ -13,7 +13,7 @@
 
 __MCF_DLLEXPORT
 int
-_MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* timeout_opt)
+_MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smtx, const int64_t* timeout_opt)
   {
     __MCF_winnt_timeout nt_timeout = __MCF_0_INIT;
     _MCF_shared_mutex old, new;
@@ -24,7 +24,7 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
       __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
   try_lock_loop:
-    _MCF_atomic_load_pptr_rlx(&old, smutex);
+    _MCF_atomic_load_pptr_rlx(&old, smtx);
     for(;;)
       if((old.__nshare < __MCF_SHARED_MUTEX_MAX_SHARE) && (old.__nsleep == 0)) {
         /* The mutex is either not locked or locked in shared mode, and no
@@ -32,7 +32,7 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
         new.__nshare = (old.__nshare + 1U) & 0x3FFFU;
         new.__nsleep = old.__nsleep;
 
-        if(_MCF_atomic_cmpxchg_weak_pptr_acq(smutex, &old, &new))
+        if(_MCF_atomic_cmpxchg_weak_pptr_acq(smtx, &old, &new))
           return 0;
       }
       else if(nt_timeout.__li.QuadPart == 0) {
@@ -45,17 +45,17 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
         new.__nshare = old.__nshare;
         new.__nsleep = (old.__nsleep + 1U) & (__MCF_UPTR_MAX >> 14);
 
-        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smutex, &old, &new))
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smtx, &old, &new))
           break;
       }
 
     /* Try waiting.  */
-    int err = __MCF_keyed_event_wait(smutex, &nt_timeout);
+    int err = __MCF_keyed_event_wait(smtx, &nt_timeout);
     while(err != 0) {
       /* Tell another thread which is going to signal this mutex that an old
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
-      _MCF_atomic_load_pptr_rlx(&old, smutex);
+      _MCF_atomic_load_pptr_rlx(&old, smtx);
       for(;;) {
         if(old.__nsleep == 0)
           break;
@@ -63,7 +63,7 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
         new.__nshare = old.__nshare;
         new.__nsleep = (old.__nsleep - 1U) & (__MCF_UPTR_MAX >> 14);
 
-        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smutex, &old, &new))
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smtx, &old, &new))
           return -1;
       }
 
@@ -74,7 +74,7 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
        * keyed event before us, so we set the timeout to zero. If we time out
        * once more, the third thread will have incremented the number of
        * sleeping threads and we can try decrementing it again.  */
-      err = __MCF_keyed_event_wait(smutex, &(__MCF_winnt_timeout) { 0 });
+      err = __MCF_keyed_event_wait(smtx, &(__MCF_winnt_timeout) { 0 });
     }
 
     /* We have got notified.  */
@@ -84,7 +84,7 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* smutex, const int64_t* tim
 
 __MCF_DLLEXPORT
 int
-_MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* timeout_opt)
+_MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smtx, const int64_t* timeout_opt)
   {
     __MCF_winnt_timeout nt_timeout = __MCF_0_INIT;
     _MCF_shared_mutex old, new;
@@ -95,14 +95,14 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
       __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
   try_lock_loop:
-    _MCF_atomic_load_pptr_rlx(&old, smutex);
+    _MCF_atomic_load_pptr_rlx(&old, smtx);
     for(;;)
       if(old.__nshare == 0) {
         /* The mutex is not locked, so grant exclusive access.  */
         new.__nshare = 0x3FFFU;
         new.__nsleep = old.__nsleep;
 
-        if(_MCF_atomic_cmpxchg_weak_pptr_acq(smutex, &old, &new))
+        if(_MCF_atomic_cmpxchg_weak_pptr_acq(smtx, &old, &new))
           return 0;
       }
       else if(nt_timeout.__li.QuadPart == 0) {
@@ -115,17 +115,17 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
         new.__nshare = old.__nshare;
         new.__nsleep = (old.__nsleep + 1U) & (__MCF_UPTR_MAX >> 14);
 
-        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smutex, &old, &new))
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smtx, &old, &new))
           break;
       }
 
     /* Try waiting.  */
-    int err = __MCF_keyed_event_wait(smutex, &nt_timeout);
+    int err = __MCF_keyed_event_wait(smtx, &nt_timeout);
     while(err != 0) {
       /* Tell another thread which is going to signal this mutex that an old
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
-      _MCF_atomic_load_pptr_rlx(&old, smutex);
+      _MCF_atomic_load_pptr_rlx(&old, smtx);
       for(;;) {
         if(old.__nsleep == 0)
           break;
@@ -133,7 +133,7 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
         new.__nshare = old.__nshare;
         new.__nsleep = (old.__nsleep - 1U) & (__MCF_UPTR_MAX >> 14);
 
-        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smutex, &old, &new))
+        if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smtx, &old, &new))
           return -1;
       }
 
@@ -144,7 +144,7 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
        * keyed event before us, so we set the timeout to zero. If we time out
        * once more, the third thread will have incremented the number of
        * sleeping threads and we can try decrementing it again.  */
-      err = __MCF_keyed_event_wait(smutex, &(__MCF_winnt_timeout) { 0 });
+      err = __MCF_keyed_event_wait(smtx, &(__MCF_winnt_timeout) { 0 });
     }
 
     /* We have got notified.  */
@@ -154,7 +154,7 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
 void
-_MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
+_MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smtx)
   {
     bool wake_one;
     _MCF_shared_mutex old, new;
@@ -164,7 +164,7 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
      * last reader (`__nshare` = 1 before the call) or writer (`__nshare` =
      * `__MCF_SHARED_MUTEX_NSHARE_M` before the call) that unlocks a shared
      * mutex shall perform a wakeup operation.  */
-    _MCF_atomic_load_pptr_rlx(&old, smutex);
+    _MCF_atomic_load_pptr_rlx(&old, smtx);
     for(;;) {
       __MCF_ASSERT(old.__nshare != 0);
 
@@ -172,10 +172,10 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
       new.__nshare = (old.__nshare - 1U) & (((uint32_t) old.__nshare - 0x3FFFU) >> 14) & 0x3FFFU;
       new.__nsleep = (old.__nsleep - wake_one) & (__MCF_UPTR_MAX >> 14);
 
-      if(_MCF_atomic_cmpxchg_weak_pptr_rel(smutex, &old, &new))
+      if(_MCF_atomic_cmpxchg_weak_pptr_rel(smtx, &old, &new))
         break;
     }
 
     /* Wake up a sleeping thread, if any.  */
-    __MCF_batch_release_common(smutex, wake_one);
+    __MCF_batch_release_common(smtx, wake_one);
   }

@@ -33,7 +33,7 @@ struct __MCF_shared_mutex
  * `{0}`, like other structs.  */
 __MCF_SHARED_MUTEX_INLINE
 void
-_MCF_shared_mutex_init(_MCF_shared_mutex* __smutex)
+_MCF_shared_mutex_init(_MCF_shared_mutex* __smtx)
   __MCF_noexcept;
 
 /* Attempts to lock a shared mutex in shared mode.
@@ -51,12 +51,12 @@ _MCF_shared_mutex_init(_MCF_shared_mutex* __smutex)
  * -1 if the operation has timed out.  */
 __MCF_SHARED_MUTEX_IMPORT
 int
-_MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt)
+_MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
 __MCF_SHARED_MUTEX_INLINE
 int
-_MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt)
+_MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
 /* Attempts to lock a shared mutex in exclusive mode.
@@ -73,12 +73,12 @@ _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __time
  * or -1 if the operation has timed out.  */
 __MCF_SHARED_MUTEX_IMPORT
 int
-_MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt)
+_MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
 __MCF_SHARED_MUTEX_INLINE
 int
-_MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt)
+_MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
 /* Releases a shared mutex, in either shared or exclusive mode. This function may
@@ -86,12 +86,12 @@ _MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smutex, const int64_t* __t
  * has not been locked, the behavior is undefined.  */
 __MCF_SHARED_MUTEX_IMPORT
 void
-_MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* __smutex)
+_MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* __smtx)
   __MCF_noexcept;
 
 __MCF_SHARED_MUTEX_INLINE
 void
-_MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex)
+_MCF_shared_mutex_unlock(_MCF_shared_mutex* __smtx)
   __MCF_noexcept;
 
 /* Define inline functions after all declarations.
@@ -101,69 +101,69 @@ _MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex)
  * this file.  */
 __MCF_SHARED_MUTEX_INLINE
 void
-_MCF_shared_mutex_init(_MCF_shared_mutex* __smutex)
+_MCF_shared_mutex_init(_MCF_shared_mutex* __smtx)
   __MCF_noexcept
   {
     _MCF_shared_mutex __temp = __MCF_0_INIT;
-    _MCF_atomic_store_pptr_rlx(__smutex, &__temp);
+    _MCF_atomic_store_pptr_rlx(__smtx, &__temp);
   }
 
 __MCF_SHARED_MUTEX_INLINE
 int
-_MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt)
+_MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
     /* Use raw integers to work around issues about missed optimizations.
      * See <https://github.com/lhmouse/mcfgthread/issues/320>.  */
     uintptr_t __old_bits, __new_bits;
-    _MCF_atomic_load_pptr_rlx(&__old_bits, __smutex);
+    _MCF_atomic_load_pptr_rlx(&__old_bits, __smtx);
     if(__old_bits < __MCF_SHARED_MUTEX_MAX_SHARE) {  /* (__nshare < MAX) && (__nsleep == 0) */
       __new_bits = __old_bits + 1U;
-      if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smutex, &__old_bits, &__new_bits))
+      if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smtx, &__old_bits, &__new_bits))
         return 0;
     }
 #endif
-    return _MCF_shared_mutex_lock_shared_slow(__smutex, __timeout_opt);
+    return _MCF_shared_mutex_lock_shared_slow(__smtx, __timeout_opt);
   }
 
 __MCF_SHARED_MUTEX_INLINE
 int
-_MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smutex, const int64_t* __timeout_opt)
+_MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
     /* Use raw integers to work around issues about missed optimizations.
      * See <https://github.com/lhmouse/mcfgthread/issues/320>.  */
     uintptr_t __old_bits, __new_bits;
-    _MCF_atomic_load_pptr_rlx(&__old_bits, __smutex);
+    _MCF_atomic_load_pptr_rlx(&__old_bits, __smtx);
     if((__old_bits & 0x3FFFU) == 0) {  /* __nshare == 0 */
       __new_bits = __old_bits + 0x3FFFU;
-      if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smutex, &__old_bits, &__new_bits))
+      if(_MCF_atomic_cmpxchg_weak_pptr_acq(__smtx, &__old_bits, &__new_bits))
         return 0;
     }
 #endif
-    return _MCF_shared_mutex_lock_exclusive_slow(__smutex, __timeout_opt);
+    return _MCF_shared_mutex_lock_exclusive_slow(__smtx, __timeout_opt);
   }
 
 __MCF_SHARED_MUTEX_INLINE
 void
-_MCF_shared_mutex_unlock(_MCF_shared_mutex* __smutex)
+_MCF_shared_mutex_unlock(_MCF_shared_mutex* __smtx)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
     /* Use raw integers to work around issues about missed optimizations.
      * See <https://github.com/lhmouse/mcfgthread/issues/320>.  */
     uintptr_t __old_bits, __new_bits;
-    _MCF_atomic_load_pptr_rlx(&__old_bits, __smutex);
+    _MCF_atomic_load_pptr_rlx(&__old_bits, __smtx);
     __MCF_ASSERT((__old_bits & 0x3FFFU) != 0);  /* __nshare != 0 */
     if(__old_bits <= 0x3FFFU) {  /* __nsleep == 0 */
       __new_bits = (__old_bits - 1U) & (((uint32_t) __old_bits - 0x3FFFU) >> 14);
-      if(_MCF_atomic_cmpxchg_weak_pptr_rel(__smutex, &__old_bits, &__new_bits))
+      if(_MCF_atomic_cmpxchg_weak_pptr_rel(__smtx, &__old_bits, &__new_bits))
         return;
     }
 #endif
-    _MCF_shared_mutex_unlock_slow(__smutex);
+    _MCF_shared_mutex_unlock_slow(__smtx);
   }
 
 __MCF_CXX(})  /* extern "C"  */
