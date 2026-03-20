@@ -6,9 +6,10 @@ This minor release contains the following changes since v2.3-ga.1:
 
 1. A new header, `mcfgthread/teb.h`, has been added, which provides inline
    functions for accessing fields of the Thread Environment Block (TEB) and
-   the Process Environment Block (PEB). TEB-based `__MCF_tid()` and
-   `__MCF_pid()` replace the previous inline assembly macros. The thread ID
-   field in `_MCF_thread` is now `int32_t` (was `uint32_t`).
+   the Process Environment Block (PEB). New functions `__MCF_tid()` and
+   `__MCF_pid()` replace the previous `__MCF_TEB_LOAD_32_ABS` inline
+   assembly macros. The thread ID field in `_MCF_thread` is now `int32_t`
+   (was `uint32_t`).
 2. Building with Link Time Optimization (LTO) is now supported. Section
    garbage collection can be disabled with `-Denable-gc-sections=false` to
    work around linker bugs. `-funwind-tables` has been moved from per-target
