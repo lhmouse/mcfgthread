@@ -168,7 +168,7 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
     for(;;) {
       __MCF_ASSERT(old.__nshare != 0);
 
-      wake_one = (old.__nshare == 1U) || (old.__nshare == 0x3FFFU);
+      wake_one = (old.__nsleep != 0) && !((old.__nshare > 1) && (old.__nshare < 0x3FFFU));
       new.__nshare = (old.__nshare - 1U) & (((uint32_t) old.__nshare - 0x3FFFU) >> 14) & 0x3FFFU;
       new.__nsleep = (old.__nsleep - wake_one) & (__MCF_UPTR_MAX >> 14);
 
