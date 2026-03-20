@@ -41,7 +41,7 @@ struct __MCF_mutex
  * `{0}`, like other structs.  */
 __MCF_MUTEX_INLINE
 void
-_MCF_mutex_init(_MCF_mutex* __mutex)
+_MCF_mutex_init(_MCF_mutex* __mtx)
   __MCF_noexcept;
 
 /* Attempts to lock a mutex.
@@ -59,12 +59,12 @@ _MCF_mutex_init(_MCF_mutex* __mutex)
  * has timed out.  */
 __MCF_MUTEX_IMPORT
 int
-_MCF_mutex_lock_slow(_MCF_mutex* __mutex, const int64_t* __timeout_opt)
+_MCF_mutex_lock_slow(_MCF_mutex* __mtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
 __MCF_MUTEX_INLINE
 int
-_MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt)
+_MCF_mutex_lock(_MCF_mutex* __mtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
 /* Releases a mutex. If the mutex has not been locked, the behavior is undefined.
@@ -73,12 +73,12 @@ _MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt)
  * mutex.  */
 __MCF_MUTEX_IMPORT
 void
-_MCF_mutex_unlock_slow(_MCF_mutex* __mutex)
+_MCF_mutex_unlock_slow(_MCF_mutex* __mtx)
   __MCF_noexcept;
 
 __MCF_MUTEX_INLINE
 void
-_MCF_mutex_unlock(_MCF_mutex* __mutex)
+_MCF_mutex_unlock(_MCF_mutex* __mtx)
   __MCF_noexcept;
 
 /* Define inline functions after all declarations.
@@ -88,50 +88,50 @@ _MCF_mutex_unlock(_MCF_mutex* __mutex)
  * this file.  */
 __MCF_MUTEX_INLINE
 void
-_MCF_mutex_init(_MCF_mutex* __mutex)
+_MCF_mutex_init(_MCF_mutex* __mtx)
   __MCF_noexcept
   {
     _MCF_mutex __temp = __MCF_0_INIT;
-    _MCF_atomic_store_pptr_rlx(__mutex, &__temp);
+    _MCF_atomic_store_pptr_rlx(__mtx, &__temp);
   }
 
 __MCF_MUTEX_INLINE
 int
-_MCF_mutex_lock(_MCF_mutex* __mutex, const int64_t* __timeout_opt)
+_MCF_mutex_lock(_MCF_mutex* __mtx, const int64_t* __timeout_opt)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
     /* Use raw integers to work around issues about missed optimizations.
      * See <https://github.com/lhmouse/mcfgthread/issues/320>.  */
     uintptr_t __old_bits, __new_bits;
-    _MCF_atomic_load_pptr_rlx(&__old_bits, __mutex);
+    _MCF_atomic_load_pptr_rlx(&__old_bits, __mtx);
     if((__old_bits & 1) == 0) {  /* __locked == 0 */
       __new_bits = __old_bits + 1U - (((((uint32_t) __old_bits >> 4) & 0x1EU) + 0x1EU) & 0x20U);
-      if(_MCF_atomic_cmpxchg_weak_pptr_acq(__mutex, &__old_bits, &__new_bits))
+      if(_MCF_atomic_cmpxchg_weak_pptr_acq(__mtx, &__old_bits, &__new_bits))
         return 0;
     }
 #endif
-    return _MCF_mutex_lock_slow(__mutex, __timeout_opt);
+    return _MCF_mutex_lock_slow(__mtx, __timeout_opt);
   }
 
 __MCF_MUTEX_INLINE
 void
-_MCF_mutex_unlock(_MCF_mutex* __mutex)
+_MCF_mutex_unlock(_MCF_mutex* __mtx)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
     /* Use raw integers to work around issues about missed optimizations.
      * See <https://github.com/lhmouse/mcfgthread/issues/320>.  */
     uintptr_t __old_bits, __new_bits;
-    _MCF_atomic_load_pptr_rlx(&__old_bits, __mutex);
+    _MCF_atomic_load_pptr_rlx(&__old_bits, __mtx);
     __MCF_ASSERT((__old_bits & 1) != 0);  /* __locked != 0 */
     if((__old_bits & (__MCF_UPTR_MAX - 0x1E1U)) == 0) {  /* (__sp_mask == 0) && (__nsleep == 0) */
       __new_bits = __old_bits - 1U;
-      if(_MCF_atomic_cmpxchg_weak_pptr_rel(__mutex, &__old_bits, &__new_bits))
+      if(_MCF_atomic_cmpxchg_weak_pptr_rel(__mtx, &__old_bits, &__new_bits))
         return;
     }
 #endif
-    _MCF_mutex_unlock_slow(__mutex);
+    _MCF_mutex_unlock_slow(__mtx);
   }
 
 __MCF_CXX(})  /* extern "C"  */
