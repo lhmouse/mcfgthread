@@ -241,6 +241,7 @@ test_src = [
   'test/tls_dtor.cpp',
   'test/tls_many.cpp',
   'test/tls_set.cpp',
+  'test/shared_mutex_rw_multi.c',
 ]
 
 #===========================================================
