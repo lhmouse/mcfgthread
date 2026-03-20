@@ -9,6 +9,7 @@
 #include <windows.h>
 #include <winternl.h>
 #include <ntstatus.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <assert.h>
 
@@ -34,6 +35,9 @@ main(void)
              __MCF_crt_ntdll, "NtOpenSection");
     assert(pfnNtOpenSection);
 
+    // https://gitlab.winehq.org/wine/wine/-/wikis/Developer-FAQ#how-can-i-detect-wine
+    bool is_on_wine = GetProcAddress(__MCF_crt_ntdll, "wine_get_version") != NULL;
+
     WCHAR gname_str[128] = L"Local\\__MCF_crt_xglobals_";
     WCHAR* eptr = gname_str + wcslen(gname_str);
     UINT32 pid = GetCurrentProcessId();
@@ -56,8 +60,7 @@ main(void)
     assert(pfnBaseGetNamedObjectDirectory(&attrs.RootDirectory) == STATUS_SUCCESS);
 
     HANDLE hmap;
-    // FIXME: Wine doesn't check `OBJ_EXCLUSIVE`.
-    // assert(pfnNtOpenSection(&hmap, SECTION_ALL_ACCESS, &attrs) == STATUS_ACCESS_DENIED);
+    assert(is_on_wine || pfnNtOpenSection(&hmap, SECTION_ALL_ACCESS, &attrs) == STATUS_ACCESS_DENIED);
     attrs.Attributes = OBJ_EXCLUSIVE;
     assert(pfnNtOpenSection(&hmap, SECTION_ALL_ACCESS, &attrs) == STATUS_SUCCESS);
 
