@@ -207,8 +207,6 @@ __MCF_DLLEXPORT __MCF_NEVER_INLINE
 void
 _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
   {
-    __MCF_ASSERT(mutex->__locked == 1);
-
     bool wake_one;
     _MCF_mutex old, new;
 
@@ -217,6 +215,8 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mutex)
      * further threads to spin.  */
     _MCF_atomic_load_pptr_rlx(&old, mutex);
     for(;;) {
+      __MCF_ASSERT(old.__locked == 1);
+
       wake_one = old.__nsleep != 0;
       new.__locked = 0;
       new.__sp_mask = (old.__sp_mask & (old.__sp_mask - 1U)) & 0x0FU;

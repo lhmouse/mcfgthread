@@ -156,8 +156,6 @@ __MCF_DLLEXPORT __MCF_NEVER_INLINE
 void
 _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
   {
-    __MCF_ASSERT(smutex->__nshare != 0);
-
     bool wake_one;
     _MCF_shared_mutex old, new;
 
@@ -169,6 +167,7 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
     _MCF_atomic_load_pptr_rlx(&old, smutex);
     for(;;) {
       __MCF_ASSERT(old.__nshare != 0);
+
       wake_one = (old.__nsleep != 0) && !((old.__nshare > 1) && (old.__nshare < 0x3FFFU));
       new.__nshare = (old.__nshare - 1U) & (((uint32_t) old.__nshare - 0x3FFFU) >> 14) & 0x3FFFU;
       new.__nsleep = (old.__nsleep - wake_one) & (__MCF_UPTR_MAX >> 14);
