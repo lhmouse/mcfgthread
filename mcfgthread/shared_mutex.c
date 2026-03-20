@@ -145,32 +145,30 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* smutex, const int64_t* 
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
 void
-_MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smutex)
+_MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smtx)
   {
-    __MCF_ASSERT(smutex->__nshare != 0);
-    bool wake_one;
+    size_t wake_num;
     _MCF_shared_mutex old, new;
 
     /* Determine whether the shared mutex has been locked in shared mode
      * (`__nshare` <= `__MCF_SHARED_MUTEX_MAX_SHARE`) or exclusive mode. The
      * last reader (`__nshare` = 1 before the call) or writer (`__nshare` =
-     * `__MCF_SHARED_MUTEX_NSHARE_M` before the call) that unlocks a shared
-     * mutex shall perform a wakeup operation.  */
-    _MCF_atomic_load_pptr_rlx(&old, smutex);
+     * `0x3FFF` before the call) that unlocks a shared mutex shall perform a
+     * wakeup operation. Since we can't know whether waiters are waiting for
+     * shared or exclusive access, we have to wake up all threads.  */
+    _MCF_atomic_load_pptr_rlx(&old, smtx);
     for(;;) {
       __MCF_ASSERT(old.__nshare != 0);
-      bool exclusive = old.__nshare == 0x3FFF;
-      wake_one = (old.__nsleep != 0) && !((old.__nshare > 1) && (old.__nshare < 0x3FFF));
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wconversion"
-      new.__nshare = old.__nshare - !exclusive + exclusive;
-      new.__nsleep = old.__nsleep - wake_one;
-#pragma GCC diagnostic pop
 
-      if(_MCF_atomic_cmpxchg_weak_pptr_arl(smutex, &old, &new))
+      uintptr_t new_nshare = (old.__nshare - 1U) & (((uint32_t) old.__nshare - 0x3FFFU) >> 14);
+      wake_num = old.__nsleep & ((new_nshare - 1U) >> 14);
+      new.__nshare = new_nshare & 0x3FFFU;
+      new.__nsleep = (old.__nsleep - wake_num) & (__MCF_UPTR_MAX >> 14);
+
+      if(_MCF_atomic_cmpxchg_weak_pptr_rel(smtx, &old, &new))
         break;
     }
 
-    /* Wake up a sleeping thread, if any.  */
-    __MCF_batch_release_common(smutex, wake_one);
+    /* Wake up these threads.  */
+    __MCF_batch_release_common(smtx, wake_num);
   }
