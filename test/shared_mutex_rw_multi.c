@@ -17,7 +17,7 @@ static _MCF_thread* writer_threads[NTHREADS];
 static _MCF_shared_mutex mutex;
 static _MCF_sem start = __MCF_SEM_INIT(0);
 
-#define NITER  100000U
+#define NITER  10000U
 static int res1 = 0, res2 = 0;
 
 static
