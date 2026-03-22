@@ -114,7 +114,7 @@ test_src = [
   'test/this_thread_sleep_for.cpp', 'test/tls_dtor.cpp', 'test/tls_many.cpp',
   'test/gthr_call_once_unwind_seh.cpp', 'test/c11_call_once_unwind_seh.c',
   'test/atexit_terminate.cpp', 'test/at_quick_exit_terminate.cpp',
-  'test/shared_mutex_rw_multi.c' ]
+  'test/shared_mutex_rw_multi.c', 'test/tick_count.c' ]
 
 #===========================================================
 # Global configuration

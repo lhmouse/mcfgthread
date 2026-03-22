@@ -64,7 +64,27 @@ __MCF_DLLEXPORT
 int64_t
 _MCF_tick_count(void)
   {
-    return (int64_t) GetTickCount64();
+    /* `0x7FFE0000` is the user-mode address of `KUSER_SHARED_DATA`, which is
+     * defined with the name `MM_SHARED_USER_DATA_VA` in Windows SDK for
+     * assembly, and has the same value on all architectures.
+     * `KSYSTEM_TIME InterruptTime;` is at offset 8 for all architectures; see
+     * <https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-kuser_shared_data>.  */
+    ULONGLONG ull;
+#if __MCF_64_32(1, 0)
+    ull = *(const volatile ULONGLONG*) (0x7FFE0000 + 8);
+#else
+    /* A 32-bit kernel does not write 64-bit integers atomically, which
+     * requires special treatment. The kernel writes `High2Time` then
+     * `LowPart` then `High1Time` so we read them in the reverse order. If
+     * `High1Time` is not equal to `High2Time`, then the value is split and
+     * we must try again.  */
+    do {
+      ULONG high = *(const volatile ULONG*) (0x7FFE0000 + 12);
+      ULONG low = *(const volatile ULONG*) (0x7FFE0000 + 8);
+      ull = (ULONGLONG) high << 32 | low;
+    } while((ULONG) (ull >> 32) != *(const volatile ULONG*) (0x7FFE0000 + 16));
+#endif
+    return (int64_t) do_divide_by_10000(ull);
   }
 
 __MCF_DLLEXPORT
