@@ -64,15 +64,6 @@ __MCF_DLLEXPORT
 int64_t
 _MCF_tick_count(void)
   {
-    if(__MCF_G_HAS_LAZY(QueryInterruptTime)) {
-      /* This is available since Windows 10.  */
-      ULONGLONG ull;
-      __MCF_G_LAZY(QueryInterruptTime) (&ull);
-      return (int64_t) do_divide_by_10000(ull);
-    }
-
-    /* This is available since Windows Vista and has a resolution of
-     * 15.625 ms.  */
     return (int64_t) GetTickCount64();
   }
 

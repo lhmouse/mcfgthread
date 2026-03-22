@@ -191,7 +191,6 @@ __MCF_gthread_initialize_globals(void)
     /* Load system DLLs. It's not necessary to call `FreeLibrary()`, as these
      * can't be unloaded.  */
     __MCF_crt_ntdll = LoadLibraryExW(L"NTDLL.DLL", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
-    __MCF_crt_kernelbase = LoadLibraryExW(L"KERNELBASE.DLL", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
     __MCF_crt_kernel32 = LoadLibraryExW(L"KERNEL32.DLL", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
 
     __MCF_crt_TlsGetValue = TlsGetValue;
@@ -243,7 +242,6 @@ __MCF_gthread_initialize_globals(void)
 
     /* Perform lazy binding for newer functions.  */
     __MCF_G_SET_LAZY(__MCF_crt_kernel32, GetSystemTimePreciseAsFileTime);  /* win8 */
-    __MCF_G_SET_LAZY(__MCF_crt_kernelbase, QueryInterruptTime);  /* win10 */
 
     /* Attach the main thread and make it joinable. The structure should
      * be all zeroes so no initialization is necessary.  */
@@ -313,7 +311,6 @@ SYSTEM_INFO __MCF_crt_sysinfo = { .dwPageSize = 1 };
 double __MCF_crt_pf_recip = 1;
 HANDLE __MCF_crt_heap = __MCF_BAD_PTR;
 HMODULE __MCF_crt_ntdll = __MCF_BAD_PTR;
-HMODULE __MCF_crt_kernelbase = __MCF_BAD_PTR;
 HMODULE __MCF_crt_kernel32 = __MCF_BAD_PTR;
 typeof_TlsGetValue2* __MCF_crt_TlsGetValue = __MCF_BAD_PTR;
 

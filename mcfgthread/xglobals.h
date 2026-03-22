@@ -210,7 +210,6 @@ NtRaiseHardError(
 /* Define macros and types for lazy binding. If a symbol cannot be found
  * during process startup, it shall be initialized to a null pointer.  */
 typedef void __stdcall typeof_GetSystemTimePreciseAsFileTime(FILETIME*);
-typedef void __stdcall typeof_QueryInterruptTime(ULONGLONG*);
 typedef LPVOID __stdcall typeof_TlsGetValue2(ULONG);
 
 #define __MCF_LAZY_D_(name)   typeof_##name* __f_##name
@@ -454,7 +453,7 @@ struct __MCF_crt_xglobals
 
     /* WARNING: Fields hereinafter must be accessed via `__MCF_G_OPT`!  */
     __MCF_LAZY_D_(GetSystemTimePreciseAsFileTime);
-    __MCF_LAZY_D_(QueryInterruptTime);
+    void* __obsolete_f_QueryInterruptTime;
     __MCF_BR(_MCF_mutex) __thread_oom_mtx;
     __MCF_thread_base __thread_oom_self_st;
   };
@@ -471,7 +470,7 @@ __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __quick_exit_queue) == __MCF_64
 __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __mutex_spin_field) == __MCF_64_32(4736, 2368));
 __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __interrupt_cond) == __MCF_64_32(6784, 4416));
 __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __f_GetSystemTimePreciseAsFileTime) == __MCF_64_32(6792, 4420));
-__MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __f_QueryInterruptTime) == __MCF_64_32(6800, 4424));
+__MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __obsolete_f_QueryInterruptTime) == __MCF_64_32(6800, 4424));
 __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __thread_oom_mtx) == __MCF_64_32(6808, 4428));
 __MCF_STATIC_ASSERT(offsetof(__MCF_crt_xglobals, __thread_oom_self_st) == __MCF_64_32(6816, 4432));
 
@@ -481,7 +480,6 @@ extern SYSTEM_INFO __MCF_XGLOBALS_READONLY __MCF_crt_sysinfo;
 extern double __MCF_XGLOBALS_READONLY __MCF_crt_pf_recip;
 extern HANDLE __MCF_XGLOBALS_READONLY __MCF_crt_heap;
 extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_ntdll;
-extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_kernelbase;
 extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_kernel32;
 extern typeof_TlsGetValue2* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue;
 

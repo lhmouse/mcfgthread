@@ -18,10 +18,6 @@ int main(void) { return 77;  }
 int
 main(void)
   {
-    HMODULE kernelbase = GetModuleHandleW(L"KERNELBASE.DLL");
-    if(!kernelbase)
-      return 77;  // skip
-
     HMODULE kernel32 = GetModuleHandleW(L"KERNEL32.DLL");
     if(!kernel32)
       return 77;  // skip
@@ -29,14 +25,7 @@ main(void)
     // https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsystemtimepreciseasfiletime
     void* fn = (void*) __MCF_G_LAZY(GetSystemTimePreciseAsFileTime);
     fprintf(stderr, "GetSystemTimePreciseAsFileTime = %p\n", fn);
-    assert((fn == (void*) GetProcAddress(kernelbase, "GetSystemTimePreciseAsFileTime"))
-           || (fn == (void*) GetProcAddress(kernel32, "GetSystemTimePreciseAsFileTime")));
-
-    // https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryinterrupttime
-    // NOTE: Despite documentation, this function is only exported from KERNELBASE.
-    fn = (void*) __MCF_G_LAZY(QueryInterruptTime);
-    fprintf(stderr, "QueryInterruptTime = %p\n", fn);
-    assert(fn == (void*) GetProcAddress(kernelbase, "QueryInterruptTime"));
+    assert(fn == (void*) GetProcAddress(kernel32, "GetSystemTimePreciseAsFileTime"));
   }
 
 #endif  // __CYGWIN__
