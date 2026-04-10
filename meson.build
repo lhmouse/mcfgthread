@@ -135,7 +135,7 @@ add_project_arguments(
     '-D_WIN32_WINNT=0x0601', '-D__USE_MINGW_ANSI_STDIO', '-U_FORTIFY_SOURCE',
     '-fno-stack-protector', '-fno-omit-frame-pointer', '-momit-leaf-frame-pointer',
     '-fmerge-all-constants', '-fstrict-aliasing', '-ffast-math', '-fdata-sections',
-    '-funwind-tables',
+    '-funwind-tables', '-fvisibility=hidden',
     '-Werror=conversion', '-Werror=sign-compare', '-Werror=sign-conversion',
     '-Werror=write-strings', '-Werror=return-type', '-Werror=double-promotion',
     '-Wmissing-declarations', '-Wswitch-enum', '-Wmissing-field-initializers',
