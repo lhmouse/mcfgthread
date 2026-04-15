@@ -231,13 +231,13 @@ mcfgthread_version_o = import('windows').compile_resources(
 if cc.get_linker_id() in [ 'link', 'lld-link' ]
   lib_mcfgthread_dll_link_args = [
         '-Wl,-opt:icf', '-Wl,-safeseh:no',
-        '-Wl,-nodefaultlib', '-Wl,-dynamicbase', '-Wl,-nxcompat', '-Wl,-kill-at',
-        '-Xlinker', '-subsystem:windows,6.1' ]
+        '-Xlinker', '-subsystem:windows,6.1', '-Wl,-nodefaultlib',
+        '-Wl,-dynamicbase', '-Wl,-nxcompat' ]
 else
   lib_mcfgthread_dll_link_args = [
         '-Wl,--exclude-all-symbols', '-Wl,--disable-auto-import',
-        '-nostdlib', '-Wl,--dynamicbase', '-Wl,--nxcompat', '-Wl,--kill-at',
-        '-Wl,--subsystem,windows:6.1' ]
+        '-Wl,--subsystem,windows:6.1', '-nostdlib',
+        '-Wl,--dynamicbase', '-Wl,--nxcompat' ]
 endif
 
 if meson.version().version_compare('< 1.10.0')
