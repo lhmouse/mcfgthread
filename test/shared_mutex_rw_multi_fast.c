@@ -14,7 +14,7 @@
 #include <stdio.h>
 #include <windows.h>
 
-#define NTHREADS  32U
+#define NTHREADS  16U
 static _MCF_thread* reader_threads[NTHREADS];
 static _MCF_thread* writer_threads[NTHREADS];
 static _MCF_shared_mutex mutex;
