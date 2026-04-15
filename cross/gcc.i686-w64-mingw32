@@ -13,9 +13,7 @@
 
 [binaries]
 c = 'i686-w64-mingw32-gcc'
-c_ld = 'bfd'
 cpp = 'i686-w64-mingw32-g++'
-cpp_ld = 'bfd'
 ar = 'i686-w64-mingw32-ar'
 objcopy = 'i686-w64-mingw32-objcopy'
 strip = 'i686-w64-mingw32-strip'

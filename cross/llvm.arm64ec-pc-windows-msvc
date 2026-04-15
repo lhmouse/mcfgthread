@@ -12,10 +12,8 @@
 ## OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 [binaries]
-c = [ 'clang', '--target=arm64ec-pc-windows-msvc' ]
-c_ld = 'lld'
-cpp = [ 'clang++', '--target=arm64ec-pc-windows-msvc' ]
-cpp_ld = 'lld'
+c = [ 'clang', '--target=arm64ec-pc-windows-msvc', '-fuse-ld=lld' ]
+cpp = [ 'clang++', '--target=arm64ec-pc-windows-msvc', '-fuse-ld=lld' ]
 ar = 'llvm-ar'
 objcopy = [ 'llvm-objcopy', '--target=arm64ec-pc-windows-msvc' ]
 strip = 'llvm-strip'

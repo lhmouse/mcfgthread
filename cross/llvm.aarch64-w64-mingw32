@@ -12,10 +12,8 @@
 ## OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 [binaries]
-c = [ 'clang', '--target=aarch64-w64-mingw32' ]
-c_ld = 'lld'
-cpp = [ 'clang++', '--target=aarch64-w64-mingw32' ]
-cpp_ld = 'lld'
+c = [ 'clang', '--target=aarch64-w64-mingw32', '-fuse-ld=lld' ]
+cpp = [ 'clang++', '--target=aarch64-w64-mingw32', '-fuse-ld=lld' ]
 ar = 'llvm-ar'
 objcopy = [ 'llvm-objcopy', '--target=aarch64-w64-mingw32' ]
 strip = 'llvm-strip'
