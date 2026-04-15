@@ -177,6 +177,7 @@ jobs:
 
       - name: Install dependencies
         run: >-
+             choco uninstall -y llvm &
              pip3 install --break-system-packages meson
 
       - name: Configure
@@ -205,6 +206,7 @@ jobs:
 
       - name: Install dependencies
         run: >-
+             choco uninstall -y llvm &
              pip3 install --break-system-packages meson
 
       - name: Configure
@@ -233,6 +235,7 @@ jobs:
 
       - name: Install dependencies
         run: >-
+             choco uninstall -y llvm &
              pip3 install --break-system-packages meson
 
       - name: Configure
@@ -261,6 +264,7 @@ jobs:
 
       - name: Install dependencies
         run: >-
+             choco uninstall -y llvm &
              pip3 install --break-system-packages meson
 
       - name: Download LLVM

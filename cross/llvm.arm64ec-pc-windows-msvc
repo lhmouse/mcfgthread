@@ -13,10 +13,8 @@
 
 [binaries]
 c = [ 'clang', '--target=arm64ec-pc-windows-msvc' ]
-c_ld = 'lld'
 cpp = [ 'clang++', '--target=arm64ec-pc-windows-msvc' ]
-cpp_ld = 'lld'
-ar = 'llvm-ar'
+ar = 'llvm-lib'
 objcopy = [ 'llvm-objcopy', '--target=arm64ec-pc-windows-msvc' ]
 strip = 'llvm-strip'
 windres = [ 'llvm-rc', '--target=arm64ec-pc-windows-msvc' ]

@@ -13,9 +13,7 @@
 
 [binaries]
 c = [ 'clang', '--target=x86_64-w64-mingw32' ]
-c_ld = 'lld'
 cpp = [ 'clang++', '--target=x86_64-w64-mingw32' ]
-cpp_ld = 'lld'
 ar = 'llvm-ar'
 objcopy = [ 'llvm-objcopy', '--target=x86_64-w64-mingw32' ]
 strip = 'llvm-strip'
