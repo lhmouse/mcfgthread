@@ -222,12 +222,6 @@ if not cc.has_define('__CYGWIN__')
   kwargs_dll += { 'name_prefix': 'lib' }
 endif
 
-if meson.version().version_compare('>= 1.10.0')
-  kwargs_exe += { 'build_subdir': 'bin' }
-  kwargs_dll += { 'build_subdir': 'bin' }
-  kwargs_lib += { 'build_subdir': 'lib' }
-endif
-
 if cc.get_linker_id() in [ 'link', 'lld-link' ]
   lib_mcfgthread_dll_link_args = [
         '-Wl,-nodefaultlib', '-Wl,-dynamicbase', '-Wl,-nxcompat', '-Wl,-opt:ref',
