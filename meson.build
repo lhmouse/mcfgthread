@@ -199,6 +199,20 @@ mcfgthread_version_o = import('windows').compile_resources(
       args: [ '-I.', '-c65001' ],
       depend_files: [ 'mcfgthread/version.h.in', 'mcfgthread/version.manifest' ])
 
+kwargs_exe = { }
+kwargs_dll = { }
+kwargs_lib = { }
+
+if not cc.has_define('__CYGWIN__')
+  kwargs_dll += { 'name_prefix': 'lib' }
+endif
+
+if meson.version().version_compare('>= 1.10.0')
+  kwargs_exe += { 'build_subdir': 'bin' }
+  kwargs_dll += { 'build_subdir': 'bin' }
+  kwargs_lib += { 'build_subdir': 'lib' }
+endif
+
 if cc.get_linker_id() in [ 'link', 'lld-link' ]
   lib_mcfgthread_dll_link_args = [
         '-Wl,-nodefaultlib', '-Wl,-dynamicbase', '-Wl,-nxcompat', '-Wl,-opt:ref',
@@ -218,6 +232,7 @@ lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       link_args: lib_mcfgthread_dll_link_args,
       sources: [ mcfgthread_src_min, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
+      kwargs: kwargs_dll,
       soversion: ver.get('abi_major'),
       version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
       install: true)
@@ -230,6 +245,7 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
       objects: lib_mcfgthread_minimal_dll.extract_objects(mcfgthread_src_min),
       sources: [ mcfgthread_src_ex, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
+      kwargs: kwargs_dll,
       soversion: ver.get('abi_major'),
       version: '.'.join([ ver.get('abi_major'), ver.get('abi_minor'), '0' ]),
       install: true)
@@ -242,6 +258,7 @@ else
         c_pch: 'mcfgthread/xprecompiled.h',
         c_args: [ '-funwind-tables', '-ffunction-sections' ],
         sources: [ mcfgthread_src_min, mcfgthread_src_ex ],
+        kwargs: kwargs_lib,
         install: true)
 endif
 
@@ -326,6 +343,7 @@ foreach src : test_src
                         sources: [ src, test_version_o ],
                         dependencies: [ dep_ntdll ],
                         link_with: test_link_with,
+                        kwargs: kwargs_exe,
                         build_by_default: false,
                         install: false)
 
