@@ -8,7 +8,6 @@
 #ifndef __MCFGTHREAD_XPRECOMPILED_
 #define __MCFGTHREAD_XPRECOMPILED_
 
-#include "version.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>

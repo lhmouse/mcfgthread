@@ -1,5 +1,5 @@
 /* This file is part of MCF Gthread.
- * Copyright (C) 2022-2025 LH_Mouse. All wrongs reserved.
+ * Copyright (C) 2022-2026 LH_Mouse. All wrongs reserved.
  *
  * MCF Gthread is free software. Licensing information is included in
  * LICENSE.TXT as a whole. The GCC Runtime Library Exception applies
@@ -10,22 +10,19 @@ int main(void) { return 77;  }
 #else  // __CYGWIN__
 
 #include "../mcfgthread/thread.h"
-#include "version.h"
 #include <assert.h>
 #include <windows.h>
 
 int
 main(void)
   {
-    // load functions from dll
-    wchar_t dll_name[100];
-    wsprintfW(dll_name, L"libmcfgthread-%d.dll", _MCF_ABI_VERSION_MAJOR);
-    HMODULE pdll = LoadLibraryW(dll_name);
+    // load dlls
+    HMODULE pdll = LoadLibraryW(L"libmcfgthread-2.dll");
     assert(pdll);
-    wsprintfW(dll_name, L"libmcfgthread-minimal-%d.dll", _MCF_ABI_VERSION_MAJOR);
-    HMODULE mdll = LoadLibraryW(dll_name);
+    HMODULE mdll = LoadLibraryW(L"libmcfgthread-minimal-2.dll");
     assert(mdll);
 
+    // load functions from dll
     typedef __typeof__(_MCF_tls_get) tls_get_fn;
     tls_get_fn* pdll_tls_get = __MCF_CAST_PTR(tls_get_fn, GetProcAddress(pdll, "_MCF_tls_get"));
     assert(pdll_tls_get);
