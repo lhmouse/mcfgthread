@@ -62,6 +62,33 @@ _MCF_hires_utc_now(void)
 
 __MCF_DLLEXPORT
 int64_t
+_MCF_steady_now(void)
+  {
+    /* This is available since Windows 7.  */
+    ULONGLONG ull;
+    QueryUnbiasedInterruptTime(&ull);
+    return (int64_t) do_divide_by_10000(ull);
+  }
+
+__MCF_DLLEXPORT
+double
+_MCF_hires_steady_now(void)
+  {
+    if(__MCF_HAS_G_IMP(QueryUnbiasedInterruptTimePrecise)) {
+      /* This is available since Windows 10.  */
+      ULONGLONG ull;
+      __MCF_G_IMP(QueryUnbiasedInterruptTimePrecise) (&ull);
+      return (double)(int64_t) ull * 0.0001;
+    }
+
+    /* This is available since Windows 7.  */
+    ULONGLONG ull;
+    QueryUnbiasedInterruptTime(&ull);
+    return (double)(int64_t) ull * 0.0001;
+  }
+
+__MCF_DLLEXPORT
+int64_t
 _MCF_tick_count(void)
   {
     char* pSharedInterruptTime = (char*) (__MCF_SHARED_USER_DATA_VA + 0x08);

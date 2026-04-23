@@ -28,8 +28,21 @@ double
 _MCF_hires_utc_now(void)
   __MCF_noexcept;
 
+/* Get the number of milliseconds since system startup, excluding time when the
+ * system is in suspension or hibernation. This value corresponds to
+ * `clock_gettime(CLOCK_MONOTONIC, ...)` on Linux.  */
+__MCF_CLOCK_IMPORT
+int64_t
+_MCF_steady_now(void)
+  __MCF_noexcept;
+
+__MCF_CLOCK_IMPORT
+double
+_MCF_hires_steady_now(void)
+  __MCF_noexcept;
+
 /* Get the number of milliseconds since system startup. This value corresponds
- to `clock_gettime(CLOCK_BOOTTIME, ...)` on Linux.  */
+ * to `clock_gettime(CLOCK_BOOTTIME, ...)` on Linux.  */
 __MCF_CLOCK_IMPORT
 int64_t
 _MCF_tick_count(void)
