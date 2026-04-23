@@ -23,10 +23,24 @@ main(void)
     if(!kernel32)
       return 77;  // skip
 
+    HMODULE kernelbase = GetModuleHandleW(L"KERNELBASE.DLL");
+    if(!kernelbase)
+      return 77;  // skip
+
     // https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsystemtimepreciseasfiletime
     void* fn = (void*) __MCF_G_IMP_OPT(GetSystemTimePreciseAsFileTime);
     fprintf(stderr, "GetSystemTimePreciseAsFileTime = %p\n", fn);
     assert(fn == (void*) GetProcAddress(kernel32, "GetSystemTimePreciseAsFileTime"));
+
+    // https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryinterrupttime
+    fn = (void*) __MCF_G_IMP_OPT(QueryInterruptTime);
+    fprintf(stderr, "QueryInterruptTime = %p\n", fn);
+    assert(fn == (void*) GetProcAddress(kernelbase, "QueryInterruptTime"));
+
+    // https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryunbiasedinterrupttimeprecise
+    fn = (void*) __MCF_G_IMP_OPT(QueryUnbiasedInterruptTimePrecise);
+    fprintf(stderr, "QueryUnbiasedInterruptTimePrecise = %p\n", fn);
+    assert(fn == (void*) GetProcAddress(kernelbase, "QueryUnbiasedInterruptTimePrecise"));
   }
 
 #endif  // __CYGWIN__
