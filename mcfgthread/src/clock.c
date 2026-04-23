@@ -48,7 +48,7 @@ _MCF_hires_utc_now(void)
       /* This is available since Windows 8.  */
       ULONGLONG ull;
       __MCF_G_IMP(GetSystemTimePreciseAsFileTime) ((FILETIME*) &ull);
-      return (double) ((int64_t) ull - 116444736000000000) * 0.0001;
+      return (double)(int64_t) (ull - 116444736000000000) * 0.0001;
     }
 
     /* `ULONGLONG` has a more strict alignment requirement than `FILETIME`,
@@ -57,7 +57,7 @@ _MCF_hires_utc_now(void)
      * (the Unix Epoch).  */
     ULONGLONG ull;
     GetSystemTimeAsFileTime((FILETIME*) &ull);
-    return (double) ((int64_t) ull - 116444736000000000) * 0.0001;
+    return (double)(int64_t) (ull - 116444736000000000) * 0.0001;
   }
 
 __MCF_DLLEXPORT
