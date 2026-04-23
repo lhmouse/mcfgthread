@@ -59,6 +59,8 @@
 
 /* Define prototypes for optional dependencies.  */
 typedef void __stdcall typeof_GetSystemTimePreciseAsFileTime(FILETIME*);
+typedef void __stdcall typeof_QueryInterruptTime(ULONGLONG*);
+typedef void __stdcall typeof_QueryUnbiasedInterruptTimePrecise(ULONGLONG*);
 typedef LPVOID __stdcall typeof_TlsGetValue2(ULONG);
 
 /* Terminates the current process. This function is used as the exception
@@ -262,6 +264,7 @@ extern double __MCF_XGLOBALS_READONLY __MCF_crt_pf_recip;
 extern HANDLE __MCF_XGLOBALS_READONLY __MCF_crt_heap;
 extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_ntdll;
 extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_kernel32;
+extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_kernelbase;
 extern typeof_TlsGetValue2* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue;
 
 /* Declare the structure of global data in named shared memory. As mcfgthread
@@ -288,11 +291,11 @@ struct __MCF_crt_xglobals
      * In a process which loads a DLL that is linked against an old static copy of
      * mcfgthread, these might be missing from the named shared memory object, and
      * must be accessed with `__MCF_G_OPT()`.  */
-    typeof_GetSystemTimePreciseAsFileTime* imp_GetSystemTimePreciseAsFileTime;
-    void* reserved_for_QueryInterruptTime;
-
-    __MCF_BR(_MCF_mutex) thread_oom_mtx;
-    __MCF_thread_base opt_thread_oom_self_st;
+    typeof_GetSystemTimePreciseAsFileTime* imp_GetSystemTimePreciseAsFileTime;  /* v1.8 */
+    typeof_QueryInterruptTime* imp_QueryInterruptTime;  /* v1.8 */
+    __MCF_BR(_MCF_mutex) thread_oom_mtx;  /* v1.9 */
+    __MCF_thread_base opt_thread_oom_self_st;  /* v1.9 */
+    typeof_QueryUnbiasedInterruptTimePrecise* imp_QueryUnbiasedInterruptTimePrecise;  /* v2.4 */
   };
 
 /* This is a pointer to the process-specific named shared memory in the
@@ -323,9 +326,10 @@ __MCF_STATIC_ASSERT(__MCF_OFFXG_(quick_exit_queue) == __MCF_64_32(3160, 1588));
 __MCF_STATIC_ASSERT(__MCF_OFFXG_(mutex_spin_field) == __MCF_64_32(4736, 2368));
 __MCF_STATIC_ASSERT(__MCF_OFFXG_(interrupt_cond) == __MCF_64_32(6784, 4416));
 __MCF_STATIC_ASSERT(__MCF_OFFXG_(imp_GetSystemTimePreciseAsFileTime) == __MCF_64_32(6792, 4420));
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(reserved_for_QueryInterruptTime) == __MCF_64_32(6800, 4424));
+__MCF_STATIC_ASSERT(__MCF_OFFXG_(imp_QueryInterruptTime) == __MCF_64_32(6800, 4424));
 __MCF_STATIC_ASSERT(__MCF_OFFXG_(thread_oom_mtx) == __MCF_64_32(6808, 4428));
 __MCF_STATIC_ASSERT(__MCF_OFFXG_(opt_thread_oom_self_st) == __MCF_64_32(6816, 4432));
+__MCF_STATIC_ASSERT(__MCF_OFFXG_(imp_QueryUnbiasedInterruptTimePrecise) == __MCF_64_32(8416, 5232));
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also

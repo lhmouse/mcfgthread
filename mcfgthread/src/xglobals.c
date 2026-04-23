@@ -385,6 +385,7 @@ __MCF_gthread_initialize_globals(void)
      * can't be unloaded.  */
     __MCF_crt_ntdll = LoadLibraryExW(L"NTDLL.DLL", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
     __MCF_crt_kernel32 = LoadLibraryExW(L"KERNEL32.DLL", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
+    __MCF_crt_kernelbase = LoadLibraryExW(L"KERNELBASE.DLL", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
 
     /* This function is available since Windows 11 24H2. It has the same
      * signature as `TlsGetValue()`, so the latter can be used as a backup.  */
@@ -433,6 +434,20 @@ __MCF_gthread_initialize_globals(void)
     /* This function is available since Windows 8.  */
     dll_fn = GetProcAddress(__MCF_crt_kernel32, "GetSystemTimePreciseAsFileTime");
     __MCF_G(imp_GetSystemTimePreciseAsFileTime) = (void*) dll_fn;
+
+    /* This function is available since Windows 10. Microsoft documentation says
+     * this is exported from KERNEL32.DLL, but it's really only exported from
+     * KERNELBASE.DLL. However, we no longer call this function; the field is
+     * initialized for backward compatibility.  */
+    dll_fn = GetProcAddress(__MCF_crt_kernelbase, "QueryInterruptTime");
+    __MCF_G(imp_QueryInterruptTime) = (void*) dll_fn;
+
+    /* This function is available since Windows 10. Microsoft documentation says
+     * this is exported from KERNEL32.DLL, but it's really only exported from
+     * KERNELBASE.DLL. Strangely, `QueryUnbiasedInterruptTime` is exported from
+     * KERNEL32.DLL since Windows 7, so there's no need to load it dynamically.  */
+    dll_fn = GetProcAddress(__MCF_crt_kernelbase, "QueryUnbiasedInterruptTimePrecise");
+    __MCF_G(imp_QueryUnbiasedInterruptTimePrecise) = (void*) dll_fn;
 
     /* Attach the main thread and make it joinable. The structure should
      * be all zeroes so no initialization is necessary.  */
@@ -503,6 +518,7 @@ double __MCF_crt_pf_recip = 1;
 HANDLE __MCF_crt_heap = __MCF_BAD_PTR;
 HMODULE __MCF_crt_ntdll = __MCF_BAD_PTR;
 HMODULE __MCF_crt_kernel32 = __MCF_BAD_PTR;
+HMODULE __MCF_crt_kernelbase = __MCF_BAD_PTR;
 typeof_TlsGetValue2* __MCF_crt_TlsGetValue = __MCF_BAD_PTR;
 
 /* This is a pointer to global data. If this library is linked statically,
