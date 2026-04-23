@@ -87,13 +87,19 @@ _MCF_hires_steady_now(void)
     return (double)(int64_t) ull * 0.0001;
   }
 
-__MCF_DLLEXPORT
-int64_t
-_MCF_tick_count(void)
+static inline
+void
+do_QueryInterruptTime(ULONGLONG* outp)
   {
-    char* pSharedInterruptTime = (char*) (__MCF_SHARED_USER_DATA_VA + 0x08);
+    /* At address `0x7FFE0000` (`MM_SHARED_USER_DATA_VA` in Windows SDK for
+     * assembly, same on all architectures) there's a read-only structure of
+     * type `KUSER_SHARED_DATA`. The `InterruptTime` field is at offset `8` on
+     * all architectures; see
+     * <https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-kuser_shared_data>.  */
+    volatile char* shared_user_data = (char*) 0x7FFE0000;
+    __asm__ ("" : "+r"(shared_user_data));  /* workaround for optimizer bug  */
 #if __MCF_64_32(1, 0)
-    return (int64_t) do_divide_by_10000(*(const volatile ULONGLONG*) pSharedInterruptTime);
+    *outp = *(volatile ULONGLONG*) (shared_user_data + 8);
 #else
     ULONG high, low;
     do {
@@ -102,11 +108,39 @@ _MCF_tick_count(void)
        * `LowPart` then `High1Time` so we read them in the reverse order. If
        * `High1Time` does not equal `High2Time`, then the value will have
        * been split and we must try again.  */
-      high = *(const volatile ULONG*) (pSharedInterruptTime + 0x04);
-      low = *(const volatile ULONG*) (pSharedInterruptTime + 0x00);
-    } while(high != *(const volatile ULONG*) (pSharedInterruptTime + 0x08));
-    return (int64_t) do_divide_by_10000(high * 0x100000000ULL + low);
+      high = *(volatile ULONG*) (shared_user_data + 12);
+      low = *(volatile ULONG*) (shared_user_data + 8);
+    } while(high != *(volatile ULONG*) (shared_user_data + 16));
+    *outp = (ULONGLONG) high << 32 | low;
 #endif
+  }
+
+
+__MCF_DLLEXPORT
+int64_t
+_MCF_tick_count(void)
+  {
+    /* The interrupt-time count is more precise than `GetTickCount64()`.  */
+    ULONGLONG ull;
+    do_QueryInterruptTime(&ull);
+    return (int64_t) do_divide_by_10000(ull);
+  }
+
+__MCF_DLLEXPORT
+double
+_MCF_hires_tick_count(void)
+  {
+    if(__MCF_HAS_G_IMP(QueryInterruptTimePrecise)) {
+      /* This is available since Windows 10.  */
+      ULONGLONG ull;
+      __MCF_G_IMP(QueryInterruptTimePrecise) (&ull);
+      return (double)(int64_t) ull * 0.0001;
+    }
+
+    /* The interrupt-time count is more precise than `GetTickCount64()`.  */
+    ULONGLONG ull;
+    do_QueryInterruptTime(&ull);
+    return (double)(int64_t) ull * 0.0001;
   }
 
 __MCF_DLLEXPORT

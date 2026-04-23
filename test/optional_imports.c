@@ -37,6 +37,11 @@ main(void)
     fprintf(stderr, "QueryInterruptTime = %p\n", fn);
     assert(fn == (void*) GetProcAddress(kernelbase, "QueryInterruptTime"));
 
+    // https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryinterrupttimeprecise
+    fn = (void*) __MCF_G_IMP_OPT(QueryInterruptTimePrecise);
+    fprintf(stderr, "QueryInterruptTimePrecise = %p\n", fn);
+    assert(fn == (void*) GetProcAddress(kernelbase, "QueryInterruptTimePrecise"));
+
     // https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryunbiasedinterrupttimeprecise
     fn = (void*) __MCF_G_IMP_OPT(QueryUnbiasedInterruptTimePrecise);
     fprintf(stderr, "QueryUnbiasedInterruptTimePrecise = %p\n", fn);

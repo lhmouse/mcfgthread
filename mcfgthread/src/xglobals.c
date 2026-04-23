@@ -449,6 +449,12 @@ __MCF_gthread_initialize_globals(void)
     dll_fn = GetProcAddress(__MCF_crt_kernelbase, "QueryUnbiasedInterruptTimePrecise");
     __MCF_G(imp_QueryUnbiasedInterruptTimePrecise) = (void*) dll_fn;
 
+    /* This function is available since Windows 10. Microsoft documentation says
+     * this is exported from KERNEL32.DLL, but it's really only exported from
+     * KERNELBASE.DLL.  */
+    dll_fn = GetProcAddress(__MCF_crt_kernelbase, "QueryInterruptTimePrecise");
+    __MCF_G(imp_QueryInterruptTimePrecise) = (void*) dll_fn;
+
     /* Attach the main thread and make it joinable. The structure should
      * be all zeroes so no initialization is necessary.  */
     __MCF_thread_attach_foreign(__MCF_G(main_thread));

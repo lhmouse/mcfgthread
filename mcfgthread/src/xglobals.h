@@ -28,12 +28,6 @@
 #  define nullptr   ((void*) __MCF_IPTR_0)
 #endif
 
-/* Define a value that resembles `MM_SHARED_USER_DATA_VA` in Windows SDK for
- * assembly, which has the same value on all architectures. This points to a
- * read-only structure of type `KUSER_SHARED_DATA`; see
- * <https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-kuser_shared_data>.  */
-#define __MCF_SHARED_USER_DATA_VA  0x7FFE0000U
-
 /* Define data that must be placed in `.rdata` despite `-fdata-sections`.  */
 #define __MCF_CRT_RDATA  __attribute__((__used__, __section__(".rdata")))
 #define __MCF_CRT_XL(x)  __attribute__((__used__, __section__(".CRT$XL" #x)))
@@ -61,6 +55,7 @@
 typedef void __stdcall typeof_GetSystemTimePreciseAsFileTime(FILETIME*);
 typedef void __stdcall typeof_QueryInterruptTime(ULONGLONG*);
 typedef void __stdcall typeof_QueryUnbiasedInterruptTimePrecise(ULONGLONG*);
+typedef void __stdcall typeof_QueryInterruptTimePrecise(ULONGLONG*);
 typedef LPVOID __stdcall typeof_TlsGetValue2(ULONG);
 
 /* Terminates the current process. This function is used as the exception
@@ -296,6 +291,7 @@ struct __MCF_crt_xglobals
     __MCF_BR(_MCF_mutex) thread_oom_mtx;  /* v1.9 */
     __MCF_thread_base opt_thread_oom_self_st;  /* v1.9 */
     typeof_QueryUnbiasedInterruptTimePrecise* imp_QueryUnbiasedInterruptTimePrecise;  /* v2.4 */
+    typeof_QueryInterruptTimePrecise* imp_QueryInterruptTimePrecise;  /* v2.4 */
   };
 
 /* This is a pointer to the process-specific named shared memory in the
@@ -330,6 +326,7 @@ __MCF_STATIC_ASSERT(__MCF_OFFXG_(imp_QueryInterruptTime) == __MCF_64_32(6800, 44
 __MCF_STATIC_ASSERT(__MCF_OFFXG_(thread_oom_mtx) == __MCF_64_32(6808, 4428));
 __MCF_STATIC_ASSERT(__MCF_OFFXG_(opt_thread_oom_self_st) == __MCF_64_32(6816, 4432));
 __MCF_STATIC_ASSERT(__MCF_OFFXG_(imp_QueryUnbiasedInterruptTimePrecise) == __MCF_64_32(8416, 5232));
+__MCF_STATIC_ASSERT(__MCF_OFFXG_(imp_QueryInterruptTimePrecise) == __MCF_64_32(8424, 5236));
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also

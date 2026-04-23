@@ -50,6 +50,14 @@ _MCF_tick_count(void)
 
 __MCF_CLOCK_IMPORT
 double
+_MCF_hires_tick_count(void)
+  __MCF_noexcept;
+
+/* Gets the value of the performance counter on the current platform. This is
+ * the traditional high-resolution clock for measurement, but it may deviate
+ * from `_MCF_hires_tick_count()` by a few milliseconds.  */
+__MCF_CLOCK_IMPORT
+double
 _MCF_perf_counter(void)
   __MCF_noexcept;
 
