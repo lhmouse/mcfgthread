@@ -583,6 +583,8 @@ __MCF_DLLEXPORT __attribute__((__flatten__))
 void*
 memcpy(void* restrict dst, const void* restrict src, size_t size)
   {
+    if(__builtin_object_size(dst, 0) < size)
+      __builtin_trap();
     return __MCF_mcopy(dst, src, size);
   }
 
