@@ -301,8 +301,8 @@ struct __MCF_crt_xglobals
 extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY restrict __MCF_g;
 
 /* Get a field from named shared memory with version checking.  */
-#define __MCF_OFFXG_(field)   offsetof(__MCF_crt_xglobals, field)
-#define __MCF_HAS_G(field)    (__MCF_g->self_size >= __MCF_OFFXG_(field) + sizeof(__MCF_g->field))
+#define __MCF_GFX_(field)   offsetof(__MCF_crt_xglobals, field)
+#define __MCF_HAS_G(field)    (__MCF_g->self_size >= __MCF_GFX_(field) + sizeof(__MCF_g->field))
 #define __MCF_G(field)        (*(__MCF_ASSERT(__MCF_HAS_G(field)), &(__MCF_g->field)))
 #define __MCF_G_OPT(field)    (__MCF_HAS_G(opt_##field) ? &(__MCF_g->opt_##field) : nullptr)
 
@@ -313,22 +313,22 @@ extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY restrict __MCF_g;
 #define __MCF_G_IMP_OPT(name)   (__MCF_HAS_G(imp_##name) ? __MCF_g->imp_##name : nullptr)
 
 /* Ensure we don't mess things up.  */
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(self_ptr) == 0);
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(self_size) == __MCF_64_32(8, 4));
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(tls_index) == __MCF_64_32(12, 8));
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(main_thread) == __MCF_64_32(16, 16));
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(exit_mtx) == __MCF_64_32(1616, 816));
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(exit_queue) == __MCF_64_32(1624, 820));
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(quick_exit_mtx) == __MCF_64_32(3152, 1584));
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(quick_exit_queue) == __MCF_64_32(3160, 1588));
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(mutex_spin_field) == __MCF_64_32(4736, 2368));
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(interrupt_cond) == __MCF_64_32(6784, 4416));
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(imp_GetSystemTimePreciseAsFileTime) == __MCF_64_32(6792, 4420));
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(imp_QueryInterruptTime) == __MCF_64_32(6800, 4424));
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(thread_oom_mtx) == __MCF_64_32(6808, 4428));
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(opt_thread_oom_self_st) == __MCF_64_32(6816, 4432));
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(imp_QueryUnbiasedInterruptTimePrecise) == __MCF_64_32(8416, 5232));
-__MCF_STATIC_ASSERT(__MCF_OFFXG_(imp_QueryInterruptTimePrecise) == __MCF_64_32(8424, 5236));
+__MCF_STATIC_ASSERT(__MCF_GFX_(self_ptr) == 0);
+__MCF_STATIC_ASSERT(__MCF_GFX_(self_size) == __MCF_64_32(8, 4));
+__MCF_STATIC_ASSERT(__MCF_GFX_(tls_index) == __MCF_64_32(12, 8));
+__MCF_STATIC_ASSERT(__MCF_GFX_(main_thread) == __MCF_64_32(16, 16));
+__MCF_STATIC_ASSERT(__MCF_GFX_(exit_mtx) == __MCF_64_32(1616, 816));
+__MCF_STATIC_ASSERT(__MCF_GFX_(exit_queue) == __MCF_64_32(1624, 820));
+__MCF_STATIC_ASSERT(__MCF_GFX_(quick_exit_mtx) == __MCF_64_32(3152, 1584));
+__MCF_STATIC_ASSERT(__MCF_GFX_(quick_exit_queue) == __MCF_64_32(3160, 1588));
+__MCF_STATIC_ASSERT(__MCF_GFX_(mutex_spin_field) == __MCF_64_32(4736, 2368));
+__MCF_STATIC_ASSERT(__MCF_GFX_(interrupt_cond) == __MCF_64_32(6784, 4416));
+__MCF_STATIC_ASSERT(__MCF_GFX_(imp_GetSystemTimePreciseAsFileTime) == __MCF_64_32(6792, 4420));
+__MCF_STATIC_ASSERT(__MCF_GFX_(imp_QueryInterruptTime) == __MCF_64_32(6800, 4424));
+__MCF_STATIC_ASSERT(__MCF_GFX_(thread_oom_mtx) == __MCF_64_32(6808, 4428));
+__MCF_STATIC_ASSERT(__MCF_GFX_(opt_thread_oom_self_st) == __MCF_64_32(6816, 4432));
+__MCF_STATIC_ASSERT(__MCF_GFX_(imp_QueryUnbiasedInterruptTimePrecise) == __MCF_64_32(8416, 5232));
+__MCF_STATIC_ASSERT(__MCF_GFX_(imp_QueryInterruptTimePrecise) == __MCF_64_32(8424, 5236));
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
