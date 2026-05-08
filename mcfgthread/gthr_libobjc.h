@@ -446,8 +446,7 @@ void*
 __MCF_gthr_objc_thread_get_data(void)
   __MCF_noexcept
   {
-    _MCF_thread* __self = _MCF_thread_self();
-    return __self->__libobjc_tls_data;
+    return _MCF_thread_self()->__libobjc_tls_data;
   }
 
 __MCF_GTHR_LIBOBJC_INLINE
@@ -455,8 +454,7 @@ int
 __MCF_gthr_objc_thread_set_data(void* __value)
   __MCF_noexcept
   {
-    _MCF_thread* __self = _MCF_thread_self();
-    __self->__libobjc_tls_data = __value;
+    _MCF_thread_self()->__libobjc_tls_data = __value;
     return 0;
   }
 

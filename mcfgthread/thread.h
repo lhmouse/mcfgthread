@@ -348,8 +348,7 @@ void*
 _MCF_tls_get(const _MCF_tls_key* __key)
   __MCF_noexcept
   {
-    _MCF_thread* __self = _MCF_thread_self();
-    return __MCF_tls_table_get(__self->__tls_table, __key);
+    return __MCF_tls_table_get(_MCF_thread_self()->__tls_table, __key);
   }
 
 __MCF_THREAD_INLINE
@@ -357,8 +356,8 @@ int
 _MCF_tls_xset(_MCF_tls_key* __key, void** __old_value_opt, const void* __value_opt)
   __MCF_noexcept
   {
-    _MCF_thread* __self = _MCF_thread_self();
-    return __MCF_tls_table_xset(__self->__tls_table, __key, __old_value_opt, __value_opt);
+    return __MCF_tls_table_xset(_MCF_thread_self()->__tls_table, __key,
+                                __old_value_opt, __value_opt);
   }
 
 __MCF_THREAD_INLINE
@@ -366,8 +365,8 @@ int
 _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt)
   __MCF_noexcept
   {
-    _MCF_thread* __self = _MCF_thread_self();
-    return __MCF_tls_table_xset(__self->__tls_table, __key, __MCF_nullptr, __value_opt);
+    return __MCF_tls_table_xset(_MCF_thread_self()->__tls_table, __key,
+                                __MCF_nullptr, __value_opt);
   }
 
 __MCF_CXX(})  /* extern "C"  */
