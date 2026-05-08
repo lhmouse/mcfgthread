@@ -7,6 +7,7 @@
 
 #include "../mcfgthread/once.h"
 #include "../mcfgthread/thread.h"
+#include "../mcfgthread/sem.h"
 #undef NDEBUG
 #include <assert.h>
 #include <stdio.h>
@@ -14,7 +15,7 @@
 #define NTHREADS  64U
 static _MCF_thread* threads[NTHREADS];
 static _MCF_once once;
-static _MCF_once start;
+static _MCF_sem start = __MCF_SEM_INIT(0);
 static int resource = 0;
 
 static int num_init = 0;   /* threads that performed initialization  */
@@ -25,7 +26,7 @@ static
 void
 thread_proc(_MCF_thread* self)
   {
-    _MCF_once_wait(&start, NULL);
+    _MCF_sem_wait(&start, NULL);
 
     int r = _MCF_once_wait(&once, &(int64_t){ 0 });
     fprintf(stderr, "thread %d got %d\n", self->__tid, r);
@@ -65,7 +66,7 @@ main(void)
     }
 
     fprintf(stderr, "main waiting\n");
-    _MCF_once_release(&start);
+    _MCF_sem_signal_some(&start, NTHREADS);
     for(size_t k = 0;  k < NTHREADS;  ++k) {
       _MCF_thread_wait(threads[k], NULL);
       fprintf(stderr, "main wait finished: %d\n", (int)k);
