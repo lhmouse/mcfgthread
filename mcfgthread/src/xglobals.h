@@ -281,7 +281,7 @@ struct __MCF_crt_xglobals
     __MCF_BR(__MCF_dtor_queue) exit_queue;
     __MCF_BR(_MCF_mutex) quick_exit_mtx;
     __MCF_BR(__MCF_dtor_queue) quick_exit_queue;
-    __MCF_ALIGNED(64) bool mutex_spin_field[2048];
+    __MCF_ALIGNED(64) uint8_t mutex_spin_field[2048];
     __MCF_BR(_MCF_cond) interrupt_cond;
 
     /* Fields after this line were added after the first release of mcfgthread.

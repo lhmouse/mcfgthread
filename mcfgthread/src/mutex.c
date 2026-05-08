@@ -12,7 +12,7 @@
 #include "xglobals.h"
 
 static inline __MCF_FN_CONST
-bool*
+uint8_t*
 do_spin_byte_ptr(const _MCF_mutex* mtx, uint32_t sp_mask)
   {
     /* Each spinning thread is assigned a byte in the field. If the thread sees
@@ -115,7 +115,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
 
         /* Wait for my turn. It's the simplest and fastest way to perform
          * just an atomic exchange, on both x86 and ARM.  */
-        if(_MCF_atomic_xchg_b_rlx(do_spin_byte_ptr(mtx, my_mask), false) == false)
+        if(_MCF_atomic_xchg_8_rlx(do_spin_byte_ptr(mtx, my_mask), 0) == 0)
           continue;
 
         _MCF_atomic_load_pptr_rlx(&old, mtx);
@@ -240,7 +240,7 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mtx)
      * rightmost bit should have been cleared, so we need not calculate the
      * bit difference, unlike `_MCF_mutex_lock_slow()`.  */
     if(old.__sp_mask != 0)
-      _MCF_atomic_store_b_rlx(do_spin_byte_ptr(mtx, old.__sp_mask), true);
+      _MCF_atomic_store_8_rlx(do_spin_byte_ptr(mtx, old.__sp_mask), 1);
 
     /* Wake up a sleeping thread, if any.  */
     __MCF_batch_release_common(mtx, wake_one);
