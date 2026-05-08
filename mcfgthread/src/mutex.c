@@ -106,6 +106,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
     if(sp_budget > 0) {
       uint32_t my_mask = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
       __MCF_ASSERT(my_mask != 0);
+      uint32_t mask_to_restore = my_mask;
 
       while(sp_budget > 0) {
         sp_budget --;
@@ -142,6 +143,10 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
             if(_MCF_atomic_cmpxchg_weak_pptr_rlx(mtx, &old, &new))
               break;
           }
+
+        /* We should restore the spinning mask only if it was changed. If the
+         * mask re-allocated by another thread, then it should not be restored.  */
+        mask_to_restore = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
       }
 
       /* We have wasted some time, so return the spinning mask and allocate
@@ -154,7 +159,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
       for(;;)
         if(old.__locked == 0) {
           new.__locked = 1;
-          new.__sp_mask = old.__sp_mask;
+          new.__sp_mask = (old.__sp_mask & (0x0FU - mask_to_restore)) & 0x0FU;
           new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, -1) & 0x0FU;
           new.__nsleep = old.__nsleep;
 
@@ -163,7 +168,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
         }
         else {
           new.__locked = 1;
-          new.__sp_mask = old.__sp_mask;
+          new.__sp_mask = (old.__sp_mask & (0x0FU - mask_to_restore)) & 0x0FU;
           new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, +1) & 0x0FU;
           new.__nsleep = (old.__nsleep + 1U) & (__MCF_UINTPTR_MAX >> 9);
 
