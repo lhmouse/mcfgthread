@@ -43,10 +43,10 @@ once_do_it(void)
   {
     /* Perform initialization.  */
     int old = resource;
-    _MCF_sleep(&(int64_t){ -20 });
+    _MCF_sleep_noninterruptible(&(int64_t){ -20 });
     resource = old + 1;
 
-    _MCF_sleep(&(int64_t){ -10 });
+    _MCF_sleep_noninterruptible(&(int64_t){ -10 });
     fprintf(stderr, "thread %d once\n", __MCF_tid());
 
     RtlUnwind(NULL, NULL, NULL, NULL);

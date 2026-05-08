@@ -24,7 +24,7 @@ void
 thread_proc(_MCF_thread* self)
   {
     __MCF_cxa_thread_atexit(thread_atexit_proc, _MCF_thread_get_data(self), NULL);
-    _MCF_sleep(&(int64_t){ -1001 });
+    _MCF_sleep_noninterruptible(&(int64_t){ -1001 });
     fprintf(stderr, "thread %d quitting\n", self->__tid);
   }
 

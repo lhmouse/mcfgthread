@@ -31,10 +31,10 @@ thread_proc(_MCF_thread* self)
     fprintf(stderr, "thread %d got %d\n", self->__tid, r);
     if(r == 1) {
       /* Perform initialization.  */
-      _MCF_sleep(&(int64_t){ -10 });
+      _MCF_sleep_noninterruptible(&(int64_t){ -10 });
       _MCF_once_abort(&once);
 
-      _MCF_sleep(&(int64_t){ -100 });
+      _MCF_sleep_noninterruptible(&(int64_t){ -100 });
       _MCF_atomic_xadd_32_rlx(&num_init, 1);
     }
     else if(r == 0) {

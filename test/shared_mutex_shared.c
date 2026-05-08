@@ -29,7 +29,7 @@ thread_proc(_MCF_thread* self)
 
     /* Add a resource.  */
     int old = _MCF_atomic_load_32_rlx(&resource);
-    _MCF_sleep(&(int64_t){ -10 });
+    _MCF_sleep_noninterruptible(&(int64_t){ -10 });
     _MCF_atomic_store_32_rlx(&resource, old + 1);
     _MCF_shared_mutex_unlock(&mutex);
 

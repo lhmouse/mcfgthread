@@ -29,7 +29,7 @@ main(void)
 
     // Round the time up.
     int64_t sleep_until = (int64_t) ::time(nullptr) * 1000 + 2000;
-    ::_MCF_sleep(&sleep_until);
+    ::_MCF_sleep_noninterruptible(&sleep_until);
 
     now = ::_MCF_perf_counter();
     NS::this_thread::sleep_until(NS::chrono::system_clock::now() + NS::chrono::milliseconds(1116));  // relaxed

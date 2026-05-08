@@ -32,7 +32,7 @@ thread_proc(_MCF_thread* self)
       int32_t c1 = _MCF_atomic_load_32_rlx(&signal_count);
       if(c1 & 1) {
         // Main thread is waiting.
-        _MCF_sleep(&(int64_t){ -10 });
+        _MCF_sleep_noninterruptible(&(int64_t){ -10 });
         int32_t c2 = _MCF_atomic_load_32_rlx(&signal_count);
         assert(c1 != c2);
       }

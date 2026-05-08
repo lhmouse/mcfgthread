@@ -33,7 +33,7 @@ thread_proc(void* param)
 
     /* Add a resource.  */
     int old = resource;
-    _MCF_sleep(&(int64_t){ -10 });
+    _MCF_sleep_noninterruptible(&(int64_t){ -10 });
     resource = old + 1;
 
     r = mtx_unlock(&mutex);

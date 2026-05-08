@@ -36,7 +36,7 @@ thread_proc(void* param)
 
         /* Add a resource.  */
         int old = resource;
-        _MCF_sleep(&(int64_t){ -10 });
+        _MCF_sleep_noninterruptible(&(int64_t){ -10 });
         resource = old + 1;
         mtx_unlock(&mutex);
         mtx_unlock(&mutex);
@@ -45,7 +45,7 @@ thread_proc(void* param)
       }
       else if(r == thrd_busy) {
         /* Wait.  */
-        _MCF_sleep(&(int64_t){ -10 });
+        _MCF_sleep_noninterruptible(&(int64_t){ -10 });
         continue;
       }
       else

@@ -39,7 +39,7 @@ thread_proc(LPVOID param)
     assert(r == 0);
     assert(p == &dso_2);
 
-    _MCF_sleep(&(int64_t){ -1001 });
+    _MCF_sleep_noninterruptible(&(int64_t){ -1001 });
     fprintf(stderr, "thread %d quitting\n", (int) GetCurrentThreadId());
     (void) param;
     return 0;

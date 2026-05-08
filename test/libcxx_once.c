@@ -23,10 +23,10 @@ once_do_it(void)
   {
     /* Perform initialization.  */
     int old = resource;
-    _MCF_sleep(&(int64_t){ -200 });
+    _MCF_sleep_noninterruptible(&(int64_t){ -200 });
     resource = old + 1;
 
-    _MCF_sleep(&(int64_t){ -100 });
+    _MCF_sleep_noninterruptible(&(int64_t){ -100 });
   }
 
 static

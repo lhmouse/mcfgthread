@@ -29,7 +29,7 @@ main(void)
     assert(r == true);
 
     sleep_until = time(NULL) + 2;
-    _MCF_sleep(&(int64_t){ sleep_until * 1000LL - 20 });
+    _MCF_sleep_noninterruptible(&(int64_t){ sleep_until * 1000LL - 20 });
     do { now = _MCF_perf_counter();
          timeout.tv_sec = time(NULL);
     } while(timeout.tv_sec < sleep_until);

@@ -18,7 +18,7 @@ void*
 thread_proc(void* param)
   {
     (void) param;
-    _MCF_sleep(&(int64_t){ -500 });
+    _MCF_sleep_noninterruptible(&(int64_t){ -500 });
 
     fprintf(stderr, "thread %d quitting\n", __MCF_tid());
     return &magic;
