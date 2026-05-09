@@ -35,7 +35,7 @@ jobs:
              sudo apt-get update ;
              sudo apt-get purge mono-runtime ;
              sudo apt-get install -y --no-install-recommends
-             mingw-w64-{x86-64-dev,tools} {gcc,g++,binutils}-mingw-w64-x86-64
+             mingw-w64-x86-64-dev {gcc,g++,binutils}-mingw-w64-x86-64
              ninja-build python3-pip wine wine-binfmt &&
              sudo PIP_BREAK_SYSTEM_PACKAGES=1 pip3 install meson
 
@@ -67,7 +67,7 @@ jobs:
         run: >-
              pacman -Sy ;
              pacman -S --needed --noconfirm
-             mingw-w64-ucrt-x86_64-{{headers,crt,tools}-git,gcc,meson}
+             mingw-w64-ucrt-x86_64-{headers,crt,gcc,meson}
 
       - name: Configure
         run: >-
@@ -96,7 +96,7 @@ jobs:
         run: >-
              pacman -Sy ;
              pacman -S --needed --noconfirm
-             mingw-w64-i686-{{headers,crt,tools}-git,gcc,meson,ninja}
+             mingw-w64-i686-{headers,crt,gcc,meson,ninja}
 
       - name: Configure
         run: >-
@@ -129,7 +129,7 @@ jobs:
         run: >-
              pacman -Sy ;
              pacman -S --needed --noconfirm
-             mingw-w64-clang-x86_64-{{headers,crt,tools}-git,clang,meson,ninja}
+             mingw-w64-clang-x86_64-{headers,crt,clang,meson,ninja}
 
       - name: Configure
         run: >-
@@ -158,7 +158,7 @@ jobs:
         run: >-
              pacman -Sy ;
              pacman -S --needed --noconfirm
-             mingw-w64-clang-aarch64-{{headers,crt,tools}-git,clang,meson,ninja}
+             mingw-w64-clang-aarch64-{headers,crt,clang,meson,ninja}
 
       - name: Configure
         run: >-

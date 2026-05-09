@@ -55,7 +55,7 @@ example; others are similar. MSYS and CLANG64 shells are also supported.
 
 ```sh
 pacman -S --noconfirm  \
-  mingw-w64-ucrt-x86_64-{{headers,crt,tools}-git,gcc,binutils,meson}
+  mingw-w64-ucrt-x86_64-{headers,crt,gcc,binutils,meson}
 ```
 ```sh
 meson setup build_dir
@@ -84,7 +84,7 @@ need to use some other package manager to install these dependencies.
 
 ```sh
 sudo apt-get install -y --no-install-recommends  \
-  mingw-w64-{x86-64-dev,tools} {gcc,g++,binutils}-mingw-w64-x86-64 meson  \
+  mingw-w64-x86-64-dev {gcc,g++,binutils}-mingw-w64-x86-64 meson  \
   wine wine-binfmt
 ```
 ```sh
