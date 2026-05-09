@@ -97,8 +97,9 @@ do_QueryInterruptTime(ULONGLONG* outp)
      * all architectures; see
      * <https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-kuser_shared_data>.  */
     volatile char* shared_user_data = (char*) 0x7FFE0000;
+#if !defined __MCF_M_X8664_ASM
     __asm__ ("" : "+r"(shared_user_data));  /* workaround for optimizer bug  */
-
+#endif
 #if __MCF_64_32(1, 0)
     *outp = *(volatile ULONGLONG*) (shared_user_data + 8);
 #else
