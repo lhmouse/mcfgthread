@@ -35,7 +35,7 @@ rm -f benchmark_result.txt
 
 function do_benchmark_nth()
 {
-  ${CC} -DUSE_$1 -DNTHRD=$2 -DNITER=$3 -std=c99 -Wall -Wextra  \
+  ${CC} -DUSE_$1 -DNTHRD=$2 -DNITER=$3 -I. -I.. -std=c99 -Wall -Wextra  \
       ../doc/benchmark_mutex.c -pthread lib/libmcfgthread.a  \
       -static -O2 -fno-inline  \
       -o bin/benchmark_mutex_$1_$2_$3.exe
