@@ -10,23 +10,27 @@
 #include <windows.h>
 
 #if defined USE_SRWLOCK
+#  define my_mutex_name   "SRWLOCK"
 #  define my_mutex_t      SRWLOCK
 #  define my_init(m)      InitializeSRWLock(m)
 #  define my_lock(m)      AcquireSRWLockExclusive(m)
 #  define my_unlock(m)    ReleaseSRWLockExclusive(m)
 #elif defined USE_CRITICAL_SECTION
+#  define my_mutex_name   "CRITICAL_SECTION"
 #  define my_mutex_t      CRITICAL_SECTION
 #  define my_init(m)      InitializeCriticalSection(m)
 #  define my_lock(m)      EnterCriticalSection(m)
 #  define my_unlock(m)    LeaveCriticalSection(m)
 #elif defined USE_WINPTHREAD
 #  include <pthread.h>
+#  define my_mutex_name   "WINPTHREAD"
 #  define my_mutex_t      pthread_mutex_t
 #  define my_init(m)      pthread_mutex_init(m, NULL)
 #  define my_lock(m)      pthread_mutex_lock(m)
 #  define my_unlock(m)    pthread_mutex_unlock(m)
 #elif defined USE_MCFGTHREAD
 #  include <mcfgthread/mutex.h>
+#  define my_mutex_name   "MCFGTHREAD"
 #  define my_mutex_t      _MCF_mutex
 #  define my_init(m)      _MCF_mutex_init(m)
 #  define my_lock(m)      _MCF_mutex_lock(m, NULL)
@@ -72,26 +76,25 @@ thread_proc(void* arg)
       SwitchToThread();
     }
 
-    fprintf(stderr, "thread %d quitting\n", (int) GetCurrentThreadId());
+    //fprintf(stderr, "thread %d quitting\n", (int) GetCurrentThreadId());
     return 0;
   }
 
 int
 main(void)
   {
+    fprintf(stderr, "benchmarking %s, NTHR %d, NITER %d\n", my_mutex_name, NTHRD, NITER);
     SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
 
     my_init(&mutex);
     start = CreateEventW(NULL, TRUE, FALSE, NULL);
     assert(start);
 
-    fprintf(stderr, "running %d threads with %s\n", NTHRD, _CRT_STRINGIZE(my_mutex_t));
     for(intptr_t k = 0;  k < NTHRD;  ++k) {
       threads[k] = CreateThread(NULL, 0, thread_proc, NULL, 0, NULL);
       assert(threads[k]);
     }
 
-    fprintf(stderr, "main waiting\n");
     QueryPerformanceCounter(&t0);
     SetEvent(start);
 
@@ -103,6 +106,7 @@ main(void)
     QueryPerformanceCounter(&t1);
     QueryPerformanceFrequency(&tf);
     double result = (double) (t1.QuadPart - t0.QuadPart) * 1.0e9 / tf.QuadPart / NITER;
+    printf("%s\t%d\t%.3f\n", my_mutex_name, NTHRD, result);
+
     fprintf(stderr, "result: %.3f ns / iteration\n", result);
-    printf("%.3f\n", result);
   }
