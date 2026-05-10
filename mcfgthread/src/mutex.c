@@ -78,7 +78,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
       else if((old.__sp_mask != 0x0FU) && (old.__sp_nfail < __MCF_MUTEX_SP_NFAIL_THRESHOLD)) {
         /* The mutex is locked, but a spare spinning slot is available, so
          * allocate a slot and try spinning.  */
-        sp_budget = __MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail;
+        sp_budget = (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail) * 5;
         new.__locked = 1;
         new.__sp_mask = (old.__sp_mask | (old.__sp_mask + 1U)) & 0x0FU;
         new.__sp_nfail = old.__sp_nfail;
@@ -110,7 +110,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
 
       while(sp_budget > 0) {
         sp_budget --;
-        for(uint32_t sp_scale = 160;  sp_scale != 0;  sp_scale --)
+        for(uint32_t sp_scale = 47;  sp_scale != 0;  sp_scale --)
           YieldProcessor();
 
         /* Wait for my turn. It's the simplest and fastest way to perform
