@@ -103,12 +103,12 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
 
     /* Check whether the current thread is allowed to spin. Only one bit in
      * `new.__sp_mask` may have been set.  */
-    if(sp_budget > 0) {
+    if(sp_budget != 0) {
       uint32_t my_mask = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
       __MCF_ASSERT(my_mask != 0);
       uint32_t mask_to_restore = my_mask;
 
-      while(sp_budget > 0) {
+      while(sp_budget != 0) {
         sp_budget --;
         for(uint32_t sp_scale = 37;  sp_scale != 0;  sp_scale --)
           YieldProcessor();
