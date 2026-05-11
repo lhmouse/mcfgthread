@@ -212,9 +212,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: ilammy/msvc-dev-cmd@v1
-        with: { arch: arm64 }
-
       - name: Install dependencies
         run: >-
              pip3 install --break-system-packages meson unzip
@@ -263,9 +260,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: ilammy/msvc-dev-cmd@v1
-        with: { arch: amd64 }
-
       - name: Install dependencies
         run: >-
              pip3 install --break-system-packages meson
@@ -290,9 +284,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - uses: ilammy/msvc-dev-cmd@v1
-        with: { arch: x86 }
 
       - name: Install dependencies
         run: >-
@@ -319,9 +310,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: ilammy/msvc-dev-cmd@v1
-        with: { arch: arm64 }
-
       - name: Install dependencies
         run: >-
              pip3 install --break-system-packages meson
@@ -347,20 +335,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: ilammy/msvc-dev-cmd@v1
-        with: { arch: arm64 }
-
       - name: Install dependencies
         run: >-
              pip3 install --break-system-packages meson
-
-      # TODO: The preinstalled LLVM in GitHub Actions runner is too old to
-      # support ARM64EC. This has to be removed once the runner is updated.
-      - name: Download LLVM
-        run: >-
-             curl.exe -LO "https://github.com/llvm/llvm-project/releases/download/llvmorg-22.1.0/clang+llvm-22.1.0-aarch64-pc-windows-msvc.tar.xz" &&
-             tar -xaf clang+llvm-22.1.0-aarch64-pc-windows-msvc.tar.xz &&
-             cvpa clang+llvm-22.1.0-aarch64-pc-windows-msvc/bin | tee -a "${env:GITHUB_PATH}"
 
       - name: Configure
         run: >-
@@ -372,9 +349,6 @@ jobs:
 
       - name: Run tests
         run: meson test -t2 -Cbuild_ci --print-errorlogs
-
-      - uses: ilammy/msvc-dev-cmd@v1
-        with: { arch: arm64_x64 }
 
       - name: Configure emulated x64
         run: >-
