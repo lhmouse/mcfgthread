@@ -12,8 +12,8 @@
 ## OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 [binaries]
-c = [ 'C:\Program Files\LLVM\bin\clang', '-fuse-ld=lld' ]
-cpp = [ 'C:\Program Files\LLVM\bin\clang++', '-fuse-ld=lld' ]
+c = [ 'C:\Program Files\LLVM\bin\clang' ]
+cpp = [ 'C:\Program Files\LLVM\bin\clang++' ]
 ar = 'C:\Program Files\LLVM\bin\llvm-ar'
 objcopy = 'C:\Program Files\LLVM\bin\llvm-objcopy'
 strip = 'C:\Program Files\LLVM\bin\llvm-strip'
