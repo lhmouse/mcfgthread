@@ -45,18 +45,18 @@ function do_benchmark_nth()
 
 function do_benchmark()
 {
-  do_benchmark_nth $1    1 20000000
-  do_benchmark_nth $1    2 10000000
-  do_benchmark_nth $1    4  5000000
-  do_benchmark_nth $1    8  2000000
-  do_benchmark_nth $1   12  1000000
-  do_benchmark_nth $1   16   800000
-  do_benchmark_nth $1   24   300000
-  do_benchmark_nth $1   32   300000
-  do_benchmark_nth $1   48   200000
-  do_benchmark_nth $1   64   150000
-  do_benchmark_nth $1   96   100000
-  do_benchmark_nth $1  128    70000
+  do_benchmark_nth $1    1  20000000
+  do_benchmark_nth $1    2  10000000
+  do_benchmark_nth $1    4   5000000
+  do_benchmark_nth $1    8   2000000
+  do_benchmark_nth $1   12   1000000
+  do_benchmark_nth $1   16    800000
+  do_benchmark_nth $1   24    300000
+  do_benchmark_nth $1   32    300000
+  do_benchmark_nth $1   48    200000
+  do_benchmark_nth $1   64    150000
+  do_benchmark_nth $1   96    100000
+  do_benchmark_nth $1  128     70000
 
   printf '\n\n' >> benchmark_result.txt
 }
