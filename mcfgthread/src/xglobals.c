@@ -172,11 +172,14 @@ void
 __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_proc, void* arg)
   {
 #ifdef __MCF_M_X8632
-    __MCF_USING_SEH_HANDLER(do_call_once_seh_unwind, (DWORD) once);
+    EXCEPTION_REGISTRATION_RECORD* const seh_record
+          __attribute__((__cleanup__(__MCF_i386_seh_cleanup)))
+      = __MCF_i386_seh_install((DWORD[]){ (DWORD) __MCF_teb_load_ptr(0),
+                                          (DWORD) do_call_once_seh_unwind, (DWORD) once });
     _MCF_once* saved_once = once;
 #  define do_seh_once_reg(frm, disp)  (((DWORD**) (frm))[2])
 #else
-    __MCF_USING_SEH_HANDLER(do_call_once_seh_unwind);
+    __asm__ (".seh_handler %c0, @except, @unwind" : : "i"(do_call_once_seh_unwind));
 #  if defined __MCF_M_X8664_ASM
     register _MCF_once* saved_once __asm__("rsi") = once;
 #  elif defined __MCF_M_ARM64_ASM
@@ -338,7 +341,7 @@ __MCF_DLLEXPORT
 void
 __MCF_run_static_dtors(_MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
   {
-    __MCF_USING_SEH_HANDLER(__MCF_seh_top);
+    __MCF_USING_SEH_TERMINUS;
     __MCF_dtor_element elem;
 
     while(do_pop_dtor(&elem, mtx, queue, dso) == 0)
@@ -466,7 +469,7 @@ __MCF_DLLEXPORT
 void
 __MCF_gthread_on_thread_exit(void)
   {
-    __MCF_USING_SEH_HANDLER(__MCF_seh_top);
+    __MCF_USING_SEH_TERMINUS;
     _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_G(tls_index));
     if(!self)
       return;

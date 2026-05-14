@@ -79,7 +79,7 @@ _MCF_cond_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt,
                _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg,
                const int64_t* timeout_opt)
   {
-    __MCF_USING_SEH_HANDLER(__MCF_seh_top);
+    __MCF_USING_SEH_TERMINUS;
     intptr_t unlocked;
     int err = do_unlock_and_wait(cnd, unlock_opt, &unlocked, lock_arg, timeout_opt);
 

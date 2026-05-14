@@ -68,12 +68,11 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
 
 /* On x86, SEH is stack-based. Each handler will be attached to the scope of
  * a local record object.  */
-#  define __MCF_USING_SEH_HANDLER(fn, ...)  \
+#  define __MCF_USING_SEH_TERMINUS  \
     EXCEPTION_REGISTRATION_RECORD* const __MCF_i386_seh_record  \
            __attribute__((__cleanup__(__MCF_i386_seh_cleanup)))  \
-      = __MCF_i386_seh_install(  \
-          (DWORD[]){ (DWORD) __MCF_teb_load_ptr(0), (DWORD) (fn),  \
-                     __VA_ARGS__ })  /* no semicolon  */
+      = __MCF_i386_seh_install((DWORD[]){ (DWORD) __MCF_teb_load_ptr(0),  \
+                                          (DWORD) __MCF_seh_top })  /* no semicolon  */
 
 __MCF_ALWAYS_INLINE
 EXCEPTION_REGISTRATION_RECORD*
@@ -114,8 +113,8 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
 /* SEH is table-based. Only x86-64 supports pure unwind handlers that are not
  * exception handlers; for simplicity, we use only dual handlers. This also
  * works on ARM64 and ARM64EC.  */
-#  define __MCF_USING_SEH_HANDLER(fn)  \
-    __asm__ (".seh_handler %c0, @except, @unwind" : : "i"(fn))  /* no semicolon  */
+#  define __MCF_USING_SEH_TERMINUS  \
+    __asm__ (".seh_handler %c0, @except, @unwind" : : "i"(__MCF_seh_top))  /* no semicolon  */
 
 /* The stack is always aligned to 16-byte boundaries, as required by the ABI,
  * so this expands to nothing.  */
