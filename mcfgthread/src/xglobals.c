@@ -164,7 +164,7 @@ _MCF_get_active_processor_mask(void)
     return __MCF_crt_sysinfo.dwActiveProcessorMask;
   }
 
-static
+static __attribute__((__section__(".text$safeseh")))
 EXCEPTION_DISPOSITION
 do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
 
@@ -217,7 +217,7 @@ do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, 
     return ExceptionContinueSearch;
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __attribute__((__section__(".text$safeseh")))
 EXCEPTION_DISPOSITION
 __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
   {
@@ -638,17 +638,17 @@ const int _fltused __MCF_CRT_RDATA = 0x9875;
 #if defined __MCF_M_X8632
 /* On x86-32, the load config directory contains the address and size of the
  * exception handler table. Exception handlers that are not in this table
- * will be rejected by the system. `__MCF_i386_se_handler_table` points to an
- * array of RVAs to valid handlers, and the value of (not the value it points
- * to) `__MCF_i386_se_handler_count` is the number of handlers.  */
+ * will be rejected by the system. `__MCF_i386_se_handler_table` points to a
+ * sorted (!) array of RVAs of valid handlers, and the value of (not the value
+ * it points to) `__MCF_i386_se_handler_count` is the number of handlers.  */
 extern const ULONG __MCF_i386_se_handler_table[];
 extern char __MCF_i386_se_handler_count[];
 __asm__ (
 "\n .section .rdata, \"dr\""
 "\n   .p2align 2"
 "\n ___MCF_i386_se_handler_table:"
-"\n   .rva ___MCF_seh_top"
 "\n   .rva _do_call_once_seh_unwind\n"
+"\n   .rva ___MCF_seh_top"
 "\n .equiv ___MCF_i386_se_handler_count, (. - ___MCF_i386_se_handler_table) / 4"
 "\n .text"
 );
