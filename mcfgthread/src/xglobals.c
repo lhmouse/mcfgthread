@@ -13,6 +13,7 @@
 #include "../once.h"
 #include <ntstatus.h>
 #include <libloaderapi.h>
+#include <psapi.h>
 
 static inline
 void
@@ -224,18 +225,32 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
     (void) ctx;
     (void) disp_ctx;
 
-    /* GCC raises `0x20474343` to search for an exception handler. If the
-     * control flow resumes after `RaiseException()`, `std::terminate()` will
-     * be called.  */
-    if((rec->ExceptionCode == 0x20474343) && !(rec->ExceptionFlags & EXCEPTION_NONCONTINUABLE))
-      return ExceptionContinueExecution;
+    if(rec->ExceptionCode == 0x20474343) {
+      /* GCC raises `0x20474343` to search for an exception handler. If the
+       * control flow resumes after `RaiseException()`, `std::terminate()` will
+       * be called.  */
+      if(!(rec->ExceptionFlags & EXCEPTION_NONCONTINUABLE))
+        return ExceptionContinueExecution;
+    }
+    else if(rec->ExceptionCode == 0xE06D7363) {
+      /* MSVC raises `0xE06D7363` instead. We will not allow the stack to be
+       * unwound, so we must call `std::terminate()`. The CRT may have been
+       * linked statically, but that is to be handled in the fast-fail path.  */
+      HMODULE dlls[256];
+      HMODULE* end_of_dlls = dlls;
+      DWORD size_needed;
+      if(K32EnumProcessModules(NtCurrentProcess(), dlls, sizeof(dlls), &size_needed))
+        end_of_dlls = (HMODULE*) ((char*) dlls + _MCF_minz(size_needed, sizeof(dlls)));
 
-    /* MSVC raises `0xE06D7363` instead. The exception is passed to the caller
-     * so `std::terminate()` will be called.  */
-    if(rec->ExceptionCode == 0xE06D7363)
-      return ExceptionContinueSearch;
+      /* Try calling `__std_terminate()` from UCRTBASE.DLL.  */
+      for(HMODULE* p = dlls;  p != end_of_dlls;  ++p) {
+        FARPROC dll_fn = GetProcAddress(*p, "__std_terminate");
+        if(dll_fn)
+          (* __MCF_CAST_PTR(__MCF_atexit_callback, dll_fn)) ();
+      }
+    }
 
-    /* In all the other cases, terminate the process.  */
+    /* The exception is unsolvable, so terminate the process.  */
     RaiseFailFastException(rec, ctx, 0);
     __builtin_trap();
   }

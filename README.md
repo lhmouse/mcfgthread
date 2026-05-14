@@ -199,6 +199,7 @@ and unlocks the primitive mutex, releasing all threads that are waiting on it.
 |`HeapReAlloc`                                            |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heaprealloc) |
 |`HeapSetInformation`                                     |Windows XP      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapsetinformation) |
 |`HeapSize`                                               |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapsize) |
+|`K32EnumProcessModules`                                  |Windows 7       |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/psapi/nf-psapi-enumprocessmodules) |
 |`LoadLibraryExW`                                         |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibraryexw) |
 |`QueryPerformanceCounter`                                |Windows NT 3.1  |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/profileapi/nf-profileapi-queryperformancecounter) |
 |`QueryPerformanceFrequency`                              |Windows NT 3.1  |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/profileapi/nf-profileapi-queryperformancefrequency) |
