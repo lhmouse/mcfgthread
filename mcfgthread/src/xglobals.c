@@ -230,9 +230,12 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
     if((rec->ExceptionCode == 0x20474343) && !(rec->ExceptionFlags & EXCEPTION_NONCONTINUABLE))
       return ExceptionContinueExecution;
 
-    /* In all the other cases, terminate the process. For MSVC we should have
-     * called `__std_terminate()`, but we are not linking against their CRT so
-     * it's unavailable.  */
+    /* MSVC raises `0xE06D7363` instead. The exception is passed to the caller
+     * so `std::terminate()` will be called.  */
+    if(rec->ExceptionCode == 0xE06D7363)
+      return ExceptionContinueSearch;
+
+    /* In all the other cases, terminate the process.  */
     RaiseFailFastException(rec, ctx, 0);
     __builtin_trap();
   }
