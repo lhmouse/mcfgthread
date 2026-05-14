@@ -13,6 +13,7 @@
 #include "../once.h"
 #include <ntstatus.h>
 #include <libloaderapi.h>
+#include <psapi.h>
 
 static inline
 void
@@ -163,7 +164,7 @@ _MCF_get_active_processor_mask(void)
     return __MCF_crt_sysinfo.dwActiveProcessorMask;
   }
 
-static
+static __attribute__((__section__(".text$safeseh")))
 EXCEPTION_DISPOSITION
 do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
 
@@ -216,7 +217,7 @@ do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, 
     return ExceptionContinueSearch;
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __attribute__((__section__(".text$safeseh")))
 EXCEPTION_DISPOSITION
 __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
   {
@@ -224,18 +225,32 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
     (void) ctx;
     (void) disp_ctx;
 
-    /* GCC raises `0x20474343` to search for an exception handler. If the
-     * control flow resumes after `RaiseException()`, `std::terminate()` will
-     * be called.  */
-    if((rec->ExceptionCode == 0x20474343) && !(rec->ExceptionFlags & EXCEPTION_NONCONTINUABLE))
-      return ExceptionContinueExecution;
+    if(rec->ExceptionCode == 0x20474343) {
+      /* GCC raises `0x20474343` to search for an exception handler. If the
+       * control flow resumes after `RaiseException()`, `std::terminate()` will
+       * be called.  */
+      if(!(rec->ExceptionFlags & EXCEPTION_NONCONTINUABLE))
+        return ExceptionContinueExecution;
+    }
+    else if(rec->ExceptionCode == 0xE06D7363) {
+      /* MSVC raises `0xE06D7363` instead. We will not allow the stack to be
+       * unwound, so we must call `std::terminate()`. The CRT may have been
+       * linked statically, but that is to be handled in the fast-fail path.  */
+      HMODULE dlls[256];
+      HMODULE* end_of_dlls = dlls;
+      DWORD size_needed;
+      if(K32EnumProcessModules(NtCurrentProcess(), dlls, sizeof(dlls), &size_needed))
+        end_of_dlls = (HMODULE*) ((char*) dlls + _MCF_minz(size_needed, sizeof(dlls)));
 
-    /* MSVC raises `0xE06D7363` instead. The exception is passed to the caller
-     * so `std::terminate()` will be called.  */
-    if(rec->ExceptionCode == 0xE06D7363)
-      return ExceptionContinueSearch;
+      /* Try calling `__std_terminate()` from UCRTBASE.DLL.  */
+      for(HMODULE* p = dlls;  p != end_of_dlls;  ++p) {
+        FARPROC dll_fn = GetProcAddress(*p, "__std_terminate");
+        if(dll_fn)
+          (* __MCF_CAST_PTR(__MCF_atexit_callback, dll_fn)) ();
+      }
+    }
 
-    /* In all the other cases, terminate the process.  */
+    /* The exception is unsolvable, so terminate the process.  */
     RaiseFailFastException(rec, ctx, 0);
     __builtin_trap();
   }
@@ -623,17 +638,17 @@ const int _fltused __MCF_CRT_RDATA = 0x9875;
 #if defined __MCF_M_X8632
 /* On x86-32, the load config directory contains the address and size of the
  * exception handler table. Exception handlers that are not in this table
- * will be rejected by the system. `__MCF_i386_se_handler_table` points to an
- * array of RVAs to valid handlers, and the value of (not the value it points
- * to) `__MCF_i386_se_handler_count` is the number of handlers.  */
+ * will be rejected by the system. `__MCF_i386_se_handler_table` points to a
+ * sorted (!) array of RVAs of valid handlers, and the value of (not the value
+ * it points to) `__MCF_i386_se_handler_count` is the number of handlers.  */
 extern const ULONG __MCF_i386_se_handler_table[];
 extern char __MCF_i386_se_handler_count[];
 __asm__ (
 "\n .section .rdata, \"dr\""
 "\n   .p2align 2"
 "\n ___MCF_i386_se_handler_table:"
-"\n   .rva ___MCF_seh_top"
 "\n   .rva _do_call_once_seh_unwind\n"
+"\n   .rva ___MCF_seh_top"
 "\n .equiv ___MCF_i386_se_handler_count, (. - ___MCF_i386_se_handler_table) / 4"
 "\n .text"
 );
