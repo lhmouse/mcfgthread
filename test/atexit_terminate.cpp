@@ -15,6 +15,10 @@
 int
 main(void)
   {
+#if defined __MCF_M_X8632
+    return 77;
+#endif
+
     ::std::set_terminate(
       +[] {
         ::fprintf(stderr, "terminating\n");
