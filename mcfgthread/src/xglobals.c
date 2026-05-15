@@ -243,7 +243,7 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
         for(uint32_t i = 0;  i != ndlls;  ++i) {
           /* Lock the DLL, in case that another thread unloads it.  */
           HMODULE dll;
-          if(!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCWSTR) dlls[i], &dll))
+          if(!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (void*) dlls[i], &dll))
             continue;
 
           if(dll == dlls[i]) {
