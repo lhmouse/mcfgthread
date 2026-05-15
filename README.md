@@ -185,8 +185,10 @@ and unlocks the primitive mutex, releasing all threads that are waiting on it.
 |`EncodePointer`                                          |Windows XP SP2  |[Windows API](https://learn.microsoft.com/en-us/previous-versions/bb432254(v=vs.85)) |
 |`ExitThread`                                             |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitthread) |
 |`FormatMessageW`                                         |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-formatmessagew) |
+|`FreeLibrary`                                            |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-freelibrary) |
 |`GetLastError`                                           |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror) |
 |`GetModuleFileNameW`                                     |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulefilenamew) |
+|`GetModuleHandleExW`                                     |Windows XP      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulehandleexw) |
 |`GetProcAddress`                                         |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress) |
 |`GetProcessHeap`                                         |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-getprocessheap) |
 |`GetStdHandle`                                           |All             |[Windows API](https://learn.microsoft.com/en-us/windows/console/getstdhandle) |

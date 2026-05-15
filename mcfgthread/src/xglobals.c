@@ -237,16 +237,27 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
        * unwound, so we must call `std::terminate()`. The CRT may have been
        * linked statically, but that is to be handled in the fast-fail path.  */
       HMODULE dlls[256];
-      HMODULE* end_of_dlls = dlls;
       DWORD size_needed;
-      if(K32EnumProcessModules(NtCurrentProcess(), dlls, sizeof(dlls), &size_needed))
-        end_of_dlls = (HMODULE*) ((char*) dlls + _MCF_minz(size_needed, sizeof(dlls)));
+      if(K32EnumProcessModules(NtCurrentProcess(), dlls, sizeof(dlls), &size_needed)) {
+        uint32_t ndlls = (uint32_t) (_MCF_minz(size_needed, sizeof(dlls)) / sizeof(HMODULE));
+        for(uint32_t i = 0;  i != ndlls;  ++i) {
+          /* Lock the DLL, in case that another thread unloads it.  */
+          HMODULE dll;
+          if(!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (LPCWSTR) dlls[i], &dll))
+            continue;
 
-      /* Try calling `__std_terminate()` from UCRTBASE.DLL.  */
-      for(HMODULE* p = dlls;  p != end_of_dlls;  ++p) {
-        FARPROC dll_fn = GetProcAddress(*p, "__std_terminate");
-        if(dll_fn)
-          (* __MCF_CAST_PTR(__MCF_atexit_callback, dll_fn)) ();
+          if(dll == dlls[i]) {
+            /* The handle is valid and has been locked in this thread, so look
+             * for `__std_terminate()`. This is actually a documented API; see
+             * <https://learn.microsoft.com/en-us/windows/win32/memory/stdterminate>.  */
+            FARPROC dll_fn = GetProcAddress(dlls[i], "__std_terminate");
+            if(dll_fn)
+              (* __MCF_CAST_PTR(__MCF_atexit_callback, dll_fn)) ();
+          }
+
+          /* Unlock the DLL.  */
+          FreeLibrary(dll);
+        }
       }
     }
 

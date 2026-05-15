@@ -13,8 +13,10 @@ EXPORTS
   EncodePointer@4@
   ExitThread@4@
   FormatMessageW@28@
+  FreeLibrary@4@
   GetLastError@0@
   GetModuleFileNameW@12@
+  GetModuleHandleExW@12@
   GetProcAddress@8@
   GetProcessHeap@0@
   GetStdHandle@4@
