@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install dependencies
         run: >-
@@ -58,7 +58,7 @@ jobs:
       run: { shell: 'msys2 {0}' }
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: msys2/setup-msys2@v2
         with: { msystem: UCRT64 }
@@ -87,7 +87,7 @@ jobs:
       run: { shell: 'msys2 {0}' }
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: msys2/setup-msys2@v2
         with: { msystem: MINGW32 }
@@ -120,7 +120,7 @@ jobs:
       run: { shell: 'msys2 {0}' }
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: msys2/setup-msys2@v2
         with: { msystem: CLANG64 }
@@ -149,7 +149,7 @@ jobs:
       run: { shell: 'msys2 {0}' }
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: msys2/setup-msys2@v2
         with: { msystem: CLANGARM64 }
@@ -175,7 +175,7 @@ jobs:
     runs-on: ubuntu-22.04-arm
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install dependencies
         run: >-
@@ -210,7 +210,7 @@ jobs:
       run: { shell: pwsh }
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install dependencies
         run: >-
@@ -258,7 +258,7 @@ jobs:
       run: { shell: pwsh }
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install dependencies
         run: >-
@@ -283,7 +283,7 @@ jobs:
       run: { shell: pwsh }
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install dependencies
         run: >-
@@ -308,7 +308,7 @@ jobs:
       run: { shell: pwsh }
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install dependencies
         run: >-
@@ -333,7 +333,7 @@ jobs:
       run: { shell: pwsh }
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install dependencies
         run: >-
@@ -378,7 +378,7 @@ jobs:
       run: { shell: 'msys2 {0}' }
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: msys2/setup-msys2@v2
         with: { msystem: MSYS }
