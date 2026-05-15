@@ -249,10 +249,15 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
           if(dll == dlls[i]) {
             /* The handle is valid and has been locked in this thread, so look
              * for `__std_terminate()`. This is actually a documented API; see
-             * <https://learn.microsoft.com/en-us/windows/win32/memory/stdterminate>.  */
+             * <https://learn.microsoft.com/en-us/windows/win32/memory/stdterminate>.
+             * Due to possibility of DLL hijacking, the prototype is not declared
+             * `noreturn`.  */
             FARPROC dll_fn = GetProcAddress(dlls[i], "__std_terminate");
-            if(dll_fn)
-              (* __MCF_CAST_PTR(__MCF_atexit_callback, dll_fn)) ();
+            if(dll_fn) {
+              typedef void typeof_std_terminate(void);
+              (* __MCF_CAST_PTR(typeof_std_terminate, dll_fn)) ();
+              __builtin_trap();
+            }
           }
 
           /* Unlock the DLL.  */
