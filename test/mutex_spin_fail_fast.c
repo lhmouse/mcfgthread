@@ -5,7 +5,9 @@
  * LICENSE.md as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
-#define __MCF_EXPAND_INLINE_DEFINITIONS 1
+#ifndef __MCF_EXPAND_INLINE_DEFINITIONS
+#  define __MCF_EXPAND_INLINE_DEFINITIONS 1
+#endif
 #include "../mcfgthread/mutex.h"
 #undef NDEBUG
 #include <assert.h>
