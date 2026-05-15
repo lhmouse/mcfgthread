@@ -341,21 +341,21 @@ __MCF_mcopy(void* dst, const void* src, size_t size)
   {
     __MCF_ASSERT((uintptr_t) dst - (uintptr_t) src >= size);
 #if defined __MCF_M_X86_ASM
-    PVOID edi, ecx, esi;
+    PVOID edi, esi, ecx;
     __asm__ volatile (
       "rep movsb"
-      : "=D"(edi), "=c"(ecx), "=S"(esi)
-      : "0"(dst), "1"(size), "2"(src)
+      : "=D"(edi), "=S"(esi), "=c"(ecx)
+      : "0"(dst), "1"(src), "2"(size)
       : "memory"
     );
 #elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_MOPS
     PVOID x0, x1, x2;
     __asm__ volatile (
-      "cpyfp [%0]!, [%2]!, %1!; "
-      "cpyfm [%0]!, [%2]!, %1!; "
-      "cpyfe [%0]!, [%2]!, %1!; "
+      "cpyfp [%0]!, [%1]!, %2!; "
+      "cpyfm [%0]!, [%1]!, %2!; "
+      "cpyfe [%0]!, [%1]!, %2!; "
       : "=&r"(x0), "=&r"(x1), "=&r"(x2)
-      : "0"(dst), "1"(size), "2"(src)
+      : "0"(dst), "1"(src), "2"(size)
       : "memory"
     );
 #else
@@ -371,23 +371,23 @@ __MCF_mcopy_backward(void* dst, const void* src, size_t size)
   {
     __MCF_ASSERT((uintptr_t) src - (uintptr_t) dst >= size);
 #if defined __MCF_M_X86_ASM
-    PVOID edi, ecx, esi;
+    PVOID edi, esi, ecx;
     __asm__ volatile (
       "std; "
       "rep movsb; "
       "cld; "
-      : "=D"(edi), "=c"(ecx), "=S"(esi)
-      : "0"((char*) dst + size - 1), "1"(size), "2"((char*) src + size - 1)
+      : "=D"(edi), "=S"(esi), "=c"(ecx)
+      : "0"((char*) dst + size - 1), "1"((char*) src + size - 1), "2"(size)
       : "memory"
     );
 #elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_MOPS
     PVOID x0, x1, x2;
     __asm__ volatile (
-      "cpyp [%0]!, [%2]!, %1!; "
-      "cpym [%0]!, [%2]!, %1!; "
-      "cpye [%0]!, [%2]!, %1!; "
+      "cpyp [%0]!, [%1]!, %2!; "
+      "cpym [%0]!, [%1]!, %2!; "
+      "cpye [%0]!, [%1]!, %2!; "
       : "=&r"(x0), "=&r"(x1), "=&r"(x2)
-      : "0"(dst), "1"(size), "2"(src)
+      : "0"(dst), "1"(src), "2"(size)
       : "memory"
     );
 #else
@@ -412,11 +412,11 @@ __MCF_mfill(void* dst, int val, size_t size)
 #elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_MOPS
     PVOID x0, x1, x2;
     __asm__ volatile (
-      "setp [%0]!, %1!, %2; "
-      "setm [%0]!, %1!, %2; "
-      "sete [%0]!, %1!, %2; "
+      "setp [%0]!, %2!, %1; "
+      "setm [%0]!, %2!, %1; "
+      "sete [%0]!, %2!, %1; "
       : "=&r"(x0), "=&r"(x1), "=&r"(x2)
-      : "0"(dst), "1"(size), "2"(val)
+      : "0"(dst), "1"(val), "2"(size)
       : "memory"
     );
 #else
