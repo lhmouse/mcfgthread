@@ -410,13 +410,13 @@ __MCF_mfill(void* dst, int val, size_t size)
       : "memory"
     );
 #elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_MOPS
-    PVOID x0, x1, x2;
+    PVOID x0, x2;
     __asm__ volatile (
-      "setp [%0]!, %2!, %1; "
-      "setm [%0]!, %2!, %1; "
-      "sete [%0]!, %2!, %1; "
-      : "=&r"(x0), "=&r"(x1), "=&r"(x2)
-      : "0"(dst), "1"(val), "2"(size)
+      "setp [%0]!, %1!, %x4; "
+      "setm [%0]!, %1!, %x4; "
+      "sete [%0]!, %1!, %x4; "
+      : "=&r"(x0), "=&r"(x2)
+      : "0"(dst), "1"(size), "r"(val)
       : "memory"
     );
 #else
