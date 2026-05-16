@@ -517,7 +517,7 @@ __MCF_mequal(const void* src, const void* cmp, size_t size)
     bool eq;
 #if defined __MCF_M_X86_ASM
     PVOID esi, edi, ecx;
-    if(__builtin_constant_p(size))
+    if(__builtin_constant_p(size != 0) && (size != 0))
       __asm__ (
         "repz cmpsb"   /* compare DS:[ESI] with ES:[EDI]; at least once  */
         : "=@ccz"(eq), "=S"(esi), "=c"(ecx), "=D"(edi)
