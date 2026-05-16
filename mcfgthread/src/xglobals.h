@@ -340,6 +340,9 @@ __cdecl
 __MCF_mcopy(void* dst, const void* src, size_t size)
   {
     __MCF_ASSERT((uintptr_t) dst - (uintptr_t) src >= size);
+    if(__builtin_constant_p(size) && (size == 0))
+      return dst;
+
 #if defined __MCF_M_X86_ASM
     PVOID edi, esi, ecx;
     __asm__ volatile (
@@ -370,6 +373,9 @@ __cdecl
 __MCF_mcopy_backward(void* dst, const void* src, size_t size)
   {
     __MCF_ASSERT((uintptr_t) src - (uintptr_t) dst >= size);
+    if(__builtin_constant_p(size) && (size == 0))
+      return dst;
+
 #if defined __MCF_M_X86_ASM
     PVOID edi, esi, ecx;
     __asm__ volatile (
@@ -401,6 +407,9 @@ void*
 __cdecl
 __MCF_mfill(void* dst, int val, size_t size)
   {
+    if(__builtin_constant_p(size) && (size == 0))
+      return dst;
+
 #if defined __MCF_M_X86_ASM
     PVOID edi, ecx;
     __asm__ volatile (
@@ -430,6 +439,9 @@ void*
 __cdecl
 __MCF_mzero(void* dst, size_t size)
   {
+    if(__builtin_constant_p(size) && (size == 0))
+      return dst;
+
 #if defined __MCF_M_X86_ASM
     PVOID edi, ecx;
     __asm__ volatile (
@@ -472,6 +484,9 @@ int
 __cdecl
 __MCF_mcompare(const void* src, const void* cmp, size_t size)
   {
+    if(__builtin_constant_p(size) && (size == 0))
+      return 0;
+
     int diff;
 #if defined __MCF_M_X86_ASM
     PVOID esi, edi, ecx;
@@ -496,6 +511,9 @@ bool
 __cdecl
 __MCF_mequal(const void* src, const void* cmp, size_t size)
   {
+    if(__builtin_constant_p(size) && (size == 0))
+      return true;
+
     bool eq;
 #if defined __MCF_M_X86_ASM
     PVOID esi, edi, ecx;
