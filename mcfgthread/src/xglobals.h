@@ -517,21 +517,16 @@ __MCF_mequal(const void* src, const void* cmp, size_t size)
     bool eq;
 #if defined __MCF_M_X86_ASM
     PVOID esi, edi, ecx;
-    if(__builtin_constant_p(size != 0) && (size != 0))
-      __asm__ (
-        "repz cmpsb"   /* compare DS:[ESI] with ES:[EDI]; at least once  */
-        : "=@ccz"(eq), "=S"(esi), "=c"(ecx), "=D"(edi)
-        : "1"(src), "2"(size), "3"(cmp)
-        : "memory", "cc"
-      );
-    else
-      __asm__ (
-        "test ecx, ecx; " /* set ZF if there is no input  */
-        "repz cmpsb; "    /* compare DS:[ESI] with ES:[EDI]  */
-        : "=@ccz"(eq), "=S"(esi), "=c"(ecx), "=D"(edi)
-        : "1"(src), "2"(size), "3"(cmp)
-        : "memory", "cc"
-      );
+    __asm__ (
+      ".ifeq %c7; "     /* length is NOT known non-zero? (`.ifeq` reads 'if not')  */
+      "test ecx, ecx; " /* ensure ZF is set in case of length of zero  */
+      ".endif; "
+      "repz cmpsb; "    /* compare DS:[ESI] with ES:[EDI]  */
+      : "=@ccz"(eq), "=S"(esi), "=c"(ecx), "=D"(edi)
+      : "1"(src), "2"(size), "3"(cmp),
+        "i"(__builtin_constant_p(size != 0) && (size != 0))
+      : "memory", "cc"
+    );
 #else
     eq = __MCF_do_std_compare(src, (const char*) src + size, cmp) == 0;
 #endif
