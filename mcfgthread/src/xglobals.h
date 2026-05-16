@@ -506,7 +506,7 @@ __MCF_mequal(const void* src, const void* cmp, size_t size)
     PVOID esi, edi, ecx;
     __asm__ (
       ".ifeq %c7; "     /* length is NOT known non-zero? (`.ifeq` reads 'if not')  */
-      "test ecx, ecx; " /* ensure ZF is set in case of length of zero  */
+      "cmp ecx, ecx; "  /* ensure ZF is set in case of length of zero  */
       ".endif; "
       "repz cmpsb; "    /* compare DS:[ESI] with ES:[EDI]  */
       : "=@ccz"(eq), "=S"(esi), "=D"(edi), "=c"(ecx)
