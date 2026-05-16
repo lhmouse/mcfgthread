@@ -496,8 +496,8 @@ __MCF_mcompare(const void* src, const void* cmp, size_t size)
       "setnz al; "      /* EAX = 0 if equal, 1 if less or greater  */
       "sbb ecx, ecx; "  /* ECX = 0 if equal or greater, -1 if less  */
       "or eax, ecx; "
-      : "=a"(diff), "=S"(esi), "=c"(ecx), "=D"(edi)
-      : "1"(src), "2"(size), "3"(cmp)
+      : "=a"(diff), "=S"(esi), "=D"(edi), "=c"(ecx)
+      : "1"(src), "2"(cmp), "3"(size)
       : "memory", "cc"
     );
 #else
@@ -522,8 +522,8 @@ __MCF_mequal(const void* src, const void* cmp, size_t size)
       "test ecx, ecx; " /* ensure ZF is set in case of length of zero  */
       ".endif; "
       "repz cmpsb; "    /* compare DS:[ESI] with ES:[EDI]  */
-      : "=@ccz"(eq), "=S"(esi), "=c"(ecx), "=D"(edi)
-      : "1"(src), "2"(size), "3"(cmp),
+      : "=@ccz"(eq), "=S"(esi), "=D"(edi), "=c"(ecx)
+      : "1"(src), "2"(cmp), "3"(size),
         "i"(__builtin_constant_p(size != 0) && (size != 0))
       : "memory", "cc"
     );
