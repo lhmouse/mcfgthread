@@ -479,12 +479,12 @@ __MCF_mcompare(const void* src, const void* cmp, size_t size)
 #if defined __MCF_M_X86_ASM
     PVOID esi, edi, ecx;
     __asm__ (
-      "xor eax, eax; "  /* set ZF and clear CF  */
+      "xor %k0, %k0; "  /* set ZF and clear CF  */
       "repz cmpsb; "    /* compare DS:[ESI] with ES:[EDI]  */
-      "setnz al; "      /* EAX = 0 if equal, 1 if less or greater  */
+      "setnz %b0; "     /* EAX = 0 if equal, 1 if less or greater  */
       "sbb ecx, ecx; "  /* ECX = 0 if equal or greater, -1 if less  */
-      "or eax, ecx; "
-      : "=a"(diff), "=S"(esi), "=D"(edi), "=c"(ecx)
+      "or %k0, ecx; "
+      : "=q"(diff), "=S"(esi), "=D"(edi), "=c"(ecx)
       : "1"(src), "2"(cmp), "3"(size)
       : "memory", "cc"
     );
