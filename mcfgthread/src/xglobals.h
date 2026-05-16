@@ -155,37 +155,31 @@ __MCF_batch_release_common(const void* key, size_t count);
 /* Copy a block of memory forward, like `memcpy()`.  */
 __MCF_XGLOBALS_INLINE
 void*
-__cdecl
 __MCF_mcopy(void* dst, const void* src, size_t size);
 
 /* Copy a block of memory backward.  */
 __MCF_XGLOBALS_INLINE
 void*
-__cdecl
 __MCF_mcopy_backward(void* dst, const void* src, size_t size);
 
 /* Fill a block of memory with the given byte, like `memset()`.  */
 __MCF_XGLOBALS_INLINE
 void*
-__cdecl
 __MCF_mfill(void* dst, int val, size_t size);
 
 /* Fill a block of memory with zeroes, like `bzero()`.  */
 __MCF_XGLOBALS_INLINE
 void*
-__cdecl
 __MCF_mzero(void* dst, size_t size);
 
 /* Compare two blocks of memory, like `memcmp()`.  */
 __MCF_XGLOBALS_INLINE __MCF_FN_PURE
 int
-__cdecl
 __MCF_mcompare(const void* src, const void* cmp, size_t size);
 
 /* Check whether two blocks of memory compare equal.  */
 __MCF_XGLOBALS_INLINE __MCF_FN_PURE
 bool
-__cdecl
 __MCF_mequal(const void* src, const void* cmp, size_t size);
 
 /* Allocate a block of zeroed memory, like `calloc()`.  */
@@ -336,7 +330,6 @@ __MCF_STATIC_ASSERT(__MCF_GFX_(imp_QueryInterruptTimePrecise) == __MCF_64_32(842
  * this file.  */
 __MCF_XGLOBALS_INLINE
 void*
-__cdecl
 __MCF_mcopy(void* dst, const void* src, size_t size)
   {
     __MCF_ASSERT((uintptr_t) dst - (uintptr_t) src >= size);
@@ -369,7 +362,6 @@ __MCF_mcopy(void* dst, const void* src, size_t size)
 
 __MCF_XGLOBALS_INLINE
 void*
-__cdecl
 __MCF_mcopy_backward(void* dst, const void* src, size_t size)
   {
     __MCF_ASSERT((uintptr_t) src - (uintptr_t) dst >= size);
@@ -404,7 +396,6 @@ __MCF_mcopy_backward(void* dst, const void* src, size_t size)
 
 __MCF_XGLOBALS_INLINE
 void*
-__cdecl
 __MCF_mfill(void* dst, int val, size_t size)
   {
     if(__builtin_constant_p(size) && (size == 0))
@@ -436,7 +427,6 @@ __MCF_mfill(void* dst, int val, size_t size)
 
 __MCF_XGLOBALS_INLINE
 void*
-__cdecl
 __MCF_mzero(void* dst, size_t size)
   {
     if(__builtin_constant_p(size) && (size == 0))
@@ -468,7 +458,6 @@ __MCF_mzero(void* dst, size_t size)
 
 __MCF_ALWAYS_INLINE
 int
-__cdecl
 __MCF_do_std_compare(const void* src, const void* src_end, const void* cmp)
   {
     typedef const volatile unsigned char* PCVBYTE;
@@ -481,7 +470,6 @@ __MCF_do_std_compare(const void* src, const void* src_end, const void* cmp)
 
 __MCF_XGLOBALS_INLINE __MCF_FN_PURE
 int
-__cdecl
 __MCF_mcompare(const void* src, const void* cmp, size_t size)
   {
     if(__builtin_constant_p(size) && (size == 0))
@@ -508,7 +496,6 @@ __MCF_mcompare(const void* src, const void* cmp, size_t size)
 
 __MCF_XGLOBALS_INLINE __MCF_FN_PURE
 bool
-__cdecl
 __MCF_mequal(const void* src, const void* cmp, size_t size)
   {
     if(__builtin_constant_p(size) && (size == 0))
