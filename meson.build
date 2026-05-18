@@ -230,13 +230,6 @@ dep_ntdll = declare_dependency(
                                 install: false,
                                 input: 'mcfgthread/src/ntdll.def.in')))
 
-mcfgthread_version_o = import('windows').compile_resources(
-      'mcfgthread/src/version.rc',
-      depend_files: [ 'mcfgthread/version.h.in',
-                      'mcfgthread/src/mcfgthread.manifest' ],
-      include_directories: include_directories('.'),
-      args: [ '-c65001' ])
-
 kwargs_exe = { }
 kwargs_dll = { }
 kwargs_lib = { }
@@ -262,6 +255,13 @@ else
         '-Wl,--subsystem,windows:6.1', '-nostdlib',
         '-Wl,--dynamicbase', '-Wl,--nxcompat' ]
 endif
+
+mcfgthread_version_o = import('windows').compile_resources(
+      'mcfgthread/src/version.rc',
+      depend_files: [ 'mcfgthread/version.h.in',
+                      'mcfgthread/src/mcfgthread.manifest' ],
+      include_directories: include_directories('.'),
+      args: [ '-c65001' ])
 
 lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       c_pch: 'mcfgthread/src/xprecompiled.h',
