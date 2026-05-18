@@ -188,7 +188,7 @@ install_headers(configure_file(output: 'version.h',
                                input: 'mcfgthread/version.h.in',
                                configuration: ver,
                                install: false),
-                               subdir: 'mcfgthread')
+                subdir: 'mcfgthread')
 
 install_headers(mcfgthread_include,
                 preserve_path: true)
