@@ -122,11 +122,6 @@ test_src = [
 # Global configuration
 #===========================================================
 
-ver = configuration_data()
-ver.set('abi_major', meson.project_version().split('.')[0])
-ver.set('abi_minor', meson.project_version().split('.')[1])
-ver.set_quoted('abi_string', meson.project_version())
-
 cc = meson.get_compiler('c')
 cxx = meson.get_compiler('cpp')
 dlltool = find_program('dlltool', required: true)
@@ -185,13 +180,18 @@ endif
 # Rules for headers
 #===========================================================
 
-configure_file(configuration: ver,
-               output: 'version.h',
-               install: false,
-               input: 'mcfgthread/version.h.in')
+ver = { 'abi_major': meson.project_version().split('.')[0],
+        'abi_minor': meson.project_version().split('.')[1],
+        'abi_string': meson.project_version().join([ '"', '"' ]) }
 
-install_headers(mcfgthread_include, preserve_path: true)
-install_headers(meson.current_build_dir() / 'version.h', subdir: 'mcfgthread')
+install_headers(configure_file(output: 'version.h',
+                               input: 'mcfgthread/version.h.in',
+                               configuration: ver,
+                               install: false),
+                               subdir: 'mcfgthread')
+
+install_headers(mcfgthread_include,
+                preserve_path: true)
 
 #===========================================================
 # Rules for 'lib/libmcfgthread'
@@ -273,8 +273,8 @@ lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       sources: [ mcfgthread_src_min, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
       kwargs: kwargs_dll,
-      soversion: ver.get('abi_major'),
-      version: '.'.join(ver.get('abi_major'), ver.get('abi_minor'), '0'),
+      soversion: ver['abi_major'],
+      version: '.'.join([ ver['abi_major'], ver['abi_minor'], '0' ]),
       install: true)
 
 lib_mcfgthread_dll = shared_library('mcfgthread',
@@ -288,8 +288,8 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
       sources: [ mcfgthread_src_ex, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
       kwargs: kwargs_dll,
-      soversion: ver.get('abi_major'),
-      version: '.'.join(ver.get('abi_major'), ver.get('abi_minor'), '0'),
+      soversion: ver['abi_major'],
+      version: '.'.join([ ver['abi_major'], ver['abi_minor'], '0' ]),
       install: true)
 
 if cc.has_define('__CYGWIN__')
