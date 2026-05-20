@@ -12,13 +12,13 @@
 ## OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 [binaries]
-c = [ 'C:\Program Files\LLVM\bin\clang', '--target=i686-pc-windows-msvc', '-fuse-ld=lld' ]
-cpp = [ 'C:\Program Files\LLVM\bin\clang++', '--target=i686-pc-windows-msvc', '-fuse-ld=lld' ]
-ar = 'C:\Program Files\LLVM\bin\llvm-ar'
-objcopy = [ 'C:\Program Files\LLVM\bin\llvm-objcopy', '--target=i686-pc-windows-msvc' ]
-strip = 'C:\Program Files\LLVM\bin\llvm-strip'
-windres = [ 'C:\Program Files\LLVM\bin\llvm-rc', '--target=i686-pc-windows-msvc' ]
-dlltool = [ 'C:\Program Files\LLVM\bin\llvm-dlltool', '-m', 'i386' ]
+c = [ 'C:/Program Files/LLVM/bin/clang', '--target=i686-pc-windows-msvc', '-fuse-ld=lld' ]
+cpp = [ 'C:/Program Files/LLVM/bin/clang++', '--target=i686-pc-windows-msvc', '-fuse-ld=lld' ]
+ar = 'C:/Program Files/LLVM/bin/llvm-ar'
+objcopy = [ 'C:/Program Files/LLVM/bin/llvm-objcopy', '--target=i686-pc-windows-msvc' ]
+strip = 'C:/Program Files/LLVM/bin/llvm-strip'
+windres = [ 'C:/Program Files/LLVM/bin/llvm-rc', '--target=i686-pc-windows-msvc' ]
+dlltool = [ 'C:/Program Files/LLVM/bin/llvm-dlltool', '-m', 'i386' ]
 
 [host_machine]
 system = 'windows'

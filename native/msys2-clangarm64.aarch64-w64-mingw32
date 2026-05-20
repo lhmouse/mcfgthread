@@ -12,13 +12,13 @@
 ## OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 [binaries]
-c = 'C:\msys64\clangarm64\bin\clang'
-cpp = 'C:\msys64\clangarm64\bin\clang++'
-ar = 'C:\msys64\clangarm64\bin\ar'
-objcopy = 'C:\msys64\clangarm64\bin\objcopy'
-strip = 'C:\msys64\clangarm64\bin\strip'
-windres = 'C:\msys64\clangarm64\bin\windres'
-dlltool = 'C:\msys64\clangarm64\bin\dlltool'
+c = 'C:/msys64/clangarm64/bin/clang'
+cpp = 'C:/msys64/clangarm64/bin/clang++'
+ar = 'C:/msys64/clangarm64/bin/ar'
+objcopy = 'C:/msys64/clangarm64/bin/objcopy'
+strip = 'C:/msys64/clangarm64/bin/strip'
+windres = 'C:/msys64/clangarm64/bin/windres'
+dlltool = 'C:/msys64/clangarm64/bin/dlltool'
 
 [host_machine]
 system = 'windows'
