@@ -1,0 +1,30 @@
+## No Copyright
+##
+## Permission to use, copy, modify, and/or distribute this software for
+## any purpose with or without fee is hereby granted.
+##
+## THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL
+## WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES
+## OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE
+## FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY
+## DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN
+## AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
+## OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+[binaries]
+c = 'C:/msys64/mingw64/bin/gcc'
+cpp = 'C:/msys64/mingw64/bin/g++'
+ar = 'C:/msys64/mingw64/bin/ar'
+objcopy = 'C:/msys64/mingw64/bin/objcopy'
+strip = 'C:/msys64/mingw64/bin/strip'
+windres = 'C:/msys64/mingw64/bin/windres'
+dlltool = 'C:/msys64/mingw64/bin/dlltool'
+
+[host_machine]
+system = 'windows'
+cpu_family = 'x86_64'
+cpu = 'x86_64'
+endian = 'little'
+
+[properties]
+skip_sanity_check = true

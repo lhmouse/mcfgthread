@@ -12,21 +12,18 @@
 ## OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 [binaries]
-c = [ 'C:\Program Files\LLVM\bin\clang', '--target=aarch64-pc-windows-msvc', '-fuse-ld=lld' ]
-cpp = [ 'C:\Program Files\LLVM\bin\clang++', '--target=aarch64-pc-windows-msvc', '-fuse-ld=lld' ]
-ar = 'C:\Program Files\LLVM\bin\llvm-ar'
-objcopy = [ 'C:\Program Files\LLVM\bin\llvm-objcopy', '--target=aarch64-pc-windows-msvc' ]
-strip = 'C:\Program Files\LLVM\bin\llvm-strip'
-windres = [ 'C:\Program Files\LLVM\bin\llvm-rc', '--target=aarch64-pc-windows-msvc' ]
-dlltool = [ 'C:\Program Files\LLVM\bin\llvm-dlltool', '-m', 'arm64' ]
-
-pkg-config = 'aarch64-pc-windows-msvc-pkg-config'
-exe_wrapper = 'wine'
+c = 'C:/msys64/ucrt64/bin/gcc'
+cpp = 'C:/msys64/ucrt64/bin/g++'
+ar = 'C:/msys64/ucrt64/bin/ar'
+objcopy = 'C:/msys64/ucrt64/bin/objcopy'
+strip = 'C:/msys64/ucrt64/bin/strip'
+windres = 'C:/msys64/ucrt64/bin/windres'
+dlltool = 'C:/msys64/ucrt64/bin/dlltool'
 
 [host_machine]
 system = 'windows'
-cpu_family = 'aarch64'
-cpu = 'aarch64'
+cpu_family = 'x86_64'
+cpu = 'x86_64'
 endian = 'little'
 
 [properties]

@@ -103,7 +103,7 @@ LLVM can be installed with their Windows installers from
 <https://github.com/llvm/llvm-project/releases/>.
 
 ```sh
-meson setup --native-file cross/llvm-windows.x86_64-pc-windows-msvc build_dir
+meson setup --native-file native/llvm.x86_64-pc-windows-msvc build_dir
 cd build_dir
 meson compile
 meson test
