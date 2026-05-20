@@ -266,7 +266,7 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup --native-file cross/llvm.x86_64-pc-windows-msvc
+             meson setup --native-file native/llvm.x86_64-pc-windows-msvc
              -Denable-debug-checks=true -Doptimization=1 build_ci
 
       - name: Build
@@ -291,7 +291,7 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup --native-file cross/llvm.i686-pc-windows-msvc
+             meson setup --native-file native/llvm.i686-pc-windows-msvc
              -Denable-debug-checks=true -Doptimization=1 build_ci
 
       - name: Build
@@ -316,7 +316,7 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup --native-file cross/llvm.aarch64-pc-windows-msvc
+             meson setup --native-file native/llvm.aarch64-pc-windows-msvc
              -Denable-debug-checks=true -Doptimization=1 build_ci
 
       - name: Build
@@ -341,7 +341,7 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup --native-file cross/llvm.arm64ec-pc-windows-msvc
+             meson setup --native-file native/llvm.arm64ec-pc-windows-msvc
              -Denable-debug-checks=true -Doptimization=1 build_ci
 
       - name: Build
@@ -352,7 +352,7 @@ jobs:
 
       - name: Configure emulated x64
         run: >-
-             meson setup --native-file cross/llvm.x86_64-pc-windows-msvc
+             meson setup --native-file native/llvm.x86_64-pc-windows-msvc
              -Denable-debug-checks=true -Doptimization=1 build_x64
 
       - name: Build emulated x64
