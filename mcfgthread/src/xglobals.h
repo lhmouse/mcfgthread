@@ -332,10 +332,10 @@ __MCF_XGLOBALS_INLINE
 void*
 __MCF_mcopy(void* dst, const void* src, size_t size)
   {
-    __MCF_ASSERT((uintptr_t) dst - (uintptr_t) src >= size);
     if(__builtin_constant_p(size) && (size == 0))
       return dst;
 
+    __MCF_ASSERT((uintptr_t) dst - (uintptr_t) src >= size);
 #if defined __MCF_M_X86_ASM
     PVOID edi, esi, ecx;
     __asm__ volatile (
@@ -364,10 +364,10 @@ __MCF_XGLOBALS_INLINE
 void*
 __MCF_mcopy_backward(void* dst, const void* src, size_t size)
   {
-    __MCF_ASSERT((uintptr_t) src - (uintptr_t) dst >= size);
     if(__builtin_constant_p(size) && (size == 0))
       return dst;
 
+    __MCF_ASSERT((uintptr_t) src - (uintptr_t) dst >= size);
 #if defined __MCF_M_X86_ASM
     PVOID edi, esi, ecx;
     __asm__ volatile (
