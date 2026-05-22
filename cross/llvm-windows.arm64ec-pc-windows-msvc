@@ -12,18 +12,21 @@
 ## OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 [binaries]
-c = [ 'C:/Program Files/LLVM/bin/clang', '--target=aarch64-pc-windows-msvc', '-fuse-ld=lld' ]
-cpp = [ 'C:/Program Files/LLVM/bin/clang++', '--target=aarch64-pc-windows-msvc', '-fuse-ld=lld' ]
+c = [ 'C:/Program Files/LLVM/bin/clang', '--target=arm64ec-pc-windows-msvc', '-fuse-ld=lld' ]
+cpp = [ 'C:/Program Files/LLVM/bin/clang++', '--target=arm64ec-pc-windows-msvc', '-fuse-ld=lld' ]
 ar = 'C:/Program Files/LLVM/bin/llvm-ar'
-objcopy = [ 'C:/Program Files/LLVM/bin/llvm-objcopy', '--target=aarch64-pc-windows-msvc' ]
+objcopy = [ 'C:/Program Files/LLVM/bin/llvm-objcopy', '--target=arm64ec-pc-windows-msvc' ]
 strip = 'C:/Program Files/LLVM/bin/llvm-strip'
-windres = [ 'C:/Program Files/LLVM/bin/llvm-rc', '--target=aarch64-pc-windows-msvc' ]
-dlltool = [ 'C:/Program Files/LLVM/bin/llvm-dlltool', '-m', 'arm64' ]
+windres = [ 'C:/Program Files/LLVM/bin/llvm-rc', '--target=arm64ec-pc-windows-msvc' ]
+dlltool = [ 'C:/Program Files/LLVM/bin/llvm-dlltool', '-m', 'arm64ec' ]
+
+pkg-config = ''
+exe_wrapper = ''
 
 [host_machine]
 system = 'windows'
 cpu_family = 'aarch64'
-cpu = 'aarch64'
+cpu = 'arm64ec'
 endian = 'little'
 
 [properties]
