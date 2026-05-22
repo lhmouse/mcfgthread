@@ -14,7 +14,7 @@ int
 main(void)
   {
     int r;
-    _MCF_shared_mutex mtx = __MCF_0_INIT;
+    _MCF_shared_mutex mtx = { 0 };
     assert(mtx.__nshare == 0);
     assert(mtx.__nsleep == 0);
 

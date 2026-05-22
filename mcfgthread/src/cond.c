@@ -16,7 +16,7 @@ int
 do_unlock_and_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt, intptr_t* unlocked,
                    intptr_t lock_arg, const int64_t* timeout_opt)
   {
-    __MCF_winnt_timeout nt_timeout = __MCF_0_INIT;
+    __MCF_winnt_timeout nt_timeout = { 0 };
     _MCF_cond old, new;
 
     /* Initialize the timeout value if a non-zero duration is specified. A

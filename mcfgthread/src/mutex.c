@@ -47,7 +47,7 @@ __MCF_DLLEXPORT
 int
 _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
   {
-    __MCF_winnt_timeout nt_timeout = __MCF_0_INIT;
+    __MCF_winnt_timeout nt_timeout = { 0 };
     uint32_t sp_budget;
     _MCF_mutex old, new;
 

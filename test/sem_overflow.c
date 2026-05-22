@@ -11,7 +11,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-static _MCF_sem sem = __MCF_0_INIT;
+static _MCF_sem sem = { 0 };
 
 int
 main(void)

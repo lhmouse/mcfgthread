@@ -29,7 +29,7 @@ __MCF_c11_thrd_sleep(const __MCF_timespec* dur, __MCF_timespec* rem_opt)
     end_time = __builtin_fmin(end_time, 0x1p63 - 0x1p10);
 
     if(rem_opt)
-      *rem_opt = (__MCF_timespec) __MCF_0_INIT;
+      *rem_opt = (__MCF_timespec){ 0 };
 
     int64_t timeout = (int64_t) end_time;
     int err = _MCF_sleep(&timeout);

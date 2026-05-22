@@ -15,7 +15,7 @@ __MCF_DLLEXPORT
 int
 _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
   {
-    __MCF_winnt_timeout nt_timeout = __MCF_0_INIT;
+    __MCF_winnt_timeout nt_timeout = { 0 };
     _MCF_sem old, new;
 
     /* Initialize the timeout value if a non-zero duration is specified. A

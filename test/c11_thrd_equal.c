@@ -11,7 +11,7 @@
 #include <stdio.h>
 
 static thrd_t thrd;
-static _MCF_mutex mtx = __MCF_0_INIT;
+static _MCF_mutex mtx = { 0 };
 
 static
 int

@@ -15,7 +15,7 @@ static
 int
 do_lock_common(_MCF_shared_mutex* smtx, bool shared, const int64_t* timeout_opt)
   {
-    __MCF_winnt_timeout nt_timeout = __MCF_0_INIT;
+    __MCF_winnt_timeout nt_timeout = { 0 };
     _MCF_shared_mutex old, new;
 
     /* Initialize the timeout value if a non-zero duration is specified. A

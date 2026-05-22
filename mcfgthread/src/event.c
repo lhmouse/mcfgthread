@@ -15,7 +15,7 @@ __MCF_DLLEXPORT
 int
 _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* timeout_opt)
   {
-    __MCF_winnt_timeout nt_timeout = __MCF_0_INIT;
+    __MCF_winnt_timeout nt_timeout = { 0 };
     _MCF_event old, new;
 
     /* Initialize the timeout value if a non-zero duration is specified. A
