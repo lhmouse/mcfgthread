@@ -16,8 +16,8 @@ void
 do_thread_startup(_MCF_thread* thrd)
   {
     __MCF_USING_SEH_TERMINUS;
-    __MCF_CHECK(TlsSetValue(__MCF_G(tls_index), thrd));
     thrd->__tid = __MCF_tid();
+    __MCF_CHECK(TlsSetValue(__MCF_G(tls_index), thrd));
 #if defined __MCF_M_X86_ASM
     /* Set x87 precision to 64-bit mantissa (GNU `long double` format).  */
     __asm__ volatile ("fninit");
