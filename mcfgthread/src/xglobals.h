@@ -587,12 +587,12 @@ __MCF_set_directory_to_BaseNamedObject(OBJECT_ATTRIBUTES* attrs)
 
 __MCF_ALWAYS_INLINE
 HANDLE
-__MCF_create_named_section(OBJECT_ATTRIBUTES* Attributes, LONGLONG MaximumSize)
+__MCF_create_named_section(const OBJECT_ATTRIBUTES* Attributes, LONGLONG MaximumSize)
   {
     HANDLE handle;
     LARGE_INTEGER size = { .QuadPart = MaximumSize };
-    NTSTATUS status = NtCreateSection(&handle, SECTION_ALL_ACCESS, Attributes, &size,
-                                      PAGE_READWRITE, SEC_COMMIT, NULL);
+    NTSTATUS status = NtCreateSection(&handle, SECTION_ALL_ACCESS, (OBJECT_ATTRIBUTES*) Attributes,
+                                      &size, PAGE_READWRITE, SEC_COMMIT, NULL);
     if(status < 0)
       return __MCF_win32_ntstatus_p(status, NULL);
     return handle;
