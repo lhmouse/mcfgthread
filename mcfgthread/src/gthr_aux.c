@@ -134,7 +134,7 @@ __MCF_gthr_cond_recursive_mutex_wait(_MCF_cond* cnd, __MCF_gthr_rc_mutex* rmtx,
                           (intptr_t) rmtx, timeout_opt);
   }
 
-static
+static __MCF_REALIGN_SP
 void
 do_gthread_routine(_MCF_thread* thrd)
   {

@@ -243,7 +243,7 @@ _MCF_yield(void)
     SwitchToThread();
   }
 
-static __MCF_REALIGN_SP
+static
 BOOL
 __stdcall
 do_sleep_interrupt(ULONG type)

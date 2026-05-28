@@ -168,7 +168,7 @@ static __attribute__((__section__(".text$safeseh")))
 EXCEPTION_DISPOSITION
 do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_REALIGN_SP
 void
 __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_proc, void* arg)
   {
@@ -371,7 +371,7 @@ do_pop_dtor(__MCF_dtor_element* elem, _MCF_mutex* mtx, __MCF_dtor_queue* queue, 
     return err;
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_REALIGN_SP
 void
 __MCF_run_static_dtors(_MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
   {
@@ -499,7 +499,7 @@ __MCF_gthread_initialize_globals(void)
     _MCF_atomic_store_32_rel(__MCF_G(main_thread)->__nref, 2);
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_REALIGN_SP
 void
 __MCF_gthread_on_thread_exit(void)
   {
@@ -589,7 +589,6 @@ int
 __stdcall
 DllMainCRTStartup(PVOID instance, ULONG reason, PVOID reserved);
 
-__MCF_REALIGN_SP
 int
 __stdcall
 DllMainCRTStartup(PVOID instance, ULONG reason, PVOID reserved)
@@ -885,7 +884,11 @@ const _load_config_used __MCF_CRT_RDATA =
 
 /* When building the static library, invoke common routines from a TLS
  * callback.  */
-static __MCF_REALIGN_SP
+#if defined __CYGWIN__
+#  error Static linking is not supported on Cygwin or MSYS2.
+#endif
+
+static
 void
 __stdcall
 do_tls_callback(PVOID module, ULONG reason, PVOID reserved)

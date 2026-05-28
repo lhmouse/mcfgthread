@@ -95,7 +95,7 @@ __MCF_thread_atexit(__MCF_atexit_callback* func)
     return __MCF_cxa_thread_atexit(func, nullptr, nullptr);
   }
 
-static
+static __MCF_REALIGN_SP
 void
 do_finalize_thread(void* dso)
   {

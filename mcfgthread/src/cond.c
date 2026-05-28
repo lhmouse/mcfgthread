@@ -11,7 +11,7 @@
 #include "../cond.h"
 #include "xglobals.h"
 
-static __MCF_NEVER_INLINE
+static __MCF_REALIGN_SP
 int
 do_unlock_and_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt, intptr_t* unlocked,
                    intptr_t lock_arg, const int64_t* timeout_opt)
@@ -73,7 +73,7 @@ do_unlock_and_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt, intptr
     return 0;
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_REALIGN_SP
 int
 _MCF_cond_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt,
                _MCF_cond_relock_callback* relock_opt, intptr_t lock_arg,
