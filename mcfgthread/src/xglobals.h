@@ -94,7 +94,7 @@ __MCF_i386_seh_cleanup(EXCEPTION_REGISTRATION_RECORD* const* ref)
 /* Some old code assumes that ESP is always aligned to a 16-byte boundary,
  * but that's not guaranteed for callbacks from system DLLs, so it has to be
  * enforced; otherwise SSE instructions may fault.  */
-#  define __MCF_REALIGN_SP    __attribute__((__force_align_arg_pointer__))
+#  define __MCF_REALIGN_SP    __attribute__((__force_align_arg_pointer__, __noinline__))
 
 /* `arg` shall be passed both via the ECX register and on the stack, to allow
  * both `__cdecl` and `__thiscall` functions to work properly.  */

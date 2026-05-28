@@ -11,7 +11,7 @@
 #include "../thread.h"
 #include "xglobals.h"
 
-static
+static __MCF_REALIGN_SP
 void
 do_thread_startup(_MCF_thread* thrd)
   {
@@ -25,7 +25,7 @@ do_thread_startup(_MCF_thread* thrd)
     (* thrd->__proc) (thrd);
   }
 
-static __MCF_REALIGN_SP
+static
 ULONG
 __stdcall
 do_win32_thread_routine(LPVOID param)
