@@ -662,7 +662,7 @@ __asm__ (
 "\n .section .rdata, \"dr\""
 "\n   .p2align 2"
 "\n ___MCF_i386_se_handler_table:"
-"\n   .rva _do_call_once_seh_unwind\n"
+"\n   .rva _do_call_once_seh_unwind"
 "\n   .rva ___MCF_seh_top"
 "\n .equiv ___MCF_i386_se_handler_count, (. - ___MCF_i386_se_handler_table) / 4"
 "\n .text"
