@@ -511,7 +511,7 @@ __MCF_mequal(const void* src, const void* cmp, size_t size)
       "repz cmpsb; "    /* compare DS:[ESI] with ES:[EDI]  */
       : "=@ccz"(eq), "=S"(esi), "=D"(edi), "=c"(ecx)
       : "1"(src), "2"(cmp), "3"(size),
-        "i"(__builtin_constant_p(size != 0) && (size != 0))
+        "i"(__builtin_constant_p(size != 0) ? (size != 0) : 0)
       : "memory", "cc"
     );
 #else
