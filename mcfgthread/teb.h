@@ -43,8 +43,7 @@ __MCF_teb_load_8(uint32_t __offset)
         : "=q"(__value) : "Ts"(__offset) : "memory");
 #  endif
 #elif defined __MCF_M_ARM64_ASM
-    register char* __teb __asm__("x18");
-    __asm__ ("" : "=r"(__teb));
+    __MCF_VAR_REG(char*, __teb, "x18");
     __value = *(int8_t*) (__teb + __offset);
 #elif defined __MCF_M_X8664
     __value = (int8_t) __readgsbyte(__offset);
@@ -81,8 +80,7 @@ __MCF_teb_store_8(uint32_t __offset, int8_t __value)
         : : "r"(__value), "Ts"(__offset) : "memory");
 #  endif
 #elif defined __MCF_M_ARM64_ASM
-    register char* __teb __asm__("x18");
-    __asm__ ("" : "=r"(__teb));
+    __MCF_VAR_REG(char*, __teb, "x18");
     *(int8_t*) (__teb + __offset) = __value;
 #elif defined __MCF_M_X8664
     __writegsbyte(__offset, (uint8_t) __value);
@@ -119,8 +117,7 @@ __MCF_teb_load_16(uint32_t __offset)
         : "=r"(__value) : "Ts"(__offset) : "memory");
 #  endif
 #elif defined __MCF_M_ARM64_ASM
-    register char* __teb __asm__("x18");
-    __asm__ ("" : "=r"(__teb));
+    __MCF_VAR_REG(char*, __teb, "x18");
     __value = *(int16_t*) (__teb + __offset);
 #elif defined __MCF_M_X8664
     __value = (int16_t) __readgsword(__offset);
@@ -157,8 +154,7 @@ __MCF_teb_store_16(uint32_t __offset, int16_t __value)
         : : "r"(__value), "Ts"(__offset) : "memory");
 #  endif
 #elif defined __MCF_M_ARM64_ASM
-    register char* __teb __asm__("x18");
-    __asm__ ("" : "=r"(__teb));
+    __MCF_VAR_REG(char*, __teb, "x18");
     *(int16_t*) (__teb + __offset) = __value;
 #elif defined __MCF_M_X8664
     __writegsword(__offset, (uint16_t) __value);
@@ -195,8 +191,7 @@ __MCF_teb_load_32(uint32_t __offset)
         : "=r"(__value) : "Ts"(__offset) : "memory");
 #  endif
 #elif defined __MCF_M_ARM64_ASM
-    register char* __teb __asm__("x18");
-    __asm__ ("" : "=r"(__teb));
+    __MCF_VAR_REG(char*, __teb, "x18");
     __value = *(int32_t*) (__teb + __offset);
 #elif defined __MCF_M_X8664
     __value = (int32_t) __readgsdword(__offset);
@@ -233,8 +228,7 @@ __MCF_teb_store_32(uint32_t __offset, int32_t __value)
         : : "r"(__value), "Ts"(__offset) : "memory");
 #  endif
 #elif defined __MCF_M_ARM64_ASM
-    register char* __teb __asm__("x18");
-    __asm__ ("" : "=r"(__teb));
+    __MCF_VAR_REG(char*, __teb, "x18");
     *(int32_t*) (__teb + __offset) = __value;
 #elif defined __MCF_M_X8664
     __writegsdword(__offset, (uint32_t) __value);
@@ -271,8 +265,7 @@ __MCF_teb_load_ptr(uint32_t __offset)
         : "=r"(__value) : "Ts"(__offset) : "memory");
 #  endif
 #elif defined __MCF_M_ARM64_ASM
-    register char* __teb __asm__("x18");
-    __asm__ ("" : "=r"(__teb));
+    __MCF_VAR_REG(char*, __teb, "x18");
     __value = *(intptr_t*) (__teb + __offset);
 #elif defined __MCF_M_X8664
     __value = (intptr_t) __readgsqword(__offset);
@@ -309,8 +302,7 @@ __MCF_teb_store_ptr(uint32_t __offset, intptr_t __value)
         : : "r"(__value), "Ts"(__offset) : "memory");
 #  endif
 #elif defined __MCF_M_ARM64_ASM
-    register char* __teb __asm__("x18");
-    __asm__ ("" : "=r"(__teb));
+    __MCF_VAR_REG(char*, __teb, "x18");
     *(intptr_t*) (__teb + __offset) = __value;
 #elif defined __MCF_M_X8664
     __writegsqword(__offset, (uint64_t) __value);
@@ -343,8 +335,7 @@ __MCF_teb(void)
 #if defined __MCF_M_X8664_ASM && defined __FSGSBASE__
     return (void*) __builtin_ia32_rdgsbase64();
 #elif defined __MCF_M_ARM64_ASM
-    register char* __teb __asm__("x18");
-    __asm__ ("" : "=r"(__teb));
+    __MCF_VAR_REG(void*, __teb, "x18");
     return __teb;
 #else
     return (void*) __MCF_teb_load_ptr(__MCF_64_32(0x30, 0x18));
