@@ -707,6 +707,7 @@ __asm__ (
 "\n   .rva __os_arm64x_helper6"
 "\n   .rva __os_arm64x_helper7"
 "\n   .rva __os_arm64x_helper8"
+"\n"
 /* These are pointers to helper routines, which will be filled after the image
  * is loaded by the operating system.  */
 "\n .section .00cfg, \"dr\""
@@ -753,6 +754,7 @@ __asm__ (
 "\n .globl __os_arm64x_helper8"
 "\n __os_arm64x_helper8:"
 "\n   .quad 0"
+"\n"
 /* This is the ARM64EC Adjustor Thunk. Calls to this function are synthesized
  * by the compiler.  */
 "\n .section .text$__icall_helper_arm64ec, \"x\""
@@ -775,6 +777,7 @@ __asm__ (
 "\n .seh_endepilogue"
 "\n   br x11"
 "\n .seh_endproc"
+"\n"
 /* This is a common wrapper with an Exit Thunk for x86-64 callback functions
  * that return either values in RAX, or void.  */
 "\n .globl __MCF_arm64ec_exit_thunk_p"
