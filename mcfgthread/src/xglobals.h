@@ -102,8 +102,8 @@ __MCF_ALWAYS_INLINE
 void
 __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
   {
-    __MCF_VAR_REG(int, eax, "eax");
-    __MCF_VAR_REG(int, edx, "edx");
+    register int eax __asm__("eax"), edx __asm__("edx");
+    __asm__ ("" : "=r"(eax), "=r"(edx));
     typedef __attribute__((__regparm__(3))) void xfn(int, int, void*, void*);
     (* __MCF_CAST_PTR(xfn, dtor.__cdecl_ptr)) (eax, edx, arg, arg);
   }

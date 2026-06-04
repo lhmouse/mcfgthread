@@ -177,22 +177,22 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
           __attribute__((__cleanup__(__MCF_i386_seh_cleanup)))
       = __MCF_i386_seh_install((DWORD[]){ (DWORD) __MCF_teb_load_ptr(0),
                                           (DWORD) do_call_once_seh_unwind, (DWORD) once });
-    _MCF_once* saved_once;
+    _MCF_once* saved_once = once;
 #  define do_seh_once_reg(frm, disp)  (((DWORD**) (frm))[2])
 #else
     __asm__ (".seh_handler %c0, @except, @unwind" : : "i"(do_call_once_seh_unwind));
 #  if defined __MCF_M_X8664_ASM
-    __MCF_VAR_REG(_MCF_once*, saved_once, "rsi");
+    register _MCF_once* saved_once __asm__("rsi") = once;
 #  elif defined __MCF_M_ARM64_ASM
-    __MCF_VAR_REG(_MCF_once*, saved_once, "x25");
+    register _MCF_once* saved_once __asm__("x25") = once;
 #  endif
+    __asm__ volatile ("" : "+r"(saved_once));
 #  if defined __MCF_M_X8664
 #    define do_seh_once_reg(frm, disp)  (((DISPATCHER_CONTEXT*) (disp))->ContextRecord->Rsi)
 #  elif defined __MCF_M_ARM64
 #    define do_seh_once_reg(frm, disp)  (((DISPATCHER_CONTEXT*) (disp))->ContextRecord->X25)
 #  endif
 #endif
-    saved_once = once;
 
     /* Do initialization. This is the normal path.  */
     __MCF_invoke_cxa_dtor(init_proc, arg);

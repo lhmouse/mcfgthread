@@ -140,7 +140,6 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
 #  define __MCF_UNREACHABLE     (__builtin_unreachable())
 #  define __MCF_ALT_SYM(x, fn)   extern __typeof__(x) fn __asm__(__MCF_USYM #x)
-#  define __MCF_VAR_REG(T, v, r)   register T v __asm__(r); __asm__ ("" : "=r"(v))
 #  if defined __amd64__ && !defined __arm64ec__
 #    define __MCF_64_32(x, y)  x
 #    define __MCF_USYM  ""
@@ -176,7 +175,6 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_ALIGNED(x)    __declspec(align(x))
 #  define __MCF_UNREACHABLE     (__assume(0))
 #  define __MCF_ALT_SYM(x, fn)   __pragma(comment(linker, "/alternatename:" __MCF_USYM #fn "=" __MCF_USYM #x))
-#  define __MCF_VAR_REG(T, v, r)   unsupported
 #  if defined _M_X64 && !defined _M_ARM64EC
 #    define __MCF_64_32(x, y)  x
 #    define __MCF_USYM  ""
