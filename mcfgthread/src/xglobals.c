@@ -182,11 +182,11 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
 #else
     __asm__ (".seh_handler %c0, @except, @unwind" : : "i"(do_call_once_seh_unwind));
 #  if defined __MCF_M_X8664_ASM
-    register _MCF_once* saved_once __asm__("rsi") = once;
+    register _MCF_once* saved_once __asm__("rsi");
 #  elif defined __MCF_M_ARM64_ASM
-    register _MCF_once* saved_once __asm__("x25") = once;
+    register _MCF_once* saved_once __asm__("x25");
 #  endif
-    __asm__ volatile ("" : "+r"(saved_once));
+    __asm__ volatile ("" : "=r"(saved_once) : "0"(once));
 #  if defined __MCF_M_X8664
 #    define do_seh_once_reg(frm, disp)  (((DISPATCHER_CONTEXT*) (disp))->ContextRecord->Rsi)
 #  elif defined __MCF_M_ARM64

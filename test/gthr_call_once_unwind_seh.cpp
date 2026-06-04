@@ -43,11 +43,11 @@ once_do_it(void* add)
     ::fprintf(stderr, "thread %d done\n", ::__MCF_tid());
 
 #if defined __MCF_M_X8664_ASM
-      register int64_t dummy __asm__("rsi") = 0x123456789abcdef;
-      __asm__ volatile ("" : "+r"(dummy));
+    register void* dummy __asm__("rsi");
+    __asm__ volatile ("xor %k0, %k0" : "=r"(dummy));
 #elif defined __MCF_M_ARM64_ASM
-      register int64_t dummy __asm__("x25") = 0x123456789abcdef;
-      __asm__ volatile ("" : "+r"(dummy));
+    register void* dummy __asm__("x25");
+    __asm__ volatile ("mov %x0, xzr" : "=r"(dummy));
 #endif
     throw 42;
   }
@@ -60,11 +60,11 @@ thread_proc()
 
     try {
 #if defined __MCF_M_X8664_ASM
-      register int64_t dummy __asm__("rsi") = 0x123456789abcdef;
-      __asm__ volatile ("" : "+r"(dummy));
+      register void* dummy __asm__("rsi");
+      __asm__ volatile ("xor %k0, %k0" : "=r"(dummy));
 #elif defined __MCF_M_ARM64_ASM
-      register int64_t dummy __asm__("x25") = 0x123456789abcdef;
-      __asm__ volatile ("" : "+r"(dummy));
+      register void* dummy __asm__("x25");
+      __asm__ volatile ("mov %x0, xzr" : "=r"(dummy));
 #endif
       __MCF_gthr_call_once_seh(&once, once_do_it, (void*) 1);
       ::std::terminate();
