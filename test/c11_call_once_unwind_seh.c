@@ -5,6 +5,10 @@
  * LICENSE.md as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
+#if !defined __SEH__ && !defined _MSC_VER
+int main(void) { return 77;  }
+#else  // __SEH__
+
 #include "../mcfgthread/c11.h"
 #include "../mcfgthread/sem.h"
 #include <windows.h>
@@ -91,3 +95,5 @@ main(void)
 
     assert(resource == NTHREADS);
   }
+
+#endif  // __SEH__
