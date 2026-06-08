@@ -164,7 +164,7 @@ _MCF_get_active_processor_mask(void)
     return __MCF_crt_sysinfo.dwActiveProcessorMask;
   }
 
-static __attribute__((__section__(".text$"), __no_reorder__))
+static __attribute__((__section__(".text$$safeseh$0000")))
 EXCEPTION_DISPOSITION
 do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
 
@@ -217,7 +217,7 @@ do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, 
     return ExceptionContinueSearch;
   }
 
-__MCF_DLLEXPORT __attribute__((__section__(".text$"), __no_reorder__))
+__MCF_DLLEXPORT __attribute__((__section__(".text$$safeseh$0001")))
 EXCEPTION_DISPOSITION
 __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
   {
