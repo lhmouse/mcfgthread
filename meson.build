@@ -131,7 +131,7 @@ add_project_arguments(
     '-U_FORTIFY_SOURCE',
     '-fno-stack-protector', '-fno-omit-frame-pointer', '-momit-leaf-frame-pointer',
     '-fmerge-all-constants', '-fstrict-aliasing', '-ffast-math', '-fdata-sections',
-    '-funwind-tables',
+    '-ffunction-sections', '-funwind-tables',
     '-Werror=conversion', '-Werror=sign-compare', '-Werror=sign-conversion',
     '-Werror=write-strings', '-Werror=return-type', '-Werror=double-promotion',
     '-Wmissing-declarations', '-Wswitch-enum', '-Wmissing-field-initializers',
@@ -298,7 +298,6 @@ if cc.has_define('__CYGWIN__')
 else
   lib_mcfgthread_a = static_library('mcfgthread',
         c_pch: 'mcfgthread/src/xprecompiled.h',
-        c_args: [ '-ffunction-sections' ],
         implicit_include_directories: false,
         include_directories: include_directories('.'),
         sources: [ mcfgthread_src_min, mcfgthread_src_ex ],
