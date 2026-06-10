@@ -188,10 +188,12 @@ install_headers(configure_file(output: 'version.h',
                                input: 'mcfgthread/version.h.in',
                                configuration: ver,
                                install: false),
-                subdir: 'mcfgthread')
+                subdir: 'mcfgthread',
+                install_tag: 'include')
 
 install_headers(mcfgthread_include,
-                preserve_path: true)
+                preserve_path: true,
+                install_tag: 'include')
 
 #===========================================================
 # Rules for 'lib/libmcfgthread'
@@ -275,7 +277,8 @@ lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       kwargs: kwargs_dll,
       soversion: ver['abi_major'],
       version: '.'.join([ ver['abi_major'], ver['abi_minor'], '0' ]),
-      install: true)
+      install: true,
+      install_tag: 'shared')
 
 lib_mcfgthread_dll = shared_library('mcfgthread',
       c_pch: 'mcfgthread/src/xprecompiled.h',
@@ -290,7 +293,8 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
       kwargs: kwargs_dll,
       soversion: ver['abi_major'],
       version: '.'.join([ ver['abi_major'], ver['abi_minor'], '0' ]),
-      install: true)
+      install: true,
+      install_tag: 'shared')
 
 if cc.has_define('__CYGWIN__')
   warning('Static linking is not supported on Cygwin or MSYS2.')
@@ -302,7 +306,8 @@ else
         include_directories: include_directories('.'),
         sources: [ mcfgthread_src_min, mcfgthread_src_ex ],
         kwargs: kwargs_lib,
-        install: true)
+        install: true,
+        install_tag: 'static')
 endif
 
 import('pkgconfig').generate(lib_mcfgthread_dll,
