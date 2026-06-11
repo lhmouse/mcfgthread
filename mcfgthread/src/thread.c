@@ -223,11 +223,10 @@ __MCF_DLLEXPORT __MCF_FN_CONST
 _MCF_thread*
 _MCF_thread_self(void)
   {
-    uint32_t index = __MCF_G(tls_index);
-    if(index < 64) {
-      /* This is the same as `TlsGetValue2()`.  */
-      uint32_t addr = __MCF_64_32(0x1480 + index * 8, 0x0E10 + index * 4);
-      _MCF_thread* self = (void*) __MCF_teb_load_ptr(addr);
+    uintptr_t tls_index = __MCF_G(tls_index);
+    if(tls_index < 64) {
+      uintptr_t tls_addr = __MCF_64_32(0x1480, 0x0E10) + tls_index * sizeof(void*);
+      _MCF_thread* self = (void*) __MCF_teb_load_ptr((uint32_t) tls_addr);
       if(self)
         return self;
     }
