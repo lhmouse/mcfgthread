@@ -27,37 +27,39 @@ int8_t
 __MCF_teb_load_8(uint32_t __offset)
   __MCF_noexcept
   {
-    int8_t __value;
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    __value = *(int8_t __seg_gs*) (__offset + 0ULL);
+    return *(int8_t __seg_gs*) (__offset + 0ULL);
 #  else
+    int8_t __value;
     __asm__ ("gs { movzbl %a1, %k0 | movzx %k0, BYTE PTR %a1 }"
              : "=q"(__value) : "Ts"(__offset + 0ULL)
              : "memory");
+    return __value;
 #  endif
 #elif defined __MCF_M_X8632_ASM
 #  if defined __clang__
-    __value = *(int8_t __seg_fs*) __offset;
+    return *(int8_t __seg_fs*) __offset;
 #  else
+    int8_t __value;
     __asm__ ("fs { movzbl %a1, %k0 | movzx %k0, BYTE PTR %a1 }"
              : "=q"(__value) : "Ts"(__offset)
              : "memory");
+    return __value;
 #  endif
 #elif defined __MCF_M_ARM64_ASM
     register char* __teb __asm__("x18");
     __asm__ ("" : "=r"(__teb));
-    __value = *(int8_t*) (__teb + __offset);
+    return *(int8_t*) (__teb + __offset);
 #elif defined __MCF_M_X8664
-    __value = (int8_t) __readgsbyte(__offset);
+    return (int8_t) __readgsbyte(__offset);
 #elif defined __MCF_M_X8632
-    __value = (int8_t) __readfsbyte(__offset);
+    return (int8_t) __readfsbyte(__offset);
 #elif defined __MCF_M_ARM64
-    __value = (int8_t) __readx18byte(__offset);
+    return (int8_t) __readx18byte(__offset);
 #else
 #  error unimplemented
 #endif
-    return __value;
   }
 
 /* Stores an 8-bit integer at `__offset` of the thread environment block (TEB)
@@ -107,37 +109,39 @@ int16_t
 __MCF_teb_load_16(uint32_t __offset)
   __MCF_noexcept
   {
-    int16_t __value;
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    __value = *(int16_t __seg_gs*) (__offset + 0ULL);
+    return *(int16_t __seg_gs*) (__offset + 0ULL);
 #  else
+    int16_t __value;
     __asm__ ("gs { movzwl %a1, %k0 | movzx %k0, WORD PTR %a1 }"
              : "=r"(__value) : "Ts"(__offset + 0ULL)
              : "memory");
+    return __value;
 #  endif
 #elif defined __MCF_M_X8632_ASM
 #  if defined __clang__
-    __value = *(int16_t __seg_fs*) __offset;
+    return *(int16_t __seg_fs*) __offset;
 #  else
+    int16_t __value;
     __asm__ ("fs { movzwl %a1, %k0 | movzx %k0, WORD PTR %a1 }"
              : "=r"(__value) : "Ts"(__offset)
              : "memory");
+    return __value;
 #  endif
 #elif defined __MCF_M_ARM64_ASM
     register char* __teb __asm__("x18");
     __asm__ ("" : "=r"(__teb));
-    __value = *(int16_t*) (__teb + __offset);
+    return *(int16_t*) (__teb + __offset);
 #elif defined __MCF_M_X8664
-    __value = (int16_t) __readgsword(__offset);
+    return (int16_t) __readgsword(__offset);
 #elif defined __MCF_M_X8632
-    __value = (int16_t) __readfsword(__offset);
+    return (int16_t) __readfsword(__offset);
 #elif defined __MCF_M_ARM64
-    __value = (int16_t) __readx18word(__offset);
+    return (int16_t) __readx18word(__offset);
 #else
 #  error unimplemented
 #endif
-    return __value;
   }
 
 /* Stores a 16-bit integer at `__offset` of the thread environment block (TEB)
@@ -187,37 +191,39 @@ int32_t
 __MCF_teb_load_32(uint32_t __offset)
   __MCF_noexcept
   {
-    int32_t __value;
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    __value = *(int32_t __seg_gs*) (__offset + 0ULL);
+    return *(int32_t __seg_gs*) (__offset + 0ULL);
 #  else
+    int32_t __value;
     __asm__ ("gs { movl %a1, %k0 | mov %k0, DWORD PTR %a1 }"
              : "=r"(__value) : "Ts"(__offset + 0ULL)
              : "memory");
+    return __value;
 #  endif
 #elif defined __MCF_M_X8632_ASM
 #  if defined __clang__
-    __value = *(int32_t __seg_fs*) __offset;
+    return *(int32_t __seg_fs*) __offset;
 #  else
+    int32_t __value;
     __asm__ ("fs { movl %a1, %k0 | mov %k0, DWORD PTR %a1 }"
              : "=r"(__value) : "Ts"(__offset)
              : "memory");
+    return __value;
 #  endif
 #elif defined __MCF_M_ARM64_ASM
     register char* __teb __asm__("x18");
     __asm__ ("" : "=r"(__teb));
-    __value = *(int32_t*) (__teb + __offset);
+    return *(int32_t*) (__teb + __offset);
 #elif defined __MCF_M_X8664
-    __value = (int32_t) __readgsdword(__offset);
+    return (int32_t) __readgsdword(__offset);
 #elif defined __MCF_M_X8632
-    __value = (int32_t) __readfsdword(__offset);
+    return (int32_t) __readfsdword(__offset);
 #elif defined __MCF_M_ARM64
-    __value = (int32_t) __readx18dword(__offset);
+    return (int32_t) __readx18dword(__offset);
 #else
 #  error unimplemented
 #endif
-    return __value;
   }
 
 /* Stores a 32-bit integer at `__offset` of the thread environment block (TEB)
@@ -267,37 +273,39 @@ intptr_t
 __MCF_teb_load_ptr(uint32_t __offset)
   __MCF_noexcept
   {
-    intptr_t __value;
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    __value = *(intptr_t __seg_gs*) (__offset + 0ULL);
+    return *(int64_t __seg_gs*) (__offset + 0ULL);
 #  else
+    int64_t __value;
     __asm__ ("gs { movq %a1, %q0 | mov %q0, QWORD PTR %a1 }"
              : "=r"(__value) : "Ts"(__offset + 0ULL)
              : "memory");
+    return __value;
 #  endif
 #elif defined __MCF_M_X8632_ASM
 #  if defined __clang__
-    __value = *(intptr_t __seg_fs*) __offset;
+    return *(int32_t __seg_fs*) __offset;
 #  else
+    int32_t __value;
     __asm__ ("fs { movl %a1, %k0 | mov %k0, DWORD PTR %a1 }"
              : "=r"(__value) : "Ts"(__offset)
              : "memory");
+    return __value;
 #  endif
 #elif defined __MCF_M_ARM64_ASM
     register char* __teb __asm__("x18");
     __asm__ ("" : "=r"(__teb));
-    __value = *(intptr_t*) (__teb + __offset);
+    return *(int64_t*) (__teb + __offset);
 #elif defined __MCF_M_X8664
-    __value = (intptr_t) __readgsqword(__offset);
+    return (int64_t) __readgsqword(__offset);
 #elif defined __MCF_M_X8632
-    __value = (intptr_t) __readfsdword(__offset);
+    return (int32_t) __readfsdword(__offset);
 #elif defined __MCF_M_ARM64
-    __value = (intptr_t) __readx18qword(__offset);
+    return (int64_t) __readx18qword(__offset);
 #else
 #  error unimplemented
 #endif
-    return __value;
   }
 
 /* Stores a pointer-size integer at `__offset` of the thread environment block
@@ -310,7 +318,7 @@ __MCF_teb_store_ptr(uint32_t __offset, intptr_t __value)
   {
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    *(intptr_t __seg_gs*) (__offset + 0ULL) = __value;
+    *(int64_t __seg_gs*) (__offset + 0ULL) = __value;
 #  else
     __asm__ volatile ("gs { movq %1, %a0 | mov QWORD PTR %a0, %1 }"
                       : : "Ts"(__offset + 0ULL), "re"(__value)
@@ -318,7 +326,7 @@ __MCF_teb_store_ptr(uint32_t __offset, intptr_t __value)
 #  endif
 #elif defined __MCF_M_X8632_ASM
 #  if defined __clang__
-    *(intptr_t __seg_fs*) __offset = __value;
+    *(int32_t __seg_fs*) __offset = __value;
 #  else
     __asm__ volatile ("fs { movl %1, %a0 | mov DWORD PTR %a0, %1 }"
                       : : "Ts"(__offset), "ri"(__value)
@@ -327,7 +335,7 @@ __MCF_teb_store_ptr(uint32_t __offset, intptr_t __value)
 #elif defined __MCF_M_ARM64_ASM
     register char* __teb __asm__("x18");
     __asm__ ("" : "=r"(__teb));
-    *(intptr_t*) (__teb + __offset) = __value;
+    *(int64_t*) (__teb + __offset) = __value;
 #elif defined __MCF_M_X8664
     __writegsqword(__offset, (uint64_t) __value);
 #elif defined __MCF_M_X8632
