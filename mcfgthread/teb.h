@@ -313,7 +313,7 @@ __MCF_teb_store_ptr(uint32_t __offset, intptr_t __value)
     *(intptr_t __seg_gs*) (__offset + 0ULL) = __value;
 #  else
     __asm__ volatile ("gs { movq %1, %a0 | mov QWORD PTR %a0, %1 }"
-                      : : "Ts"(__offset + 0ULL), "ri"(__value)
+                      : : "Ts"(__offset + 0ULL), "re"(__value)
                       : "memory");
 #  endif
 #elif defined __MCF_M_X8632_ASM
