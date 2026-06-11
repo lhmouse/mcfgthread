@@ -25,7 +25,7 @@ jobs:
 
   ubuntu-x86-64:
     name: Ubuntu cross (GCC, mingw-w64 runtime, MSVCRT, x86-64)
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
 
     steps:
       - uses: actions/checkout@v6
