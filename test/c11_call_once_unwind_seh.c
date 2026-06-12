@@ -30,11 +30,14 @@ unwind_done(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_c
     if(rec->ExceptionCode == (DWORD) STATUS_UNWIND)
       ExitThread(0);
 
-#if defined __x86_64__
-    // https://bugs.winehq.org/show_bug.cgi?id=59850
-    if((rec->ExceptionCode == (DWORD) STATUS_ACCESS_VIOLATION) && !ctx->Rip)
-      ExitProcess(77);
+    if(rec->ExceptionCode == (DWORD) STATUS_ACCESS_VIOLATION) {
+      // https://bugs.winehq.org/show_bug.cgi?id=59850
+#if defined __MCF_M_X8664
+      if(!ctx->Rip) ExitProcess(77);
+#elif defined __MCF_M_ARM64
+      if(!ctx->Pc) ExitProcess(77);
 #endif
+    }
 
     return ExceptionContinueSearch;
   }
