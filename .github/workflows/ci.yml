@@ -90,7 +90,7 @@ jobs:
         run: meson install -Cbuild_ci --strip
 
       - uses: actions/upload-artifact@v7
-        with: { path: build_pkg, name: 'x86-64_gcc_mingw-w64' }
+        with: { path: build_pkg, name: 'x86-64_mingw-w64_gcc' }
 
   msys2-mingw32:
     name: MSYS2 native (GCC, mingw-w64 runtime, MSVCRT, x86-32)
@@ -126,7 +126,7 @@ jobs:
         run: meson install -Cbuild_ci --strip
 
       - uses: actions/upload-artifact@v7
-        with: { path: build_pkg, name: 'x86-32_gcc_mingw-w64' }
+        with: { path: build_pkg, name: 'x86-32_mingw-w64_gcc' }
 
   #==========================================================================
   # Secondary builds
@@ -166,7 +166,7 @@ jobs:
         run: meson install -Cbuild_ci --strip
 
       - uses: actions/upload-artifact@v7
-        with: { path: build_pkg, name: 'x86-64_clang_mingw-w64' }
+        with: { path: build_pkg, name: 'x86-64_mingw-w64_clang' }
 
   msys2-clangarm64:
     name: MSYS2 native (Clang, mingw-w64 runtime, UCRT, ARM64)
@@ -202,7 +202,7 @@ jobs:
         run: meson install -Cbuild_ci --strip
 
       - uses: actions/upload-artifact@v7
-        with: { path: build_pkg, name: 'arm64_clang_mingw-w64' }
+        with: { path: build_pkg, name: 'arm64_mingw-w64_clang' }
 
   llvm-mingw-arm64:
     name: LLVM-MinGW cross (Clang, mingw-w64 runtime, UCRT, ARM64)
@@ -279,7 +279,7 @@ jobs:
         run: meson install -Cbuild_ci --strip
 
       - uses: actions/upload-artifact@v7
-        with: { path: build_pkg, name: 'x86-32_clang_mingw-w64' }
+        with: { path: build_pkg, name: 'x86-32_mingw-w64_clang' }
 
   llvm-mingw-arm64ec:
     name: LLVM-MinGW native (Clang, mingw-w64 runtime, UCRT, ARM64EC)
@@ -333,7 +333,7 @@ jobs:
         run: meson install -Cbuild_ci --strip
 
       - uses: actions/upload-artifact@v7
-        with: { path: build_pkg, name: 'arm64ec_clang_mingw-w64' }
+        with: { path: build_pkg, name: 'arm64ec_mingw-w64_clang' }
 
   llvm-msvc-x64:
     name: LLVM-MSVC native (Clang, MSVC runtime, UCRT, x86-64)
@@ -365,7 +365,7 @@ jobs:
         run: meson install -Cbuild_ci --strip
 
       - uses: actions/upload-artifact@v7
-        with: { path: build_pkg, name: 'x86-64_clang_msvc' }
+        with: { path: build_pkg, name: 'x86-64_msvc_clang' }
 
   llvm-msvc-x86:
     name: LLVM-MSVC native (Clang, MSVC runtime, UCRT, x86-32)
@@ -397,7 +397,7 @@ jobs:
         run: meson install -Cbuild_ci --strip
 
       - uses: actions/upload-artifact@v7
-        with: { path: build_pkg, name: 'x86-32_clang_msvc' }
+        with: { path: build_pkg, name: 'x86-32_msvc_clang' }
 
   llvm-msvc-arm64:
     name: LLVM-MSVC native (Clang, MSVC runtime, UCRT, ARM64)
@@ -429,7 +429,7 @@ jobs:
         run: meson install -Cbuild_ci --strip
 
       - uses: actions/upload-artifact@v7
-        with: { path: build_pkg, name: 'arm64_clang_msvc' }
+        with: { path: build_pkg, name: 'arm64_msvc_clang' }
 
   llvm-msvc-arm64ec:
     name: LLVM-MSVC native (Clang, MSVC runtime, UCRT, ARM64EC)
@@ -477,7 +477,7 @@ jobs:
         run: meson install -Cbuild_ci --strip
 
       - uses: actions/upload-artifact@v7
-        with: { path: build_pkg, name: 'arm64ec_clang_msvc' }
+        with: { path: build_pkg, name: 'arm64ec_msvc_clang' }
 
   #==========================================================================
   # Tertiary builds
