@@ -46,8 +46,9 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup --cross-file cross/gcc.x86_64-w64-mingw32
-             -Denable-debug-checks=true -Doptimization=1 build_ci
+             meson setup -Ddebug=true -Doptimization=s build_ci
+             --prefix $PWD/build_pkg
+             --cross-file cross/gcc.x86_64-w64-mingw32
 
       - name: Build
         run: meson compile -Cbuild_ci
@@ -76,13 +77,20 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
+             meson setup -Ddebug=true -Doptimization=s build_ci
+             --prefix $PWD/build_pkg
 
       - name: Build
         run: meson compile -Cbuild_ci
 
       - name: Run tests
         run: meson test -t2 -Cbuild_ci --print-errorlogs
+
+      - name: Install
+        run: meson install -Cbuild_ci --strip
+
+      - uses: actions/upload-artifact@v7
+        with: { path: build_pkg, name: 'x86-64_gcc_mingw-w64' }
 
   msys2-mingw32:
     name: MSYS2 native (GCC, mingw-w64 runtime, MSVCRT, x86-32)
@@ -105,13 +113,20 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
+             meson setup -Ddebug=true -Doptimization=s build_ci
+             --prefix $PWD/build_pkg
 
       - name: Build
         run: meson compile -Cbuild_ci
 
       - name: Run tests
         run: meson test -t2 -Cbuild_ci --print-errorlogs
+
+      - name: Install
+        run: meson install -Cbuild_ci --strip
+
+      - uses: actions/upload-artifact@v7
+        with: { path: build_pkg, name: 'x86-32_gcc_mingw-w64' }
 
   #==========================================================================
   # Secondary builds
@@ -138,13 +153,20 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
+             meson setup -Ddebug=true -Doptimization=s build_ci
+             --prefix $PWD/build_pkg
 
       - name: Build
         run: meson compile -Cbuild_ci
 
       - name: Run tests
         run: meson test -t2 -Cbuild_ci --print-errorlogs
+
+      - name: Install
+        run: meson install -Cbuild_ci --strip
+
+      - uses: actions/upload-artifact@v7
+        with: { path: build_pkg, name: 'x86-64_clang_mingw-w64' }
 
   msys2-clangarm64:
     name: MSYS2 native (Clang, mingw-w64 runtime, UCRT, ARM64)
@@ -167,13 +189,20 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
+             meson setup -Ddebug=true -Doptimization=s build_ci
+             --prefix $PWD/build_pkg
 
       - name: Build
         run: meson compile -Cbuild_ci
 
       - name: Run tests
         run: meson test -t2 -Cbuild_ci --print-errorlogs
+
+      - name: Install
+        run: meson install -Cbuild_ci --strip
+
+      - uses: actions/upload-artifact@v7
+        with: { path: build_pkg, name: 'arm64_clang_mingw-w64' }
 
   llvm-mingw-arm64:
     name: LLVM-MinGW cross (Clang, mingw-w64 runtime, UCRT, ARM64)
@@ -204,14 +233,53 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup --cross-file cross/llvm.aarch64-w64-mingw32
-             -Denable-debug-checks=true -Doptimization=1 build_ci
+             meson setup -Ddebug=true -Doptimization=s build_ci
+             --prefix $PWD/build_pkg
+             --cross-file cross/llvm.aarch64-w64-mingw32
 
       - name: Build
         run:  meson compile -Cbuild_ci
 
       - name: Run tests
         run: meson test -t20 -Cbuild_ci --print-errorlogs
+
+  llvm-mingw-i686:
+    name: LLVM-MinGW native (Clang, mingw-w64 runtime, UCRT, x86-32)
+    runs-on: windows-2022
+
+    defaults:
+      run: { shell: pwsh }
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: >-
+             pip3 install --break-system-packages meson unzip
+
+      - name: Download LLVM MinGW
+        run: >-
+             curl.exe -LO "https://github.com/mstorsjo/llvm-mingw/releases/download/20260602/llvm-mingw-20260602-ucrt-i686.zip" &&
+             unzip llvm-mingw-20260602-ucrt-i686.zip &&
+             cvpa llvm-mingw-20260602-ucrt-i686/bin | tee -a "${env:GITHUB_PATH}"
+
+      - name: Configure
+        run: >-
+             meson setup -Ddebug=true -Doptimization=s build_ci
+             --prefix $PWD/build_pkg
+             --native-file cross/llvm.i686-w64-mingw32 -Denable-gc-sections=false
+
+      - name: Build
+        run: meson compile -Cbuild_ci
+
+      - name: Run tests
+        run: meson test -t2 -Cbuild_ci --print-errorlogs
+
+      - name: Install
+        run: meson install -Cbuild_ci --strip
+
+      - uses: actions/upload-artifact@v7
+        with: { path: build_pkg, name: 'x86-32_clang_mingw-w64' }
 
   llvm-mingw-arm64ec:
     name: LLVM-MinGW native (Clang, mingw-w64 runtime, UCRT, ARM64EC)
@@ -235,9 +303,9 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup --native-file cross/llvm.arm64ec-w64-mingw32
-             -Denable-debug-checks=true -Doptimization=1 build_ci
-             -Denable-gc-sections=false
+             meson setup -Ddebug=true -Doptimization=s build_ci
+             --prefix $PWD/build_pkg
+             --native-file cross/llvm.arm64ec-w64-mingw32 -Denable-gc-sections=false
 
       - name: Build
         run: meson compile -Cbuild_ci
@@ -247,8 +315,8 @@ jobs:
 
       - name: Configure emulated x64
         run: >-
-             meson setup --native-file cross/llvm.x86_64-w64-mingw32
-             -Denable-debug-checks=true -Doptimization=1 build_x64
+             meson setup -Ddebug=true -Doptimization=s build_x64
+             --native-file cross/llvm.x86_64-w64-mingw32
 
       - name: Build emulated x64
         run: meson compile -Cbuild_x64
@@ -260,6 +328,12 @@ jobs:
         run: >-
              copy build_ci/bin/*.dll build_x64/bin/ &&
              meson test -t2 -Cbuild_x64 --no-rebuild --print-errorlogs
+
+      - name: Install
+        run: meson install -Cbuild_ci --strip
+
+      - uses: actions/upload-artifact@v7
+        with: { path: build_pkg, name: 'arm64ec_clang_mingw-w64' }
 
   llvm-msvc-x64:
     name: LLVM-MSVC native (Clang, MSVC runtime, UCRT, x86-64)
@@ -277,14 +351,21 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup --native-file cross/llvm-windows.x86_64-pc-windows-msvc
-             -Denable-debug-checks=true -Doptimization=1 build_ci
+             meson setup -Ddebug=true -Doptimization=s build_ci
+             --prefix $PWD/build_pkg
+             --native-file cross/llvm-windows.x86_64-pc-windows-msvc
 
       - name: Build
         run: meson compile -Cbuild_ci
 
       - name: Run tests
         run: meson test -t2 -Cbuild_ci --print-errorlogs
+
+      - name: Install
+        run: meson install -Cbuild_ci --strip
+
+      - uses: actions/upload-artifact@v7
+        with: { path: build_pkg, name: 'x86-64_clang_msvc' }
 
   llvm-msvc-x86:
     name: LLVM-MSVC native (Clang, MSVC runtime, UCRT, x86-32)
@@ -302,14 +383,21 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup --native-file cross/llvm-windows.i686-pc-windows-msvc
-             -Denable-debug-checks=true -Doptimization=1 build_ci
+             meson setup -Ddebug=true -Doptimization=s build_ci
+             --prefix $PWD/build_pkg
+             --native-file cross/llvm-windows.i686-pc-windows-msvc
 
       - name: Build
         run: meson compile -Cbuild_ci
 
       - name: Run tests
         run: meson test -t2 -Cbuild_ci --print-errorlogs
+
+      - name: Install
+        run: meson install -Cbuild_ci --strip
+
+      - uses: actions/upload-artifact@v7
+        with: { path: build_pkg, name: 'x86-32_clang_msvc' }
 
   llvm-msvc-arm64:
     name: LLVM-MSVC native (Clang, MSVC runtime, UCRT, ARM64)
@@ -327,14 +415,21 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup --native-file cross/llvm-windows.aarch64-pc-windows-msvc
-             -Denable-debug-checks=true -Doptimization=1 build_ci
+             meson setup -Ddebug=true -Doptimization=s build_ci
+             --prefix $PWD/build_pkg
+             --native-file cross/llvm-windows.aarch64-pc-windows-msvc
 
       - name: Build
         run: meson compile -Cbuild_ci
 
       - name: Run tests
         run: meson test -t2 -Cbuild_ci --print-errorlogs
+
+      - name: Install
+        run: meson install -Cbuild_ci --strip
+
+      - uses: actions/upload-artifact@v7
+        with: { path: build_pkg, name: 'arm64_clang_msvc' }
 
   llvm-msvc-arm64ec:
     name: LLVM-MSVC native (Clang, MSVC runtime, UCRT, ARM64EC)
@@ -352,8 +447,9 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup --native-file cross/llvm-windows.arm64ec-pc-windows-msvc
-             -Denable-debug-checks=true -Doptimization=1 build_ci
+             meson setup -Ddebug=true -Doptimization=s build_ci
+             --prefix $PWD/build_pkg
+             --native-file cross/llvm-windows.arm64ec-pc-windows-msvc
 
       - name: Build
         run: meson compile -Cbuild_ci
@@ -363,8 +459,8 @@ jobs:
 
       - name: Configure emulated x64
         run: >-
-             meson setup --native-file cross/llvm-windows.x86_64-pc-windows-msvc
-             -Denable-debug-checks=true -Doptimization=1 build_x64
+             meson setup -Ddebug=true -Doptimization=s build_x64
+             --native-file cross/llvm-windows.x86_64-pc-windows-msvc
 
       - name: Build emulated x64
         run: meson compile -Cbuild_x64
@@ -376,6 +472,12 @@ jobs:
         run: >-
              copy build_ci/bin/*.dll build_x64/bin/ &&
              meson test -t2 -Cbuild_x64 --no-rebuild --print-errorlogs
+
+      - name: Install
+        run: meson install -Cbuild_ci --strip
+
+      - uses: actions/upload-artifact@v7
+        with: { path: build_pkg, name: 'arm64ec_clang_msvc' }
 
   #==========================================================================
   # Tertiary builds
@@ -402,7 +504,8 @@ jobs:
 
       - name: Configure
         run: >-
-             meson setup -Denable-debug-checks=true -Doptimization=1 build_ci
+             meson setup -Ddebug=true -Doptimization=s build_ci
+             --prefix $PWD/build_pkg
 
       - name: Build
         run: meson compile -Cbuild_ci
