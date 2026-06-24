@@ -13,10 +13,10 @@ to provide synchronization of initialization of local static objects, and by
 ## Benchmark Results
 
 This is the result of [a benchmark program](doc/benchmark_mutex.c) on Windows
-11 Insider Preview (dev channel, build 26300.7760) on an Intel i9-14900K desktop
-processor (8 P-cores + 16 E-cores, 32 threads):
+11 (26H2, build 26200.8737) on an Intel i9-14900K desktop processor (8 P-cores
++ 16 E-cores, 32 threads):
 
-![benchmark_result_win11_26300_i9_14900k](doc/benchmark_result_win11_26300_i9_14900k.png)
+![benchmark_result_win11_26200_i9_14900k](doc/benchmark_result_win11_26200_i9_14900k.png)
 
 This is the result on Windows 11 (25H2, build 26200.8246) on an AMD Ryzen 9
 9950X3D desktop processor (16 cores, 32 threads; special thanks to @fredyakumo
