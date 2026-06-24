@@ -108,10 +108,17 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
       __MCF_ASSERT(my_mask != 0);
       uint32_t mask_to_restore = my_mask;
 
+      LARGE_INTEGER t1;
+      QueryPerformanceCounter(&t1);
+
       while(sp_budget != 0) {
         sp_budget --;
-        for(uint32_t sp_scale = 29;  sp_scale != 0;  sp_scale --)
+
+        LARGE_INTEGER t0 = t1;
+        while((int) (t1.LowPart - t0.LowPart) * __MCF_crt_perf_freq_reciprocal < 0.001) {
           YieldProcessor();
+          QueryPerformanceCounter(&t1);
+        }
 
         /* Wait for my turn. It's the simplest and fastest way to perform
          * just an atomic exchange, on both x86 and ARM.  */
