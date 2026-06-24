@@ -40,10 +40,10 @@ cores, 8 threads):
 
 ![benchmark_result_win7_sp1_i7_7700](doc/benchmark_result_win7_sp1_i7_7700.png)
 
-This is the result on Wine 9.0 on Linux Mint 22 (kernel 6.11 low-latency) on an
+This is the result on Wine 10.0 on Linux Mint 23 (kernel 7.0 generic HWE) on an
 Intel i7-1165G7 mobile processor (4 cores, 8 threads):
 
-![benchmark_result_wine9.0_linux_i7_1165g7](doc/benchmark_result_wine9.0_linux_i7_1165g7.png)
+![benchmark_result_wine10.0_linux_i7_1165g7](doc/benchmark_result_wine10.0_linux_i7_1165g7.png)
 
 ## How to Build
 
