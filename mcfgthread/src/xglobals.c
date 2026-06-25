@@ -237,10 +237,9 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
        * unwound, so we must call `std::terminate()`. The CRT may have been
        * linked statically, but that is to be handled in the fast-fail path.  */
       HMODULE dlls[256];
-      DWORD size_needed;
-      if(K32EnumProcessModules(NtCurrentProcess(), dlls, sizeof(dlls), &size_needed)) {
-        uint32_t ndlls = (uint32_t) (_MCF_minz(size_needed, sizeof(dlls)) / sizeof(HMODULE));
-        for(uint32_t i = 0;  i != ndlls;  ++i) {
+      DWORD dlls_cb;
+      if(K32EnumProcessModules(NtCurrentProcess(), dlls, sizeof(dlls), &dlls_cb))
+        for(uint32_t i = 0;  i != _MCF_minz(dlls_cb, sizeof(dlls)) / sizeof(HMODULE);  ++i) {
           /* Lock the DLL, in case that another thread unloads it.  */
           HMODULE dll;
           if(!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (void*) dlls[i], &dll))
@@ -263,7 +262,6 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
           /* Unlock the DLL.  */
           FreeLibrary(dll);
         }
-      }
     }
 
     /* The exception is unsolvable, so terminate the process.  */
