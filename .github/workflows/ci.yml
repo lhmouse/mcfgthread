@@ -54,7 +54,7 @@ jobs:
         run: meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t15 -Cbuild_ci --print-errorlogs
+        run: meson test -t2 -Cbuild_ci --print-errorlogs
 
   msys2-ucrt64:
     name: MSYS2 native (GCC, mingw-w64 runtime, UCRT, x86-64)
