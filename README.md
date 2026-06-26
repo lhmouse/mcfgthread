@@ -18,7 +18,7 @@ This is the result of [a benchmark program](doc/benchmark_mutex.c) on Windows
 
 ![benchmark_result_win11_26200_i9_14900k](doc/benchmark_result_win11_26200_i9_14900k.png)
 
-This is the result on Windows 11 (25H2, build 26200.8246) on an AMD Ryzen 9
+This is the result on Windows 11 (25H2, build 26200.8655) on an AMD Ryzen 9
 9950X3D desktop processor (16 cores, 32 threads; special thanks to @fredyakumo
 for testing!):
 
