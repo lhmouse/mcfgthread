@@ -319,8 +319,10 @@ typedef void _MCF_thread_procedure(_MCF_thread* __thrd);
 /* Define the prototype for destructors for `_MCF_tls_key_new()`.  */
 typedef void _MCF_tls_dtor(void* __ptr);
 
-/* Define the prototype for destructors for `atexit()` and `at_quick_exit()`.  */
+/* Define prototypes for destructors for `atexit()` and `at_quick_exit()`.  */
 typedef void __MCF_atexit_callback(void);
+typedef void __stdcall __MCF_atexit_callback_stdcall(void);
+typedef void __fastcall __MCF_atexit_callback_fastcall(void);
 
 /* Define the prototype for `call_once()`.  */
 typedef void __MCF_once_callback(void);
@@ -350,10 +352,12 @@ typedef union __MCF_cxa_dtor_any __MCF_cxa_dtor_any_;
 __MCF_TRANSPARENT_UNION __MCF_cxa_dtor_any
   {
     __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_cxa_dtor_cdecl*, __cdecl_ptr);
-    __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_atexit_callback*, __nullary_ptr);
+    __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_atexit_callback*, __cdecl_0_ptr);
 #  if defined __MCF_M_X8632
     __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_cxa_dtor_fastcall*, __fastcall_ptr);
     __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_cxa_dtor_thiscall*, __thiscall_ptr);
+    __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_atexit_callback_stdcall*, __stdcall_0_ptr);
+    __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_atexit_callback_fastcall*, __fastcall_0_ptr);
 #  endif
   };
 #else
