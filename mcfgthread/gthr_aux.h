@@ -150,6 +150,11 @@ __MCF_gthr_thread_create_v3(__MCF_gthr_thread_procedure* __proc, void* __arg)
   __MCF_noexcept;
 
 __MCF_GTHR_AUX_IMPORT
+_MCF_thread*
+__MCF_gthr_thread_create_v4(_MCF_thread** __thrdp_opt, __MCF_gthr_thread_procedure* __proc, void* __arg)
+  __MCF_noexcept;
+
+__MCF_GTHR_AUX_IMPORT
 void
 __MCF_gthr_thread_join_v3(_MCF_thread* __thrd, void** __resp_opt)
   __MCF_noexcept;

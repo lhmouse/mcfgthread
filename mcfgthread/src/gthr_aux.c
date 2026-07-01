@@ -164,11 +164,18 @@ __MCF_DLLEXPORT
 _MCF_thread*
 __MCF_gthr_thread_create_v3(__MCF_gthr_thread_procedure* proc, void* arg)
   {
+    return __MCF_gthr_thread_create_v4(nullptr, proc, arg);
+  }
+
+__MCF_GTHR_AUX_IMPORT
+_MCF_thread*
+__MCF_gthr_thread_create_v4(_MCF_thread** thrdp_opt, __MCF_gthr_thread_procedure* proc, void* arg)
+  {
     __MCF_ALIGNED(8) __MCF_gthr_thread_record record;
     __builtin_memcpy(record.__magic_guid, __MCF_crt_gthread_guid, 16);
     record.__proc = proc;
     record.__arg_or_result = arg;
-    return _MCF_thread_new(do_gthread_routine, &record, sizeof(record));
+    return _MCF_thread_p_new(thrdp_opt, do_gthread_routine, 0, &record, sizeof(record));
   }
 
 __MCF_DLLEXPORT

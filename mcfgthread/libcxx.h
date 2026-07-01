@@ -608,8 +608,8 @@ int
 __MCF_libcxx_thread_create(__libcpp_thread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg)
   __MCF_noexcept
   {
-    *__thrdp = __MCF_gthr_thread_create_v3(__proc, __arg);
-    return (*__thrdp == __MCF_nullptr) ? EAGAIN : 0;
+    _MCF_thread* __thrd = __MCF_gthr_thread_create_v4(__thrdp, __proc, __arg);
+    return (__thrd == __MCF_nullptr) ? EAGAIN : 0;
   }
 
 __MCF_LIBCXX_INLINE

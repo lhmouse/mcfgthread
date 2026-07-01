@@ -50,8 +50,8 @@ do_win32_thread_routine(LPVOID param)
 
 __MCF_DLLEXPORT
 _MCF_thread*
-_MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* data_opt,
-                        size_t size)
+_MCF_thread_p_new(_MCF_thread** thrdp_opt, _MCF_thread_procedure* proc, size_t align,
+                  const void* data_opt, size_t size)
   {
     if(!proc)
       return __MCF_win32_error_p(ERROR_INVALID_PARAMETER, nullptr);
@@ -83,6 +83,9 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     if(!thrd)
       return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, nullptr);
 
+    _MCF_atomic_store_32_rlx(thrd->__nref, 2);
+    thrd->__proc = proc;
+
     if(size != 0) {
       uintptr_t data_addr = (uintptr_t) thrd + sizeof(__MCF_thread_base);
       thrd->__data_opt = (void*) data_addr;
@@ -106,10 +109,6 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
         __MCF_mcopy(thrd->__data_opt, data_opt, size);
     }
 
-    /* Create a thread, which shall wait on `__init_done` and shall not continue
-     * before `__tid` and `__handle` are initialized.  */
-    _MCF_atomic_store_32_rlx(thrd->__nref, 2);
-    thrd->__proc = proc;
     thrd->__handle = CreateThread(nullptr, 0, do_win32_thread_routine, thrd, 0,
                                   (DWORD*) &(thrd->__tid));
     if(!thrd->__handle) {
@@ -117,7 +116,11 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
       return nullptr;
     }
 
-    /* Return the initialized thread.  */
+    /* Now `__tid` and `__handle` have been initialized, pass the structure back
+     * to the caller. The new thread is still waiting on `__init_done`.  */
+    __MCF_SET_IF(thrdp_opt, thrd);
+
+    /* Let the new thread go.  */
     _MCF_event_set(thrd->__init_done, init_st_success);
     return thrd;
   }
