@@ -97,7 +97,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     _MCF_atomic_store_32_rlx(thrd->__nref, 2);
     thrd->__proc = proc;
     thrd->__handle = CreateThread(nullptr, 0, do_win32_thread_routine, thrd, 0,
-                                  (void*) &(thrd->__tid));
+                                  (DWORD*) &(thrd->__tid));
     if(!thrd->__handle) {
       __MCF_mfree_nonnull(thrd);
       return nullptr;
@@ -113,7 +113,7 @@ __MCF_thread_attach_foreign(_MCF_thread* thrd)
   {
     __MCF_ASSERT(thrd->__nref[0] == 0);
     __MCF_ASSERT(thrd->__tid == 0);
-    __MCF_ASSERT(thrd->__handle == nullptr);
+    __MCF_ASSERT(thrd->__handle == NULL);
 
     /* Initialize thread identity fields.  */
     thrd->__tid = __MCF_tid();
