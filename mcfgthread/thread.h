@@ -13,6 +13,9 @@
 #include "tls.h"
 #include "atomic.h"
 #include "teb.h"
+#ifdef __MCF_THREAD_DETAILS
+#include "event.h"
+#endif
 
 __MCF_CXX(extern "C" {)
 #ifndef __MCF_THREAD_IMPORT
@@ -33,7 +36,14 @@ struct __MCF_thread_base
     __MCF_BR(__MCF_dtor_queue) __atexit_queue;  /* for `__cxa_thread_atexit()`  */
     __MCF_BR(__MCF_tls_table) __tls_table;  /* for `_MCF_tls_get()` and `_MCF_tls_set()`  */
 
-    void* __libobjc_tls_data;  /* for GCC libobjc  */
+#ifdef __MCF_THREAD_DETAILS
+    union {
+#endif
+      void* __libobjc_tls_data;  /* for GCC libobjc  */
+#ifdef __MCF_THREAD_DETAILS
+      __MCF_BR(_MCF_event) __init_done;
+    };
+#endif
   };
 
 /* This is the default alignment of user-defined data that is guaranteed by

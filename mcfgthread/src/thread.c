@@ -8,16 +8,29 @@
 #include "xprecompiled.h"
 #define __MCF_THREAD_IMPORT  __MCF_DLLEXPORT
 #define __MCF_THREAD_INLINE  __MCF_DLLEXPORT
+#define __MCF_THREAD_DETAILS  1
 #include "../thread.h"
 #include "xglobals.h"
+
+enum
+  {
+    init_st_zero     = 0,
+    init_st_success  = 1,
+  };
 
 static __MCF_REALIGN_SP
 void
 do_thread_startup(_MCF_thread* thrd)
   {
     __MCF_USING_SEH_TERMINUS;
-    thrd->__tid = __MCF_tid();
+    if(_MCF_event_await_change(thrd->__init_done, init_st_zero, nullptr) != init_st_success)
+      return;
+
+    __MCF_ASSERT(thrd->__tid != 0);
+    __MCF_ASSERT(thrd->__handle != NULL);
+    thrd->__libobjc_tls_data = nullptr;
     __MCF_CHECK(TlsSetValue(__MCF_G(tls_index), thrd));
+
 #if defined __MCF_M_X86_ASM
     /* Set x87 precision to 64-bit mantissa (GNU `long double` format).  */
     __asm__ volatile ("fninit");
@@ -93,7 +106,8 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
         __MCF_mcopy(thrd->__data_opt, data_opt, size);
     }
 
-    /* Create a thread and wait for its initialization to finish.  */
+    /* Create a thread, which shall wait on `__init_done` and shall not continue
+     * before `__tid` and `__handle` are initialized.  */
     _MCF_atomic_store_32_rlx(thrd->__nref, 2);
     thrd->__proc = proc;
     thrd->__handle = CreateThread(nullptr, 0, do_win32_thread_routine, thrd, 0,
@@ -104,6 +118,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* proc, size_t align, const void* d
     }
 
     /* Return the initialized thread.  */
+    _MCF_event_set(thrd->__init_done, init_st_success);
     return thrd;
   }
 
