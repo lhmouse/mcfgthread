@@ -71,11 +71,11 @@ enum __MCF_thread_priority __MCF_CXX11(: int)
   };
 
 /* Creates a thread. The `__nref` member is initialized to 2, since a running
- * thread holds a reference to itself. If `__size` is specified as non-zero,
- * storage for user-defined data is reserved. The storage is initialized to
- * zeroes. If `__data_opt` is non-null, it is used to initialize the storage
- * before the new thread begins execution. `__alignment` specifies the
- * alignment of user-defined data. If it is not zero, then it must be a power
+ * thread holds a reference to itself. If `__data_size` is non-zero, storage
+ * for user-defined data is reserved; if `__data_opt` is also non-null, the
+ * storage is initialized from the memory block that `__data_opt` points to,
+ * otherwise the storage is zero-initialized. `__data_alignment` specifies the
+ * alignment of user-defined data; if it is not zero, then it must be a power
  * of two; otherwise this function fails with `ERROR_NOT_SUPPORTED`. If
  * `__thrdp_opt` is not null, the address of the new thread control structure
  * is stored into `*__thrdp_opt` before the new thread begins execution.
@@ -87,18 +87,18 @@ enum __MCF_thread_priority __MCF_CXX11(: int)
 __MCF_THREAD_IMPORT
 _MCF_thread*
 _MCF_thread_p_new(_MCF_thread** __thrdp_opt, _MCF_thread_procedure* __proc,
-                  size_t __alignment, const void* __data_opt, size_t __size)
+                  size_t __data_alignment, const void* __data_opt, size_t __data_size)
   __MCF_noexcept;
 
 __MCF_THREAD_INLINE
 _MCF_thread*
-_MCF_thread_new_aligned(_MCF_thread_procedure* __proc, size_t __alignment,
-                        const void* __data_opt, size_t __size)
+_MCF_thread_new_aligned(_MCF_thread_procedure* __proc, size_t __data_alignment,
+                        const void* __data_opt, size_t __data_size)
   __MCF_noexcept;
 
 __MCF_THREAD_INLINE
 _MCF_thread*
-_MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __size)
+_MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __data_size)
   __MCF_noexcept;
 
 /* Attaches a thread that was not created by `_MCF_thread_new_aligned()`.
@@ -118,8 +118,8 @@ __MCF_thread_attach_foreign(_MCF_thread* __thrd)
   __MCF_noexcept;
 
 /* Gets a pointer to user-defined data of a thread. If the thread does not have
- * user-defined data, because zero was specified for the `__size` parameter to
- * `_MCF_thread_new()`, a null pointer is returned.  */
+ * user-defined data, because zero was specified for the `__data_size` parameter
+ * to `_MCF_thread_new()`, a null pointer is returned.  */
 __MCF_THREAD_INLINE __MCF_FN_PURE
 __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd)
@@ -286,19 +286,19 @@ _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt)
  * this file.  */
 __MCF_THREAD_INLINE
 _MCF_thread*
-_MCF_thread_new_aligned(_MCF_thread_procedure* __proc, size_t __alignment,
-                        const void* __data_opt, size_t __size)
+_MCF_thread_new_aligned(_MCF_thread_procedure* __proc, size_t __data_alignment,
+                        const void* __data_opt, size_t __data_size)
   __MCF_noexcept
   {
-    return _MCF_thread_p_new(__MCF_nullptr, __proc, __alignment, __data_opt, __size);
+    return _MCF_thread_p_new(__MCF_nullptr, __proc, __data_alignment, __data_opt, __data_size);
   }
 
 __MCF_THREAD_INLINE
 _MCF_thread*
-_MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __size)
+_MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __data_size)
   __MCF_noexcept
   {
-    return _MCF_thread_p_new(__MCF_nullptr, __proc, 0, __data_opt, __size);
+    return _MCF_thread_p_new(__MCF_nullptr, __proc, 0, __data_opt, __data_size);
   }
 
 __MCF_THREAD_INLINE __MCF_FN_PURE

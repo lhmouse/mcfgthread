@@ -51,29 +51,29 @@ do_win32_thread_routine(LPVOID param)
 __MCF_DLLEXPORT
 _MCF_thread*
 _MCF_thread_p_new(_MCF_thread** thrdp_opt, _MCF_thread_procedure* proc,
-                  size_t alignment, const void* data_opt, size_t size)
+                  size_t data_alignment, const void* data_opt, size_t data_size)
   {
     if(!proc)
       return __MCF_win32_error_p(ERROR_INVALID_PARAMETER, nullptr);
 
-    if(alignment & (alignment - 1))  /* power of 2, or 0 */
+    if(data_alignment & (data_alignment - 1))  /* power of 2, or 0 */
       return __MCF_win32_error_p(ERROR_INVALID_PARAMETER, nullptr);
-    else if(alignment > __MCF_THREAD_MAX_DATA_ALIGNMENT)
+    else if(data_alignment > __MCF_THREAD_MAX_DATA_ALIGNMENT)
       return __MCF_win32_error_p(ERROR_NOT_SUPPORTED, nullptr);
 
-    if(size > 0x8000000U - __MCF_THREAD_MAX_DATA_ALIGNMENT)
+    if(data_size > 0x8000000U - __MCF_THREAD_MAX_DATA_ALIGNMENT)
       return __MCF_win32_error_p(ERROR_ARITHMETIC_OVERFLOW, nullptr);
 
     /* Calculate the number of bytes to allocate for the thread control structure
      * and user-defined data. If the user-defined data should be over-aligned,
      * over-allocate some, which will be given back later.  */
-    size_t size_need = sizeof(__MCF_thread_base) + size;
+    size_t size_need = sizeof(__MCF_thread_base) + data_size;
     size_t real_alignment = 0;
     size_t size_request = size_need;
 
-    if(size != 0) {
+    if(data_size != 0) {
       __MCF_ASSERT(MEMORY_ALLOCATION_ALIGNMENT <= __MCF_THREAD_DATA_ALIGNMENT);
-      real_alignment = _MCF_maxz(__MCF_THREAD_DATA_ALIGNMENT, alignment);
+      real_alignment = _MCF_maxz(__MCF_THREAD_DATA_ALIGNMENT, data_alignment);
       size_request = size_need + real_alignment - MEMORY_ALLOCATION_ALIGNMENT;
       __MCF_ASSERT(size_need <= size_request);
     }
@@ -86,7 +86,7 @@ _MCF_thread_p_new(_MCF_thread** thrdp_opt, _MCF_thread_procedure* proc,
     _MCF_atomic_store_32_rlx(thrd->__nref, 2);
     thrd->__proc = proc;
 
-    if(size != 0) {
+    if(data_size != 0) {
       uintptr_t data_addr = (uintptr_t) thrd + sizeof(__MCF_thread_base);
       thrd->__data_opt = (void*) data_addr;
       if(size_need != size_request) {
@@ -98,7 +98,7 @@ _MCF_thread_p_new(_MCF_thread** thrdp_opt, _MCF_thread_procedure* proc,
         thrd->__data_opt = (void*) data_addr;
 
         /* If we have over-allocated memory, give back some. Errors are ignored.  */
-        size_request = data_addr + size - (uintptr_t) thrd;
+        size_request = data_addr + data_size - (uintptr_t) thrd;
         __MCF_ASSERT(size_need <= size_request);
         if(size_request != size_need)
           __MCF_mresize_0(thrd, size_request);
@@ -106,7 +106,7 @@ _MCF_thread_p_new(_MCF_thread** thrdp_opt, _MCF_thread_procedure* proc,
 
       /* Copy user-defined data. If this doesn't happen, they are implicit zeroes.  */
       if(data_opt)
-        __MCF_mcopy(thrd->__data_opt, data_opt, size);
+        __MCF_mcopy(thrd->__data_opt, data_opt, data_size);
     }
 
     thrd->__handle = CreateThread(nullptr, 0, do_win32_thread_routine, thrd, 0,
