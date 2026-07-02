@@ -50,15 +50,15 @@ do_win32_thread_routine(LPVOID param)
 
 __MCF_DLLEXPORT
 _MCF_thread*
-_MCF_thread_p_new(_MCF_thread** thrdp_opt, _MCF_thread_procedure* proc, size_t align,
-                  const void* data_opt, size_t size)
+_MCF_thread_p_new(_MCF_thread** thrdp_opt, _MCF_thread_procedure* proc,
+                  size_t alignment, const void* data_opt, size_t size)
   {
     if(!proc)
       return __MCF_win32_error_p(ERROR_INVALID_PARAMETER, nullptr);
 
-    if(align & (align - 1))  /* power of 2, or 0 */
+    if(alignment & (alignment - 1))  /* power of 2, or 0 */
       return __MCF_win32_error_p(ERROR_INVALID_PARAMETER, nullptr);
-    else if(align > __MCF_THREAD_MAX_DATA_ALIGNMENT)
+    else if(alignment > __MCF_THREAD_MAX_DATA_ALIGNMENT)
       return __MCF_win32_error_p(ERROR_NOT_SUPPORTED, nullptr);
 
     if(size > 0x8000000U - __MCF_THREAD_MAX_DATA_ALIGNMENT)
@@ -68,13 +68,13 @@ _MCF_thread_p_new(_MCF_thread** thrdp_opt, _MCF_thread_procedure* proc, size_t a
      * and user-defined data. If the user-defined data should be over-aligned,
      * over-allocate some, which will be given back later.  */
     size_t size_need = sizeof(__MCF_thread_base) + size;
-    size_t real_align = 0;
+    size_t real_alignment = 0;
     size_t size_request = size_need;
 
     if(size != 0) {
       __MCF_ASSERT(MEMORY_ALLOCATION_ALIGNMENT <= __MCF_THREAD_DATA_ALIGNMENT);
-      real_align = _MCF_maxz(__MCF_THREAD_DATA_ALIGNMENT, align);
-      size_request = size_need + real_align - MEMORY_ALLOCATION_ALIGNMENT;
+      real_alignment = _MCF_maxz(__MCF_THREAD_DATA_ALIGNMENT, alignment);
+      size_request = size_need + real_alignment - MEMORY_ALLOCATION_ALIGNMENT;
       __MCF_ASSERT(size_need <= size_request);
     }
 
@@ -92,9 +92,9 @@ _MCF_thread_p_new(_MCF_thread** thrdp_opt, _MCF_thread_procedure* proc, size_t a
       if(size_need != size_request) {
         /* Round `__data_opt` for over-aligned types.  */
         data_addr --;
-        data_addr |= real_align - 1;
+        data_addr |= real_alignment - 1;
         data_addr ++;
-        __MCF_ASSERT(data_addr % real_align == 0);
+        __MCF_ASSERT(data_addr % real_alignment == 0);
         thrd->__data_opt = (void*) data_addr;
 
         /* If we have over-allocated memory, give back some. Errors are ignored.  */

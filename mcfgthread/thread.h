@@ -74,9 +74,9 @@ enum __MCF_thread_priority __MCF_CXX11(: int)
  * thread holds a reference to itself. If `__size` is specified as non-zero,
  * storage for user-defined data is reserved. The storage is initialized to
  * zeroes. If `__data_opt` is non-null, it is used to initialize the storage
- * before the new thread begins execution. The `__align` parameter specifies
- * the alignment of user-defined data. If it is not zero, then it must be a
- * power of two; otherwise this function fails with `ERROR_NOT_SUPPORTED`. If
+ * before the new thread begins execution. `__alignment` specifies the
+ * alignment of user-defined data. If it is not zero, then it must be a power
+ * of two; otherwise this function fails with `ERROR_NOT_SUPPORTED`. If
  * `__thrdp_opt` is not null, the address of the new thread control structure
  * is stored into `*__thrdp_opt` before the new thread begins execution.
  *
@@ -86,14 +86,14 @@ enum __MCF_thread_priority __MCF_CXX11(: int)
  * via `_MCF_get_win32_error()`.  */
 __MCF_THREAD_IMPORT
 _MCF_thread*
-_MCF_thread_p_new(_MCF_thread** __thrdp_opt, _MCF_thread_procedure* __proc, size_t __align,
-                  const void* __data_opt, size_t __size)
+_MCF_thread_p_new(_MCF_thread** __thrdp_opt, _MCF_thread_procedure* __proc,
+                  size_t __alignment, const void* __data_opt, size_t __size)
   __MCF_noexcept;
 
 __MCF_THREAD_INLINE
 _MCF_thread*
-_MCF_thread_new_aligned(_MCF_thread_procedure* __proc, size_t __align, const void* __data_opt,
-                        size_t __size)
+_MCF_thread_new_aligned(_MCF_thread_procedure* __proc, size_t __alignment,
+                        const void* __data_opt, size_t __size)
   __MCF_noexcept;
 
 __MCF_THREAD_INLINE
@@ -286,11 +286,11 @@ _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt)
  * this file.  */
 __MCF_THREAD_INLINE
 _MCF_thread*
-_MCF_thread_new_aligned(_MCF_thread_procedure* __proc, size_t __align, const void* __data_opt,
-                        size_t __size)
+_MCF_thread_new_aligned(_MCF_thread_procedure* __proc, size_t __alignment,
+                        const void* __data_opt, size_t __size)
   __MCF_noexcept
   {
-    return _MCF_thread_p_new(__MCF_nullptr, __proc, __align, __data_opt, __size);
+    return _MCF_thread_p_new(__MCF_nullptr, __proc, __alignment, __data_opt, __size);
   }
 
 __MCF_THREAD_INLINE
