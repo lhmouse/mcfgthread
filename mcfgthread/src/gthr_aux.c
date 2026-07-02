@@ -175,7 +175,7 @@ __MCF_gthr_thread_create_v4(_MCF_thread** thrdp_opt, __MCF_gthr_thread_procedure
     __builtin_memcpy(record.__magic_guid, __MCF_crt_gthread_guid, 16);
     record.__proc = proc;
     record.__arg_or_result = arg;
-    return _MCF_thread_p_new(thrdp_opt, do_gthread_routine, 0, &record, sizeof(record));
+    return _MCF_thread_p_new(thrdp_opt, do_gthread_routine, 0, 0, &record, sizeof(record));
   }
 
 __MCF_DLLEXPORT

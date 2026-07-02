@@ -50,7 +50,7 @@ do_win32_thread_routine(LPVOID param)
 
 __MCF_DLLEXPORT
 _MCF_thread*
-_MCF_thread_p_new(_MCF_thread** thrdp_opt, _MCF_thread_procedure* proc,
+_MCF_thread_p_new(_MCF_thread** thrdp_opt, _MCF_thread_procedure* proc, size_t stack_size,
                   size_t data_alignment, const void* data_opt, size_t data_size)
   {
     if(!proc)
@@ -109,8 +109,8 @@ _MCF_thread_p_new(_MCF_thread** thrdp_opt, _MCF_thread_procedure* proc,
         __MCF_mcopy(thrd->__data_opt, data_opt, data_size);
     }
 
-    thrd->__handle = CreateThread(nullptr, 0, do_win32_thread_routine, thrd, 0,
-                                  (DWORD*) &(thrd->__tid));
+    thrd->__handle = CreateThread(nullptr, stack_size, do_win32_thread_routine, thrd,
+                                  STACK_SIZE_PARAM_IS_A_RESERVATION, (DWORD*) &(thrd->__tid));
     if(!thrd->__handle) {
       __MCF_mfree_nonnull(thrd);
       return nullptr;
