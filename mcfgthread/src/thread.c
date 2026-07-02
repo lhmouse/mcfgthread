@@ -50,7 +50,7 @@ do_win32_thread_routine(LPVOID param)
 
 __MCF_DLLEXPORT
 _MCF_thread*
-_MCF_thread_p_new(_MCF_thread** thrdp_opt, _MCF_thread_procedure* proc, size_t stack_size,
+_MCF_thread_p_new(_MCF_thread** thrdp_opt, size_t stack_size, _MCF_thread_procedure* proc,
                   size_t data_alignment, const void* data_opt, size_t data_size)
   {
     if(!proc)
