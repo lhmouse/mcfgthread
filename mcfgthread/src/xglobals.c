@@ -325,14 +325,12 @@ __MCF_DLLEXPORT __MCF_NEVER_INLINE
 void
 __MCF_batch_release_common(const void* key, size_t count)
   {
-    /* A call to `ExitProcess()` terminates all the other threads, even if
-     * they are waiting. We don't release the keyed event in this case, as it
-     * blocks the calling thread infinitely if there is no thread to wake up.
-     * See <https://github.com/lhmouse/mcfgthread/issues/21>.  */
     size_t remaining = count;
-    while((remaining != 0) && !RtlDllShutdownInProgress())
+    while(remaining != 0)
       if(__MCF_keyed_event_signal(key, __MCF_crt_timeout_1s) == 0)
         remaining --;
+      else if(RtlDllShutdownInProgress())
+        break;
   }
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
