@@ -46,6 +46,7 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
       }
 
     /* Try waiting.  */
+    __MCF_check_wait_safety(&nt_timeout);
     int err = __MCF_keyed_event_wait(sem, &nt_timeout);
     while(err != 0) {
       /* Remove myself from the wait queue. But see below...  */

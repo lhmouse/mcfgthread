@@ -323,6 +323,36 @@ __MCF_adjust_winnt_timeout_v3(__MCF_winnt_timeout* to)
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
 void
+__MCF_check_wait_safety(const __MCF_winnt_timeout* to)
+  {
+    /* It's safe to wait if other threads are still running.  */
+    if(!RtlDllShutdownInProgress())
+      return;
+
+    /* Allow a maximum timeout of 3 seconds.  */
+    if((to->li.QuadPart >= -30000000) && (to->li.QuadPart <= 0))
+      return;
+    else if(to->li.QuadPart > 0) {
+      ULONGLONG ull;
+      GetSystemTimeAsFileTime((FILETIME*) &ull);
+      if(to->li.QuadPart <= (LONGLONG) (ull + 30000000))
+        return;
+    }
+
+    /* If all the other threads have been terminated, the current thread would
+     * have to wait forever. This can happen in `DllMain()` or a TLS callback
+     * upon `DLL_PROCESS_DETACH`. Windows Vista+ terminates the process if such
+     * a scenario is detected in `SRWLOCK` or `CRITICAL_SECTION` (but not in
+     * `CONDITION_VARIABLE`), so do the same.  */
+    EXCEPTION_RECORD record = { .ExceptionCode = (ULONG) STATUS_THREAD_IS_TERMINATING,
+                                .ExceptionFlags = EXCEPTION_NONCONTINUABLE,
+                                .ExceptionAddress = __builtin_return_address(0) };
+    RaiseFailFastException(&record, nullptr, 0);
+    __builtin_trap();
+  }
+
+__MCF_DLLEXPORT __MCF_NEVER_INLINE
+void
 __MCF_batch_release_common(const void* key, size_t count)
   {
     size_t remaining = count;

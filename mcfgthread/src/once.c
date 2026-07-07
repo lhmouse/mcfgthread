@@ -56,6 +56,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
       }
 
     /* Try waiting.  */
+    __MCF_check_wait_safety(&nt_timeout);
     int err = __MCF_keyed_event_wait(once, &nt_timeout);
     while(err != 0) {
       /* Tell another thread which is going to signal this flag that an old

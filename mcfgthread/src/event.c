@@ -45,6 +45,7 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
       }
 
     /* Try waiting.  */
+    __MCF_check_wait_safety(&nt_timeout);
     int err = __MCF_keyed_event_wait(event, &nt_timeout);
     while(err != 0) {
       /* Tell another thread which is going to signal this flag that an old

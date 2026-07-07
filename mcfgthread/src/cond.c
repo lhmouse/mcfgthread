@@ -41,6 +41,7 @@ do_unlock_and_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt, intptr
       *unlocked = (* unlock_opt) (lock_arg);
 
     /* Try waiting.  */
+    __MCF_check_wait_safety(&nt_timeout);
     int err = __MCF_keyed_event_wait(cnd, &nt_timeout);
     while(err != 0) {
       /* Tell another thread which is going to signal this condition variable

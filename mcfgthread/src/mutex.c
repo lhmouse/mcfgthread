@@ -185,6 +185,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
     }
 
     /* Try waiting.  */
+    __MCF_check_wait_safety(&nt_timeout);
     int err = __MCF_keyed_event_wait(mtx, &nt_timeout);
     while(err != 0) {
       /* Tell another thread which is going to signal this mutex that an old
