@@ -142,24 +142,6 @@ do_gthread_routine(_MCF_thread* thrd)
     rec->__arg_or_result = (* rec->__proc) (rec->__arg_or_result);
   }
 
-static inline
-__MCF_gthr_thread_record*
-do_get_record(_MCF_thread* thrd)
-  {
-    __MCF_gthr_thread_record* rec = _MCF_thread_get_data(thrd);
-    if(!rec)
-      return nullptr;
-
-    /* Check the GUID. As user-defined data are aligned to 16-byte boundaries,
-     * there must be at least 16 bytes available.  */
-    if(!__MCF_mequal(rec->__magic_guid, __MCF_crt_gthread_guid, 16))
-      return nullptr;
-
-    /* Assume so. `do_gthread_routine()` is not shared across modules,
-     * so we should not check it for uniqueness.  */
-    return rec;
-  }
-
 __MCF_DLLEXPORT
 _MCF_thread*
 __MCF_gthr_thread_create_v3(__MCF_gthr_thread_procedure* proc, void* arg)
@@ -190,8 +172,8 @@ __MCF_gthr_thread_join_v3(_MCF_thread* thrd, void** resp_opt)
       *resp_opt = nullptr;
 
       /* Get the exit code.  */
-      __MCF_gthr_thread_record* rec = do_get_record(thrd);
-      if(rec)
+      __MCF_gthr_thread_record* rec = _MCF_thread_get_data(thrd);
+      if(rec && __MCF_mequal(rec->__magic_guid, __MCF_crt_gthread_guid, 16))
         *resp_opt = rec->__arg_or_result;
     }
 
@@ -204,8 +186,8 @@ void
 __MCF_gthr_thread_exit_v3(void* resp)
   {
     /* Set the exit code.  */
-    __MCF_gthr_thread_record* rec = do_get_record(_MCF_thread_self());
-    if(rec)
+    __MCF_gthr_thread_record* rec = _MCF_thread_get_data(_MCF_thread_self());
+    if(rec && __MCF_mequal(rec->__magic_guid, __MCF_crt_gthread_guid, 16))
       rec->__arg_or_result = resp;
 
     /* Terminate the current thread.  */
