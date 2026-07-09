@@ -413,8 +413,8 @@ void
 do_hex_encode(wchar_t* ptr, unsigned width, uint64_t value, const char* digits)
   {
     for(unsigned k = 0;  k != width;  ++k) {
-      unsigned digit = (value >> (width - 1 - k) * 4) & 0x0FU;
-      ptr[k] = (unsigned char) digits[digit];
+      unsigned val = (value >> (width - 1 - k) * 4) & 0x0FU;
+      ptr[k] = (unsigned char) digits[val];
     }
   }
 
