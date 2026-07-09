@@ -343,21 +343,29 @@ __MCF_EX typedef void __thiscall __MCF_cxa_dtor_thiscall(void* __arg);
 typedef void __fastcall __MCF_cxa_dtor_thiscall(void* __arg);
 #endif
 
-#if defined __MCF_CXA_DTOR_DUAL_ABI || defined __cplusplus
-#  define __MCF_TRANSPARENT_UNION   union __MCF_C(__attribute__((__transparent_union__)))
-#  define __MCF_TRANSPARENT_UNION_FIELD(tag, type, x)  \
-    __MCF_CXX(__MCF_CXX11(constexpr) tag(type x##_) __MCF_noexcept : x(x##_) { })  \
+#if defined __cplusplus
+#  define __MCF_TRANSPARENT_UNION   union
+#  define __MCF_TRANSPARENT_UNION_F(tag, type, x)  \
+    __MCF_CXX11(constexpr) tag(type x##_) __MCF_noexcept : x(x##_) { }  \
     /* ^= constructor / field => */ type x  /* no semicolon  */
+#elif defined __GNUC__ || defined __clang__
+#  define __MCF_TRANSPARENT_UNION   union __attribute__((__transparent_union__))
+#  define __MCF_TRANSPARENT_UNION_F(tag, type, x)  type x  /* no semicolon  */
+#endif
+
+#if defined __MCF_TRANSPARENT_UNION
 typedef union __MCF_cxa_dtor_any __MCF_cxa_dtor_any_;
 __MCF_TRANSPARENT_UNION __MCF_cxa_dtor_any
   {
-    __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_cxa_dtor_cdecl*, __cdecl_ptr);
-    __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_atexit_callback*, __cdecl_0_ptr);
+    __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_cxa_dtor_cdecl*, __cdecl_ptr);
+    __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_atexit_callback*, __cdecl_0_ptr);
 #  if defined __MCF_M_X8632
-    __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_cxa_dtor_fastcall*, __fastcall_ptr);
-    __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_cxa_dtor_thiscall*, __thiscall_ptr);
-    __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_atexit_callback_stdcall*, __stdcall_0_ptr);
-    __MCF_TRANSPARENT_UNION_FIELD(__MCF_cxa_dtor_any, __MCF_atexit_callback_fastcall*, __fastcall_0_ptr);
+    __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_atexit_callback_stdcall*, __stdcall_0_ptr);
+    __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_atexit_callback_fastcall*, __fastcall_0_ptr);
+    __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_cxa_dtor_fastcall*, __fastcall_ptr);
+#    if defined __MCF_CXA_DTOR_DUAL_ABI
+    __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_cxa_dtor_thiscall*, __thiscall_ptr);
+#    endif
 #  endif
   };
 #else
