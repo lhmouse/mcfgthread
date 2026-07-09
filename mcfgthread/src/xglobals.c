@@ -410,10 +410,12 @@ __MCF_run_static_dtors(_MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
 
 static inline
 void
-do_hex_encode(wchar_t* ptr, unsigned width, uint64_t value, const wchar_t* digits)
+do_hex_encode(wchar_t* ptr, unsigned width, uint64_t value, const char* digits)
   {
-    for(unsigned k = 0;  k != width;  ++k)
-      ptr[k] = digits[(value >> (width - 1 - k) * 4) & 0x0FU];
+    for(unsigned k = 0;  k != width;  ++k) {
+      unsigned digit = (value >> (width - 1 - k) * 4) & 0x0FU;
+      ptr[k] = (unsigned char) digits[digit];
+    }
   }
 
 static inline
@@ -466,9 +468,9 @@ __MCF_gthread_initialize_globals(void)
 
     const uint32_t pid = (uint32_t) __MCF_pid();
     __MCF_ASSERT(gnbuffer[25] == L'*');
-    do_hex_encode(gnbuffer + 25, 8, pid, L"0123456789ABCDEF");
+    do_hex_encode(gnbuffer + 25, 8, pid, "0123456789ABCDEF");
     __MCF_ASSERT(gnbuffer[34] == L'#');
-    do_hex_encode(gnbuffer + 34, 16, do_make_cookie(pid), L"GHJKLMNPQRSTUWXY");
+    do_hex_encode(gnbuffer + 34, 16, do_make_cookie(pid), "GHJKLMNPQRSTUWXY");
     __MCF_ASSERT(gnbuffer[50] == 0);
 
     /* Allocate or open storage for global data. We are in the DLL main routine,
