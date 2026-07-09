@@ -420,8 +420,9 @@ static inline
 uint64_t
 do_make_cookie(uint32_t seed)
   {
-    uintptr_t xid = __MCF_64_32(seed * 0x100000001ULL, seed) ^ __MCF_UINTPTR_MAX;
-    return (uintptr_t) EncodePointer((PVOID) xid) * 0x9E3779B97F4A7C15ULL;
+    uintptr_t val = seed * __MCF_64_32(0x100000001ULL, 1U);
+    val = (uintptr_t) EncodePointer((PVOID) ~val);
+    return val * 0x9E3779B97F4A7C15ULL;
   }
 
 __MCF_DLLEXPORT
