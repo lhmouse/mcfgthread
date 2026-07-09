@@ -242,7 +242,11 @@ __MCF_XGLOBALS_IMPORT
 void
 __MCF_gthread_on_thread_exit(void);
 
-/* These are constants that have to be initialized at load time.  */
+/* These are global variables that are initialized either statically, or when
+ * `DLL_PROCESS_ATTACH` is received. These are really read-only; after
+ * successful initialization, the DLL changes the protection of its `.data`
+ * section to `PAGE_READONLY`, so an attempt to modify these variables will
+ * result in an access violation.  */
 extern __MCF_ALIGNED(8) __MCF_BR(GUID) const __MCF_crt_gthread_guid;
 extern __MCF_BR(__MCF_winnt_timeout) const __MCF_crt_timeout_0;
 extern __MCF_BR(__MCF_winnt_timeout) const __MCF_crt_timeout_1s;
