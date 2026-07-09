@@ -50,7 +50,7 @@ _MCF_hires_utc_now(void)
      * (the Unix Epoch).  */
     ULONGLONG ull;
     __MCF_crt_GetSystemTimePreciseAsFileTime((FILETIME*) &ull);
-    return (double)(int64_t) (ull - 116444736000000000) * 0.0001;
+    return ((double)(int64_t) ull - 116444736000000000) * 0.0001;
   }
 
 __MCF_DLLEXPORT
