@@ -51,13 +51,6 @@
       .Buffer = (void*) ((s) + __MCF_STATIC_ASSERT_0(  \
          !__builtin_types_compatible_p(__typeof__(1+&*(s)), __typeof__(s))))  }
 
-/* Define prototypes for optional dependencies.  */
-typedef void __stdcall typeof_GetSystemTimePreciseAsFileTime(FILETIME*);
-typedef void __stdcall typeof_QueryInterruptTime(ULONGLONG*);
-typedef void __stdcall typeof_QueryUnbiasedInterruptTimePrecise(ULONGLONG*);
-typedef void __stdcall typeof_QueryInterruptTimePrecise(ULONGLONG*);
-typedef LPVOID __stdcall typeof_TlsGetValue2(ULONG);
-
 /* Terminates the current process. This function is used as the exception
  * handler of a `noexcept` function.  */
 __MCF_XGLOBALS_IMPORT
@@ -253,13 +246,23 @@ __MCF_gthread_on_thread_exit(void);
 extern __MCF_ALIGNED(8) __MCF_BR(GUID) const __MCF_crt_gthread_guid;
 extern __MCF_BR(__MCF_winnt_timeout) const __MCF_crt_timeout_0;
 extern __MCF_BR(__MCF_winnt_timeout) const __MCF_crt_timeout_1s;
+
 extern SYSTEM_INFO __MCF_XGLOBALS_READONLY __MCF_crt_sysinfo;
 extern double __MCF_XGLOBALS_READONLY __MCF_crt_perf_freq_reciprocal;
 extern HANDLE __MCF_XGLOBALS_READONLY __MCF_crt_heap;
 extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_ntdll;
 extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_kernel32;
 extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_kernelbase;
-extern typeof_TlsGetValue2* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue;
+
+typedef void __stdcall typeof_GetSystemTimePreciseAsFileTime(FILETIME*);
+typedef void __stdcall typeof_QueryUnbiasedInterruptTimePrecise(ULONGLONG*);
+typedef void __stdcall typeof_QueryInterruptTimePrecise(ULONGLONG*);
+typedef LPVOID __stdcall typeof_TlsGetValue2(ULONG);
+
+extern typeof_GetSystemTimePreciseAsFileTime* __MCF_XGLOBALS_READONLY __MCF_crt_GetSystemTimePreciseAsFileTime;
+extern typeof_QueryUnbiasedInterruptTimePrecise* __MCF_XGLOBALS_READONLY __MCF_crt_QueryUnbiasedInterruptTimePrecise;
+extern typeof_QueryInterruptTimePrecise* __MCF_XGLOBALS_READONLY __MCF_crt_QueryInterruptTimePrecise;
+extern typeof_TlsGetValue2* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue2;
 
 /* Declare the structure of global data in named shared memory. As mcfgthread
  * may be linked statically by user DLLs, we must ensure that, in the same
@@ -285,12 +288,12 @@ struct __MCF_crt_xglobals
      * In a process which loads a DLL that is linked against an old static copy of
      * mcfgthread, these might be missing from the named shared memory object, and
      * must be accessed with `__MCF_G_OPT()`.  */
-    typeof_GetSystemTimePreciseAsFileTime* imp_GetSystemTimePreciseAsFileTime;  /* v1.8 */
-    typeof_QueryInterruptTime* imp_QueryInterruptTime;  /* v1.8 */
+    void* reserved_1_must_be_null;  /* v1.8 */
+    void* reserved_2_must_be_null;  /* v1.8 */
     __MCF_BR(_MCF_mutex) thread_oom_mtx;  /* v1.9 */
     __MCF_thread_base opt_thread_oom_self_st;  /* v1.9 */
-    typeof_QueryUnbiasedInterruptTimePrecise* imp_QueryUnbiasedInterruptTimePrecise;  /* v2.4 */
-    typeof_QueryInterruptTimePrecise* imp_QueryInterruptTimePrecise;  /* v2.4 */
+    void* reserved_3_must_be_null;  /* v2.4 */
+    void* reserved_4_must_be_null;  /* v2.4 */
   };
 
 /* This is a pointer to the process-specific named shared memory in the
@@ -298,16 +301,10 @@ struct __MCF_crt_xglobals
 extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY restrict __MCF_g;
 
 /* Get a field from named shared memory with version checking.  */
-#define __MCF_GFX_(field)   offsetof(__MCF_crt_xglobals, field)
+#define __MCF_GFX_(field)     offsetof(__MCF_crt_xglobals, field)
 #define __MCF_HAS_G(field)    (__MCF_g->self_size >= __MCF_GFX_(field) + sizeof(__MCF_g->field))
 #define __MCF_G(field)        (*(__MCF_ASSERT(__MCF_HAS_G(field)), &(__MCF_g->field)))
 #define __MCF_G_OPT(field)    (__MCF_HAS_G(opt_##field) ? &(__MCF_g->opt_##field) : nullptr)
-
-/* An `imp_` field is a pointer. For a dynamic load symbol to exist, the field
- * must exist, and must contain a non-null value.  */
-#define __MCF_HAS_G_IMP(name)   (__MCF_HAS_G(imp_##name) && __MCF_g->imp_##name)
-#define __MCF_G_IMP(name)       (*(__MCF_ASSERT(__MCF_HAS_G(imp_##name)), __MCF_g->imp_##name))
-#define __MCF_G_IMP_OPT(name)   (__MCF_HAS_G(imp_##name) ? __MCF_g->imp_##name : nullptr)
 
 /* Ensure we don't mess things up.  */
 __MCF_STATIC_ASSERT(__MCF_GFX_(self_ptr) == 0);
@@ -320,12 +317,12 @@ __MCF_STATIC_ASSERT(__MCF_GFX_(quick_exit_mtx) == __MCF_64_32(3152, 1584));
 __MCF_STATIC_ASSERT(__MCF_GFX_(quick_exit_queue) == __MCF_64_32(3160, 1588));
 __MCF_STATIC_ASSERT(__MCF_GFX_(mutex_spin_field) == __MCF_64_32(4736, 2368));
 __MCF_STATIC_ASSERT(__MCF_GFX_(interrupt_cond) == __MCF_64_32(6784, 4416));
-__MCF_STATIC_ASSERT(__MCF_GFX_(imp_GetSystemTimePreciseAsFileTime) == __MCF_64_32(6792, 4420));
-__MCF_STATIC_ASSERT(__MCF_GFX_(imp_QueryInterruptTime) == __MCF_64_32(6800, 4424));
+__MCF_STATIC_ASSERT(__MCF_GFX_(reserved_1_must_be_null) == __MCF_64_32(6792, 4420));
+__MCF_STATIC_ASSERT(__MCF_GFX_(reserved_2_must_be_null) == __MCF_64_32(6800, 4424));
 __MCF_STATIC_ASSERT(__MCF_GFX_(thread_oom_mtx) == __MCF_64_32(6808, 4428));
 __MCF_STATIC_ASSERT(__MCF_GFX_(opt_thread_oom_self_st) == __MCF_64_32(6816, 4432));
-__MCF_STATIC_ASSERT(__MCF_GFX_(imp_QueryUnbiasedInterruptTimePrecise) == __MCF_64_32(8416, 5232));
-__MCF_STATIC_ASSERT(__MCF_GFX_(imp_QueryInterruptTimePrecise) == __MCF_64_32(8424, 5236));
+__MCF_STATIC_ASSERT(__MCF_GFX_(reserved_3_must_be_null) == __MCF_64_32(8416, 5232));
+__MCF_STATIC_ASSERT(__MCF_GFX_(reserved_4_must_be_null) == __MCF_64_32(8424, 5236));
 
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
@@ -579,6 +576,36 @@ __MCF_mfree_nonnull(void* ptr)
 #endif
     int succ = HeapFree(__MCF_crt_heap, 0, ptr);
     __MCF_ASSERT(succ);
+  }
+
+__MCF_ALWAYS_INLINE
+ULONGLONG
+__MCF_get_interrupt_time(void)
+  {
+    /* At address `0x7FFE0000` (`MM_SHARED_USER_DATA_VA` in Windows SDK for
+     * assembly, same on all architectures) there's a read-only structure of
+     * type `KUSER_SHARED_DATA`. The `InterruptTime` field is at offset `8` on
+     * all architectures; see
+     * <https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-kuser_shared_data>.  */
+    volatile char* shared_user_data = (char*) 0x7FFE0000;
+#if !defined __MCF_M_X8664_ASM
+    __asm__ ("" : "+r"(shared_user_data));  /* workaround for optimizer bug  */
+#endif
+#if __MCF_64_32(1, 0)
+    return *(volatile ULONGLONG*) (shared_user_data + 8);
+#else
+    ULONG high, low;
+    do {
+      /* A 32-bit kernel does not write 64-bit integers atomically, which
+       * requires special treatment. The kernel writes `High2Time` then
+       * `LowPart` then `High1Time` so we read them in the reverse order. If
+       * `High1Time` does not equal `High2Time`, then the value will have
+       * been split and we must try again.  */
+      high = *(volatile ULONG*) (shared_user_data + 12);
+      low = *(volatile ULONG*) (shared_user_data + 8);
+    } while(high != *(volatile ULONG*) (shared_user_data + 16));
+    return (ULONGLONG) high << 32 | low;
+#endif
   }
 
 __MCF_ALWAYS_INLINE

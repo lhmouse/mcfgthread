@@ -218,7 +218,7 @@ static __MCF_NEVER_INLINE
 _MCF_thread*
 do_thread_self_slow(void)
   {
-    _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_G(tls_index));
+    _MCF_thread* self = __MCF_crt_TlsGetValue2(__MCF_G(tls_index));
     if(self)
       return self;
 

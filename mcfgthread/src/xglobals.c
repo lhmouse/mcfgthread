@@ -427,6 +427,14 @@ do_make_cookie(uint32_t seed)
     return val * 0x9E3779B97F4A7C15ULL;
   }
 
+static
+void
+__stdcall
+do_QueryInterruptTime(ULONGLONG* outp)
+  {
+    *outp = __MCF_get_interrupt_time();
+  }
+
 __MCF_DLLEXPORT
 void
 __MCF_gthread_initialize_globals(void)
@@ -454,10 +462,35 @@ __MCF_gthread_initialize_globals(void)
     __MCF_crt_kernelbase = LoadLibraryExW(L"KERNELBASE.DLL", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
     __MCF_CHECK(__MCF_crt_kernelbase);
 
+    /* This function is available since Windows 8.  */
+    FARPROC dll_fn = GetProcAddress(__MCF_crt_kernel32, "GetSystemTimePreciseAsFileTime");
+    __MCF_crt_GetSystemTimePreciseAsFileTime =
+        dll_fn ? __MCF_CAST_PTR(typeof_GetSystemTimePreciseAsFileTime, dll_fn)
+               : GetSystemTimeAsFileTime;
+
+    /* This function is available since Windows 10. Microsoft documentation says
+     * this is exported from KERNEL32.DLL, but it's really only exported from
+     * KERNELBASE.DLL. Strangely, `QueryUnbiasedInterruptTime` is exported from
+     * KERNEL32.DLL since Windows 7, so there's no need to load it dynamically.  */
+    dll_fn = GetProcAddress(__MCF_crt_kernelbase, "QueryUnbiasedInterruptTimePrecise");
+    __MCF_crt_QueryUnbiasedInterruptTimePrecise =
+        dll_fn ? __MCF_CAST_PTR(typeof_QueryUnbiasedInterruptTimePrecise, dll_fn)
+               : __MCF_CAST_PTR(typeof_QueryUnbiasedInterruptTimePrecise, QueryUnbiasedInterruptTime);
+
+    /* This function is available since Windows 10. Microsoft documentation says
+     * this is exported from KERNEL32.DLL, but it's really only exported from
+     * KERNELBASE.DLL.  */
+    dll_fn = GetProcAddress(__MCF_crt_kernelbase, "QueryInterruptTimePrecise");
+    __MCF_crt_QueryInterruptTimePrecise =
+        dll_fn ? __MCF_CAST_PTR(typeof_QueryInterruptTimePrecise, dll_fn)
+               : do_QueryInterruptTime;
+
     /* This function is available since Windows 11 24H2. It has the same
      * signature as `TlsGetValue()`, so the latter can be used as a backup.  */
-    FARPROC dll_fn = GetProcAddress(__MCF_crt_kernel32, "TlsGetValue2");
-    __MCF_crt_TlsGetValue = dll_fn ? __MCF_CAST_PTR(typeof_TlsGetValue2, dll_fn) : TlsGetValue;
+    dll_fn = GetProcAddress(__MCF_crt_kernel32, "TlsGetValue2");
+    __MCF_crt_TlsGetValue2 =
+        dll_fn ? __MCF_CAST_PTR(typeof_TlsGetValue2, dll_fn)
+               : TlsGetValue;
 
     /* Generate the unique name for this process.  */
     static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
@@ -498,30 +531,6 @@ __MCF_gthread_initialize_globals(void)
     __MCF_G(tls_index) = TlsAlloc();
     __MCF_CHECK(__MCF_G(tls_index) != TLS_OUT_OF_INDEXES);
 
-    /* This function is available since Windows 8.  */
-    dll_fn = GetProcAddress(__MCF_crt_kernel32, "GetSystemTimePreciseAsFileTime");
-    __MCF_G(imp_GetSystemTimePreciseAsFileTime) = (void*) dll_fn;
-
-    /* This function is available since Windows 10. Microsoft documentation says
-     * this is exported from KERNEL32.DLL, but it's really only exported from
-     * KERNELBASE.DLL. However, we no longer call this function; the field is
-     * initialized for backward compatibility.  */
-    dll_fn = GetProcAddress(__MCF_crt_kernelbase, "QueryInterruptTime");
-    __MCF_G(imp_QueryInterruptTime) = (void*) dll_fn;
-
-    /* This function is available since Windows 10. Microsoft documentation says
-     * this is exported from KERNEL32.DLL, but it's really only exported from
-     * KERNELBASE.DLL. Strangely, `QueryUnbiasedInterruptTime` is exported from
-     * KERNEL32.DLL since Windows 7, so there's no need to load it dynamically.  */
-    dll_fn = GetProcAddress(__MCF_crt_kernelbase, "QueryUnbiasedInterruptTimePrecise");
-    __MCF_G(imp_QueryUnbiasedInterruptTimePrecise) = (void*) dll_fn;
-
-    /* This function is available since Windows 10. Microsoft documentation says
-     * this is exported from KERNEL32.DLL, but it's really only exported from
-     * KERNELBASE.DLL.  */
-    dll_fn = GetProcAddress(__MCF_crt_kernelbase, "QueryInterruptTimePrecise");
-    __MCF_G(imp_QueryInterruptTimePrecise) = (void*) dll_fn;
-
     /* Attach the main thread and make it joinable. The structure should
      * be all zeroes so no initialization is necessary.  */
     __MCF_thread_attach_foreign(__MCF_G(main_thread));
@@ -533,7 +542,7 @@ void
 __MCF_gthread_on_thread_exit(void)
   {
     __MCF_USING_SEH_TERMINUS;
-    _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_G(tls_index));
+    _MCF_thread* self = __MCF_crt_TlsGetValue2(__MCF_G(tls_index));
     if(!self)
       return;
 
@@ -588,13 +597,18 @@ __MCF_gthread_on_thread_exit(void)
 __MCF_BR(GUID) const __MCF_crt_gthread_guid = { __MCF_GUID(9FB2D15C,C5F2,4AE7,868D,2769591B8E92) };
 __MCF_BR(__MCF_winnt_timeout) const __MCF_crt_timeout_0 = {{ .li.QuadPart = 0 }};
 __MCF_BR(__MCF_winnt_timeout) const __MCF_crt_timeout_1s = {{ .li.QuadPart = -10000000 }};
+
 SYSTEM_INFO __MCF_crt_sysinfo = { .dwPageSize = 1 };
 double __MCF_crt_perf_freq_reciprocal = -1;
 HANDLE __MCF_crt_heap = __MCF_BAD_PTR;
 HMODULE __MCF_crt_ntdll = __MCF_BAD_PTR;
 HMODULE __MCF_crt_kernel32 = __MCF_BAD_PTR;
 HMODULE __MCF_crt_kernelbase = __MCF_BAD_PTR;
-typeof_TlsGetValue2* __MCF_crt_TlsGetValue = __MCF_BAD_PTR;
+
+typeof_GetSystemTimePreciseAsFileTime* __MCF_crt_GetSystemTimePreciseAsFileTime = __MCF_BAD_PTR;
+typeof_QueryUnbiasedInterruptTimePrecise* __MCF_crt_QueryUnbiasedInterruptTimePrecise = __MCF_BAD_PTR;
+typeof_QueryInterruptTimePrecise* __MCF_crt_QueryInterruptTimePrecise = __MCF_BAD_PTR;
+typeof_TlsGetValue2* __MCF_crt_TlsGetValue2 = __MCF_BAD_PTR;
 
 /* This is a pointer to global data. If this library is linked statically,
  * all instances of this pointer in the same process should point to the

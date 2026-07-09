@@ -44,19 +44,12 @@ __MCF_DLLEXPORT
 double
 _MCF_hires_utc_now(void)
   {
-    if(__MCF_HAS_G_IMP(GetSystemTimePreciseAsFileTime)) {
-      /* This is available since Windows 8.  */
-      ULONGLONG ull;
-      __MCF_G_IMP(GetSystemTimePreciseAsFileTime) ((FILETIME*) &ull);
-      return (double)(int64_t) (ull - 116444736000000000) * 0.0001;
-    }
-
     /* `ULONGLONG` has a more strict alignment requirement than `FILETIME`,
      * so the cast should be safe. `116444736000000000` is number of 1/100
      * seconds from 1601-01-01T00:00:00Z (the NT epoch) to 1970-01-01T00:00:00Z
      * (the Unix Epoch).  */
     ULONGLONG ull;
-    GetSystemTimeAsFileTime((FILETIME*) &ull);
+    __MCF_crt_GetSystemTimePreciseAsFileTime((FILETIME*) &ull);
     return (double)(int64_t) (ull - 116444736000000000) * 0.0001;
   }
 
@@ -64,7 +57,6 @@ __MCF_DLLEXPORT
 int64_t
 _MCF_steady_now(void)
   {
-    /* This is available since Windows 7.  */
     ULONGLONG ull;
     QueryUnbiasedInterruptTime(&ull);
     return (int64_t) do_divide_by_10000(ull);
@@ -74,56 +66,17 @@ __MCF_DLLEXPORT
 double
 _MCF_hires_steady_now(void)
   {
-    if(__MCF_HAS_G_IMP(QueryUnbiasedInterruptTimePrecise)) {
-      /* This is available since Windows 10.  */
-      ULONGLONG ull;
-      __MCF_G_IMP(QueryUnbiasedInterruptTimePrecise) (&ull);
-      return (double)(int64_t) ull * 0.0001;
-    }
-
-    /* This is available since Windows 7.  */
     ULONGLONG ull;
-    QueryUnbiasedInterruptTime(&ull);
+    __MCF_crt_QueryUnbiasedInterruptTimePrecise(&ull);
     return (double)(int64_t) ull * 0.0001;
-  }
-
-static inline
-void
-do_QueryInterruptTime(ULONGLONG* outp)
-  {
-    /* At address `0x7FFE0000` (`MM_SHARED_USER_DATA_VA` in Windows SDK for
-     * assembly, same on all architectures) there's a read-only structure of
-     * type `KUSER_SHARED_DATA`. The `InterruptTime` field is at offset `8` on
-     * all architectures; see
-     * <https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-kuser_shared_data>.  */
-    volatile char* shared_user_data = (char*) 0x7FFE0000;
-#if !defined __MCF_M_X8664_ASM
-    __asm__ ("" : "+r"(shared_user_data));  /* workaround for optimizer bug  */
-#endif
-#if __MCF_64_32(1, 0)
-    *outp = *(volatile ULONGLONG*) (shared_user_data + 8);
-#else
-    ULONG high, low;
-    do {
-      /* A 32-bit kernel does not write 64-bit integers atomically, which
-       * requires special treatment. The kernel writes `High2Time` then
-       * `LowPart` then `High1Time` so we read them in the reverse order. If
-       * `High1Time` does not equal `High2Time`, then the value will have
-       * been split and we must try again.  */
-      high = *(volatile ULONG*) (shared_user_data + 12);
-      low = *(volatile ULONG*) (shared_user_data + 8);
-    } while(high != *(volatile ULONG*) (shared_user_data + 16));
-    *outp = (ULONGLONG) high << 32 | low;
-#endif
   }
 
 __MCF_DLLEXPORT
 int64_t
 _MCF_tick_count(void)
   {
-    /* The interrupt-time count is more precise than `GetTickCount64()`.  */
     ULONGLONG ull;
-    do_QueryInterruptTime(&ull);
+    ull = __MCF_get_interrupt_time();
     return (int64_t) do_divide_by_10000(ull);
   }
 
@@ -131,16 +84,8 @@ __MCF_DLLEXPORT
 double
 _MCF_hires_tick_count(void)
   {
-    if(__MCF_HAS_G_IMP(QueryInterruptTimePrecise)) {
-      /* This is available since Windows 10.  */
-      ULONGLONG ull;
-      __MCF_G_IMP(QueryInterruptTimePrecise) (&ull);
-      return (double)(int64_t) ull * 0.0001;
-    }
-
-    /* The interrupt-time count is more precise than `GetTickCount64()`.  */
     ULONGLONG ull;
-    do_QueryInterruptTime(&ull);
+    __MCF_crt_QueryInterruptTimePrecise(&ull);
     return (double)(int64_t) ull * 0.0001;
   }
 
@@ -148,7 +93,6 @@ __MCF_DLLEXPORT
 double
 _MCF_perf_counter(void)
   {
-    /* This will not fail since Windows XP.  */
     LARGE_INTEGER li;
     QueryPerformanceCounter(&li);
     return (double) li.QuadPart * __MCF_crt_perf_freq_reciprocal;

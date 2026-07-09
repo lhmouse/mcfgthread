@@ -223,7 +223,6 @@ and unlocks the primitive mutex, releasing all threads that are waiting on it.
 
 |Function                                                 |Availability    |Documentation |
 |:--------------------------------------------------------|:---------------|:-------------|
-|`QueryInterruptTime` <sub>optional</sub>                 |Windows 10      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryinterrupttime) |
 |`QueryInterruptTimePrecise` <sub>optional</sub>          |Windows 10      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryinterrupttimeprecise) |
 |`QueryUnbiasedInterruptTimePrecise` <sub>optional</sub>  |Windows 10      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryunbiasedinterrupttimeprecise) |
 

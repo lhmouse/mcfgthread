@@ -100,7 +100,7 @@ void
 do_finalize_thread(void* dso)
   {
     __MCF_USING_SEH_TERMINUS;
-    _MCF_thread* self = __MCF_crt_TlsGetValue(__MCF_G(tls_index));
+    _MCF_thread* self = __MCF_crt_TlsGetValue2(__MCF_G(tls_index));
     if(!self)
       return;
 
