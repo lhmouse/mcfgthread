@@ -10,9 +10,9 @@
 
 #include "fwd.h"
 #include "dtor_queue.h"
-#include "tls.h"
 #include "atomic.h"
 #include "teb.h"
+#include "tls.h"
 #ifdef __MCF_THREAD_DETAILS
 #include "event.h"
 #endif
