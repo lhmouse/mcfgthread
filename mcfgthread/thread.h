@@ -203,7 +203,8 @@ _MCF_thread_get_priority(const _MCF_thread* __thrd_opt)
  * `__thrd_opt` is not null but doesn't point to a valid thread object, the
  * behavior of this function is undefined.
  *
- * Returns 0 upon success and -1 upon failure.  */
+ * Returns 0 upon success. If the function fails, -1 is returned and an error
+ * code can be obtained via `_MCF_get_win32_error()`.  */
 __MCF_THREAD_IMPORT
 int
 _MCF_thread_set_priority(_MCF_thread* __thrd_opt, _MCF_thread_priority __priority)
