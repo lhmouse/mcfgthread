@@ -260,15 +260,15 @@ extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_kernelbase;
 
 typedef void __stdcall typeof_GetSystemTimePreciseAsFileTime(FILETIME*);
 extern typeof_GetSystemTimePreciseAsFileTime*
-  __MCF_XGLOBALS_READONLY __MCF_crt_GetSystemTimePreciseAsFileTime;
+    __MCF_XGLOBALS_READONLY __MCF_crt_GetSystemTimePreciseAsFileTime;
 
 typedef void __stdcall typeof_QueryUnbiasedInterruptTimePrecise(ULONGLONG*);
 extern typeof_QueryUnbiasedInterruptTimePrecise*
-  __MCF_XGLOBALS_READONLY __MCF_crt_QueryUnbiasedInterruptTimePrecise;
+    __MCF_XGLOBALS_READONLY __MCF_crt_QueryUnbiasedInterruptTimePrecise;
 
 typedef void __stdcall typeof_QueryInterruptTimePrecise(ULONGLONG*);
 extern typeof_QueryInterruptTimePrecise*
-  __MCF_XGLOBALS_READONLY __MCF_crt_QueryInterruptTimePrecise;
+    __MCF_XGLOBALS_READONLY __MCF_crt_QueryInterruptTimePrecise;
 
 typedef LPVOID __stdcall typeof_TlsGetValue2(ULONG);
 extern typeof_TlsGetValue2* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue2;
