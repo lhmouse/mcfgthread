@@ -42,11 +42,11 @@ _MCF_cond_init(_MCF_cond* __cnd)
  * callback is provided without an unlock callback, it is not invoked at all.
  * Neither callback is allowed to throw exceptions.
  *
- * If the `__timeout_opt` argument points to a positive integer, it denotes the
- * expiration time in number of milliseconds since 1970-01-01T00:00:00Z. If it
- * points to a negative integer, the absolute value of it denotes the number of
- * milliseconds to wait. If it points to zero, the function returns immediately
- * without waiting. If it is null, the function waits indefinitely.
+ * If `__timeout_opt` points to a positive integer, it denotes the expiration
+ * time in number of milliseconds since 1970-01-01T00:00:00Z. If it points to a
+ * negative integer, the absolute value of it denotes the number of milliseconds
+ * to wait. If it points to zero, the function returns immediately without
+ * waiting. If it is null, the function waits indefinitely.
  *
  * Returns 0 if the condition variable has been signaled or there is a spurious
  * wakeup, or -1 if the wait operation has timed out.  */

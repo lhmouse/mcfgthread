@@ -171,12 +171,12 @@ void
 _MCF_thread_exit(void)
   __MCF_noexcept;
 
-/* Waits for a thread to finish execution. If the `__timeout_opt` argument
- * points to a positive integer, it denotes the expiration time in number of
- * milliseconds since 1970-01-01T00:00:00Z. If it points to a negative integer,
- * the absolute value of it denotes the number of milliseconds to wait. If it
- * points to zero, the function returns immediately without waiting. If it is
- * null, the function waits indefinitely.
+/* Waits for a thread to finish execution. If `__timeout_opt` points to a
+ * positive integer, it denotes the expiration time in number of milliseconds
+ * since 1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ * value of it denotes the number of milliseconds to wait. If it points to zero,
+ * the function returns immediately without waiting. If it is null, the function
+ * waits indefinitely.
  *
  * Returns 0 if the thread has terminated, or -1 if the wait operation has
  * timed out.  */
@@ -185,9 +185,9 @@ int
 _MCF_thread_wait(const _MCF_thread* __thrd_opt, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Gets the priority of a thread. If the `__thrd_opt` argument is null, the
- * priority of the current thread is returned. If `__thrd_opt` is not null but
- * doesn't point to a valid thread object, the behavior is undefined.
+/* Gets the priority of a thread. If `__thrd_opt` is null, the priority of the
+ * current thread is returned. If `__thrd_opt` is not null but doesn't point to
+ * a valid thread object, the behavior is undefined.
  *
  * Returns the thread priority as an enumerator. No value has been reserved to
  * indicate an error.  */
@@ -196,12 +196,12 @@ _MCF_thread_priority
 _MCF_thread_get_priority(const _MCF_thread* __thrd_opt)
   __MCF_noexcept;
 
-/* Sets the priority of a thread. The `__priority` argument may be an arbitrary
- * integer within -15 and +15, but specifying an `_MCF_thread_priority_*`
- * constant is recommended. Setting high priority values may require certain
- * privileges. If the `__thrd_opt` argument is null, the priority of the
- * current thread will be set. If `__thrd_opt` is not null but doesn't point to
- * a valid thread object, the behavior of this function is undefined.
+/* Sets the priority of a thread. `__priority` may be an arbitrary integer
+ * within -15 and +15, but specifying an `_MCF_thread_priority_*` constant is
+ * recommended. Setting high priority values may require certain privileges. If
+ * `__thrd_opt` is null, the priority of the current thread will be set. If
+ * `__thrd_opt` is not null but doesn't point to a valid thread object, the
+ * behavior of this function is undefined.
  *
  * Returns 0 upon success and -1 upon failure.  */
 __MCF_THREAD_IMPORT

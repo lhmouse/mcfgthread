@@ -42,11 +42,11 @@ _MCF_once_init(_MCF_once* __once)
  * `__cxa_guard_acquire()` function from the Itanium C++ ABI, as explained on
  * <https://itanium-cxx-abi.github.io/cxx-abi/abi.html#once-ctor>.
  *
- * If the `__timeout_opt` argument points to a positive integer, it denotes the
- * expiration time in number of milliseconds since 1970-01-01T00:00:00Z. If it
- * points to a negative integer, the absolute value of it denotes the number of
- * milliseconds to wait. If it points to zero, the function returns immediately
- * without waiting. If it is null, the function waits indefinitely.
+ * If `__timeout_opt` points to a positive integer, it denotes the expiration
+ * time in number of milliseconds since 1970-01-01T00:00:00Z. If it points to a
+ * negative integer, the absolute value of it denotes the number of milliseconds
+ * to wait. If it points to zero, the function returns immediately without
+ * waiting. If it is null, the function waits indefinitely.
  *
  * If this once-initialization flag is in the UNLOCKED state, this function
  * changes it into the LOCKED state and returns 1. If it is in the LOCKED state

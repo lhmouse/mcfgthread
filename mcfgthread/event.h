@@ -57,11 +57,11 @@ _MCF_event_get(const _MCF_event* __eventp)
 
 /* Waits for an event until it does NOT contain an undesired value.
  *
- * If the `__timeout_opt` argument points to a positive integer, it denotes the
- * expiration time in number of milliseconds since 1970-01-01T00:00:00Z. If it
- * points to a negative integer, the absolute value of it denotes the number of
- * milliseconds to wait. If it points to zero, the function returns immediately
- * without waiting. If it is null, the function waits indefinitely.
+ * If `__timeout_opt` points to a positive integer, it denotes the expiration
+ * time in number of milliseconds since 1970-01-01T00:00:00Z. If it points to a
+ * negative integer, the absolute value of it denotes the number of milliseconds
+ * to wait. If it points to zero, the function returns immediately without
+ * waiting. If it is null, the function waits indefinitely.
  *
  * If this event contains the undesired value, this function blocks until
  * some other value has been stored. Otherwise, this function returns its value

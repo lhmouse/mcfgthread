@@ -41,11 +41,11 @@ _MCF_shared_mutex_init(_MCF_shared_mutex* __smtx)
  * attempts to lock a mutex which it has already held and there is another thread
  * waiting for exclusive access, deadlocks may occur.
  *
- * If the `__timeout_opt` argument points to a positive integer, it denotes the
- * expiration time in number of milliseconds since 1970-01-01T00:00:00Z. If it
- * points to a negative integer, the absolute value of it denotes the number of
- * milliseconds to wait. If it points to zero, the function returns immediately
- * without waiting. If it is null, the function waits indefinitely.
+ * If `__timeout_opt` points to a positive integer, it denotes the expiration
+ * time in number of milliseconds since 1970-01-01T00:00:00Z. If it points to a
+ * negative integer, the absolute value of it denotes the number of milliseconds
+ * to wait. If it points to zero, the function returns immediately without
+ * waiting. If it is null, the function waits indefinitely.
  *
  * Returns 0 if the shared mutex has been locked in shared mode by the caller, or
  * -1 if the operation has timed out.  */
@@ -63,11 +63,11 @@ _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smtx, const int64_t* __timeou
  * A shared mutex is not recursive and performs no error checking. If the caller
  * attempts to lock a mutex which it has already held, deadlocks may occur.
  *
- * If the `__timeout_opt` argument points to a positive integer, it denotes the
- * expiration time in number of milliseconds since 1970-01-01T00:00:00Z. If it
- * points to a negative integer, the absolute value of it denotes the number of
- * milliseconds to wait. If it points to zero, the function returns immediately
- * without waiting. If it is null, the function waits indefinitely.
+ * If `__timeout_opt` points to a positive integer, it denotes the expiration
+ * time in number of milliseconds since 1970-01-01T00:00:00Z. If it points to a
+ * negative integer, the absolute value of it denotes the number of milliseconds
+ * to wait. If it points to zero, the function returns immediately without
+ * waiting. If it is null, the function waits indefinitely.
  *
  * Returns 0 if the shared mutex has been locked in exclusive mode by the caller,
  * or -1 if the operation has timed out.  */
