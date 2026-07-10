@@ -485,6 +485,21 @@ __MCF_gthread_initialize_globals(void)
         dll_fn ? __MCF_CAST_PTR(typeof_QueryInterruptTimePrecise, dll_fn)
                : do_QueryInterruptTime;
 
+    /* This function is available since Windows 10.  */
+    dll_fn = GetProcAddress(__MCF_crt_kernel32, "GetSystemCpuSetInformation");
+    __MCF_crt_GetSystemCpuSetInformation_opt =
+        __MCF_CAST_PTR(typeof_GetSystemCpuSetInformation, dll_fn);
+
+    /* This function is available since Windows 10.  */
+    dll_fn = GetProcAddress(__MCF_crt_kernel32, "GetThreadSelectedCpuSets");
+    __MCF_crt_GetThreadSelectedCpuSets_opt =
+        __MCF_CAST_PTR(typeof_GetThreadSelectedCpuSets, dll_fn);
+
+    /* This function is available since Windows 10.  */
+    dll_fn = GetProcAddress(__MCF_crt_kernel32, "SetThreadSelectedCpuSets");
+    __MCF_crt_SetThreadSelectedCpuSets_opt =
+        __MCF_CAST_PTR(typeof_SetThreadSelectedCpuSets, dll_fn);
+
     /* This function is available since Windows 11 24H2. It has the same
      * signature as `TlsGetValue()`, so the latter can be used as a backup.  */
     dll_fn = GetProcAddress(__MCF_crt_kernel32, "TlsGetValue2");
@@ -608,6 +623,9 @@ HMODULE __MCF_crt_kernelbase = __MCF_BAD_PTR;
 typeof_GetSystemTimePreciseAsFileTime* __MCF_crt_GetSystemTimePreciseAsFileTime = __MCF_BAD_PTR;
 typeof_QueryUnbiasedInterruptTimePrecise* __MCF_crt_QueryUnbiasedInterruptTimePrecise = __MCF_BAD_PTR;
 typeof_QueryInterruptTimePrecise* __MCF_crt_QueryInterruptTimePrecise = __MCF_BAD_PTR;
+typeof_GetSystemCpuSetInformation* __MCF_crt_GetSystemCpuSetInformation_opt = __MCF_BAD_PTR;
+typeof_GetThreadSelectedCpuSets* __MCF_crt_GetThreadSelectedCpuSets_opt = __MCF_BAD_PTR;
+typeof_SetThreadSelectedCpuSets* __MCF_crt_SetThreadSelectedCpuSets_opt = __MCF_BAD_PTR;
 typeof_TlsGetValue2* __MCF_crt_TlsGetValue2 = __MCF_BAD_PTR;
 
 /* This is a pointer to global data. If this library is linked statically,

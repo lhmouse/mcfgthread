@@ -270,6 +270,19 @@ typedef void __stdcall typeof_QueryInterruptTimePrecise(ULONGLONG*);
 extern typeof_QueryInterruptTimePrecise*
     __MCF_XGLOBALS_READONLY __MCF_crt_QueryInterruptTimePrecise;
 
+typedef BOOL __stdcall typeof_GetSystemCpuSetInformation(
+    SYSTEM_CPU_SET_INFORMATION*, ULONG, ULONG*, HANDLE, ULONG);
+extern typeof_GetSystemCpuSetInformation*
+    __MCF_XGLOBALS_READONLY __MCF_crt_GetSystemCpuSetInformation_opt;
+
+typedef BOOL __stdcall typeof_GetThreadSelectedCpuSets(HANDLE, ULONG*, ULONG, ULONG*);
+extern typeof_GetThreadSelectedCpuSets*
+    __MCF_XGLOBALS_READONLY __MCF_crt_GetThreadSelectedCpuSets_opt;
+
+typedef BOOL __stdcall typeof_SetThreadSelectedCpuSets(HANDLE, const ULONG*, ULONG);
+extern typeof_SetThreadSelectedCpuSets*
+    __MCF_XGLOBALS_READONLY __MCF_crt_SetThreadSelectedCpuSets_opt;
+
 typedef LPVOID __stdcall typeof_TlsGetValue2(ULONG);
 extern typeof_TlsGetValue2* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue2;
 

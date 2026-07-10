@@ -297,6 +297,7 @@ typedef struct __MCF_dtor_element __MCF_dtor_element;
 typedef struct __MCF_dtor_queue __MCF_dtor_queue;
 typedef struct __MCF_tls_element __MCF_tls_element;
 typedef struct __MCF_tls_table __MCF_tls_table;
+typedef struct __MCF_cpu_element __MCF_cpu_element;
 typedef struct __MCF_thread_base __MCF_thread_base;
 
 typedef struct __MCF_cond _MCF_cond;
@@ -308,6 +309,7 @@ typedef struct __MCF_event _MCF_event;
 typedef struct __MCF_thread_base _MCF_thread;
 typedef int _MCF_thread_priority;
 typedef struct __MCF_tls_key _MCF_tls_key;
+typedef struct __MCF_cpu_collection _MCF_cpu_collection;
 
 /* See `_MCF_cond_wait()` for details about these callbacks.  */
 typedef intptr_t _MCF_cond_unlock_callback(intptr_t __lock_arg);

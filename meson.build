@@ -28,7 +28,8 @@ mcfgthread_include = [
   'mcfgthread/mutex.h', 'mcfgthread/shared_mutex.h', 'mcfgthread/cond.h',
   'mcfgthread/once.h', 'mcfgthread/sem.h', 'mcfgthread/event.h', 'mcfgthread/thread.h',
   'mcfgthread/cxa.h', 'mcfgthread/dtor_queue.h', 'mcfgthread/exit.h',
-  'mcfgthread/tls.h', 'mcfgthread/gthr_aux.h', 'mcfgthread/gthr.h',
+  'mcfgthread/tls.h', 'mcfgthread/cpu_collection.h',
+  'mcfgthread/gthr_aux.h', 'mcfgthread/gthr.h',
   'mcfgthread/gthr_libobjc.h', 'mcfgthread/c11.h', 'mcfgthread/libcxx.h',
   'mcfgthread/cxx11.hpp' ]
 
@@ -37,7 +38,7 @@ mcfgthread_src_min = [
   'mcfgthread/src/shared_mutex.c', 'mcfgthread/src/cond.c', 'mcfgthread/src/once.c',
   'mcfgthread/src/sem.c', 'mcfgthread/src/event.c', 'mcfgthread/src/thread.c',
   'mcfgthread/src/cxa.c', 'mcfgthread/src/dtor_queue.c', 'mcfgthread/src/exit.c',
-  'mcfgthread/src/tls.c' ]
+  'mcfgthread/src/tls.c', 'mcfgthread/src/cpu_collection.c' ]
 
 mcfgthread_src_ex = [
   'mcfgthread/src/gthr_aux.c', 'mcfgthread/src/gthr.c', 'mcfgthread/src/gthr_libobjc.c',
@@ -116,7 +117,7 @@ test_src = [
   'test/gthr_call_once_unwind_seh.cpp', 'test/c11_call_once_unwind_seh.c',
   'test/atexit_terminate.cpp', 'test/at_quick_exit_terminate.cpp',
   'test/shared_mutex_rw_multi_fast.c', 'test/shared_mutex_rw_multi_slow.c',
-  'test/tick_count.c' ]
+  'test/tick_count.c', 'test/cpu_collection_selection.c' ]
 
 #===========================================================
 # Global configuration

@@ -13,6 +13,7 @@
 #include "atomic.h"
 #include "teb.h"
 #include "tls.h"
+#include "cpu_collection.h"
 #ifdef __MCF_THREAD_DETAILS
 #include "event.h"
 #endif
