@@ -14,10 +14,12 @@ EXPORTS
   ExitThread@4@
   FormatMessageW@28@
   FreeLibrary@4@
+  GetCurrentProcessorNumberEx@4@
   GetLastError@0@
   GetModuleFileNameW@12@
   GetModuleHandleExW@12@
   GetProcAddress@8@
+  GetProcessAffinityMask@12@
   GetProcessHeap@0@
   GetStdHandle@4@
   GetSystemInfo@4@

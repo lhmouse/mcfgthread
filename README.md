@@ -186,15 +186,19 @@ and unlocks the primitive mutex, releasing all threads that are waiting on it.
 |`ExitThread`                                             |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitthread) |
 |`FormatMessageW`                                         |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-formatmessagew) |
 |`FreeLibrary`                                            |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-freelibrary) |
+|`GetCurrentProcessorNumberEx`                            |Windows 7       |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentprocessornumberex) |
 |`GetLastError`                                           |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror) |
 |`GetModuleFileNameW`                                     |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulefilenamew) |
 |`GetModuleHandleExW`                                     |Windows XP      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulehandleexw) |
 |`GetProcAddress`                                         |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress) |
+|`GetProcessAffinityMask`                                 |Windows NT 3.5  |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getprocessaffinitymask) |
 |`GetProcessHeap`                                         |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-getprocessheap) |
 |`GetStdHandle`                                           |All             |[Windows API](https://learn.microsoft.com/en-us/windows/console/getstdhandle) |
+|`GetSystemCpuSetInformation` <sub>optional</sub>         |Windows 10      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getsystemcpusetinformation) |
 |`GetSystemInfo`                                          |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsysteminfo) |
 |`GetSystemTimeAsFileTime`                                |Windows NT 3.5  |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsystemtimeasfiletime) |
 |`GetSystemTimePreciseAsFileTime` <sub>optional</sub>     |Windows 8       |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsystemtimepreciseasfiletime) |
+|`GetThreadSelectedCpuSets` <sub>optional</sub>           |Windows 10      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadselectedcpusets) |
 |`GetThreadPriority`                                      |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadpriority) |
 |`HeapAlloc`                                              |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapalloc) |
 |`HeapFree`                                               |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapfree) |
@@ -210,6 +214,7 @@ and unlocks the primitive mutex, releasing all threads that are waiting on it.
 |`SetConsoleCtrlHandler`                                  |All             |[Windows API](https://learn.microsoft.com/en-us/windows/console/setconsolectrlhandler) |
 |`SetLastError`                                           |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-setlasterror) |
 |`SetThreadPriority`                                      |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setthreadpriority) |
+|`SetThreadSelectedCpuSets` <sub>optional</sub>           |Windows 10      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setthreadselectedcpusets) |
 |`SwitchToThread`                                         |Windows NT 4.0  |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-switchtothread) |
 |`TerminateProcess`                                       |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-terminateprocess) |
 |`TlsAlloc`                                               |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-tlsalloc) |
