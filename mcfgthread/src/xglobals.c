@@ -707,7 +707,8 @@ memcmp(const void* src, const void* dst, size_t size)
   }
 
 __asm__ (
-"\n .text"
+"\n .section .text$___chkstk_ms, \"x\""
+"\n   .p2align 2"
 #if defined __MCF_M_X8632_ASM
 /* This function probes the stack without adjusting ESP or clobbering any
  * registers. The size of allocation is passed via EAX in number of bytes.  */
@@ -773,7 +774,7 @@ __asm__ (
 "\n   sub x16, x16, x15, lsl 2"
 "\n 20001:"
 "\n   ldr wzr, [x16, x15, lsl 2]"
-"\n   sub x15, x15, 1024"
+"\n   sub x15, x15, 4096 / 4"
 "\n   tbz x15, 63, 20001b"
 "\n   ldp x15, x16, [sp], 16"
 "\n   ret"
