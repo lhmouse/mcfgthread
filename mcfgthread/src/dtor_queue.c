@@ -19,7 +19,7 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
     if(queue->__size == ARRAYSIZE(queue->__data)) {
       __MCF_dtor_queue* prev = __MCF_malloc_copy(queue, sizeof(__MCF_dtor_queue));
       if(!prev)
-        return __MCF_win32_error_i(ERROR_NOT_ENOUGH_MEMORY, -1);
+        return -2;
 
       /* Create a singly-linked list by moving elements to `*prev`. The
        * current block is empty now.  */

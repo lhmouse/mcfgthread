@@ -35,7 +35,7 @@ struct __MCF_dtor_queue
  * function is used to implement `__cxa_atexit()`. Refer to the Itanium C++
  * ABI for details about DSO handles.
  *
- * Returns 0 if an element has been pushed, or -1 if out of memory.  */
+ * Returns 0 if an element has been pushed, or -2 if out of memory.  */
 __MCF_DTOR_QUEUE_IMPORT
 int
 __MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtor_element* __elem)
