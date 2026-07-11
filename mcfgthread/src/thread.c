@@ -311,3 +311,88 @@ _MCF_sleep_noninterruptible(const int64_t* timeout_opt)
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
     __MCF_sleep(&nt_timeout);
   }
+
+__MCF_DLLEXPORT
+int
+_MCF_thread_get_affinity(const _MCF_thread* thrd_opt, _MCF_cpu_collection* coll)
+  {
+    if(!coll)
+      return __MCF_win32_error_i(ERROR_INVALID_PARAMETER, -1);
+
+    _MCF_cpu_collection_set_all_selections(coll, false);
+    HANDLE handle = thrd_opt ? thrd_opt->__handle : NtCurrentThread();
+
+    if(__MCF_crt_GetThreadSelectedCpuSets_opt) {
+      /* Use CPU Set APIs if they are available. These work reliably in a 32-bit
+       * process on a 64-bit system.  */
+      DWORD* ids = __builtin_alloca(_MCF_cpu_collection_get_size(coll) * sizeof(DWORD));
+      DWORD nids = _MCF_cpu_collection_get_size(coll);
+      if(!__MCF_crt_GetThreadSelectedCpuSets_opt(handle, ids, nids, &nids))
+        return -1;
+
+      /* Select all CPUs in [ids, ids + nids]. If `nids` is zero, it indicates
+       * the thread does not have a selection and runs on all CPUs.  */
+      if(nids == 0)
+        _MCF_cpu_collection_set_all_selections(coll, true);
+      else
+        for(uint32_t k = 0;  k < nids;  ++k)
+          _MCF_cpu_collection_set_selection(coll, ids[k], true);
+    }
+    else {
+      /* When CPU Set APIs are not available, a process is limited to a single
+       * processor group.  */
+      GROUP_AFFINITY gaff;
+      if(!GetThreadGroupAffinity(handle, &gaff))
+        return -1;
+
+      /* Each bit in `gaff.Mask` indicates an active logical processor in the
+       * current process group. CPU identifiers start from 256 like CPU Set APIs.  */
+      for(uint32_t k = 0;  k < __MCF_PTR_BITS;  ++k)
+        if(gaff.Mask & ((DWORD_PTR) 1 << k))
+          _MCF_cpu_collection_set_selection(coll, 256 + k, true);
+    }
+
+    return 0;
+  }
+
+__MCF_DLLEXPORT
+int
+_MCF_thread_set_affinity(_MCF_thread* thrd_opt, const _MCF_cpu_collection* coll)
+  {
+    if(!coll)
+      return __MCF_win32_error_i(ERROR_INVALID_PARAMETER, -1);
+
+    HANDLE handle = thrd_opt ? thrd_opt->__handle : NtCurrentThread();
+
+    if(__MCF_crt_SetThreadSelectedCpuSets_opt) {
+      /* Use CPU Set APIs if they are available. These work reliably in a 32-bit
+       * process on a 64-bit system.  */
+      DWORD* ids = __builtin_alloca(_MCF_cpu_collection_get_size(coll) * sizeof(DWORD));
+      DWORD nids = 0;
+      for(uint32_t k = 0;  k < _MCF_cpu_collection_get_size(coll);  ++k)
+        if(_MCF_cpu_collection_get_selection_by_index(coll, k))
+          ids[nids ++] = _MCF_cpu_collection_get_id_by_index(coll, k);
+
+      if(nids == 0)
+        return __MCF_win32_error_i(ERROR_INVALID_PARAMETER, -1);
+
+      if(!__MCF_crt_SetThreadSelectedCpuSets_opt(handle, ids, nids))
+        return -1;
+    }
+    else {
+      /* When CPU Set APIs are not available, a process is limited to a single
+       * processor group.  */
+      DWORD_PTR aff_mask = 0;
+      for(uint32_t k = 0;  k < _MCF_cpu_collection_get_size(coll);  ++k)
+        if(_MCF_cpu_collection_get_selection_by_index(coll, k))
+          aff_mask |= (DWORD_PTR) 1 << (_MCF_cpu_collection_get_id_by_index(coll, k) - 256);
+
+      if(aff_mask == 0)
+        return __MCF_win32_error_i(ERROR_INVALID_PARAMETER, -1);
+
+      if(!SetThreadAffinityMask(handle, aff_mask))
+        return -1;
+    }
+
+    return 0;
+  }
