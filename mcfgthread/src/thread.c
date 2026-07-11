@@ -274,7 +274,7 @@ do_sleep_interrupt(ULONG type)
 
 static
 intptr_t
-do_register_ctrl_c_handler(intptr_t arg)
+do_set_ctrl_c_handler(intptr_t arg)
   {
     (void) arg;
 
@@ -298,7 +298,7 @@ __MCF_DLLEXPORT
 int
 _MCF_sleep(const int64_t* timeout_opt)
   {
-    int err = _MCF_cond_wait(__MCF_G(interrupt_cond), do_register_ctrl_c_handler,
+    int err = _MCF_cond_wait(__MCF_G(interrupt_cond), do_set_ctrl_c_handler,
                              do_remove_ctrl_c_handler, 0, timeout_opt);
     return err ^ -1;
   }
