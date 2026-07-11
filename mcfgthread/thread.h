@@ -283,6 +283,35 @@ int
 _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt)
   __MCF_noexcept;
 
+/* Gets the affinity of a thread. The caller shall allocate and supply a CPU
+ * collection, where the function will select CPUs according to the affinity of
+ * the target thread. If `__thrd_opt` is null, the affinity of the current
+ * thread is returned. If `__thrd_opt` is not null but doesn't point to a valid
+ * thread object, the behavior is undefined. Be advised, if the calling thread
+ * has been moved to a processor group which `__coll` doesn't include, the
+ * function may select no CPU in the collection.
+ *
+ * Returns 0 upon success. If the function fails, -1 is returned and an error
+ * code can be obtained via `_MCF_get_win32_error()`.  */
+__MCF_THREAD_IMPORT
+int
+_MCF_thread_get_affinity(const _MCF_thread* __thrd_opt, _MCF_cpu_collection* __coll)
+  __MCF_noexcept;
+
+/* Sets the affinity of a thread. The caller shall allocate and supply a CPU
+ * collection to indicate which CPUs the target thread is allowed to run on. The
+ * caller shall not specify a CPU collection with no selection; the function will
+ * fail with `ERROR_INVALID_PARAMETER`. If `__thrd_opt` is null, the affinity of
+ * the current thread will be set. If `__thrd_opt` is not null but doesn't point
+ * to a valid thread object, the behavior of this function is undefined.
+ *
+ * Returns 0 upon success. If the function fails, -1 is returned and an error
+ * code can be obtained via `_MCF_get_win32_error()`.  */
+__MCF_THREAD_IMPORT
+int
+_MCF_thread_set_affinity(_MCF_thread* __thrd_opt, const _MCF_cpu_collection* __coll)
+  __MCF_noexcept;
+
 /* Define inline functions after all declarations.
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++

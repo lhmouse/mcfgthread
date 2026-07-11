@@ -24,6 +24,7 @@ EXPORTS
   GetStdHandle@4@
   GetSystemInfo@4@
   GetSystemTimeAsFileTime@4@
+  GetThreadGroupAffinity@8@
   GetThreadPriority@4@
   HeapAlloc@12@
   HeapFree@12@
@@ -38,6 +39,7 @@ EXPORTS
   RaiseFailFastException@12@
   SetConsoleCtrlHandler@8@
   SetLastError@4@
+  SetThreadAffinityMask@8@
   SetThreadPriority@8@
   SwitchToThread@0@
   TerminateProcess@8@
