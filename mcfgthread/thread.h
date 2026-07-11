@@ -204,8 +204,8 @@ _MCF_thread_get_priority(const _MCF_thread* __thrd_opt)
  * `__thrd_opt` is not null but doesn't point to a valid thread object, the
  * behavior of this function is undefined.
  *
- * Returns 0 upon success. If the function fails, -1 is returned and an error
- * code can be obtained via `_MCF_get_win32_error()`.  */
+ * Returns 0 upon success, -1 in case of an invalid argument, or -2 in case of
+ * a system error which can be obtained via `_MCF_get_win32_error()`.  */
 __MCF_THREAD_IMPORT
 int
 _MCF_thread_set_priority(_MCF_thread* __thrd_opt, _MCF_thread_priority __priority)
@@ -272,7 +272,8 @@ _MCF_tls_get(const _MCF_tls_key* __key)
  * not a null pointer and the new value has been set, its old value is stored
  * into `*__old_value_opt`.
  *
- * Returns 0 upon success and -1 upon failure.  */
+ * Returns 0 upon success, -1 if `__key` has been deleted, or -2 if out of
+ * memory.  */
 __MCF_THREAD_INLINE
 int
 _MCF_tls_xset(_MCF_tls_key* __key, void** __old_value_opt, const void* __value_opt)
@@ -291,8 +292,8 @@ _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt)
  * has been moved to a processor group which `__coll` doesn't include, the
  * function may select no CPU in the collection.
  *
- * Returns 0 upon success. If the function fails, -1 is returned and an error
- * code can be obtained via `_MCF_get_win32_error()`.  */
+ * Returns 0 upon success, -1 in case of an invalid argument, or -2 in case of
+ * a system error which can be obtained via `_MCF_get_win32_error()`.  */
 __MCF_THREAD_IMPORT
 int
 _MCF_thread_get_affinity(const _MCF_thread* __thrd_opt, _MCF_cpu_collection* __coll)
@@ -305,8 +306,8 @@ _MCF_thread_get_affinity(const _MCF_thread* __thrd_opt, _MCF_cpu_collection* __c
  * the current thread will be set. If `__thrd_opt` is not null but doesn't point
  * to a valid thread object, the behavior of this function is undefined.
  *
- * Returns 0 upon success. If the function fails, -1 is returned and an error
- * code can be obtained via `_MCF_get_win32_error()`.  */
+ * Returns 0 upon success, -1 in case of an invalid argument, or -2 in case of
+ * a system error which can be obtained via `_MCF_get_win32_error()`.  */
 __MCF_THREAD_IMPORT
 int
 _MCF_thread_set_affinity(_MCF_thread* __thrd_opt, const _MCF_cpu_collection* __coll)

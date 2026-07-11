@@ -27,7 +27,6 @@ main(void)
 
     _MCF_cpu_collection_set_all_selections(coll, false);
     assert(_MCF_thread_set_affinity(_MCF_thread_self(), coll) == -1);
-    assert(_MCF_get_win32_error() == ERROR_INVALID_PARAMETER);
 
     _MCF_cpu_collection_drop_ref(coll);
   }
