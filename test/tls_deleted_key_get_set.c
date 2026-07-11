@@ -37,7 +37,6 @@ main(void)
 
     r = _MCF_tls_set(key, &dummy1);
     assert(r == -1);
-    assert(GetLastError() == ERROR_INVALID_PARAMETER);
 
     p = _MCF_tls_get(key);
     assert(p == NULL);

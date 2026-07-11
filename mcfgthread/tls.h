@@ -49,9 +49,8 @@ struct __MCF_tls_key
  * invoked. The order of destructors during a thread's exit is unspecified.
  *
  * Returns a new thread-local key. The caller is responsible for calling
- * `_MCF_tls_key_delete()` when it is no longer needed. If the thread-local key
- * cannot be created, a null pointer is returned and an error code can be
- * obtained via `_MCF_get_win32_error()`.  */
+ * `_MCF_tls_key_delete()` when it is no longer needed. In case of out of
+ * memory, a null pointer is returned.  */
 __MCF_TLS_IMPORT
 _MCF_tls_key*
 _MCF_tls_key_new(__MCF_cxa_dtor_any_ __dtor_opt)
@@ -116,7 +115,8 @@ __MCF_tls_table_get(const __MCF_tls_table* __table, const _MCF_tls_key* __key)
  * If `__old_value_opt` is not a null pointer and the new value has been set,
  * its old value is stored into `*__old_value_opt`.
  *
- * Returns 0 upon success and -1 upon failure.  */
+ * Returns 0 upon success, -1 if `__key` has been deleted, or -2 if out of
+ * memory.  */
 __MCF_TLS_IMPORT
 int
 __MCF_tls_table_xset(__MCF_tls_table* __table, _MCF_tls_key* __key, void** __old_value_opt,
