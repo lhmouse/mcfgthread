@@ -52,9 +52,8 @@ _MCF_cpu_collection_new(void)
 /* Creates a copy of a CPU collection.
  *
  * Returns a new collection which is a copy of `__src`. The caller shall call
- * `_MCF_cpu_collection_drop_ref()` when the collection is no longer needed. If
- * the collection cannot be allocated, a null pointer is returned and an error
- * code can be obtained via `_MCF_get_win32_error()`.  */
+ * `_MCF_cpu_collection_drop_ref()` when the collection is no longer needed. In
+ * case of out of memory, a null pointer is returned.  */
 __MCF_CPU_COLLECTION_IMPORT
 _MCF_cpu_collection*
 _MCF_cpu_collection_new_copy(const _MCF_cpu_collection* __src)

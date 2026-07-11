@@ -105,7 +105,7 @@ _MCF_cpu_collection_new_copy(const _MCF_cpu_collection* src)
                                       offsetof(_MCF_cpu_collection, __data)
                                       + src->__size * sizeof(__MCF_cpu_element));
     if(!coll)
-      return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, nullptr);
+      return nullptr;
 
     /* Initialize the collection.  */
     _MCF_atomic_store_32_rlx(coll->__nref, 1);
