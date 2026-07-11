@@ -17,7 +17,6 @@ _MCF_cpu_collection*
 _MCF_cpu_collection_new(void)
   {
     _MCF_cpu_collection* coll;
-
     if(__MCF_crt_GetSystemCpuSetInformation_opt) {
       /* Use CPU Set APIs if they are available. These work reliably in a 32-bit
        * process on a 64-bit system.  */
