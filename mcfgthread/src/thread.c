@@ -209,9 +209,11 @@ __MCF_DLLEXPORT
 int
 _MCF_thread_set_priority(_MCF_thread* thrd_opt, _MCF_thread_priority priority)
   {
+    if((priority < THREAD_PRIORITY_IDLE) || (priority > THREAD_PRIORITY_TIME_CRITICAL))
+      return -1;
+
     HANDLE handle = thrd_opt ? thrd_opt->__handle : NtCurrentThread();
-    BOOL succ = SetThreadPriority(handle, priority);
-    return !succ ? -1 : 0;
+    return SetThreadPriority(handle, priority) ? 0 : -1;
   }
 
 static __MCF_NEVER_INLINE
