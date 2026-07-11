@@ -706,6 +706,86 @@ memcmp(const void* src, const void* dst, size_t size)
     return __MCF_mcompare(src, dst, size);
   }
 
+__asm__ (
+"\n .text"
+#if defined __MCF_M_X8632_ASM
+/* This function probes the stack without adjusting ESP or clobbering any
+ * registers. The size of allocation is passed via EAX in number of bytes.  */
+"\n .globl ___chkstk_ms"
+"\n .def ___chkstk_ms; .scl 2; .type 32; .endef"
+"\n ___chkstk_ms:"
+"\n   push eax"
+"\n   push ecx"
+"\n   lea ecx, [esp + 12 - 4096]"
+"\n   sub ecx, eax"
+"\n 20001:"
+"\n   test edx, DWORD PTR [ecx + eax]"
+"\n   sub eax, 4096"
+"\n   jns 20001b"
+"\n   pop ecx"
+"\n   pop eax"
+"\n   ret"
+/* This function probes the stack and adjusts ESP. No registers shall be
+ * clobbered. The size of allocation is passed via EAX in number of bytes.  */
+"\n .globl __alloca"
+"\n .def __alloca; .scl 2; .type 32; .endef"
+"\n __alloca:"
+"\n   call ___chkstk_ms"
+"\n   sub esp, eax"
+"\n   add esp, 4"
+"\n   push DWORD PTR [esp + eax - 4]"
+"\n   ret"
+/* This name is called by Clang for MSVC target.  */
+"\n .globl __chkstk"
+"\n .def __chkstk; .scl 2; .type 32; .endef"
+"\n .equiv __chkstk, __alloca"
+#elif defined __MCF_M_X8664_ASM
+/* This function probes the stack without adjusting RSP. No registers shall
+ * be clobbered. The size of allocation is passed via RAX in number of bytes.  */
+"\n .globl ___chkstk_ms"
+"\n .def ___chkstk_ms; .scl 2; .type 32; .endef"
+"\n ___chkstk_ms:"
+"\n   push rax"
+"\n   push rcx"
+"\n   lea rcx, [rsp + 24 - 4096]"
+"\n   sub rcx, rax"
+"\n 20001:"
+"\n   test rdx, QWORD PTR [rcx + rax]"
+"\n   sub rax, 4096"
+"\n   jns 20001b"
+"\n   pop rcx"
+"\n   pop rax"
+"\n   ret"
+/* This name is called by Clang for MSVC target.  */
+"\n .globl __chkstk"
+"\n .def __chkstk; .scl 2; .type 32; .endef"
+"\n .equiv __chkstk, ___chkstk_ms"
+#elif defined __MCF_M_ARM64_ASM
+/* This function probes the stack without adjusting SP. No registers shall
+ * be clobbered. The size of allocation is passed via X15 in number of quad
+ * words.  */
+"\n .globl __chkstk"
+"\n .def __chkstk; .scl 2; .type 32; .endef"
+"\n __chkstk:"
+"\n   stp x15, x16, [sp, -16]!"
+"\n   lsl x15, x15, 2"
+"\n   add x16, sp, 16 - 4096"
+"\n   sub x16, x16, x15, lsl 2"
+"\n 20001:"
+"\n   ldr wzr, [x16, x15, lsl 2]"
+"\n   sub x15, x15, 1024"
+"\n   tbz x15, 63, 20001b"
+"\n   ldp x15, x16, [sp], 16"
+"\n   ret"
+#  if defined __MCF_M_ARM64EC
+/* This name is used for ARM64EC.  */
+"\n .globl \"#__chkstk_arm64ec\""
+"\n .def \"#__chkstk_arm64ec\"; .scl 2; .type 32; .endef"
+"\n .equiv \"#__chkstk_arm64ec\", __chkstk"
+#  endif
+#endif
+);
+
 #if defined _MSC_VER
 /* Microsoft LINK requires this for a reason.  */
 const int _fltused __MCF_CRT_RDATA = 0x9875;
