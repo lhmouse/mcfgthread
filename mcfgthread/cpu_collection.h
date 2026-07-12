@@ -116,6 +116,12 @@ _MCF_cpu_collection_set_selection_by_index(_MCF_cpu_collection* __coll, uint32_t
                                            bool __selected)
   __MCF_noexcept;
 
+/* Selects or deselects all CPUs in the collection.  */
+__MCF_CPU_COLLECTION_INLINE
+void
+_MCF_cpu_collection_set_all_selections(_MCF_cpu_collection* __coll, bool __selected)
+  __MCF_noexcept;
+
 /* Returns the index of a CPU in the collection. If the CPU is not found,
  * `UINT32_MAX` is returned.  */
 __MCF_CPU_COLLECTION_IMPORT __MCF_FN_PURE
@@ -145,12 +151,6 @@ _MCF_cpu_collection_get_selection(const _MCF_cpu_collection* __coll, uint32_t __
 __MCF_CPU_COLLECTION_IMPORT
 int
 _MCF_cpu_collection_set_selection(_MCF_cpu_collection* __coll, uint32_t __id, bool __selected)
-  __MCF_noexcept;
-
-/* Selects or deselects all CPUs in the collection.  */
-__MCF_CPU_COLLECTION_INLINE
-void
-_MCF_cpu_collection_set_all_selections(_MCF_cpu_collection* __coll, bool __selected)
   __MCF_noexcept;
 
 /* Define inline functions after all declarations.
