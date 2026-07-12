@@ -202,11 +202,3 @@ _MCF_cpu_collection_set_selection(_MCF_cpu_collection* coll, uint32_t id, bool s
     elem->__selected = selected;
     return old_selected;
   }
-
-__MCF_DLLEXPORT
-void
-_MCF_cpu_collection_set_all_selections(_MCF_cpu_collection* coll, bool selected)
-  {
-    for(uint32_t k = 0;  k < coll->__size;  ++k)
-      coll->__data[k].__selected = selected;
-  }

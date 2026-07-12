@@ -148,7 +148,7 @@ _MCF_cpu_collection_set_selection(_MCF_cpu_collection* __coll, uint32_t __id, bo
   __MCF_noexcept;
 
 /* Selects or deselects all CPUs in the collection.  */
-__MCF_CPU_COLLECTION_IMPORT
+__MCF_CPU_COLLECTION_INLINE
 void
 _MCF_cpu_collection_set_all_selections(_MCF_cpu_collection* __coll, bool __selected)
   __MCF_noexcept;
@@ -231,6 +231,16 @@ _MCF_cpu_collection_set_selection_by_index(_MCF_cpu_collection* __coll, uint32_t
     __old_selected = __coll->__data[__index].__selected;
     __coll->__data[__index].__selected = __selected;
     return __old_selected;
+  }
+
+__MCF_CPU_COLLECTION_INLINE
+void
+_MCF_cpu_collection_set_all_selections(_MCF_cpu_collection* __coll, bool __selected)
+  __MCF_noexcept
+  {
+    uint32_t __index;
+    for(__index = 0;  __index < __coll->__size;  ++__index)
+      __coll->__data[__index].__selected = __selected;
   }
 
 __MCF_CXX(})  /* extern "C"  */
