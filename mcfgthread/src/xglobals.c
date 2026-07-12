@@ -504,8 +504,7 @@ __MCF_gthread_initialize_globals(void)
      * signature as `TlsGetValue()`, so the latter can be used as a backup.  */
     dll_fn = GetProcAddress(__MCF_crt_kernel32, "TlsGetValue2");
     __MCF_crt_TlsGetValue2 =
-        dll_fn ? __MCF_CAST_PTR(typeof_TlsGetValue2, dll_fn)
-               : TlsGetValue;
+        dll_fn ? __MCF_CAST_PTR(typeof_TlsGetValue2, dll_fn) : TlsGetValue;
 
     /* Generate the unique name for this process.  */
     static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
