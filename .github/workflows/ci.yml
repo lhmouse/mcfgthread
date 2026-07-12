@@ -206,7 +206,8 @@ jobs:
 
   llvm-mingw-arm64:
     name: LLVM-MinGW cross (Clang, mingw-w64 runtime, UCRT, ARM64)
-    runs-on: ubuntu-22.04-arm
+    runs-on: ubuntu-24.04-arm
+    container: ghcr.io/mstorsjo/wine
 
     steps:
       - uses: actions/checkout@v6
@@ -228,7 +229,7 @@ jobs:
       - name: Warming Wine up
         run: >-
              mkdir ~/.wine &&
-             /usr/lib/wine/wineserver64 -p &&
+             WINEPREFIX=${HOME}/.wine /usr/lib/wine/wineserver64 -p &&
              wine wineboot
 
       - name: Configure
