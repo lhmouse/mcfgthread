@@ -270,7 +270,7 @@ do_sleep_interrupt(ULONG type)
     (void) type;
 
     /* Notify all threads that are sleeping.  */
-    _MCF_cond_signal_some_slow(__MCF_G(interrupt_cond), SIZE_MAX);
+    _MCF_cond_signal_all(__MCF_G(interrupt_cond));
     return false;
   }
 
@@ -300,9 +300,9 @@ __MCF_DLLEXPORT
 int
 _MCF_sleep(const int64_t* timeout_opt)
   {
-    int err = _MCF_cond_wait(__MCF_G(interrupt_cond), do_set_ctrl_c_handler,
-                             do_remove_ctrl_c_handler, 0, timeout_opt);
-    return err ^ -1;
+    return _MCF_cond_wait(__MCF_G(interrupt_cond), do_set_ctrl_c_handler,
+                          do_remove_ctrl_c_handler, 0, timeout_opt)
+           ^ -1;
   }
 
 __MCF_DLLEXPORT
