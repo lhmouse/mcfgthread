@@ -22,8 +22,8 @@ struct __MCF_cpu_element
   {
     uint32_t __id;  /* CPU identifier; read-only  */
     uint16_t __group;  /* processor group index; read-only  */
-    uint16_t __reserved_1 : 15;
-    uint16_t __selected : 1;
+    __MCF_EX uint16_t __reserved_1 : 15;
+    __MCF_EX uint16_t __selected : 1;
   };
 
 struct __MCF_cpu_collection
