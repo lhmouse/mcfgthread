@@ -45,12 +45,12 @@ _MCF_cpu_collection_new(void)
           /* The system seems to return CPU Set identifiers in increasing order,
            * but that's undocumented, so keep them sorted, with Insertion Sort.  */
           uint32_t pos1 = coll->__size, pos2 = coll->__size;
-          while((pos1 != 0) && (coll->__data[-- pos1].__id > info->CpuSet.Id))
+          while((pos1 != 0) && (coll->__data[-- pos1].__id > info->CpuSet.LogicalProcessorIndex))
             coll->__data[pos2 --] = coll->__data[pos1];
 
           /* Add CPU at the upper bound.  */
           coll->__size ++;
-          coll->__data[pos2].__id = info->CpuSet.Id;
+          coll->__data[pos2].__id = info->CpuSet.LogicalProcessorIndex;
           coll->__data[pos2].__group = info->CpuSet.Group;
         }
 
