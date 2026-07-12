@@ -126,7 +126,7 @@ _MCF_cpu_collection_set_all_selections(_MCF_cpu_collection* __coll, bool __selec
  * `UINT32_MAX` is returned.  */
 __MCF_CPU_COLLECTION_IMPORT __MCF_FN_PURE
 uint32_t
-_MCF_cpu_collection_get_index(const _MCF_cpu_collection* __coll, uint32_t __id)
+_MCF_cpu_collection_find(const _MCF_cpu_collection* __coll, uint32_t __id)
   __MCF_noexcept;
 
 /* Returns the processor group of a CPU in the collection. If the CPU is not

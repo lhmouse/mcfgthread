@@ -155,7 +155,7 @@ do_find_cpu_opt(const _MCF_cpu_collection* coll, uint32_t id)
 
 __MCF_DLLEXPORT __MCF_FN_PURE
 uint32_t
-_MCF_cpu_collection_get_index(const _MCF_cpu_collection* coll, uint32_t id)
+_MCF_cpu_collection_find(const _MCF_cpu_collection* coll, uint32_t id)
   {
     const __MCF_cpu_element* elem = do_find_cpu_opt(coll, id);
     if(!elem)
