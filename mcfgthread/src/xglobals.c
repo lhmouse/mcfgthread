@@ -751,7 +751,7 @@ __asm__ (
 "\n   lea rcx, [rsp + 24 - 4096]"
 "\n   sub rcx, rax"
 "\n 20001:"
-"\n   test rdx, QWORD PTR [rcx + rax]"
+"\n   test edx, DWORD PTR [rcx + rax]"
 "\n   sub rax, 4096"
 "\n   jns 20001b"
 "\n   pop rcx"
