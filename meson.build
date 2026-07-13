@@ -118,7 +118,7 @@ test_src = [
   'test/atexit_terminate.cpp', 'test/at_quick_exit_terminate.cpp',
   'test/shared_mutex_rw_multi_fast.c', 'test/shared_mutex_rw_multi_slow.c',
   'test/tick_count.c', 'test/cpu_collection_selection.c', 'test/affinity_empty.c',
-  'test/affinity_loop.c' ]
+  'test/affinity_loop.c', 'test/cpu_collection_new_legacy.c' ]
 
 #===========================================================
 # Global configuration
@@ -323,8 +323,8 @@ foreach src : test_src
   test_link_args = []
   test_link_with = lib_mcfgthread_dll
 
-  if src in [ 'test/self_oom.c', 'test/mix.c', 'test/xglobals_name.c',
-              'test/tls_dtor_static.c' ]
+  if src in [ 'test/self_oom.c', 'test/xglobals_name.c', 'test/tls_dtor_static.c',
+              'test/mix.c', 'test/cpu_collection_new_legacy.c' ]
     test_link_with = lib_mcfgthread_a
   endif
 
