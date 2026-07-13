@@ -203,8 +203,8 @@ _MCF_cpu_collection_get_selection(const _MCF_cpu_collection* __coll, uint32_t __
  * doesn't exist in the collection. There's no way to add a new CPU into the
  * collection.
  *
- * Returns 1 if the CPU was selected before the call, 0 if the CPU was
- * unselected before the call, or -1 if the CPU does not exist in the collection.  */
+ * Returns 1 if the CPU was selected before the call, 0 if the CPU was unselected
+ * before the call, or -1 if the CPU does not exist in the collection.  */
 __MCF_CPU_COLLECTION_IMPORT
 int
 _MCF_cpu_collection_set_selection(_MCF_cpu_collection* __coll, uint32_t __id, bool __selected)
