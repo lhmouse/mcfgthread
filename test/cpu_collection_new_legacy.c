@@ -5,6 +5,10 @@
  * LICENSE.md as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
+#if defined __CYGWIN__
+int main(void) { return 77;  }
+#else  // __CYGWIN__
+
 #include "../mcfgthread/cpu_collection.h"
 #include <windows.h>
 #undef NDEBUG
@@ -70,3 +74,5 @@ main(void)
     _MCF_cpu_collection_drop_ref(collx);
     _MCF_cpu_collection_drop_ref(colly);
   }
+
+#endif  // __CYGWIN__
