@@ -401,7 +401,7 @@ __MCF_DLLEXPORT __MCF_REALIGN_SP
 void
 __MCF_run_static_dtors(_MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
   {
-    __MCF_USING_SEH_TERMINUS;
+    __MCF_USING_SEH_HANDLER(__MCF_seh_top);
     __MCF_dtor_element elem;
 
     while(do_pop_dtor(&elem, mtx, queue, dso) == 0)
@@ -555,7 +555,7 @@ __MCF_DLLEXPORT __MCF_REALIGN_SP
 void
 __MCF_gthread_on_thread_exit(void)
   {
-    __MCF_USING_SEH_TERMINUS;
+    __MCF_USING_SEH_HANDLER(__MCF_seh_top);
     _MCF_thread* self = __MCF_crt_TlsGetValue2(__MCF_G(tls_index));
     if(!self)
       return;

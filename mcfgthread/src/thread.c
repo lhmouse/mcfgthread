@@ -22,7 +22,7 @@ static __MCF_REALIGN_SP
 void
 do_thread_startup(_MCF_thread* thrd)
   {
-    __MCF_USING_SEH_TERMINUS;
+    __MCF_USING_SEH_HANDLER(__MCF_seh_top);
     if(_MCF_event_await_change(thrd->__init_done, init_st_zero, nullptr) != init_st_success)
       return;
 

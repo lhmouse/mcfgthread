@@ -99,7 +99,7 @@ static __MCF_REALIGN_SP
 void
 do_finalize_thread(void* dso)
   {
-    __MCF_USING_SEH_TERMINUS;
+    __MCF_USING_SEH_HANDLER(__MCF_seh_top);
     _MCF_thread* self = __MCF_crt_TlsGetValue2(__MCF_G(tls_index));
     if(!self)
       return;
