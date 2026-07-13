@@ -161,7 +161,7 @@ _MCF_cpu_collection_find(const _MCF_cpu_collection* coll, uint32_t id)
     if(!elem)
       return UINT32_MAX;
 
-    /* Returns the index in `__data`.  */
+    /* Return the index in `__data`.  */
     return (uint32_t) (elem - coll->__data);
   }
 
@@ -173,7 +173,7 @@ _MCF_cpu_collection_get_group(const _MCF_cpu_collection* coll, uint32_t id)
     if(!elem)
       return UINT32_MAX;
 
-    /* Returns the processor group index.  */
+    /* Return the processor group index.  */
     return elem->__group;
   }
 
@@ -185,7 +185,7 @@ _MCF_cpu_collection_get_selection(const _MCF_cpu_collection* coll, uint32_t id)
     if(!elem)
       return false;
 
-    /* Returns the current state.  */
+    /* Return the current state.  */
     return elem->__selected;
   }
 
@@ -197,7 +197,7 @@ _MCF_cpu_collection_set_selection(_MCF_cpu_collection* coll, uint32_t id, bool s
     if(!elem)
       return -1;
 
-    /* Returns the previous state.  */
+    /* Return the previous state.  */
     int old_selected = elem->__selected;
     elem->__selected = selected;
     return old_selected;
