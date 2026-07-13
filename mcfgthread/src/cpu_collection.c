@@ -20,8 +20,8 @@ _MCF_cpu_collection_new(void)
     if(__MCF_crt_GetSystemCpuSetInformation_opt) {
       /* Use CPU Set APIs if they are available. These work reliably in a 32-bit
        * process on a 64-bit system.  */
-      SYSTEM_CPU_SET_INFORMATION* info = __builtin_alloca(2048);
-      DWORD info_cb = 2048;
+      SYSTEM_CPU_SET_INFORMATION* info = __builtin_alloca(1024);
+      DWORD info_cb = 1024;
       if(!__MCF_crt_GetSystemCpuSetInformation_opt(info, info_cb, &info_cb, NULL, 0)) {
         if(GetLastError() != ERROR_INSUFFICIENT_BUFFER)
           return nullptr;
@@ -37,8 +37,6 @@ _MCF_cpu_collection_new(void)
       if(!coll)
         return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, nullptr);
 
-      /* Each active logical processor is indicated by a variable-size structure
-       * of type `SYSTEM_CPU_SET_INFORMATION`.  */
       SYSTEM_CPU_SET_INFORMATION* end_of_info = (void*) ((char*) info + info_cb);
       while(info != end_of_info) {
         if(info->Type == CpuSetInformation) {
@@ -52,6 +50,9 @@ _MCF_cpu_collection_new(void)
           coll->__size ++;
           coll->__data[pos2].__id = info->CpuSet.Id;
           coll->__data[pos2].__group = info->CpuSet.Group;
+          coll->__data[pos2].__core_idx = info->CpuSet.CoreIndex;
+          coll->__data[pos2].__effic_cls = info->CpuSet.EfficiencyClass;
+          coll->__data[pos2].__sched_cls = info->CpuSet.SchedulingClass;
         }
 
         info = (SYSTEM_CPU_SET_INFORMATION*) ((char*) info + info->Size);
@@ -60,34 +61,65 @@ _MCF_cpu_collection_new(void)
     else {
       /* When CPU Set APIs are not available, a process is limited to a single
        * processor group.  */
+      SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX* info = __builtin_alloca(2560);
+      DWORD info_cb = 2560;
+      if(!GetLogicalProcessorInformationEx(RelationProcessorCore, info, &info_cb)) {
+        if(GetLastError() != ERROR_INSUFFICIENT_BUFFER)
+          return nullptr;
+
+        info = __builtin_alloca(info_cb);
+        if(!GetLogicalProcessorInformationEx(RelationProcessorCore, info, &info_cb))
+          return nullptr;
+      }
+
       DWORD_PTR proc_mask, sys_mask;
       if(!GetProcessAffinityMask(NtCurrentProcess(), &proc_mask, &sys_mask))
         return nullptr;
+
+      PROCESSOR_NUMBER proc_num;
+      GetCurrentProcessorNumberEx(&proc_num);
 
       coll = __MCF_malloc_0(offsetof(_MCF_cpu_collection, __data)
                             + __MCF_PTR_BITS * sizeof(__MCF_cpu_element));
       if(!coll)
         return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, nullptr);
 
-      /* Get the current processor group index from somewhere else.  */
-      PROCESSOR_NUMBER proc_number;
-      GetCurrentProcessorNumberEx(&proc_number);
-
-      /* Each active logical processor is indicated by a bit in `proc_mask` in
-       * the current process group. This ensures that CPU identifiers are sorted,
-       * and also start from 256 like CPU Set APIs.  */
-      uint32_t bit_index = 0;
-      uintptr_t mask_reg = proc_mask;
+      DWORD_PTR mask_reg = proc_mask;
       while(mask_reg != 0) {
-        if(mask_reg & 1) {
-          /* Add CPU into the end.  */
-          uint32_t pos = coll->__size ++;
-          coll->__data[pos].__id = 256 + bit_index;
-          coll->__data[pos].__group = proc_number.Group;
+        DWORD bit_index;
+        __MCF_64_32(_BitScanForward64, _BitScanForward) (&bit_index, mask_reg);
+
+        /* Add CPU into the end. This ensures that CPU identifiers are sorted,
+         * and also start from 256 like CPU Set APIs.  */
+        uint32_t pos = coll->__size ++;
+        coll->__data[pos].__id = 256 + bit_index;
+        coll->__data[pos].__group = proc_num.Group;
+        coll->__data[pos].__core_idx = (BYTE) bit_index;
+
+        mask_reg = mask_reg & (mask_reg - 1);
+      }
+
+      SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX* end_of_info = (void*) ((char*) info + info_cb);
+      while(info != end_of_info) {
+        if(info->Relationship == RelationProcessorCore) {
+          /* Microsoft documentation says that 'if the `PROCESSOR_RELATIONSHIP`
+           * structure represents a processor core, the `GroupCount` member is
+           * always 1.' In this code path, a process can't straddle multiple
+           * process groups, so only cores of the current group are returned.  */
+          if(info->Processor.GroupMask[0].Group == proc_num.Group) {
+            DWORD core_index;
+            __MCF_64_32(_BitScanForward64, _BitScanForward) (&core_index,
+                                                             info->Processor.GroupMask[0].Mask);
+
+            for(uint32_t k = 0;  k < coll->__size;  ++k)
+              if(info->Processor.GroupMask[0].Mask & ((DWORD_PTR) 1 << (coll->__data[k].__id - 256))) {
+                coll->__data[k].__core_idx = (BYTE) core_index;
+                coll->__data[k].__effic_cls = info->Processor.EfficiencyClass;
+              }
+          }
         }
 
-        bit_index ++;
-        mask_reg >>= 1;
+        info = (SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX*) ((char*) info + info->Size);
       }
     }
 
@@ -175,6 +207,44 @@ _MCF_cpu_collection_get_group(const _MCF_cpu_collection* coll, uint32_t id)
 
     /* Return the processor group index.  */
     return elem->__group;
+  }
+
+__MCF_DLLEXPORT __MCF_FN_PURE
+uint32_t
+_MCF_cpu_collection_get_core(const _MCF_cpu_collection* coll, uint32_t id)
+  {
+    const __MCF_cpu_element* elem = do_find_cpu_opt(coll, id);
+    if(!elem)
+      return UINT32_MAX;
+
+    /* Compose the physical core identifier.  */
+    return elem->__group * 256U + elem->__core_idx;
+  }
+
+__MCF_DLLEXPORT __MCF_FN_PURE
+uint32_t
+_MCF_cpu_collection_get_efficiency_class(const _MCF_cpu_collection* coll, uint32_t id)
+  {
+    const __MCF_cpu_element* elem = do_find_cpu_opt(coll, id);
+    if(!elem)
+      return UINT32_MAX;
+
+    /* Return the efficiency class. The lower the value, the more efficient
+     * the core. Shouldn't this be called 'performance class'? I don't know.  */
+    return elem->__effic_cls;
+  }
+
+__MCF_DLLEXPORT __MCF_FN_PURE
+uint32_t
+_MCF_cpu_collection_get_scheduling_class(const _MCF_cpu_collection* coll, uint32_t id)
+  {
+    const __MCF_cpu_element* elem = do_find_cpu_opt(coll, id);
+    if(!elem)
+      return UINT32_MAX;
+
+    /* Return the scheduling class. This value is > 0 for a P-core and = 0 for
+     * an E-core.  */
+    return elem->__sched_cls;
   }
 
 __MCF_DLLEXPORT __MCF_FN_PURE

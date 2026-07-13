@@ -22,8 +22,11 @@ struct __MCF_cpu_element
   {
     uint32_t __id;  /* CPU identifier; read-only  */
     uint16_t __group;  /* processor group index; read-only  */
-    __MCF_EX uint16_t __reserved_1 : 15;
-    __MCF_EX uint16_t __selected : 1;
+    uint8_t __core_idx;  /* core index in physical package; read-only  */
+    bool __selected;
+    uint8_t __effic_cls;  /* `PROCESSOR_RELATIONSHIP::EfficiencyClass`  */
+    uint8_t __sched_cls;  /* `SYSTEM_CPU_SET_INFORMATION::CpuSet.SchedulingClass`  */
+    uint16_t __reserved_x2;
   };
 
 struct __MCF_cpu_collection
@@ -102,6 +105,32 @@ uint32_t
 _MCF_cpu_collection_get_group_by_index(const _MCF_cpu_collection* __coll, uint32_t __index)
   __MCF_noexcept;
 
+/* Gets the identifier of a physical core which the CPU at `__index` in the
+ * collection belongs to. This value is calculated as `__group * 256 + __core_idx`.  */
+__MCF_CPU_COLLECTION_INLINE __MCF_FN_PURE
+uint32_t
+_MCF_cpu_collection_get_core_by_index(const _MCF_cpu_collection* __coll, uint32_t __index)
+  __MCF_noexcept;
+
+/* Gets the efficiency class of the CPU at `__index` in the collection. This
+ * value is the same as `PROCESSOR_RELATIONSHIP::EfficiencyClass`; typically,
+ * this value is 1 for Intel P-cores or ARM big cores, and 0 for Intel E-cores
+ * or ARM little cores. On a homogeneous CPU, this value is always zero.  */
+__MCF_CPU_COLLECTION_INLINE __MCF_FN_PURE
+uint32_t
+_MCF_cpu_collection_get_efficiency_class_by_index(const _MCF_cpu_collection* __coll, uint32_t __index)
+  __MCF_noexcept;
+
+/* Gets the scheduling class of the CPU at `__index` in the collection. This
+ * value is the same as `SYSTEM_CPU_SET_INFORMATION::CpuSet.SchedulingClass`;
+ * typically, this value is > 0 for Intel P-cores or ARM big cores, and 0 for
+ * Intel E-cores or ARM little cores. On a homogeneous CPU, this value is always
+ * zero.  */
+__MCF_CPU_COLLECTION_INLINE __MCF_FN_PURE
+uint32_t
+_MCF_cpu_collection_get_scheduling_class_by_index(const _MCF_cpu_collection* __coll, uint32_t __index)
+  __MCF_noexcept;
+
 /* Gets the selection state of the CPU at `__index` in the collection.  */
 __MCF_CPU_COLLECTION_INLINE __MCF_FN_PURE
 bool
@@ -134,6 +163,34 @@ _MCF_cpu_collection_find(const _MCF_cpu_collection* __coll, uint32_t __id)
 __MCF_CPU_COLLECTION_IMPORT __MCF_FN_PURE
 uint32_t
 _MCF_cpu_collection_get_group(const _MCF_cpu_collection* __coll, uint32_t __id)
+  __MCF_noexcept;
+
+/* Gets the identifier of a physical core which a CPU in the collection belongs
+ * to. This value is calculated as `__group * 256 + __core_idx`. If the CPU is
+ * not found, `UINT32_MAX` is returned.  */
+__MCF_CPU_COLLECTION_IMPORT __MCF_FN_PURE
+uint32_t
+_MCF_cpu_collection_get_core(const _MCF_cpu_collection* __coll, uint32_t __id)
+  __MCF_noexcept;
+
+/* Gets the efficiency class of a CPU in the collection. This value is the same
+ * as `PROCESSOR_RELATIONSHIP::EfficiencyClass`; typically, this value is 1 for
+ * Intel P-cores or ARM big cores, and 0 for Intel E-cores or ARM little cores.
+ * On a homogeneous CPU, this value is always zero. If the CPU is not found,
+ * `UINT32_MAX` is returned.  */
+__MCF_CPU_COLLECTION_IMPORT __MCF_FN_PURE
+uint32_t
+_MCF_cpu_collection_get_efficiency_class(const _MCF_cpu_collection* __coll, uint32_t __id)
+  __MCF_noexcept;
+
+/* Gets the scheduling class of a CPU in the collection. This value is the same
+ * as `SYSTEM_CPU_SET_INFORMATION::CpuSet.SchedulingClass`; typically, this
+ * value is > 0 for Intel P-cores or ARM big cores, and 0 for Intel E-cores or
+ * ARM little cores. On a homogeneous CPU, this value is always zero. If the CPU
+ * is not found, `UINT32_MAX` is returned.  */
+__MCF_CPU_COLLECTION_IMPORT __MCF_FN_PURE
+uint32_t
+_MCF_cpu_collection_get_scheduling_class(const _MCF_cpu_collection* __coll, uint32_t __id)
   __MCF_noexcept;
 
 /* Gets the selection state of a CPU in the collection.  */
@@ -209,6 +266,33 @@ _MCF_cpu_collection_get_group_by_index(const _MCF_cpu_collection* __coll, uint32
   {
     __MCF_ASSERT(__index < __coll->__size);
     return __coll->__data[__index].__group;
+  }
+
+__MCF_CPU_COLLECTION_INLINE __MCF_FN_PURE
+uint32_t
+_MCF_cpu_collection_get_core_by_index(const _MCF_cpu_collection* __coll, uint32_t __index)
+  __MCF_noexcept
+  {
+    __MCF_ASSERT(__index < __coll->__size);
+    return __coll->__data[__index].__group * 256U + __coll->__data[__index].__core_idx;
+  }
+
+__MCF_CPU_COLLECTION_INLINE __MCF_FN_PURE
+uint32_t
+_MCF_cpu_collection_get_efficiency_class_by_index(const _MCF_cpu_collection* __coll, uint32_t __index)
+  __MCF_noexcept
+  {
+    __MCF_ASSERT(__index < __coll->__size);
+    return __coll->__data[__index].__effic_cls;
+  }
+
+__MCF_CPU_COLLECTION_INLINE __MCF_FN_PURE
+uint32_t
+_MCF_cpu_collection_get_scheduling_class_by_index(const _MCF_cpu_collection* __coll, uint32_t __index)
+  __MCF_noexcept
+  {
+    __MCF_ASSERT(__index < __coll->__size);
+    return __coll->__data[__index].__sched_cls;
   }
 
 __MCF_CPU_COLLECTION_INLINE __MCF_FN_PURE
