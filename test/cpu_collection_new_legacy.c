@@ -11,6 +11,7 @@
 #include <assert.h>
 #include <stdio.h>
 
+extern HMODULE __MCF_crt_ntdll;
 extern void* __MCF_crt_GetSystemCpuSetInformation_opt;
 
 int
