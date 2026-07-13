@@ -41,6 +41,10 @@ struct __MCF_gthr_thread_record
     void* __arg_or_result;
   };
 
+/* If a thread exits with an exit unwind, then `__gthread_join()` stores this
+ * value into `*__resp_opt`.  */
+#define __MCF_GTHR_CANCELLED   ((void*) -1)
+
 /* These functions implement `__gthread_once()`. If `__once_fn` initiates stack
  * unwinding, by throwing an exception for example, the state of `*__once` will
  * be restored correctly.
