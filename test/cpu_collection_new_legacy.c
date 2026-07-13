@@ -22,6 +22,9 @@ main(void)
     if(GetActiveProcessorGroupCount() != 1)
       return 77;
 
+    // https://gitlab.winehq.org/wine/wine/-/wikis/Developer-FAQ#how-can-i-detect-wine
+    bool is_on_wine = GetProcAddress(__MCF_crt_ntdll, "wine_get_version") != NULL;
+
     // use new API
     _MCF_cpu_collection* collx = _MCF_cpu_collection_new();
     assert(collx);
@@ -54,8 +57,11 @@ main(void)
     for(uint32_t k = 0;  k < _MCF_cpu_collection_get_size(collx);  k++) {
       assert(_MCF_cpu_collection_get_id_by_index(collx, k)
              == _MCF_cpu_collection_get_id_by_index(colly, k));
-      assert(_MCF_cpu_collection_get_core_by_index(collx, k)
-             == _MCF_cpu_collection_get_core_by_index(colly, k));
+
+      if(!is_on_wine)
+        assert(_MCF_cpu_collection_get_core_by_index(collx, k)
+               == _MCF_cpu_collection_get_core_by_index(colly, k));
+
       assert(_MCF_cpu_collection_get_efficiency_class_by_index(collx, k)
              == _MCF_cpu_collection_get_efficiency_class_by_index(colly, k));
     }
