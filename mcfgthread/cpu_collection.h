@@ -310,7 +310,7 @@ _MCF_cpu_collection_set_selection_by_index(_MCF_cpu_collection* __coll, uint32_t
                                            bool __selected)
   __MCF_noexcept
   {
-    int __old_selected;
+    bool __old_selected;
     __MCF_ASSERT(__index < __coll->__size);
     __old_selected = __coll->__data[__index].__selected;
     __coll->__data[__index].__selected = __selected;
