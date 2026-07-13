@@ -86,11 +86,13 @@ _MCF_cpu_collection_new(void)
 
       DWORD_PTR mask_reg = proc_mask;
       while(mask_reg != 0) {
+        /* Each active logical processor is indicated by a bit in `proc_mask`
+         * in the current process group. This ensures that CPU identifiers are
+         * sorted.  */
         DWORD bit_index;
         __MCF_64_32(_BitScanForward64, _BitScanForward) (&bit_index, mask_reg);
 
-        /* Add CPU into the end. This ensures that CPU identifiers are sorted,
-         * and also start from 256 like CPU Set APIs.  */
+        /* Add CPU into the end. CPU identifiers start from 256 like CPU Set APIs.  */
         uint32_t pos = coll->__size ++;
         coll->__data[pos].__id = 256 + bit_index;
         coll->__data[pos].__group = proc_num.Group;
