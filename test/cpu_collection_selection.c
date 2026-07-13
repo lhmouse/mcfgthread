@@ -19,8 +19,11 @@ main(void)
 
     fprintf(stderr, "number of CPUs: %u\n", _MCF_cpu_collection_get_size(coll));
     for(uint32_t k = 0;  k < _MCF_cpu_collection_get_size(coll);  k++)
-      fprintf(stderr, "  CPU %u: ID %u, Group %u\n", k,
+      fprintf(stderr, "  CPU %u: ID %u, Core %u, Efficiency %u, Scheduling %u, Group %u\n", k,
           _MCF_cpu_collection_get_id_by_index(coll, k),
+          _MCF_cpu_collection_get_core_by_index(coll, k),
+          _MCF_cpu_collection_get_efficiency_class_by_index(coll, k),
+          _MCF_cpu_collection_get_scheduling_class_by_index(coll, k),
           _MCF_cpu_collection_get_group_by_index(coll, k));
 
     uint32_t first_cpu_id = _MCF_cpu_collection_get_id_by_index(coll, 0);
