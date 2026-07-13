@@ -554,7 +554,8 @@ __MCF_XGLOBALS_INLINE
 void*
 __MCF_mresize_0(void* ptr, size_t size)
   {
-    return HeapReAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY | HEAP_REALLOC_IN_PLACE_ONLY, ptr, size);
+    return HeapReAlloc(__MCF_crt_heap, HEAP_ZERO_MEMORY | HEAP_REALLOC_IN_PLACE_ONLY,
+                       ptr, size);
   }
 
 __MCF_XGLOBALS_INLINE
@@ -644,8 +645,9 @@ __MCF_create_named_section(const OBJECT_ATTRIBUTES* Attributes, LONGLONG Maximum
   {
     HANDLE handle;
     LARGE_INTEGER size = { .QuadPart = MaximumSize };
-    NTSTATUS status = NtCreateSection(&handle, SECTION_ALL_ACCESS, (OBJECT_ATTRIBUTES*) Attributes,
-                                      &size, PAGE_READWRITE, SEC_COMMIT, NULL);
+    NTSTATUS status = NtCreateSection(&handle, SECTION_ALL_ACCESS,
+                                      (OBJECT_ATTRIBUTES*) Attributes, &size,
+                                      PAGE_READWRITE, SEC_COMMIT, NULL);
     if(status < 0)
       return __MCF_win32_ntstatus_p(status, NULL);
     return handle;
