@@ -386,14 +386,24 @@ size_t
 _MCF_get_page_size(void)
   __MCF_noexcept;
 
-/* Gets the number of logical processors in the current group.  */
+/* Gets the number of logical processors in the current group. When there are
+ * more processors than `__MCF_PTR_BITS`, the result includes only those in the
+ * current/primary processor group of the current process. For Windows 10+ where
+ * CPU Set APIs are available, precise information may be obtained by examining
+ * a CPU collection that is created by `_MCF_cpu_collection_new()`.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_CONST
 size_t
 _MCF_get_processor_count(void)
   __MCF_noexcept;
 
-/* Gets the mask of active processors. Each bit 1 denotes a processor that
- * has been configured into the system.  */
+/* Gets the mask of active processors. Each bit 1 denotes a processor that has
+ * been configured into the system. The value is cached upon initialization, and
+ * does not reflect changes thereafter. When there are more processors than
+ * `__MCF_PTR_BITS`, the result includes only those in the current/primary
+ * processor group of the current process, and may even be incorrect in a 32-bit
+ * process on a 64-bit system. For Windows 10+ where CPU Set APIs are available,
+ * precise information may be obtained by examining a CPU collection that is
+ * created by `_MCF_cpu_collection_new()`.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_CONST
 uintptr_t
 _MCF_get_active_processor_mask(void)
