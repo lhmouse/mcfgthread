@@ -11,6 +11,7 @@
 #define __MCF_XGLOBALS_READONLY
 #include "xglobals.h"
 #include "../once.h"
+#include "../exit.h"
 #include <ntstatus.h>
 #include <libloaderapi.h>
 #include <psapi.h>
@@ -267,6 +268,26 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
     /* The exception is unsolvable, so terminate the process.  */
     RaiseFailFastException(rec, ctx, 0);
     __builtin_trap();
+  }
+
+__MCF_DLLEXPORT __attribute__((__section__(".text$$safeseh$0002")))
+EXCEPTION_DISPOSITION
+__MCF_seh_process_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
+  {
+    if(rec->ExceptionFlags & EXCEPTION_EXIT_UNWIND)
+      __MCF_exit((int) rec->ExceptionCode);
+
+    return __MCF_seh_top(rec, estab_frame, ctx, disp_ctx);
+  }
+
+__MCF_DLLEXPORT __attribute__((__section__(".text$$safeseh$0003")))
+EXCEPTION_DISPOSITION
+__MCF_seh_thread_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
+  {
+    if(rec->ExceptionFlags & EXCEPTION_EXIT_UNWIND)
+      _MCF_thread_exit();
+
+    return __MCF_seh_top(rec, estab_frame, ctx, disp_ctx);
   }
 
 __MCF_DLLEXPORT
@@ -805,6 +826,8 @@ __asm__ (
 "\n ___MCF_i386_se_handler_table:"
 "\n   .rva _do_call_once_seh_unwind"
 "\n   .rva ___MCF_seh_top"
+"\n   .rva ___MCF_seh_process_top"
+"\n   .rva ___MCF_seh_thread_top"
 "\n .equiv ___MCF_i386_se_handler_count, (. - ___MCF_i386_se_handler_table) / 4"
 "\n .text"
 );
@@ -1068,8 +1091,10 @@ const PIMAGE_TLS_CALLBACK __MCF_crt_xl_b __MCF_CRT_XL(B) = do_tls_callback;
  * on all compilers. In the static library we use the `.safeseh` directive but it
  * is only supported by Microsoft LINK, or LLD in LINK mode.  */
 __asm__ (
-"\n.safeseh ___MCF_seh_top"
-"\n.safeseh _do_call_once_seh_unwind"
+"\n .safeseh _do_call_once_seh_unwind"
+"\n .safeseh ___MCF_seh_top"
+"\n .safeseh ___MCF_seh_process_top"
+"\n .safeseh ___MCF_seh_thread_top"
 );
 #endif
 

@@ -51,11 +51,22 @@
       .Buffer = (void*) ((s) + __MCF_STATIC_ASSERT_0(  \
          !__builtin_types_compatible_p(__typeof__(1+&*(s)), __typeof__(s))))  }
 
-/* Terminates the current process. This function is used as the exception
- * handler of a `noexcept` function.  */
+/* This function is used as the exception handler of a `noexcept` function.  */
 __MCF_XGLOBALS_IMPORT
 EXCEPTION_DISPOSITION
 __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
+
+/* This is an alternative handler for `main()` or `WinMain()`, which terminates
+ * the current process in case of an exit unwind.  */
+__MCF_XGLOBALS_IMPORT
+EXCEPTION_DISPOSITION
+__MCF_seh_process_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
+
+/* This is an alternative handler for threads, which terminates the current
+ * thread in case of an exit unwind.  */
+__MCF_XGLOBALS_IMPORT
+EXCEPTION_DISPOSITION
+__MCF_seh_thread_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
 
 #if defined __MCF_M_X8632
 
