@@ -139,7 +139,9 @@ void
 do_gthread_routine(_MCF_thread* thrd)
   {
     __MCF_gthr_thread_record* rec = _MCF_thread_get_data(thrd);
-    rec->__arg_or_result = (* rec->__proc) (rec->__arg_or_result);
+    void* arg = rec->__arg_or_result;
+    rec->__arg_or_result = (void*) -1;  /* maybe for cancellation */
+    rec->__arg_or_result = (* rec->__proc) (arg);
   }
 
 __MCF_DLLEXPORT
