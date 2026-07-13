@@ -842,7 +842,7 @@ __asm__ (
 "\n .section .rdata, \"dr\""
 "\n   .p2align 2"
 "\n __MCF_arm64ec_chpe_metadata:"
-"\n   .long 1" /* Version */
+"\n   .long 1"  /* Version */
 "\n   .rva __hybrid_code_map"
 "\n   .long __hybrid_code_map_count"
 "\n   .rva __x64_code_ranges_to_entry_points"
