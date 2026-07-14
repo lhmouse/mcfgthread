@@ -11,10 +11,6 @@ on:
   workflow_dispatch:
 
 jobs:
-  #==========================================================================
-  # Windows x86-64  (MSYS2 UCRT64, GCC)
-  #==========================================================================
-
   windows-x86-64:
     name: Windows x86-64 (GCC, UCRT)
     runs-on: windows-2022
@@ -37,30 +33,23 @@ jobs:
       - name: Configure
         run: >-
              meson setup --buildtype=release build_ci
-             --prefix $PWD/build_pkg
 
       - name: Build
         run: meson compile -Cbuild_ci
 
       - name: Run benchmark
-        run: cd build_ci && ../doc/benchmark_mutex.sh
-
-      - name: Rename output
         run: >-
-             mv build_ci/benchmark_result_OS_VER_CPU_MODEL.png
-                build_ci/benchmark_result_ACTIONS_windows-x86-64.png
+             cd build_ci &&
+             ../doc/benchmark_mutex.sh &&
+             mv benchmark_result_{OS_VER_CPU_MODEL,ACTIONS_windows-x86-64}.png
 
       - uses: actions/upload-artifact@v7
         with:
           path: build_ci/benchmark_result_ACTIONS_windows-x86-64.png
-          name: benchmark_Windows_x86-64
-
-  #==========================================================================
-  # Wine x86-64  (Ubuntu cross, GCC, mingw-w64)
-  #==========================================================================
+          name: benchmark_result_ACTIONS_windows-x86-64
 
   wine-x86-64:
-    name: Wine x86-64 (GCC, mingw-w64, MSVCRT)
+    name: Wine x86-64 (GCC, MSVCRT)
     runs-on: ubuntu-26.04
 
     steps:
@@ -83,28 +72,21 @@ jobs:
       - name: Configure
         run: >-
              meson setup --buildtype=release build_ci
-             --prefix $PWD/build_pkg
              --cross-file cross/gcc.x86_64-w64-mingw32
 
       - name: Build
         run: meson compile -Cbuild_ci
 
       - name: Run benchmark
-        run: cd build_ci && ../doc/benchmark_mutex.sh
-
-      - name: Rename output
         run: >-
-             mv build_ci/benchmark_result_OS_VER_CPU_MODEL.png
-                build_ci/benchmark_result_ACTIONS_wine-x86-64.png
+             cd build_ci &&
+             CC=x86_64-w64-mingw32-gcc ../doc/benchmark_mutex.sh &&
+             mv benchmark_result_{OS_VER_CPU_MODEL,ACTIONS_wine-x86-64}.png
 
       - uses: actions/upload-artifact@v7
         with:
           path: build_ci/benchmark_result_ACTIONS_wine-x86-64.png
-          name: benchmark_Wine_x86-64
-
-  #==========================================================================
-  # Windows ARM64  (MSYS2 CLANGARM64, Clang)
-  #==========================================================================
+          name: benchmark_result_ACTIONS_wine-x86-64
 
   windows-arm64:
     name: Windows ARM64 (Clang, UCRT)
@@ -128,30 +110,23 @@ jobs:
       - name: Configure
         run: >-
              meson setup --buildtype=release build_ci
-             --prefix $PWD/build_pkg
 
       - name: Build
         run: meson compile -Cbuild_ci
 
       - name: Run benchmark
-        run: cd build_ci && ../doc/benchmark_mutex.sh
-
-      - name: Rename output
         run: >-
-             mv build_ci/benchmark_result_OS_VER_CPU_MODEL.png
-                build_ci/benchmark_result_ACTIONS_windows-arm64.png
+             cd build_ci &&
+             ../doc/benchmark_mutex.sh &&
+             mv benchmark_result_{OS_VER_CPU_MODEL,ACTIONS_windows-arm64}.png
 
       - uses: actions/upload-artifact@v7
         with:
           path: build_ci/benchmark_result_ACTIONS_windows-arm64.png
-          name: benchmark_Windows_ARM64
-
-  #==========================================================================
-  # Wine ARM64  (Ubuntu cross, LLVM-MinGW, Clang)
-  #==========================================================================
+          name: benchmark_result_ACTIONS_windows-arm64
 
   wine-arm64:
-    name: Wine ARM64 (Clang, LLVM-MinGW, UCRT)
+    name: Wine ARM64 (Clang, UCRT)
     runs-on: ubuntu-22.04-arm
 
     steps:
@@ -180,23 +155,18 @@ jobs:
       - name: Configure
         run: >-
              meson setup --buildtype=release build_ci
-             --prefix $PWD/build_pkg
              --cross-file cross/llvm.aarch64-w64-mingw32
 
       - name: Build
         run: meson compile -Cbuild_ci
 
       - name: Run benchmark
-        env:
-          CC: aarch64-w64-mingw32-clang
-        run: cd build_ci && ../doc/benchmark_mutex.sh
-
-      - name: Rename output
         run: >-
-             mv build_ci/benchmark_result_OS_VER_CPU_MODEL.png
-                build_ci/benchmark_result_ACTIONS_wine-arm64.png
+             cd build_ci &&
+             CC=aarch64-w64-mingw32-clang ../doc/benchmark_mutex.sh &&
+             mv benchmark_result_{OS_VER_CPU_MODEL,ACTIONS_wine-arm64}.png
 
       - uses: actions/upload-artifact@v7
         with:
           path: build_ci/benchmark_result_ACTIONS_wine-arm64.png
-          name: benchmark_Wine_ARM64
+          name: benchmark_result_ACTIONS_wine-arm64
