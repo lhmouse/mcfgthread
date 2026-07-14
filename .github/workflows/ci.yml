@@ -5,7 +5,7 @@ permissions:
   pull-requests: read
 
 concurrency:
-  group: ${{ github.ref }}
+  group: ${{ github.ref }}-ci
   cancel-in-progress: true
 
 on:

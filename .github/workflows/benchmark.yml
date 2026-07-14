@@ -1,0 +1,202 @@
+name: Benchmark
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.ref }}-benchmark
+  cancel-in-progress: true
+
+on:
+  workflow_dispatch:
+
+jobs:
+  #==========================================================================
+  # Windows x86-64  (MSYS2 UCRT64, GCC)
+  #==========================================================================
+
+  windows-x86-64:
+    name: Windows x86-64 (GCC, UCRT)
+    runs-on: windows-2022
+
+    defaults:
+      run: { shell: 'msys2 {0}' }
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: msys2/setup-msys2@v2
+        with: { msystem: UCRT64 }
+
+      - name: Install dependencies
+        run: >-
+             pacman -Sy ;
+             pacman -S --needed --noconfirm
+             mingw-w64-ucrt-x86_64-{headers,crt,gcc,meson,gnuplot}
+
+      - name: Configure
+        run: >-
+             meson setup --buildtype=release build_ci
+             --prefix $PWD/build_pkg
+
+      - name: Build
+        run: meson compile -Cbuild_ci
+
+      - name: Run benchmark
+        run: cd build_ci && ../doc/benchmark_mutex.sh
+
+      - name: Rename output
+        run: >-
+             mv build_ci/benchmark_result_OS_VER_CPU_MODEL.png
+                build_ci/benchmark_result_ACTIONS_windows-x86-64.png
+
+      - uses: actions/upload-artifact@v7
+        with:
+          path: build_ci/benchmark_result_ACTIONS_windows-x86-64.png
+          name: benchmark_Windows_x86-64
+
+  #==========================================================================
+  # Wine x86-64  (Ubuntu cross, GCC, mingw-w64)
+  #==========================================================================
+
+  wine-x86-64:
+    name: Wine x86-64 (GCC, mingw-w64, MSVCRT)
+    runs-on: ubuntu-26.04
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: >-
+             sudo apt-get update ;
+             sudo apt-get purge mono-runtime ;
+             sudo apt-get install -y --no-install-recommends
+             mingw-w64-x86-64-dev {gcc,g++,binutils}-mingw-w64-x86-64 meson
+             ninja-build gnuplot wine wine-binfmt
+
+      - name: Warming Wine up
+        run: >-
+             mkdir ~/.wine &&
+             /usr/lib/x86_64-linux-gnu/wine/wineserver -p &&
+             wine wineboot
+
+      - name: Configure
+        run: >-
+             meson setup --buildtype=release build_ci
+             --prefix $PWD/build_pkg
+             --cross-file cross/gcc.x86_64-w64-mingw32
+
+      - name: Build
+        run: meson compile -Cbuild_ci
+
+      - name: Run benchmark
+        run: cd build_ci && ../doc/benchmark_mutex.sh
+
+      - name: Rename output
+        run: >-
+             mv build_ci/benchmark_result_OS_VER_CPU_MODEL.png
+                build_ci/benchmark_result_ACTIONS_wine-x86-64.png
+
+      - uses: actions/upload-artifact@v7
+        with:
+          path: build_ci/benchmark_result_ACTIONS_wine-x86-64.png
+          name: benchmark_Wine_x86-64
+
+  #==========================================================================
+  # Windows ARM64  (MSYS2 CLANGARM64, Clang)
+  #==========================================================================
+
+  windows-arm64:
+    name: Windows ARM64 (Clang, UCRT)
+    runs-on: windows-11-arm
+
+    defaults:
+      run: { shell: 'msys2 {0}' }
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: msys2/setup-msys2@v2
+        with: { msystem: CLANGARM64 }
+
+      - name: Install dependencies
+        run: >-
+             pacman -Sy ;
+             pacman -S --needed --noconfirm
+             mingw-w64-clang-aarch64-{headers,crt,clang,meson,gnuplot}
+
+      - name: Configure
+        run: >-
+             meson setup --buildtype=release build_ci
+             --prefix $PWD/build_pkg
+
+      - name: Build
+        run: meson compile -Cbuild_ci
+
+      - name: Run benchmark
+        run: cd build_ci && ../doc/benchmark_mutex.sh
+
+      - name: Rename output
+        run: >-
+             mv build_ci/benchmark_result_OS_VER_CPU_MODEL.png
+                build_ci/benchmark_result_ACTIONS_windows-arm64.png
+
+      - uses: actions/upload-artifact@v7
+        with:
+          path: build_ci/benchmark_result_ACTIONS_windows-arm64.png
+          name: benchmark_Windows_ARM64
+
+  #==========================================================================
+  # Wine ARM64  (Ubuntu cross, LLVM-MinGW, Clang)
+  #==========================================================================
+
+  wine-arm64:
+    name: Wine ARM64 (Clang, LLVM-MinGW, UCRT)
+    runs-on: ubuntu-22.04-arm
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: >-
+             sudo apt-get update ;
+             sudo apt-get purge mono-runtime ;
+             sudo apt-get install -y --no-install-recommends
+             wget ninja-build gnuplot wine wine-binfmt &&
+             sudo PIP_BREAK_SYSTEM_PACKAGES=1 pip3 install meson
+
+      - name: Download LLVM MinGW
+        run: >-
+             wget 'https://github.com/mstorsjo/llvm-mingw/releases/download/20260602/llvm-mingw-20260602-ucrt-ubuntu-22.04-aarch64.tar.xz' &&
+             tar -xaf llvm-mingw-20260602-ucrt-ubuntu-22.04-aarch64.tar.xz &&
+             readlink -fe llvm-mingw-20260602-ucrt-ubuntu-22.04-aarch64/bin | tee -a "${GITHUB_PATH}"
+
+      - name: Warming Wine up
+        run: >-
+             mkdir ~/.wine &&
+             /usr/lib/wine/wineserver64 -p &&
+             wine wineboot
+
+      - name: Configure
+        run: >-
+             meson setup --buildtype=release build_ci
+             --prefix $PWD/build_pkg
+             --cross-file cross/llvm.aarch64-w64-mingw32
+
+      - name: Build
+        run: meson compile -Cbuild_ci
+
+      - name: Run benchmark
+        env:
+          CC: aarch64-w64-mingw32-clang
+        run: cd build_ci && ../doc/benchmark_mutex.sh
+
+      - name: Rename output
+        run: >-
+             mv build_ci/benchmark_result_OS_VER_CPU_MODEL.png
+                build_ci/benchmark_result_ACTIONS_wine-arm64.png
+
+      - uses: actions/upload-artifact@v7
+        with:
+          path: build_ci/benchmark_result_ACTIONS_wine-arm64.png
+          name: benchmark_Wine_ARM64
