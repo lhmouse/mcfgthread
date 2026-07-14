@@ -38,7 +38,7 @@ jobs:
              mingw-w64-x86-64-dev {gcc,g++,binutils}-mingw-w64-x86-64 meson
              ninja-build wine wine-binfmt
 
-      - name: Warming Wine up
+      - name: Warm Wine up
         run: >-
              mkdir ~/.wine &&
              /usr/lib/x86_64-linux-gnu/wine/wineserver -p &&
@@ -225,7 +225,7 @@ jobs:
              tar -xaf llvm-mingw-20260602-ucrt-ubuntu-22.04-aarch64.tar.xz &&
              readlink -fe llvm-mingw-20260602-ucrt-ubuntu-22.04-aarch64/bin | tee -a "${GITHUB_PATH}"
 
-      - name: Warming Wine up
+      - name: Warm Wine up
         run: >-
              mkdir ~/.wine &&
              /usr/lib/wine/wineserver64 -p &&
