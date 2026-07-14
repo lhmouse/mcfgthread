@@ -25,7 +25,7 @@ __MCF_CXX(extern "C" {)
 /* Define reusable types.  */
 typedef struct __MCF_gthr_rc_mutex __MCF_gthr_rc_mutex;
 typedef struct __MCF_gthr_thread_record __MCF_gthr_thread_record;
-typedef void* __MCF_gthr_thread_procedure(void* __arg);
+typedef void* __MCF_gthr_thread_fn(void* __arg);
 
 struct __MCF_gthr_rc_mutex
   {
@@ -37,7 +37,7 @@ struct __MCF_gthr_rc_mutex
 struct __MCF_gthr_thread_record
   {
     uint8_t __magic_guid[16];
-    __MCF_gthr_thread_procedure* __proc;
+    __MCF_gthr_thread_fn* __proc;
     void* __arg_or_result;
   };
 
@@ -150,12 +150,12 @@ __MCF_gthr_cond_recursive_mutex_wait(_MCF_cond* __cnd, __MCF_gthr_rc_mutex* __rm
 /* These are auxiliary functions for threads.  */
 __MCF_GTHR_AUX_IMPORT
 _MCF_thread*
-__MCF_gthr_thread_create_v3(__MCF_gthr_thread_procedure* __proc, void* __arg)
+__MCF_gthr_thread_create_v3(__MCF_gthr_thread_fn* __proc, void* __arg)
   __MCF_noexcept;
 
 __MCF_GTHR_AUX_IMPORT
 _MCF_thread*
-__MCF_gthr_thread_create_v4(_MCF_thread** __thrdp_opt, __MCF_gthr_thread_procedure* __proc, void* __arg)
+__MCF_gthr_thread_create_v4(_MCF_thread** __thrdp_opt, __MCF_gthr_thread_fn* __proc, void* __arg)
   __MCF_noexcept;
 
 __MCF_GTHR_AUX_IMPORT

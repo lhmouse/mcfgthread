@@ -546,7 +546,7 @@ int
 __MCF_c11_thrd_create(thrd_t* __thrdp, thrd_start_t __proc, void* __arg)
   __MCF_noexcept
   {
-    __MCF_gthr_thread_procedure* __fn = __MCF_CAST_PTR(__MCF_gthr_thread_procedure, __proc);
+    __MCF_gthr_thread_fn* __fn = __MCF_CAST_PTR(__MCF_gthr_thread_fn, __proc);
     _MCF_thread* __thrd = __MCF_gthr_thread_create_v4(__thrdp, __fn, __arg);
     return (__thrd == __MCF_nullptr) ? thrd_nomem : thrd_success;
   }

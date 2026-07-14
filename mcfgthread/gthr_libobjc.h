@@ -176,7 +176,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_condition_broadcast, __gthread_objc_condition_broa
  * This function creates a detached thread.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 objc_thread_t
-__MCF_gthr_objc_thread_detach(__MCF_gthr_thread_procedure* __proc, void* __arg)
+__MCF_gthr_objc_thread_detach(__MCF_gthr_thread_fn* __proc, void* __arg)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
@@ -388,7 +388,7 @@ __MCF_gthr_objc_condition_broadcast(objc_condition_t __objc_cnd)
 
 __MCF_GTHR_LIBOBJC_INLINE
 objc_thread_t
-__MCF_gthr_objc_thread_detach(__MCF_gthr_thread_procedure* __proc, void* __arg)
+__MCF_gthr_objc_thread_detach(__MCF_gthr_thread_fn* __proc, void* __arg)
   __MCF_noexcept
   {
     _MCF_thread* __thrd = __MCF_gthr_thread_create_v3(__proc, __arg);

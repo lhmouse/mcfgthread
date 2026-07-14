@@ -331,7 +331,7 @@ __MCF_ALT_SYM(__MCF_gthr_cond_broadcast, __gthread_cond_broadcast);
 /* Creates a thread, like `pthread_create()`.  */
 __MCF_GTHR_IMPORT
 int
-__MCF_gthr_create_v3(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg)
+__MCF_gthr_create_v3(__gthread_t* __thrdp, __MCF_gthr_thread_fn* __proc, void* __arg)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
@@ -651,7 +651,7 @@ __MCF_gthr_cond_broadcast(__gthread_cond_t* __cnd)
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_create_v3(__gthread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg)
+__MCF_gthr_create_v3(__gthread_t* __thrdp, __MCF_gthr_thread_fn* __proc, void* __arg)
   __MCF_noexcept
   {
     _MCF_thread* __thrd = __MCF_gthr_thread_create_v4(__thrdp, __proc, __arg);

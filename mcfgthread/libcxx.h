@@ -279,7 +279,7 @@ __MCF_ALT_SYM(__MCF_libcxx_condvar_broadcast, __libcpp_condvar_broadcast);
 /* Creates a thread, like `pthread_create()`.  */
 __MCF_LIBCXX_IMPORT
 int
-__MCF_libcxx_thread_create(__libcpp_thread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg)
+__MCF_libcxx_thread_create(__libcpp_thread_t* __thrdp, __MCF_gthr_thread_fn* __proc, void* __arg)
   __MCF_noexcept;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
@@ -605,7 +605,7 @@ __MCF_libcxx_condvar_broadcast(__libcpp_condvar_t* __cnd)
 
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_thread_create(__libcpp_thread_t* __thrdp, __MCF_gthr_thread_procedure* __proc, void* __arg)
+__MCF_libcxx_thread_create(__libcpp_thread_t* __thrdp, __MCF_gthr_thread_fn* __proc, void* __arg)
   __MCF_noexcept
   {
     _MCF_thread* __thrd = __MCF_gthr_thread_create_v4(__thrdp, __proc, __arg);
