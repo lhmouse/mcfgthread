@@ -288,9 +288,7 @@ _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt)
  * collection, where the function will select CPUs according to the affinity of
  * the target thread. If `__thrd_opt` is null, the affinity of the current
  * thread is returned. If `__thrd_opt` is not null but doesn't point to a valid
- * thread object, the behavior is undefined. Be advised, if the calling thread
- * has been moved to a processor group which `__coll` doesn't include, the
- * function may select no CPU in the collection.
+ * thread object, the behavior is undefined.
  *
  * Returns 0 upon success, -1 in case of an invalid argument, or -2 in case of
  * a system error which can be obtained via `_MCF_get_win32_error()`.  */
