@@ -29,7 +29,7 @@ __MCF_CXX(extern "C" {)
  * the mutex.  */
 typedef struct __MCF_c11_mutex __MCF_c11_mutex;
 typedef struct __MCF_c11_thread_record __MCF_c11_thread_record;
-typedef int __MCF_c11_thread_procedure(void* __arg);
+typedef int __MCF_c11_thread_fn(void* __arg);
 
 struct __MCF_c11_mutex
   {
@@ -40,14 +40,14 @@ struct __MCF_c11_mutex
 struct __MCF_c11_thread_record
   {
     int __result;
-    __MCF_c11_thread_procedure* __proc;
+    __MCF_c11_thread_fn* __proc;
     void* __arg;
     __MCF_BR(uint8_t) __joinable;
     uintptr_t __reserved_low;
     uintptr_t __reserved_high;
   };
 
-typedef __MCF_c11_thread_procedure* thrd_start_t;
+typedef __MCF_c11_thread_fn* thrd_start_t;
 typedef _MCF_thread* thrd_t;
 typedef _MCF_tls_key* tss_t;
 typedef _MCF_tls_dtor* tss_dtor_t;
