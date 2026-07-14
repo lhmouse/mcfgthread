@@ -117,7 +117,7 @@ jobs:
       - name: Run benchmark
         run: >-
              cd build_ci &&
-             ../doc/benchmark_mutex.sh &&
+             CC=clang ../doc/benchmark_mutex.sh &&
              mv benchmark_result_{OS_VER_CPU_MODEL,ACTIONS_windows-arm64}.png
 
       - uses: actions/upload-artifact@v7
