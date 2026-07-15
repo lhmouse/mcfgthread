@@ -78,26 +78,17 @@ __MCF_seh_thread_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVO
  * a local record object.  */
 __MCF_ALWAYS_INLINE
 void
-__MCF_i386_seh_cleanup(EXCEPTION_REGISTRATION_RECORD* const* ref)
+__MCF_i386_seh_cleanup(const void* ref)
   {
-    EXCEPTION_REGISTRATION_RECORD* const restrict record = *ref;
-    __MCF_teb_store_ptr(0, (intptr_t) record->Next);
-  }
-
-__MCF_ALWAYS_INLINE
-EXCEPTION_REGISTRATION_RECORD*
-__MCF_i386_seh_install(DWORD* storage)
-  {
-    EXCEPTION_REGISTRATION_RECORD* const restrict record = (void*) storage;
-    __MCF_teb_store_ptr(0, (intptr_t) record);
-    return record;
+    __MCF_teb_store_ptr(0, *(const intptr_t*) ref);
   }
 
 #  define __MCF_USING_SEH_HANDLER(fn)  \
-    EXCEPTION_REGISTRATION_RECORD* const __MCF_i386_seh_record  \
-           __attribute__((__cleanup__(__MCF_i386_seh_cleanup)))  \
-      = __MCF_i386_seh_install(  \
-          (DWORD[]){ (DWORD) __MCF_teb_load_ptr(0), (DWORD) (fn) })  /* no semicolon  */
+    const intptr_t  \
+      __MCF_i386_seh_record[] __attribute__((__cleanup__(__MCF_i386_seh_cleanup)))  \
+        = { __MCF_teb_load_ptr(0), (intptr_t) (fn) },  \
+      __MCF_i386_seh_record_dummy __attribute__((__unused__))  \
+        = (__MCF_teb_store_ptr(0, (intptr_t) &__MCF_i386_seh_record), 0)  /* no semicolon  */
 
 /* Some old code assumes that ESP is always aligned to a 16-byte boundary,
  * but that's not guaranteed for callbacks from system DLLs, so it has to be

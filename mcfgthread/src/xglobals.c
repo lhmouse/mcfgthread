@@ -169,31 +169,66 @@ static __attribute__((__section__(".text$$safeseh$0000")))
 EXCEPTION_DISPOSITION
 do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
 
+#if defined __MCF_M_X8632
+
+struct gthr_call_once_seh_record
+  {
+    intptr_t Next;
+    intptr_t Handler;
+    _MCF_once* once;
+  };
+
 __MCF_DLLEXPORT __MCF_REALIGN_SP
 void
 __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_proc, void* arg)
   {
-#ifdef __MCF_M_X8632
-    EXCEPTION_REGISTRATION_RECORD* const seh_record
-          __attribute__((__cleanup__(__MCF_i386_seh_cleanup)))
-      = __MCF_i386_seh_install((DWORD[]){ (DWORD) __MCF_teb_load_ptr(0),
-                                          (DWORD) do_call_once_seh_unwind, (DWORD) once });
-    _MCF_once* saved_once = once;
-#  define do_seh_once_reg(frm, disp)  (((DWORD**) (frm))[2])
-#else
+    /* Set up an exception handler.  */
+    const struct gthr_call_once_seh_record
+      seh_record __attribute__((__cleanup__(__MCF_i386_seh_cleanup)))
+        = { __MCF_teb_load_ptr(0), (intptr_t) do_call_once_seh_unwind, once };
+    __MCF_teb_store_ptr(0, (intptr_t) &seh_record);
+
+    /* Do initialization. This is the normal path.  */
+    __MCF_invoke_cxa_dtor(init_proc, arg);
+
+    /* Disarm the once flag.  */
+    _MCF_once_release(seh_record.once);
+  }
+
+static
+EXCEPTION_DISPOSITION
+do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
+  {
+    (void) ctx;
+    (void) disp_ctx;
+
+    /* If the stack is being unwound, reset the once flag.  */
+    if(rec->ExceptionFlags & EXCEPTION_UNWINDING)
+      _MCF_once_abort(((const struct gthr_call_once_seh_record*) estab_frame)->once);
+
+    /* Continue unwinding.  */
+    return ExceptionContinueSearch;
+  }
+
+#else  /* non-x86-32 */
+
+__MCF_DLLEXPORT __MCF_REALIGN_SP
+void
+__MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_proc, void* arg)
+  {
+    /* Set up an exception handler.  */
     __asm__ (".seh_handler %c0, @except, @unwind" : : "i"(do_call_once_seh_unwind));
-#  if defined __MCF_M_X8664_ASM
-    register _MCF_once* saved_once __asm__("rsi");
-#  elif defined __MCF_M_ARM64_ASM
-    register _MCF_once* saved_once __asm__("x25");
-#  endif
-    __asm__ volatile ("" : "=r"(saved_once) : "0"(once));
-#  if defined __MCF_M_X8664
-#    define do_seh_once_reg(frm, disp)  (((DISPATCHER_CONTEXT*) (disp))->ContextRecord->Rsi)
-#  elif defined __MCF_M_ARM64
-#    define do_seh_once_reg(frm, disp)  (((DISPATCHER_CONTEXT*) (disp))->ContextRecord->X25)
-#  endif
+    register _MCF_once* saved_once __asm__(
+#if defined __MCF_M_X8664_ASM  /* x86-64 */
+        "rsi"
+#elif defined __MCF_M_ARM64_ASM  /* ARM64 or ARM64EC; must be same with x86-64 on ARM64EC */
+        "x25"
+#else
+#  error unimplemented
 #endif
+      );
+    saved_once = once;
+    __asm__ volatile ("" : : "r"(saved_once));
 
     /* Do initialization. This is the normal path.  */
     __MCF_invoke_cxa_dtor(init_proc, arg);
@@ -208,15 +243,24 @@ do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, 
   {
     (void) estab_frame;
     (void) ctx;
-    (void) disp_ctx;
 
     /* If the stack is being unwound, reset the once flag.  */
     if(rec->ExceptionFlags & EXCEPTION_UNWINDING)
-      _MCF_once_abort((_MCF_once*) do_seh_once_reg(estab_frame, disp_ctx));
+      _MCF_once_abort((_MCF_once*) ((const DISPATCHER_CONTEXT*) disp_ctx)->ContextRecord->
+#if defined __MCF_M_X8664  /* x86-64 or ARM64EC */
+          Rsi
+#elif defined __MCF_M_ARM64  /* ARM64 */
+          X25
+#else
+#  error unimplemented
+#endif
+        );
 
     /* Continue unwinding.  */
     return ExceptionContinueSearch;
   }
+
+#endif  /* non-x86-32 */
 
 __MCF_DLLEXPORT __attribute__((__section__(".text$$safeseh$0001")))
 EXCEPTION_DISPOSITION
