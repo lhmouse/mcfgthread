@@ -322,7 +322,7 @@ typedef void _MCF_thread_procedure(_MCF_thread* __thrd);
 typedef void _MCF_tls_dtor(void* __ptr);
 
 /* Define prototypes for destructors for `atexit()` and `at_quick_exit()`.  */
-typedef void __MCF_atexit_callback(void);
+typedef void __cdecl __MCF_atexit_callback(void);
 typedef void __stdcall __MCF_atexit_callback_stdcall(void);
 typedef void __fastcall __MCF_atexit_callback_fastcall(void);
 
@@ -331,7 +331,7 @@ typedef void __MCF_once_callback(void);
 
 /* Define the prototype for destructors for `__cxa_atexit()`, `__cxa_at_quick_exit()`
  * and `__cxa_thread_atexit()`.  */
-typedef void __MCF_cxa_dtor_cdecl(void* __arg);
+typedef void __cdecl __MCF_cxa_dtor_cdecl(void* __arg);
 typedef void __fastcall __MCF_cxa_dtor_fastcall(void* __arg);
 
 /* In the case of i386, the argument is passed both via the ECX register and on
