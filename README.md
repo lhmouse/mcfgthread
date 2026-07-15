@@ -199,9 +199,9 @@ and unlocks the primitive mutex, releasing all threads that are waiting on it.
 |`GetSystemInfo`                                          |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsysteminfo) |
 |`GetSystemTimeAsFileTime`                                |Windows NT 3.5  |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsystemtimeasfiletime) |
 |`GetSystemTimePreciseAsFileTime` <sub>optional</sub>     |Windows 8       |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsystemtimepreciseasfiletime) |
-|`GetThreadSelectedCpuSets` <sub>optional</sub>           |Windows 10      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadselectedcpusets) |
 |`GetThreadGroupAffinity`                                 |Windows 7       |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processtopologyapi/nf-processtopologyapi-getthreadgroupaffinity) |
 |`GetThreadPriority`                                      |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadpriority) |
+|`GetThreadSelectedCpuSets` <sub>optional</sub>           |Windows 10      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadselectedcpusets) |
 |`HeapAlloc`                                              |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapalloc) |
 |`HeapFree`                                               |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapfree) |
 |`HeapReAlloc`                                            |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heaprealloc) |
