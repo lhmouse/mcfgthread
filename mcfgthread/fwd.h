@@ -362,12 +362,12 @@ __MCF_TRANSPARENT_UNION __MCF_cxa_dtor_any
     __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_cxa_dtor_cdecl*, __cdecl_ptr);
     __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_atexit_callback*, __cdecl_0_ptr);
 #  if defined __MCF_M_X8632
-    __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_atexit_callback_stdcall*, __stdcall_0_ptr);
-    __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_atexit_callback_fastcall*, __fastcall_0_ptr);
     __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_cxa_dtor_fastcall*, __fastcall_ptr);
 #    if defined __MCF_CXA_DTOR_DUAL_ABI
     __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_cxa_dtor_thiscall*, __thiscall_ptr);
 #    endif
+    __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_atexit_callback_stdcall*, __stdcall_0_ptr);
+    __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_atexit_callback_fastcall*, __fastcall_0_ptr);
 #  endif
   };
 #else
