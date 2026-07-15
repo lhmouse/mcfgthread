@@ -113,7 +113,7 @@ _MCF_thread_p_new(_MCF_thread** thrdp_opt, size_t stack_size, _MCF_thread_proced
                                   STACK_SIZE_PARAM_IS_A_RESERVATION, (DWORD*) &(thrd->__tid));
     if(!thrd->__handle) {
       __MCF_mfree_nonnull(thrd);
-      return nullptr;
+      return __MCF_FORWARD_WIN32_ERROR(nullptr);
     }
 
     /* Now `__tid` and `__handle` have been initialized, pass the structure back
@@ -330,7 +330,7 @@ _MCF_thread_get_affinity(const _MCF_thread* thrd_opt, _MCF_cpu_collection* coll)
       DWORD* ids = __builtin_alloca(_MCF_cpu_collection_get_size(coll) * sizeof(DWORD));
       DWORD nids = _MCF_cpu_collection_get_size(coll);
       if(!__MCF_crt_GetThreadSelectedCpuSets_opt(handle, ids, nids, &nids))
-        return -2;
+        return __MCF_FORWARD_WIN32_ERROR(-2);
 
       /* Select all CPUs in [ids, ids + nids]. If `nids` is zero, it indicates
        * the thread does not have a selection and runs on all CPUs.  */
@@ -345,7 +345,7 @@ _MCF_thread_get_affinity(const _MCF_thread* thrd_opt, _MCF_cpu_collection* coll)
        * processor group.  */
       GROUP_AFFINITY gaff;
       if(!GetThreadGroupAffinity(handle, &gaff))
-        return -2;
+        return __MCF_FORWARD_WIN32_ERROR(-2);
 
       /* Each bit in `gaff.Mask` indicates an active logical processor in the
        * current process group. CPU identifiers start from 256 like CPU Set APIs.  */
@@ -378,7 +378,7 @@ _MCF_thread_set_affinity(_MCF_thread* thrd_opt, const _MCF_cpu_collection* coll)
         return -1;
 
       if(!__MCF_crt_SetThreadSelectedCpuSets_opt(handle, ids, nids))
-        return -2;
+        return __MCF_FORWARD_WIN32_ERROR(-2);
     }
     else {
       /* When CPU Set APIs are not available, a process is limited to a single
@@ -392,7 +392,7 @@ _MCF_thread_set_affinity(_MCF_thread* thrd_opt, const _MCF_cpu_collection* coll)
         return -1;
 
       if(!SetThreadAffinityMask(handle, aff_mask))
-        return -2;
+        return __MCF_FORWARD_WIN32_ERROR(-2);
     }
 
     return 0;

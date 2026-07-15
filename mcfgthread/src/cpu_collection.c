@@ -24,11 +24,11 @@ _MCF_cpu_collection_new(void)
       DWORD info_cb = 1024;
       if(!__MCF_crt_GetSystemCpuSetInformation_opt(info, info_cb, &info_cb, NULL, 0)) {
         if(GetLastError() != ERROR_INSUFFICIENT_BUFFER)
-          return nullptr;
+          return __MCF_FORWARD_WIN32_ERROR(nullptr);
 
         info = __builtin_alloca(info_cb);
         if(!__MCF_crt_GetSystemCpuSetInformation_opt(info, info_cb, &info_cb, NULL, 0))
-          return nullptr;
+          return __MCF_FORWARD_WIN32_ERROR(nullptr);
       }
 
       coll = __MCF_malloc_0(offsetof(_MCF_cpu_collection, __data)
@@ -65,16 +65,16 @@ _MCF_cpu_collection_new(void)
       DWORD info_cb = 2560;
       if(!GetLogicalProcessorInformationEx(RelationProcessorCore, info, &info_cb)) {
         if(GetLastError() != ERROR_INSUFFICIENT_BUFFER)
-          return nullptr;
+          return __MCF_FORWARD_WIN32_ERROR(nullptr);
 
         info = __builtin_alloca(info_cb);
         if(!GetLogicalProcessorInformationEx(RelationProcessorCore, info, &info_cb))
-          return nullptr;
+          return __MCF_FORWARD_WIN32_ERROR(nullptr);
       }
 
       DWORD_PTR proc_mask, sys_mask;
       if(!GetProcessAffinityMask(NtCurrentProcess(), &proc_mask, &sys_mask))
-        return nullptr;
+        return __MCF_FORWARD_WIN32_ERROR(nullptr);
 
       PROCESSOR_NUMBER proc_num;
       GetCurrentProcessorNumberEx(&proc_num);

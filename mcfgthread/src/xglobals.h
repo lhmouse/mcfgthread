@@ -28,6 +28,10 @@
 #  define nullptr   ((void*) __MCF_INTPTR_0)
 #endif
 
+/* Annotate a `return` statement that the previous expression has set the last
+ * error code. This doesn't do anything at the moment.  */
+#define __MCF_FORWARD_WIN32_ERROR(...)  (__VA_ARGS__)
+
 /* Define data that must be placed in `.rdata` despite `-fdata-sections`.  */
 #define __MCF_CRT_RDATA  __attribute__((__used__, __section__(".rdata")))
 #define __MCF_CRT_XL(x)  __attribute__((__used__, __section__(".CRT$XL" #x)))
