@@ -53,9 +53,9 @@ __MCF_cxa_atexit(__MCF_cxa_dtor_any_ dtor, void* this, void* dso)
 
 __MCF_DLLEXPORT
 int
-__MCF_atexit(__MCF_atexit_callback* func)
+__MCF_atexit(__MCF_atexit_callback_any_ func)
   {
-    return __MCF_cxa_atexit(func, nullptr, nullptr);
+    return __MCF_cxa_atexit(func.__cdecl_ptr, nullptr, nullptr);
   }
 
 __MCF_DLLEXPORT
@@ -72,9 +72,9 @@ __MCF_cxa_at_quick_exit(__MCF_cxa_dtor_any_ dtor, void* this, void* dso)
 
 __MCF_DLLEXPORT
 int
-__MCF_at_quick_exit(__MCF_atexit_callback* func)
+__MCF_at_quick_exit(__MCF_atexit_callback_any_ func)
   {
-    return __MCF_cxa_at_quick_exit(func, nullptr, nullptr);
+    return __MCF_cxa_at_quick_exit(func.__cdecl_ptr, nullptr, nullptr);
   }
 
 __MCF_DLLEXPORT
@@ -90,9 +90,9 @@ __MCF_cxa_thread_atexit(__MCF_cxa_dtor_any_ dtor, void* this, void* dso)
 
 __MCF_DLLEXPORT
 int
-__MCF_thread_atexit(__MCF_atexit_callback* func)
+__MCF_thread_atexit(__MCF_atexit_callback_any_ func)
   {
-    return __MCF_cxa_thread_atexit(func, nullptr, nullptr);
+    return __MCF_cxa_thread_atexit(func.__cdecl_ptr, nullptr, nullptr);
   }
 
 static __MCF_REALIGN_SP

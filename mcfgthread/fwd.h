@@ -374,6 +374,20 @@ __MCF_TRANSPARENT_UNION __MCF_cxa_dtor_any
 typedef __MCF_cxa_dtor_thiscall* __MCF_cxa_dtor_any_;
 #endif
 
+#if defined __MCF_TRANSPARENT_UNION
+typedef union __MCF_atexit_callback_any __MCF_atexit_callback_any_;
+__MCF_TRANSPARENT_UNION __MCF_atexit_callback_any
+  {
+    __MCF_TRANSPARENT_UNION_F(__MCF_atexit_callback_any, __MCF_atexit_callback*, __cdecl_ptr);
+#  if defined __MCF_M_X8632
+    __MCF_TRANSPARENT_UNION_F(__MCF_atexit_callback_any, __MCF_atexit_callback_stdcall*, __stdcall_ptr);
+    __MCF_TRANSPARENT_UNION_F(__MCF_atexit_callback_any, __MCF_atexit_callback_fastcall*, __fastcall_ptr);
+#  endif
+  };
+#else
+typedef __MCF_atexit_callback* __MCF_atexit_callback_any_;
+#endif
+
 /* Gets the last error number, like `GetLastError()`.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_PURE
 uint32_t
