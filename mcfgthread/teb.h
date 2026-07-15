@@ -354,6 +354,7 @@ void*
 __MCF_peb(void)
   __MCF_noexcept
   {
+    /* `TePeb`; WDK: ks386.inc, ksamd64.inc, ksarm64.h  */
     return (void*) __MCF_teb_load_ptr(__MCF_64_32(0x60, 0x30));
   }
 
@@ -371,6 +372,7 @@ __MCF_teb(void)
     __asm__ ("" : "=r"(__teb));
     return __teb;
 #else
+    /* `TeSelf`; WDK: ks386.inc, ksamd64.inc, ksarm64.h  */
     return (void*) __MCF_teb_load_ptr(__MCF_64_32(0x30, 0x18));
 #endif
   }
@@ -382,6 +384,7 @@ int32_t
 __MCF_pid(void)
   __MCF_noexcept
   {
+    /* `TeClientId`; WDK: ks386.inc, ksamd64.inc, ksarm64.h  */
     return __MCF_teb_load_32(__MCF_64_32(0x40, 0x20));
   }
 
@@ -392,6 +395,7 @@ int32_t
 __MCF_tid(void)
   __MCF_noexcept
   {
+    /* `TeClientId`; WDK: ks386.inc, ksamd64.inc, ksarm64.h  */
     return __MCF_teb_load_32(__MCF_64_32(0x48, 0x24));
   }
 
