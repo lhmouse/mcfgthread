@@ -195,21 +195,6 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
     _MCF_once_release(seh_record.once);
   }
 
-static
-EXCEPTION_DISPOSITION
-do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
-  {
-    (void) ctx;
-    (void) disp_ctx;
-
-    /* If the stack is being unwound, reset the once flag.  */
-    if(rec->ExceptionFlags & EXCEPTION_UNWINDING)
-      _MCF_once_abort(((const struct gthr_call_once_seh_record*) estab_frame)->once);
-
-    /* Continue unwinding.  */
-    return ExceptionContinueSearch;
-  }
-
 #else  /* non-x86-32 */
 
 __MCF_DLLEXPORT __MCF_REALIGN_SP
@@ -237,30 +222,36 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
     _MCF_once_release(saved_once);
   }
 
+#endif  /* non-x86-32 */
+
 static
 EXCEPTION_DISPOSITION
 do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
   {
     (void) estab_frame;
     (void) ctx;
+    (void) disp_ctx;
 
     /* If the stack is being unwound, reset the once flag.  */
     if(rec->ExceptionFlags & EXCEPTION_UNWINDING)
-      _MCF_once_abort((_MCF_once*) ((const DISPATCHER_CONTEXT*) disp_ctx)->ContextRecord->
-#if defined __MCF_M_X8664
-          Rsi  /* x86-64 or ARM64EC */
-#elif defined __MCF_M_ARM64
-          X25  /* ARM64 */
+      _MCF_once_abort(
+#if defined __MCF_M_X8632
+        ((const struct gthr_call_once_seh_record*) estab_frame)->once
 #else
-#  error unimplemented
+        (_MCF_once*) ((const DISPATCHER_CONTEXT*) disp_ctx)->ContextRecord->
+#  if defined __MCF_M_X8664
+          Rsi  /* x86-64 or ARM64EC */
+#  elif defined __MCF_M_ARM64
+          X25  /* ARM64 */
+#  else
+#    error unimplemented
+#  endif
 #endif
         );
 
     /* Continue unwinding.  */
     return ExceptionContinueSearch;
   }
-
-#endif  /* non-x86-32 */
 
 __MCF_DLLEXPORT __attribute__((__section__(".text$$safeseh$0001")))
 EXCEPTION_DISPOSITION
