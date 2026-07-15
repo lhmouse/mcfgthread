@@ -25,6 +25,7 @@ __MCF_CXX(extern "C" {)
 /* Define reusable types.  */
 typedef struct __MCF_gthr_rc_mutex __MCF_gthr_rc_mutex;
 typedef struct __MCF_gthr_thread_record __MCF_gthr_thread_record;
+typedef void __MCF_gthr_once_callback(void);
 typedef void* __MCF_gthr_thread_fn(void* __arg);
 
 struct __MCF_gthr_rc_mutex

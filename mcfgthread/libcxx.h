@@ -40,7 +40,7 @@ typedef __MCF_gthr_rc_mutex __libcpp_recursive_mutex_t;
 /* Performs one-time initialization, like `pthread_once()`.  */
 __MCF_LIBCXX_IMPORT
 int
-__MCF_libcxx_execute_once(__libcpp_exec_once_flag* __once, __MCF_once_callback* __init_proc)
+__MCF_libcxx_execute_once(__libcpp_exec_once_flag* __once, __MCF_gthr_once_callback* __init_proc)
   __MCF_MAY_THROW;
 
 #ifndef __MCF_LIBCXX_NO_ALIASES
@@ -400,7 +400,7 @@ __MCF_ALT_SYM(__MCF_libcxx_thread_yield, __libcpp_thread_yield);
  * this file.  */
 __MCF_LIBCXX_INLINE
 int
-__MCF_libcxx_execute_once(__libcpp_exec_once_flag* __once, __MCF_once_callback* __init_proc)
+__MCF_libcxx_execute_once(__libcpp_exec_once_flag* __once, __MCF_gthr_once_callback* __init_proc)
   __MCF_MAY_THROW
   {
     __MCF_EX __MCF_gthr_call_once_seh(__once, __init_proc, __MCF_nullptr);

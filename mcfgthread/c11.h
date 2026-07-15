@@ -78,7 +78,7 @@ enum __MCF_thrd_error
 /* 7.26.2.1 The call_once function  */
 __MCF_C11_IMPORT
 void
-__MCF_c11_call_once(once_flag* __once, __MCF_once_callback* __init_proc)
+__MCF_c11_call_once(once_flag* __once, __MCF_gthr_once_callback* __init_proc)
   __MCF_MAY_THROW;
 
 #ifndef __MCF_C11_NO_ALIASES
@@ -369,7 +369,7 @@ __MCF_ALT_SYM(__MCF_c11_tss_set, tss_set);
  * this file.  */
 __MCF_C11_INLINE
 void
-__MCF_c11_call_once(once_flag* __once, __MCF_once_callback* __init_proc)
+__MCF_c11_call_once(once_flag* __once, __MCF_gthr_once_callback* __init_proc)
   __MCF_MAY_THROW
   {
     __MCF_EX __MCF_gthr_call_once_seh(__once, __init_proc, __MCF_nullptr);
