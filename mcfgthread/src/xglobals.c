@@ -219,10 +219,10 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
     /* Set up an exception handler.  */
     __asm__ (".seh_handler %c0, @except, @unwind" : : "i"(do_call_once_seh_unwind));
     register _MCF_once* saved_once __asm__(
-#if defined __MCF_M_X8664_ASM  /* x86-64 */
-        "rsi"
-#elif defined __MCF_M_ARM64_ASM  /* ARM64 or ARM64EC; must be same with x86-64 on ARM64EC */
-        "x25"
+#if defined __MCF_M_X8664_ASM
+        "rsi"  /* x86-64 */
+#elif defined __MCF_M_ARM64_ASM
+        "x25"  /* ARM64 or ARM64EC; must be same with x86-64 on ARM64EC */
 #else
 #  error unimplemented
 #endif
@@ -247,10 +247,10 @@ do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, 
     /* If the stack is being unwound, reset the once flag.  */
     if(rec->ExceptionFlags & EXCEPTION_UNWINDING)
       _MCF_once_abort((_MCF_once*) ((const DISPATCHER_CONTEXT*) disp_ctx)->ContextRecord->
-#if defined __MCF_M_X8664  /* x86-64 or ARM64EC */
-          Rsi
-#elif defined __MCF_M_ARM64  /* ARM64 */
-          X25
+#if defined __MCF_M_X8664
+          Rsi  /* x86-64 or ARM64EC */
+#elif defined __MCF_M_ARM64
+          X25  /* ARM64 */
 #else
 #  error unimplemented
 #endif
