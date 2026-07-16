@@ -227,33 +227,6 @@ and unlocks the primitive mutex, releasing all threads that are waiting on it.
 |`VirtualProtect`                                         |All             |[Windows API][ref:VirtualProtect] |
 |`WriteConsoleW`                                          |All             |[Windows API][ref:WriteConsoleW] |
 
-#### KERNELBASE.DLL
-
-|Function                                                 |Availability    |Documentation |
-|:--------------------------------------------------------|:---------------|:-------------|
-|`QueryInterruptTimePrecise` <sub>optional</sub>          |Windows 10      |[Windows API][ref:QueryInterruptTimePrecise] |
-|`QueryUnbiasedInterruptTimePrecise` <sub>optional</sub>  |Windows 10      |[Windows API][ref:QueryUnbiasedInterruptTimePrecise] |
-
-#### NTDLL.DLL
-
-|Function                                                 |Availability    |Documentation |
-|:--------------------------------------------------------|:---------------|:-------------|
-|`NtClose`                                                |All             |[Windows Driver API][ref:NtClose] |
-|`NtCreateSection`                                        |All             |[Windows Driver API][ref:NtCreateSection] |
-|`NtDelayExecution`                                       |All             |Undocumented |
-|`NtDuplicateObject`                                      |All             |[Windows Driver API][ref:NtDuplicateObject] |
-|`NtMapViewOfSection`                                     |All             |[Windows Driver API][ref:NtMapViewOfSection] |
-|`NtRaiseHardError`                                       |All             |Undocumented |
-|`NtReleaseKeyedEvent`                                    |Windows XP      |Undocumented |
-|`NtUnmapViewOfSection`                                   |All             |[Windows Driver API][ref:NtUnmapViewOfSection] |
-|`NtWaitForKeyedEvent`                                    |Windows XP      |Undocumented |
-|`NtWaitForSingleObject`                                  |All             |[Windows Driver API][ref:NtWaitForSingleObject] |
-|`RtlDllShutdownInProgress`                               |Windows XP      |[Windows API][ref:RtlDllShutdownInProgress]|
-|`RtlFillMemory`                                          |All             |[Windows Driver API][ref:RtlFillMemory] |
-|`RtlMoveMemory`                                          |All             |[Windows Driver API][ref:RtlMoveMemory] |
-|`RtlNtStatusToDosError`                                  |All             |[Windows Driver API][ref:RtlNtStatusToDosError] |
-|`RtlZeroMemory`                                          |All             |[Windows Driver API][ref:RtlZeroMemory] |
-
 [ref:CreateThread]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createthread
 [ref:DecodePointer]: https://learn.microsoft.com/en-us/previous-versions/bb432242(v=vs.85)
 [ref:EncodePointer]: https://learn.microsoft.com/en-us/previous-versions/bb432254(v=vs.85)
@@ -283,23 +256,10 @@ and unlocks the primitive mutex, releasing all threads that are waiting on it.
 [ref:HeapSize]: https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapsize
 [ref:K32EnumProcessModules]: https://learn.microsoft.com/en-us/windows/win32/api/psapi/nf-psapi-enumprocessmodules
 [ref:LoadLibraryExW]: https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibraryexw
-[ref:NtClose]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwclose
-[ref:NtCreateSection]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwcreatesection
-[ref:NtDuplicateObject]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-zwduplicateobject
-[ref:NtMapViewOfSection]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwmapviewofsection
-[ref:NtUnmapViewOfSection]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwunmapviewofsection
-[ref:NtWaitForSingleObject]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-zwwaitforsingleobject
-[ref:QueryInterruptTimePrecise]: https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryinterrupttimeprecise
 [ref:QueryPerformanceCounter]: https://learn.microsoft.com/en-us/windows/win32/api/profileapi/nf-profileapi-queryperformancecounter
 [ref:QueryPerformanceFrequency]: https://learn.microsoft.com/en-us/windows/win32/api/profileapi/nf-profileapi-queryperformancefrequency
 [ref:QueryUnbiasedInterruptTime]: https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryunbiasedinterrupttime
-[ref:QueryUnbiasedInterruptTimePrecise]: https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryunbiasedinterrupttimeprecise
 [ref:RaiseFailFastException]: https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-raisefailfastexception
-[ref:RtlDllShutdownInProgress]: https://learn.microsoft.com/en-us/windows/win32/devnotes/rtldllshutdowninprogress
-[ref:RtlFillMemory]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlfillmemory
-[ref:RtlMoveMemory]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlmovememory
-[ref:RtlNtStatusToDosError]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-rtlntstatustodoserror
-[ref:RtlZeroMemory]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlzeromemory
 [ref:SetConsoleCtrlHandler]: https://learn.microsoft.com/en-us/windows/console/setconsolectrlhandler
 [ref:SetLastError]: https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-setlasterror
 [ref:SetThreadAffinityMask]: https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-setthreadaffinitymask
@@ -313,3 +273,45 @@ and unlocks the primitive mutex, releasing all threads that are waiting on it.
 [ref:TlsSetValue]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-tlssetvalue
 [ref:VirtualProtect]: https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualprotect
 [ref:WriteConsoleW]: https://learn.microsoft.com/en-us/windows/console/writeconsole
+
+#### KERNELBASE.DLL
+
+|Function                                                 |Availability    |Documentation |
+|:--------------------------------------------------------|:---------------|:-------------|
+|`QueryInterruptTimePrecise` <sub>optional</sub>          |Windows 10      |[Windows API][ref:QueryInterruptTimePrecise] |
+|`QueryUnbiasedInterruptTimePrecise` <sub>optional</sub>  |Windows 10      |[Windows API][ref:QueryUnbiasedInterruptTimePrecise] |
+
+[ref:QueryInterruptTimePrecise]: https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryinterrupttimeprecise
+[ref:QueryUnbiasedInterruptTimePrecise]: https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryunbiasedinterrupttimeprecise
+
+#### NTDLL.DLL
+
+|Function                                                 |Availability    |Documentation |
+|:--------------------------------------------------------|:---------------|:-------------|
+|`NtClose`                                                |All             |[Windows Driver API][ref:NtClose] |
+|`NtCreateSection`                                        |All             |[Windows Driver API][ref:NtCreateSection] |
+|`NtDelayExecution`                                       |All             |Undocumented |
+|`NtDuplicateObject`                                      |All             |[Windows Driver API][ref:NtDuplicateObject] |
+|`NtMapViewOfSection`                                     |All             |[Windows Driver API][ref:NtMapViewOfSection] |
+|`NtRaiseHardError`                                       |All             |Undocumented |
+|`NtReleaseKeyedEvent`                                    |Windows XP      |Undocumented |
+|`NtUnmapViewOfSection`                                   |All             |[Windows Driver API][ref:NtUnmapViewOfSection] |
+|`NtWaitForKeyedEvent`                                    |Windows XP      |Undocumented |
+|`NtWaitForSingleObject`                                  |All             |[Windows Driver API][ref:NtWaitForSingleObject] |
+|`RtlDllShutdownInProgress`                               |Windows XP      |[Windows API][ref:RtlDllShutdownInProgress]|
+|`RtlFillMemory`                                          |All             |[Windows Driver API][ref:RtlFillMemory] |
+|`RtlMoveMemory`                                          |All             |[Windows Driver API][ref:RtlMoveMemory] |
+|`RtlNtStatusToDosError`                                  |All             |[Windows Driver API][ref:RtlNtStatusToDosError] |
+|`RtlZeroMemory`                                          |All             |[Windows Driver API][ref:RtlZeroMemory] |
+
+[ref:NtClose]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwclose
+[ref:NtCreateSection]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwcreatesection
+[ref:NtDuplicateObject]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-zwduplicateobject
+[ref:NtMapViewOfSection]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwmapviewofsection
+[ref:NtUnmapViewOfSection]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwunmapviewofsection
+[ref:NtWaitForSingleObject]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-zwwaitforsingleobject
+[ref:RtlDllShutdownInProgress]: https://learn.microsoft.com/en-us/windows/win32/devnotes/rtldllshutdowninprogress
+[ref:RtlFillMemory]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlfillmemory
+[ref:RtlMoveMemory]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlmovememory
+[ref:RtlNtStatusToDosError]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-rtlntstatustodoserror
+[ref:RtlZeroMemory]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlzeromemory
