@@ -226,7 +226,8 @@ __MCF_ALT_SYM(__MCF_gthr_recursive_mutex_trylock, __gthread_recursive_mutex_tryl
  * `pthread_mutex_timedlock()`.  */
 __MCF_GTHR_IMPORT
 int
-__MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const __gthread_time_t* __abs_time)
+__MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx,
+                                     const __gthread_time_t* __abs_time)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_NO_ALIASES
@@ -560,7 +561,8 @@ __MCF_gthr_recursive_mutex_trylock(__gthread_recursive_mutex_t* __rmtx)
 
 __MCF_GTHR_INLINE
 int
-__MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx, const __gthread_time_t* __abs_time)
+__MCF_gthr_recursive_mutex_timedlock(__gthread_recursive_mutex_t* __rmtx,
+                                     const __gthread_time_t* __abs_time)
   __MCF_noexcept
   {
     int64_t __timeout;
