@@ -17,7 +17,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_MUTEX_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Define the mutex struct, which takes up the same storage as a pointer.  */
+/* This is the mutex, which takes up the same storage as a pointer.  */
 struct __MCF_mutex
   {
     __MCF_EX uintptr_t __locked : 1;
@@ -26,56 +26,102 @@ struct __MCF_mutex
     __MCF_EX uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
-/* If the spinning failure counter has reached this number, newcomers will not
- * attempt to spin at all. This value must not be greater than the maximum
- * value of `__sp_nfail`, and must not be zero.  */
+/* If the spinning failure counter of a mutex has reached this number, newcomers
+ * will not attempt to spin at all. This value must not be greater than the
+ * maximum value of `__sp_nfail`, and must not be zero.  */
 #define __MCF_MUTEX_SP_NFAIL_THRESHOLD   10U
 
-/* Initializes a mutex dynamically. Static ones should be initialized with
- * `{0}`, like other structs.  */
+/* Initializes a mutex dynamically.
+ *
+ * Static ones should be initialized with `{0}`, like other structs.
+ *
+ * @param `mtx` points to the mutex to initialize.
+ * @returns nothing.  */
 __MCF_MUTEX_INLINE
 void
 _MCF_mutex_init(_MCF_mutex* __mtx)
   __MCF_noexcept;
 
 /* Attempts to lock a mutex.
- * This a simple mutex that is not recursive and performs no error checking. If
- * the caller attempts to lock a mutex which it has already held, deadlocks may
- * occur.
  *
- * If `__timeout_opt` points to a positive integer, it denotes the expiration
- * time in number of milliseconds since 1970-01-01T00:00:00Z. If it points to a
- * negative integer, the absolute value of it denotes the number of milliseconds
- * to wait. If it points to zero, the function returns immediately without
- * waiting. If it is null, the function waits indefinitely.
+ * If the mutex is not locked, this function locks it and returns immediately;
+ * otherwise, it waits until the mutex becomes unlocked, locks it, and returns.
+ * This is a simple mutex that is not recursive and performs no error checking.
+ * If the caller attempts to lock a mutex which it has already held, deadlocks
+ * may occur.
  *
- * Returns 0 if the mutex has been locked by the caller, or -1 if the operation
- * has timed out.  */
+ * @param `mtx` points to the mutex to lock.
+ * @param `timeout_opt` points to the timeout value. If it is positive, it
+ *     denotes the expiration time point in the number of milliseconds since
+ *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *     value of it denotes the number of milliseconds to wait. If it points to
+ *     zero, the function returns immediately without waiting. If it is null,
+ *     the function waits indefinitely.
+ * @returns 0 if the mutex has been successfully locked, or -1 if the operation
+ *     has timed out.  */
 __MCF_MUTEX_IMPORT
 int
 _MCF_mutex_lock_slow(_MCF_mutex* __mtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
+/* Attempts to lock a mutex.
+ *
+ * If the mutex is not locked, this function locks it and returns immediately;
+ * otherwise, it waits until the mutex becomes unlocked, locks it, and returns.
+ * This is a simple mutex that is not recursive and performs no error checking.
+ * If the caller attempts to lock a mutex which it has already held, deadlocks
+ * may occur.
+ *
+ * This is an inline wrapper for `_MCF_mutex_lock_slow()`, which is optimized
+ * when there's little to no contention, for example, when there's only one
+ * thread.
+ *
+ * @param `mtx` points to the mutex to lock.
+ * @param `timeout_opt` points to the timeout value. If it is positive, it
+ *     denotes the expiration time point in the number of milliseconds since
+ *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *     value of it denotes the number of milliseconds to wait. If it points to
+ *     zero, the function returns immediately without waiting. If it is null,
+ *     the function waits indefinitely.
+ * @returns 0 if the mutex has been successfully locked, or -1 if the operation
+ *     has timed out.  */
 __MCF_MUTEX_INLINE
 int
 _MCF_mutex_lock(_MCF_mutex* __mtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Releases a mutex. If the mutex has not been locked, the behavior is undefined.
+/* Unlocks a mutex.
  *
- * This function may be called by a different thread from which locked the same
- * mutex.  */
+ * If the mutex has not been locked by the current thread, the behavior is
+ * undefined. This function may be called by a different thread from which
+ * locked the same mutex.
+ *
+ * @param `mtx` points to the mutex to unlock.
+ * @returns nothing.  */
 __MCF_MUTEX_IMPORT
 void
 _MCF_mutex_unlock_slow(_MCF_mutex* __mtx)
   __MCF_noexcept;
 
+/* Unlocks a mutex.
+ *
+ * If the mutex has not been locked by the current thread, the behavior is
+ * undefined. This function may be called by a different thread from which
+ * locked the same mutex.
+ *
+ * This is an inline wrapper for `_MCF_mutex_unlock_slow()`, which is optimized
+ * when there's little to no contention, for example, when there's only one
+ * thread.
+ *
+ * @param `mtx` points to the mutex to unlock.
+ * @returns nothing.  */
 __MCF_MUTEX_INLINE
 void
 _MCF_mutex_unlock(_MCF_mutex* __mtx)
   __MCF_noexcept;
 
 /* Define inline functions after all declarations.
+ *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
