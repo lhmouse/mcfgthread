@@ -739,9 +739,10 @@ class thread
           };
 
         // Create the thread. User-defined data are initialized to zeroes.
-        this->_M_thr = ::_MCF_thread_new_aligned(__thread_fn, alignof(_My_data), nullptr, sizeof(_My_data));
-        if(!this->_M_thr)
-          __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_thread_new_aligned");
+        if(::_MCF_thread_p_new(&(this->_M_thr), 0, __thread_fn, alignof(_My_data),
+                               nullptr, sizeof(_My_data))
+            == nullptr)
+          __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_thread_p_new");
 
         // active
         _Thread_sentry __sentry = { __sentry_cancel_thread, this->_M_thr };
