@@ -17,7 +17,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_SHARED_MUTEX_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Define the shared mutex struct, which takes up the same storage as a pointer.  */
+/* This is the shared mutex, which takes up the same storage as a pointer.  */
 struct __MCF_shared_mutex
   {
     __MCF_EX uintptr_t __nshare : 14;  /* number of sharing threads  */
@@ -26,75 +26,150 @@ struct __MCF_shared_mutex
 
 /* This is the maximum number of concurrent threads with shared access. If
  * `__nshare` exceeds this value, further threads will block. This value meets
- * the requirement of the C++ standard, which is 10000.  */
+ * the minimal requirement of the C++ standard, which is 10000.  */
 #define __MCF_SHARED_MUTEX_MAX_SHARE   16382U
 
-/* Initializes a shared mutex dynamically. Static ones should be initialized with
- * `{0}`, like other structs.  */
+/* Initializes a shared mutex dynamically.
+ *
+ * Static ones should be initialized with `{0}`, like other structs.
+ *
+ * @param `smtx` points to the shared mutex to initialize.
+ * @returns nothing.  */
 __MCF_SHARED_MUTEX_INLINE
 void
 _MCF_shared_mutex_init(_MCF_shared_mutex* __smtx)
   __MCF_noexcept;
 
 /* Attempts to lock a shared mutex in shared mode.
- * A shared mutex is not recursive and performs no error checking. If the caller
- * attempts to lock a mutex which it has already held and there is another thread
- * waiting for exclusive access, deadlocks may occur.
  *
- * If `__timeout_opt` points to a positive integer, it denotes the expiration
- * time in number of milliseconds since 1970-01-01T00:00:00Z. If it points to a
- * negative integer, the absolute value of it denotes the number of milliseconds
- * to wait. If it points to zero, the function returns immediately without
- * waiting. If it is null, the function waits indefinitely.
+ * If the mutex is not locked in exclusive mode, this function increments the
+ * share count and returns immediately; otherwise, it waits until the shared
+ * mutex becomes unlocked, increments the share count, and returns. A shared
+ * mutex is not recursive and performs no error checking. If the caller attempts
+ * to lock a mutex which it has already held and there is another thread waiting
+ * for exclusive access, deadlocks may occur.
  *
- * Returns 0 if the shared mutex has been locked in shared mode by the caller, or
- * -1 if the operation has timed out.  */
+ * @param `smtx` points to the shared mutex to lock.
+ * @param `timeout_opt` points to the timeout value. If it is positive, it
+ *     denotes the expiration time point in the number of milliseconds since
+ *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *     value of it denotes the number of milliseconds to wait. If it points to
+ *     zero, the function returns immediately without waiting. If it is null,
+ *     the function waits indefinitely.
+ * @returns 0 if the shared mutex has been successfully locked in shared mode,
+ *     or -1 if the operation has timed out.  */
 __MCF_SHARED_MUTEX_IMPORT
 int
 _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
+/* Attempts to lock a shared mutex in shared mode.
+ *
+ * If the mutex is not locked in exclusive mode, this function increments the
+ * share count and returns immediately; otherwise, it waits until the shared
+ * mutex becomes unlocked, increments the share count, and returns. A shared
+ * mutex is not recursive and performs no error checking. If the caller attempts
+ * to lock a mutex which it has already held and there is another thread waiting
+ * for exclusive access, deadlocks may occur.
+ *
+ * This is an inline wrapper for `_MCF_shared_mutex_lock_shared_slow()`, which
+ * is optimized when there's little to no contention, for example, when there's
+ * only one thread.
+ *
+ * @param `smtx` points to the shared mutex to lock.
+ * @param `timeout_opt` points to the timeout value. If it is positive, it
+ *     denotes the expiration time point in the number of milliseconds since
+ *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *     value of it denotes the number of milliseconds to wait. If it points to
+ *     zero, the function returns immediately without waiting. If it is null,
+ *     the function waits indefinitely.
+ * @returns 0 if the shared mutex has been successfully locked in shared mode,
+ *     or -1 if the operation has timed out.  */
 __MCF_SHARED_MUTEX_INLINE
 int
 _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
 /* Attempts to lock a shared mutex in exclusive mode.
- * A shared mutex is not recursive and performs no error checking. If the caller
- * attempts to lock a mutex which it has already held, deadlocks may occur.
  *
- * If `__timeout_opt` points to a positive integer, it denotes the expiration
- * time in number of milliseconds since 1970-01-01T00:00:00Z. If it points to a
- * negative integer, the absolute value of it denotes the number of milliseconds
- * to wait. If it points to zero, the function returns immediately without
- * waiting. If it is null, the function waits indefinitely.
+ * If the mutex is locked in either shared or exclusive mode, this function waits
+ * until the shared mutex becomes unlocked, locks it in exclusive mode, and
+ * returns. A shared mutex is not recursive and performs no error checking. If
+ * the caller attempts to lock a mutex which it has already held, deadlocks may
+ * occur.
  *
- * Returns 0 if the shared mutex has been locked in exclusive mode by the caller,
- * or -1 if the operation has timed out.  */
+ * @param `smtx` points to the shared mutex to lock.
+ * @param `timeout_opt` points to the timeout value. If it is positive, it
+ *     denotes the expiration time point in the number of milliseconds since
+ *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *     value of it denotes the number of milliseconds to wait. If it points to
+ *     zero, the function returns immediately without waiting. If it is null,
+ *     the function waits indefinitely.
+ * @returns 0 if the shared mutex has been successfully locked in exclusive
+ *     mode, or -1 if the operation has timed out.  */
 __MCF_SHARED_MUTEX_IMPORT
 int
 _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
+/* Attempts to lock a shared mutex in exclusive mode.
+ *
+ * If the mutex is locked in either shared or exclusive mode, this function waits
+ * until the shared mutex becomes unlocked, locks it in exclusive mode, and
+ * returns. A shared mutex is not recursive and performs no error checking. If
+ * the caller attempts to lock a mutex which it has already held, deadlocks may
+ * occur.
+ *
+ * This is an inline wrapper for `_MCF_shared_mutex_lock_exclusive_slow()`, which
+ * is optimized when there's little to no contention, for example, when there's
+ * only one thread.
+ *
+ * @param `smtx` points to the shared mutex to lock.
+ * @param `timeout_opt` points to the timeout value. If it is positive, it
+ *     denotes the expiration time point in the number of milliseconds since
+ *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *     value of it denotes the number of milliseconds to wait. If it points to
+ *     zero, the function returns immediately without waiting. If it is null,
+ *     the function waits indefinitely.
+ * @returns 0 if the shared mutex has been successfully locked in exclusive
+ *     mode, or -1 if the operation has timed out.  */
 __MCF_SHARED_MUTEX_INLINE
 int
 _MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Releases a shared mutex, in either shared or exclusive mode. This function may
- * be called by a different thread from which locked the same mutex. If the mutex
- * has not been locked, the behavior is undefined.  */
+/* Unlocks a shared mutex.
+ *
+ * If the shared mutex has not been locked in either shared or exclusive mode,
+ * the behavior is undefined. This function may be called by a different thread
+ * from which it locked the same shared mutex.
+ *
+ * @param `smtx` points to the shared mutex to unlock.
+ * @returns nothing.  */
 __MCF_SHARED_MUTEX_IMPORT
 void
 _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* __smtx)
   __MCF_noexcept;
 
+/* Unlocks a shared mutex.
+ *
+ * If the shared mutex has not been locked in either shared or exclusive mode,
+ * the behavior is undefined. This function may be called by a different thread
+ * from which it locked the same shared mutex.
+ *
+ * This is an inline wrapper for `_MCF_shared_mutex_unlock_slow()`, which is
+ * optimized when there's little to no contention, for example, when there's only
+ * one thread.
+ *
+ * @param `smtx` points to the shared mutex to unlock.
+ * @returns nothing.  */
 __MCF_SHARED_MUTEX_INLINE
 void
 _MCF_shared_mutex_unlock(_MCF_shared_mutex* __smtx)
   __MCF_noexcept;
 
 /* Define inline functions after all declarations.
+ *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
