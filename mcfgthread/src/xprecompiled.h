@@ -10,22 +10,28 @@
 #include <stdbool.h>
 #include <limits.h>
 
-/* Define internal build options, and additionally, work around many problems
- * about Clang-CL and the MSVC standard library.  */
+/**
+ * Define internal build options, and additionally, work around many problems
+ * about Clang-CL and the MSVC standard library.
+ */
 #ifdef __MCF_IN_DLL
 #  define __MCF_DLLEXPORT  __declspec(dllexport)
 #else
 #  define __MCF_DLLEXPORT
 #endif
 
-/* When inline functions are compiled as external definitions, the definitions
- * should be fully visible.  */
+/**
+ * When inline functions are compiled as external definitions, the definitions
+ * should be fully visible.
+ */
 #define __MCF_EXPAND_INLINE_DEFINITIONS   1
 
-/* When building the DLL, GCC may make implicit calls to these functions, so
+/**
+ * When building the DLL, GCC may make implicit calls to these functions, so
  * we must define and export them. However, Clang requires that the `dllexport`
  * attribute be applied before a function is called, so declare them as early as
- * possible.  */
+ * possible.
+ */
 #ifdef __cplusplus
 extern "C" {
 #endif
