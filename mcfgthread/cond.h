@@ -17,39 +17,49 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_COND_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Define the condition variable struct, which takes up the same storage as a
- * pointer.  */
+/* This is the condition variable, which takes up the same storage as a pointer.  */
 struct __MCF_cond
   {
     __MCF_EX uintptr_t __reserved_bits : 9;
     __MCF_EX uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
-/* Initializes a condition variable dynamically. Static ones should be
- * initialized with `{0}`, like other structs.  */
+/* Initializes a condition variable dynamically.
+ *
+ * Static ones should be initialized with `{0}`, like other structs.
+ *
+ * @param `cnd` points to the condition variable to initialize.
+ * @returns nothing.  */
 __MCF_COND_INLINE
 void
 _MCF_cond_init(_MCF_cond* __cnd)
   __MCF_noexcept;
 
-/* Puts the current thread to sleep on a condition variable.
+/* Suspends the current thread on a condition variable.
  *
- * The calling thread invokes the unlock callback before it goes to sleep on
- * this condition variable, and invokes the relock callback after it awakes. It
- * should unlock and relock the associated mutex, if any. The return value of
- * the unlock callback is passed to the relock callback verbatim. An unlock
- * callback may be provided regardless of a relock callback, but if a relock
- * callback is provided without an unlock callback, it is not invoked at all.
- * Neither callback is allowed to throw exceptions.
+ * The calling thread will invoke the unlock callback before going to sleep, and
+ * will invoke the relock callback after it awakes. When the condition variable
+ * is accompanied by a mutex, these callbacks should unlock and relock the
+ * associated mutex, if any. The return value of the unlock callback will be
+ * passed to the relock callback verbatim. Neither callback is allowed to throw
+ * an exception.
  *
- * If `__timeout_opt` points to a positive integer, it denotes the expiration
- * time in number of milliseconds since 1970-01-01T00:00:00Z. If it points to a
- * negative integer, the absolute value of it denotes the number of milliseconds
- * to wait. If it points to zero, the function returns immediately without
- * waiting. If it is null, the function waits indefinitely.
+ * An unlock callback may be provided regardless of a relock callback, but if a
+ * relock callback is provided without an unlock callback, it will not be
+ * invoked at all.
  *
- * Returns 0 if the condition variable has been signaled or there is a spurious
- * wakeup, or -1 if the wait operation has timed out.  */
+ * @param `cnd` points to the condition variable to wait on.
+ * @param `unlock_opt` is an optional pointer to the unlock callback.
+ * @param `relock_opt` is an optional pointer to the relock callback.
+ * @param `lock_arg` is a user-defined argument to both callbacks.
+ * @param `timeout_opt` points to the timeout value. If it is positive, it
+ *     denotes the expiration time point in the number of milliseconds since
+ *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *     value of it denotes the number of milliseconds to wait. If it points to
+ *     zero, the function returns immediately without waiting. If it is null,
+ *     the function waits indefinitely.
+ * @returns 0 if the condition variable was signaled or there was a spurious
+ *     wakeup, or -1 if the wait operation has timed out.  */
 __MCF_COND_IMPORT
 int
 _MCF_cond_wait(_MCF_cond* __cnd, _MCF_cond_unlock_callback* __unlock_opt,
@@ -57,31 +67,53 @@ _MCF_cond_wait(_MCF_cond* __cnd, _MCF_cond_unlock_callback* __unlock_opt,
                const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Wakes up some or all threads that have been put to sleep on this condition
- * variable.
+/* Wakes up some threads that are sleeping on this condition variable.
  *
- * Returns the number of threads that have been woken up.  */
+ * @param `cnd` points to the condition variable to signal.
+ * @param `limit` is the maximum number of threads to wake up.
+ * @returns the number of threads that have been woken up.  */
 __MCF_COND_IMPORT
 size_t
 _MCF_cond_signal_some_slow(_MCF_cond* __cnd, size_t __limit)
   __MCF_noexcept;
 
+/* Wakes up some threads that are sleeping on this condition variable.
+ *
+ * This is an inline wrapper for `_MCF_cond_signal_some_slow()`, which does
+ * nothing when no thread is sleeping.
+ *
+ * @param `cnd` points to the condition variable to signal.
+ * @param `limit` is the maximum number of threads to wake up.
+ * @returns the number of threads that have been woken up.  */
 __MCF_COND_INLINE
 size_t
 _MCF_cond_signal_some(_MCF_cond* __cnd, size_t __limit)
   __MCF_noexcept;
 
+/* Wakes up one thread that is sleeping on this condition variable.
+ *
+ * This function is equivalent to `_MCF_cond_signal_some(cnd, 1)`.
+ *
+ * @param `cnd` points to the condition variable to signal.
+ * @returns the number of threads that have been woken up.  */
 __MCF_COND_INLINE
 size_t
 _MCF_cond_signal(_MCF_cond* __cnd)
   __MCF_noexcept;
 
+/* Wakes up all threads that are sleeping on this condition variable.
+ *
+ * This function is equivalent to `_MCF_cond_signal_some(cnd, SIZE_MAX)`.
+ *
+ * @param `cnd` points to the condition variable to signal.
+ * @returns the number of threads that have been woken up.  */
 __MCF_COND_INLINE
 size_t
 _MCF_cond_signal_all(_MCF_cond* __cnd)
   __MCF_noexcept;
 
 /* Define inline functions after all declarations.
+ *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
