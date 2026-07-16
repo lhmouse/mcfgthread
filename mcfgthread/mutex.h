@@ -92,9 +92,8 @@ _MCF_mutex_lock(_MCF_mutex* __mtx, const int64_t* __timeout_opt)
 
 /* Unlocks a mutex.
  *
- * If the mutex has not been locked by the current thread, the behavior is
- * undefined. This function may be called by a different thread from which
- * locked the same mutex.
+ * If the mutex has not been locked, the behavior is undefined. This function
+ * may be called by a different thread from which locked the same mutex.
  *
  * @param `mtx` points to the mutex to unlock.
  * @returns nothing.  */
@@ -105,9 +104,8 @@ _MCF_mutex_unlock_slow(_MCF_mutex* __mtx)
 
 /* Unlocks a mutex.
  *
- * If the mutex has not been locked by the current thread, the behavior is
- * undefined. This function may be called by a different thread from which
- * locked the same mutex.
+ * If the mutex has not been locked, the behavior is undefined. This function
+ * may be called by a different thread from which locked the same mutex.
  *
  * This is an inline wrapper for `_MCF_mutex_unlock_slow()`, which is optimized
  * when there's little to no contention, for example, when there's only one
