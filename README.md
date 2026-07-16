@@ -68,9 +68,9 @@ meson test
 > conform to the Itanium C++ ABI, it is required 1) for a process to call
 > `__cxa_finalize(NULL)` when exiting, and 2) for a DLL to call
 > `__cxa_finalize(&__dso_handle)` when it is unloaded dynamically. This requires
-> [hacking the CRT](https://github.com/lhmouse/MINGW-packages/blob/0274a6e7e0da258cf5e32efe6e4427454741fa32/mingw-w64-crt-git/9003-crt-Implement-standard-conforming-termination-suppor.patch). If you don't
-> have the modified CRT, you may still get standard compliance by 1) calling
-> `__MCF_exit()` instead of `exit()` from your program, and 2) calling
+> [hacking the CRT](https://github.com/lhmouse/MINGW-packages/tree/gcc-mcf/mingw-w64-crt).
+> If you don't have the modified CRT, you may still get standard compliance by
+> 1) calling `__MCF_exit()` instead of `exit()` from your program, and 2) calling
 > `__cxa_finalize(&__dso_handle)` followed by `fflush(NULL)` upon receipt of
 > `DLL_PROCESS_DETACH` in your `DllMain()`.
 
@@ -180,76 +180,136 @@ and unlocks the primitive mutex, releasing all threads that are waiting on it.
 |Function                                                 |Availability    |Documentation |
 |:--------------------------------------------------------|:---------------|:-------------|
 |`BaseGetNamedObjectDirectory`                            |Windows 7       |Undocumented |
-|`CreateThread`                                           |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createthread) |
-|`DecodePointer`                                          |Windows XP SP2  |[Windows API](https://learn.microsoft.com/en-us/previous-versions/bb432242(v=vs.85)) |
-|`EncodePointer`                                          |Windows XP SP2  |[Windows API](https://learn.microsoft.com/en-us/previous-versions/bb432254(v=vs.85)) |
-|`ExitThread`                                             |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitthread) |
-|`FormatMessageW`                                         |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-formatmessagew) |
-|`FreeLibrary`                                            |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-freelibrary) |
-|`GetCurrentProcessorNumberEx`                            |Windows 7       |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentprocessornumberex) |
-|`GetLastError`                                           |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror) |
-|`GetLogicalProcessorInformationEx`                       |Windows 7       |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getlogicalprocessorinformationex) |
-|`GetModuleFileNameW`                                     |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulefilenamew) |
-|`GetModuleHandleExW`                                     |Windows XP      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulehandleexw) |
-|`GetProcAddress`                                         |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress) |
-|`GetProcessAffinityMask`                                 |Windows NT 3.5  |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getprocessaffinitymask) |
-|`GetProcessHeap`                                         |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-getprocessheap) |
-|`GetStdHandle`                                           |All             |[Windows API](https://learn.microsoft.com/en-us/windows/console/getstdhandle) |
-|`GetSystemCpuSetInformation` <sub>optional</sub>         |Windows 10      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getsystemcpusetinformation) |
-|`GetSystemInfo`                                          |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsysteminfo) |
-|`GetSystemTimeAsFileTime`                                |Windows NT 3.5  |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsystemtimeasfiletime) |
-|`GetSystemTimePreciseAsFileTime` <sub>optional</sub>     |Windows 8       |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsystemtimepreciseasfiletime) |
-|`GetThreadGroupAffinity`                                 |Windows 7       |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processtopologyapi/nf-processtopologyapi-getthreadgroupaffinity) |
-|`GetThreadPriority`                                      |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadpriority) |
-|`GetThreadSelectedCpuSets` <sub>optional</sub>           |Windows 10      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadselectedcpusets) |
-|`HeapAlloc`                                              |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapalloc) |
-|`HeapFree`                                               |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapfree) |
-|`HeapReAlloc`                                            |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heaprealloc) |
-|`HeapSetInformation`                                     |Windows XP      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapsetinformation) |
-|`HeapSize`                                               |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapsize) |
-|`K32EnumProcessModules`                                  |Windows 7       |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/psapi/nf-psapi-enumprocessmodules) |
-|`LoadLibraryExW`                                         |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibraryexw) |
-|`QueryPerformanceCounter`                                |Windows NT 3.1  |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/profileapi/nf-profileapi-queryperformancecounter) |
-|`QueryPerformanceFrequency`                              |Windows NT 3.1  |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/profileapi/nf-profileapi-queryperformancefrequency) |
-|`QueryUnbiasedInterruptTime`                             |Windows 7       |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryunbiasedinterrupttime) |
-|`RaiseFailFastException`                                 |Windows 7       |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-raisefailfastexception) |
-|`SetConsoleCtrlHandler`                                  |All             |[Windows API](https://learn.microsoft.com/en-us/windows/console/setconsolectrlhandler) |
-|`SetLastError`                                           |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-setlasterror) |
-|`SetThreadAffinityMask`                                  |Windows NT 3.5  |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-setthreadaffinitymask) |
-|`SetThreadPriority`                                      |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setthreadpriority) |
-|`SetThreadSelectedCpuSets` <sub>optional</sub>           |Windows 10      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setthreadselectedcpusets) |
-|`SwitchToThread`                                         |Windows NT 4.0  |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-switchtothread) |
-|`TerminateProcess`                                       |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-terminateprocess) |
-|`TlsAlloc`                                               |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-tlsalloc) |
-|`TlsGetValue`                                            |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-tlsgetvalue) |
-|`TlsGetValue2` <sub>optional</sub>                       |Windows 11 24H2 |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-tlsgetvalue2) |
-|`TlsSetValue`                                            |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-tlssetvalue) |
-|`VirtualProtect`                                         |All             |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualprotect) |
-|`WriteConsoleW`                                          |All             |[Windows API](https://learn.microsoft.com/en-us/windows/console/writeconsole) |
+|`CreateThread`                                           |All             |[Windows API][ref:CreateThread] |
+|`DecodePointer`                                          |Windows XP SP2  |[Windows API][ref:DecodePointer] |
+|`EncodePointer`                                          |Windows XP SP2  |[Windows API][ref:EncodePointer] |
+|`ExitThread`                                             |All             |[Windows API][ref:ExitThread] |
+|`FormatMessageW`                                         |All             |[Windows API][ref:FormatMessageW] |
+|`FreeLibrary`                                            |All             |[Windows API][ref:FreeLibrary] |
+|`GetCurrentProcessorNumberEx`                            |Windows 7       |[Windows API][ref:GetCurrentProcessorNumberEx] |
+|`GetLastError`                                           |All             |[Windows API][ref:GetLastError] |
+|`GetLogicalProcessorInformationEx`                       |Windows 7       |[Windows API][ref:GetLogicalProcessorInformationEx] |
+|`GetModuleFileNameW`                                     |All             |[Windows API][ref:GetModuleFileNameW] |
+|`GetModuleHandleExW`                                     |Windows XP      |[Windows API][ref:GetModuleHandleExW] |
+|`GetProcAddress`                                         |All             |[Windows API][ref:GetProcAddress] |
+|`GetProcessAffinityMask`                                 |Windows NT 3.5  |[Windows API][ref:GetProcessAffinityMask] |
+|`GetProcessHeap`                                         |All             |[Windows API][ref:GetProcessHeap] |
+|`GetStdHandle`                                           |All             |[Windows API][ref:GetStdHandle] |
+|`GetSystemCpuSetInformation` <sub>optional</sub>         |Windows 10      |[Windows API][ref:GetSystemCpuSetInformation] |
+|`GetSystemInfo`                                          |All             |[Windows API][ref:GetSystemInfo] |
+|`GetSystemTimeAsFileTime`                                |Windows NT 3.5  |[Windows API][ref:GetSystemTimeAsFileTime] |
+|`GetSystemTimePreciseAsFileTime` <sub>optional</sub>     |Windows 8       |[Windows API][ref:GetSystemTimePreciseAsFileTime] |
+|`GetThreadGroupAffinity`                                 |Windows 7       |[Windows API][ref:GetThreadGroupAffinity] |
+|`GetThreadPriority`                                      |All             |[Windows API][ref:GetThreadPriority] |
+|`GetThreadSelectedCpuSets` <sub>optional</sub>           |Windows 10      |[Windows API][ref:GetThreadSelectedCpuSets] |
+|`HeapAlloc`                                              |All             |[Windows API][ref:HeapAlloc] |
+|`HeapFree`                                               |All             |[Windows API][ref:HeapFree] |
+|`HeapReAlloc`                                            |All             |[Windows API][ref:HeapReAlloc] |
+|`HeapSetInformation`                                     |Windows XP      |[Windows API][ref:HeapSetInformation] |
+|`HeapSize`                                               |All             |[Windows API][ref:HeapSize] |
+|`K32EnumProcessModules`                                  |Windows 7       |[Windows API][ref:K32EnumProcessModules] |
+|`LoadLibraryExW`                                         |All             |[Windows API][ref:LoadLibraryExW] |
+|`QueryPerformanceCounter`                                |Windows NT 3.1  |[Windows API][ref:QueryPerformanceCounter] |
+|`QueryPerformanceFrequency`                              |Windows NT 3.1  |[Windows API][ref:QueryPerformanceFrequency] |
+|`QueryUnbiasedInterruptTime`                             |Windows 7       |[Windows API][ref:QueryUnbiasedInterruptTime] |
+|`RaiseFailFastException`                                 |Windows 7       |[Windows API][ref:RaiseFailFastException] |
+|`SetConsoleCtrlHandler`                                  |All             |[Windows API][ref:SetConsoleCtrlHandler] |
+|`SetLastError`                                           |All             |[Windows API][ref:SetLastError] |
+|`SetThreadAffinityMask`                                  |Windows NT 3.5  |[Windows API][ref:SetThreadAffinityMask] |
+|`SetThreadPriority`                                      |All             |[Windows API][ref:SetThreadPriority] |
+|`SetThreadSelectedCpuSets` <sub>optional</sub>           |Windows 10      |[Windows API][ref:SetThreadSelectedCpuSets] |
+|`SwitchToThread`                                         |Windows NT 4.0  |[Windows API][ref:SwitchToThread] |
+|`TerminateProcess`                                       |All             |[Windows API][ref:TerminateProcess] |
+|`TlsAlloc`                                               |All             |[Windows API][ref:TlsAlloc] |
+|`TlsGetValue`                                            |All             |[Windows API][ref:TlsGetValue] |
+|`TlsGetValue2` <sub>optional</sub>                       |Windows 11 24H2 |[Windows API][ref:TlsGetValue2] |
+|`TlsSetValue`                                            |All             |[Windows API][ref:TlsSetValue] |
+|`VirtualProtect`                                         |All             |[Windows API][ref:VirtualProtect] |
+|`WriteConsoleW`                                          |All             |[Windows API][ref:WriteConsoleW] |
 
 #### KERNELBASE.DLL
 
 |Function                                                 |Availability    |Documentation |
 |:--------------------------------------------------------|:---------------|:-------------|
-|`QueryInterruptTimePrecise` <sub>optional</sub>          |Windows 10      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryinterrupttimeprecise) |
-|`QueryUnbiasedInterruptTimePrecise` <sub>optional</sub>  |Windows 10      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryunbiasedinterrupttimeprecise) |
+|`QueryInterruptTimePrecise` <sub>optional</sub>          |Windows 10      |[Windows API][ref:QueryInterruptTimePrecise] |
+|`QueryUnbiasedInterruptTimePrecise` <sub>optional</sub>  |Windows 10      |[Windows API][ref:QueryUnbiasedInterruptTimePrecise] |
 
 #### NTDLL.DLL
 
 |Function                                                 |Availability    |Documentation |
 |:--------------------------------------------------------|:---------------|:-------------|
-|`NtClose`                                                |All             |[Windows Driver API](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwclose) |
-|`NtCreateSection`                                        |All             |[Windows Driver API](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwcreatesection) |
+|`NtClose`                                                |All             |[Windows Driver API][ref:NtClose] |
+|`NtCreateSection`                                        |All             |[Windows Driver API][ref:NtCreateSection] |
 |`NtDelayExecution`                                       |All             |Undocumented |
-|`NtDuplicateObject`                                      |All             |[Windows Driver API](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-zwduplicateobject) |
-|`NtMapViewOfSection`                                     |All             |[Windows Driver API](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwmapviewofsection) |
+|`NtDuplicateObject`                                      |All             |[Windows Driver API][ref:NtDuplicateObject] |
+|`NtMapViewOfSection`                                     |All             |[Windows Driver API][ref:NtMapViewOfSection] |
 |`NtRaiseHardError`                                       |All             |Undocumented |
 |`NtReleaseKeyedEvent`                                    |Windows XP      |Undocumented |
-|`NtUnmapViewOfSection`                                   |All             |[Windows Driver API](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwunmapviewofsection) |
+|`NtUnmapViewOfSection`                                   |All             |[Windows Driver API][ref:NtUnmapViewOfSection] |
 |`NtWaitForKeyedEvent`                                    |Windows XP      |Undocumented |
-|`NtWaitForSingleObject`                                  |All             |[Windows Driver API](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-zwwaitforsingleobject) |
-|`RtlDllShutdownInProgress`                               |Windows XP      |[Windows API](https://learn.microsoft.com/en-us/windows/win32/devnotes/rtldllshutdowninprogress)|
-|`RtlFillMemory`                                          |All             |[Windows Driver API](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlfillmemory) |
-|`RtlMoveMemory`                                          |All             |[Windows Driver API](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlmovememory) |
-|`RtlNtStatusToDosError`                                  |All             |[Windows Driver API](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-rtlntstatustodoserror) |
-|`RtlZeroMemory`                                          |All             |[Windows Driver API](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlzeromemory) |
+|`NtWaitForSingleObject`                                  |All             |[Windows Driver API][ref:NtWaitForSingleObject] |
+|`RtlDllShutdownInProgress`                               |Windows XP      |[Windows API][ref:RtlDllShutdownInProgress]|
+|`RtlFillMemory`                                          |All             |[Windows Driver API][ref:RtlFillMemory] |
+|`RtlMoveMemory`                                          |All             |[Windows Driver API][ref:RtlMoveMemory] |
+|`RtlNtStatusToDosError`                                  |All             |[Windows Driver API][ref:RtlNtStatusToDosError] |
+|`RtlZeroMemory`                                          |All             |[Windows Driver API][ref:RtlZeroMemory] |
+
+[ref:CreateThread]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createthread
+[ref:DecodePointer]: https://learn.microsoft.com/en-us/previous-versions/bb432242(v=vs.85)
+[ref:EncodePointer]: https://learn.microsoft.com/en-us/previous-versions/bb432254(v=vs.85)
+[ref:ExitThread]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitthread
+[ref:FormatMessageW]: https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-formatmessagew
+[ref:FreeLibrary]: https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-freelibrary
+[ref:GetCurrentProcessorNumberEx]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentprocessornumberex
+[ref:GetLastError]: https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror
+[ref:GetLogicalProcessorInformationEx]: https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getlogicalprocessorinformationex
+[ref:GetModuleFileNameW]: https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulefilenamew
+[ref:GetModuleHandleExW]: https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getmodulehandleexw
+[ref:GetProcAddress]: https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress
+[ref:GetProcessAffinityMask]: https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getprocessaffinitymask
+[ref:GetProcessHeap]: https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-getprocessheap
+[ref:GetStdHandle]: https://learn.microsoft.com/en-us/windows/console/getstdhandle
+[ref:GetSystemCpuSetInformation]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getsystemcpusetinformation
+[ref:GetSystemInfo]: https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsysteminfo
+[ref:GetSystemTimeAsFileTime]: https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsystemtimeasfiletime
+[ref:GetSystemTimePreciseAsFileTime]: https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsystemtimepreciseasfiletime
+[ref:GetThreadGroupAffinity]: https://learn.microsoft.com/en-us/windows/win32/api/processtopologyapi/nf-processtopologyapi-getthreadgroupaffinity
+[ref:GetThreadPriority]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadpriority
+[ref:GetThreadSelectedCpuSets]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadselectedcpusets
+[ref:HeapAlloc]: https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapalloc
+[ref:HeapFree]: https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapfree
+[ref:HeapReAlloc]: https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heaprealloc
+[ref:HeapSetInformation]: https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapsetinformation
+[ref:HeapSize]: https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapsize
+[ref:K32EnumProcessModules]: https://learn.microsoft.com/en-us/windows/win32/api/psapi/nf-psapi-enumprocessmodules
+[ref:LoadLibraryExW]: https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-loadlibraryexw
+[ref:NtClose]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwclose
+[ref:NtCreateSection]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwcreatesection
+[ref:NtDuplicateObject]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-zwduplicateobject
+[ref:NtMapViewOfSection]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwmapviewofsection
+[ref:NtUnmapViewOfSection]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwunmapviewofsection
+[ref:NtWaitForSingleObject]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-zwwaitforsingleobject
+[ref:QueryInterruptTimePrecise]: https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryinterrupttimeprecise
+[ref:QueryPerformanceCounter]: https://learn.microsoft.com/en-us/windows/win32/api/profileapi/nf-profileapi-queryperformancecounter
+[ref:QueryPerformanceFrequency]: https://learn.microsoft.com/en-us/windows/win32/api/profileapi/nf-profileapi-queryperformancefrequency
+[ref:QueryUnbiasedInterruptTime]: https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryunbiasedinterrupttime
+[ref:QueryUnbiasedInterruptTimePrecise]: https://learn.microsoft.com/en-us/windows/win32/api/realtimeapiset/nf-realtimeapiset-queryunbiasedinterrupttimeprecise
+[ref:RaiseFailFastException]: https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-raisefailfastexception
+[ref:RtlDllShutdownInProgress]: https://learn.microsoft.com/en-us/windows/win32/devnotes/rtldllshutdowninprogress
+[ref:RtlFillMemory]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlfillmemory
+[ref:RtlMoveMemory]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlmovememory
+[ref:RtlNtStatusToDosError]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-rtlntstatustodoserror
+[ref:RtlZeroMemory]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlzeromemory
+[ref:SetConsoleCtrlHandler]: https://learn.microsoft.com/en-us/windows/console/setconsolectrlhandler
+[ref:SetLastError]: https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-setlasterror
+[ref:SetThreadAffinityMask]: https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-setthreadaffinitymask
+[ref:SetThreadPriority]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setthreadpriority
+[ref:SetThreadSelectedCpuSets]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setthreadselectedcpusets
+[ref:SwitchToThread]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-switchtothread
+[ref:TerminateProcess]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-terminateprocess
+[ref:TlsAlloc]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-tlsalloc
+[ref:TlsGetValue]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-tlsgetvalue
+[ref:TlsGetValue2]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-tlsgetvalue2
+[ref:TlsSetValue]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-tlssetvalue
+[ref:VirtualProtect]: https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualprotect
+[ref:WriteConsoleW]: https://learn.microsoft.com/en-us/windows/console/writeconsole
