@@ -245,7 +245,7 @@ _MCF_thread_self(void)
   {
     uintptr_t tls_index = __MCF_G(tls_index);
     if(tls_index < 64) {
-      /* `TeTlsSlots`; WDK: ks386.inc, ksamd64.inc, ksarm64.h  */
+      /* `TeTlsSlots`; WDK: ksamd64.inc, ksarm64.h, ks386.inc  */
       uintptr_t tls_addr = __MCF_64_32(0x1480, 0x0E10) + tls_index * sizeof(void*);
       _MCF_thread* self = (void*) __MCF_teb_load_ptr((uint32_t) tls_addr);
       if(self)
