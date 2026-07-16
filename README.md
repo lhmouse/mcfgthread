@@ -70,9 +70,9 @@ meson test
 > `__cxa_finalize(&__dso_handle)` when it is unloaded dynamically. This requires
 > [hacking the CRT](https://github.com/lhmouse/MINGW-packages/tree/gcc-mcf/mingw-w64-crt).
 > If you don't have the modified CRT, you may still get standard compliance by
-> 1) calling `__MCF_exit()` instead of `exit()` from your program, and 2) calling
-> `__cxa_finalize(&__dso_handle)` followed by `fflush(NULL)` upon receipt of
-> `DLL_PROCESS_DETACH` in your `DllMain()`.
+> 1. calling `__MCF_exit()` instead of `exit()` from your program, and
+> 2. calling `__cxa_finalize(&__dso_handle)` followed by `fflush(NULL)` upon
+>    receipt of `DLL_PROCESS_DETACH` in your `DllMain()`.
 
 #### Linux
 
