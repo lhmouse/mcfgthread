@@ -385,50 +385,78 @@ __MCF_TRANSPARENT_UNION __MCF_atexit_callback_any
 typedef __MCF_atexit_callback* __MCF_atexit_callback_any_;
 #endif
 
-/* Gets the last error number, like `GetLastError()`.  */
+/* Gets the last error code, like `GetLastError()`.
+ *
+ * @returns the last error code as an unsigned integer.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_PURE
 uint32_t
 _MCF_get_win32_error(void)
   __MCF_noexcept;
 
-/* Gets the system page size, which is usually 4KiB or 8KiB.  */
+/* Gets the system page size, which is usually 4KiB or 8KiB.
+ *
+ * @returns the system page size in bytes.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_CONST
 size_t
 _MCF_get_page_size(void)
   __MCF_noexcept;
 
-/* Gets the number of logical processors in the current group. When there are
- * more processors than `__MCF_PTR_BITS`, the result includes only those in the
- * current/primary processor group of the current process. For Windows 10+ where
- * CPU Set APIs are available, precise information may be obtained by examining
- * a CPU collection that is created by `_MCF_cpu_collection_new()`.  */
+/* Gets the number of logical processors in the current processor group.
+ *
+ * When there are more processors than `__MCF_PTR_BITS`, the result may include
+ * only those in the current/primary processor group of the current process. For
+ * Windows 10+ where CPU Set APIs are available, precise information can be
+ * obtained by examining a CPU collection which can be created with
+ * `_MCF_cpu_collection_new()`.
+ *
+ * @returns the number of logical processors in the current processor group.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_CONST
 size_t
 _MCF_get_processor_count(void)
   __MCF_noexcept;
 
-/* Gets the mask of active processors. Each bit 1 denotes a processor that has
- * been configured into the system. The value is cached upon initialization, and
- * does not reflect changes thereafter. When there are more processors than
- * `__MCF_PTR_BITS`, the result includes only those in the current/primary
- * processor group of the current process, and may even be incorrect in a 32-bit
- * process on a 64-bit system. For Windows 10+ where CPU Set APIs are available,
- * precise information may be obtained by examining a CPU collection that is
- * created by `_MCF_cpu_collection_new()`.  */
+/* Gets the mask of active processors in the current processor group.
+ *
+ * Each bit 1 denotes a processor that has been configured into the system. The
+ * value is cached upon initialization, and does not reflect changes if CPUs are
+ * hot-unplugged. When there are more processors than `__MCF_PTR_BITS`, the
+ * result may include only those in the current/primary processor group of the
+ * current process, and may even be incorrect in a 32-bit process on a 64-bit
+ * system. For Windows 10+ where CPU Set APIs are available, precise information
+ * may be obtained by examining a CPU collection which can be created with
+ * `_MCF_cpu_collection_new()`.
+ *
+ * @returns the mask of active processors in the current processor group.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_CONST
 uintptr_t
 _MCF_get_active_processor_mask(void)
   __MCF_noexcept;
 
-/* Calls `__init_proc(__arg)` exactly once. If an exception is thrown, this
- * function calls `_MCF_once_abort(__once)` and rethrow the exception; otherwise
- * this function calls `_MCF_once_release(__once)` and returns.  */
+/* Calls `__init_proc(__arg)` exactly once.
+ *
+ * If an exception is thrown, this function calls `_MCF_once_abort(once)` and
+ * rethrow the exception; otherwise, it calls `_MCF_once_release(once)` and
+ * returns.
+ *
+ * This function requires exceptions be implemented with structured exception
+ * handling (SEH). If user code is compiled by GCC with DWARF2 or SJLJ exception
+ * model and an exception is thrown from `init_proc`, the behavior is
+ * unpredictable.
+ *
+ * @param `once` points to an object of type `_MCF_once`.
+ * @param `init_proc` points to the function that should be called exactly once.
+ * @param `arg` is a user-defined parameter for `init_proc`.
+ * @returns nothing.  */
 __MCF_XGLOBALS_IMPORT
 void
 __MCF_gthr_call_once_seh_take_over(_MCF_once* __once, __MCF_cxa_dtor_any_ __init_proc, void* __arg)
   __MCF_MAY_THROW;
 
-/* Declare some helper functions.  */
+/* Calculates the minimum value of two values of type `size_t`.
+ *
+ * @param `x` is one value.
+ * @param `y` is another value.
+ * @returns the minimum value of `x` and `y`.  */
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
 _MCF_minz(size_t __x, size_t __y)
@@ -437,6 +465,11 @@ _MCF_minz(size_t __x, size_t __y)
     return (__y < __x) ? __y : __x;
   }
 
+/* Calculates the maximum value of two values of type `size_t`.
+ *
+ * @param `x` is one value.
+ * @param `y` is another value.
+ * @returns the maximum value of `x` and `y`.  */
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
 _MCF_maxz(size_t __x, size_t __y)
@@ -445,6 +478,11 @@ _MCF_maxz(size_t __x, size_t __y)
     return (__x < __y) ? __y : __x;
   }
 
+/* Calculates the positive difference of two values of type `intptr_t`.
+ *
+ * @param `x` is the minuend.
+ * @param `y` is the subtrahend.
+ * @returns `MAX(x, y) - y`.  */
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 intptr_t
 _MCF_dim(intptr_t __x, intptr_t __y)
