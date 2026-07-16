@@ -286,7 +286,7 @@ __MCF_gthr_thread_create_v3(__MCF_gthr_thread_fn* __proc, void* __arg)
  *
  * @param `thrdp_opt` is an optional pointer that indicates where to store a
  *     pointer to the new thread. If it is non-null, it is updated before the
- *     new thread begins execution.; the value is the same as what this function
+ *     new thread begins execution. The value is the same as what this function
  *     will return.
  * @param `proc` shall point to the thread procedure.
  * @param `arg` is a user-defined parameter for the thread procedure.
