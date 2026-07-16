@@ -166,7 +166,7 @@ __MCF_gthr_thread_join_v3(_MCF_thread* __thrd, void** __resp_opt)
 
 __MCF_GTHR_AUX_IMPORT __MCF_NEVER_RETURN
 void
-__MCF_gthr_thread_exit_v3(void* __resp)
+__MCF_gthr_thread_exit_v3(void* __result)
   __MCF_noexcept;
 
 /* Define inline functions after all declarations.

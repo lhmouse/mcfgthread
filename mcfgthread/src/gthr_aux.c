@@ -186,12 +186,12 @@ __MCF_gthr_thread_join_v3(_MCF_thread* thrd, void** resp_opt)
 
 __MCF_DLLEXPORT
 void
-__MCF_gthr_thread_exit_v3(void* resp)
+__MCF_gthr_thread_exit_v3(void* result)
   {
     /* Set the exit code.  */
     __MCF_gthr_thread_record* rec = _MCF_thread_get_data(_MCF_thread_self());
     if(rec && __MCF_mequal(rec->__magic_guid, __MCF_crt_gthread_guid, 16))
-      rec->__arg_or_result = resp;
+      rec->__arg_or_result = result;
 
     /* Terminate the current thread.  */
     _MCF_thread_exit();
