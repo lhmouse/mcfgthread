@@ -262,6 +262,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_thread_set_data, __gthread_objc_thread_set_data);
 #endif
 
 /* Define inline functions after all declarations.
+ *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout

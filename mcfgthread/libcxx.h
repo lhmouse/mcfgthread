@@ -394,6 +394,7 @@ __MCF_ALT_SYM(__MCF_libcxx_thread_yield, __libcpp_thread_yield);
 #endif
 
 /* Define inline functions after all declarations.
+ *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
