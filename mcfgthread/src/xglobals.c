@@ -663,7 +663,7 @@ __MCF_gthread_on_thread_exit(void)
   }
 
 /* These are constants that have to be initialized at load time. The
- * initializers prevent them from being placed into the`.bss` section.  */
+ * initializers prevent them from being placed into the `.bss` section.  */
 __MCF_BR(GUID) const __MCF_crt_gthread_guid = { __MCF_GUID(9FB2D15C,C5F2,4AE7,868D,2769591B8E92) };
 __MCF_BR(__MCF_winnt_timeout) const __MCF_crt_timeout_0 = {{ .li.QuadPart = 0 }};
 __MCF_BR(__MCF_winnt_timeout) const __MCF_crt_timeout_1s = {{ .li.QuadPart = -10000000 }};
@@ -675,6 +675,7 @@ HMODULE __MCF_crt_ntdll = __MCF_BAD_PTR;
 HMODULE __MCF_crt_kernel32 = __MCF_BAD_PTR;
 HMODULE __MCF_crt_kernelbase = __MCF_BAD_PTR;
 
+/* These point to optional imports.  */
 typeof_GetSystemTimePreciseAsFileTime* __MCF_crt_GetSystemTimePreciseAsFileTime = __MCF_BAD_PTR;
 typeof_QueryUnbiasedInterruptTimePrecise* __MCF_crt_QueryUnbiasedInterruptTimePrecise = __MCF_BAD_PTR;
 typeof_QueryInterruptTimePrecise* __MCF_crt_QueryInterruptTimePrecise = __MCF_BAD_PTR;
@@ -728,9 +729,6 @@ DllMainCRTStartup(PVOID instance, ULONG reason, PVOID reserved)
       }
   }
 
-/* According to GCC documentation, these functions are required by a
- * freestanding implementation. When doing a non-emulative build, they are
- * also exported for reuse.  */
 __MCF_DLLEXPORT __attribute__((__flatten__))
 void*
 memcpy(void* restrict dst, const void* restrict src, size_t size)
@@ -1084,8 +1082,7 @@ const _load_config_used __MCF_CRT_RDATA =
 
 #else  /* __MCF_IN_DLL  */
 
-/* When building the static library, invoke common routines from a TLS
- * callback.  */
+/* When building the static library, invoke common routines from a TLS callback.  */
 #if defined __CYGWIN__
 #  error Static linking is not supported on Cygwin or MSYS2.
 #endif
