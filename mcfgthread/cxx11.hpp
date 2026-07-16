@@ -27,7 +27,9 @@ extern "C" void* __dso_handle;
 namespace _MCF {
 namespace _Noadl = ::_MCF;
 
-// Forward declarations
+/* N3797 ISO/IEC 14882:201z
+ * 30 Thread support library [thread]  */
+
 namespace chrono = ::std::chrono;
 using ::std::lock_guard;
 using ::std::unique_lock;
@@ -60,7 +62,7 @@ class thread;
 template<typename _Tp>
 class thread_specific_ptr;  // inspired by boost
 
-// Provide limited support for `-fno-exceptions`.
+/* Provide limited support for `-fno-exceptions`.  */
 #if defined __cpp_exceptions || defined __EXCEPTIONS || defined _CPPUNWIND
 #  define __MCF_THROW_SYSTEM_ERROR(_Code, _Msg)  \
      throw ::std::system_error(static_cast<int>(::std::errc::_Code),  \
@@ -69,11 +71,11 @@ class thread_specific_ptr;  // inspired by boost
 #  define __MCF_THROW_SYSTEM_ERROR(_Code, _Msg)   ::__MCF_runtime_failure(_Msg)
 #endif
 
-// Define shortcuts for `enable_if`.
+/* Define shortcuts for `enable_if`.  */
 #define __MCF_SFINAE_ENABLE_IF(...)   typename ::std::enable_if<(bool) (__VA_ARGS__)>::type* = nullptr
 #define __MCF_SFINAE_DISABLE_IF(...)  typename ::std::enable_if<!(bool) (__VA_ARGS__)>::type* = nullptr
 
-// Declare prototypes for callback functions.
+/* Declare prototypes for callback functions.  */
 #if defined __cpp_noexcept_function_type
 #  define __MCF_NOEXCEPT_ON_TYPEDEF   noexcept
 #else
@@ -86,13 +88,14 @@ using _Vfn = void (_Args...);
 template<typename... _Args>
 using _Vfn_noexcept = void (_Args...) __MCF_NOEXCEPT_ON_TYPEDEF;
 
-// This is the maximum integer representable as a `double` exact.
+/* This is the maximum integer representable as a `double` exact.  */
 constexpr int64_t _Max_ms = 0x7FFFFFFFFFFFFC00;
 
-// Convert a `chrono::duration` to the number of milliseconds, represented
-// as a non-negative 64-bit integer. For everything other than milliseconds,
-// it is necessary to perform calculation using a floating-point type and
-// check for overflows before casting.
+/* Converts a `chrono::duration` to the number of milliseconds, represented
+ * as a non-negative 64-bit integer.
+ *
+ * @param `ms` is the duration to convert.
+ * @returns the number of milliseconds, clamped to the interval [0, _Max_ms].  */
 __MCF_CXX14(constexpr) inline
 int64_t
 __clamp_duration(const chrono::milliseconds& __ms)
@@ -106,6 +109,14 @@ __clamp_duration(const chrono::milliseconds& __ms)
       return __ms.count();
   }
 
+/* Converts a `chrono::duration` to the number of milliseconds, represented
+ * as a non-negative 64-bit integer.
+ *
+ * This function does calculation with a floating-point type and checks for
+ * overflows before converting the result.
+ *
+ * @param `ms` is the duration to convert.
+ * @returns the number of milliseconds, clamped to the interval [0, _Max_ms].  */
 template<typename _Duration>
 __MCF_CXX14(constexpr) inline
 int64_t
@@ -122,8 +133,7 @@ __clamp_duration(const _Duration& __dur)
       return static_cast<int64_t>(__ms.count() + 0.9999999);
   }
 
-// Suspend the current thread until the given timeout. The operation is
-// noninterruptible, and this function always returns zero.
+/* Undocumented  */
 inline
 int
 __sleep_noninterruptible(int64_t* __timeout_opt)
@@ -133,10 +143,7 @@ __sleep_noninterruptible(int64_t* __timeout_opt)
     return 0;
   }
 
-// Wait an amount of time, or until a time point. The condition function
-// shall return `int`. If it returns zero, this function also returns zero;
-// otherwise it is called repeatedly, until the timeout has been reached,
-// and this function returns its last value.
+/* Undocumented  */
 template<typename _Rep, typename _Period, typename _Cond, typename... _Args>
 inline
 int
@@ -148,6 +155,7 @@ __wait_for(const chrono::duration<_Rep, _Period>& __rel_time, _Cond&& __cnd,
     return __cnd(__args..., &__timeout);
   }
 
+/* Undocumented  */
 template<typename _Dur, typename _Cond, typename... _Args>
 inline
 int
@@ -158,6 +166,7 @@ __wait_until(const chrono::time_point<chrono::system_clock, _Dur>& __abs_time,
     return __cnd(__args..., &__timeout);
   }
 
+/* Undocumented  */
 template<typename _Clock, typename _Dur, typename _Cond, typename... _Args>
 inline
 int
@@ -174,9 +183,10 @@ __wait_until(const chrono::time_point<_Clock, _Dur>& __abs_time, _Cond&& __cnd,
     return __err;
   }
 
-// Provide `INVOKE` for C++11. [func.require]
-// At the moment, all results are discarded, so the expression always has a
-// type of `void` for simplicity.
+/* Emulate `INVOKE` for C++11. [func.require]
+ *
+ * At the moment, all results are discarded, so the expression always has a
+ * type of `void` for simplicity.  */
 #if defined __cpp_lib_invoke
 
 template<class... _Args>
@@ -201,9 +211,9 @@ __v_invoke(_Callable&& __callable, _Args&&... __args)
 
 #endif  // __cpp_lib_invoke
 
-// Create a thread. ISO C++ requires that arguments for the constructor of
-// `std::thread` be passed as decay-copied rvalues. This is the object that
-// saves copies of them and invokes the target function accordingly.
+/* ISO C++ requires that arguments for the constructor of `std::thread` be
+ * passed as decay-copied rvalues. This is the object that saves copies of them
+ * and invokes the target function accordingly.  */
 template<typename _Callable, typename... _Args>
 struct _Invoke_decay_copy;
 
@@ -244,7 +254,7 @@ struct _Invoke_decay_copy<_Callable, _Mine, _Others...>
       }
   };
 
-// Reference implementation for [thread.once.onceflag]
+/* Reference implementation for [thread.once.onceflag]  */
 struct once_flag
   {
     __MCF_BR(::_MCF_once) _M_once = { };
@@ -254,7 +264,7 @@ struct once_flag
     once_flag& operator=(const once_flag&) = delete;
   };
 
-// Reference implementation for [thread.once.callonce]
+/* Reference implementation for [thread.once.callonce]  */
 template<typename _Callable, typename... _Args>
 void
 call_once(once_flag& __flag, _Callable&& __callable, _Args&&... __args)
@@ -277,8 +287,8 @@ call_once(once_flag& __flag, _Callable&& __callable, _Args&&... __args)
     __sentry.__deferred_fn = ::_MCF_once_release;
   }
 
-// Reference implementation for [thread.mutex.class] and
-// [thread.timedmutex.class].
+/* Reference implementation for [thread.mutex.class] and
+ * [thread.timedmutex.class].  */
 class mutex
   {
   private:
@@ -342,8 +352,8 @@ class mutex
       }
   };
 
-// Reference implementation for [thread.sharedmutex.class] and
-// [thread.sharedtimedmutex.class].
+/* Reference implementation for [thread.sharedmutex.class] and
+ * [thread.sharedtimedmutex.class].  */
 class shared_mutex
   {
   private:
@@ -454,8 +464,8 @@ class shared_mutex
       }
   };
 
-// Reference implementation for [thread.timedmutex.recursive] and
-// [thread.timedmutex.recursive].
+/* Reference implementation for [thread.timedmutex.recursive] and
+ * [thread.timedmutex.recursive].  */
 class recursive_mutex
   {
   private:
@@ -529,7 +539,7 @@ class recursive_mutex
       }
   };
 
-// Reference implementation for [thread.condition.condvar]
+/* Reference implementation for [thread.condition.condvar]  */
 class condition_variable
   {
   private:
@@ -641,7 +651,7 @@ class condition_variable
       }
   };
 
-// Reference implementation for [thread.condition.nonmember]
+/* Reference implementation for [thread.condition.nonmember]  */
 inline
 void
 notify_all_at_thread_exit(condition_variable& __cnd, unique_lock<mutex> __lock)
@@ -664,7 +674,7 @@ notify_all_at_thread_exit(condition_variable& __cnd, unique_lock<mutex> __lock)
     __lock.release();
   }
 
-// Reference implementation for [thread.thread.class]
+/* Undocumented  */
 struct _Thread_id
   {
     uint32_t _M_tid;  // Windows thread ID
@@ -674,6 +684,7 @@ struct _Thread_id
       : _M_tid(__thr_opt ? ::_MCF_thread_get_tid(__thr_opt) : 0U)  { }
   };
 
+/* Reference implementation for [thread.thread.class]  */
 class thread
   {
   private:
@@ -957,6 +968,7 @@ namespace this_thread
       }
   }
 
+/* Non-standard extension  */
 template<typename _Tp>
 class thread_specific_ptr
   {
