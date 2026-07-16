@@ -17,8 +17,8 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_SEM_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Define the semaphore struct, which contains just a signed integer, same as
- * what can be found in any operating system book.  */
+/* This is the counting semaphore, which takes up the same storage as a pointer.
+ * The counter has the same semantics as found in an operating system book.  */
 struct __MCF_sem
   {
     intptr_t __value;
@@ -34,12 +34,15 @@ struct __MCF_sem
       __MCF_STATIC_ASSERT_0((__value_init) <= __MCF_SEM_VALUE_MAX) +  \
       (__value_init)  }
 
-/* Initializes a semaphore dynamically. The argument is the initial value of
- * the semaphore, which shall not be negative. Static ones should be initialized
- * with `__MCF_SEM_INIT(__value_init)`.
- *
- * Returns 0 if the initialization is successful, or -1 in case of invalid
- * arguments.  */
+/* Initializes a semaphore dynamically.
+
+ * Static ones should be initialized with `__MCF_SEM_INIT(value_init)`.
+
+ * @param `sem` points to the semaphore to initialize.
+ * @param `value_init` is the initial value of the semaphore, which shall not be
+ *     negative.
+ * @returns 0 if the initialization is successful, or -1 in case of an invalid
+ *     argument.  */
 __MCF_SEM_INLINE
 int
 _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init)
@@ -47,47 +50,61 @@ _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init)
 
 /* Gets the current value of a semaphore.
  *
- * Returns the current value as a signed integer. If the value is negative, its
- * absolute value denotes the number of threads that have been suspended on
- * this semaphore.  */
+ * If the value is negative, the absolute value of it denotes the number of
+ * threads that are currently waiting on the semaphore.
+ *
+ * @param `sem` points to the semaphore.
+ * @returns the current value of the semaphore.  */
 __MCF_SEM_INLINE
 intptr_t
 _MCF_sem_get(const _MCF_sem* __sem)
   __MCF_noexcept;
 
-/* Decrements the value of a semaphore. If the result is negative, the calling
- * thread will be suspended.
+/* Decrements the value of a semaphore.
  *
- * If `__timeout_opt` points to a positive integer, it denotes the expiration
- * time in number of milliseconds since 1970-01-01T00:00:00Z. If it points to a
- * negative integer, the absolute value of it denotes the number of milliseconds
- * to wait. If it points to zero, the function returns immediately without
- * waiting. If it is null, the function waits indefinitely.
+ * If the value is reduced below zero, the calling thread is suspended until
+ * another thread increments the value of the semaphore.
  *
- * Returns 0 if the value had been decremented and the calling thread has been
- * woken up by another thread, or -1 if the operation has timed out.  */
+ * @param `sem` points to the semaphore.
+ * @param `timeout_opt` points to the timeout value. If it is positive, it
+ *     denotes the expiration time point in the number of milliseconds since
+ *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *     value of it denotes the number of milliseconds to wait. If it points to
+ *     zero, the function returns immediately without waiting. If it is null,
+ *     the function waits indefinitely.
+ * @returns 0 if the value has been decremented, or -1 if the operation has
+ *     timed out.  */
 __MCF_SEM_IMPORT
 int
 _MCF_sem_wait(_MCF_sem* __sem, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Increases the value of a semaphore by the specified value. If the value was
- * negative before the call, a waiting thread is woken up. The argument shall
- * not be negative.
+/* Increases the value of a semaphore and wake up some threads.
  *
- * Returns 0 if the value has been updated successfully, or -1 in case of
- * invalid arguments, or -2 if the result would overflow.  */
+ * @param `sem` points to the semaphore.
+ * @param `value_add` is the value to add to the semaphore, which shall not be
+ *     negative.
+ * @returns 0 if the value has been increased successfully, -1 in case of an
+ *     invalid argument, or -2 if the value would overflow.  */
 __MCF_SEM_IMPORT
 int
 _MCF_sem_signal_some(_MCF_sem* __sem, intptr_t __value_add)
   __MCF_noexcept;
 
+/* Increments the value of a semaphore and wakes up a thread.
+ *
+ * This is an inline wrapper for `_MCF_sem_signal_some(sem, 1)`.
+ *
+ * @param `sem` points to the semaphore.
+ * @returns 0 if the value has been incremented successfully, -1 in case of an
+ *     invalid argument, or -2 if the value would overflow.  */
 __MCF_SEM_INLINE
 int
 _MCF_sem_signal(_MCF_sem* __sem)
   __MCF_noexcept;
 
 /* Define inline functions after all declarations.
+ *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
