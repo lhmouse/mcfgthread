@@ -16,6 +16,9 @@ __MCF_DLLEXPORT
 int
 __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
   {
+    if(!elem || !elem->__dtor)
+      return -1;
+
     if(queue->__size == ARRAYSIZE(queue->__data)) {
       __MCF_dtor_queue* prev = __MCF_malloc_copy(queue, sizeof(__MCF_dtor_queue));
       if(!prev)

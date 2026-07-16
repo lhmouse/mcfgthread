@@ -19,12 +19,12 @@ main(void)
     int r;
 
     for(intptr_t k = 1;  k <= 1000;  ++k) {
-      elem.__this = (void*) k;
+      elem.__dtor = (__MCF_cxa_dtor_cdecl*) k;
       elem.__dso = (void*) (k % 10);
 
       r = __MCF_dtor_queue_push(&queue, &elem);
       assert(r == 0);
-      fprintf(stderr, "push: %d, size = %d\n", (int)(intptr_t) elem.__this, (int)(intptr_t) queue.__size);
+      fprintf(stderr, "push: %td, size = %d\n", (intptr_t) elem.__dtor, queue.__size);
 
     }
 
@@ -40,9 +40,9 @@ main(void)
       for(intptr_t k = 99;  k >= 0;  --k) {
         r = __MCF_dtor_queue_pop(&elem, &queue, (void*) m);
         assert(r == 0);
-        fprintf(stderr, "pop: %d, size = %d\n", (int)(intptr_t) elem.__this, (int)(intptr_t) queue.__size);
+        fprintf(stderr, "pop: %td, size = %d\n", (intptr_t) elem.__dtor, queue.__size);
 
-        assert(elem.__this == (void*) (k * 10 + m));
+        assert(elem.__dtor == (void*) (k * 10 + m));
         assert(elem.__dso == (void*) m);
       }
 
