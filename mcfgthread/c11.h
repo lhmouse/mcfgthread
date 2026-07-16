@@ -17,7 +17,10 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_C11_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* N1570 7.26.1 Introduction  */
+/* N1570 ISO/IEC 9899:201x
+ * 7.26 Threads <threads.h>
+ * 7.26.1 Introduction  */
+
 #if __MCF_C11(1+)0
 #  define thread_local  _Thread_local
 #endif
@@ -25,8 +28,8 @@ __MCF_CXX(extern "C" {)
 #define ONCE_FLAG_INIT  __MCF_0_INIT
 #define TSS_DTOR_ITERATIONS  LONG_MAX  /* no limit  */
 
-/* Define <threads.h> types. These usually map to our APIs directly, except
- * the mutex.  */
+/* Define <threads.h> types. These map to our APIs directly, except the mutex.  */
+
 typedef struct __MCF_c11_mutex __MCF_c11_mutex;
 typedef struct __MCF_c11_thread_record __MCF_c11_thread_record;
 typedef int __MCF_c11_thread_fn(void* __arg);
@@ -56,7 +59,6 @@ typedef _MCF_once once_flag;
 typedef _MCF_cond cnd_t;
 typedef __MCF_c11_mutex mtx_t;
 
-/* Define enumeration constants.  */
 enum __MCF_mtx_type
   {
     mtx_plain           = 0,
@@ -363,10 +365,12 @@ __MCF_ALT_SYM(__MCF_c11_tss_set, tss_set);
 #endif
 
 /* Define inline functions after all declarations.
+ *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
+
 __MCF_C11_INLINE
 void
 __MCF_c11_call_once(once_flag* __once, __MCF_gthr_once_callback* __init_proc)
