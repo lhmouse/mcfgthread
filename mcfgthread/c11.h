@@ -370,7 +370,6 @@ __MCF_ALT_SYM(__MCF_c11_tss_set, tss_set);
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
-
 __MCF_C11_INLINE
 void
 __MCF_c11_call_once(once_flag* __once, __MCF_gthr_once_callback* __init_proc)
