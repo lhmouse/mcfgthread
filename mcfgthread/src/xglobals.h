@@ -74,8 +74,7 @@ __MCF_seh_thread_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVO
 
 #if defined __MCF_M_X8632
 
-/* On x86, SEH is stack-based. Each handler will be attached to the scope of
- * a local record object.  */
+/* Removes an SEH node from the linked list of handlers.  */
 __MCF_ALWAYS_INLINE
 void
 __MCF_i386_seh_cleanup(const void* ref)
@@ -83,6 +82,8 @@ __MCF_i386_seh_cleanup(const void* ref)
     __MCF_teb_store_ptr(0, *(const intptr_t*) ref);
   }
 
+/* On x86, SEH is stack-based. Each handler will be attached to the scope of
+ * a local record object.  */
 #  define __MCF_USING_SEH_HANDLER(fn)  \
     const intptr_t  \
       __MCF_i386_seh_record[] __attribute__((__cleanup__(__MCF_i386_seh_cleanup)))  \
@@ -95,8 +96,8 @@ __MCF_i386_seh_cleanup(const void* ref)
  * enforced; otherwise SSE instructions may fault.  */
 #  define __MCF_REALIGN_SP    __attribute__((__force_align_arg_pointer__, __noinline__))
 
-/* `arg` shall be passed both via the ECX register and on the stack, to allow
- * both `__cdecl` and `__thiscall` functions to work properly.  */
+/* Invokes `dtor`, passing `arg` both via ECX and on the stack, to allow both
+ * `__cdecl` and `__thiscall` functions to work properly.  */
 __MCF_ALWAYS_INLINE
 void
 __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
@@ -139,14 +140,21 @@ struct __MCF_winnt_timeout
     ULONGLONG since;
   };
 
+/* Converts a timeout in milliseconds to a native Windows NT timeout in 100
+ * nanoseconds, and initializes `since` for a relative timeout.  */
 __MCF_XGLOBALS_IMPORT
 void
 __MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* to, const int64_t* ms_opt);
 
+/* Adjusts `*to` for an interrupted wait operation, so it may be resumed.  */
 __MCF_XGLOBALS_IMPORT
 void
 __MCF_adjust_winnt_timeout_v3(__MCF_winnt_timeout* to);
 
+/* Checks whether it is safe to suspend the current thread. In `DllMain()` or
+ * TLS callback upon `DLL_PROCESS_DETACH`, where all other threads have been
+ * terminated by the system, it may not be safe to wait, and this function
+ * terminates the current process.  */
 __MCF_XGLOBALS_IMPORT
 void
 __MCF_check_wait_safety(const __MCF_winnt_timeout* to);
@@ -155,95 +163,98 @@ __MCF_XGLOBALS_IMPORT
 void
 __MCF_batch_release_common(const void* key, size_t count);
 
-/* Copy a block of memory forward, like `memcpy()`.  */
+/* Copies a block of memory forward, like `memcpy()`.  */
 __MCF_XGLOBALS_INLINE
 void*
 __MCF_mcopy(void* dst, const void* src, size_t size);
 
-/* Copy a block of memory backward.  */
+/* Copies a block of memory backward.  */
 __MCF_XGLOBALS_INLINE
 void*
 __MCF_mcopy_backward(void* dst, const void* src, size_t size);
 
-/* Fill a block of memory with the given byte, like `memset()`.  */
+/* Fills a block of memory with the given byte, like `memset()`.  */
 __MCF_XGLOBALS_INLINE
 void*
 __MCF_mfill(void* dst, int val, size_t size);
 
-/* Fill a block of memory with zeroes, like `bzero()`.  */
+/* Fills a block of memory with zeroes, like `bzero()`.  */
 __MCF_XGLOBALS_INLINE
 void*
 __MCF_mzero(void* dst, size_t size);
 
-/* Compare two blocks of memory, like `memcmp()`.  */
+/* Compares two blocks of memory, like `memcmp()`.  */
 __MCF_XGLOBALS_INLINE __MCF_FN_PURE
 int
 __MCF_mcompare(const void* src, const void* cmp, size_t size);
 
-/* Check whether two blocks of memory compare equal.  */
+/* Checks whether two blocks of memory compare equal.  */
 __MCF_XGLOBALS_INLINE __MCF_FN_PURE
 bool
 __MCF_mequal(const void* src, const void* cmp, size_t size);
 
-/* Allocate a block of zeroed memory, like `calloc()`.  */
+/* Allocates a block of zeroed memory, like `calloc()`.  */
 __MCF_XGLOBALS_INLINE __attribute__((__malloc__, __alloc_size__(1)))
 void*
 __MCF_malloc_0(size_t size);
 
-/* Set the size a block of memory in place, like `truncate()` on files.
- * If the existent block should be extended, vacuum bytes are filled with
- * zeroes.  */
+/* Sets the size a block of memory in place, like `truncate()` on files. If the
+ * existent block should be extended, vacuum bytes are filled with zeroes.  */
 __MCF_XGLOBALS_INLINE __attribute__((__alloc_size__(2)))
 void*
 __MCF_mresize_0(void* ptr, size_t size);
 
-/* Re-allocate a block of memory, like `realloc()`. If the existent
- * block should be extended, vacuum bytes are filled with zeroes.  */
+/* Re-allocates a block of memory, like `realloc()`. If the existent block should
+ * be extended, vacuum bytes are filled with zeroes.  */
 __MCF_XGLOBALS_INLINE __attribute__((__alloc_size__(2)))
 void*
 __MCF_mrealloc_0(void** pptr, size_t size);
 
-/* Allocate a copy of a block of memory, like `malloc()` followed by
- * `memcpy()`.  */
+/* Allocates a copy of a block of memory, like `malloc()` followed by `memcpy()`.  */
 __MCF_XGLOBALS_INLINE __attribute__((__alloc_size__(2)))
 void*
 __MCF_malloc_copy(const void* data, size_t size);
 
-/* Get the size of an allocated block, like `malloc_usable_size()`.  */
+/* Gets the size of an allocated block, like `malloc_usable_size()`.  */
 __MCF_XGLOBALS_INLINE __MCF_FN_PURE
 size_t
 __MCF_msize(const void* ptr);
 
-/* Free a block of memory, like `free()`, except that the argument shall not
- * be a null pointer.  */
+/* Frees a block of memory, like `free()`, except that the argument shall not be
+ * a null pointer.  */
 __MCF_XGLOBALS_INLINE
 void
 __MCF_mfree_nonnull(void* ptr);
 
-/* These functions set the last error code and return the second argument.
- * They should be eligible for tail-call optimization.  */
+/* Sets the last error code to `code` and returns `val`. This function should be
+ * the target of a tail call.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_COLD
 int
 __MCF_win32_error_i(ULONG code, int val);
 
+/* Sets the last error code to `code` and returns `ptr`. This function should be
+ * the target of a tail call.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_COLD
 void*
 __MCF_win32_error_p(ULONG code, void* ptr);
 
+/* Sets the last error code to `RtlNtStatusToDosError(status)` and returns `ptr`.
+ * This function should be the target of a tail call.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_COLD
 void*
 __MCF_win32_ntstatus_p(NTSTATUS status, void* ptr);
 
-/* These functions are declared here for the sake of completeness, and are not
- * meant to be called directly.  */
+/* Undocumented  */
 __MCF_XGLOBALS_IMPORT
 void
 __MCF_run_static_dtors(_MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso);
 
+/* Undocumented  */
 __MCF_XGLOBALS_IMPORT
 void
 __MCF_gthread_initialize_globals(void);
 
+/* Undocumented  */
 __MCF_XGLOBALS_IMPORT
 void
 __MCF_gthread_on_thread_exit(void);
@@ -328,7 +339,8 @@ struct __MCF_crt_xglobals
  * current module.  */
 extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY restrict __MCF_g;
 
-/* Get a field from named shared memory with version checking.  */
+/* These are utility macros for accessing fields in the named shared memory
+ * with version checking.  */
 #define __MCF_GFX_(field)     offsetof(__MCF_crt_xglobals, field)
 #define __MCF_HAS_G(field)    (__MCF_g->self_size >= __MCF_GFX_(field) + sizeof(__MCF_g->field))
 #define __MCF_G(field)        (*(__MCF_ASSERT(__MCF_HAS_G(field)), &(__MCF_g->field)))
@@ -353,6 +365,7 @@ __MCF_STATIC_ASSERT(__MCF_GFX_(reserved_3_must_be_null) == __MCF_64_32(8416, 523
 __MCF_STATIC_ASSERT(__MCF_GFX_(reserved_4_must_be_null) == __MCF_64_32(8424, 5236));
 
 /* Define inline functions after all declarations.
+ *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
