@@ -140,7 +140,8 @@ __sleep_noninterruptible(int64_t* __timeout_opt)
 template<typename _Rep, typename _Period, typename _Cond, typename... _Args>
 inline
 int
-__wait_for(const chrono::duration<_Rep, _Period>& __rel_time, _Cond&& __cnd, _Args&&... __args)
+__wait_for(const chrono::duration<_Rep, _Period>& __rel_time, _Cond&& __cnd,
+           _Args&&... __args)
   {
     int64_t __timeout = _Noadl::__clamp_duration(__rel_time);
     __timeout *= -1;
@@ -150,7 +151,8 @@ __wait_for(const chrono::duration<_Rep, _Period>& __rel_time, _Cond&& __cnd, _Ar
 template<typename _Dur, typename _Cond, typename... _Args>
 inline
 int
-__wait_until(const chrono::time_point<chrono::system_clock, _Dur>& __abs_time, _Cond&& __cnd, _Args&&... __args)
+__wait_until(const chrono::time_point<chrono::system_clock, _Dur>& __abs_time,
+             _Cond&& __cnd, _Args&&... __args)
   {
     int64_t __timeout = _Noadl::__clamp_duration(__abs_time.time_since_epoch());
     return __cnd(__args..., &__timeout);
@@ -159,18 +161,16 @@ __wait_until(const chrono::time_point<chrono::system_clock, _Dur>& __abs_time, _
 template<typename _Clock, typename _Dur, typename _Cond, typename... _Args>
 inline
 int
-__wait_until(const chrono::time_point<_Clock, _Dur>& __abs_time, _Cond&& __cnd, _Args&&... __args)
+__wait_until(const chrono::time_point<_Clock, _Dur>& __abs_time, _Cond&& __cnd,
+             _Args&&... __args)
   {
     int __err;
     int64_t __timeout;
-
     do {
       __timeout = _Noadl::__clamp_duration(__abs_time - _Clock::now());
       __timeout *= -1;
       __err = __cnd(__args..., &__timeout);
-    }
-    while((__err < 0) && (__timeout != 0));  // loop if timed out
-
+    } while((__err < 0) && (__timeout != 0));  // loop if timed out
     return __err;
   }
 
@@ -390,7 +390,8 @@ class shared_mutex
     bool
     try_lock_until(const chrono::time_point<_Clock, _Dur>& __abs_time)
       {
-        int __err = _Noadl::__wait_until(__abs_time, ::_MCF_shared_mutex_lock_exclusive, this->_M_smtx);
+        int __err = _Noadl::__wait_until(__abs_time, ::_MCF_shared_mutex_lock_exclusive,
+                                         this->_M_smtx);
         return __err == 0;
       }
 
@@ -398,7 +399,8 @@ class shared_mutex
     bool
     try_lock_for(const chrono::duration<_Rep, _Period>& __rel_time)
       {
-        int __err = _Noadl::__wait_for(__rel_time, ::_MCF_shared_mutex_lock_exclusive, this->_M_smtx);
+        int __err = _Noadl::__wait_for(__rel_time, ::_MCF_shared_mutex_lock_exclusive,
+                                       this->_M_smtx);
         return __err == 0;
       }
 
@@ -430,7 +432,8 @@ class shared_mutex
     bool
     try_lock_shared_until(const chrono::time_point<_Clock, _Dur>& __abs_time)
       {
-        int __err = _Noadl::__wait_until(__abs_time, ::_MCF_shared_mutex_lock_shared, this->_M_smtx);
+        int __err = _Noadl::__wait_until(__abs_time, ::_MCF_shared_mutex_lock_shared,
+                                         this->_M_smtx);
         return __err == 0;
       }
 
@@ -438,7 +441,8 @@ class shared_mutex
     bool
     try_lock_shared_for(const chrono::duration<_Rep, _Period>& __rel_time)
       {
-        int __err = _Noadl::__wait_for(__rel_time, ::_MCF_shared_mutex_lock_shared, this->_M_smtx);
+        int __err = _Noadl::__wait_for(__rel_time, ::_MCF_shared_mutex_lock_shared,
+                                       this->_M_smtx);
         return __err == 0;
       }
 
@@ -501,7 +505,8 @@ class recursive_mutex
       {
         int __err = ::__MCF_gthr_rc_mutex_recurse(this->_M_rmtx);
         if(__err != 0)
-          __err = _Noadl::__wait_until(__abs_time, ::__MCF_gthr_rc_mutex_wait, this->_M_rmtx);
+          __err = _Noadl::__wait_until(__abs_time, ::__MCF_gthr_rc_mutex_wait,
+                                       this->_M_rmtx);
         return __err == 0;
       }
 
@@ -511,7 +516,8 @@ class recursive_mutex
       {
         int __err = ::__MCF_gthr_rc_mutex_recurse(this->_M_rmtx);
         if(__err != 0)
-          __err = _Noadl::__wait_for(__rel_time, ::__MCF_gthr_rc_mutex_wait, this->_M_rmtx);
+          __err = _Noadl::__wait_for(__rel_time, ::__MCF_gthr_rc_mutex_wait,
+                                     this->_M_rmtx);
         return __err == 0;
       }
 
@@ -593,14 +599,16 @@ class condition_variable
         unique_lock_type __temp_lock;
         __temp_lock.swap(__lock);
         ::_MCF_mutex* __mtx = __temp_lock.mutex()->native_handle();
-        int __err = _Noadl::__wait_until(__abs_time, ::__MCF_gthr_cond_mutex_wait, this->_M_cnd, __mtx);
+        int __err = _Noadl::__wait_until(__abs_time, ::__MCF_gthr_cond_mutex_wait,
+                                         this->_M_cnd, __mtx);
         __temp_lock.swap(__lock);
         return (__err == 0) ? cv_status::no_timeout : cv_status::timeout;
       }
 
     template<typename _Clock, typename _Dur, typename _Predicate>
     bool
-    wait_until(unique_lock_type& __lock, const chrono::time_point<_Clock, _Dur>& __abs_time, _Predicate&& __pred)
+    wait_until(unique_lock_type& __lock, const chrono::time_point<_Clock, _Dur>& __abs_time,
+               _Predicate&& __pred)
       {
         while(!(bool) __pred())
           if(this->wait_until(__lock, __abs_time) == cv_status::timeout)
@@ -618,14 +626,16 @@ class condition_variable
         unique_lock_type __temp_lock;
         __temp_lock.swap(__lock);
         ::_MCF_mutex* __mtx = __temp_lock.mutex()->native_handle();
-        int __err = _Noadl::__wait_for(__rel_time, ::__MCF_gthr_cond_mutex_wait, this->_M_cnd, __mtx);
+        int __err = _Noadl::__wait_for(__rel_time, ::__MCF_gthr_cond_mutex_wait,
+                                       this->_M_cnd, __mtx);
         __temp_lock.swap(__lock);
         return (__err == 0) ? cv_status::no_timeout : cv_status::timeout;
       }
 
     template<typename _Rep, typename _Period, typename _Predicate>
     bool
-    wait_for(unique_lock_type& __lock, const chrono::duration<_Rep, _Period>& __rel_time, _Predicate&& __pred)
+    wait_for(unique_lock_type& __lock, const chrono::duration<_Rep, _Period>& __rel_time,
+             _Predicate&& __pred)
       {
         return this->wait_until(__lock, chrono::steady_clock::now() + __rel_time, __pred);
       }
@@ -673,7 +683,8 @@ class thread
     thread& operator=(const thread&) = delete;
 
     template<typename _Callable, typename... _Args,
-    __MCF_SFINAE_DISABLE_IF(::std::is_same<typename ::std::decay<_Callable>::type, thread>::value)>
+    __MCF_SFINAE_DISABLE_IF(::std::is_same<typename ::std::decay<_Callable>::type,
+                            thread>::value)>
     explicit thread(_Callable&& __callable, _Args&&... __args)
       {
         using _My_invoker = _Invoke_decay_copy<_Callable, _Args...>;
