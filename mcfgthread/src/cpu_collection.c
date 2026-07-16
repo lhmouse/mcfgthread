@@ -43,17 +43,17 @@ _MCF_cpu_collection_new(void)
         if(info->Type == CpuSetInformation) {
           /* The system seems to return CPU Set identifiers in increasing order,
            * but that's undocumented, so keep them sorted, with Insertion Sort.  */
-          uint32_t pos1 = coll->__size, pos2 = coll->__size;
-          while((pos1 != 0) && (coll->__data[-- pos1].__id > info->CpuSet.Id))
-            coll->__data[pos2 --] = coll->__data[pos1];
+          uint32_t i = coll->__size, k = coll->__size;
+          while((i != 0) && (coll->__data[--i].__id > info->CpuSet.Id))
+            coll->__data[k--] = coll->__data[i];
 
           /* Add CPU at the upper bound.  */
           coll->__size ++;
-          coll->__data[pos2].__id = info->CpuSet.Id;
-          coll->__data[pos2].__group = info->CpuSet.Group;
-          coll->__data[pos2].__core_idx = info->CpuSet.CoreIndex;
-          coll->__data[pos2].__effic_cls = info->CpuSet.EfficiencyClass;
-          coll->__data[pos2].__sched_cls = info->CpuSet.SchedulingClass;
+          coll->__data[k].__id = info->CpuSet.Id;
+          coll->__data[k].__group = info->CpuSet.Group;
+          coll->__data[k].__core_idx = info->CpuSet.CoreIndex;
+          coll->__data[k].__effic_cls = info->CpuSet.EfficiencyClass;
+          coll->__data[k].__sched_cls = info->CpuSet.SchedulingClass;
         }
 
         info = (SYSTEM_CPU_SET_INFORMATION*) ((char*) info + info->Size);
@@ -94,10 +94,10 @@ _MCF_cpu_collection_new(void)
         __MCF_64_32(_BitScanForward64, _BitScanForward) (&bit_index, mask_reg);
 
         /* Add CPU into the end. CPU identifiers start from 256 like CPU Set APIs.  */
-        uint32_t pos = coll->__size ++;
-        coll->__data[pos].__id = 256 + bit_index;
-        coll->__data[pos].__group = proc_num.Group;
-        coll->__data[pos].__core_idx = (BYTE) bit_index;
+        uint32_t k = coll->__size ++;
+        coll->__data[k].__id = 256 + bit_index;
+        coll->__data[k].__group = proc_num.Group;
+        coll->__data[k].__core_idx = (BYTE) bit_index;
 
         mask_reg = mask_reg & (mask_reg - 1);
       }
