@@ -11,9 +11,11 @@
 
 #include "fwd.h"
 
-/* Define macros to use atomic operations. If the compiler has builtin support,
- * then it should be preferred; otherwise the standard library is used.
- * Microsoft Visual Studio 2022 has experimental support which seems to suffice.  */
+/* Define macros to use atomic operations.
+ *
+ * If the compiler has builtin support, then it should be preferred; otherwise
+ * the standard library is used. Microsoft Visual Studio 2022 has experimental
+ * support which seems to suffice.  */
 #if defined __GNUC__ || defined __clang__
 #  define __MCF_ATOMIC(...)                   volatile __VA_ARGS__
 #  define __MCF_memory_order_rlx              __ATOMIC_RELAXED
@@ -253,9 +255,10 @@ __MCF_CXX(extern "C" {)
 
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 20001
 
-/* Perform an atomic load operation. `mem` shall point to an atomic object of
- * the specified width. The first function returns the value as an integer. The
- * second function writes the value into `*res`.  */
+/* Performs an atomic load operation.
+ *
+ * @param `mem` shall point to an atomic object of the specified width.
+ * @returns the value of the atomic object as an integer.  */
 __MCF_ATOMIC_INLINE
 INTEGER
 __MCF_C3(_MCF_atomic_load_,WIDTH,ORDER) (const volatile void* __mem)
@@ -264,6 +267,12 @@ __MCF_C3(_MCF_atomic_load_,WIDTH,ORDER) (const volatile void* __mem)
     return __MCF_atomic_load(E_ATOMICIFY(__mem), E_ORDER_A);
   }
 
+/* Performs an atomic load operation.
+ *
+ * @param `res` shall point to a variable of the specified width, which receives
+ *     the value of the atomic object.
+ * @param `mem` shall point to an atomic object of the specified width.
+ * @returns nothing.  */
 __MCF_ATOMIC_INLINE
 void
 __MCF_C3(_MCF_atomic_load_p,WIDTH,ORDER) (void* __res, const volatile void* __mem)
@@ -273,9 +282,11 @@ __MCF_C3(_MCF_atomic_load_p,WIDTH,ORDER) (void* __res, const volatile void* __me
     *(INTEGER*) __res = __rval;
   }
 
-/* Perform an atomic store operation. `mem` shall point to an atomic object of
- * the specified width. The first function stores the integer `val`. The second
- * function stores the value at `*src`.  */
+/* Performs an atomic store operation.
+ *
+ * @param `mem` shall point to an atomic object of the specified width.
+ * @param `val` is the value to store into the atomic object.
+ * @returns nothing.  */
 __MCF_ATOMIC_INLINE
 void
 __MCF_C3(_MCF_atomic_store_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
@@ -284,6 +295,12 @@ __MCF_C3(_MCF_atomic_store_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
     __MCF_atomic_store(E_ATOMICIFY(__mem), __val, E_ORDER_R);
   }
 
+/* Performs an atomic store operation.
+ *
+ * @param `mem` shall point to an atomic object of the specified width.
+ * @param `src` shall point to a variable of the specified width, which provides
+ *     the value to store into the atomic object.
+ * @returns nothing.  */
 __MCF_ATOMIC_INLINE
 void
 __MCF_C3(_MCF_atomic_store_p,WIDTH,ORDER) (volatile void* __mem, const void* __src)
@@ -293,10 +310,11 @@ __MCF_C3(_MCF_atomic_store_p,WIDTH,ORDER) (volatile void* __mem, const void* __s
     __MCF_atomic_store(E_ATOMICIFY(__mem), __val, E_ORDER_R);
   }
 
-/* Perform an atomic exchange operation. `mem` shall point to an atomic object
- * of the specified width. The first function stores the integer `val` and
- * returns the old value as an integer. The second function stores the value at
- * `*src` and writes the old value into `*res`.  */
+/* Performs an atomic exchange operation.
+ *
+ * @param `mem` shall point to an atomic object of the specified width.
+ * @param `val` is the value to store into the atomic object.
+ * @returns the previous value of the atomic object as an integer.  */
 __MCF_ATOMIC_INLINE
 INTEGER
 __MCF_C3(_MCF_atomic_xchg_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
@@ -305,6 +323,14 @@ __MCF_C3(_MCF_atomic_xchg_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
     return __MCF_atomic_xchg(E_ATOMICIFY(__mem), __val, E_ORDER);
   }
 
+/* Performs an atomic exchange operation.
+ *
+ * @param `res` shall point to a variable of the specified width, which receives
+ *     the previous value of the atomic object.
+ * @param `mem` shall point to an atomic object of the specified width.
+ * @param `src` shall point to a variable of the specified width, which provides
+ *     the value to store into the atomic object.
+ * @returns nothing.  */
 __MCF_ATOMIC_INLINE
 void
 __MCF_C3(_MCF_atomic_xchg_p,WIDTH,ORDER) (void* __res, volatile void* __mem, const void* __src)
@@ -315,13 +341,20 @@ __MCF_C3(_MCF_atomic_xchg_p,WIDTH,ORDER) (void* __res, volatile void* __mem, con
     *(INTEGER*) __res = __rval;
   }
 
-/* Perform a strong atomic compare-and-exchange operation. `mem` shall point to
- * an atomic object of the specified width. These functions compare the value of
- * the atomic object with `*cmp`. If they equal, these functions store the
- * integer `val` or the value at `*src` into `*mem`, and return `true`;
- * otherwise these functions return `false`. The old value of `*mem` is stored
- * into `*cmp`. For some targets, these functions may perform the operation as a
- * loop and will not fail spuriously.  */
+/* Performs an atomic compare-and-exchange operation.
+ *
+ * If the value of `*mem` compares equal to `*cmp`, then `val` is stored into
+ * `*mem` and the function succeeds; otherwise, the value of `*mem` is loaded
+ * into `*cmp` and the function fails. The operation is performed atomically.
+ * On some architectures, this function may create a loop to recover from
+ * spurious failures.
+ *
+ * @param `mem` shall point to an atomic object of the specified width.
+ * @param `cmp` shall point to a variable of the specified width, which provides
+ *     the value to compare, and when the function fails, receives the current
+ *     value of the atomic object.
+ * @param `val` is the value to store into the atomic object upon success.
+ * @returns whether the comparison succeeds.  */
 __MCF_ATOMIC_INLINE
 bool
 __MCF_C3(_MCF_atomic_cmpxchg_,WIDTH,ORDER) (volatile void* __mem, INTEGER* __cmp, INTEGER __val)
@@ -330,6 +363,21 @@ __MCF_C3(_MCF_atomic_cmpxchg_,WIDTH,ORDER) (volatile void* __mem, INTEGER* __cmp
     return __MCF_atomic_cmpxchg(E_ATOMICIFY(__mem), __cmp, __val, E_ORDER, E_ORDER_A);
   }
 
+/* Performs an atomic compare-and-exchange operation.
+ *
+ * If the value of `*mem` compares equal to `*cmp`, then `*src` is stored into
+ * `*mem` and the function succeeds; otherwise, the value of `*mem` is loaded
+ * into `*cmp` and the function fails. The operation is performed atomically.
+ * On some architectures, this function may create a loop to recover from
+ * spurious failures.
+ *
+ * @param `mem` shall point to an atomic object of the specified width.
+ * @param `cmp` shall point to a variable of the specified width, which provides
+ *     the value to compare, and when the function fails, receives the current
+ *     value of the atomic object.
+ * @param `src` shall point to a variable of the specified width, which provides
+ *     the value to store into the atomic object.
+ * @returns whether the comparison succeeds.  */
 __MCF_ATOMIC_INLINE
 bool
 __MCF_C3(_MCF_atomic_cmpxchg_p,WIDTH,ORDER) (volatile void* __mem, void* __cmp, const void* __src)
@@ -342,12 +390,19 @@ __MCF_C3(_MCF_atomic_cmpxchg_p,WIDTH,ORDER) (volatile void* __mem, void* __cmp, 
     return __succ;
   }
 
-/* Perform a weak atomic compare-and-exchange operation. `mem` shall point to an
- * atomic object of the specified width. These functions compare the value of
- * the atomic object with `*cmp`. If they equal, these functions store the
- * integer `val` or the value at `*src` into `*mem`, and return `true`;
- * otherwise these functions return `false`. The old value of `*mem` is stored
- * into `*cmp`. For some targets, these functions may fail spuriously.  */
+/* Performs a weak atomic compare-and-exchange operation.
+ *
+ * If the value of `*mem` compares equal to `*cmp`, then `val` is stored into
+ * `*mem` and the function succeeds; otherwise, the value of `*mem` is loaded
+ * into `*cmp` and the function fails. The operation is performed atomically.
+ * On some architectures, this function may fail spuriously.
+ *
+ * @param `mem` shall point to an atomic object of the specified width.
+ * @param `cmp` shall point to a variable of the specified width, which provides
+ *     the value to compare, and when the function fails, receives the current
+ *     value of the atomic object.
+ * @param `val` is the value to store into the atomic object upon success.
+ * @returns whether the comparison succeeds.  */
 __MCF_ATOMIC_INLINE
 bool
 __MCF_C3(_MCF_atomic_cmpxchg_weak_,WIDTH,ORDER) (volatile void* __mem, INTEGER* __cmp, INTEGER __val)
@@ -356,6 +411,20 @@ __MCF_C3(_MCF_atomic_cmpxchg_weak_,WIDTH,ORDER) (volatile void* __mem, INTEGER* 
     return __MCF_atomic_cmpxchg_w(E_ATOMICIFY(__mem), __cmp, __val, E_ORDER, E_ORDER_A);
   }
 
+/* Performs a weak atomic compare-and-exchange operation.
+ *
+ * If the value of `*mem` compares equal to `*cmp`, then `*src` is stored into
+ * `*mem` and the function succeeds; otherwise, the value of `*mem` is loaded
+ * into `*cmp` and the function fails. The operation is performed atomically.
+ * On some architectures, this function may fail spuriously.
+ *
+ * @param `mem` shall point to an atomic object of the specified width.
+ * @param `cmp` shall point to a variable of the specified width, which provides
+ *     the value to compare, and when the function fails, receives the current
+ *     value of the atomic object.
+ * @param `src` shall point to a variable of the specified width, which provides
+ *     the value to store into the atomic object.
+ * @returns whether the comparison succeeds.  */
 __MCF_ATOMIC_INLINE
 bool
 __MCF_C3(_MCF_atomic_cmpxchg_weak_p,WIDTH,ORDER) (volatile void* __mem, void* __cmp, const void* __src)
@@ -370,9 +439,11 @@ __MCF_C3(_MCF_atomic_cmpxchg_weak_p,WIDTH,ORDER) (volatile void* __mem, void* __
 
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 20002
 
-/* Add `val` to, or subtract `val` from, an atomic integer. `mem` shall point to
- * an atomic integer of the specified width. These functions return the old
- * value.  */
+/* Adds `val` to the value of an atomic integer.
+ *
+ * @param `mem` shall point to an atomic integer of the specified width.
+ * @param `val` is the value to add to the atomic integer.
+ * @returns the previous value of the atomic integer.  */
 __MCF_ATOMIC_INLINE
 INTEGER
 __MCF_C3(_MCF_atomic_xadd_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
@@ -381,6 +452,11 @@ __MCF_C3(_MCF_atomic_xadd_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
     return __MCF_atomic_xadd(E_ATOMICIFY(__mem), __val, E_ORDER);
   }
 
+/* Subtracts `val` from the value of an atomic integer.
+ *
+ * @param `mem` shall point to an atomic integer of the specified width.
+ * @param `val` is the value to subtract from the atomic integer.
+ * @returns the previous value of the atomic integer.  */
 __MCF_ATOMIC_INLINE
 INTEGER
 __MCF_C3(_MCF_atomic_xsub_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
@@ -391,10 +467,10 @@ __MCF_C3(_MCF_atomic_xsub_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
 
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 20003
 
-/* Emit a fence (barrier). This ensures that read and write operations shall
- * happen in the requested memory order. A signal fence generates no CPU
- * instruction, but prevents the compiler from reordering load and store
- * operations.  */
+/* Emits hardware memory fence instructions to ensure that the effects of memory
+ * operations are visible in the requested memory order.
+ *
+ * @returns nothing.  */
 __MCF_ATOMIC_INLINE
 void
 __MCF_C2(_MCF_thread_fence,ORDER) (void)
@@ -403,6 +479,10 @@ __MCF_C2(_MCF_thread_fence,ORDER) (void)
     __MCF_atomic_thread_fence(E_ORDER);
   }
 
+/* Prevents the compiler from reordering other instructions which would violate
+ * the requested memory order, without generating any hardware instructions.
+ *
+ * @returns nothing.  */
 __MCF_ATOMIC_INLINE
 void
 __MCF_C2(_MCF_signal_fence,ORDER) (void)
