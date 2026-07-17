@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-static _MCF_sem sem = __MCF_SEM_INIT(3);
+static _MCF_sem sem = _MCF_SEM_INIT(3);
 
 int
 main(void)

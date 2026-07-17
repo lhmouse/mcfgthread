@@ -10,9 +10,9 @@
 
 static tss_t key;
 static thrd_t thrd;
-static _MCF_sem thread_start = __MCF_SEM_INIT(0);
-static _MCF_sem value_set = __MCF_SEM_INIT(0);
-static _MCF_sem key_deleted = __MCF_SEM_INIT(0);
+static _MCF_sem thread_start = _MCF_SEM_INIT(0);
+static _MCF_sem value_set = _MCF_SEM_INIT(0);
+static _MCF_sem key_deleted = _MCF_SEM_INIT(0);
 static int count;
 
 static

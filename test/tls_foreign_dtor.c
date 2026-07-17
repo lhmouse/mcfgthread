@@ -12,7 +12,7 @@
 #define NTHREADS  64U
 static HANDLE threads[NTHREADS];
 static _MCF_tls_key* key;
-static _MCF_sem start = __MCF_SEM_INIT(0);
+static _MCF_sem start = _MCF_SEM_INIT(0);
 static int count;
 
 static

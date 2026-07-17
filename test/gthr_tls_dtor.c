@@ -11,7 +11,7 @@
 #define NTHREADS  64U
 static __gthread_t threads[NTHREADS];
 static __gthread_key_t key;
-static _MCF_sem start = __MCF_SEM_INIT(0);
+static _MCF_sem start = _MCF_SEM_INIT(0);
 static int count;
 
 static

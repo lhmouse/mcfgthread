@@ -15,30 +15,30 @@ main(void)
   {
     assert(_MCF_sem_get(&sem) == 0);
 
-    assert(_MCF_sem_signal_some(&sem, __MCF_SEM_VALUE_MAX / 2) == 0);
-    assert(_MCF_sem_get(&sem) == __MCF_SEM_VALUE_MAX / 2);
+    assert(_MCF_sem_signal_some(&sem, _MCF_SEM_VALUE_MAX / 2) == 0);
+    assert(_MCF_sem_get(&sem) == _MCF_SEM_VALUE_MAX / 2);
 
-    assert(_MCF_sem_signal_some(&sem, __MCF_SEM_VALUE_MAX / 2) == 0);
-    assert(_MCF_sem_get(&sem) == __MCF_SEM_VALUE_MAX - 1);
+    assert(_MCF_sem_signal_some(&sem, _MCF_SEM_VALUE_MAX / 2) == 0);
+    assert(_MCF_sem_get(&sem) == _MCF_SEM_VALUE_MAX - 1);
 
-    assert(_MCF_sem_signal_some(&sem, __MCF_SEM_VALUE_MAX) == -2);
-    assert(_MCF_sem_get(&sem) == __MCF_SEM_VALUE_MAX - 1);
+    assert(_MCF_sem_signal_some(&sem, _MCF_SEM_VALUE_MAX) == -2);
+    assert(_MCF_sem_get(&sem) == _MCF_SEM_VALUE_MAX - 1);
 
     assert(_MCF_sem_signal_some(&sem, 1) == 0);
-    assert(_MCF_sem_get(&sem) == __MCF_SEM_VALUE_MAX);
+    assert(_MCF_sem_get(&sem) == _MCF_SEM_VALUE_MAX);
 
     assert(_MCF_sem_signal_some(&sem, 1) == -2);
-    assert(_MCF_sem_get(&sem) == __MCF_SEM_VALUE_MAX);
+    assert(_MCF_sem_get(&sem) == _MCF_SEM_VALUE_MAX);
 
     assert(_MCF_sem_wait(&sem, NULL) == 0);
-    assert(_MCF_sem_get(&sem) == __MCF_SEM_VALUE_MAX - 1);
+    assert(_MCF_sem_get(&sem) == _MCF_SEM_VALUE_MAX - 1);
 
     assert(_MCF_sem_signal_some(&sem, 1) == 0);
-    assert(_MCF_sem_get(&sem) == __MCF_SEM_VALUE_MAX);
+    assert(_MCF_sem_get(&sem) == _MCF_SEM_VALUE_MAX);
 
     assert(_MCF_sem_wait(&sem, NULL) == 0);
-    assert(_MCF_sem_get(&sem) == __MCF_SEM_VALUE_MAX - 1);
+    assert(_MCF_sem_get(&sem) == _MCF_SEM_VALUE_MAX - 1);
 
     assert(_MCF_sem_signal_some(&sem, 2) == -2);
-    assert(_MCF_sem_get(&sem) == __MCF_SEM_VALUE_MAX - 1);
+    assert(_MCF_sem_get(&sem) == _MCF_SEM_VALUE_MAX - 1);
   }

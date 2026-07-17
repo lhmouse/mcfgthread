@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-static _MCF_sem sem = __MCF_SEM_INIT(42);
+static _MCF_sem sem = _MCF_SEM_INIT(42);
 
 int
 main(void)
@@ -27,6 +27,6 @@ main(void)
     assert(_MCF_sem_init(&sem, 0) == 0);
     assert(_MCF_sem_get(&sem) == 0);
 
-    assert(_MCF_sem_init(&sem, __MCF_SEM_VALUE_MAX) == 0);
-    assert(_MCF_sem_get(&sem) == __MCF_SEM_VALUE_MAX);
+    assert(_MCF_sem_init(&sem, _MCF_SEM_VALUE_MAX) == 0);
+    assert(_MCF_sem_get(&sem) == _MCF_SEM_VALUE_MAX);
   }

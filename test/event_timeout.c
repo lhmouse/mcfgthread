@@ -9,7 +9,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-static _MCF_event event = __MCF_EVENT_INIT(42);
+static _MCF_event event = _MCF_EVENT_INIT(42);
 
 int
 main(void)
@@ -22,7 +22,7 @@ main(void)
     r = _MCF_event_await_change(&event, -1, &(int64_t){ (int64_t) _MCF_hires_utc_now() + 1116 });  /* absolute  */
     assert(r == 42);
 
-    r = _MCF_event_await_change(&event, __MCF_EVENT_VALUE_MAX + 1, &(int64_t){ (int64_t) _MCF_hires_utc_now() + 1116 });  /* absolute  */
+    r = _MCF_event_await_change(&event, _MCF_EVENT_VALUE_MAX + 1, &(int64_t){ (int64_t) _MCF_hires_utc_now() + 1116 });  /* absolute  */
     assert(r == 42);
 
     now = _MCF_perf_counter();
@@ -34,7 +34,7 @@ main(void)
     assert(delta <= 100);
 
     now = _MCF_perf_counter();
-    r = _MCF_event_await_change(&event, __MCF_EVENT_VALUE_MAX, &(int64_t){ (int64_t) _MCF_hires_utc_now() + 1116 });  /* absolute  */
+    r = _MCF_event_await_change(&event, _MCF_EVENT_VALUE_MAX, &(int64_t){ (int64_t) _MCF_hires_utc_now() + 1116 });  /* absolute  */
     assert(r == 42);
     delta = _MCF_perf_counter() - now;
     fprintf(stderr, "delta = %.6f\n", delta);
