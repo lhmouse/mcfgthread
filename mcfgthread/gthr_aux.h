@@ -328,7 +328,6 @@ __MCF_gthr_thread_join_v3(_MCF_thread* __thrd, void** __resp_opt)
  * This function does not return.
  *
  * @param `result` is the exit code of the current thread.
- * @returns nothing.
  * @since 2.0  */
 __MCF_GTHR_AUX_IMPORT __MCF_NEVER_RETURN
 void

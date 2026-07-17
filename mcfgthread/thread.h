@@ -259,7 +259,6 @@ _MCF_thread_get_handle(const _MCF_thread* __thrd)
  *
  * This function does not return.
  *
- * @returns nothing.
  * @since 1.0  */
 __MCF_THREAD_IMPORT __MCF_NEVER_RETURN
 void
