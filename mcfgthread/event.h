@@ -29,22 +29,26 @@ struct __MCF_event
 
 /** This is the maximum value of an event. This is a value of type `int` due
  * to potential integral promotion.  */
-#define __MCF_EVENT_VALUE_MAX   0xFF
+#define _MCF_EVENT_VALUE_MAX   0xFF
 
 /** This is a macro for static initialization of an event. The argument is the
  * initial value of the event.  */
-#define __MCF_EVENT_INIT(__value_init)  \
+#define _MCF_EVENT_INIT(__value_init)  \
     { (__value_init), 0, 0  \
       + __MCF_STATIC_ASSERT_0((__value_init) >= 0)  \
-      + __MCF_STATIC_ASSERT_0((__value_init) <= __MCF_EVENT_VALUE_MAX)  }
+      + __MCF_STATIC_ASSERT_0((__value_init) <= _MCF_EVENT_VALUE_MAX)  }
+
+/** These are kept for compatibility.  */
+#define __MCF_EVENT_VALUE_MAX            _MCF_EVENT_VALUE_MAX
+#define __MCF_EVENT_INIT(__value_init)   _MCF_EVENT_INIT(__value_init)
 
 /** Initializes an event dynamically.
  *
- * Static ones should be initialized with `__MCF_EVENT_INIT(value_init)`.
+ * Static ones should be initialized with `_MCF_EVENT_INIT(value_init)`.
  *
  * @param `eventp` points to the event to initialize.
  * @param `value_init` is the initial value of the event, which shall not be
- *     negative and shall not exceed `__MCF_EVENT_VALUE_MAX`.
+ *     negative and shall not exceed `_MCF_EVENT_VALUE_MAX`.
  * @returns 0 if the initialization is successful, or -1 if `value_init` is out
  *     of range. The function will not fail if all arguments are valid.  */
 __MCF_EVENT_INLINE
@@ -110,7 +114,7 @@ _MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __
  *
  * @param `eventp` points to the event to set.
  * @param `value` is the new value to set, which shall not be negative and shall
- *     not exceed `__MCF_EVENT_VALUE_MAX`.
+ *     not exceed `_MCF_EVENT_VALUE_MAX`.
  * @returns 0 if the value has been updated successfully, or -1 if `value` is out
  *     of range. The function will not fail if all arguments are valid.  */
 __MCF_EVENT_IMPORT
@@ -124,7 +128,7 @@ _MCF_event_set_slow(_MCF_event* __eventp, int __value)
  *
  * @param `eventp` points to the event to set.
  * @param `value` is the new value to set, which shall not be negative and shall
- *     not exceed `__MCF_EVENT_VALUE_MAX`.
+ *     not exceed `_MCF_EVENT_VALUE_MAX`.
  * @returns 0 if the value has been updated successfully, or -1 if `value` is out
  *     of range. The function will not fail if all arguments are valid.  */
 __MCF_EVENT_INLINE
@@ -143,7 +147,7 @@ int
 _MCF_event_init(_MCF_event* __eventp, int __value_init)
   __MCF_noexcept
   {
-    if((__value_init < 0) || (__value_init > __MCF_EVENT_VALUE_MAX))
+    if((__value_init < 0) || (__value_init > _MCF_EVENT_VALUE_MAX))
       return -1;
     else {
       _MCF_event __temp = __MCF_0_INIT;

@@ -83,7 +83,7 @@ __MCF_DLLEXPORT __MCF_NEVER_INLINE
 int
 _MCF_event_set_slow(_MCF_event* event, int value)
   {
-    if((value < 0) || (value > __MCF_EVENT_VALUE_MAX))
+    if((value < 0) || (value > _MCF_EVENT_VALUE_MAX))
       return -1;
 
     size_t wake_num;
