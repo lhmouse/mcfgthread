@@ -24,7 +24,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_THREAD_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* This is the control structure of a thread.  */
+/** This is the control structure of a thread.  */
 struct __MCF_thread_base
   {
     __MCF_ALIGNED(16) __MCF_BR(int32_t) __nref;  /* atomic reference count  */
@@ -47,16 +47,16 @@ struct __MCF_thread_base
 #endif
   };
 
-/* This is the default alignment of user-defined data that is guaranteed by
+/** This is the default alignment of user-defined data that is guaranteed by
  * `_MCF_thread_new_aligned()`.  */
 #define __MCF_THREAD_DATA_ALIGNMENT   16U
 
-/* This is the maximum alignment of user-defined data that is supported by
+/** This is the maximum alignment of user-defined data that is supported by
  * `_MCF_thread_new_aligned()`. It is defined here for illustration purposes
  * only and you should not make assumption about it.  */
 #define __MCF_THREAD_MAX_DATA_ALIGNMENT   0x200000U
 
-/* These thread priority values match Windows APIs and can be passed around as
+/** These thread priority values match Windows APIs and can be passed around as
  * such, but we define only what we find necessary at the moment.  */
 enum __MCF_thread_priority __MCF_CXX11(: int)
   {
@@ -70,7 +70,7 @@ enum __MCF_thread_priority __MCF_CXX11(: int)
     __MCF_thread_priority_end
   };
 
-/* Creates a thread.
+/** Creates a thread.
  *
  * The `__nref` member is initialized to 2, since a running thread holds a
  * reference to itself. The caller shall call `_MCF_thread_drop_ref()` when the
@@ -100,7 +100,7 @@ _MCF_thread_p_new(_MCF_thread** __thrdp_opt, size_t __stack_size, _MCF_thread_pr
                   size_t __data_alignment, const void* __data_opt, size_t __data_size)
   __MCF_noexcept;
 
-/* Creates a thread.
+/** Creates a thread.
  *
  * The `__nref` member is initialized to 2, since a running thread holds a
  * reference to itself. The caller shall call `_MCF_thread_drop_ref()` when the
@@ -127,7 +127,7 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* __proc, size_t __data_alignment,
                         const void* __data_opt, size_t __data_size)
   __MCF_noexcept;
 
-/* Creates a thread.
+/** Creates a thread.
  *
  * The `__nref` member is initialized to 2, since a running thread holds a
  * reference to itself. The caller shall call `_MCF_thread_drop_ref()` when the
@@ -150,7 +150,7 @@ _MCF_thread*
 _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __data_size)
   __MCF_noexcept;
 
-/* Attaches a thread that was not created by `_MCF_thread_new()`.
+/** Attaches a thread that was not created by `_MCF_thread_new()`.
  *
  * This function takes ownership of the thread control structure and assigns it
  * to the calling thread, which shall not have already had a control structure.
@@ -170,7 +170,7 @@ _MCF_thread*
 __MCF_thread_attach_foreign(_MCF_thread* __thrd)
   __MCF_noexcept;
 
-/* Gets a pointer to user-defined data of a thread.
+/** Gets a pointer to user-defined data of a thread.
  *
  * If the thread does not have user-defined data, a null pointer is returned.
  *
@@ -181,7 +181,7 @@ __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd)
   __MCF_noexcept;
 
-/* Gets the reference count of a thread.
+/** Gets the reference count of a thread.
  *
  * @param `thrd` shall point to a thread control structure.
  * @returns the reference count of the thread.  */
@@ -190,7 +190,7 @@ int32_t
 _MCF_thread_get_ref(const _MCF_thread* __thrd)
   __MCF_noexcept;
 
-/* Increments the reference count of a thread.
+/** Increments the reference count of a thread.
  *
  * @param `thrd` shall point to a thread control structure.
  * @returns nothing.  */
@@ -199,7 +199,7 @@ void
 _MCF_thread_add_ref(_MCF_thread* __thrd)
   __MCF_noexcept;
 
-/* Decrements the reference count of a thread, and if it is reduced to zero,
+/** Decrements the reference count of a thread, and if it is reduced to zero,
  * deallocates the thread control structure.
  *
  * @param `thrd` shall point to a thread control structure.
@@ -209,7 +209,7 @@ void
 _MCF_thread_drop_ref_nonnull(_MCF_thread* __thrd)
   __MCF_noexcept;
 
-/* Decrements the reference count of a thread, and if it is reduced to zero,
+/** Decrements the reference count of a thread, and if it is reduced to zero,
  * deallocates the thread control structure.
  *
  * This function does nothing if `thrd_opt` is a null pointer.
@@ -221,7 +221,7 @@ void
 _MCF_thread_drop_ref(_MCF_thread* __thrd_opt)
   __MCF_noexcept;
 
-/* Gets the identifier of a thread.
+/** Gets the identifier of a thread.
  *
  * @param `thrd` shall point to a thread control structure.
  * @returns the identifier of the thread.  */
@@ -230,7 +230,7 @@ uint32_t
 _MCF_thread_get_tid(const _MCF_thread* __thrd)
   __MCF_noexcept;
 
-/* Gets the handle of a thread.
+/** Gets the handle of a thread.
  *
  * This is the Windows handle that is returned by `CreateThread()`.
  *
@@ -241,7 +241,7 @@ __MCF_HANDLE
 _MCF_thread_get_handle(const _MCF_thread* __thrd)
   __MCF_noexcept;
 
-/* Terminates the current thread.
+/** Terminates the current thread.
  *
  * This function performs thread-local cleanup before calling `ExitThread()`, to
  * avoid potential deadlocks in `DllMain()` or TLS callbacks.
@@ -254,7 +254,7 @@ void
 _MCF_thread_exit(void)
   __MCF_noexcept;
 
-/* Waits for a thread to terminate.
+/** Waits for a thread to terminate.
  *
  * @param `thrd_opt` points to the thread to wait for. It's not recommended to
  *     pass a null pointer, which indicates the calling thread itself and the
@@ -272,7 +272,7 @@ int
 _MCF_thread_wait(const _MCF_thread* __thrd_opt, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Gets the priority of a thread.
+/** Gets the priority of a thread.
  *
  * @param `thrd_opt` points to the thread to get the priority of. If it is null,
  *     the priority of the current thread is returned.
@@ -283,7 +283,7 @@ _MCF_thread_priority
 _MCF_thread_get_priority(const _MCF_thread* __thrd_opt)
   __MCF_noexcept;
 
-/* Sets the priority of a thread.
+/** Sets the priority of a thread.
  *
  * @param `thrd_opt` points to the thread to set the priority of. If it is null,
  *     the priority of the current thread is changed.
@@ -297,7 +297,7 @@ int
 _MCF_thread_set_priority(_MCF_thread* __thrd_opt, _MCF_thread_priority __priority)
   __MCF_noexcept;
 
-/* Gets a non-owning pointer to the control structure of the current thread.
+/** Gets a non-owning pointer to the control structure of the current thread.
  *
  * This function never returns a null pointer. If the calling thread was not
  * created by `_MCF_thread_p_new()`, a thread control structure with no user data
@@ -309,7 +309,7 @@ _MCF_thread*
 _MCF_thread_self(void)
   __MCF_noexcept;
 
-/* Gets the identifier of the current thread.
+/** Gets the identifier of the current thread.
  *
  * This is the same value that is returned by `GetCurrentThreadId()`.
  *
@@ -319,7 +319,7 @@ uint32_t
 _MCF_thread_self_tid(void)
   __MCF_noexcept;
 
-/* Gives up the current time slice to other threads.
+/** Gives up the current time slice to other threads.
  *
  * @returns nothing.  */
 __MCF_THREAD_IMPORT
@@ -327,7 +327,7 @@ void
 _MCF_yield(void)
   __MCF_noexcept;
 
-/* Suspends the calling thread for a given amount of time.
+/** Suspends the calling thread for a given amount of time.
  *
  * This operation can be interrupted by Ctrl+C.
  *
@@ -344,7 +344,7 @@ int
 _MCF_sleep(const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Suspends the calling thread for a given amount of time.
+/** Suspends the calling thread for a given amount of time.
  *
  * This operation cannot be interrupted.
  *
@@ -360,7 +360,7 @@ void
 _MCF_sleep_noninterruptible(const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Gets a thread-local value.
+/** Gets a thread-local value.
  *
  * If the key has been marked deleted, a null pointer is returned.
  *
@@ -373,7 +373,7 @@ void*
 _MCF_tls_get(const _MCF_tls_key* __key)
   __MCF_noexcept;
 
-/* Sets a thread-local value and returns its old value.
+/** Sets a thread-local value and returns its old value.
  *
  * If the key has been marked deleted, the function fails.
  *
@@ -388,7 +388,7 @@ int
 _MCF_tls_xset(_MCF_tls_key* __key, void** __old_value_opt, const void* __value_opt)
   __MCF_noexcept;
 
-/* Sets a thread-local value.
+/** Sets a thread-local value.
  *
  * If the key has been marked deleted, the function fails.
  *
@@ -401,7 +401,7 @@ int
 _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt)
   __MCF_noexcept;
 
-/* Gets the affinity of a thread.
+/** Gets the affinity of a thread.
  *
  * The caller shall allocate and supply a CPU collection, where the function
  * will select CPUs according to the affinity of the target thread.
@@ -416,7 +416,7 @@ int
 _MCF_thread_get_affinity(const _MCF_thread* __thrd_opt, _MCF_cpu_collection* __coll)
   __MCF_noexcept;
 
-/* Sets the affinity of a thread.
+/** Sets the affinity of a thread.
  *
  * The caller shall allocate and supply a CPU collection to indicate which CPUs
  * the target thread is allowed to run on. The caller shall not specify a CPU
@@ -432,7 +432,7 @@ int
 _MCF_thread_set_affinity(_MCF_thread* __thrd_opt, const _MCF_cpu_collection* __coll)
   __MCF_noexcept;
 
-/* Define inline functions after all declarations.
+/** Define inline functions after all declarations.
  *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++

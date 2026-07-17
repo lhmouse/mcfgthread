@@ -16,7 +16,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_DTOR_QUEUE_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* This structure contains one registered callback.  */
+/** This structure contains one registered callback.  */
 struct __MCF_dtor_element
   {
     __MCF_cxa_dtor_cdecl* __dtor;
@@ -24,7 +24,7 @@ struct __MCF_dtor_element
     void* __dso;
   };
 
-/* A destructor queue is a singly-linked list of blocks of callbacks.
+/** A destructor queue is a singly-linked list of blocks of callbacks.
  *
  * The queue itself provides storage for the initial 63 callbacks without
  * allocation, to meet the requirement of the C standard, which specifies that
@@ -36,7 +36,7 @@ struct __MCF_dtor_queue
     __MCF_dtor_element __data[63];
   };
 
-/* Appends an element to the end of a destructor queue.
+/** Appends an element to the end of a destructor queue.
  *
  * @param `queue` points to a queue where the element will be appended.
  * @param `elem` points to an element to be appended. `elem->__dtor` shall not
@@ -48,7 +48,7 @@ int
 __MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtor_element* __elem)
   __MCF_noexcept;
 
-/* Pops the newest element that matches a DSO from a destructor queue.
+/** Pops the newest element that matches a DSO from a destructor queue.
  *
  * @param `elem` points to a structure which will receive the popped element.
  * @param `queue` points to a queue where an element will be popped.
@@ -62,7 +62,7 @@ int
 __MCF_dtor_queue_pop(__MCF_dtor_element* __elem, __MCF_dtor_queue* __queue, void* __dso)
   __MCF_noexcept;
 
-/* Removes all elements that match a DSO from a destructor queue.
+/** Removes all elements that match a DSO from a destructor queue.
  *
  * @param `queue` points to a queue where elements will be removed.
  * @param `dso` is an optional DSO handle. If `dso` is null, then all elements

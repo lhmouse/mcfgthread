@@ -17,14 +17,14 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_COND_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* This is the condition variable, which takes up the same storage as a pointer.  */
+/** This is the condition variable, which takes up the same storage as a pointer.  */
 struct __MCF_cond
   {
     __MCF_EX uintptr_t __reserved_bits : 9;
     __MCF_EX uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
-/* Initializes a condition variable dynamically.
+/** Initializes a condition variable dynamically.
  *
  * Static ones should be initialized with `{0}`, like other structs.
  *
@@ -35,7 +35,7 @@ void
 _MCF_cond_init(_MCF_cond* __cnd)
   __MCF_noexcept;
 
-/* Suspends the current thread on a condition variable.
+/** Suspends the current thread on a condition variable.
  *
  * The calling thread will invoke the unlock callback before going to sleep, and
  * will invoke the relock callback after it awakes. When the condition variable
@@ -67,7 +67,7 @@ _MCF_cond_wait(_MCF_cond* __cnd, _MCF_cond_unlock_callback* __unlock_opt,
                const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Wakes up some threads that are sleeping on this condition variable.
+/** Wakes up some threads that are sleeping on this condition variable.
  *
  * @param `cnd` points to the condition variable to signal.
  * @param `limit` is the maximum number of threads to wake up.
@@ -77,7 +77,7 @@ size_t
 _MCF_cond_signal_some_slow(_MCF_cond* __cnd, size_t __limit)
   __MCF_noexcept;
 
-/* Wakes up some threads that are sleeping on this condition variable.
+/** Wakes up some threads that are sleeping on this condition variable.
  *
  * This is an inline wrapper for `_MCF_cond_signal_some_slow()`, which does
  * nothing when no thread is sleeping.
@@ -90,7 +90,7 @@ size_t
 _MCF_cond_signal_some(_MCF_cond* __cnd, size_t __limit)
   __MCF_noexcept;
 
-/* Wakes up one thread that is sleeping on this condition variable.
+/** Wakes up one thread that is sleeping on this condition variable.
  *
  * This function is equivalent to `_MCF_cond_signal_some(cnd, 1)`.
  *
@@ -101,7 +101,7 @@ size_t
 _MCF_cond_signal(_MCF_cond* __cnd)
   __MCF_noexcept;
 
-/* Wakes up all threads that are sleeping on this condition variable.
+/** Wakes up all threads that are sleeping on this condition variable.
  *
  * This function is equivalent to `_MCF_cond_signal_some(cnd, SIZE_MAX)`.
  *
@@ -112,7 +112,7 @@ size_t
 _MCF_cond_signal_all(_MCF_cond* __cnd)
   __MCF_noexcept;
 
-/* Define inline functions after all declarations.
+/** Define inline functions after all declarations.
  *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++

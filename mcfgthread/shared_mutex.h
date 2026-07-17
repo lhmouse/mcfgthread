@@ -17,19 +17,19 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_SHARED_MUTEX_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* This is the shared mutex, which takes up the same storage as a pointer.  */
+/** This is the shared mutex, which takes up the same storage as a pointer.  */
 struct __MCF_shared_mutex
   {
     __MCF_EX uintptr_t __nshare : 14;  /* number of sharing threads  */
     __MCF_EX uintptr_t __nsleep : __MCF_PTR_BITS - 14;  /* number of sleeping threads  */
   };
 
-/* This is the maximum number of concurrent threads with shared access. If
+/** This is the maximum number of concurrent threads with shared access. If
  * `__nshare` exceeds this value, further threads will block. This value meets
  * the minimal requirement of the C++ standard, which is 10000.  */
 #define __MCF_SHARED_MUTEX_MAX_SHARE   16382U
 
-/* Initializes a shared mutex dynamically.
+/** Initializes a shared mutex dynamically.
  *
  * Static ones should be initialized with `{0}`, like other structs.
  *
@@ -40,7 +40,7 @@ void
 _MCF_shared_mutex_init(_MCF_shared_mutex* __smtx)
   __MCF_noexcept;
 
-/* Attempts to lock a shared mutex in shared mode.
+/** Attempts to lock a shared mutex in shared mode.
  *
  * If the mutex is not locked in exclusive mode, this function increments the
  * share count and returns immediately; otherwise, it waits until the shared
@@ -63,7 +63,7 @@ int
 _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Attempts to lock a shared mutex in shared mode.
+/** Attempts to lock a shared mutex in shared mode.
  *
  * If the mutex is not locked in exclusive mode, this function increments the
  * share count and returns immediately; otherwise, it waits until the shared
@@ -90,7 +90,7 @@ int
 _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Attempts to lock a shared mutex in exclusive mode.
+/** Attempts to lock a shared mutex in exclusive mode.
  *
  * If the mutex is locked in either shared or exclusive mode, this function waits
  * until the shared mutex becomes unlocked, locks it in exclusive mode, and
@@ -112,7 +112,7 @@ int
 _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Attempts to lock a shared mutex in exclusive mode.
+/** Attempts to lock a shared mutex in exclusive mode.
  *
  * If the mutex is locked in either shared or exclusive mode, this function waits
  * until the shared mutex becomes unlocked, locks it in exclusive mode, and
@@ -138,7 +138,7 @@ int
 _MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Unlocks a shared mutex.
+/** Unlocks a shared mutex.
  *
  * If the shared mutex has not been locked in either shared or exclusive mode,
  * the behavior is undefined. This function may be called by a different thread
@@ -151,7 +151,7 @@ void
 _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* __smtx)
   __MCF_noexcept;
 
-/* Unlocks a shared mutex.
+/** Unlocks a shared mutex.
  *
  * If the shared mutex has not been locked in either shared or exclusive mode,
  * the behavior is undefined. This function may be called by a different thread
@@ -168,7 +168,7 @@ void
 _MCF_shared_mutex_unlock(_MCF_shared_mutex* __smtx)
   __MCF_noexcept;
 
-/* Define inline functions after all declarations.
+/** Define inline functions after all declarations.
  *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++

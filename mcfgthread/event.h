@@ -17,7 +17,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_EVENT_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* This is the event object, which takes up the same storage as a pointer. An
+/** This is the event object, which takes up the same storage as a pointer. An
  * event object is like a futex on Linux, except that its value is only a byte
  * rather than a 32-bit integer.  */
 struct __MCF_event
@@ -27,18 +27,18 @@ struct __MCF_event
     __MCF_EX uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
-/* This is the maximum value of an event. This is a value of type `int` due
+/** This is the maximum value of an event. This is a value of type `int` due
  * to potential integral promotion.  */
 #define __MCF_EVENT_VALUE_MAX   0xFF
 
-/* This is a macro for static initialization of an event. The argument is the
+/** This is a macro for static initialization of an event. The argument is the
  * initial value of the event.  */
 #define __MCF_EVENT_INIT(__value_init)  \
     { (__value_init), 0, 0  \
       + __MCF_STATIC_ASSERT_0((__value_init) >= 0)  \
       + __MCF_STATIC_ASSERT_0((__value_init) <= __MCF_EVENT_VALUE_MAX)  }
 
-/* Initializes an event dynamically.
+/** Initializes an event dynamically.
  *
  * Static ones should be initialized with `__MCF_EVENT_INIT(value_init)`.
  *
@@ -52,7 +52,7 @@ int
 _MCF_event_init(_MCF_event* __eventp, int __value_init)
   __MCF_noexcept;
 
-/* Gets the current value of an event.
+/** Gets the current value of an event.
  *
  * @param `eventp` points to the event to get.
  * @returns the current value of the event as a byte.  */
@@ -61,7 +61,7 @@ uint8_t
 _MCF_event_get(const _MCF_event* __eventp)
   __MCF_noexcept;
 
-/* Waits for an event until it does NOT contain an undesired value.
+/** Waits for an event until it does NOT contain an undesired value.
  *
  * If this event contains the undesired value, this function blocks until some
  * other value has been stored. Otherwise, this function returns immediately.
@@ -82,7 +82,7 @@ int
 _MCF_event_await_change_slow(_MCF_event* __eventp, int __undesired, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Waits for an event until it does NOT contain an undesired value.
+/** Waits for an event until it does NOT contain an undesired value.
  *
  * If this event contains the undesired value, this function blocks until some
  * other value has been stored. Otherwise, this function returns immediately.
@@ -106,7 +106,7 @@ int
 _MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Sets the value of an event and wakes up all threads.
+/** Sets the value of an event and wakes up all threads.
  *
  * @param `eventp` points to the event to set.
  * @param `value` is the new value to set, which shall not be negative and shall
@@ -118,7 +118,7 @@ int
 _MCF_event_set_slow(_MCF_event* __eventp, int __value)
   __MCF_noexcept;
 
-/* Sets the value of an event and wakes up all threads.
+/** Sets the value of an event and wakes up all threads.
  *
  * This function is the same as `_MCF_event_set_slow()`.
  *
@@ -132,7 +132,7 @@ int
 _MCF_event_set(_MCF_event* __eventp, int __value)
   __MCF_noexcept;
 
-/* Define inline functions after all declarations.
+/** Define inline functions after all declarations.
  *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++

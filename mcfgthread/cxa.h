@@ -16,7 +16,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_CXA_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* https://itanium-cxx-abi.github.io/cxx-abi/abi.html
+/** https://itanium-cxx-abi.github.io/cxx-abi/abi.html
  * 3.3.3 One-time Construction API
  * `__cxa_guard_acquire()`  */
 __MCF_CXA_IMPORT
@@ -24,21 +24,21 @@ int
 __MCF_cxa_guard_acquire(int64_t* __guard)
   __MCF_noexcept;
 
-/* 3.3.3 One-time Construction API
+/** 3.3.3 One-time Construction API
  * `__cxa_guard_release()`  */
 __MCF_CXA_IMPORT
 void
 __MCF_cxa_guard_release(int64_t* __guard)
   __MCF_noexcept;
 
-/* 3.3.3 One-time Construction API
+/** 3.3.3 One-time Construction API
  * `__cxa_guard_abort()`  */
 __MCF_CXA_IMPORT
 void
 __MCF_cxa_guard_abort(int64_t* __guard)
   __MCF_noexcept;
 
-/* 3.3.6.3 Runtime API
+/** 3.3.6.3 Runtime API
  * A. Object construction
  * `__cxa_atexit()`  */
 __MCF_CXA_IMPORT
@@ -46,13 +46,13 @@ int
 __MCF_cxa_atexit(__MCF_cxa_dtor_any_ __dtor, void* __this, void* __dso)
   __MCF_noexcept;
 
-/* Standard C `atexit()`  */
+/** Standard C `atexit()`  */
 __MCF_CXA_IMPORT
 int
 __MCF_atexit(__MCF_atexit_callback_any_ __func)
   __MCF_noexcept;
 
-/* Non-standard extension
+/** Non-standard extension
  *
  * Callbacks that have been registered with `__cxa_at_quick_exit()` in a DLL are
  * deleted when the DLL is unloaded.  */
@@ -61,13 +61,13 @@ int
 __MCF_cxa_at_quick_exit(__MCF_cxa_dtor_any_ __dtor, void* __this, void* __dso)
   __MCF_noexcept;
 
-/* Standard C `at_quick_exit()`  */
+/** Standard C `at_quick_exit()`  */
 __MCF_CXA_IMPORT
 int
 __MCF_at_quick_exit(__MCF_atexit_callback_any_ __func)
   __MCF_noexcept;
 
-/* GNU extension
+/** GNU extension
  *
  * `__cxa_thread_atexit_impl()` is exported from glibc. `__cxa_thread_atexit()`
  * is exported from libstdc++.  */
@@ -76,13 +76,13 @@ int
 __MCF_cxa_thread_atexit(__MCF_cxa_dtor_any_ __dtor, void* __this, void* __dso)
   __MCF_noexcept;
 
-/* Non-standard extension  */
+/** Non-standard extension  */
 __MCF_CXA_IMPORT
 int
 __MCF_thread_atexit(__MCF_atexit_callback_any_ __func)
   __MCF_noexcept;
 
-/* 3.3.6.3 Runtime API
+/** 3.3.6.3 Runtime API
  * C. Termination
  * `__cxa_finalize()`  */
 __MCF_CXA_IMPORT

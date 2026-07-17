@@ -17,24 +17,24 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_SEM_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* This is the counting semaphore, which takes up the same storage as a pointer.
+/** This is the counting semaphore, which takes up the same storage as a pointer.
  * The counter has the same semantics as found in an operating system book.  */
 struct __MCF_sem
   {
     intptr_t __value;
   };
 
-/* This is the maximum value of a semaphore.  */
+/** This is the maximum value of a semaphore.  */
 #define __MCF_SEM_VALUE_MAX   __MCF_INTPTR_MAX
 
-/* Define a macro for static initialization of semaphores. The argument is the
+/** Define a macro for static initialization of semaphores. The argument is the
  * initial value of the semaphore, which shall not be negative.  */
 #define __MCF_SEM_INIT(__value_init)  \
     { __MCF_STATIC_ASSERT_0((__value_init) >= 0) +  \
       __MCF_STATIC_ASSERT_0((__value_init) <= __MCF_SEM_VALUE_MAX) +  \
       (__value_init)  }
 
-/* Initializes a semaphore dynamically.
+/** Initializes a semaphore dynamically.
 
  * Static ones should be initialized with `__MCF_SEM_INIT(value_init)`.
 
@@ -48,7 +48,7 @@ int
 _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init)
   __MCF_noexcept;
 
-/* Gets the current value of a semaphore.
+/** Gets the current value of a semaphore.
  *
  * If the value is negative, the absolute value of it denotes the number of
  * threads that are currently waiting on the semaphore.
@@ -60,7 +60,7 @@ intptr_t
 _MCF_sem_get(const _MCF_sem* __sem)
   __MCF_noexcept;
 
-/* Decrements the value of a semaphore.
+/** Decrements the value of a semaphore.
  *
  * If the value is reduced below zero, the calling thread is suspended until
  * another thread increments the value of the semaphore.
@@ -79,7 +79,7 @@ int
 _MCF_sem_wait(_MCF_sem* __sem, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Increases the value of a semaphore and wake up some threads.
+/** Increases the value of a semaphore and wake up some threads.
  *
  * @param `sem` points to the semaphore.
  * @param `value_add` is the value to add to the semaphore, which shall not be
@@ -91,7 +91,7 @@ int
 _MCF_sem_signal_some(_MCF_sem* __sem, intptr_t __value_add)
   __MCF_noexcept;
 
-/* Increments the value of a semaphore and wakes up a thread.
+/** Increments the value of a semaphore and wakes up a thread.
  *
  * This is an inline wrapper for `_MCF_sem_signal_some(sem, 1)`.
  *
@@ -103,7 +103,7 @@ int
 _MCF_sem_signal(_MCF_sem* __sem)
   __MCF_noexcept;
 
-/* Define inline functions after all declarations.
+/** Define inline functions after all declarations.
  *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++

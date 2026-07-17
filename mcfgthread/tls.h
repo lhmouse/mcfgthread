@@ -17,14 +17,14 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_TLS_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* This structure defines one value and its associated key.  */
+/** This structure defines one value and its associated key.  */
 struct __MCF_tls_element
   {
     _MCF_tls_key* __key_opt;  /* null denotes an empty element  */
     void* __value_opt;
   };
 
-/* This structure implements a hash table of thread-local values.  */
+/** This structure implements a hash table of thread-local values.  */
 struct __MCF_tls_table
   {
     __MCF_tls_element* __begin;  /* beginning of hash table  */
@@ -32,7 +32,7 @@ struct __MCF_tls_table
     size_t __size_hint;  /* number of non-empty elements  */
   };
 
-/* This is the thread-local key, which stores the destructor and deletion state.
+/** This is the thread-local key, which stores the destructor and deletion state.
  * The address of a thread-local key denotes a unique value in the thread-local
  * table of the current thread.  */
 struct __MCF_tls_key
@@ -43,7 +43,7 @@ struct __MCF_tls_key
     _MCF_tls_dtor* __dtor_opt;  /* destructor, optional  */
   };
 
-/* Creates a thread-local key.
+/** Creates a thread-local key.
  *
  * A thread-local key is used to get and set thread-local values, which are
  * exclusive to the calling thread. A key may be assigned a destructor. When a
@@ -62,7 +62,7 @@ _MCF_tls_key*
 _MCF_tls_key_new(__MCF_cxa_dtor_any_ __dtor_opt)
   __MCF_noexcept;
 
-/* Gets the reference count of a thread-local key.
+/** Gets the reference count of a thread-local key.
  *
  * @param `key` shall point to a thread-local key.
  * @returns the reference count of the thread-local key.  */
@@ -71,7 +71,7 @@ int32_t
 _MCF_tls_key_get_ref(const _MCF_tls_key* __key)
   __MCF_noexcept;
 
-/* Increments the reference count of a thread-local key.
+/** Increments the reference count of a thread-local key.
  *
  * @param `key` shall point to a thread-local key.
  * @returns nothing.  */
@@ -80,7 +80,7 @@ void
 _MCF_tls_key_add_ref(_MCF_tls_key* __key)
   __MCF_noexcept;
 
-/* Decrements the reference count of a thread-local key, and if it is reduced to
+/** Decrements the reference count of a thread-local key, and if it is reduced to
  * zero, deallocates the thread-local key.
  *
  * @param `key` shall point to a thread-local key.
@@ -90,7 +90,7 @@ void
 _MCF_tls_key_drop_ref_nonnull(_MCF_tls_key* __key)
   __MCF_noexcept;
 
-/* Decrements the reference count of a thread-local key, and if it is reduced to
+/** Decrements the reference count of a thread-local key, and if it is reduced to
  * zero, deallocates the thread-local key.
  *
  * This function does nothing if `key_opt` is a null pointer.
@@ -102,7 +102,7 @@ void
 _MCF_tls_key_drop_ref(_MCF_tls_key* __key_opt)
   __MCF_noexcept;
 
-/* Marks a thread-local key deleted, decrements the reference count of it, and
+/** Marks a thread-local key deleted, decrements the reference count of it, and
  * if it is reduced to zero, deallocates the thread-local key.
  *
  * After this function has been called on a thread-local key, the destructor
@@ -118,7 +118,7 @@ void
 _MCF_tls_key_delete_nonnull(_MCF_tls_key* __key)
   __MCF_noexcept;
 
-/* Marks a thread-local key deleted, decrements the reference count of it, and
+/** Marks a thread-local key deleted, decrements the reference count of it, and
  * if it is reduced to zero, deallocates the thread-local key.
  *
  * After this function has been called on a thread-local key, the destructor
@@ -135,7 +135,7 @@ void
 _MCF_tls_key_delete(_MCF_tls_key* __key_opt)
   __MCF_noexcept;
 
-/* Gets the destructor of a thread-local key.
+/** Gets the destructor of a thread-local key.
  *
  * @param `key` shall point to a thread-local key.
  * @returns the destructor of the thread-local key, which may be null if none
@@ -145,7 +145,7 @@ _MCF_tls_dtor*
 _MCF_tls_key_get_destructor(const _MCF_tls_key* __key)
   __MCF_noexcept;
 
-/* Gets a value from a thread-local table.
+/** Gets a value from a thread-local table.
  *
  * If the key has been marked deleted, a null pointer is returned.
  *
@@ -159,7 +159,7 @@ void*
 __MCF_tls_table_get(const __MCF_tls_table* __table, const _MCF_tls_key* __key)
   __MCF_noexcept;
 
-/* Sets a value into a thread-local table.
+/** Sets a value into a thread-local table.
  *
  * If the key has been marked deleted, the function fails.
  *
@@ -176,7 +176,7 @@ __MCF_tls_table_xset(__MCF_tls_table* __table, _MCF_tls_key* __key, void** __old
                      const void* __value_opt)
   __MCF_noexcept;
 
-/* Define inline functions after all declarations.
+/** Define inline functions after all declarations.
  *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++

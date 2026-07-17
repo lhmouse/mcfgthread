@@ -17,7 +17,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_C11_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* N1570 ISO/IEC 9899:201x
+/** N1570 ISO/IEC 9899:201x
  * 7.26 Threads <threads.h>
  * 7.26.1 Introduction  */
 
@@ -28,7 +28,7 @@ __MCF_CXX(extern "C" {)
 #define ONCE_FLAG_INIT  __MCF_0_INIT
 #define TSS_DTOR_ITERATIONS  LONG_MAX  /* no limit  */
 
-/* Define <threads.h> types. These map to our APIs directly, except the mutex.  */
+/** Define <threads.h> types. These map to our APIs directly, except the mutex.  */
 
 typedef struct __MCF_c11_mutex __MCF_c11_mutex;
 typedef struct __MCF_c11_thread_record __MCF_c11_thread_record;
@@ -77,7 +77,7 @@ enum __MCF_thrd_error
     __MCF_thrd_error_end
   };
 
-/* 7.26.2.1 The call_once function  */
+/** 7.26.2.1 The call_once function  */
 __MCF_C11_IMPORT
 void
 __MCF_c11_call_once(once_flag* __once, __MCF_gthr_once_callback* __init_proc)
@@ -88,7 +88,7 @@ __MCF_ALT_SYM(__MCF_c11_call_once, call_once);
 #  define __MCF_c11_call_once  call_once
 #endif
 
-/* 7.26.3.1 The cnd_broadcast function  */
+/** 7.26.3.1 The cnd_broadcast function  */
 __MCF_C11_IMPORT
 int
 __MCF_c11_cnd_broadcast(cnd_t* __cnd)
@@ -99,7 +99,7 @@ __MCF_ALT_SYM(__MCF_c11_cnd_broadcast, cnd_broadcast);
 #  define __MCF_c11_cnd_broadcast  cnd_broadcast
 #endif
 
-/* 7.26.3.2 The cnd_destroy function  */
+/** 7.26.3.2 The cnd_destroy function  */
 __MCF_C11_IMPORT
 void
 __MCF_c11_cnd_destroy(cnd_t* __cnd)
@@ -110,7 +110,7 @@ __MCF_ALT_SYM(__MCF_c11_cnd_destroy, cnd_destroy);
 #  define __MCF_c11_cnd_destroy  cnd_destroy
 #endif
 
-/* 7.26.3.3 The cnd_init function  */
+/** 7.26.3.3 The cnd_init function  */
 __MCF_C11_IMPORT
 int
 __MCF_c11_cnd_init(cnd_t* __cnd)
@@ -121,7 +121,7 @@ __MCF_ALT_SYM(__MCF_c11_cnd_init, cnd_init);
 #  define __MCF_c11_cnd_init  cnd_init
 #endif
 
-/* 7.26.3.4 The cnd_signal function  */
+/** 7.26.3.4 The cnd_signal function  */
 __MCF_C11_IMPORT
 int
 __MCF_c11_cnd_signal(cnd_t* __cnd)
@@ -132,7 +132,7 @@ __MCF_ALT_SYM(__MCF_c11_cnd_signal, cnd_signal);
 #  define __MCF_c11_cnd_signal  cnd_signal
 #endif
 
-/* 7.26.3.5 The cnd_timedwait function  */
+/** 7.26.3.5 The cnd_timedwait function  */
 __MCF_C11_IMPORT
 int
 __MCF_c11_cnd_timedwait(cnd_t* __cnd, mtx_t* __mtx, const __MCF_timespec* __ts)
@@ -143,7 +143,7 @@ __MCF_ALT_SYM(__MCF_c11_cnd_timedwait, cnd_timedwait);
 #  define __MCF_c11_cnd_timedwait  cnd_timedwait
 #endif
 
-/* 7.26.3.6 The cnd_wait function  */
+/** 7.26.3.6 The cnd_wait function  */
 __MCF_C11_IMPORT
 int
 __MCF_c11_cnd_wait(cnd_t* __cnd, mtx_t* __mtx)
@@ -154,7 +154,7 @@ __MCF_ALT_SYM(__MCF_c11_cnd_wait, cnd_wait);
 #  define __MCF_c11_cnd_wait  cnd_wait
 #endif
 
-/* 7.26.4.1 The mtx_destroy function  */
+/** 7.26.4.1 The mtx_destroy function  */
 __MCF_C11_IMPORT
 void
 __MCF_c11_mtx_destroy(mtx_t* __mtx)
@@ -165,7 +165,7 @@ __MCF_ALT_SYM(__MCF_c11_mtx_destroy, mtx_destroy);
 #  define __MCF_c11_mtx_destroy  mtx_destroy
 #endif
 
-/* 7.26.4.2 The mtx_init function  */
+/** 7.26.4.2 The mtx_init function  */
 __MCF_C11_IMPORT
 int
 __MCF_c11_mtx_init(mtx_t* __mtx, int __type)
@@ -176,7 +176,7 @@ __MCF_ALT_SYM(__MCF_c11_mtx_init, mtx_init);
 #  define __MCF_c11_mtx_init  mtx_init
 #endif
 
-/* 7.26.4.3 The mtx_lock function  */
+/** 7.26.4.3 The mtx_lock function  */
 __MCF_C11_IMPORT
 int
 __MCF_c11_mtx_lock(mtx_t* __mtx)
@@ -187,7 +187,7 @@ __MCF_ALT_SYM(__MCF_c11_mtx_lock, mtx_lock);
 #  define __MCF_c11_mtx_lock  mtx_lock
 #endif
 
-/* 7.26.4.4 The mtx_timedlock function  */
+/** 7.26.4.4 The mtx_timedlock function  */
 __MCF_C11_IMPORT
 int
 __MCF_c11_mtx_timedlock(mtx_t* __mtx, const __MCF_timespec* __ts)
@@ -198,7 +198,7 @@ __MCF_ALT_SYM(__MCF_c11_mtx_timedlock, mtx_timedlock);
 #  define __MCF_c11_mtx_timedlock  mtx_timedlock
 #endif
 
-/* 7.26.4.5 The mtx_trylock function  */
+/** 7.26.4.5 The mtx_trylock function  */
 __MCF_C11_IMPORT
 int
 __MCF_c11_mtx_trylock(mtx_t* __mtx)
@@ -209,7 +209,7 @@ __MCF_ALT_SYM(__MCF_c11_mtx_trylock, mtx_trylock);
 #  define __MCF_c11_mtx_trylock  mtx_trylock
 #endif
 
-/* 7.26.4.6 The mtx_unlock function  */
+/** 7.26.4.6 The mtx_unlock function  */
 __MCF_C11_IMPORT
 int
 __MCF_c11_mtx_unlock(mtx_t* __mtx)
@@ -220,7 +220,7 @@ __MCF_ALT_SYM(__MCF_c11_mtx_unlock, mtx_unlock);
 #  define __MCF_c11_mtx_unlock  mtx_unlock
 #endif
 
-/* 7.26.5.1 The thrd_create function  */
+/** 7.26.5.1 The thrd_create function  */
 __MCF_C11_IMPORT
 int
 __MCF_c11_thrd_create(thrd_t* __thrd, thrd_start_t __proc, void* __arg)
@@ -231,7 +231,7 @@ __MCF_ALT_SYM(__MCF_c11_thrd_create, thrd_create);
 #  define __MCF_c11_thrd_create  thrd_create
 #endif
 
-/* 7.26.5.2 The thrd_current function  */
+/** 7.26.5.2 The thrd_current function  */
 __MCF_C11_IMPORT __MCF_FN_CONST
 thrd_t
 __MCF_c11_thrd_current(void)
@@ -242,7 +242,7 @@ __MCF_ALT_SYM(__MCF_c11_thrd_current, thrd_current);
 #  define __MCF_c11_thrd_current  thrd_current
 #endif
 
-/* 7.26.5.3 The thrd_detach function  */
+/** 7.26.5.3 The thrd_detach function  */
 __MCF_C11_IMPORT
 int
 __MCF_c11_thrd_detach(thrd_t __thrd)
@@ -253,7 +253,7 @@ __MCF_ALT_SYM(__MCF_c11_thrd_detach, thrd_detach);
 #  define __MCF_c11_thrd_detach  thrd_detach
 #endif
 
-/* 7.26.5.4 The thrd_equal function  */
+/** 7.26.5.4 The thrd_equal function  */
 __MCF_C11_IMPORT __MCF_FN_CONST
 int
 __MCF_c11_thrd_equal(thrd_t __t1, thrd_t __t2)
@@ -264,7 +264,7 @@ __MCF_ALT_SYM(__MCF_c11_thrd_equal, thrd_equal);
 #  define __MCF_c11_thrd_equal  thrd_equal
 #endif
 
-/* 7.26.5.5 The thrd_exit function  */
+/** 7.26.5.5 The thrd_exit function  */
 __MCF_C11_IMPORT __MCF_NEVER_RETURN
 void
 __MCF_c11_thrd_exit(int __res)
@@ -275,7 +275,7 @@ __MCF_ALT_SYM(__MCF_c11_thrd_exit, thrd_exit);
 #  define __MCF_c11_thrd_exit  thrd_exit
 #endif
 
-/* 7.26.5.6 The thrd_join function  */
+/** 7.26.5.6 The thrd_join function  */
 __MCF_C11_IMPORT
 int
 __MCF_c11_thrd_join(thrd_t __thrd, int* __resp_opt)
@@ -286,7 +286,7 @@ __MCF_ALT_SYM(__MCF_c11_thrd_join, thrd_join);
 #  define __MCF_c11_thrd_join  thrd_join
 #endif
 
-/* 7.26.5.7 The thrd_sleep function  */
+/** 7.26.5.7 The thrd_sleep function  */
 __MCF_C11_IMPORT
 int
 __MCF_c11_thrd_sleep(const __MCF_timespec* __dur, __MCF_timespec* __rem_opt)
@@ -297,7 +297,7 @@ __MCF_ALT_SYM(__MCF_c11_thrd_sleep, thrd_sleep);
 #  define __MCF_c11_thrd_sleep  thrd_sleep
 #endif
 
-/* This is a non-standard extension that takes a time point instead of a
+/** This is a non-standard extension that takes a time point instead of a
  * duration. No remaining time is returned.  */
 __MCF_C11_IMPORT
 int
@@ -309,7 +309,7 @@ __MCF_ALT_SYM(__MCF_c11__thrd_sleep_until, _thrd_sleep_until);
 #  define __MCF_c11__thrd_sleep_until  _thrd_sleep_until
 #endif
 
-/* 7.26.5.8 The thrd_yield function  */
+/** 7.26.5.8 The thrd_yield function  */
 __MCF_C11_IMPORT
 void
 __MCF_c11_thrd_yield(void)
@@ -320,7 +320,7 @@ __MCF_ALT_SYM(__MCF_c11_thrd_yield, thrd_yield);
 #  define __MCF_c11_thrd_yield  thrd_yield
 #endif
 
-/* 7.26.6.1 The tss_create function  */
+/** 7.26.6.1 The tss_create function  */
 __MCF_C11_IMPORT
 int
 __MCF_c11_tss_create(tss_t* __keyp, tss_dtor_t __dtor_opt)
@@ -331,7 +331,7 @@ __MCF_ALT_SYM(__MCF_c11_tss_create, tss_create);
 #  define __MCF_c11_tss_create  tss_create
 #endif
 
-/* 7.26.6.2 The tss_delete function  */
+/** 7.26.6.2 The tss_delete function  */
 __MCF_C11_IMPORT
 void
 __MCF_c11_tss_delete(tss_t __key)
@@ -342,7 +342,7 @@ __MCF_ALT_SYM(__MCF_c11_tss_delete, tss_delete);
 #  define __MCF_c11_tss_delete  tss_delete
 #endif
 
-/* 7.26.6.3 The tss_get function  */
+/** 7.26.6.3 The tss_get function  */
 __MCF_C11_IMPORT __MCF_FN_PURE
 void*
 __MCF_c11_tss_get(tss_t __key)
@@ -353,7 +353,7 @@ __MCF_ALT_SYM(__MCF_c11_tss_get, tss_get);
 #  define __MCF_c11_tss_get  tss_get
 #endif
 
-/* 7.26.6.4 The tss_set function  */
+/** 7.26.6.4 The tss_set function  */
 __MCF_C11_IMPORT
 int
 __MCF_c11_tss_set(tss_t __key, void* __val_opt)
@@ -364,7 +364,7 @@ __MCF_ALT_SYM(__MCF_c11_tss_set, tss_set);
 #  define __MCF_c11_tss_set  tss_set
 #endif
 
-/* Define inline functions after all declarations.
+/** Define inline functions after all declarations.
  *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++

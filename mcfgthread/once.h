@@ -17,7 +17,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_ONCE_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* This is the once-initialization flag, which takes up the same storage as a
+/** This is the once-initialization flag, which takes up the same storage as a
  * pointer.  */
 struct __MCF_once
   {
@@ -26,7 +26,7 @@ struct __MCF_once
     __MCF_EX uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
-/* Initializes a once-initialization flag dynamically.
+/** Initializes a once-initialization flag dynamically.
  *
  * Static ones should be initialized with `{0}`, like other structs.
  *
@@ -40,7 +40,7 @@ void
 _MCF_once_init(_MCF_once* __once)
   __MCF_noexcept;
 
-/* Attempts to lock a once-initialization flag.
+/** Attempts to lock a once-initialization flag.
  *
  * If this once-initialization flag is in the UNLOCKED state, this function
  * changes it into the LOCKED state and returns 1. If it is in the LOCKED state
@@ -67,7 +67,7 @@ int
 _MCF_once_wait_slow(_MCF_once* __once, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Attempts to lock a once-initialization flag.
+/** Attempts to lock a once-initialization flag.
  *
  * If this once-initialization flag is in the UNLOCKED state, this function
  * changes it into the LOCKED state and returns 1. If it is in the LOCKED state
@@ -97,7 +97,7 @@ int
 _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Cancels once initialization.
+/** Cancels once initialization.
  *
  * This function changes the once-initialization flag to the UNLOCKED state and
  * wakes up the next thread that is waiting for it, which will observe
@@ -111,7 +111,7 @@ void
 _MCF_once_abort(_MCF_once* __once)
   __MCF_noexcept;
 
-/* Completes once initialization.
+/** Completes once initialization.
  *
  * This function changes the once-initialization flag to the READY state and
  * wakes up all threads that are waiting for it, which will observe
@@ -125,7 +125,7 @@ void
 _MCF_once_release(_MCF_once* __once)
   __MCF_noexcept;
 
-/* Define inline functions after all declarations.
+/** Define inline functions after all declarations.
  *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++

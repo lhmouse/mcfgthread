@@ -17,7 +17,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_MUTEX_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* This is the mutex, which takes up the same storage as a pointer.  */
+/** This is the mutex, which takes up the same storage as a pointer.  */
 struct __MCF_mutex
   {
     __MCF_EX uintptr_t __locked : 1;
@@ -26,12 +26,12 @@ struct __MCF_mutex
     __MCF_EX uintptr_t __nsleep : __MCF_PTR_BITS - 9;  /* number of sleeping threads  */
   };
 
-/* If the spinning failure counter of a mutex has reached this number, newcomers
+/** If the spinning failure counter of a mutex has reached this number, newcomers
  * will not attempt to spin at all. This value must not be greater than the
  * maximum value of `__sp_nfail`, and must not be zero.  */
 #define __MCF_MUTEX_SP_NFAIL_THRESHOLD   10U
 
-/* Initializes a mutex dynamically.
+/** Initializes a mutex dynamically.
  *
  * Static ones should be initialized with `{0}`, like other structs.
  *
@@ -42,7 +42,7 @@ void
 _MCF_mutex_init(_MCF_mutex* __mtx)
   __MCF_noexcept;
 
-/* Attempts to lock a mutex.
+/** Attempts to lock a mutex.
  *
  * If the mutex is not locked, this function locks it and returns immediately;
  * otherwise, it waits until the mutex becomes unlocked, locks it, and returns.
@@ -64,7 +64,7 @@ int
 _MCF_mutex_lock_slow(_MCF_mutex* __mtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Attempts to lock a mutex.
+/** Attempts to lock a mutex.
  *
  * If the mutex is not locked, this function locks it and returns immediately;
  * otherwise, it waits until the mutex becomes unlocked, locks it, and returns.
@@ -90,7 +90,7 @@ int
 _MCF_mutex_lock(_MCF_mutex* __mtx, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/* Unlocks a mutex.
+/** Unlocks a mutex.
  *
  * If the mutex has not been locked, the behavior is undefined. This function
  * may be called by a different thread from which locked the same mutex.
@@ -102,7 +102,7 @@ void
 _MCF_mutex_unlock_slow(_MCF_mutex* __mtx)
   __MCF_noexcept;
 
-/* Unlocks a mutex.
+/** Unlocks a mutex.
  *
  * If the mutex has not been locked, the behavior is undefined. This function
  * may be called by a different thread from which locked the same mutex.
@@ -118,7 +118,7 @@ void
 _MCF_mutex_unlock(_MCF_mutex* __mtx)
   __MCF_noexcept;
 
-/* Define inline functions after all declarations.
+/** Define inline functions after all declarations.
  *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++

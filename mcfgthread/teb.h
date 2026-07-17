@@ -19,7 +19,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_TEB_INLINE  __MCF_ALWAYS_INLINE
 #endif
 
-/* Loads an 8-bit integer at `offset` of the thread environment block (TEB) of
+/** Loads an 8-bit integer at `offset` of the thread environment block (TEB) of
  * the current thread.
  *
  * @param `offset` specifies the address of the integer to load.
@@ -64,7 +64,7 @@ __MCF_teb_load_8(uint32_t __offset)
 #endif
   }
 
-/* Stores an 8-bit integer at `offset` of the thread environment block (TEB) of
+/** Stores an 8-bit integer at `offset` of the thread environment block (TEB) of
  * the current thread.
  *
  * @param `offset` specifies the address of the integer to store.
@@ -106,7 +106,7 @@ __MCF_teb_store_8(uint32_t __offset, int8_t __value)
 #endif
   }
 
-/* Loads a 16-bit integer at `offset` of the thread environment block (TEB) of
+/** Loads a 16-bit integer at `offset` of the thread environment block (TEB) of
  * the current thread.
  *
  * @param `offset` specifies the address of the integer to load.
@@ -151,7 +151,7 @@ __MCF_teb_load_16(uint32_t __offset)
 #endif
   }
 
-/* Stores a 16-bit integer at `offset` of the thread environment block (TEB) of
+/** Stores a 16-bit integer at `offset` of the thread environment block (TEB) of
  * the current thread.
  *
  * @param `offset` specifies the address of the integer to store.
@@ -193,7 +193,7 @@ __MCF_teb_store_16(uint32_t __offset, int16_t __value)
 #endif
   }
 
-/* Loads a 32-bit integer at `offset` of the thread environment block (TEB) of
+/** Loads a 32-bit integer at `offset` of the thread environment block (TEB) of
  * the current thread.
  *
  * @param `offset` specifies the address of the integer to load.
@@ -238,7 +238,7 @@ __MCF_teb_load_32(uint32_t __offset)
 #endif
   }
 
-/* Stores a 32-bit integer at `offset` of the thread environment block (TEB) of
+/** Stores a 32-bit integer at `offset` of the thread environment block (TEB) of
  * the current thread.
  *
  * @param `offset` specifies the address of the integer to store.
@@ -280,7 +280,7 @@ __MCF_teb_store_32(uint32_t __offset, int32_t __value)
 #endif
   }
 
-/* Loads a pointer-size integer at `offset` of the thread environment block (TEB)
+/** Loads a pointer-size integer at `offset` of the thread environment block (TEB)
  * of the current thread.
  *
  * @param `offset` specifies the address of the integer to load.
@@ -325,7 +325,7 @@ __MCF_teb_load_ptr(uint32_t __offset)
 #endif
   }
 
-/* Stores a pointer-size integer at `offset` of the thread environment block
+/** Stores a pointer-size integer at `offset` of the thread environment block
  * (TEB) of the current thread.
  *
  * @param `offset` specifies the address of the integer to store.
@@ -367,7 +367,7 @@ __MCF_teb_store_ptr(uint32_t __offset, intptr_t __value)
 #endif
   }
 
-/* Gets the process environment block (PEB) of the current process.
+/** Gets the process environment block (PEB) of the current process.
  *
  * @returns a pointer to the PEB in flat address space.  */
 __MCF_TEB_INLINE __MCF_FN_CONST
@@ -379,7 +379,7 @@ __MCF_peb(void)
     return (void*) __MCF_teb_load_ptr(__MCF_64_32(0x60, 0x30));
   }
 
-/* Gets the thread environment block (TEB) of the current thread.
+/** Gets the thread environment block (TEB) of the current thread.
  *
  * @returns a pointer to the TEB in flat address space.  */
 __MCF_TEB_INLINE __MCF_FN_CONST
@@ -399,7 +399,7 @@ __MCF_teb(void)
 #endif
   }
 
-/* Gets the identifier of the current process.
+/** Gets the identifier of the current process.
  *
  * This is the same value that is returned by `GetCurrentProcessId()`, but as
  * a signed integer.
@@ -414,7 +414,7 @@ __MCF_pid(void)
     return __MCF_teb_load_32(__MCF_64_32(0x40, 0x20));
   }
 
-/* Gets the identifier of the current thread.
+/** Gets the identifier of the current thread.
  *
  * This is the same value that is returned by `GetCurrentThreadId()`, but as
  * a signed integer.

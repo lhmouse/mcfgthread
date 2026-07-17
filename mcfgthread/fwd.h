@@ -24,7 +24,7 @@
 #  error 32-bit ARM target is not supported.
 #endif
 
-/* Define language-support macros. We start from C89 (which doesn't have an
+/** Define language-support macros. We start from C89 (which doesn't have an
  * identification macro) and then redefine these macros according to
  * `__STDC_VERSION__` and `__cplusplus`.  */
 #define __MCF_C(...)     __VA_ARGS__
@@ -126,7 +126,7 @@ __MCF_CXX(extern "C" {)
 #define __MCF_0_INIT           { __MCF_C(0) }
 #define __MCF_SET_IF(x, ...)    ((void) ((x) && (*(x) = (__VA_ARGS__))))
 
-/* Define compiler-specific macros. In the case of Clang-CL, prefer GNU
+/** Define compiler-specific macros. In the case of Clang-CL, prefer GNU
  * extensions to Microsoft ones.  */
 #if defined __GNUC__ || defined __clang__
 #  define __MCF_EX             __extension__
@@ -195,7 +195,7 @@ __MCF_CXX(extern "C" {)
 #  endif
 #endif
 
-/* These are necessary when the header is compiled as C89 or C++98. The check
+/** These are necessary when the header is compiled as C89 or C++98. The check
  * for `_LP64` is for Cygwin and MSYS2.  */
 #ifdef _LP64
 #  define __MCF_INT64_    long
@@ -223,7 +223,7 @@ typedef unsigned __MCF_INTPTR_ uintptr_t;
 #define __MCF_UINTPTR_0     __MCF_64_32(0ULL, 0U)
 #define __MCF_UINTPTR_MAX   __MCF_64_32(0xFFFFFFFFFFFFFFFFULL, 0xFFFFFFFFU)
 
-/* I can't find a better name for this macro. It controls whether the complete
+/** I can't find a better name for this macro. It controls whether the complete
  * definitions of inline functions are compiled. If headers are included by user
  * code and they are optimizing for size, most fast-path parts are opted out.
  * Complete definitions are compiled when a user is optimizing for speed, or when
@@ -237,7 +237,7 @@ typedef unsigned __MCF_INTPTR_ uintptr_t;
 #  define __MCF_EXPAND_INLINE_DEFINITIONS   1
 #endif
 
-/* This defines a by-reference variable, in other words, an array of exactly one
+/** This defines a by-reference variable, in other words, an array of exactly one
  * element, which is always passed around as a pointer.  */
 #if defined __cplusplus
 extern "C++" {
@@ -248,7 +248,7 @@ template<typename _Tp> struct __MCF_make_br { typedef _Tp __type[1]; };
 #define __MCF_BR(...)   __typeof__(__VA_ARGS__ [1])
 #endif
 
-/* Some compilers warn about casts between pointers, so launder the pointer via
+/** Some compilers warn about casts between pointers, so launder the pointer via
  * an in-between integral type.  */
 #if defined __cplusplus
 #  define __MCF_CAST_PTR(T, ...)   (reinterpret_cast<T*>(reinterpret_cast<__MCF_INTPTR_>(__VA_ARGS__)))
@@ -256,7 +256,7 @@ template<typename _Tp> struct __MCF_make_br { typedef _Tp __type[1]; };
 #  define __MCF_CAST_PTR(T, ...)   (__MCF_EX (T*)(__MCF_INTPTR_) (__VA_ARGS__))
 #endif
 
-/* The `__MCF_STATIC_ASSERT_0()` macro is an expression that yields zero if it
+/** The `__MCF_STATIC_ASSERT_0()` macro is an expression that yields zero if it
  * compiles anyway. Its argument must be a constant expression.  */
 #if defined __cplusplus
 extern "C++" {
@@ -273,7 +273,7 @@ template<> struct __MCF_static_assert_helper<true> { static const int __one = 1;
 #define __MCF_STATIC_ASSERT_0(...)   (__MCF_STATIC_ASSERT_1(__VA_ARGS__) - 1)
 #define __MCF_STATIC_ASSERT(...)    extern int __MCF_static_assert_true[__MCF_STATIC_ASSERT_1(__VA_ARGS__)]
 
-/* The `__MCF_ASSERT()` and `__MCF_CHECK()` macros perform run-time checks. If
+/** The `__MCF_ASSERT()` and `__MCF_CHECK()` macros perform run-time checks. If
  * an argument yields false, `__MCF_ASSERT()` results in undefined behavior,
  * and `__MCF_CHECK()` effects abnormal termination of the current program.  */
 __MCF_XGLOBALS_IMPORT __MCF_NEVER_RETURN __MCF_FN_COLD
@@ -289,7 +289,7 @@ __MCF_runtime_failure(const char* __where)
 #define __MCF_ASSERT(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
 #define __MCF_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__MCF_EX __func__))
 
-/* Below are public declarations for users.  */
+/** Below are public declarations for users.  */
 typedef void* __MCF_HANDLE;
 typedef struct timespec __MCF_timespec;
 
@@ -311,27 +311,27 @@ typedef int _MCF_thread_priority;
 typedef struct __MCF_tls_key _MCF_tls_key;
 typedef struct __MCF_cpu_collection _MCF_cpu_collection;
 
-/* See `_MCF_cond_wait()` for details about these callbacks.  */
+/** See `_MCF_cond_wait()` for details about these callbacks.  */
 typedef intptr_t _MCF_cond_unlock_callback(intptr_t __lock_arg);
 typedef void _MCF_cond_relock_callback(intptr_t __lock_arg, intptr_t __unlocked);
 
-/* Define the prototype for thread procedures.  */
+/** Define the prototype for thread procedures.  */
 typedef void _MCF_thread_procedure(_MCF_thread* __thrd);
 
-/* Define the prototype for destructors for `_MCF_tls_key_new()`.  */
+/** Define the prototype for destructors for `_MCF_tls_key_new()`.  */
 typedef void _MCF_tls_dtor(void* __ptr);
 
-/* Define prototypes for destructors for `atexit()` and `at_quick_exit()`.  */
+/** Define prototypes for destructors for `atexit()` and `at_quick_exit()`.  */
 typedef void __cdecl __MCF_atexit_callback(void);
 typedef void __stdcall __MCF_atexit_callback_stdcall(void);
 typedef void __fastcall __MCF_atexit_callback_fastcall(void);
 
-/* Define the prototype for destructors for `__cxa_atexit()`, `__cxa_at_quick_exit()`
+/** Define the prototype for destructors for `__cxa_atexit()`, `__cxa_at_quick_exit()`
  * and `__cxa_thread_atexit()`.  */
 typedef void __cdecl __MCF_cxa_dtor_cdecl(void* __arg);
 typedef void __fastcall __MCF_cxa_dtor_fastcall(void* __arg);
 
-/* In the case of i386, the argument is passed both via the ECX register and on
+/** In the case of i386, the argument is passed both via the ECX register and on
  * the stack, to allow both `__cdecl` and `__thiscall` functions to work
  * properly. GCC and Clang accept `__thiscall` on non-member functions as an
  * extension, but MSVC doesn't so we use `__fastcall` there.  */
@@ -385,7 +385,7 @@ __MCF_TRANSPARENT_UNION __MCF_atexit_callback_any
 typedef __MCF_atexit_callback* __MCF_atexit_callback_any_;
 #endif
 
-/* Gets the last error code, like `GetLastError()`.
+/** Gets the last error code, like `GetLastError()`.
  *
  * @returns the last error code as an unsigned integer.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_PURE
@@ -393,7 +393,7 @@ uint32_t
 _MCF_get_win32_error(void)
   __MCF_noexcept;
 
-/* Gets the system page size, which is usually 4KiB or 8KiB.
+/** Gets the system page size, which is usually 4KiB or 8KiB.
  *
  * @returns the system page size in bytes.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_CONST
@@ -401,7 +401,7 @@ size_t
 _MCF_get_page_size(void)
   __MCF_noexcept;
 
-/* Gets the number of logical processors in the current processor group.
+/** Gets the number of logical processors in the current processor group.
  *
  * When there are more processors than `__MCF_PTR_BITS`, the result may include
  * only those in the current/primary processor group of the current process. For
@@ -415,7 +415,7 @@ size_t
 _MCF_get_processor_count(void)
   __MCF_noexcept;
 
-/* Gets the mask of active processors in the current processor group.
+/** Gets the mask of active processors in the current processor group.
  *
  * Each bit 1 denotes a processor that has been configured into the system. The
  * value is cached upon initialization, and does not reflect changes if CPUs are
@@ -432,7 +432,7 @@ uintptr_t
 _MCF_get_active_processor_mask(void)
   __MCF_noexcept;
 
-/* Calls `__init_proc(__arg)` exactly once.
+/** Calls `__init_proc(__arg)` exactly once.
  *
  * If an exception is thrown, this function calls `_MCF_once_abort(once)` and
  * rethrow the exception; otherwise, it calls `_MCF_once_release(once)` and
@@ -452,7 +452,7 @@ void
 __MCF_gthr_call_once_seh_take_over(_MCF_once* __once, __MCF_cxa_dtor_any_ __init_proc, void* __arg)
   __MCF_MAY_THROW;
 
-/* Calculates the minimum value of two values of type `size_t`.
+/** Calculates the minimum value of two values of type `size_t`.
  *
  * @param `x` is one value.
  * @param `y` is another value.
@@ -465,7 +465,7 @@ _MCF_minz(size_t __x, size_t __y)
     return (__y < __x) ? __y : __x;
   }
 
-/* Calculates the maximum value of two values of type `size_t`.
+/** Calculates the maximum value of two values of type `size_t`.
  *
  * @param `x` is one value.
  * @param `y` is another value.
@@ -478,7 +478,7 @@ _MCF_maxz(size_t __x, size_t __y)
     return (__x < __y) ? __y : __x;
   }
 
-/* Calculates the positive difference of two values of type `intptr_t`.
+/** Calculates the positive difference of two values of type `intptr_t`.
  *
  * @param `x` is the minuend.
  * @param `y` is the subtrahend.

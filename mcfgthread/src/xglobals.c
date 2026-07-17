@@ -662,7 +662,7 @@ __MCF_gthread_on_thread_exit(void)
     _MCF_thread_drop_ref_nonnull(self);
   }
 
-/* These are constants that have to be initialized at load time. The
+/** These are constants that have to be initialized at load time. The
  * initializers prevent them from being placed into the `.bss` section.  */
 __MCF_BR(GUID) const __MCF_crt_gthread_guid = { __MCF_GUID(9FB2D15C,C5F2,4AE7,868D,2769591B8E92) };
 __MCF_BR(__MCF_winnt_timeout) const __MCF_crt_timeout_0 = {{ .li.QuadPart = 0 }};
@@ -675,7 +675,7 @@ HMODULE __MCF_crt_ntdll = __MCF_BAD_PTR;
 HMODULE __MCF_crt_kernel32 = __MCF_BAD_PTR;
 HMODULE __MCF_crt_kernelbase = __MCF_BAD_PTR;
 
-/* These point to optional imports.  */
+/** These point to optional imports.  */
 typeof_GetSystemTimePreciseAsFileTime* __MCF_crt_GetSystemTimePreciseAsFileTime = __MCF_BAD_PTR;
 typeof_QueryUnbiasedInterruptTimePrecise* __MCF_crt_QueryUnbiasedInterruptTimePrecise = __MCF_BAD_PTR;
 typeof_QueryInterruptTimePrecise* __MCF_crt_QueryInterruptTimePrecise = __MCF_BAD_PTR;
@@ -684,7 +684,7 @@ typeof_GetThreadSelectedCpuSets* __MCF_crt_GetThreadSelectedCpuSets_opt = __MCF_
 typeof_SetThreadSelectedCpuSets* __MCF_crt_SetThreadSelectedCpuSets_opt = __MCF_BAD_PTR;
 typeof_TlsGetValue2* __MCF_crt_TlsGetValue2 = __MCF_BAD_PTR;
 
-/* This is a pointer to global data. If this library is linked statically,
+/** This is a pointer to global data. If this library is linked statically,
  * all instances of this pointer in the same process should point to the
  * same memory. The initializer prevents it from being placed into the
  * `.bss` section.  */
@@ -692,7 +692,7 @@ __MCF_crt_xglobals* restrict __MCF_g = __MCF_BAD_PTR;
 
 #ifdef __MCF_IN_DLL
 
-/* When building the shared library, invoke common routines from the DLL
+/** When building the shared library, invoke common routines from the DLL
  * entry point callback. This has the same signature as `DllMain()`.  */
 #if defined __MSYS__
 #  define DllMainCRTStartup  _msys_dll_entry
@@ -763,7 +763,7 @@ __asm__ (
 "\n .section .text$___chkstk_ms, \"x\""
 "\n   .p2align 2"
 #if defined __MCF_M_X8632_ASM
-/* This function probes the stack without adjusting ESP or clobbering any
+/** This function probes the stack without adjusting ESP or clobbering any
  * registers. The size of allocation is passed via EAX in number of bytes.  */
 "\n .globl ___chkstk_ms"
 "\n .def ___chkstk_ms; .scl 2; .type 32; .endef"
@@ -779,7 +779,7 @@ __asm__ (
 "\n   pop ecx"
 "\n   pop eax"
 "\n   ret"
-/* This function probes the stack and adjusts ESP. No registers shall be
+/** This function probes the stack and adjusts ESP. No registers shall be
  * clobbered. The size of allocation is passed via EAX in number of bytes.  */
 "\n .globl __alloca"
 "\n .def __alloca; .scl 2; .type 32; .endef"
@@ -789,12 +789,12 @@ __asm__ (
 "\n   add esp, 4"
 "\n   push DWORD PTR [esp + eax - 4]"
 "\n   ret"
-/* This name is called by Clang for MSVC target.  */
+/** This name is called by Clang for MSVC target.  */
 "\n .globl __chkstk"
 "\n .def __chkstk; .scl 2; .type 32; .endef"
 "\n .equiv __chkstk, __alloca"
 #elif defined __MCF_M_X8664_ASM
-/* This function probes the stack without adjusting RSP. No registers shall
+/** This function probes the stack without adjusting RSP. No registers shall
  * be clobbered. The size of allocation is passed via RAX in number of bytes.  */
 "\n .globl ___chkstk_ms"
 "\n .def ___chkstk_ms; .scl 2; .type 32; .endef"
@@ -810,12 +810,12 @@ __asm__ (
 "\n   pop rcx"
 "\n   pop rax"
 "\n   ret"
-/* This name is called by Clang for MSVC target.  */
+/** This name is called by Clang for MSVC target.  */
 "\n .globl __chkstk"
 "\n .def __chkstk; .scl 2; .type 32; .endef"
 "\n .equiv __chkstk, ___chkstk_ms"
 #elif defined __MCF_M_ARM64_ASM
-/* This function probes the stack without adjusting SP. No registers shall
+/** This function probes the stack without adjusting SP. No registers shall
  * be clobbered. The size of allocation is passed via X15 in number of quad
  * words.  */
 "\n .globl __chkstk"
@@ -832,7 +832,7 @@ __asm__ (
 "\n   ldp x15, x16, [sp], 16"
 "\n   ret"
 #  if defined __MCF_M_ARM64EC
-/* This name is used for ARM64EC.  */
+/** This name is used for ARM64EC.  */
 "\n .globl \"#__chkstk_arm64ec\""
 "\n .def \"#__chkstk_arm64ec\"; .scl 2; .type 32; .endef"
 "\n .equiv \"#__chkstk_arm64ec\", __chkstk"
@@ -841,12 +841,12 @@ __asm__ (
 );
 
 #if defined _MSC_VER
-/* Microsoft LINK requires this for a reason.  */
+/** Microsoft LINK requires this for a reason.  */
 const int _fltused __MCF_CRT_RDATA = 0x9875;
 #endif
 
 #if defined __MCF_M_X8632
-/* On x86-32, the load config directory contains the address and size of the
+/** On x86-32, the load config directory contains the address and size of the
  * exception handler table. Exception handlers that are not in this table
  * will be rejected by the system. `__MCF_i386_se_handler_table` points to a
  * sorted (!) array of RVAs of valid handlers, and the value of (not the value
@@ -867,7 +867,7 @@ __asm__ (
 #endif
 
 #if defined __MCF_M_ARM64EC
-/* This section has been heavily modified from 'chpe.S' from mingw-w64. Only
+/** This section has been heavily modified from 'chpe.S' from mingw-w64. Only
  * symbols that are documented by Microsoft are kept. Original code is declared
  * to be in the Public Domain.  */
 extern const ULONG __MCF_arm64ec_chpe_metadata[];
@@ -905,7 +905,7 @@ __asm__ (
 "\n   .rva __os_arm64x_helper7"
 "\n   .rva __os_arm64x_helper8"
 "\n"
-/* These are pointers to helper routines, which will be filled after the image
+/** These are pointers to helper routines, which will be filled after the image
  * is loaded by the operating system.  */
 "\n .section .00cfg, \"dr\""
 "\n   .p2align 3"
@@ -952,7 +952,7 @@ __asm__ (
 "\n __os_arm64x_helper8:"
 "\n   .quad 0"
 "\n"
-/* This is the ARM64EC Adjustor Thunk. Calls to this function are synthesized
+/** This is the ARM64EC Adjustor Thunk. Calls to this function are synthesized
  * by the compiler.  */
 "\n .section .text$__icall_helper_arm64ec, \"x\""
 "\n   .p2align 2"
@@ -975,7 +975,7 @@ __asm__ (
 "\n   br x11"
 "\n .seh_endproc"
 "\n"
-/* This is a common wrapper with an Exit Thunk for x86-64 callback functions
+/** This is a common wrapper with an Exit Thunk for x86-64 callback functions
  * that return either values in RAX, or void.  */
 "\n .globl __MCF_arm64ec_exit_thunk_p"
 "\n .def __MCF_arm64ec_exit_thunk_p; .scl 2; .type 32; .endef"
@@ -1004,7 +1004,7 @@ __asm__ (
 );
 #endif
 
-/* If the image subsystem version is set to 6.3+, Windows requires that the
+/** If the image subsystem version is set to 6.3+, Windows requires that the
  * security cookie shall exist and shall be initialized to a constant value
  * when the image is loaded. Otherwise the system will reject the image with
  * `STATUS_INVALID_IMAGE_FORMAT`.  */
@@ -1082,7 +1082,7 @@ const _load_config_used __MCF_CRT_RDATA =
 
 #else  /* __MCF_IN_DLL  */
 
-/* When building the static library, invoke common routines from a TLS callback.  */
+/** When building the static library, invoke common routines from a TLS callback.  */
 #if defined __CYGWIN__
 #  error Static linking is not supported on Cygwin or MSYS2.
 #endif
@@ -1110,7 +1110,7 @@ do_tls_callback(PVOID module, ULONG reason, PVOID reserved)
       }
   }
 
-/* This requires the main executable be linked with 'tlssup.o'. Such
+/** This requires the main executable be linked with 'tlssup.o'. Such
  * initialization shall happen as early as possible.  */
 #if defined _MSC_VER
 __pragma(comment(linker, "/include:" __MCF_USYM "_tls_used"))
@@ -1119,7 +1119,7 @@ __pragma(section(".CRT$XLB", read))
 const PIMAGE_TLS_CALLBACK __MCF_crt_xl_b __MCF_CRT_XL(B) = do_tls_callback;
 
 #if defined __MCF_M_X8632 && defined _MSC_VER
-/* Register SEH handlers. In the DLL we build a handler table by hand which works
+/** Register SEH handlers. In the DLL we build a handler table by hand which works
  * on all compilers. In the static library we use the `.safeseh` directive but it
  * is only supported by Microsoft LINK, or LLD in LINK mode.  */
 __asm__ (

@@ -23,31 +23,31 @@
 #  error This internal header is for C only.
 #endif
 
-/* Guarantee that `nullptr` is available for C.  */
+/** Guarantee that `nullptr` is available for C.  */
 #if 0 __MCF_C23(+1) __MCF_CXX11(+1) == 0
 #  define nullptr   ((void*) __MCF_INTPTR_0)
 #endif
 
-/* Annotate a `return` statement that the previous expression has set the last
+/** Annotate a `return` statement that the previous expression has set the last
  * error code. This doesn't do anything at the moment.  */
 #define __MCF_FORWARD_WIN32_ERROR(...)  (__VA_ARGS__)
 
-/* Define data that must be placed in `.rdata` despite `-fdata-sections`.  */
+/** Define data that must be placed in `.rdata` despite `-fdata-sections`.  */
 #define __MCF_CRT_RDATA  __attribute__((__used__, __section__(".rdata")))
 #define __MCF_CRT_XL(x)  __attribute__((__used__, __section__(".CRT$XL" #x)))
 
-/* Initialize a GUID in the canonical form.  */
+/** Initialize a GUID in the canonical form.  */
 #define __MCF_GUID(a8,b4,c4,d4,e12)  \
     ((GUID){ 0x##a8, 0x##b4, 0x##c4, { 0x##d4 >> 8, 0x##d4 & 0xFF, 0x##e12 >> 40,  \
              (0x##e12 >> 32) & 0xFF, (0x##e12 >> 24) & 0xFF, (0x##e12 >> 16) & 0xFF,  \
              (0x##e12 >> 8) & 0xFF, 0x##e12 & 0xFF } })
 
-/* Define a non-zero but invalid value. This can be used to mark a pointer
+/** Define a non-zero but invalid value. This can be used to mark a pointer
  * to freed memory, or to prevent a static pointer from being placed into
  * the `.bss` section.  */
 #define __MCF_BAD_PTR  ((void*) -127)
 
-/* Define a macro that is identical to `RTL_CONSTANT_STRING()` as we are not
+/** Define a macro that is identical to `RTL_CONSTANT_STRING()` as we are not
  * willing to include <ntdef.h> here.  */
 #define __MCF_NT_STRING_INIT(s)  \
     { .Length = sizeof(s) - sizeof(*(s)),  \
@@ -55,18 +55,18 @@
       .Buffer = (void*) ((s) + __MCF_STATIC_ASSERT_0(  \
          !__builtin_types_compatible_p(__typeof__(1+&*(s)), __typeof__(s))))  }
 
-/* This function is used as the exception handler of a `noexcept` function.  */
+/** This function is used as the exception handler of a `noexcept` function.  */
 __MCF_XGLOBALS_IMPORT
 EXCEPTION_DISPOSITION
 __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
 
-/* This is an alternative handler for `main()` or `WinMain()`, which terminates
+/** This is an alternative handler for `main()` or `WinMain()`, which terminates
  * the current process in case of an exit unwind.  */
 __MCF_XGLOBALS_IMPORT
 EXCEPTION_DISPOSITION
 __MCF_seh_process_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
 
-/* This is an alternative handler for threads, which terminates the current
+/** This is an alternative handler for threads, which terminates the current
  * thread in case of an exit unwind.  */
 __MCF_XGLOBALS_IMPORT
 EXCEPTION_DISPOSITION
@@ -74,7 +74,7 @@ __MCF_seh_thread_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVO
 
 #if defined __MCF_M_X8632
 
-/* Removes an SEH node from the linked list of handlers.  */
+/** Removes an SEH node from the linked list of handlers.  */
 __MCF_ALWAYS_INLINE
 void
 __MCF_i386_seh_cleanup(const void* ref)
@@ -82,7 +82,7 @@ __MCF_i386_seh_cleanup(const void* ref)
     __MCF_teb_store_ptr(0, *(const intptr_t*) ref);
   }
 
-/* On x86, SEH is stack-based. Each handler will be attached to the scope of
+/** On x86, SEH is stack-based. Each handler will be attached to the scope of
  * a local record object.  */
 #  define __MCF_USING_SEH_HANDLER(fn)  \
     const intptr_t  \
@@ -91,12 +91,12 @@ __MCF_i386_seh_cleanup(const void* ref)
       __MCF_i386_seh_record_dummy __attribute__((__unused__))  \
         = (__MCF_teb_store_ptr(0, (intptr_t) &__MCF_i386_seh_record), 0)  /* no semicolon  */
 
-/* Some old code assumes that ESP is always aligned to a 16-byte boundary,
+/** Some old code assumes that ESP is always aligned to a 16-byte boundary,
  * but that's not guaranteed for callbacks from system DLLs, so it has to be
  * enforced; otherwise SSE instructions may fault.  */
 #  define __MCF_REALIGN_SP    __attribute__((__force_align_arg_pointer__, __noinline__))
 
-/* Invokes `dtor`, passing `arg` both via ECX and on the stack, to allow both
+/** Invokes `dtor`, passing `arg` both via ECX and on the stack, to allow both
  * `__cdecl` and `__thiscall` functions to work properly.  */
 __MCF_ALWAYS_INLINE
 void
@@ -110,17 +110,17 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
 
 #else  /* !defined __MCF_M_X8632 */
 
-/* SEH is table-based. Only x86-64 supports pure unwind handlers that are not
+/** SEH is table-based. Only x86-64 supports pure unwind handlers that are not
  * exception handlers; for simplicity, we use only dual handlers. This also
  * works on ARM64 and ARM64EC.  */
 #  define __MCF_USING_SEH_HANDLER(fn)  \
     __asm__ (".seh_handler %c0, @except, @unwind" : : "i"(fn))  /* no semicolon  */
 
-/* The stack is always aligned to 16-byte boundaries, as required by the ABI,
+/** The stack is always aligned to 16-byte boundaries, as required by the ABI,
  * so this expands to nothing.  */
 #  define __MCF_REALIGN_SP
 
-/* There is only ever one calling convention.  */
+/** There is only ever one calling convention.  */
 __MCF_ALWAYS_INLINE
 void
 __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
@@ -133,25 +133,25 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
 typedef struct __MCF_winnt_timeout __MCF_winnt_timeout;
 typedef struct __MCF_crt_xglobals __MCF_crt_xglobals;
 
-/* This structure contains timeout values that will be passed to NT syscalls.  */
+/** This structure contains timeout values that will be passed to NT syscalls.  */
 struct __MCF_winnt_timeout
   {
     LARGE_INTEGER li;
     ULONGLONG since;
   };
 
-/* Converts a timeout in milliseconds to a native Windows NT timeout in 100
+/** Converts a timeout in milliseconds to a native Windows NT timeout in 100
  * nanoseconds, and initializes `since` for a relative timeout.  */
 __MCF_XGLOBALS_IMPORT
 void
 __MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* to, const int64_t* ms_opt);
 
-/* Adjusts `*to` for an interrupted wait operation, so it may be resumed.  */
+/** Adjusts `*to` for an interrupted wait operation, so it may be resumed.  */
 __MCF_XGLOBALS_IMPORT
 void
 __MCF_adjust_winnt_timeout_v3(__MCF_winnt_timeout* to);
 
-/* Checks whether it is safe to suspend the current thread. In `DllMain()` or
+/** Checks whether it is safe to suspend the current thread. In `DllMain()` or
  * TLS callback upon `DLL_PROCESS_DETACH`, where all other threads have been
  * terminated by the system, it may not be safe to wait, and this function
  * terminates the current process.  */
@@ -163,103 +163,103 @@ __MCF_XGLOBALS_IMPORT
 void
 __MCF_batch_release_common(const void* key, size_t count);
 
-/* Copies a block of memory forward, like `memcpy()`.  */
+/** Copies a block of memory forward, like `memcpy()`.  */
 __MCF_XGLOBALS_INLINE
 void*
 __MCF_mcopy(void* dst, const void* src, size_t size);
 
-/* Copies a block of memory backward.  */
+/** Copies a block of memory backward.  */
 __MCF_XGLOBALS_INLINE
 void*
 __MCF_mcopy_backward(void* dst, const void* src, size_t size);
 
-/* Fills a block of memory with the given byte, like `memset()`.  */
+/** Fills a block of memory with the given byte, like `memset()`.  */
 __MCF_XGLOBALS_INLINE
 void*
 __MCF_mfill(void* dst, int val, size_t size);
 
-/* Fills a block of memory with zeroes, like `bzero()`.  */
+/** Fills a block of memory with zeroes, like `bzero()`.  */
 __MCF_XGLOBALS_INLINE
 void*
 __MCF_mzero(void* dst, size_t size);
 
-/* Compares two blocks of memory, like `memcmp()`.  */
+/** Compares two blocks of memory, like `memcmp()`.  */
 __MCF_XGLOBALS_INLINE __MCF_FN_PURE
 int
 __MCF_mcompare(const void* src, const void* cmp, size_t size);
 
-/* Checks whether two blocks of memory compare equal.  */
+/** Checks whether two blocks of memory compare equal.  */
 __MCF_XGLOBALS_INLINE __MCF_FN_PURE
 bool
 __MCF_mequal(const void* src, const void* cmp, size_t size);
 
-/* Allocates a block of zeroed memory, like `calloc()`.  */
+/** Allocates a block of zeroed memory, like `calloc()`.  */
 __MCF_XGLOBALS_INLINE __attribute__((__malloc__, __alloc_size__(1)))
 void*
 __MCF_malloc_0(size_t size);
 
-/* Sets the size a block of memory in place, like `truncate()` on files. If the
+/** Sets the size a block of memory in place, like `truncate()` on files. If the
  * existent block should be extended, vacuum bytes are filled with zeroes.  */
 __MCF_XGLOBALS_INLINE __attribute__((__alloc_size__(2)))
 void*
 __MCF_mresize_0(void* ptr, size_t size);
 
-/* Re-allocates a block of memory, like `realloc()`. If the existent block should
+/** Re-allocates a block of memory, like `realloc()`. If the existent block should
  * be extended, vacuum bytes are filled with zeroes.  */
 __MCF_XGLOBALS_INLINE __attribute__((__alloc_size__(2)))
 void*
 __MCF_mrealloc_0(void** pptr, size_t size);
 
-/* Allocates a copy of a block of memory, like `malloc()` followed by `memcpy()`.  */
+/** Allocates a copy of a block of memory, like `malloc()` followed by `memcpy()`.  */
 __MCF_XGLOBALS_INLINE __attribute__((__alloc_size__(2)))
 void*
 __MCF_malloc_copy(const void* data, size_t size);
 
-/* Gets the size of an allocated block, like `malloc_usable_size()`.  */
+/** Gets the size of an allocated block, like `malloc_usable_size()`.  */
 __MCF_XGLOBALS_INLINE __MCF_FN_PURE
 size_t
 __MCF_msize(const void* ptr);
 
-/* Frees a block of memory, like `free()`, except that the argument shall not be
+/** Frees a block of memory, like `free()`, except that the argument shall not be
  * a null pointer.  */
 __MCF_XGLOBALS_INLINE
 void
 __MCF_mfree_nonnull(void* ptr);
 
-/* Sets the last error code to `code` and returns `val`. This function should be
+/** Sets the last error code to `code` and returns `val`. This function should be
  * the target of a tail call.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_COLD
 int
 __MCF_win32_error_i(ULONG code, int val);
 
-/* Sets the last error code to `code` and returns `ptr`. This function should be
+/** Sets the last error code to `code` and returns `ptr`. This function should be
  * the target of a tail call.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_COLD
 void*
 __MCF_win32_error_p(ULONG code, void* ptr);
 
-/* Sets the last error code to `RtlNtStatusToDosError(status)` and returns `ptr`.
+/** Sets the last error code to `RtlNtStatusToDosError(status)` and returns `ptr`.
  * This function should be the target of a tail call.  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_COLD
 void*
 __MCF_win32_ntstatus_p(NTSTATUS status, void* ptr);
 
-/* Undocumented  */
+/** Undocumented  */
 __MCF_XGLOBALS_IMPORT
 void
 __MCF_run_static_dtors(_MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso);
 
-/* Undocumented  */
+/** Undocumented  */
 __MCF_XGLOBALS_IMPORT
 void
 __MCF_gthread_initialize_globals(void);
 
-/* Undocumented  */
+/** Undocumented  */
 __MCF_XGLOBALS_IMPORT
 void
 __MCF_gthread_on_thread_exit(void);
 
-/* These are global variables that are initialized either statically, or when
+/** These are global variables that are initialized either statically, or when
  * `DLL_PROCESS_ATTACH` is received. These are really read-only; after
  * successful initialization, the DLL changes the protection of its `.data`
  * section to `PAGE_READONLY`, so an attempt to modify these variables will
@@ -303,7 +303,7 @@ extern typeof_SetThreadSelectedCpuSets*
 typedef LPVOID __stdcall typeof_TlsGetValue2(ULONG);
 extern typeof_TlsGetValue2* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue2;
 
-/* Declare the structure of global data in named shared memory. As mcfgthread
+/** Declare the structure of global data in named shared memory. As mcfgthread
  * may be linked statically by user DLLs, we must ensure that, in the same
  * process, all instances of `__MCF_g` (see below) point to the same object.
  * This is achieved by having them point to a named shared memory object, which
@@ -335,18 +335,18 @@ struct __MCF_crt_xglobals
     void* reserved_4_must_be_null;  /* v2.4 */
   };
 
-/* This is a pointer to the process-specific named shared memory in the
+/** This is a pointer to the process-specific named shared memory in the
  * current module.  */
 extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY restrict __MCF_g;
 
-/* These are utility macros for accessing fields in the named shared memory
+/** These are utility macros for accessing fields in the named shared memory
  * with version checking.  */
 #define __MCF_GFX_(field)     offsetof(__MCF_crt_xglobals, field)
 #define __MCF_HAS_G(field)    (__MCF_g->self_size >= __MCF_GFX_(field) + sizeof(__MCF_g->field))
 #define __MCF_G(field)        (*(__MCF_ASSERT(__MCF_HAS_G(field)), &(__MCF_g->field)))
 #define __MCF_G_OPT(field)    (__MCF_HAS_G(opt_##field) ? &(__MCF_g->opt_##field) : nullptr)
 
-/* Ensure we don't mess things up.  */
+/** Ensure we don't mess things up.  */
 __MCF_STATIC_ASSERT(__MCF_GFX_(self_ptr) == 0);
 __MCF_STATIC_ASSERT(__MCF_GFX_(self_size) == __MCF_64_32(8, 4));
 __MCF_STATIC_ASSERT(__MCF_GFX_(tls_index) == __MCF_64_32(12, 8));
@@ -364,7 +364,7 @@ __MCF_STATIC_ASSERT(__MCF_GFX_(opt_thread_oom_self_st) == __MCF_64_32(6816, 4432
 __MCF_STATIC_ASSERT(__MCF_GFX_(reserved_3_must_be_null) == __MCF_64_32(8416, 5232));
 __MCF_STATIC_ASSERT(__MCF_GFX_(reserved_4_must_be_null) == __MCF_64_32(8424, 5236));
 
-/* Define inline functions after all declarations.
+/** Define inline functions after all declarations.
  *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++

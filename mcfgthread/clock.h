@@ -16,7 +16,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_CLOCK_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Gets the system time.
+/** Gets the system time.
  *
  * This function is fast, but may be less precise than `_MCF_hires_utc_now()`.
  * This value corresponds to `clock_gettime(CLOCK_REALTIME_COARSE, ...)` on
@@ -28,7 +28,7 @@ int64_t
 _MCF_utc_now(void)
   __MCF_noexcept;
 
-/* Gets a more precise value of the system time.
+/** Gets a more precise value of the system time.
  *
  * This function is precise, but may be slower than `_MCF_utc_now()`. This
  * value corresponds to `clock_gettime(CLOCK_REALTIME, ...)` on Linux.
@@ -39,7 +39,7 @@ double
 _MCF_hires_utc_now(void)
   __MCF_noexcept;
 
-/* Gets the number of milliseconds since system startup, excluding time when the
+/** Gets the number of milliseconds since system startup, excluding time when the
  * system is in suspension or hibernation.
  *
  * This function is fast, but may be less precise than `_MCF_hires_steady_now()`.
@@ -52,7 +52,7 @@ int64_t
 _MCF_steady_now(void)
   __MCF_noexcept;
 
-/* Gets the number of milliseconds since system startup, excluding time when the
+/** Gets the number of milliseconds since system startup, excluding time when the
  * system is in suspension or hibernation.
  *
  * This function is precise, but may be slower than `_MCF_steady_now()`. This
@@ -64,7 +64,7 @@ double
 _MCF_hires_steady_now(void)
   __MCF_noexcept;
 
-/* Gets the number of milliseconds since system startup, including time when the
+/** Gets the number of milliseconds since system startup, including time when the
  * system is in suspension or hibernation.
  *
  * This function is fast, but may be less precise than `_MCF_hires_tick_count()`.
@@ -76,7 +76,7 @@ int64_t
 _MCF_tick_count(void)
   __MCF_noexcept;
 
-/* Gets the number of milliseconds since system startup, including time when the
+/** Gets the number of milliseconds since system startup, including time when the
  * system is in suspension or hibernation.
  *
  * This function is precise, but may be slower than `_MCF_tick_count()`. This
@@ -88,7 +88,7 @@ double
 _MCF_hires_tick_count(void)
   __MCF_noexcept;
 
-/* Gets the value of the high-resolution performance counter as a number of
+/** Gets the value of the high-resolution performance counter as a number of
  * milliseconds.
  *
  * This is the traditional high-resolution clock for measurement, but it may

@@ -18,12 +18,12 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_GTHR_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* Enable full C++11 threading support.  */
+/** Enable full C++11 threading support.  */
 #define __GTHREADS  1
 #define __GTHREADS_CXX0X  1
 #define __GTHREAD_HAS_COND  1
 
-/* Define gthread types. These usually map to our APIs directly, except
+/** Define gthread types. These usually map to our APIs directly, except
  * the recursive mutex.  */
 typedef __MCF_timespec __gthread_time_t;
 typedef _MCF_thread* __gthread_t;
@@ -34,7 +34,7 @@ typedef _MCF_cond __gthread_cond_t;
 typedef _MCF_mutex __gthread_mutex_t;
 typedef __MCF_gthr_rc_mutex __gthread_recursive_mutex_t;
 
-/* Define macros for static and dynamic initialization.  */
+/** Define macros for static and dynamic initialization.  */
 #define __GTHREAD_ONCE_INIT   __MCF_0_INIT
 #define __GTHREAD_COND_INIT   __MCF_0_INIT
 #define __GTHREAD_COND_INIT_FUNCTION   __MCF_gthr_cond_init
@@ -43,7 +43,8 @@ typedef __MCF_gthr_rc_mutex __gthread_recursive_mutex_t;
 #define __GTHREAD_RECURSIVE_MUTEX_INIT   __MCF_0_INIT
 #define __GTHREAD_RECURSIVE_MUTEX_INIT_FUNCTION   __MCF_gthr_recursive_mutex_init
 
-/* Informs the runtime that threading support is active.
+/** Informs the runtime that threading support is active.
+ *
  * Windows creates new threads for console control handlers, so threading
  * cannot be disabled.  */
 __MCF_GTHR_IMPORT __MCF_FN_CONST
@@ -56,7 +57,7 @@ __MCF_ALT_SYM(__MCF_gthr_active_p, __gthread_active_p);
 #  define __MCF_gthr_active_p  __gthread_active_p
 #endif
 
-/* Performs one-time initialization, like `pthread_once()`.  */
+/** Performs one-time initialization, like `pthread_once()`.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_once(__gthread_once_t* __once, __MCF_gthr_once_callback* __init_proc)
@@ -67,7 +68,7 @@ __MCF_ALT_SYM(__MCF_gthr_once, __gthread_once);
 #  define __MCF_gthr_once  __gthread_once
 #endif
 
-/* Allocates a thread-specific key, like `pthread_key_create()`.  */
+/** Allocates a thread-specific key, like `pthread_key_create()`.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_key_create(__gthread_key_t* __keyp, _MCF_tls_dtor* __dtor_opt)
@@ -78,7 +79,7 @@ __MCF_ALT_SYM(__MCF_gthr_key_create, __gthread_key_create);
 #  define __MCF_gthr_key_create  __gthread_key_create
 #endif
 
-/* Destroys a thread-specific key, like `pthread_key_delete()`.  */
+/** Destroys a thread-specific key, like `pthread_key_delete()`.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_key_delete(__gthread_key_t __key)
@@ -89,7 +90,7 @@ __MCF_ALT_SYM(__MCF_gthr_key_delete, __gthread_key_delete);
 #  define __MCF_gthr_key_delete  __gthread_key_delete
 #endif
 
-/* Gets a thread-specific value, like `pthread_getspecific()`.  */
+/** Gets a thread-specific value, like `pthread_getspecific()`.  */
 __MCF_GTHR_IMPORT __MCF_FN_PURE
 void*
 __MCF_gthr_getspecific(__gthread_key_t __key)
@@ -100,7 +101,7 @@ __MCF_ALT_SYM(__MCF_gthr_getspecific, __gthread_getspecific);
 #  define __MCF_gthr_getspecific  __gthread_getspecific
 #endif
 
-/* Sets a thread-specific value, like `pthread_setspecific()`.  */
+/** Sets a thread-specific value, like `pthread_setspecific()`.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_setspecific(__gthread_key_t __key, const void* __val_opt)
@@ -111,7 +112,7 @@ __MCF_ALT_SYM(__MCF_gthr_setspecific, __gthread_setspecific);
 #  define __MCF_gthr_setspecific  __gthread_setspecific
 #endif
 
-/* Initializes a mutex, like `pthread_mutex_init()`.  */
+/** Initializes a mutex, like `pthread_mutex_init()`.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_mutex_init(__gthread_mutex_t* __mtx)
@@ -122,7 +123,7 @@ __MCF_ALT_SYM(__MCF_gthr_mutex_init, __gthread_mutex_init);
 #  define __MCF_gthr_mutex_init  __gthread_mutex_init
 #endif
 
-/* Destroys a mutex. This function does nothing.  */
+/** Destroys a mutex. This function does nothing.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_mutex_destroy(__gthread_mutex_t* __mtx)
@@ -133,7 +134,7 @@ __MCF_ALT_SYM(__MCF_gthr_mutex_destroy, __gthread_mutex_destroy);
 #  define __MCF_gthr_mutex_destroy  __gthread_mutex_destroy
 #endif
 
-/* Locks a mutex, like `pthread_mutex_lock()`.  */
+/** Locks a mutex, like `pthread_mutex_lock()`.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_mutex_lock(__gthread_mutex_t* __mtx)
@@ -144,7 +145,7 @@ __MCF_ALT_SYM(__MCF_gthr_mutex_lock, __gthread_mutex_lock);
 #  define __MCF_gthr_mutex_lock  __gthread_mutex_lock
 #endif
 
-/* Tries locking a mutex without blocking, like `pthread_mutex_trylock()`.  */
+/** Tries locking a mutex without blocking, like `pthread_mutex_trylock()`.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_mutex_trylock(__gthread_mutex_t* __mtx)
@@ -155,7 +156,7 @@ __MCF_ALT_SYM(__MCF_gthr_mutex_trylock, __gthread_mutex_trylock);
 #  define __MCF_gthr_mutex_trylock  __gthread_mutex_trylock
 #endif
 
-/* Tries locking a mutex until a time point, like `pthread_mutex_timedlock()`.  */
+/** Tries locking a mutex until a time point, like `pthread_mutex_timedlock()`.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_mutex_timedlock(__gthread_mutex_t* __mtx, const __gthread_time_t* __abs_time)
@@ -166,7 +167,7 @@ __MCF_ALT_SYM(__MCF_gthr_mutex_timedlock, __gthread_mutex_timedlock);
 #  define __MCF_gthr_mutex_timedlock  __gthread_mutex_timedlock
 #endif
 
-/* Unlocks a mutex, like `pthread_mutex_unlock()`.  */
+/** Unlocks a mutex, like `pthread_mutex_unlock()`.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_mutex_unlock(__gthread_mutex_t* __mtx)
@@ -177,7 +178,7 @@ __MCF_ALT_SYM(__MCF_gthr_mutex_unlock, __gthread_mutex_unlock);
 #  define __MCF_gthr_mutex_unlock  __gthread_mutex_unlock
 #endif
 
-/* Initializes a recursive mutex, like `pthread_mutex_init()`.  */
+/** Initializes a recursive mutex, like `pthread_mutex_init()`.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_recursive_mutex_init(__gthread_recursive_mutex_t* __rmtx)
@@ -188,7 +189,7 @@ __MCF_ALT_SYM(__MCF_gthr_recursive_mutex_init, __gthread_recursive_mutex_init);
 #  define __MCF_gthr_recursive_mutex_init  __gthread_recursive_mutex_init
 #endif
 
-/* Destroys a recursive mutex. This function does nothing.  */
+/** Destroys a recursive mutex. This function does nothing.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_recursive_mutex_destroy(__gthread_recursive_mutex_t* __rmtx)
@@ -199,7 +200,7 @@ __MCF_ALT_SYM(__MCF_gthr_recursive_mutex_destroy, __gthread_recursive_mutex_dest
 #  define __MCF_gthr_recursive_mutex_destroy  __gthread_recursive_mutex_destroy
 #endif
 
-/* Locks a recursive mutex, like `pthread_mutex_lock()`.  */
+/** Locks a recursive mutex, like `pthread_mutex_lock()`.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_recursive_mutex_lock(__gthread_recursive_mutex_t* __rmtx)
@@ -210,7 +211,7 @@ __MCF_ALT_SYM(__MCF_gthr_recursive_mutex_lock, __gthread_recursive_mutex_lock);
 #  define __MCF_gthr_recursive_mutex_lock  __gthread_recursive_mutex_lock
 #endif
 
-/* Tries locking a recursive mutex without blocking, like
+/** Tries locking a recursive mutex without blocking, like
  * `pthread_mutex_trylock()`.  */
 __MCF_GTHR_IMPORT
 int
@@ -222,7 +223,7 @@ __MCF_ALT_SYM(__MCF_gthr_recursive_mutex_trylock, __gthread_recursive_mutex_tryl
 #  define __MCF_gthr_recursive_mutex_trylock  __gthread_recursive_mutex_trylock
 #endif
 
-/* Tries locking a recursive mutex until a time point, like
+/** Tries locking a recursive mutex until a time point, like
  * `pthread_mutex_timedlock()`.  */
 __MCF_GTHR_IMPORT
 int
@@ -235,7 +236,7 @@ __MCF_ALT_SYM(__MCF_gthr_recursive_mutex_timedlock, __gthread_recursive_mutex_ti
 #  define __MCF_gthr_recursive_mutex_timedlock  __gthread_recursive_mutex_timedlock
 #endif
 
-/* Unlocks a recursive mutex, like `pthread_mutex_unlock()`.  */
+/** Unlocks a recursive mutex, like `pthread_mutex_unlock()`.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx)
@@ -246,7 +247,7 @@ __MCF_ALT_SYM(__MCF_gthr_recursive_mutex_unlock, __gthread_recursive_mutex_unloc
 #  define __MCF_gthr_recursive_mutex_unlock  __gthread_recursive_mutex_unlock
 #endif
 
-/* Initializes a condition variable, like `pthread_cond_init()`.
+/** Initializes a condition variable, like `pthread_cond_init()`.
  * This function exists not in GCC's 'gthr.h' but in 'gthr-posix.h'.  */
 __MCF_GTHR_IMPORT
 int
@@ -258,7 +259,7 @@ __MCF_ALT_SYM(__MCF_gthr_cond_init, __gthread_cond_init);
 #  define __MCF_gthr_cond_init  __gthread_cond_init
 #endif
 
-/* Destroys a condition variable. This function does nothing.
+/** Destroys a condition variable. This function does nothing.
  * This function exists not in GCC's 'gthr.h' but in 'gthr-posix.h'.  */
 __MCF_GTHR_IMPORT
 int
@@ -270,7 +271,7 @@ __MCF_ALT_SYM(__MCF_gthr_cond_destroy, __gthread_cond_destroy);
 #  define __MCF_gthr_cond_destroy  __gthread_cond_destroy
 #endif
 
-/* Waits for a condition variable, like `pthread_cond_wait()`.  */
+/** Waits for a condition variable, like `pthread_cond_wait()`.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_cond_wait(__gthread_cond_t* __cnd, __gthread_mutex_t* __mtx)
@@ -281,7 +282,7 @@ __MCF_ALT_SYM(__MCF_gthr_cond_wait, __gthread_cond_wait);
 #  define __MCF_gthr_cond_wait  __gthread_cond_wait
 #endif
 
-/* Waits for a condition variable, like `pthread_cond_wait()`.  */
+/** Waits for a condition variable, like `pthread_cond_wait()`.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_cond_wait_recursive(__gthread_cond_t* __cnd, __gthread_recursive_mutex_t* __rmtx)
@@ -292,7 +293,7 @@ __MCF_ALT_SYM(__MCF_gthr_cond_wait_recursive, __gthread_cond_wait_recursive);
 #  define __MCF_gthr_cond_wait_recursive  __gthread_cond_wait_recursive
 #endif
 
-/* Waits for a condition variable until a time point, like
+/** Waits for a condition variable until a time point, like
  * `pthread_cond_timedwait()`.  */
 __MCF_GTHR_IMPORT
 int
@@ -305,7 +306,7 @@ __MCF_ALT_SYM(__MCF_gthr_cond_timedwait, __gthread_cond_timedwait);
 #  define __MCF_gthr_cond_timedwait  __gthread_cond_timedwait
 #endif
 
-/* Signals at most one thread that is waiting on the condition variable, like
+/** Signals at most one thread that is waiting on the condition variable, like
  * `pthread_cond_signal()`.  */
 __MCF_GTHR_IMPORT
 int
@@ -317,7 +318,7 @@ __MCF_ALT_SYM(__MCF_gthr_cond_signal, __gthread_cond_signal);
 #  define __MCF_gthr_cond_signal  __gthread_cond_signal
 #endif
 
-/* Signals all threads that are waiting on the condition variable, like
+/** Signals all threads that are waiting on the condition variable, like
  * `pthread_cond_broadcast()`.  */
 __MCF_GTHR_IMPORT
 int
@@ -329,7 +330,7 @@ __MCF_ALT_SYM(__MCF_gthr_cond_broadcast, __gthread_cond_broadcast);
 #  define __MCF_gthr_cond_broadcast  __gthread_cond_broadcast
 #endif
 
-/* Creates a thread, like `pthread_create()`.  */
+/** Creates a thread, like `pthread_create()`.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_create_v3(__gthread_t* __thrdp, __MCF_gthr_thread_fn* __proc, void* __arg)
@@ -340,7 +341,7 @@ __MCF_ALT_SYM(__MCF_gthr_create_v3, __gthread_create);
 #  define __MCF_gthr_create_v3  __gthread_create
 #endif
 
-/* Awaits a thread to terminate and gets its result, like `pthread_join()`.  */
+/** Awaits a thread to terminate and gets its result, like `pthread_join()`.  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_join_v3(__gthread_t __thrd, void** __resp_opt)
@@ -351,7 +352,7 @@ __MCF_ALT_SYM(__MCF_gthr_join_v3, __gthread_join);
 #  define __MCF_gthr_join_v3  __gthread_join
 #endif
 
-/* Detaches a thread, like `pthread_detach()`  */
+/** Detaches a thread, like `pthread_detach()`  */
 __MCF_GTHR_IMPORT
 int
 __MCF_gthr_detach(__gthread_t __thrd)
@@ -362,7 +363,7 @@ __MCF_ALT_SYM(__MCF_gthr_detach, __gthread_detach);
 #  define __MCF_gthr_detach  __gthread_detach
 #endif
 
-/* Gets a thread itself, like `pthread_self()`.
+/** Gets a thread itself, like `pthread_self()`.
  * The thread shall be the main thread, or shall have been created by
  * `__gthread_create()`. Otherwise the behavior is undefined.  */
 __MCF_GTHR_IMPORT __MCF_FN_CONST
@@ -375,7 +376,7 @@ __MCF_ALT_SYM(__MCF_gthr_self, __gthread_self);
 #  define __MCF_gthr_self  __gthread_self
 #endif
 
-/* Checks whether two thread IDs compare equal, like `pthread_equal()`.  */
+/** Checks whether two thread IDs compare equal, like `pthread_equal()`.  */
 __MCF_GTHR_IMPORT __MCF_FN_CONST
 int
 __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2)
@@ -386,7 +387,7 @@ __MCF_ALT_SYM(__MCF_gthr_equal, __gthread_equal);
 #  define __MCF_gthr_equal  __gthread_equal
 #endif
 
-/* Gives up the current time slice, like `sched_yield()`.  */
+/** Gives up the current time slice, like `sched_yield()`.  */
 __MCF_GTHR_IMPORT
 void
 __MCF_gthr_yield(void)
@@ -397,7 +398,7 @@ __MCF_ALT_SYM(__MCF_gthr_yield, __gthread_yield);
 #  define __MCF_gthr_yield  __gthread_yield
 #endif
 
-/* Define inline functions after all declarations.
+/** Define inline functions after all declarations.
  *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++

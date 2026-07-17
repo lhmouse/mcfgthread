@@ -16,7 +16,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_EXIT_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* N1570 ISO/IEC 9899:201x
+/** N1570 ISO/IEC 9899:201x
  * 7.22.4 Communication with the environment
  * 7.22.4.5 The _Exit function  */
 __MCF_EXIT_IMPORT __MCF_NEVER_RETURN
@@ -24,13 +24,13 @@ void
 __MCF__Exit(int __status)
   __MCF_noexcept;
 
-/* 7.22.4.7 The quick_exit function  */
+/** 7.22.4.7 The quick_exit function  */
 __MCF_EXIT_IMPORT __MCF_NEVER_RETURN
 void
 __MCF_quick_exit(int __status)
   __MCF_noexcept;
 
-/* 7.22.4.4 The exit function  */
+/** 7.22.4.4 The exit function  */
 __MCF_EXIT_IMPORT __MCF_NEVER_RETURN
 void
 __MCF_exit(int __status)

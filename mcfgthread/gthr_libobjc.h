@@ -20,7 +20,7 @@ __MCF_CXX(extern "C" {)
 #ifdef _LIBOBJC
 #  include <objc/thr.h>
 #else
-/* These are copied from <objc/thr.h> which seems a public header. These
+/** These are copied from <objc/thr.h> which seems a public header. These
  * types have not been updated for more than a decade, so might be stable
  * after all.  */
 typedef void* objc_thread_t;
@@ -40,7 +40,7 @@ struct objc_condition
   };
 #endif
 
-/* Initialize the threads subsystem.  */
+/** Initialize the threads subsystem.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_init_thread_system(void)
@@ -51,7 +51,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_init_thread_system, __gthread_objc_init_thread_sys
 #  define __MCF_gthr_objc_init_thread_system  __gthread_objc_init_thread_system
 #endif
 
-/* Close the threads subsystem.  */
+/** Close the threads subsystem.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_close_thread_system(void)
@@ -62,7 +62,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_close_thread_system, __gthread_objc_close_thread_s
 #  define __MCF_gthr_objc_close_thread_system  __gthread_objc_close_thread_system
 #endif
 
-/* Allocate a mutex.  */
+/** Allocate a mutex.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_mutex_allocate(objc_mutex_t __objc_mtx)
@@ -73,7 +73,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_mutex_allocate, __gthread_objc_mutex_allocate);
 #  define __MCF_gthr_objc_mutex_allocate  __gthread_objc_mutex_allocate
 #endif
 
-/* Deallocate a mutex.  */
+/** Deallocate a mutex.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_mutex_deallocate(objc_mutex_t __objc_mtx)
@@ -84,7 +84,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_mutex_deallocate, __gthread_objc_mutex_deallocate)
 #  define __MCF_gthr_objc_mutex_deallocate  __gthread_objc_mutex_deallocate
 #endif
 
-/* Grab a lock on a mutex.  */
+/** Grab a lock on a mutex.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_mutex_lock(objc_mutex_t __objc_mtx)
@@ -95,7 +95,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_mutex_lock, __gthread_objc_mutex_lock);
 #  define __MCF_gthr_objc_mutex_lock  __gthread_objc_mutex_lock
 #endif
 
-/* Try grabbing a lock on a mutex.  */
+/** Try grabbing a lock on a mutex.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_mutex_trylock(objc_mutex_t __objc_mtx)
@@ -106,7 +106,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_mutex_trylock, __gthread_objc_mutex_trylock);
 #  define __MCF_gthr_objc_mutex_trylock  __gthread_objc_mutex_trylock
 #endif
 
-/* Unlock the mutex.  */
+/** Unlock the mutex.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_mutex_unlock(objc_mutex_t __objc_mtx)
@@ -117,7 +117,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_mutex_unlock, __gthread_objc_mutex_unlock);
 #  define __MCF_gthr_objc_mutex_unlock  __gthread_objc_mutex_unlock
 #endif
 
-/* Allocate a condition.  */
+/** Allocate a condition.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_condition_allocate(objc_condition_t __objc_cnd)
@@ -128,7 +128,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_condition_allocate, __gthread_objc_condition_alloc
 #  define __MCF_gthr_objc_condition_allocate  __gthread_objc_condition_allocate
 #endif
 
-/* Deallocate a condition.  */
+/** Deallocate a condition.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_condition_deallocate(objc_condition_t __objc_cnd)
@@ -139,7 +139,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_condition_deallocate, __gthread_objc_condition_dea
 #  define __MCF_gthr_objc_condition_deallocate  __gthread_objc_condition_deallocate
 #endif
 
-/* Wait on the condition.  */
+/** Wait on the condition.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_condition_wait(objc_condition_t __objc_cnd, objc_mutex_t __objc_mtx)
@@ -150,7 +150,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_condition_wait, __gthread_objc_condition_wait);
 #  define __MCF_gthr_objc_condition_wait  __gthread_objc_condition_wait
 #endif
 
-/* Wake up one thread waiting on this condition.  */
+/** Wake up one thread waiting on this condition.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_condition_signal(objc_condition_t __objc_cnd)
@@ -161,7 +161,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_condition_signal, __gthread_objc_condition_signal)
 #  define __MCF_gthr_objc_condition_signal  __gthread_objc_condition_signal
 #endif
 
-/* Wake up all threads waiting on this condition.  */
+/** Wake up all threads waiting on this condition.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_condition_broadcast(objc_condition_t __objc_cnd)
@@ -172,7 +172,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_condition_broadcast, __gthread_objc_condition_broa
 #  define __MCF_gthr_objc_condition_broadcast  __gthread_objc_condition_broadcast
 #endif
 
-/* Create a new thread of execution.
+/** Create a new thread of execution.
  * This function creates a detached thread.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 objc_thread_t
@@ -184,7 +184,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_thread_detach, __gthread_objc_thread_detach);
 #  define __MCF_gthr_objc_thread_detach  __gthread_objc_thread_detach
 #endif
 
-/* Set the current thread's priority.  */
+/** Set the current thread's priority.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_thread_set_priority(int __priority)
@@ -195,7 +195,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_thread_set_priority, __gthread_objc_thread_set_pri
 #  define __MCF_gthr_objc_thread_set_priority  __gthread_objc_thread_set_priority
 #endif
 
-/* Return the current thread's priority.  */
+/** Return the current thread's priority.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_thread_get_priority(void)
@@ -206,7 +206,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_thread_get_priority, __gthread_objc_thread_get_pri
 #  define __MCF_gthr_objc_thread_get_priority  __gthread_objc_thread_get_priority
 #endif
 
-/* Yield our process time to another thread.  */
+/** Yield our process time to another thread.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 void
 __MCF_gthr_objc_thread_yield(void)
@@ -217,7 +217,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_thread_yield, __gthread_objc_thread_yield);
 #  define __MCF_gthr_objc_thread_yield  __gthread_objc_thread_yield
 #endif
 
-/* Terminate the current thread.  */
+/** Terminate the current thread.  */
 __MCF_GTHR_LIBOBJC_IMPORT __MCF_NEVER_RETURN
 int
 __MCF_gthr_objc_thread_exit(void)
@@ -228,7 +228,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_thread_exit, __gthread_objc_thread_exit);
 #  define __MCF_gthr_objc_thread_exit  __gthread_objc_thread_exit
 #endif
 
-/* Returns an integer value which uniquely describes a thread.  */
+/** Returns an integer value which uniquely describes a thread.  */
 __MCF_GTHR_LIBOBJC_IMPORT __MCF_FN_CONST
 objc_thread_t
 __MCF_gthr_objc_thread_id(void)
@@ -239,7 +239,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_thread_id, __gthread_objc_thread_id);
 #  define __MCF_gthr_objc_thread_id  __gthread_objc_thread_id
 #endif
 
-/* Returns the thread's local storage pointer.  */
+/** Returns the thread's local storage pointer.  */
 __MCF_GTHR_LIBOBJC_IMPORT __MCF_FN_PURE
 void*
 __MCF_gthr_objc_thread_get_data(void)
@@ -250,7 +250,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_thread_get_data, __gthread_objc_thread_get_data);
 #  define __MCF_gthr_objc_thread_get_data  __gthread_objc_thread_get_data
 #endif
 
-/* Sets the thread's local storage pointer.  */
+/** Sets the thread's local storage pointer.  */
 __MCF_GTHR_LIBOBJC_IMPORT
 int
 __MCF_gthr_objc_thread_set_data(void* __value)
@@ -261,7 +261,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_thread_set_data, __gthread_objc_thread_set_data);
 #  define __MCF_gthr_objc_thread_set_data  __gthread_objc_thread_set_data
 #endif
 
-/* Define inline functions after all declarations.
+/** Define inline functions after all declarations.
  *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++

@@ -17,7 +17,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_CPU_COLLECTION_INLINE  __MCF_GNU_INLINE
 #endif
 
-/* This structure describes one logical CPU in a CPU collection.  */
+/** This structure describes one logical CPU in a CPU collection.  */
 struct __MCF_cpu_element
   {
     uint32_t __id;  /* CPU identifier; read-only  */
@@ -29,7 +29,7 @@ struct __MCF_cpu_element
     uint16_t __reserved_x2;
   };
 
-/* This is the header of a CPU collection object that is allocated by
+/** This is the header of a CPU collection object that is allocated by
  * `_MCF_cpu_collection_new()`. More elements may follow `__data`.  */
 struct __MCF_cpu_collection
   {
@@ -38,7 +38,7 @@ struct __MCF_cpu_collection
     __MCF_cpu_element __data[1];
   };
 
-/* Allocates a collection of all active CPUs.
+/** Allocates a collection of all active CPUs.
  *
  * On modern versions of Windows where CPU Set APIs are available, this function
  * returns all active CPUs on the system; otherwise, only active CPUs in the
@@ -56,7 +56,7 @@ _MCF_cpu_collection*
 _MCF_cpu_collection_new(void)
   __MCF_noexcept;
 
-/* Allocates a copy of an existing CPU collection.
+/** Allocates a copy of an existing CPU collection.
  *
  * The caller shall call `_MCF_cpu_collection_drop_ref()` to deallocate the CPU
  * collection when it is no longer needed.
@@ -69,7 +69,7 @@ _MCF_cpu_collection*
 _MCF_cpu_collection_new_copy(const _MCF_cpu_collection* __src)
   __MCF_noexcept;
 
-/* Gets the reference count of a CPU collection.
+/** Gets the reference count of a CPU collection.
  *
  * @param `coll` shall point to a CPU collection.
  * @returns the reference count of the CPU collection.  */
@@ -78,7 +78,7 @@ int32_t
 _MCF_cpu_collection_get_ref(const _MCF_cpu_collection* __coll)
   __MCF_noexcept;
 
-/* Increments the reference count of a CPU collection.
+/** Increments the reference count of a CPU collection.
  *
  * @param `coll` shall point to a CPU collection.
  * @returns nothing.  */
@@ -87,7 +87,7 @@ void
 _MCF_cpu_collection_add_ref(_MCF_cpu_collection* __coll)
   __MCF_noexcept;
 
-/* Decrements the reference count of a CPU collection, and if it is reduced to
+/** Decrements the reference count of a CPU collection, and if it is reduced to
  * zero, deallocates the CPU collection.
  *
  * @param `coll` shall point to a CPU collection.
@@ -97,7 +97,7 @@ void
 _MCF_cpu_collection_drop_ref_nonnull(_MCF_cpu_collection* __coll)
   __MCF_noexcept;
 
-/* Decrements the reference count of a CPU collection, and if it is reduced to
+/** Decrements the reference count of a CPU collection, and if it is reduced to
  * zero, deallocates the CPU collection.
  *
  * This function does nothing if `coll_opt` is a null pointer.
@@ -109,7 +109,7 @@ void
 _MCF_cpu_collection_drop_ref(_MCF_cpu_collection* __coll_opt)
   __MCF_noexcept;
 
-/* Gets the number of CPUs in a collection.
+/** Gets the number of CPUs in a collection.
  *
  * @param `coll` shall point to a CPU collection.
  * @returns the number of CPUs in the CPU collection.  */
@@ -118,7 +118,7 @@ uint32_t
 _MCF_cpu_collection_get_size(const _MCF_cpu_collection* __coll)
   __MCF_noexcept;
 
-/* Gets the identifier of the CPU at `index` in the collection.
+/** Gets the identifier of the CPU at `index` in the collection.
  *
  * @param `coll` shall point to a CPU collection.
  * @param `index` shall be a valid index to a CPU in the collection.
@@ -128,7 +128,7 @@ uint32_t
 _MCF_cpu_collection_get_id_by_index(const _MCF_cpu_collection* __coll, uint32_t __index)
   __MCF_noexcept;
 
-/* Gets the processor group of the CPU at `index` in the collection.
+/** Gets the processor group of the CPU at `index` in the collection.
  *
  * @param `coll` shall point to a CPU collection.
  * @param `index` shall be a valid index to a CPU in the collection.
@@ -138,7 +138,7 @@ uint32_t
 _MCF_cpu_collection_get_group_by_index(const _MCF_cpu_collection* __coll, uint32_t __index)
   __MCF_noexcept;
 
-/* Gets the physical core identifier of the CPU at `index` in the collection.
+/** Gets the physical core identifier of the CPU at `index` in the collection.
  *
  * This value is calculated as `__group * 256 + __core_idx`.
  *
@@ -150,7 +150,7 @@ uint32_t
 _MCF_cpu_collection_get_core_by_index(const _MCF_cpu_collection* __coll, uint32_t __index)
   __MCF_noexcept;
 
-/* Gets the efficiency class of the CPU at `index` in the collection.
+/** Gets the efficiency class of the CPU at `index` in the collection.
  *
  * This value is a copy of `PROCESSOR_RELATIONSHIP::EfficiencyClass`. Typically,
  * it is 1 for Intel P-cores or ARM big cores, and 0 for Intel E-cores or ARM
@@ -164,7 +164,7 @@ uint32_t
 _MCF_cpu_collection_get_efficiency_class_by_index(const _MCF_cpu_collection* __coll, uint32_t __index)
   __MCF_noexcept;
 
-/* Gets the scheduling class of the CPU at `index` in the collection.
+/** Gets the scheduling class of the CPU at `index` in the collection.
  *
  * This value is a copy of `SYSTEM_CPU_SET_INFORMATION::CpuSet.SchedulingClass`.
  *
@@ -176,7 +176,7 @@ uint32_t
 _MCF_cpu_collection_get_scheduling_class_by_index(const _MCF_cpu_collection* __coll, uint32_t __index)
   __MCF_noexcept;
 
-/* Gets the selection state of the CPU at `index` in the collection.
+/** Gets the selection state of the CPU at `index` in the collection.
  *
  * @param `coll` shall point to a CPU collection.
  * @param `index` shall be a valid index to a CPU in the collection.
@@ -186,7 +186,7 @@ bool
 _MCF_cpu_collection_get_selection_by_index(const _MCF_cpu_collection* __coll, uint32_t __index)
   __MCF_noexcept;
 
-/* Selects or deselects the CPU at `index` in the collection.
+/** Selects or deselects the CPU at `index` in the collection.
  *
  * @param `coll` shall point to a CPU collection.
  * @param `index` shall be a valid index to a CPU in the collection.
@@ -199,7 +199,7 @@ _MCF_cpu_collection_set_selection_by_index(_MCF_cpu_collection* __coll, uint32_t
                                            bool __selected)
   __MCF_noexcept;
 
-/* Selects or deselects all CPUs in the collection.
+/** Selects or deselects all CPUs in the collection.
  *
  * @param `coll` shall point to a CPU collection.
  * @param `selected` specifies whether the CPUs are to be selected. If this
@@ -210,7 +210,7 @@ void
 _MCF_cpu_collection_set_all_selections(_MCF_cpu_collection* __coll, bool __selected)
   __MCF_noexcept;
 
-/* Finds a CPU by its identifier in the collection.
+/** Finds a CPU by its identifier in the collection.
  *
  * @param `coll` shall point to a CPU collection.
  * @param `id` is the identifier of the CPU to find.
@@ -221,7 +221,7 @@ uint32_t
 _MCF_cpu_collection_find(const _MCF_cpu_collection* __coll, uint32_t __id)
   __MCF_noexcept;
 
-/* Gets the processor group of a CPU by its identifier in the collection.
+/** Gets the processor group of a CPU by its identifier in the collection.
  *
  * @param `coll` shall point to a CPU collection.
  * @param `id` is the identifier of the CPU to find.
@@ -232,7 +232,7 @@ uint32_t
 _MCF_cpu_collection_get_group(const _MCF_cpu_collection* __coll, uint32_t __id)
   __MCF_noexcept;
 
-/* Gets the physical core identifier of a CPU by its identifier in the
+/** Gets the physical core identifier of a CPU by its identifier in the
  * collection.
  *
  * This value is calculated as `__group * 256 + __core_idx`.
@@ -246,7 +246,7 @@ uint32_t
 _MCF_cpu_collection_get_core(const _MCF_cpu_collection* __coll, uint32_t __id)
   __MCF_noexcept;
 
-/* Gets the efficiency class of a CPU by its identifier in the collection.
+/** Gets the efficiency class of a CPU by its identifier in the collection.
  *
  * This value is a copy of `PROCESSOR_RELATIONSHIP::EfficiencyClass`. Typically,
  * it is 1 for Intel P-cores or ARM big cores, and 0 for Intel E-cores or ARM
@@ -261,7 +261,7 @@ uint32_t
 _MCF_cpu_collection_get_efficiency_class(const _MCF_cpu_collection* __coll, uint32_t __id)
   __MCF_noexcept;
 
-/* Gets the scheduling class of a CPU by its identifier in the collection.
+/** Gets the scheduling class of a CPU by its identifier in the collection.
  *
  * This value is a copy of `SYSTEM_CPU_SET_INFORMATION::CpuSet.SchedulingClass`.
  *
@@ -274,7 +274,7 @@ uint32_t
 _MCF_cpu_collection_get_scheduling_class(const _MCF_cpu_collection* __coll, uint32_t __id)
   __MCF_noexcept;
 
-/* Gets the selection state of a CPU by its identifier in the collection.
+/** Gets the selection state of a CPU by its identifier in the collection.
  *
  * @param `coll` shall point to a CPU collection.
  * @param `id` is the identifier of the CPU to find.
@@ -284,7 +284,7 @@ bool
 _MCF_cpu_collection_get_selection(const _MCF_cpu_collection* __coll, uint32_t __id)
   __MCF_noexcept;
 
-/* Selects or deselects a CPU by its identifier in the collection.
+/** Selects or deselects a CPU by its identifier in the collection.
  *
  * @param `coll` shall point to a CPU collection.
  * @param `id` is the identifier of the CPU to find.
@@ -298,7 +298,7 @@ int
 _MCF_cpu_collection_set_selection(_MCF_cpu_collection* __coll, uint32_t __id, bool __selected)
   __MCF_noexcept;
 
-/* Define inline functions after all declarations.
+/** Define inline functions after all declarations.
  *
  * We would like to keep them away from declarations for conciseness, which also
  * matches the disposition of non-inline functions. Note that however, unlike C++
