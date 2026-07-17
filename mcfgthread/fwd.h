@@ -117,6 +117,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_XGLOBALS_READONLY   const
 #endif
 
+/** Define preprocessor utilities.  */
 #define __MCF_S_(...)     #__VA_ARGS__
 #define __MCF_S(...)       __MCF_S_(__VA_ARGS__)
 #define __MCF_C2_(x, y)     x##y
