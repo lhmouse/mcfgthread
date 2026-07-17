@@ -459,7 +459,6 @@ __MCF_run_static_dtors(_MCF_mutex* mtx, __MCF_dtor_queue* queue, void* dso)
   {
     __MCF_USING_SEH_HANDLER(__MCF_seh_top);
     __MCF_dtor_element elem;
-
     while(do_pop_dtor(&elem, mtx, queue, dso) == 0)
       __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
   }
