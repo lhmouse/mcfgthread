@@ -196,7 +196,11 @@ __MCF_CXX(extern "C" {)
 #  endif
 #endif
 
-/** Terminates the current process abnormally.
+/** Displays an error message and terminates the current process abnormally.
+ *
+ * This function composes a message from its argument and the Windows last error
+ * code, and displays it to the user. After the message box (if any) is closed,
+ * this function terminates the current process without returning.
  *
  * @param `where` should be a function name which will be included in the error
  *     message to display to the user.
