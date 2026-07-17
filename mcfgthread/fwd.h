@@ -196,6 +196,22 @@ __MCF_CXX(extern "C" {)
 #  endif
 #endif
 
+/** Terminates the current process abnormally.
+ *
+ * @param `where` should be a function name which will be included in the error
+ *     message to display to the user.
+ * @since 1.0  */
+__MCF_XGLOBALS_IMPORT __MCF_NEVER_RETURN __MCF_FN_COLD
+void
+__MCF_runtime_failure(const char* __where)
+  __MCF_noexcept;
+
+/** For debug builds, just hard-fail.  */
+#ifdef __MCF_DEBUG
+#  undef __MCF_UNREACHABLE
+#  define __MCF_UNREACHABLE   (__MCF_runtime_failure(__MCF_EX __func__))
+#endif
+
 /** These are necessary when the header is compiled as C89 or C++98. The check
  * for `_LP64` is for Cygwin and MSYS2.  */
 #ifdef _LP64
@@ -279,15 +295,7 @@ template<> struct __MCF_static_assert_helper<true> { static const int __one = 1;
 /** The `__MCF_ASSERT()` and `__MCF_CHECK()` macros perform run-time checks. If
  * an argument yields false, `__MCF_ASSERT()` results in undefined behavior,
  * and `__MCF_CHECK()` effects abnormal termination of the current program.  */
-__MCF_XGLOBALS_IMPORT __MCF_NEVER_RETURN __MCF_FN_COLD
-void
-__MCF_runtime_failure(const char* __where)
-  __MCF_noexcept;
 
-#ifdef __MCF_DEBUG
-#  undef __MCF_UNREACHABLE
-#  define __MCF_UNREACHABLE   (__MCF_runtime_failure(__MCF_EX __func__))
-#endif
 
 #define __MCF_ASSERT(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
 #define __MCF_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__MCF_EX __func__))
