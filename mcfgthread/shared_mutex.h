@@ -34,7 +34,8 @@ struct __MCF_shared_mutex
  * Static ones should be initialized with `{0}`, like other structs.
  *
  * @param `smtx` points to the shared mutex to initialize.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.9  */
 __MCF_SHARED_MUTEX_INLINE
 void
 _MCF_shared_mutex_init(_MCF_shared_mutex* __smtx)
@@ -57,7 +58,8 @@ _MCF_shared_mutex_init(_MCF_shared_mutex* __smtx)
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
  * @returns 0 if the shared mutex has been successfully locked in shared mode,
- *     or -1 if the operation has timed out.  */
+ *     or -1 if the operation has timed out.
+ * @since 1.9  */
 __MCF_SHARED_MUTEX_IMPORT
 int
 _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
@@ -84,7 +86,8 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* __smtx, const int64_t* __t
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
  * @returns 0 if the shared mutex has been successfully locked in shared mode,
- *     or -1 if the operation has timed out.  */
+ *     or -1 if the operation has timed out.
+ * @since 1.9  */
 __MCF_SHARED_MUTEX_INLINE
 int
 _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
@@ -106,7 +109,8 @@ _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smtx, const int64_t* __timeou
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
  * @returns 0 if the shared mutex has been successfully locked in exclusive
- *     mode, or -1 if the operation has timed out.  */
+ *     mode, or -1 if the operation has timed out.
+ * @since 1.9  */
 __MCF_SHARED_MUTEX_IMPORT
 int
 _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
@@ -132,7 +136,8 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* __smtx, const int64_t* 
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
  * @returns 0 if the shared mutex has been successfully locked in exclusive
- *     mode, or -1 if the operation has timed out.  */
+ *     mode, or -1 if the operation has timed out.
+ * @since 1.9  */
 __MCF_SHARED_MUTEX_INLINE
 int
 _MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smtx, const int64_t* __timeout_opt)
@@ -145,7 +150,8 @@ _MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smtx, const int64_t* __tim
  * from which it locked the same shared mutex.
  *
  * @param `smtx` points to the shared mutex to unlock.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.9  */
 __MCF_SHARED_MUTEX_IMPORT
 void
 _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* __smtx)
@@ -162,7 +168,8 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* __smtx)
  * one thread.
  *
  * @param `smtx` points to the shared mutex to unlock.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.9  */
 __MCF_SHARED_MUTEX_INLINE
 void
 _MCF_shared_mutex_unlock(_MCF_shared_mutex* __smtx)

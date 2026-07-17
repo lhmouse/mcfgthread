@@ -93,7 +93,8 @@ enum __MCF_thread_priority __MCF_CXX11(: int)
  *     user-defined data will be allocated.
  * @returns a pointer to the new thread control structure. If a thread cannot be
  *     created, a null pointer is returned and an error code can be obtained via
- *     `_MCF_get_win32_error()`.  */
+ *     `_MCF_get_win32_error()`.
+ * @since 2.5  */
 __MCF_THREAD_IMPORT
 _MCF_thread*
 _MCF_thread_p_new(_MCF_thread** __thrdp_opt, size_t __stack_size, _MCF_thread_procedure* __proc,
@@ -120,7 +121,8 @@ _MCF_thread_p_new(_MCF_thread** __thrdp_opt, size_t __stack_size, _MCF_thread_pr
  *     user-defined data will be allocated.
  * @returns a pointer to the new thread control structure. If a thread cannot be
  *     created, a null pointer is returned and an error code can be obtained via
- *     `_MCF_get_win32_error()`.  */
+ *     `_MCF_get_win32_error()`.
+ * @since 1.4  */
 __MCF_THREAD_INLINE
 _MCF_thread*
 _MCF_thread_new_aligned(_MCF_thread_procedure* __proc, size_t __data_alignment,
@@ -144,7 +146,8 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* __proc, size_t __data_alignment,
  *     user-defined data will be allocated.
  * @returns a pointer to the new thread control structure. If a thread cannot be
  *     created, a null pointer is returned and an error code can be obtained via
- *     `_MCF_get_win32_error()`.  */
+ *     `_MCF_get_win32_error()`.
+ * @since 1.0  */
 __MCF_THREAD_INLINE
 _MCF_thread*
 _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __data_size)
@@ -164,7 +167,8 @@ _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __
  * be created with `_MCF_thread_new()`.
  *
  * @param `thrd` is a pointer to a thread control structure to attach.
- * @returns `thrd`.  */
+ * @returns `thrd`.
+ * @since 1.5  */
 __MCF_THREAD_IMPORT
 _MCF_thread*
 __MCF_thread_attach_foreign(_MCF_thread* __thrd)
@@ -175,7 +179,8 @@ __MCF_thread_attach_foreign(_MCF_thread* __thrd)
  * If the thread does not have user-defined data, a null pointer is returned.
  *
  * @param `thrd` is a pointer to a thread control structure.
- * @returns a pointer to the user-defined data, or null if none exists.  */
+ * @returns a pointer to the user-defined data, or null if none exists.
+ * @since 1.0  */
 __MCF_THREAD_INLINE __MCF_FN_PURE
 __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd)
@@ -184,7 +189,8 @@ _MCF_thread_get_data(const _MCF_thread* __thrd)
 /** Gets the reference count of a thread.
  *
  * @param `thrd` shall point to a thread control structure.
- * @returns the reference count of the thread.  */
+ * @returns the reference count of the thread.
+ * @since 1.4  */
 __MCF_THREAD_INLINE __MCF_FN_PURE
 int32_t
 _MCF_thread_get_ref(const _MCF_thread* __thrd)
@@ -193,7 +199,8 @@ _MCF_thread_get_ref(const _MCF_thread* __thrd)
 /** Increments the reference count of a thread.
  *
  * @param `thrd` shall point to a thread control structure.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.0  */
 __MCF_THREAD_INLINE
 void
 _MCF_thread_add_ref(_MCF_thread* __thrd)
@@ -203,7 +210,8 @@ _MCF_thread_add_ref(_MCF_thread* __thrd)
  * deallocates the thread control structure.
  *
  * @param `thrd` shall point to a thread control structure.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.0  */
 __MCF_THREAD_IMPORT
 void
 _MCF_thread_drop_ref_nonnull(_MCF_thread* __thrd)
@@ -215,7 +223,8 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* __thrd)
  * This function does nothing if `thrd_opt` is a null pointer.
  *
  * @param `thrd_opt` is an optional pointer to a thread control structure.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.0  */
 __MCF_THREAD_INLINE
 void
 _MCF_thread_drop_ref(_MCF_thread* __thrd_opt)
@@ -224,7 +233,8 @@ _MCF_thread_drop_ref(_MCF_thread* __thrd_opt)
 /** Gets the identifier of a thread.
  *
  * @param `thrd` shall point to a thread control structure.
- * @returns the identifier of the thread.  */
+ * @returns the identifier of the thread.
+ * @since 1.0  */
 __MCF_THREAD_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
 uint32_t
 _MCF_thread_get_tid(const _MCF_thread* __thrd)
@@ -235,7 +245,8 @@ _MCF_thread_get_tid(const _MCF_thread* __thrd)
  * This is the Windows handle that is returned by `CreateThread()`.
  *
  * @param `thrd` shall point to a thread control structure.
- * @returns the handle of the thread.  */
+ * @returns the handle of the thread.
+ * @since 1.0  */
 __MCF_THREAD_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
 __MCF_HANDLE
 _MCF_thread_get_handle(const _MCF_thread* __thrd)
@@ -248,7 +259,8 @@ _MCF_thread_get_handle(const _MCF_thread* __thrd)
  *
  * This function does not return.
  *
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.0  */
 __MCF_THREAD_IMPORT __MCF_NEVER_RETURN
 void
 _MCF_thread_exit(void)
@@ -266,7 +278,8 @@ _MCF_thread_exit(void)
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
  * @returns 0 if the thread has terminated, or -1 if the wait operation has
- *     timed out.  */
+ *     timed out.
+ * @since 1.0  */
 __MCF_THREAD_IMPORT
 int
 _MCF_thread_wait(const _MCF_thread* __thrd_opt, const int64_t* __timeout_opt)
@@ -277,7 +290,8 @@ _MCF_thread_wait(const _MCF_thread* __thrd_opt, const int64_t* __timeout_opt)
  * @param `thrd_opt` points to the thread to get the priority of. If it is null,
  *     the priority of the current thread is returned.
  * @returns the priority of the thread as an integer. No value has been reserved
- *     to indicate an error.  */
+ *     to indicate an error.
+ * @since 1.3  */
 __MCF_THREAD_IMPORT
 _MCF_thread_priority
 _MCF_thread_get_priority(const _MCF_thread* __thrd_opt)
@@ -291,7 +305,8 @@ _MCF_thread_get_priority(const _MCF_thread* __thrd_opt)
  *     integer within -15 and +15, but specifying an `_MCF_thread_priority_*`
  *     constant is recommended.
  * @returns 0 upon success, -1 in case of an invalid argument, or -2 in case of
- *     a system error which can be obtained via `_MCF_get_win32_error()`.  */
+ *     a system error which can be obtained via `_MCF_get_win32_error()`.
+ * @since 1.3  */
 __MCF_THREAD_IMPORT
 int
 _MCF_thread_set_priority(_MCF_thread* __thrd_opt, _MCF_thread_priority __priority)
@@ -303,7 +318,8 @@ _MCF_thread_set_priority(_MCF_thread* __thrd_opt, _MCF_thread_priority __priorit
  * created by `_MCF_thread_p_new()`, a thread control structure with no user data
  * is allocated and returned.
  *
- * @returns the control structure of the current thread.  */
+ * @returns the control structure of the current thread.
+ * @since 1.0  */
 __MCF_THREAD_IMPORT __MCF_FN_CONST
 _MCF_thread*
 _MCF_thread_self(void)
@@ -313,7 +329,8 @@ _MCF_thread_self(void)
  *
  * This is the same value that is returned by `GetCurrentThreadId()`.
  *
- * @returns the identifier of the current thread as an unsigned integer.  */
+ * @returns the identifier of the current thread as an unsigned integer.
+ * @since 1.0  */
 __MCF_THREAD_INLINE __MCF_FN_CONST
 uint32_t
 _MCF_thread_self_tid(void)
@@ -321,7 +338,8 @@ _MCF_thread_self_tid(void)
 
 /** Gives up the current time slice to other threads.
  *
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.0  */
 __MCF_THREAD_IMPORT
 void
 _MCF_yield(void)
@@ -338,7 +356,8 @@ _MCF_yield(void)
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
  * @returns 0 if the operation has timed out, or -1 if the operation was
- *     interrupted.  */
+ *     interrupted.
+ * @since 1.0  */
 __MCF_THREAD_IMPORT
 int
 _MCF_sleep(const int64_t* __timeout_opt)
@@ -354,7 +373,8 @@ _MCF_sleep(const int64_t* __timeout_opt)
  *     value of it denotes the number of milliseconds to wait. If it points to
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.3  */
 __MCF_THREAD_IMPORT
 void
 _MCF_sleep_noninterruptible(const int64_t* __timeout_opt)
@@ -366,8 +386,9 @@ _MCF_sleep_noninterruptible(const int64_t* __timeout_opt)
  *
  * @param `key` shall point to a thread-local key.
  * @returns the value associated with the key, or a null pointer if no such
- *    value has been set. If the key has been marked deleted, a null pointer is
- *    also returned. No return value is reserved to indicate an error.  */
+ *     value has been set. If the key has been marked deleted, a null pointer is
+ *     also returned. No return value is reserved to indicate an error.
+ * @since 1.0  */
 __MCF_THREAD_INLINE __MCF_FN_PURE
 void*
 _MCF_tls_get(const _MCF_tls_key* __key)
@@ -382,7 +403,8 @@ _MCF_tls_get(const _MCF_tls_key* __key)
  *     value will be stored.
  * @param `__value_opt` is the new value to associate with the key.
  * @returns 0 if the value has been set successfully, -1 if the key has been
- *     marked deleted, or -2 if out of memory.  */
+ *     marked deleted, or -2 if out of memory.
+ * @since 1.4  */
 __MCF_THREAD_INLINE
 int
 _MCF_tls_xset(_MCF_tls_key* __key, void** __old_value_opt, const void* __value_opt)
@@ -395,7 +417,8 @@ _MCF_tls_xset(_MCF_tls_key* __key, void** __old_value_opt, const void* __value_o
  * @param `key` shall point to a thread-local key.
  * @param `__value_opt` is the new value to associate with the key.
  * @returns 0 if the value has been set successfully, -1 if the key has been
- *     marked deleted, or -2 if out of memory.  */
+ *     marked deleted, or -2 if out of memory.
+ * @since 1.0  */
 __MCF_THREAD_INLINE
 int
 _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt)
@@ -410,7 +433,8 @@ _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt)
  *     the affinity of the current thread is returned.
  * @param `coll` points to a CPU collection where to set CPU selections.
  * @returns 0 upon success, -1 in case of an invalid argument, or -2 in case of
- *     a system error which can be obtained via `_MCF_get_win32_error()`.  */
+ *     a system error which can be obtained via `_MCF_get_win32_error()`.
+ * @since 2.5  */
 __MCF_THREAD_IMPORT
 int
 _MCF_thread_get_affinity(const _MCF_thread* __thrd_opt, _MCF_cpu_collection* __coll)
@@ -426,7 +450,8 @@ _MCF_thread_get_affinity(const _MCF_thread* __thrd_opt, _MCF_cpu_collection* __c
  *     the affinity of the current thread is changed.
  * @param `coll` points to a CPU collection where to set CPU selections.
  * @returns 0 upon success, -1 in case of an invalid argument, or -2 in case of
- *     a system error which can be obtained via `_MCF_get_win32_error()`.  */
+ *     a system error which can be obtained via `_MCF_get_win32_error()`.
+ * @since 2.5  */
 __MCF_THREAD_IMPORT
 int
 _MCF_thread_set_affinity(_MCF_thread* __thrd_opt, const _MCF_cpu_collection* __coll)

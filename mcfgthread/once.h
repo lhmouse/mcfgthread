@@ -34,7 +34,8 @@ struct __MCF_once
  * LOCKED and READY. An once-initialization flag is initialized to UNLOCKED.
  *
  * @param `once` points to the once-initialization flag to initialize.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.0  */
 __MCF_ONCE_INLINE
 void
 _MCF_once_init(_MCF_once* __once)
@@ -61,7 +62,8 @@ _MCF_once_init(_MCF_once* __once)
  *     the function waits indefinitely.
  * @returns 1 if the once-initialization flag has been successfully locked and
  *     the caller should perform initialization, 0 if initialization has finished
- *     and the caller should do nothing, or -1 if the operation has timed out.  */
+ *     and the caller should do nothing, or -1 if the operation has timed out.
+ * @since 1.0  */
 __MCF_ONCE_IMPORT
 int
 _MCF_once_wait_slow(_MCF_once* __once, const int64_t* __timeout_opt)
@@ -91,7 +93,8 @@ _MCF_once_wait_slow(_MCF_once* __once, const int64_t* __timeout_opt)
  *     the function waits indefinitely.
  * @returns 1 if the once-initialization flag has been successfully locked and
  *     the caller should perform initialization, 0 if initialization has finished
- *     and the caller should do nothing, or -1 if the operation has timed out.  */
+ *     and the caller should do nothing, or -1 if the operation has timed out.
+ * @since 1.0  */
 __MCF_ONCE_INLINE
 int
 _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt)
@@ -105,7 +108,8 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt)
  * once-initialization flag, otherwise the behavior is undefined.
  *
  * @param `once` points to the once-initialization flag to cancel.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.0  */
 __MCF_ONCE_IMPORT
 void
 _MCF_once_abort(_MCF_once* __once)
@@ -119,7 +123,8 @@ _MCF_once_abort(_MCF_once* __once)
  * once-initialization flag, otherwise the behavior is undefined.
  *
  * @param `once` points to the once-initialization flag to complete.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.0  */
 __MCF_ONCE_IMPORT
 void
 _MCF_once_release(_MCF_once* __once)

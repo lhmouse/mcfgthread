@@ -387,7 +387,8 @@ typedef __MCF_atexit_callback* __MCF_atexit_callback_any_;
 
 /** Gets the last error code, like `GetLastError()`.
  *
- * @returns the last error code as an unsigned integer.  */
+ * @returns the last error code as an unsigned integer.
+ * @since 1.0  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_PURE
 uint32_t
 _MCF_get_win32_error(void)
@@ -395,7 +396,8 @@ _MCF_get_win32_error(void)
 
 /** Gets the system page size, which is usually 4KiB or 8KiB.
  *
- * @returns the system page size in bytes.  */
+ * @returns the system page size in bytes.
+ * @since 1.4  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_CONST
 size_t
 _MCF_get_page_size(void)
@@ -409,7 +411,8 @@ _MCF_get_page_size(void)
  * obtained by examining a CPU collection which can be created with
  * `_MCF_cpu_collection_new()`.
  *
- * @returns the number of logical processors in the current processor group.  */
+ * @returns the number of logical processors in the current processor group.
+ * @since 1.4  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_CONST
 size_t
 _MCF_get_processor_count(void)
@@ -426,7 +429,8 @@ _MCF_get_processor_count(void)
  * may be obtained by examining a CPU collection which can be created with
  * `_MCF_cpu_collection_new()`.
  *
- * @returns the mask of active processors in the current processor group.  */
+ * @returns the mask of active processors in the current processor group.
+ * @since 1.4  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_CONST
 uintptr_t
 _MCF_get_active_processor_mask(void)
@@ -446,7 +450,8 @@ _MCF_get_active_processor_mask(void)
  * @param `once` points to an object of type `_MCF_once`.
  * @param `init_proc` points to the function that should be called exactly once.
  * @param `arg` is a user-defined parameter for `init_proc`.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.8  */
 __MCF_XGLOBALS_IMPORT
 void
 __MCF_gthr_call_once_seh_take_over(_MCF_once* __once, __MCF_cxa_dtor_any_ __init_proc, void* __arg)
@@ -456,7 +461,8 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* __once, __MCF_cxa_dtor_any_ __init
  *
  * @param `x` is one value.
  * @param `y` is another value.
- * @returns the minimum value of `x` and `y`.  */
+ * @returns the minimum value of `x` and `y`.
+ * @since 1.0  */
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
 _MCF_minz(size_t __x, size_t __y)
@@ -469,7 +475,8 @@ _MCF_minz(size_t __x, size_t __y)
  *
  * @param `x` is one value.
  * @param `y` is another value.
- * @returns the maximum value of `x` and `y`.  */
+ * @returns the maximum value of `x` and `y`.
+ * @since 1.0  */
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 size_t
 _MCF_maxz(size_t __x, size_t __y)
@@ -482,7 +489,8 @@ _MCF_maxz(size_t __x, size_t __y)
  *
  * @param `x` is the minuend.
  * @param `y` is the subtrahend.
- * @returns `MAX(x, y) - y`.  */
+ * @returns `MAX(x, y) - y`.
+ * @since 2.1  */
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
 intptr_t
 _MCF_dim(intptr_t __x, intptr_t __y)

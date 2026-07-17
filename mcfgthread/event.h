@@ -50,7 +50,8 @@ struct __MCF_event
  * @param `value_init` is the initial value of the event, which shall not be
  *     negative and shall not exceed `_MCF_EVENT_VALUE_MAX`.
  * @returns 0 if the initialization is successful, or -1 if `value_init` is out
- *     of range. The function will not fail if all arguments are valid.  */
+ *     of range. The function will not fail if all arguments are valid.
+ * @since 1.0  */
 __MCF_EVENT_INLINE
 int
 _MCF_event_init(_MCF_event* __eventp, int __value_init)
@@ -59,7 +60,8 @@ _MCF_event_init(_MCF_event* __eventp, int __value_init)
 /** Gets the current value of an event.
  *
  * @param `eventp` points to the event to get.
- * @returns the current value of the event as a byte.  */
+ * @returns the current value of the event as a byte.
+ * @since 1.0  */
 __MCF_EVENT_INLINE
 uint8_t
 _MCF_event_get(const _MCF_event* __eventp)
@@ -80,7 +82,8 @@ _MCF_event_get(const _MCF_event* __eventp)
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
  * @returns a non-negative integer if the event has been changed to a value
- *     other than `undesired`, or -1 if the wait operation has timed out.  */
+ *     other than `undesired`, or -1 if the wait operation has timed out.
+ * @since 1.0  */
 __MCF_EVENT_IMPORT
 int
 _MCF_event_await_change_slow(_MCF_event* __eventp, int __undesired, const int64_t* __timeout_opt)
@@ -104,7 +107,8 @@ _MCF_event_await_change_slow(_MCF_event* __eventp, int __undesired, const int64_
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
  * @returns a non-negative integer if the event has been changed to a value
- *     other than `undesired`, or -1 if the wait operation has timed out.  */
+ *     other than `undesired`, or -1 if the wait operation has timed out.
+ * @since 1.0  */
 __MCF_EVENT_INLINE
 int
 _MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __timeout_opt)
@@ -116,7 +120,8 @@ _MCF_event_await_change(_MCF_event* __eventp, int __undesired, const int64_t* __
  * @param `value` is the new value to set, which shall not be negative and shall
  *     not exceed `_MCF_EVENT_VALUE_MAX`.
  * @returns 0 if the value has been updated successfully, or -1 if `value` is out
- *     of range. The function will not fail if all arguments are valid.  */
+ *     of range. The function will not fail if all arguments are valid.
+ * @since 1.0  */
 __MCF_EVENT_IMPORT
 int
 _MCF_event_set_slow(_MCF_event* __eventp, int __value)
@@ -130,7 +135,8 @@ _MCF_event_set_slow(_MCF_event* __eventp, int __value)
  * @param `value` is the new value to set, which shall not be negative and shall
  *     not exceed `_MCF_EVENT_VALUE_MAX`.
  * @returns 0 if the value has been updated successfully, or -1 if `value` is out
- *     of range. The function will not fail if all arguments are valid.  */
+ *     of range. The function will not fail if all arguments are valid.
+ * @since 1.0  */
 __MCF_EVENT_INLINE
 int
 _MCF_event_set(_MCF_event* __eventp, int __value)

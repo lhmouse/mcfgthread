@@ -29,7 +29,8 @@ struct __MCF_cond
  * Static ones should be initialized with `{0}`, like other structs.
  *
  * @param `cnd` points to the condition variable to initialize.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.0  */
 __MCF_COND_INLINE
 void
 _MCF_cond_init(_MCF_cond* __cnd)
@@ -59,7 +60,8 @@ _MCF_cond_init(_MCF_cond* __cnd)
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
  * @returns 0 if the condition variable was signaled or there was a spurious
- *     wakeup, or -1 if the wait operation has timed out.  */
+ *     wakeup, or -1 if the wait operation has timed out.
+ * @since 1.0  */
 __MCF_COND_IMPORT
 int
 _MCF_cond_wait(_MCF_cond* __cnd, _MCF_cond_unlock_callback* __unlock_opt,
@@ -71,7 +73,8 @@ _MCF_cond_wait(_MCF_cond* __cnd, _MCF_cond_unlock_callback* __unlock_opt,
  *
  * @param `cnd` points to the condition variable to signal.
  * @param `limit` is the maximum number of threads to wake up.
- * @returns the number of threads that have been woken up.  */
+ * @returns the number of threads that have been woken up.
+ * @since 1.0  */
 __MCF_COND_IMPORT
 size_t
 _MCF_cond_signal_some_slow(_MCF_cond* __cnd, size_t __limit)
@@ -84,7 +87,8 @@ _MCF_cond_signal_some_slow(_MCF_cond* __cnd, size_t __limit)
  *
  * @param `cnd` points to the condition variable to signal.
  * @param `limit` is the maximum number of threads to wake up.
- * @returns the number of threads that have been woken up.  */
+ * @returns the number of threads that have been woken up.
+ * @since 1.0  */
 __MCF_COND_INLINE
 size_t
 _MCF_cond_signal_some(_MCF_cond* __cnd, size_t __limit)
@@ -95,7 +99,8 @@ _MCF_cond_signal_some(_MCF_cond* __cnd, size_t __limit)
  * This function is equivalent to `_MCF_cond_signal_some(cnd, 1)`.
  *
  * @param `cnd` points to the condition variable to signal.
- * @returns the number of threads that have been woken up.  */
+ * @returns the number of threads that have been woken up.
+ * @since 1.0  */
 __MCF_COND_INLINE
 size_t
 _MCF_cond_signal(_MCF_cond* __cnd)
@@ -106,7 +111,8 @@ _MCF_cond_signal(_MCF_cond* __cnd)
  * This function is equivalent to `_MCF_cond_signal_some(cnd, SIZE_MAX)`.
  *
  * @param `cnd` points to the condition variable to signal.
- * @returns the number of threads that have been woken up.  */
+ * @returns the number of threads that have been woken up.
+ * @since 1.0  */
 __MCF_COND_INLINE
 size_t
 _MCF_cond_signal_all(_MCF_cond* __cnd)

@@ -36,7 +36,8 @@ struct __MCF_mutex
  * Static ones should be initialized with `{0}`, like other structs.
  *
  * @param `mtx` points to the mutex to initialize.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.0  */
 __MCF_MUTEX_INLINE
 void
 _MCF_mutex_init(_MCF_mutex* __mtx)
@@ -58,7 +59,8 @@ _MCF_mutex_init(_MCF_mutex* __mtx)
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
  * @returns 0 if the mutex has been successfully locked, or -1 if the operation
- *     has timed out.  */
+ *     has timed out.
+ * @since 1.0  */
 __MCF_MUTEX_IMPORT
 int
 _MCF_mutex_lock_slow(_MCF_mutex* __mtx, const int64_t* __timeout_opt)
@@ -84,7 +86,8 @@ _MCF_mutex_lock_slow(_MCF_mutex* __mtx, const int64_t* __timeout_opt)
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
  * @returns 0 if the mutex has been successfully locked, or -1 if the operation
- *     has timed out.  */
+ *     has timed out.
+ * @since 1.0  */
 __MCF_MUTEX_INLINE
 int
 _MCF_mutex_lock(_MCF_mutex* __mtx, const int64_t* __timeout_opt)
@@ -96,7 +99,8 @@ _MCF_mutex_lock(_MCF_mutex* __mtx, const int64_t* __timeout_opt)
  * may be called by a different thread from which locked the same mutex.
  *
  * @param `mtx` points to the mutex to unlock.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.0  */
 __MCF_MUTEX_IMPORT
 void
 _MCF_mutex_unlock_slow(_MCF_mutex* __mtx)
@@ -112,7 +116,8 @@ _MCF_mutex_unlock_slow(_MCF_mutex* __mtx)
  * thread.
  *
  * @param `mtx` points to the mutex to unlock.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.0  */
 __MCF_MUTEX_INLINE
 void
 _MCF_mutex_unlock(_MCF_mutex* __mtx)

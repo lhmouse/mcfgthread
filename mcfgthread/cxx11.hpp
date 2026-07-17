@@ -95,7 +95,8 @@ constexpr int64_t _Max_ms = 0x7FFFFFFFFFFFFC00;
  * as a non-negative 64-bit integer.
  *
  * @param `ms` is the duration to convert.
- * @returns the number of milliseconds, clamped to the interval [0, _Max_ms].  */
+ * @returns the number of milliseconds, clamped to the interval [0, _Max_ms].
+ * @since 1.4  */
 __MCF_CXX14(constexpr) inline
 int64_t
 __clamp_duration(const chrono::milliseconds& __ms)
@@ -116,7 +117,8 @@ __clamp_duration(const chrono::milliseconds& __ms)
  * overflows before converting the result.
  *
  * @param `ms` is the duration to convert.
- * @returns the number of milliseconds, clamped to the interval [0, _Max_ms].  */
+ * @returns the number of milliseconds, clamped to the interval [0, _Max_ms].
+ * @since 1.4  */
 template<typename _Duration>
 __MCF_CXX14(constexpr) inline
 int64_t
@@ -254,7 +256,9 @@ struct _Invoke_decay_copy<_Callable, _Mine, _Others...>
       }
   };
 
-/** Reference implementation for [thread.once.onceflag]  */
+/** Reference implementation for [thread.once.onceflag]
+ *
+ * @since 1.4  */
 struct once_flag
   {
     __MCF_BR(::_MCF_once) _M_once = { };
@@ -264,7 +268,9 @@ struct once_flag
     once_flag& operator=(const once_flag&) = delete;
   };
 
-/** Reference implementation for [thread.once.callonce]  */
+/** Reference implementation for [thread.once.callonce]
+ *
+ * @since 1.4  */
 template<typename _Callable, typename... _Args>
 void
 call_once(once_flag& __flag, _Callable&& __callable, _Args&&... __args)
@@ -288,7 +294,9 @@ call_once(once_flag& __flag, _Callable&& __callable, _Args&&... __args)
   }
 
 /** Reference implementation for [thread.mutex.class] and
- * [thread.timedmutex.class].  */
+ * [thread.timedmutex.class].
+ *
+ * @since 1.4  */
 class mutex
   {
   private:
@@ -353,7 +361,9 @@ class mutex
   };
 
 /** Reference implementation for [thread.sharedmutex.class] and
- * [thread.sharedtimedmutex.class].  */
+ * [thread.sharedtimedmutex.class].
+ *
+ * @since 1.9  */
 class shared_mutex
   {
   private:
@@ -465,7 +475,9 @@ class shared_mutex
   };
 
 /** Reference implementation for [thread.timedmutex.recursive] and
- * [thread.timedmutex.recursive].  */
+ * [thread.timedmutex.recursive].
+ *
+ * @since 1.4  */
 class recursive_mutex
   {
   private:
@@ -539,7 +551,9 @@ class recursive_mutex
       }
   };
 
-/** Reference implementation for [thread.condition.condvar]  */
+/** Reference implementation for [thread.condition.condvar]
+ *
+ * @since 1.4  */
 class condition_variable
   {
   private:
@@ -651,7 +665,9 @@ class condition_variable
       }
   };
 
-/** Reference implementation for [thread.condition.nonmember]  */
+/** Reference implementation for [thread.condition.nonmember]
+ *
+ * @since 1.4  */
 inline
 void
 notify_all_at_thread_exit(condition_variable& __cnd, unique_lock<mutex> __lock)
@@ -684,7 +700,9 @@ struct _Thread_id
       : _M_tid(__thr_opt ? ::_MCF_thread_get_tid(__thr_opt) : 0U)  { }
   };
 
-/** Reference implementation for [thread.thread.class]  */
+/** Reference implementation for [thread.thread.class]
+ *
+ * @since 1.4  */
 class thread
   {
   private:
@@ -968,7 +986,9 @@ namespace this_thread
       }
   }
 
-/** Non-standard extension  */
+/** Non-standard extension
+ *
+ * @since 1.4  */
 template<typename _Tp>
 class thread_specific_ptr
   {

@@ -23,7 +23,8 @@ __MCF_CXX(extern "C" {)
  * the current thread.
  *
  * @param `offset` specifies the address of the integer to load.
- * @returns the integer at the specified offset as a signed integer.  */
+ * @returns the integer at the specified offset as a signed integer.
+ * @since 2.4  */
 __MCF_TEB_INLINE __MCF_FN_PURE
 int8_t
 __MCF_teb_load_8(uint32_t __offset)
@@ -69,7 +70,8 @@ __MCF_teb_load_8(uint32_t __offset)
  *
  * @param `offset` specifies the address of the integer to store.
  * @param `value` is the integer to store at the specified offset.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 2.4  */
 __MCF_TEB_INLINE
 void
 __MCF_teb_store_8(uint32_t __offset, int8_t __value)
@@ -110,7 +112,8 @@ __MCF_teb_store_8(uint32_t __offset, int8_t __value)
  * the current thread.
  *
  * @param `offset` specifies the address of the integer to load.
- * @returns the integer at the specified offset as a signed integer.  */
+ * @returns the integer at the specified offset as a signed integer.
+ * @since 2.4  */
 __MCF_TEB_INLINE __MCF_FN_PURE
 int16_t
 __MCF_teb_load_16(uint32_t __offset)
@@ -156,7 +159,8 @@ __MCF_teb_load_16(uint32_t __offset)
  *
  * @param `offset` specifies the address of the integer to store.
  * @param `value` is the integer to store at the specified offset.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 2.4  */
 __MCF_TEB_INLINE
 void
 __MCF_teb_store_16(uint32_t __offset, int16_t __value)
@@ -197,7 +201,8 @@ __MCF_teb_store_16(uint32_t __offset, int16_t __value)
  * the current thread.
  *
  * @param `offset` specifies the address of the integer to load.
- * @returns the integer at the specified offset as a signed integer.  */
+ * @returns the integer at the specified offset as a signed integer.
+ * @since 2.4  */
 __MCF_TEB_INLINE __MCF_FN_PURE
 int32_t
 __MCF_teb_load_32(uint32_t __offset)
@@ -243,7 +248,8 @@ __MCF_teb_load_32(uint32_t __offset)
  *
  * @param `offset` specifies the address of the integer to store.
  * @param `value` is the integer to store at the specified offset.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 2.4  */
 __MCF_TEB_INLINE
 void
 __MCF_teb_store_32(uint32_t __offset, int32_t __value)
@@ -284,7 +290,8 @@ __MCF_teb_store_32(uint32_t __offset, int32_t __value)
  * of the current thread.
  *
  * @param `offset` specifies the address of the integer to load.
- * @returns the integer at the specified offset as a signed integer.  */
+ * @returns the integer at the specified offset as a signed integer.
+ * @since 2.4  */
 __MCF_TEB_INLINE __MCF_FN_PURE
 intptr_t
 __MCF_teb_load_ptr(uint32_t __offset)
@@ -330,7 +337,8 @@ __MCF_teb_load_ptr(uint32_t __offset)
  *
  * @param `offset` specifies the address of the integer to store.
  * @param `value` is the integer to store at the specified offset.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 2.4  */
 __MCF_TEB_INLINE
 void
 __MCF_teb_store_ptr(uint32_t __offset, intptr_t __value)
@@ -369,7 +377,8 @@ __MCF_teb_store_ptr(uint32_t __offset, intptr_t __value)
 
 /** Gets the process environment block (PEB) of the current process.
  *
- * @returns a pointer to the PEB in flat address space.  */
+ * @returns a pointer to the PEB in flat address space.
+ * @since 2.4  */
 __MCF_TEB_INLINE __MCF_FN_CONST
 void*
 __MCF_peb(void)
@@ -381,7 +390,8 @@ __MCF_peb(void)
 
 /** Gets the thread environment block (TEB) of the current thread.
  *
- * @returns a pointer to the TEB in flat address space.  */
+ * @returns a pointer to the TEB in flat address space.
+ * @since 2.4  */
 __MCF_TEB_INLINE __MCF_FN_CONST
 void*
 __MCF_teb(void)
@@ -404,7 +414,8 @@ __MCF_teb(void)
  * This is the same value that is returned by `GetCurrentProcessId()`, but as
  * a signed integer.
  *
- * @returns the identifier of the current process as a signed integer.  */
+ * @returns the identifier of the current process as a signed integer.
+ * @since 2.4  */
 __MCF_TEB_INLINE __MCF_FN_CONST
 int32_t
 __MCF_pid(void)
@@ -419,7 +430,8 @@ __MCF_pid(void)
  * This is the same value that is returned by `GetCurrentThreadId()`, but as
  * a signed integer.
  *
- * @returns the identifier of the current thread as a signed integer.  */
+ * @returns the identifier of the current thread as a signed integer.
+ * @since 2.4  */
 __MCF_TEB_INLINE __MCF_FN_CONST
 int32_t
 __MCF_tid(void)

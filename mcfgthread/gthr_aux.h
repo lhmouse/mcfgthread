@@ -55,7 +55,8 @@ struct __MCF_gthr_thread_record
  * @param `once` shall point to a once-initialization flag.
  * @param `init_proc` points to the function that should be called exactly once.
  * @param `arg` is a user-defined parameter for `init_proc`.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.8  */
 __MCF_GTHR_AUX_INLINE
 void
 __MCF_gthr_call_once_seh(_MCF_once* __once, __MCF_cxa_dtor_any_ __init_proc, void* __arg)
@@ -68,7 +69,8 @@ __MCF_gthr_call_once_seh(_MCF_once* __once, __MCF_cxa_dtor_any_ __init_proc, voi
  * overflow, it will be clamped to the maximum value.
  *
  * @param `abs_time` points to a time point.
- * @returns the number of milliseconds since 1970-01-01T00:00:00Z.  */
+ * @returns the number of milliseconds since 1970-01-01T00:00:00Z.
+ * @since 1.0  */
 __MCF_GTHR_AUX_IMPORT __MCF_FN_PURE
 int64_t
 __MCF_gthr_timeout_from_timespec(const __MCF_timespec* __abs_time)
@@ -77,7 +79,8 @@ __MCF_gthr_timeout_from_timespec(const __MCF_timespec* __abs_time)
 /** Initializes a recursive mutex.
  *
  * @param `rmtx` points to a recursive mutex to initialize.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.0  */
 __MCF_GTHR_AUX_INLINE
 void
 __MCF_gthr_rc_mutex_init(__MCF_gthr_rc_mutex* __rmtx)
@@ -90,7 +93,8 @@ __MCF_gthr_rc_mutex_init(__MCF_gthr_rc_mutex* __rmtx)
  * the state of the mutex.
  *
  * @param `rmtx` points to a recursive mutex to test.
- * @returns 0 if the current thread owns the mutex, or -1 otherwise.  */
+ * @returns 0 if the current thread owns the mutex, or -1 otherwise.
+ * @since 1.0  */
 __MCF_GTHR_AUX_INLINE
 int
 __MCF_gthr_rc_mutex_recurse(__MCF_gthr_rc_mutex* __rmtx)
@@ -105,7 +109,8 @@ __MCF_gthr_rc_mutex_recurse(__MCF_gthr_rc_mutex* __rmtx)
  *
  * @param `rmtx` points to a recursive mutex to wait for.
  * @returns 0 if the current thread has acquired ownership of the mutex, or -1
- *     if the operation has timed out.  */
+ *     if the operation has timed out.
+ * @since 1.0  */
 __MCF_GTHR_AUX_INLINE
 int
 __MCF_gthr_rc_mutex_wait(__MCF_gthr_rc_mutex* __rmtx, const int64_t* __timeout_opt)
@@ -119,7 +124,8 @@ __MCF_gthr_rc_mutex_wait(__MCF_gthr_rc_mutex* __rmtx, const int64_t* __timeout_o
  * otherwise the behavior is undefined.
  *
  * @param `rmtx` points to a recursive mutex to unlock.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 1.0  */
 __MCF_GTHR_AUX_INLINE
 void
 __MCF_gthr_rc_mutex_release(__MCF_gthr_rc_mutex* __rmtx)
@@ -156,7 +162,8 @@ __MCF_gthr_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked)
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
  * @returns 0 if the condition variable was signaled or there was a spurious
- *     wakeup, or -1 if the wait operation has timed out.  */
+ *     wakeup, or -1 if the wait operation has timed out.
+ * @since 1.9  */
 __MCF_GTHR_AUX_IMPORT
 int
 __MCF_gthr_cond_mutex_wait(_MCF_cond* __cnd, _MCF_mutex* __mtx, const int64_t* __timeout_opt)
@@ -201,7 +208,8 @@ __MCF_gthr_shared_mutex_relock_exclusive_callback(intptr_t __arg, intptr_t __unl
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
  * @returns 0 if the condition variable was signaled or there was a spurious
- *     wakeup, or -1 if the wait operation has timed out.  */
+ *     wakeup, or -1 if the wait operation has timed out.
+ * @since 1.9  */
 __MCF_GTHR_AUX_IMPORT
 int
 __MCF_gthr_cond_shared_mutex_wait_shared(_MCF_cond* __cnd, _MCF_shared_mutex* __smtx,
@@ -226,7 +234,8 @@ __MCF_gthr_cond_shared_mutex_wait_shared(_MCF_cond* __cnd, _MCF_shared_mutex* __
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
  * @returns 0 if the condition variable was signaled or there was a spurious
- *     wakeup, or -1 if the wait operation has timed out.  */
+ *     wakeup, or -1 if the wait operation has timed out.
+ * @since 1.9  */
 __MCF_GTHR_AUX_IMPORT
 int
 __MCF_gthr_cond_shared_mutex_wait_exclusive(_MCF_cond* __cnd, _MCF_shared_mutex* __smtx,
@@ -265,7 +274,8 @@ __MCF_gthr_recursive_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked)
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
  * @returns 0 if the condition variable was signaled or there was a spurious
- *     wakeup, or -1 if the wait operation has timed out.  */
+ *     wakeup, or -1 if the wait operation has timed out.
+ * @since 1.9  */
 __MCF_GTHR_AUX_IMPORT
 int
 __MCF_gthr_cond_recursive_mutex_wait(_MCF_cond* __cnd, __MCF_gthr_rc_mutex* __rmtx,
@@ -276,7 +286,8 @@ __MCF_gthr_cond_recursive_mutex_wait(_MCF_cond* __cnd, __MCF_gthr_rc_mutex* __rm
  *
  * @param `proc` shall point to the thread procedure.
  * @param `arg` is a user-defined parameter for the thread procedure.
- * @returns a pointer to the new thread, or null in case of a failure.  */
+ * @returns a pointer to the new thread, or null in case of a failure.
+ * @since 2.0  */
 __MCF_GTHR_AUX_IMPORT
 _MCF_thread*
 __MCF_gthr_thread_create_v3(__MCF_gthr_thread_fn* __proc, void* __arg)
@@ -290,7 +301,8 @@ __MCF_gthr_thread_create_v3(__MCF_gthr_thread_fn* __proc, void* __arg)
  *     will return.
  * @param `proc` shall point to the thread procedure.
  * @param `arg` is a user-defined parameter for the thread procedure.
- * @returns a pointer to the new thread, or null in case of a failure.  */
+ * @returns a pointer to the new thread, or null in case of a failure.
+ * @since 2.5  */
 __MCF_GTHR_AUX_IMPORT
 _MCF_thread*
 __MCF_gthr_thread_create_v4(_MCF_thread** __thrdp_opt, __MCF_gthr_thread_fn* __proc, void* __arg)
@@ -304,7 +316,8 @@ __MCF_gthr_thread_create_v4(_MCF_thread** __thrdp_opt, __MCF_gthr_thread_fn* __p
  *     exit code of the thread. If it is non-null, the exit code is stored into
  *     `*resp_opt`. If the thread has exited with an exit unwind, then the exit
  *     code will be `__MCF_GTHR_CANCELLED`.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 2.0  */
 __MCF_GTHR_AUX_IMPORT
 void
 __MCF_gthr_thread_join_v3(_MCF_thread* __thrd, void** __resp_opt)
@@ -315,7 +328,8 @@ __MCF_gthr_thread_join_v3(_MCF_thread* __thrd, void** __resp_opt)
  * This function does not return.
  *
  * @param `result` is the exit code of the current thread.
- * @returns nothing.  */
+ * @returns nothing.
+ * @since 2.0  */
 __MCF_GTHR_AUX_IMPORT __MCF_NEVER_RETURN
 void
 __MCF_gthr_thread_exit_v3(void* __result)

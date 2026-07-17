@@ -46,7 +46,8 @@ struct __MCF_sem
  * @param `value_init` is the initial value of the semaphore, which shall not be
  *     negative.
  * @returns 0 if the initialization is successful, or -1 in case of an invalid
- *     argument.  */
+ *     argument.
+ * @since 1.0  */
 __MCF_SEM_INLINE
 int
 _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init)
@@ -58,7 +59,8 @@ _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init)
  * threads that are currently waiting on the semaphore.
  *
  * @param `sem` points to the semaphore.
- * @returns the current value of the semaphore.  */
+ * @returns the current value of the semaphore.
+ * @since 1.0  */
 __MCF_SEM_INLINE
 intptr_t
 _MCF_sem_get(const _MCF_sem* __sem)
@@ -77,7 +79,8 @@ _MCF_sem_get(const _MCF_sem* __sem)
  *     zero, the function returns immediately without waiting. If it is null,
  *     the function waits indefinitely.
  * @returns 0 if the value has been decremented, or -1 if the operation has
- *     timed out.  */
+ *     timed out.
+ * @since 1.0  */
 __MCF_SEM_IMPORT
 int
 _MCF_sem_wait(_MCF_sem* __sem, const int64_t* __timeout_opt)
@@ -89,7 +92,8 @@ _MCF_sem_wait(_MCF_sem* __sem, const int64_t* __timeout_opt)
  * @param `value_add` is the value to add to the semaphore, which shall not be
  *     negative.
  * @returns 0 if the value has been increased successfully, -1 in case of an
- *     invalid argument, or -2 if the value would overflow.  */
+ *     invalid argument, or -2 if the value would overflow.
+ * @since 1.0  */
 __MCF_SEM_IMPORT
 int
 _MCF_sem_signal_some(_MCF_sem* __sem, intptr_t __value_add)
@@ -101,7 +105,8 @@ _MCF_sem_signal_some(_MCF_sem* __sem, intptr_t __value_add)
  *
  * @param `sem` points to the semaphore.
  * @returns 0 if the value has been incremented successfully, -1 in case of an
- *     invalid argument, or -2 if the value would overflow.  */
+ *     invalid argument, or -2 if the value would overflow.
+ * @since 1.0  */
 __MCF_SEM_INLINE
 int
 _MCF_sem_signal(_MCF_sem* __sem)
