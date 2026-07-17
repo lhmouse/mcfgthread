@@ -80,7 +80,7 @@ __MCF_DLLEXPORT __MCF_NEVER_INLINE
 int
 _MCF_sem_signal_some(_MCF_sem* sem, intptr_t value_add)
   {
-    if((value_add < 0) || (value_add > __MCF_SEM_VALUE_MAX))
+    if((value_add < 0) || (value_add > _MCF_SEM_VALUE_MAX))
       return -1;
     else if(value_add == 0)
       return 0;
@@ -91,7 +91,7 @@ _MCF_sem_signal_some(_MCF_sem* sem, intptr_t value_add)
     /* Get the number of threads to wake up.  */
     _MCF_atomic_load_pptr_rlx(&old, sem);
     for(;;) {
-      if(old.__value > __MCF_SEM_VALUE_MAX - value_add)
+      if(old.__value > _MCF_SEM_VALUE_MAX - value_add)
         return -2;
 
       uintptr_t nsleep = -(uintptr_t) (old.__value & (old.__value >> (__MCF_PTR_BITS - 1)));

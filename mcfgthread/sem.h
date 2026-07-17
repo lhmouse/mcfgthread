@@ -25,18 +25,22 @@ struct __MCF_sem
   };
 
 /** This is the maximum value of a semaphore.  */
-#define __MCF_SEM_VALUE_MAX   __MCF_INTPTR_MAX
+#define _MCF_SEM_VALUE_MAX   __MCF_INTPTR_MAX
 
 /** Define a macro for static initialization of semaphores. The argument is the
  * initial value of the semaphore, which shall not be negative.  */
-#define __MCF_SEM_INIT(__value_init)  \
+#define _MCF_SEM_INIT(__value_init)  \
     { __MCF_STATIC_ASSERT_0((__value_init) >= 0) +  \
-      __MCF_STATIC_ASSERT_0((__value_init) <= __MCF_SEM_VALUE_MAX) +  \
+      __MCF_STATIC_ASSERT_0((__value_init) <= _MCF_SEM_VALUE_MAX) +  \
       (__value_init)  }
+
+/** These are kept for compatibility.  */
+#define __MCF_SEM_VALUE_MAX             _MCF_SEM_VALUE_MAX
+#define __MCF_SEM_INIT(__value_init)    _MCF_SEM_INIT(__value_init)
 
 /** Initializes a semaphore dynamically.
 
- * Static ones should be initialized with `__MCF_SEM_INIT(value_init)`.
+ * Static ones should be initialized with `_MCF_SEM_INIT(value_init)`.
 
  * @param `sem` points to the semaphore to initialize.
  * @param `value_init` is the initial value of the semaphore, which shall not be
@@ -114,7 +118,7 @@ int
 _MCF_sem_init(_MCF_sem* __sem, intptr_t __value_init)
   __MCF_noexcept
   {
-    if((__value_init < 0) || (__value_init > __MCF_SEM_VALUE_MAX))
+    if((__value_init < 0) || (__value_init > _MCF_SEM_VALUE_MAX))
       return -1;
     else {
       _MCF_sem __temp = __MCF_0_INIT;
