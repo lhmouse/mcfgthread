@@ -256,8 +256,11 @@ template<typename _Tp> struct __MCF_make_br { typedef _Tp __type[1]; };
 #  define __MCF_CAST_PTR(T, ...)   (__MCF_EX (T*)(__MCF_INTPTR_) (__VA_ARGS__))
 #endif
 
-/** The `__MCF_STATIC_ASSERT_0()` macro is an expression that yields zero if it
- * compiles anyway. Its argument must be a constant expression.  */
+/** These are static assertions. The argument shall be a constant expression.
+ * If the argument yields zero, these macros effect a compiler error; otherwise,
+ * `__MCF_STATIC_ASSERT_1()` expands to a constant expressions that yields one,
+ * `__MCF_STATIC_ASSERT_0()` expands to a constant expressions that yields zero,
+ * and `__MCF_STATIC_ASSERT()` expands to a declaration.  */
 #if defined __cplusplus
 extern "C++" {
 template<bool> struct __MCF_static_assert_helper;
@@ -269,7 +272,6 @@ template<> struct __MCF_static_assert_helper<true> { static const int __one = 1;
 #else
 #  define __MCF_STATIC_ASSERT_1(...)   ((int) sizeof(struct { char __one : (__VA_ARGS__) ? 1 : -1; }))
 #endif
-
 #define __MCF_STATIC_ASSERT_0(...)   (__MCF_STATIC_ASSERT_1(__VA_ARGS__) - 1)
 #define __MCF_STATIC_ASSERT(...)    extern int __MCF_static_assert_true[__MCF_STATIC_ASSERT_1(__VA_ARGS__)]
 
