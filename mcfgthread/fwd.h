@@ -407,9 +407,12 @@ uint32_t
 _MCF_get_win32_error(void)
   __MCF_noexcept;
 
-/** Gets the system page size, which is usually 4KiB or 8KiB.
+/** Gets the normal page size.
  *
- * @returns the system page size in bytes.
+ * This value is 4096, except on Alpha AXP and Itanium where it's 8192; see
+ * <https://devblogs.microsoft.com/oldnewthing/20210510-00/?p=105200>.
+ *
+ * @returns the normal page size in bytes.
  * @since 1.4  */
 __MCF_XGLOBALS_IMPORT __MCF_FN_CONST
 size_t
