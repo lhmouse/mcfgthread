@@ -36,7 +36,7 @@ for testing!):
 
 ![benchmark_result_win11_26100_ryzen9_7900x](doc/benchmark_result_win11_26100_ryzen9_7900x.png)
 
-This is the result on **Windows 7 SP1** on an **Intel i7-7700 desktop processor**
+This is the result on **Windows 7 SP1** on an **Intel i7-7700** desktop processor
 (4 cores, 8 threads):
 
 ![benchmark_result_win7_sp1_i7_7700](doc/benchmark_result_win7_sp1_i7_7700.png)
