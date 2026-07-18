@@ -31,7 +31,7 @@ hyper-threading):
 ![benchmark_result_win11_26200_snapdragon_8cxg3](doc/benchmark_result_win11_26200_snapdragon_8cxg3.png)
 
 This is the result on **Windows 11 24H2** (build 26100.4652) on an **AMD Ryzen 9
-7900X desktop processor (12 cores, 24 threads; special thanks to @nmreadelf
+7900X** desktop processor (12 cores, 24 threads; special thanks to @nmreadelf
 for testing!):
 
 ![benchmark_result_win11_26100_ryzen9_7900x](doc/benchmark_result_win11_26100_ryzen9_7900x.png)
