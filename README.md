@@ -12,36 +12,37 @@ to provide synchronization of initialization of local static objects, and by
 
 ## Benchmark Results
 
-This is the result of [a benchmark program](doc/benchmark_mutex.c) on Windows
-11 (26H2, build 26200.8737) on an Intel i9-14900K desktop processor (8 P-cores +
-16 E-cores, 32 threads):
+This is the result of [a benchmark program](doc/benchmark_mutex.c) on **Windows
+11 26H2** (build 26200.8737) on an **Intel i9-14900K** desktop processor (8
+P-cores + 16 E-cores, 32 threads):
 
 ![benchmark_result_win11_26200_i9_14900k](doc/benchmark_result_win11_26200_i9_14900k.png)
 
-This is the result on Windows 11 (25H2, build 26200.8655) on an AMD Ryzen 9
-9950X3D desktop processor (16 cores, 32 threads; special thanks to @fredyakumo
+This is the result on **Windows 11 25H2** (build 26200.8655) on an **AMD Ryzen 9
+9950X3D** desktop processor (16 cores, 32 threads; special thanks to @fredyakumo
 for testing!):
 
 ![benchmark_result_win11_26200_ryzen9_9950x3d](doc/benchmark_result_win11_26200_ryzen9_9950x3d.png)
 
-This is the result on Windows 11 (26H2, build 26200.8737) on a Qualcomm
-Snapdragon 8cx Gen 3 mobile processor (8 cores, no hyper-threading):
+This is the result on **Windows 11 26H2** (build 26200.8737) on a **Qualcomm
+Snapdragon 8cx Gen 3** mobile processor (4 big cores + 4 little cores, no
+hyper-threading):
 
 ![benchmark_result_win11_26200_snapdragon_8cxg3](doc/benchmark_result_win11_26200_snapdragon_8cxg3.png)
 
-This is the result on Windows 11 (24H2, build 26100.4652) on an AMD Ryzen 9
+This is the result on **Windows 11 24H2** (build 26100.4652) on an **AMD Ryzen 9
 7900X desktop processor (12 cores, 24 threads; special thanks to @nmreadelf
 for testing!):
 
 ![benchmark_result_win11_26100_ryzen9_7900x](doc/benchmark_result_win11_26100_ryzen9_7900x.png)
 
-This is the result on Windows 7 SP1 on an Intel i7-7700 desktop processor (4
-cores, 8 threads):
+This is the result on **Windows 7 SP1** on an **Intel i7-7700 desktop processor**
+(4 cores, 8 threads):
 
 ![benchmark_result_win7_sp1_i7_7700](doc/benchmark_result_win7_sp1_i7_7700.png)
 
-This is the result on Wine 10.0 on Linux Mint 23 (kernel 7.0 generic HWE) on an
-Intel i7-1165G7 mobile processor (4 cores, 8 threads):
+This is the result on **Wine 10.0** on **Linux Mint 23** (kernel 7.0 generic HWE)
+on an **Intel i7-1165G7** mobile processor (4 cores, 8 threads):
 
 ![benchmark_result_wine10.0_linux_i7_1165g7](doc/benchmark_result_wine10.0_linux_i7_1165g7.png)
 
