@@ -303,12 +303,13 @@ extern typeof_SetThreadSelectedCpuSets*
 typedef LPVOID __stdcall typeof_TlsGetValue2(ULONG);
 extern typeof_TlsGetValue2* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue2;
 
-/** Declare the structure of global data in named shared memory. As mcfgthread
- * may be linked statically by user DLLs, we must ensure that, in the same
- * process, all instances of `__MCF_g` (see below) point to the same object.
- * This is achieved by having them point to a named shared memory object, which
- * is created with exclusive access with a name that is generated from its PID.
- * Additional randomness is introduced to make the name unpredictable.  */
+/** Declare the structure of global data in named shared memory.
+ *
+ * As mcfgthread may be linked statically by user DLLs, we must ensure that, in
+ * the same process, all instances of `__MCF_g` (see below) point to the same
+ * object. This is achieved by having them point to a named shared memory object,
+ * which is created with exclusive access with a name that is generated from its
+ * PID. Additional randomness is introduced to make the name unpredictable.  */
 struct __MCF_crt_xglobals
   {
     __MCF_crt_xglobals* self_ptr;
