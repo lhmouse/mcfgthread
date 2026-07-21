@@ -344,8 +344,8 @@ extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY restrict __MCF_g;
 /** These are utility macros for accessing fields in the named shared memory
  * with version checking.  */
 #define __MCF_G_SIZE_TOTAL    (sizeof(__MCF_crt_xglobals))
-#define __MCF_G_SIZE(field)   RTL_SIZEOF_THROUGH_FIELD(__MCF_crt_xglobals, field)
-#define __MCF_HAS_G(field)    RTL_CONTAINS_FIELD(__MCF_g, __MCF_g->self_size, field)
+#define __MCF_G_SIZE(field)   (RTL_SIZEOF_THROUGH_FIELD(__MCF_crt_xglobals, field))
+#define __MCF_HAS_G(field)    (RTL_CONTAINS_FIELD(__MCF_g, __MCF_g->self_size, field))
 #define __MCF_G(field)        (*(__MCF_ASSERT(__MCF_HAS_G(field)), &(__MCF_g->field)))
 #define __MCF_G_OPT(field)    (__MCF_HAS_G(opt_##field) ? &(__MCF_g->opt_##field) : nullptr)
 
