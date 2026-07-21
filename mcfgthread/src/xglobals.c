@@ -584,8 +584,9 @@ __MCF_gthread_initialize_globals(void)
     __MCF_g = __MCF_map_view_of_section(gfile, &gsize, false);
     __MCF_CHECK(__MCF_g);
 
-    if(__MCF_g->self_ptr) {
+    if(__MCF_g->self_size >= __MCF_G_SIZE_TOTAL) {
       /* Reuse the existent region and close excess handles.  */
+      __MCF_ASSERT(__MCF_g->self_ptr);
       void* new_base = __MCF_g;
       __MCF_g = __MCF_g->self_ptr;
       __MCF_unmap_view_of_section(new_base);
@@ -593,18 +594,28 @@ __MCF_gthread_initialize_globals(void)
       return;
     }
 
-    /* The region is new, so initialize it.  */
-    __MCF_g->self_ptr = __MCF_g;
-    __MCF_g->self_size = sizeof(__MCF_crt_xglobals);
+    if(__MCF_g->self_size == 0) {
+      /* Initialize the new region. This is the only section where no other
+       * threads may be running, so an atomic operation is unnecessary.  */
+      __MCF_g->self_ptr = __MCF_g;
+      __MCF_g->self_size = __MCF_G_SIZE(interrupt_cond);
 
-    /* Allocate a TLS slot for this library.  */
-    __MCF_G(tls_index) = TlsAlloc();
-    __MCF_CHECK(__MCF_G(tls_index) != TLS_OUT_OF_INDEXES);
+      /* Allocate a TLS slot for this library.  */
+      __MCF_g->tls_index = TlsAlloc();
+      __MCF_CHECK(__MCF_g->tls_index != TLS_OUT_OF_INDEXES);
 
-    /* Attach the main thread and make it joinable. The structure should
-     * be all zeroes so no initialization is necessary.  */
-    __MCF_thread_attach_foreign(__MCF_G(main_thread));
-    _MCF_atomic_store_32_rel(__MCF_G(main_thread)->__nref, 2);
+      /* Attach the main thread and make it joinable. The structure should
+       * be all zeroes so no initialization is necessary.  */
+      __MCF_thread_attach_foreign(__MCF_g->main_thread);
+      _MCF_atomic_store_32_rlx(__MCF_g->main_thread->__nref, 2);
+    }
+
+    if((__MCF_g->self_size < __MCF_G_SIZE_TOTAL) && (gsize >= __MCF_G_SIZE_TOTAL)) {
+      /* Extend global storage. The remaining fields that are not initialized
+       * explicitly are implicit zeroes. Other threads may be running, so the
+       * size must be updated with an atomic operation.  */
+      _MCF_atomic_store_32_rlx(&(__MCF_g->self_size), __MCF_G_SIZE_TOTAL);
+    }
   }
 
 __MCF_DLLEXPORT __MCF_REALIGN_SP
