@@ -343,28 +343,28 @@ extern __MCF_crt_xglobals* __MCF_XGLOBALS_READONLY restrict __MCF_g;
 
 /** These are utility macros for accessing fields in the named shared memory
  * with version checking.  */
-#define __MCF_GFX_(field)     offsetof(__MCF_crt_xglobals, field)
-#define __MCF_HAS_G(field)    (__MCF_g->self_size >= __MCF_GFX_(field) + sizeof(__MCF_g->field))
+#define __MCF_G_SIZE(field)   RTL_SIZEOF_THROUGH_FIELD(__MCF_crt_xglobals, field)
+#define __MCF_HAS_G(field)    RTL_CONTAINS_FIELD(__MCF_g, __MCF_g->self_size, field)
 #define __MCF_G(field)        (*(__MCF_ASSERT(__MCF_HAS_G(field)), &(__MCF_g->field)))
 #define __MCF_G_OPT(field)    (__MCF_HAS_G(opt_##field) ? &(__MCF_g->opt_##field) : nullptr)
 
 /** Ensure we don't mess things up.  */
-__MCF_STATIC_ASSERT(__MCF_GFX_(self_ptr) == 0);
-__MCF_STATIC_ASSERT(__MCF_GFX_(self_size) == __MCF_64_32(8, 4));
-__MCF_STATIC_ASSERT(__MCF_GFX_(tls_index) == __MCF_64_32(12, 8));
-__MCF_STATIC_ASSERT(__MCF_GFX_(main_thread) == __MCF_64_32(16, 16));
-__MCF_STATIC_ASSERT(__MCF_GFX_(exit_mtx) == __MCF_64_32(1616, 816));
-__MCF_STATIC_ASSERT(__MCF_GFX_(exit_queue) == __MCF_64_32(1624, 820));
-__MCF_STATIC_ASSERT(__MCF_GFX_(quick_exit_mtx) == __MCF_64_32(3152, 1584));
-__MCF_STATIC_ASSERT(__MCF_GFX_(quick_exit_queue) == __MCF_64_32(3160, 1588));
-__MCF_STATIC_ASSERT(__MCF_GFX_(mutex_spin_field) == __MCF_64_32(4736, 2368));
-__MCF_STATIC_ASSERT(__MCF_GFX_(interrupt_cond) == __MCF_64_32(6784, 4416));
-__MCF_STATIC_ASSERT(__MCF_GFX_(reserved_1_must_be_null) == __MCF_64_32(6792, 4420));
-__MCF_STATIC_ASSERT(__MCF_GFX_(reserved_2_must_be_null) == __MCF_64_32(6800, 4424));
-__MCF_STATIC_ASSERT(__MCF_GFX_(thread_oom_mtx) == __MCF_64_32(6808, 4428));
-__MCF_STATIC_ASSERT(__MCF_GFX_(opt_thread_oom_self_st) == __MCF_64_32(6816, 4432));
-__MCF_STATIC_ASSERT(__MCF_GFX_(reserved_3_must_be_null) == __MCF_64_32(8416, 5232));
-__MCF_STATIC_ASSERT(__MCF_GFX_(reserved_4_must_be_null) == __MCF_64_32(8424, 5236));
+__MCF_STATIC_ASSERT(__MCF_G_SIZE(self_ptr) == __MCF_64_32(8, 4));
+__MCF_STATIC_ASSERT(__MCF_G_SIZE(self_size) == __MCF_64_32(12, 8));
+__MCF_STATIC_ASSERT(__MCF_G_SIZE(tls_index) == __MCF_64_32(16, 12));
+__MCF_STATIC_ASSERT(__MCF_G_SIZE(main_thread) == __MCF_64_32(1616, 816));
+__MCF_STATIC_ASSERT(__MCF_G_SIZE(exit_mtx) == __MCF_64_32(1624, 820));
+__MCF_STATIC_ASSERT(__MCF_G_SIZE(exit_queue) == __MCF_64_32(3152, 1584));
+__MCF_STATIC_ASSERT(__MCF_G_SIZE(quick_exit_mtx) == __MCF_64_32(3160, 1588));
+__MCF_STATIC_ASSERT(__MCF_G_SIZE(quick_exit_queue) == __MCF_64_32(4688, 2352));
+__MCF_STATIC_ASSERT(__MCF_G_SIZE(mutex_spin_field) == __MCF_64_32(6784, 4416));
+__MCF_STATIC_ASSERT(__MCF_G_SIZE(interrupt_cond) == __MCF_64_32(6792, 4420));
+__MCF_STATIC_ASSERT(__MCF_G_SIZE(reserved_1_must_be_null) == __MCF_64_32(6800, 4424));
+__MCF_STATIC_ASSERT(__MCF_G_SIZE(reserved_2_must_be_null) == __MCF_64_32(6808, 4428));
+__MCF_STATIC_ASSERT(__MCF_G_SIZE(thread_oom_mtx) == __MCF_64_32(6816, 4432));
+__MCF_STATIC_ASSERT(__MCF_G_SIZE(opt_thread_oom_self_st) == __MCF_64_32(8416, 5232));
+__MCF_STATIC_ASSERT(__MCF_G_SIZE(reserved_3_must_be_null) == __MCF_64_32(8424, 5236));
+__MCF_STATIC_ASSERT(__MCF_G_SIZE(reserved_4_must_be_null) == __MCF_64_32(8432, 5240));
 
 /** Define inline functions after all declarations.
  *
