@@ -580,7 +580,8 @@ __MCF_gthread_initialize_globals(void)
      * and view shall not be inherited by child processes.  */
     HANDLE gfile = __MCF_create_named_section(&gattrs, sizeof(__MCF_crt_xglobals));
     __MCF_CHECK(gfile);
-    __MCF_g = __MCF_map_view_of_section(gfile, false);
+    size_t gsize = 0;
+    __MCF_g = __MCF_map_view_of_section(gfile, &gsize, false);
     __MCF_CHECK(__MCF_g);
 
     if(__MCF_g->self_ptr) {
