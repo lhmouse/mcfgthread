@@ -62,33 +62,33 @@ NTSYSAPI
 void
 NTAPI
 RtlMoveMemory(
-    OUT void* Destination,
-    IN const void* Source,
-    IN SIZE_T Length);
+    _Out_writes_bytes_(Length) void* Destination,
+    _In_reads_bytes_(Length) const void* Source,
+    _In_ SIZE_T Length);
 
 /** ntdll.dll  */
 NTSYSAPI
 void
 NTAPI
 RtlFillMemory(
-    OUT void* Destination,
-    IN SIZE_T Length,
-    IN int Fill);
+    _Out_writes_bytes_(Length) void* Destination,
+    _In_ SIZE_T Length,
+    _In_range_(0, 255) int Fill);
 
 /** ntdll.dll  */
 NTSYSAPI
 void
 NTAPI
 RtlZeroMemory(
-    OUT void* Destination,
-    IN SIZE_T Length);
+    _Out_writes_bytes_(Length) void* Destination,
+    _In_ SIZE_T Length);
 
 /** ntdll.dll  */
 NTSYSAPI
 ULONG
 NTAPI
 RtlNtStatusToDosError(
-    IN NTSTATUS Status);
+    _In_ NTSTATUS Status);
 
 /** ntdll.dll since Windows XP  */
 NTSYSAPI __attribute__((__pure__))
@@ -102,110 +102,110 @@ NTSYSAPI
 NTSTATUS
 NTAPI
 BaseGetNamedObjectDirectory(
-    OUT HANDLE* OutHandle);
+    _Out_ HANDLE* OutHandle);
 
 /** ntdll.dll  */
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 NtCreateSection(
-    OUT HANDLE* SectionHandle,
-    IN ACCESS_MASK DesiredAccess,
-    IN OPTIONAL OBJECT_ATTRIBUTES* ObjectAttributes,
-    IN LARGE_INTEGER* MaximumSize,
-    IN ULONG SectionPageProtection,
-    IN ULONG AllocationAttributes,
-    IN OPTIONAL HANDLE FileHandle);
+    _Out_ HANDLE* SectionHandle,
+    _In_ ACCESS_MASK DesiredAccess,
+    _In_opt_ OBJECT_ATTRIBUTES* ObjectAttributes,
+    _In_ LARGE_INTEGER* MaximumSize,
+    _In_ ULONG SectionPageProtection,
+    _In_ ULONG AllocationAttributes,
+    _In_opt_ HANDLE FileHandle);
 
 /** ntdll.dll  */
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 NtDuplicateObject(
-    IN HANDLE SourceProcessHandle,
-    IN HANDLE SourceHandle,
-    IN OPTIONAL HANDLE TargetProcessHandle,
-    OUT OPTIONAL HANDLE* TargetHandle,
-    IN ACCESS_MASK DesiredAccess,
-    IN ULONG HandleAttributes,
-    IN ULONG Options);
+    _In_ HANDLE SourceProcessHandle,
+    _In_ HANDLE SourceHandle,
+    _In_opt_ HANDLE TargetProcessHandle,
+    _Out_opt_ HANDLE* TargetHandle,
+    _In_ ACCESS_MASK DesiredAccess,
+    _In_ ULONG HandleAttributes,
+    _In_ ULONG Options);
 
 /** ntdll.dll  */
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 NtClose(
-    IN HANDLE Handle);
+    _In_ HANDLE Handle);
 
 /** ntdll.dll  */
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 NtMapViewOfSection(
-    IN HANDLE SectionHandle,
-    IN HANDLE ProcessHandle,
-    IN OUT PVOID* BaseAddress,
-    IN ULONG_PTR ZeroBits,
-    IN SIZE_T CommitSize,
-    IN OUT OPTIONAL LARGE_INTEGER* SectionOffset,
-    IN OUT SIZE_T* ViewSize,
-    IN UINT InheritDisposition,
-    IN ULONG AllocationType,
-    IN ULONG Win32Protect);
+    _In_ HANDLE SectionHandle,
+    _In_ HANDLE ProcessHandle,
+    _Inout_ PVOID* BaseAddress,
+    _In_ ULONG_PTR ZeroBits,
+    _In_ SIZE_T CommitSize,
+    _Inout_opt_ LARGE_INTEGER* SectionOffset,
+    _Inout_ SIZE_T* ViewSize,
+    _In_ UINT InheritDisposition,
+    _In_ ULONG AllocationType,
+    _In_ ULONG Win32Protect);
 
 /** ntdll.dll  */
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 NtUnmapViewOfSection(
-    IN HANDLE ProcessHandle,
-    IN OPTIONAL PVOID BaseAddress);
+    _In_ HANDLE ProcessHandle,
+    _In_opt_ PVOID BaseAddress);
 
 /** ntdll.dll  */
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 NtWaitForSingleObject(
-    IN HANDLE Handle,
-    IN BOOLEAN Alertable,
-    IN OPTIONAL LARGE_INTEGER* Timeout);
+    _In_ HANDLE Handle,
+    _In_ BOOLEAN Alertable,
+    _In_opt_ LARGE_INTEGER* Timeout);
 
 /** ntdll.dll  */
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 NtDelayExecution(
-    IN BOOLEAN Alertable,
-    IN OPTIONAL LARGE_INTEGER* Timeout);
+    _In_ BOOLEAN Alertable,
+    _In_opt_ LARGE_INTEGER* Timeout);
 
 /** ntdll.dll since Windows XP  */
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 NtWaitForKeyedEvent(
-    IN OPTIONAL HANDLE KeyedEventHandle,
-    IN PVOID Key,
-    IN BOOLEAN Alertable,
-    IN OPTIONAL LARGE_INTEGER* Timeout);
+    _In_opt_ HANDLE KeyedEventHandle,
+    _In_ PVOID Key,
+    _In_ BOOLEAN Alertable,
+    _In_opt_ LARGE_INTEGER* Timeout);
 
 /** ntdll.dll since Windows XP  */
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 NtReleaseKeyedEvent(
-    IN OPTIONAL HANDLE KeyedEventHandle,
-    IN PVOID Key,
-    IN BOOLEAN Alertable,
-    IN OPTIONAL LARGE_INTEGER* Timeout);
+    _In_opt_ HANDLE KeyedEventHandle,
+    _In_ PVOID Key,
+    _In_ BOOLEAN Alertable,
+    _In_opt_ LARGE_INTEGER* Timeout);
 
 /** ntdll.dll  */
 NTSYSCALLAPI
 NTSTATUS
 NTAPI
 NtRaiseHardError(
-    IN NTSTATUS Status,
-    IN ULONG NumberOfParameters,
-    IN ULONG UnicodeStringParameterMask,
-    IN OPTIONAL ULONG_PTR* Parameters,
-    IN ULONG ResponseOption,
-    OUT ULONG* Response);
+    _In_ NTSTATUS Status,
+    _In_ ULONG NumberOfParameters,
+    _In_ ULONG UnicodeStringParameterMask,
+    _In_opt_ ULONG_PTR* Parameters,
+    _In_ ULONG ResponseOption,
+    _Out_ ULONG* Response);
