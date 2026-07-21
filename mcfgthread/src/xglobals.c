@@ -614,7 +614,7 @@ __MCF_gthread_initialize_globals(void)
       /* Extend global storage. The remaining fields that are not initialized
        * explicitly are implicit zeroes. Other threads may be running, so the
        * size must be updated with an atomic operation.  */
-      _MCF_atomic_store_32_rlx(&(__MCF_g->self_size), __MCF_G_SIZE_TOTAL);
+      _MCF_atomic_store_32_rel(&(__MCF_g->self_size), __MCF_G_SIZE_TOTAL);
     }
   }
 
