@@ -597,6 +597,7 @@ __MCF_gthread_initialize_globals(void)
     if(__MCF_g->self_size == 0) {
       /* Initialize the new region. This is the only section where no other
        * threads may be running, so an atomic operation is unnecessary.  */
+      __MCF_ASSERT(gsize >= __MCF_G_SIZE(interrupt_cond));
       __MCF_g->self_ptr = __MCF_g;
       __MCF_g->self_size = __MCF_G_SIZE(interrupt_cond);
 
