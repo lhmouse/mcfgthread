@@ -607,7 +607,7 @@ __MCF_gthread_initialize_globals(void)
       /* Attach the main thread and make it joinable. The structure should
        * be all zeroes so no initialization is necessary.  */
       __MCF_thread_attach_foreign(__MCF_g->main_thread);
-      _MCF_atomic_store_32_rlx(__MCF_g->main_thread->__nref, 2);
+      _MCF_atomic_store_32_rlx(__MCF_g->main_thread[0].__nref, 2);
     }
 
     if((__MCF_g->self_size < __MCF_G_SIZE_TOTAL) && (gsize >= __MCF_G_SIZE_TOTAL)) {
