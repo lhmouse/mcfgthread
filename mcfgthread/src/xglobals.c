@@ -578,7 +578,7 @@ __MCF_gthread_initialize_globals(void)
     /* Allocate or open storage for global data. We are in the DLL main routine,
      * so locking is not necessary. Unlike `CreateFileMappingW()`, the handle
      * and view shall not be inherited by child processes.  */
-    HANDLE gfile = __MCF_create_named_section(&gattrs, sizeof(__MCF_crt_xglobals));
+    HANDLE gfile = __MCF_create_named_section(&gattrs, __MCF_G_SIZE_TOTAL);
     __MCF_CHECK(gfile);
     size_t gsize = 0;
     __MCF_g = __MCF_map_view_of_section(gfile, &gsize, false);
