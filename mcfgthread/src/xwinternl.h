@@ -45,15 +45,15 @@ enum
 /** `HARDERROR_RESPONSE_OPTION`; undocumented  */
 enum
   {
-    OptionAbortRetryIgnore   = 0,  /* MB_ABORTRETRYIGNORE */
-    OptionOk                 = 1,  /* MB_OK */
-    OptionOkCancel           = 2,  /* MB_OKCANCEL */
-    OptionRetryCancel        = 3,  /* MB_RETRYCANCEL */
-    OptionYesNo              = 4,  /* MB_YESNO */
-    OptionYesNoCancel        = 5,  /* MB_YESNOCANCEL */
+    OptionAbortRetryIgnore   = 0,  /* `MB_ABORTRETRYIGNORE` */
+    OptionOk                 = 1,  /* `MB_OK` */
+    OptionOkCancel           = 2,  /* `MB_OKCANCEL` */
+    OptionRetryCancel        = 3,  /* `MB_RETRYCANCEL` */
+    OptionYesNo              = 4,  /* `MB_YESNO` */
+    OptionYesNoCancel        = 5,  /* `MB_YESNOCANCEL` */
     OptionShutdownSystem     = 6,  /* DANGER - effects BSoD */
     OptionOkNoWait           = 7,  /* shows tray balloon instead of message box */
-    OptionCancelTryContinue  = 8,  /* MB_CANCELTRYCONTINUE */
+    OptionCancelTryContinue  = 8,  /* `MB_CANCELTRYCONTINUE` */
 };
 
 /** `HARDERROR_RESPONSE`; undocumented  */
@@ -61,15 +61,15 @@ enum
   {
     ResponseReturnToCaller  =  0,  /* LPC communication error */
     ResponseNotHandled      =  1,  /* preset value in case of invalid argument */
-    ResponseAbort           =  2,  /* IDABORT */
-    ResponseCancel          =  3,  /* IDCANCEL */
-    ResponseIgnore          =  4,  /* IDIGNORE */
-    ResponseNo              =  5,  /* IDNO */
-    ResponseOk              =  6,  /* IDOK */
-    ResponseRetry           =  7,  /* IDRETRY */
-    ResponseYes             =  8,  /* IDYES */
-    ResponseTryAgain        =  9,  /* IDTRYAGAIN */
-    ResponseContinue        = 10,  /* IDCONTINUE */
+    ResponseAbort           =  2,  /* `IDABORT` */
+    ResponseCancel          =  3,  /* `IDCANCEL` */
+    ResponseIgnore          =  4,  /* `IDIGNORE` */
+    ResponseNo              =  5,  /* `IDNO` */
+    ResponseOk              =  6,  /* `IDOK` */
+    ResponseRetry           =  7,  /* `IDRETRY` */
+    ResponseYes             =  8,  /* `IDYES` */
+    ResponseTryAgain        =  9,  /* `IDTRYAGAIN` */
+    ResponseContinue        = 10,  /* `IDCONTINUE` */
   };
 
 /** `OBJECT_ATTRIBUTES.Attributes`; ntdef.h */
