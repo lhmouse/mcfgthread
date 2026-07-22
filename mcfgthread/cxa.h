@@ -53,7 +53,6 @@ __MCF_atexit(__MCF_atexit_callback_any_ __func)
   __MCF_noexcept;
 
 /** Non-standard extension
- *
  * Callbacks that have been registered with `__cxa_at_quick_exit()` in a DLL are
  * deleted when the DLL is unloaded.  */
 __MCF_CXA_IMPORT
@@ -68,7 +67,6 @@ __MCF_at_quick_exit(__MCF_atexit_callback_any_ __func)
   __MCF_noexcept;
 
 /** GNU extension
- *
  * `__cxa_thread_atexit_impl()` is exported from glibc. `__cxa_thread_atexit()`
  * is exported from libstdc++.  */
 __MCF_CXA_IMPORT
