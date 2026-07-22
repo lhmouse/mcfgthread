@@ -36,14 +36,14 @@ struct _OBJECT_ATTRIBUTES
   };
 
 /** `SECTION_INHERIT`; wdm.h  */
-enum
+enum _SECTION_INHERIT
   {
     ViewShare = 1,  /* inheritable by child processes */
     ViewUnmap = 2,  /* not inheritable by child processes */
   };
 
 /** `HARDERROR_RESPONSE_OPTION`; undocumented  */
-enum
+enum _HARDERROR_RESPONSE_OPTION
   {
     OptionAbortRetryIgnore   = 0,  /* `MB_ABORTRETRYIGNORE` */
     OptionOk                 = 1,  /* `MB_OK` */
@@ -57,7 +57,7 @@ enum
 };
 
 /** `HARDERROR_RESPONSE`; undocumented  */
-enum
+enum _HARDERROR_RESPONSE
   {
     ResponseReturnToCaller  =  0,  /* LPC communication error */
     ResponseNotHandled      =  1,  /* preset value in case of invalid argument */
