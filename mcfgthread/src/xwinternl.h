@@ -59,17 +59,17 @@ enum
 /** `HARDERROR_RESPONSE`; undocumented  */
 enum
   {
-    ResponseReturnToCaller  = 0,
-    ResponseNotHandled      = 1,
-    ResponseAbort           = 2,
-    ResponseCancel          = 3,
-    ResponseIgnore          = 4,
-    ResponseNo              = 5,
-    ResponseOk              = 6,
-    ResponseRetry           = 7,
-    ResponseYes             = 8,
-    ResponseTryAgain        = 9,
-    ResponseContinue        = 10,
+    ResponseReturnToCaller  =  0,  /* LPC communication error */
+    ResponseNotHandled      =  1,  /* preset value in case of invalid argument */
+    ResponseAbort           =  2,  /* IDABORT */
+    ResponseCancel          =  3,  /* IDCANCEL */
+    ResponseIgnore          =  4,  /* IDIGNORE */
+    ResponseNo              =  5,  /* IDNO */
+    ResponseOk              =  6,  /* IDOK */
+    ResponseRetry           =  7,  /* IDRETRY */
+    ResponseYes             =  8,  /* IDYES */
+    ResponseTryAgain        =  9,  /* IDTRYAGAIN */
+    ResponseContinue        = 10,  /* IDCONTINUE */
   };
 
 /** `OBJECT_ATTRIBUTES.Attributes`; ntdef.h */
