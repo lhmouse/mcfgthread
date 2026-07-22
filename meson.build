@@ -260,8 +260,7 @@ endif
 
 mcfgthread_version_o = import('windows').compile_resources(
       'mcfgthread/src/version.rc',
-      depend_files: [ 'mcfgthread/version.h.in',
-                      'mcfgthread/src/mcfgthread.manifest' ],
+      depend_files: [ 'mcfgthread/version.h.in' ],
       include_directories: include_directories('.'),
       args: [ '-c65001' ])
 

@@ -7,7 +7,6 @@
 
 #include "version.h"
 #include <winver.h>
-#include <winuser.h>
 
 VS_VERSION_INFO  VERSIONINFO
   PRODUCTVERSION     _MCF_ABI_VERSION_MAJOR, _MCF_ABI_VERSION_MINOR, 0, 0
@@ -38,5 +37,3 @@ VS_VERSION_INFO  VERSIONINFO
       }
     }
   }
-
-ISOLATIONAWARE_MANIFEST_RESOURCE_ID  RT_MANIFEST  "mcfgthread.manifest"
