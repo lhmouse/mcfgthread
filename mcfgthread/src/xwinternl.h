@@ -45,31 +45,31 @@ enum
 /** `HARDERROR_RESPONSE_OPTION`; undocumented  */
 enum
   {
-    OptionAbortRetryIgnore = 0,  /* MB_ABORTRETRYIGNORE */
-    OptionOk = 1,  /* MB_OK */
-    OptionOkCancel = 2,  /* MB_OKCANCEL */
-    OptionRetryCancel = 3,  /* MB_RETRYCANCEL */
-    OptionYesNo = 4,  /* MB_YESNO */
-    OptionYesNoCancel = 5,  /* MB_YESNOCANCEL */
-    OptionShutdownSystem = 6,  /* DANGER - effects BSoD */
-    OptionOkNoWait = 7,  /* shows tray balloon instead of message box */
-    OptionCancelTryContinue = 8,  /* MB_CANCELTRYCONTINUE */
+    OptionAbortRetryIgnore   = 0,  /* MB_ABORTRETRYIGNORE */
+    OptionOk                 = 1,  /* MB_OK */
+    OptionOkCancel           = 2,  /* MB_OKCANCEL */
+    OptionRetryCancel        = 3,  /* MB_RETRYCANCEL */
+    OptionYesNo              = 4,  /* MB_YESNO */
+    OptionYesNoCancel        = 5,  /* MB_YESNOCANCEL */
+    OptionShutdownSystem     = 6,  /* DANGER - effects BSoD */
+    OptionOkNoWait           = 7,  /* shows tray balloon instead of message box */
+    OptionCancelTryContinue  = 8,  /* MB_CANCELTRYCONTINUE */
 };
 
 /** `HARDERROR_RESPONSE`; undocumented  */
 enum
   {
-    ResponseReturnToCaller = 0,
-    ResponseNotHandled = 1,
-    ResponseAbort = 2,
-    ResponseCancel = 3,
-    ResponseIgnore = 4,
-    ResponseNo = 5,
-    ResponseOk = 6,
-    ResponseRetry = 7,
-    ResponseYes = 8,
-    ResponseTryAgain = 9,
-    ResponseContinue = 10,
+    ResponseReturnToCaller  = 0,
+    ResponseNotHandled      = 1,
+    ResponseAbort           = 2,
+    ResponseCancel          = 3,
+    ResponseIgnore          = 4,
+    ResponseNo              = 5,
+    ResponseOk              = 6,
+    ResponseRetry           = 7,
+    ResponseYes             = 8,
+    ResponseTryAgain        = 9,
+    ResponseContinue        = 10,
   };
 
 /** `OBJECT_ATTRIBUTES.Attributes`; ntdef.h */
