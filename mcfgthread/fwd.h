@@ -203,7 +203,7 @@ __MCF_CXX(extern "C" {)
  * this function terminates the current process without returning.
  *
  * @param `where` should be a function name which will be included in the error
- *     message to display to the user.
+ *    message to display to the user.
  * @since 1.0  */
 __MCF_XGLOBALS_IMPORT __MCF_NEVER_RETURN __MCF_FN_COLD
 void

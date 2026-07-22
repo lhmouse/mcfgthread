@@ -165,7 +165,7 @@ RtlZeroMemory(
  *
  * @param `Status` is the `NTSTATUS` value to convert.
  * @returns the corresponding Windows error code. If the `NTSTATUS` value has no
- *     corresponding Windows error code, `ERROR_MR_MID_NOT_FOUND` is returned.
+ *    corresponding Windows error code, `ERROR_MR_MID_NOT_FOUND` is returned.
  * @since All  */
 NTSYSAPI
 ULONG
@@ -199,7 +199,7 @@ RtlDllShutdownInProgress(
  * This function is exported from KERNEL32.DLL and KERNELBASE.DLL.
  *
  * @param `OutHandle` points to a variable which receives the handle. The handle
- *     is cached in KERNEL32.DLL and shall not be closed by the caller.
+ *    is cached in KERNEL32.DLL and shall not be closed by the caller.
  * @returns an `NTSTATUS` code.
  * @since Windows 7  */
 NTSYSAPI
@@ -215,12 +215,12 @@ BaseGetNamedObjectDirectory(
  * This function is a public driver API, exported from NTDLL.DLL.
  *
  * @param `SourceProcessHandle` specifies the handle to the owner process of the
- *     source handle, or `NtCurrentProcess()`.
+ *    source handle, or `NtCurrentProcess()`.
  * @param `SourceHandle` specifies the handle to the existing kernel object.
  * @param `TargetProcessHandle` specifies the handle to the target process. This
- *     can be null if `DUPLICATE_CLOSE_SOURCE` is specified in `Options`.
+ *    can be null if `DUPLICATE_CLOSE_SOURCE` is specified in `Options`.
  * @param `TargetHandle` receives the new handle. The caller shall close the
- *     handle when it is no longer needed.
+ *    handle when it is no longer needed.
  * @param `DesiredAccess` is the access mask for the new handle.
  * @param `Attributes` specifies a combination of `OBJ_*` constants.
  * @param `Options` specifies a combination of `DUPLICATE_*` constants.
@@ -264,13 +264,13 @@ NtClose(
  * @param `DesiredAccess` is the access mask for the new handle.
  * @param `ObjectAttributes` specifies the attributes for the object.
  * @param `MaximumSize` is the maximum size of the file mapping object, which
- *     is rounded up to a multiple of the system page size.
+ *    is rounded up to a multiple of the system page size.
  * @param `SectionPageProtection` specifies the protection of pages in the
- *     section. This shall be one of the `PAGE_*` constants.
+ *    section. This shall be one of the `PAGE_*` constants.
  * @param `AllocationAttributes` specifies the allocation attributes of the
- *     section. This shall be a combination of `SEC_*` constants.
+ *    section. This shall be a combination of `SEC_*` constants.
  * @param `FileHandle` specifies the backing file for the section. If this
- *     handle is null, the section is backed by the system paging file.
+ *    handle is null, the section is backed by the system paging file.
  * @returns an `NTSTATUS` code.
  * @since All  */
 NTSYSCALLAPI
@@ -293,24 +293,24 @@ NtCreateSection(
  *
  * @param `SectionHandle` specifies a handle to the file mapping object.
  * @param `ProcessHandle` specifies a handle to the process in which the file
- *     mapping will be mapped, or `NtCurrentProcess()`.
+ *    mapping will be mapped, or `NtCurrentProcess()`.
  * @param `BaseAddress` points to a variable which specifies the base address of
- *     the view, and receives the base address after the function returns. If the
- *     variable contains a null pointer before the call, the base address will be
- *     chosen by the system.
+ *    the view, and receives the base address after the function returns. If the
+ *    variable contains a null pointer before the call, the base address will be
+ *    chosen by the system.
  * @param `ZeroBits` specifies the number of high-order address bits that must be
- *     zero in the base address.
+ *    zero in the base address.
  * @param `CommitSize` specifies the size of the region that will be committed
- *     initially.
+ *    initially.
  * @param `SectionOffset` specifies the offset from the beginning of the file
- *     mapping to map. If this is null, the mapping starts at the beginning.
+ *    mapping to map. If this is null, the mapping starts at the beginning.
  * @param `ViewSize` points to a variable which specifies the size of the view,
- *     and receives the size after the function returns. If this variable
- *     contains zero before the call, the file mapping is mapped until the end.
+ *    and receives the size after the function returns. If this variable
+ *    contains zero before the call, the file mapping is mapped until the end.
  * @param `InheritDisposition` specifies one of the `View*` constants.
  * @param `AllocationType` specifies a combination of `MEM_*` constants.
  * @param `Win32Protect` specifies the protection of the view. This shall be one
- *     of the `PAGE_*` constants.
+ *    of the `PAGE_*` constants.
  * @returns an `NTSTATUS` code.
  * @since All  */
 NTSYSCALLAPI
@@ -335,9 +335,9 @@ NtMapViewOfSection(
  * This function is a public driver API, exported from NTDLL.DLL.
  *
  * @param `ProcessHandle` specifies a handle to the process in which the file
- *     mapping will be unmapped, or `NtCurrentProcess()`.
+ *    mapping will be unmapped, or `NtCurrentProcess()`.
  * @param `BaseAddress` points to the base address that was returned by a
- *     previous call to `NtMapViewOfSection()`.
+ *    previous call to `NtMapViewOfSection()`.
  * @returns an `NTSTATUS` code.
  * @since All  */
 NTSYSCALLAPI
@@ -356,7 +356,7 @@ NtUnmapViewOfSection(
  * @param `Handle` specifies a handle to the object to wait for.
  * @param `Alertable` specifies whether the operation is alertable.
  * @param `Timeout` specifies an optional timeout. If the parameter is null, the
- *     function waits indefinitely.
+ *    function waits indefinitely.
  * @returns an `NTSTATUS` code.
  * @since All  */
 NTSYSCALLAPI
@@ -375,7 +375,7 @@ NtWaitForSingleObject(
  *
  * @param `Alertable` specifies whether the operation is alertable.
  * @param `Timeout` specifies an optional timeout. If the parameter is null, the
- *     function waits indefinitely.
+ *    function waits indefinitely.
  * @returns an `NTSTATUS` code.
  * @since All  */
 NTSYSCALLAPI
@@ -393,13 +393,13 @@ NtDelayExecution(
  * This function is exported from NTDLL.DLL.
  *
  * @param `KeyedEventHandle` specifies a handle to the keyed event. Since Windows
- *     Vista, this handle can be null, in which case the function will use
- *     `\KernelObjects\CritSecOutOfMemoryEvent`.
+ *    Vista, this handle can be null, in which case the function will use
+ *    `\KernelObjects\CritSecOutOfMemoryEvent`.
  * @param `Key` specifies the key. The lowest bit must be clear. The key is not
- *     shared between processes.
+ *    shared between processes.
  * @param `Alertable` specifies whether the operation is alertable.
  * @param `Timeout` specifies an optional timeout. If the parameter is null, the
- *     function waits indefinitely.
+ *    function waits indefinitely.
  * @returns an `NTSTATUS` code.
  * @since Windows XP  */
 NTSYSCALLAPI
@@ -419,13 +419,13 @@ NtWaitForKeyedEvent(
  * This function is exported from NTDLL.DLL.
  *
  * @param `KeyedEventHandle` specifies a handle to the keyed event. Since Windows
- *     Vista, this handle can be null, in which case the function will use
- *     `\KernelObjects\CritSecOutOfMemoryEvent`.
+ *    Vista, this handle can be null, in which case the function will use
+ *    `\KernelObjects\CritSecOutOfMemoryEvent`.
  * @param `Key` specifies the key. The lowest bit must be clear. The key is not
- *     shared between processes.
+ *    shared between processes.
  * @param `Alertable` specifies whether the operation is alertable.
  * @param `Timeout` specifies an optional timeout. If the parameter is null, the
- *     function waits indefinitely.
+ *    function waits indefinitely.
  * @returns an `NTSTATUS` code.
  * @since Windows XP  */
 NTSYSCALLAPI
@@ -451,14 +451,14 @@ NtReleaseKeyedEvent(
  *
  * @param `Status` specifies the status code to raise.
  * @param `NumberOfParameters` specifies the number of parameters that
- *     `Parameters` points to.
+ *    `Parameters` points to.
  * @param `UnicodeStringParameterMask` specifies a bit mask where each bit
- *     indicates whether the corresponding parameter is actually a pointer to a
- *     `UNICODE_STRING`.
+ *    indicates whether the corresponding parameter is actually a pointer to a
+ *    `UNICODE_STRING`.
  * @param `Parameters` points to an array of parameters.
  * @param `ResponseOption` specifies an enumerator of `HARDERROR_RESPONSE_OPTION`.
  * @param `Response` points to a variable which receives the user response as
- *     an enumerator of `HARDERROR_RESPONSE`.
+ *    an enumerator of `HARDERROR_RESPONSE`.
  * @returns an `NTSTATUS` code.
  * @since All  */
 NTSYSCALLAPI

@@ -52,13 +52,13 @@ _MCF_shared_mutex_init(_MCF_shared_mutex* __smtx)
  *
  * @param `smtx` points to the shared mutex to lock.
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns 0 if the shared mutex has been successfully locked in shared mode,
- *     or -1 if the operation has timed out.
+ *    or -1 if the operation has timed out.
  * @since 1.9  */
 __MCF_SHARED_MUTEX_IMPORT
 int
@@ -80,13 +80,13 @@ _MCF_shared_mutex_lock_shared_slow(_MCF_shared_mutex* __smtx, const int64_t* __t
  *
  * @param `smtx` points to the shared mutex to lock.
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns 0 if the shared mutex has been successfully locked in shared mode,
- *     or -1 if the operation has timed out.
+ *    or -1 if the operation has timed out.
  * @since 1.9  */
 __MCF_SHARED_MUTEX_INLINE
 int
@@ -103,13 +103,13 @@ _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smtx, const int64_t* __timeou
  *
  * @param `smtx` points to the shared mutex to lock.
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns 0 if the shared mutex has been successfully locked in exclusive
- *     mode, or -1 if the operation has timed out.
+ *    mode, or -1 if the operation has timed out.
  * @since 1.9  */
 __MCF_SHARED_MUTEX_IMPORT
 int
@@ -130,13 +130,13 @@ _MCF_shared_mutex_lock_exclusive_slow(_MCF_shared_mutex* __smtx, const int64_t* 
  *
  * @param `smtx` points to the shared mutex to lock.
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns 0 if the shared mutex has been successfully locked in exclusive
- *     mode, or -1 if the operation has timed out.
+ *    mode, or -1 if the operation has timed out.
  * @since 1.9  */
 __MCF_SHARED_MUTEX_INLINE
 int

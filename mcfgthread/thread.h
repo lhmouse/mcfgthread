@@ -77,23 +77,23 @@ enum __MCF_thread_priority __MCF_CXX11(: int)
  * returned pointer is no longer needed.
  *
  * @param `thrdp_opt` is an optional pointer that indicates where to store a
- *     pointer to the new thread. If it is non-null, it is updated before the
- *     new thread begins execution. The value is the same as what this function
- *     will return.
+ *    pointer to the new thread. If it is non-null, it is updated before the
+ *    new thread begins execution. The value is the same as what this function
+ *    will return.
  * @param `stack_size` specifies the stack reservation for the new thread. If it
- *     is zero, the default stack size of the current process will be used.
+ *    is zero, the default stack size of the current process will be used.
  * @param `proc` shall point to the thread procedure.
  * @param `data_alignment` specifies the alignment of user-defined data. If it
- *     is zero, `__MCF_THREAD_DATA_ALIGNMENT` is used; if it is non-zero, it
- *     shall be a power of two.
+ *    is zero, `__MCF_THREAD_DATA_ALIGNMENT` is used; if it is non-zero, it
+ *    shall be a power of two.
  * @param `data_opt` is an optional pointer to a memory block that will be copied
- *     to initialize user-defined data. If it is null, user-defined data will be
- *     zero-initialized.
+ *    to initialize user-defined data. If it is null, user-defined data will be
+ *    zero-initialized.
  * @param `data_size` specifies the size of user-defined data. If it is zero, no
- *     user-defined data will be allocated.
+ *    user-defined data will be allocated.
  * @returns a pointer to the new thread control structure. If a thread cannot be
- *     created, a null pointer is returned and an error code can be obtained via
- *     `_MCF_get_win32_error()`.
+ *    created, a null pointer is returned and an error code can be obtained via
+ *    `_MCF_get_win32_error()`.
  * @since 2.5  */
 __MCF_THREAD_IMPORT
 _MCF_thread*
@@ -112,16 +112,16 @@ _MCF_thread_p_new(_MCF_thread** __thrdp_opt, size_t __stack_size, _MCF_thread_pr
  *
  * @param `proc` shall point to the thread procedure.
  * @param `data_alignment` specifies the alignment of user-defined data. If it
- *     is zero, `__MCF_THREAD_DATA_ALIGNMENT` is used; if it is non-zero, it
- *     shall be a power of two.
+ *    is zero, `__MCF_THREAD_DATA_ALIGNMENT` is used; if it is non-zero, it
+ *    shall be a power of two.
  * @param `data_opt` is an optional pointer to a memory block that will be copied
- *     to initialize user-defined data. If it is null, user-defined data will be
- *     zero-initialized.
+ *    to initialize user-defined data. If it is null, user-defined data will be
+ *    zero-initialized.
  * @param `data_size` specifies the size of user-defined data. If it is zero, no
- *     user-defined data will be allocated.
+ *    user-defined data will be allocated.
  * @returns a pointer to the new thread control structure. If a thread cannot be
- *     created, a null pointer is returned and an error code can be obtained via
- *     `_MCF_get_win32_error()`.
+ *    created, a null pointer is returned and an error code can be obtained via
+ *    `_MCF_get_win32_error()`.
  * @since 1.4  */
 __MCF_THREAD_INLINE
 _MCF_thread*
@@ -140,13 +140,13 @@ _MCF_thread_new_aligned(_MCF_thread_procedure* __proc, size_t __data_alignment,
  *
  * @param `proc` shall point to the thread procedure.
  * @param `data_opt` is an optional pointer to a memory block that will be copied
- *     to initialize user-defined data. If it is null, user-defined data will be
- *     zero-initialized.
+ *    to initialize user-defined data. If it is null, user-defined data will be
+ *    zero-initialized.
  * @param `data_size` specifies the size of user-defined data. If it is zero, no
- *     user-defined data will be allocated.
+ *    user-defined data will be allocated.
  * @returns a pointer to the new thread control structure. If a thread cannot be
- *     created, a null pointer is returned and an error code can be obtained via
- *     `_MCF_get_win32_error()`.
+ *    created, a null pointer is returned and an error code can be obtained via
+ *    `_MCF_get_win32_error()`.
  * @since 1.0  */
 __MCF_THREAD_INLINE
 _MCF_thread*
@@ -268,16 +268,16 @@ _MCF_thread_exit(void)
 /** Waits for a thread to terminate.
  *
  * @param `thrd_opt` points to the thread to wait for. It's not recommended to
- *     pass a null pointer, which indicates the calling thread itself and the
- *     operation will always time out.
+ *    pass a null pointer, which indicates the calling thread itself and the
+ *    operation will always time out.
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns 0 if the thread has terminated, or -1 if the wait operation has
- *     timed out.
+ *    timed out.
  * @since 1.0  */
 __MCF_THREAD_IMPORT
 int
@@ -287,9 +287,9 @@ _MCF_thread_wait(const _MCF_thread* __thrd_opt, const int64_t* __timeout_opt)
 /** Gets the priority of a thread.
  *
  * @param `thrd_opt` points to the thread to get the priority of. If it is null,
- *     the priority of the current thread is returned.
+ *    the priority of the current thread is returned.
  * @returns the priority of the thread as an integer. No value has been reserved
- *     to indicate an error.
+ *    to indicate an error.
  * @since 1.3  */
 __MCF_THREAD_IMPORT
 _MCF_thread_priority
@@ -299,12 +299,12 @@ _MCF_thread_get_priority(const _MCF_thread* __thrd_opt)
 /** Sets the priority of a thread.
  *
  * @param `thrd_opt` points to the thread to set the priority of. If it is null,
- *     the priority of the current thread is changed.
+ *    the priority of the current thread is changed.
  * @param `priority` is the new priority of the thread. It may be an arbitrary
- *     integer within -15 and +15, but specifying an `_MCF_thread_priority_*`
- *     constant is recommended.
+ *    integer within -15 and +15, but specifying an `_MCF_thread_priority_*`
+ *    constant is recommended.
  * @returns 0 upon success, -1 in case of an invalid argument, or -2 in case of
- *     a system error which can be obtained via `_MCF_get_win32_error()`.
+ *    a system error which can be obtained via `_MCF_get_win32_error()`.
  * @since 1.3  */
 __MCF_THREAD_IMPORT
 int
@@ -349,13 +349,13 @@ _MCF_yield(void)
  * This operation can be interrupted by Ctrl+C.
  *
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns 0 if the operation has timed out, or -1 if the operation was
- *     interrupted.
+ *    interrupted.
  * @since 1.0  */
 __MCF_THREAD_IMPORT
 int
@@ -367,11 +367,11 @@ _MCF_sleep(const int64_t* __timeout_opt)
  * This operation cannot be interrupted.
  *
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns nothing.
  * @since 1.3  */
 __MCF_THREAD_IMPORT
@@ -385,8 +385,8 @@ _MCF_sleep_noninterruptible(const int64_t* __timeout_opt)
  *
  * @param `key` shall point to a thread-local key.
  * @returns the value associated with the key, or a null pointer if no such
- *     value has been set. If the key has been marked deleted, a null pointer is
- *     also returned. No return value is reserved to indicate an error.
+ *    value has been set. If the key has been marked deleted, a null pointer is
+ *    also returned. No return value is reserved to indicate an error.
  * @since 1.0  */
 __MCF_THREAD_INLINE __MCF_FN_PURE
 void*
@@ -399,10 +399,10 @@ _MCF_tls_get(const _MCF_tls_key* __key)
  *
  * @param `key` shall point to a thread-local key.
  * @param `old_value_opt` is an optional pointer to a location where the old
- *     value will be stored.
+ *    value will be stored.
  * @param `__value_opt` is the new value to associate with the key.
  * @returns 0 if the value has been set successfully, -1 if the key has been
- *     marked deleted, or -2 if out of memory.
+ *    marked deleted, or -2 if out of memory.
  * @since 1.4  */
 __MCF_THREAD_INLINE
 int
@@ -416,7 +416,7 @@ _MCF_tls_xset(_MCF_tls_key* __key, void** __old_value_opt, const void* __value_o
  * @param `key` shall point to a thread-local key.
  * @param `__value_opt` is the new value to associate with the key.
  * @returns 0 if the value has been set successfully, -1 if the key has been
- *     marked deleted, or -2 if out of memory.
+ *    marked deleted, or -2 if out of memory.
  * @since 1.0  */
 __MCF_THREAD_INLINE
 int
@@ -429,10 +429,10 @@ _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt)
  * will select CPUs according to the affinity of the target thread.
  *
  * @param `thrd_opt` points to the thread to get the affinity of. If it is null,
- *     the affinity of the current thread is returned.
+ *    the affinity of the current thread is returned.
  * @param `coll` points to a CPU collection where to set CPU selections.
  * @returns 0 upon success, -1 in case of an invalid argument, or -2 in case of
- *     a system error which can be obtained via `_MCF_get_win32_error()`.
+ *    a system error which can be obtained via `_MCF_get_win32_error()`.
  * @since 2.5  */
 __MCF_THREAD_IMPORT
 int
@@ -446,10 +446,10 @@ _MCF_thread_get_affinity(const _MCF_thread* __thrd_opt, _MCF_cpu_collection* __c
  * collection with no selection; the function will fail.
  *
  * @param `thrd_opt` points to the thread to set the affinity of. If it is null,
- *     the affinity of the current thread is changed.
+ *    the affinity of the current thread is changed.
  * @param `coll` points to a CPU collection where to set CPU selections.
  * @returns 0 upon success, -1 in case of an invalid argument, or -2 in case of
- *     a system error which can be obtained via `_MCF_get_win32_error()`.
+ *    a system error which can be obtained via `_MCF_get_win32_error()`.
  * @since 2.5  */
 __MCF_THREAD_IMPORT
 int

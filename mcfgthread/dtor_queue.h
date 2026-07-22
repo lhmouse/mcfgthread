@@ -40,9 +40,9 @@ struct __MCF_dtor_queue
  *
  * @param `queue` points to a queue where the element will be appended.
  * @param `elem` points to an element to be appended. `elem->__dtor` shall not
- *     be a null pointer.
+ *    be a null pointer.
  * @returns 0 if the element has been pushed successfully, -1 in case of an
- *     invalid argument, or -2 if out of memory.
+ *    invalid argument, or -2 if out of memory.
  * @since 1.0  */
 __MCF_DTOR_QUEUE_IMPORT
 int
@@ -54,10 +54,10 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtor_element* __ele
  * @param `elem` points to a structure which will receive the popped element.
  * @param `queue` points to a queue where an element will be popped.
  * @param `dso` is an optional DSO handle. If `dso` is null, then the newest
- *     element will be popped, regardless of its DSO handle; otherwise, only
- *     the newest element whose `__dso` field equals `dso` will be popped.
+ *    element will be popped, regardless of its DSO handle; otherwise, only
+ *    the newest element whose `__dso` field equals `dso` will be popped.
  * @returns 0 if an element has been popped, or -1 if there's no more matching
- *     element in the queue.
+ *    element in the queue.
  * @since 1.0  */
 __MCF_DTOR_QUEUE_IMPORT
 int
@@ -68,8 +68,8 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* __elem, __MCF_dtor_queue* __queue, void
  *
  * @param `queue` points to a queue where elements will be removed.
  * @param `dso` is an optional DSO handle. If `dso` is null, then all elements
- *     will be removed, regardless of their DSO handles; otherwise, only the
- *     elements whose `__dso` field equals `dso` will be removed.
+ *    will be removed, regardless of their DSO handles; otherwise, only the
+ *    elements whose `__dso` field equals `dso` will be removed.
  * @returns the number of elements that have been removed.
  * @since 1.0  */
 __MCF_DTOR_QUEUE_IMPORT

@@ -44,9 +44,9 @@ struct __MCF_sem
 
  * @param `sem` points to the semaphore to initialize.
  * @param `value_init` is the initial value of the semaphore, which shall not be
- *     negative.
+ *    negative.
  * @returns 0 if the initialization is successful, or -1 in case of an invalid
- *     argument.
+ *    argument.
  * @since 1.0  */
 __MCF_SEM_INLINE
 int
@@ -73,13 +73,13 @@ _MCF_sem_get(const _MCF_sem* __sem)
  *
  * @param `sem` points to the semaphore.
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns 0 if the value has been decremented, or -1 if the operation has
- *     timed out.
+ *    timed out.
  * @since 1.0  */
 __MCF_SEM_IMPORT
 int
@@ -90,9 +90,9 @@ _MCF_sem_wait(_MCF_sem* __sem, const int64_t* __timeout_opt)
  *
  * @param `sem` points to the semaphore.
  * @param `value_add` is the value to add to the semaphore, which shall not be
- *     negative.
+ *    negative.
  * @returns 0 if the value has been increased successfully, -1 in case of an
- *     invalid argument, or -2 if the value would overflow.
+ *    invalid argument, or -2 if the value would overflow.
  * @since 1.0  */
 __MCF_SEM_IMPORT
 int
@@ -105,7 +105,7 @@ _MCF_sem_signal_some(_MCF_sem* __sem, intptr_t __value_add)
  *
  * @param `sem` points to the semaphore.
  * @returns 0 if the value has been incremented successfully, -1 in case of an
- *     invalid argument, or -2 if the value would overflow.
+ *    invalid argument, or -2 if the value would overflow.
  * @since 1.0  */
 __MCF_SEM_INLINE
 int

@@ -56,7 +56,7 @@ struct __MCF_tls_key
  *
  * @param `dtor_opt` is an optional pointer to the destructor for values.
  * @returns a new thread-local key. In case of out of memory, a null pointer is
- *     returned.
+ *    returned.
  * @since 1.0  */
 __MCF_TLS_IMPORT
 _MCF_tls_key*
@@ -146,7 +146,7 @@ _MCF_tls_key_delete(_MCF_tls_key* __key_opt)
  *
  * @param `key` shall point to a thread-local key.
  * @returns the destructor of the thread-local key, which may be null if none
- *     was specified when the key was created.
+ *    was specified when the key was created.
  * @since 1.4  */
 __MCF_TLS_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
 _MCF_tls_dtor*
@@ -175,10 +175,10 @@ __MCF_tls_table_get(const __MCF_tls_table* __table, const _MCF_tls_key* __key)
  * @param `table` shall point to a thread-local table.
  * @param `key` shall point to a thread-local key.
  * @param `old_value_opt` is an optional pointer to a location where the old
- *     value will be stored.
+ *    value will be stored.
  * @param `__value_opt` is the new value to associate with the key.
  * @returns 0 if the value has been set successfully, -1 if the key has been
- *     marked deleted, or -2 if out of memory.
+ *    marked deleted, or -2 if out of memory.
  * @since 1.4  */
 __MCF_TLS_IMPORT
 int

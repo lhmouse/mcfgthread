@@ -54,13 +54,13 @@ _MCF_cond_init(_MCF_cond* __cnd)
  * @param `relock_opt` is an optional pointer to the relock callback.
  * @param `lock_arg` is a user-defined argument to both callbacks.
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns 0 if the condition variable was signaled or there was a spurious
- *     wakeup, or -1 if the wait operation has timed out.
+ *    wakeup, or -1 if the wait operation has timed out.
  * @since 1.0  */
 __MCF_COND_IMPORT
 int

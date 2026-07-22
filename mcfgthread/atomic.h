@@ -271,7 +271,7 @@ __MCF_C3(_MCF_atomic_load_,WIDTH,ORDER) (const volatile void* __mem)
 /** Performs an atomic load operation.
  *
  * @param `res` shall point to a variable of the specified width, which receives
- *     the value of the atomic object.
+ *    the value of the atomic object.
  * @param `mem` shall point to an atomic object of the specified width.
  * @returns nothing.
  * @since 1.0  */
@@ -302,7 +302,7 @@ __MCF_C3(_MCF_atomic_store_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
  *
  * @param `mem` shall point to an atomic object of the specified width.
  * @param `src` shall point to a variable of the specified width, which provides
- *     the value to store into the atomic object.
+ *    the value to store into the atomic object.
  * @returns nothing.
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
@@ -331,10 +331,10 @@ __MCF_C3(_MCF_atomic_xchg_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
 /** Performs an atomic exchange operation.
  *
  * @param `res` shall point to a variable of the specified width, which receives
- *     the previous value of the atomic object.
+ *    the previous value of the atomic object.
  * @param `mem` shall point to an atomic object of the specified width.
  * @param `src` shall point to a variable of the specified width, which provides
- *     the value to store into the atomic object.
+ *    the value to store into the atomic object.
  * @returns nothing.
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
@@ -357,8 +357,8 @@ __MCF_C3(_MCF_atomic_xchg_p,WIDTH,ORDER) (void* __res, volatile void* __mem, con
  *
  * @param `mem` shall point to an atomic object of the specified width.
  * @param `cmp` shall point to a variable of the specified width, which provides
- *     the value to compare, and when the function fails, receives the current
- *     value of the atomic object.
+ *    the value to compare, and when the function fails, receives the current
+ *    value of the atomic object.
  * @param `val` is the value to store into the atomic object upon success.
  * @returns whether the comparison succeeds.
  * @since 1.0  */
@@ -380,10 +380,10 @@ __MCF_C3(_MCF_atomic_cmpxchg_,WIDTH,ORDER) (volatile void* __mem, INTEGER* __cmp
  *
  * @param `mem` shall point to an atomic object of the specified width.
  * @param `cmp` shall point to a variable of the specified width, which provides
- *     the value to compare, and when the function fails, receives the current
- *     value of the atomic object.
+ *    the value to compare, and when the function fails, receives the current
+ *    value of the atomic object.
  * @param `src` shall point to a variable of the specified width, which provides
- *     the value to store into the atomic object.
+ *    the value to store into the atomic object.
  * @returns whether the comparison succeeds.
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
@@ -407,8 +407,8 @@ __MCF_C3(_MCF_atomic_cmpxchg_p,WIDTH,ORDER) (volatile void* __mem, void* __cmp, 
  *
  * @param `mem` shall point to an atomic object of the specified width.
  * @param `cmp` shall point to a variable of the specified width, which provides
- *     the value to compare, and when the function fails, receives the current
- *     value of the atomic object.
+ *    the value to compare, and when the function fails, receives the current
+ *    value of the atomic object.
  * @param `val` is the value to store into the atomic object upon success.
  * @returns whether the comparison succeeds.
  * @since 1.0  */
@@ -429,10 +429,10 @@ __MCF_C3(_MCF_atomic_cmpxchg_weak_,WIDTH,ORDER) (volatile void* __mem, INTEGER* 
  *
  * @param `mem` shall point to an atomic object of the specified width.
  * @param `cmp` shall point to a variable of the specified width, which provides
- *     the value to compare, and when the function fails, receives the current
- *     value of the atomic object.
+ *    the value to compare, and when the function fails, receives the current
+ *    value of the atomic object.
  * @param `src` shall point to a variable of the specified width, which provides
- *     the value to store into the atomic object.
+ *    the value to store into the atomic object.
  * @returns whether the comparison succeeds.
  * @since 1.0  */
 __MCF_ATOMIC_INLINE

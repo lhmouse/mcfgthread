@@ -55,14 +55,14 @@ _MCF_once_init(_MCF_once* __once)
  *
  * @param `once` points to the once-initialization flag to lock.
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns 1 if the once-initialization flag has been successfully locked and
- *     the caller should perform initialization, 0 if initialization has finished
- *     and the caller should do nothing, or -1 if the operation has timed out.
+ *    the caller should perform initialization, 0 if initialization has finished
+ *    and the caller should do nothing, or -1 if the operation has timed out.
  * @since 1.0  */
 __MCF_ONCE_IMPORT
 int
@@ -86,14 +86,14 @@ _MCF_once_wait_slow(_MCF_once* __once, const int64_t* __timeout_opt)
  *
  * @param `once` points to the once-initialization flag to lock.
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns 1 if the once-initialization flag has been successfully locked and
- *     the caller should perform initialization, 0 if initialization has finished
- *     and the caller should do nothing, or -1 if the operation has timed out.
+ *    the caller should perform initialization, 0 if initialization has finished
+ *    and the caller should do nothing, or -1 if the operation has timed out.
  * @since 1.0  */
 __MCF_ONCE_INLINE
 int

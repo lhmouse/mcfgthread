@@ -109,7 +109,7 @@ __MCF_gthr_rc_mutex_recurse(__MCF_gthr_rc_mutex* __rmtx)
  *
  * @param `rmtx` points to a recursive mutex to wait for.
  * @returns 0 if the current thread has acquired ownership of the mutex, or -1
- *     if the operation has timed out.
+ *    if the operation has timed out.
  * @since 1.0  */
 __MCF_GTHR_AUX_INLINE
 int
@@ -156,13 +156,13 @@ __MCF_gthr_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked)
  * @param `cnd` points to the condition variable to wait on.
  * @param `mtx` points to the mutex to use.
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns 0 if the condition variable was signaled or there was a spurious
- *     wakeup, or -1 if the wait operation has timed out.
+ *    wakeup, or -1 if the wait operation has timed out.
  * @since 1.9  */
 __MCF_GTHR_AUX_IMPORT
 int
@@ -202,13 +202,13 @@ __MCF_gthr_shared_mutex_relock_exclusive_callback(intptr_t __arg, intptr_t __unl
  * @param `cnd` points to the condition variable to wait on.
  * @param `smtx` points to the shared mutex to use.
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns 0 if the condition variable was signaled or there was a spurious
- *     wakeup, or -1 if the wait operation has timed out.
+ *    wakeup, or -1 if the wait operation has timed out.
  * @since 1.9  */
 __MCF_GTHR_AUX_IMPORT
 int
@@ -228,13 +228,13 @@ __MCF_gthr_cond_shared_mutex_wait_shared(_MCF_cond* __cnd, _MCF_shared_mutex* __
  * @param `cnd` points to the condition variable to wait on.
  * @param `smtx` points to the shared mutex to use.
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns 0 if the condition variable was signaled or there was a spurious
- *     wakeup, or -1 if the wait operation has timed out.
+ *    wakeup, or -1 if the wait operation has timed out.
  * @since 1.9  */
 __MCF_GTHR_AUX_IMPORT
 int
@@ -268,13 +268,13 @@ __MCF_gthr_recursive_mutex_relock_callback(intptr_t __arg, intptr_t __unlocked)
  * @param `cnd` points to the condition variable to wait on.
  * @param `rmtx` points to the recursive mutex to use.
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns 0 if the condition variable was signaled or there was a spurious
- *     wakeup, or -1 if the wait operation has timed out.
+ *    wakeup, or -1 if the wait operation has timed out.
  * @since 1.9  */
 __MCF_GTHR_AUX_IMPORT
 int
@@ -296,9 +296,9 @@ __MCF_gthr_thread_create_v3(__MCF_gthr_thread_fn* __proc, void* __arg)
 /** Creates a thread.
  *
  * @param `thrdp_opt` is an optional pointer that indicates where to store a
- *     pointer to the new thread. If it is non-null, it is updated before the
- *     new thread begins execution. The value is the same as what this function
- *     will return.
+ *    pointer to the new thread. If it is non-null, it is updated before the
+ *    new thread begins execution. The value is the same as what this function
+ *    will return.
  * @param `proc` shall point to the thread procedure.
  * @param `arg` is a user-defined parameter for the thread procedure.
  * @returns a pointer to the new thread, or null in case of a failure.
@@ -311,11 +311,11 @@ __MCF_gthr_thread_create_v4(_MCF_thread** __thrdp_opt, __MCF_gthr_thread_fn* __p
 /** Waits for a thread to terminate.
  *
  * @param `thrd` points to the thread to wait for. It shall not denote the
- *     calling thread; otherwise the behavior is undefined.
+ *    calling thread; otherwise the behavior is undefined.
  * @param `resp_opt` is an optional pointer that indicates where to store the
- *     exit code of the thread. If it is non-null, the exit code is stored into
- *     `*resp_opt`. If the thread has exited with an exit unwind, then the exit
- *     code will be `__MCF_GTHR_CANCELLED`.
+ *    exit code of the thread. If it is non-null, the exit code is stored into
+ *    `*resp_opt`. If the thread has exited with an exit unwind, then the exit
+ *    code will be `__MCF_GTHR_CANCELLED`.
  * @returns nothing.
  * @since 2.0  */
 __MCF_GTHR_AUX_IMPORT

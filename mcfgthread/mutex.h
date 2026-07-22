@@ -53,13 +53,13 @@ _MCF_mutex_init(_MCF_mutex* __mtx)
  *
  * @param `mtx` points to the mutex to lock.
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns 0 if the mutex has been successfully locked, or -1 if the operation
- *     has timed out.
+ *    has timed out.
  * @since 1.0  */
 __MCF_MUTEX_IMPORT
 int
@@ -80,13 +80,13 @@ _MCF_mutex_lock_slow(_MCF_mutex* __mtx, const int64_t* __timeout_opt)
  *
  * @param `mtx` points to the mutex to lock.
  * @param `timeout_opt` points to the timeout value. If it is positive, it
- *     denotes the expiration time point in the number of milliseconds since
- *     1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
- *     value of it denotes the number of milliseconds to wait. If it points to
- *     zero, the function returns immediately without waiting. If it is null,
- *     the function waits indefinitely.
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
  * @returns 0 if the mutex has been successfully locked, or -1 if the operation
- *     has timed out.
+ *    has timed out.
  * @since 1.0  */
 __MCF_MUTEX_INLINE
 int

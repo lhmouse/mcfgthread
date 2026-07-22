@@ -49,8 +49,8 @@ struct __MCF_cpu_collection
  * collection when it is no longer needed.
  *
  * @returns a new CPU collection. If a CPU collection cannot be allocated, a
- *     null pointer is returned and an error code can be obtained via
- *     `_MCF_get_win32_error()`.
+ *    null pointer is returned and an error code can be obtained via
+ *    `_MCF_get_win32_error()`.
  * @since 2.5  */
 __MCF_CPU_COLLECTION_IMPORT
 _MCF_cpu_collection*
@@ -64,7 +64,7 @@ _MCF_cpu_collection_new(void)
  *
  * @param `src` shall point to the CPU collection to copy.
  * @returns an exact copy of `*src`. If a CPU collection cannot be allocated, a
- *     null pointer is returned. This function does not set the last error code.
+ *    null pointer is returned. This function does not set the last error code.
  * @since 2.5  */
 __MCF_CPU_COLLECTION_IMPORT
 _MCF_cpu_collection*
@@ -204,7 +204,7 @@ _MCF_cpu_collection_get_selection_by_index(const _MCF_cpu_collection* __coll, ui
  * @param `coll` shall point to a CPU collection.
  * @param `index` shall be a valid index to a CPU in the collection.
  * @param `selected` specifies whether the CPU is to be selected. If this
- *     parameter is false, the CPU is deselected.
+ *    parameter is false, the CPU is deselected.
  * @returns whether the CPU at the specified index was selected before the call.
  * @since 2.5  */
 __MCF_CPU_COLLECTION_INLINE
@@ -217,7 +217,7 @@ _MCF_cpu_collection_set_selection_by_index(_MCF_cpu_collection* __coll, uint32_t
  *
  * @param `coll` shall point to a CPU collection.
  * @param `selected` specifies whether the CPUs are to be selected. If this
- *     parameter is false, the CPUs are deselected.
+ *    parameter is false, the CPUs are deselected.
  * @returns nothing.
  * @since 2.5  */
 __MCF_CPU_COLLECTION_INLINE
@@ -230,7 +230,7 @@ _MCF_cpu_collection_set_all_selections(_MCF_cpu_collection* __coll, bool __selec
  * @param `coll` shall point to a CPU collection.
  * @param `id` is the identifier of the CPU to find.
  * @returns the index of the CPU in the collection, or `UINT32_MAX` if no CPU
- *     with the specified identifier is found.
+ *    with the specified identifier is found.
  * @since 2.5  */
 __MCF_CPU_COLLECTION_IMPORT __MCF_FN_PURE
 uint32_t
@@ -242,7 +242,7 @@ _MCF_cpu_collection_find(const _MCF_cpu_collection* __coll, uint32_t __id)
  * @param `coll` shall point to a CPU collection.
  * @param `id` is the identifier of the CPU to find.
  * @returns the processor group of the CPU, or `UINT32_MAX` if no CPU with
- *     the specified identifier is found.
+ *    the specified identifier is found.
  * @since 2.5  */
 __MCF_CPU_COLLECTION_IMPORT __MCF_FN_PURE
 uint32_t
@@ -257,7 +257,7 @@ _MCF_cpu_collection_get_group(const _MCF_cpu_collection* __coll, uint32_t __id)
  * @param `coll` shall point to a CPU collection.
  * @param `id` is the identifier of the CPU to find.
  * @returns the physical core identifier of the CPU, or `UINT32_MAX` if no CPU
- *     with the specified identifier is found.
+ *    with the specified identifier is found.
  * @since 2.5  */
 __MCF_CPU_COLLECTION_IMPORT __MCF_FN_PURE
 uint32_t
@@ -273,7 +273,7 @@ _MCF_cpu_collection_get_core(const _MCF_cpu_collection* __coll, uint32_t __id)
  * @param `coll` shall point to a CPU collection.
  * @param `id` is the identifier of the CPU to find.
  * @returns the efficiency class of the CPU, or `UINT32_MAX` if no CPU with the
- *     specified identifier is found.
+ *    specified identifier is found.
  * @since 2.5  */
 __MCF_CPU_COLLECTION_IMPORT __MCF_FN_PURE
 uint32_t
@@ -287,7 +287,7 @@ _MCF_cpu_collection_get_efficiency_class(const _MCF_cpu_collection* __coll, uint
  * @param `coll` shall point to a CPU collection.
  * @param `id` is the identifier of the CPU to find.
  * @returns the scheduling class of the CPU, or `UINT32_MAX` if no CPU with the
- *     specified identifier is found.
+ *    specified identifier is found.
  * @since 2.5  */
 __MCF_CPU_COLLECTION_IMPORT __MCF_FN_PURE
 uint32_t
@@ -310,10 +310,10 @@ _MCF_cpu_collection_get_selection(const _MCF_cpu_collection* __coll, uint32_t __
  * @param `coll` shall point to a CPU collection.
  * @param `id` is the identifier of the CPU to find.
  * @param `selected` specifies whether the CPU is to be selected. If this
- *     parameter is false, the CPU is deselected.
+ *    parameter is false, the CPU is deselected.
  * @returns 1 if the CPU with the specified identifier was selected before the call,
- *     0 if it was unselected before the call, or -1 if no CPU with the specified
- *     identifier is found.
+ *    0 if it was unselected before the call, or -1 if no CPU with the specified
+ *    identifier is found.
  * @since 2.5  */
 __MCF_CPU_COLLECTION_IMPORT
 int
