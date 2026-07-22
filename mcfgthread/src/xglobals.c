@@ -581,7 +581,7 @@ __MCF_gthread_initialize_globals(void)
     HANDLE gfile = __MCF_create_named_section(&gattrs, __MCF_G_SIZE_TOTAL);
     __MCF_CHECK(gfile);
     size_t gsize = 0;
-    __MCF_g = __MCF_map_view_of_section(gfile, &gsize, false);
+    __MCF_g = __MCF_map_view_of_section(gfile, &gsize);
     __MCF_CHECK(__MCF_g);
 
     if(__MCF_g->self_size >= __MCF_G_SIZE_TOTAL) {

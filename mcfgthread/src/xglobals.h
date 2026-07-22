@@ -698,12 +698,12 @@ __MCF_close_handle(HANDLE Handle)
 
 __MCF_ALWAYS_INLINE
 void*
-__MCF_map_view_of_section(HANDLE Section, size_t* Size, bool Inheritable)
+__MCF_map_view_of_section(HANDLE Section, size_t* Size)
   {
     void* address = nullptr;
-    UINT inherit = Inheritable ? ViewShare : ViewUnmap;
     NTSTATUS status = NtMapViewOfSection(Section, NtCurrentProcess(), &address, 0, 0,
-                                         nullptr, (SIZE_T*) Size, inherit, 0, PAGE_READWRITE);
+                                         nullptr, (SIZE_T*) Size, ViewUnmap, 0,
+                                         PAGE_READWRITE);
     if(status < 0)
       return __MCF_win32_ntstatus_p(status, nullptr);
     return address;
