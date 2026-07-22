@@ -151,8 +151,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
               break;
           }
 
-        /* We should restore the spinning mask only if it was changed. If the
-         * mask re-allocated by another thread, then it should not be restored.  */
+        /* We should restore the spinning mask only if it has been set by the
+         * current thread; the mask should not be restored if it has been
+         * re-allocated by another thread.  */
         mask_to_restore = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
       }
 
