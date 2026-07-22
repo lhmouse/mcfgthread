@@ -561,25 +561,25 @@ __MCF_gthread_initialize_globals(void)
     __MCF_crt_TlsGetValue2 =
         dll_fn ? __MCF_CAST_PTR(typeof_TlsGetValue2, dll_fn) : TlsGetValue;
 
-    /* Generate the unique name for this process.  */
-    static WCHAR gnbuffer[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
-    static UNICODE_STRING gname = __MCF_NT_STRING_INIT(gnbuffer);
-    static OBJECT_ATTRIBUTES gattrs = { .Length = sizeof(gattrs), .ObjectName = &gname,
-                                        .Attributes = OBJ_OPENIF | OBJ_EXCLUSIVE };
-    __MCF_set_directory_to_BaseNamedObject(&gattrs);
-
-    const uint32_t pid = (uint32_t) __MCF_pid();
-    __MCF_ASSERT(gnbuffer[25] == L'*');
-    do_hex_encode(gnbuffer + 25, 8, pid, "0123456789ABCDEF");
-    __MCF_ASSERT(gnbuffer[34] == L'#');
-    do_hex_encode(gnbuffer + 34, 16, do_make_cookie(pid), "GHJKLMNPQRSTUWXY");
-    __MCF_ASSERT(gnbuffer[50] == 0);
-
     /* Allocate or open storage for global data. We are in the DLL main routine,
      * so locking is not necessary. Unlike `CreateFileMappingW()`, the handle
      * and view shall not be inherited by child processes.  */
-    HANDLE gfile = __MCF_create_named_section(&gattrs, __MCF_G_SIZE_TOTAL);
+    static WCHAR s_gname[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
+    const uint32_t pid = (uint32_t) __MCF_pid();
+    __MCF_ASSERT(s_gname[25] == L'*');
+    do_hex_encode(s_gname + 25, 8, pid, "0123456789ABCDEF");
+    __MCF_ASSERT(s_gname[34] == L'#');
+    do_hex_encode(s_gname + 34, 16, do_make_cookie(pid), "GHJKLMNPQRSTUWXY");
+    __MCF_ASSERT(s_gname[50] == 0);
+
+    HANDLE gfile = __MCF_create_named_section(
+            &(OBJECT_ATTRIBUTES){ .Length = sizeof(OBJECT_ATTRIBUTES),
+              .RootDirectory = __MCF_get_BaseNamedObject(),
+              .ObjectName = &(UNICODE_STRING) __MCF_NT_STRING_INIT(s_gname),
+              .Attributes = OBJ_OPENIF | OBJ_EXCLUSIVE },
+            __MCF_G_SIZE_TOTAL);
     __MCF_CHECK(gfile);
+
     size_t gsize = 0;
     __MCF_g = __MCF_map_view_of_section(gfile, &gsize);
     __MCF_CHECK(__MCF_g);

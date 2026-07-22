@@ -653,12 +653,14 @@ __MCF_get_interrupt_time(void)
 #endif
   }
 
-__MCF_ALWAYS_INLINE
-void
-__MCF_set_directory_to_BaseNamedObject(OBJECT_ATTRIBUTES* attrs)
+__MCF_ALWAYS_INLINE __MCF_FN_CONST
+HANDLE
+__MCF_get_BaseNamedObject(void)
   {
-    NTSTATUS status = BaseGetNamedObjectDirectory(&(attrs->RootDirectory));
+    HANDLE handle;
+    NTSTATUS status = BaseGetNamedObjectDirectory(&handle);
     __MCF_ASSERT(status >= 0);
+    return handle;
   }
 
 __MCF_ALWAYS_INLINE
