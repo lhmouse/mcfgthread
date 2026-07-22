@@ -701,7 +701,7 @@ void*
 __MCF_map_view_of_section(HANDLE Section, size_t* Size, bool Inheritable)
   {
     void* address = nullptr;
-    UINT inherit = Inheritable ? 1U : 2U;  /* ViewShare : ViewUnmap */
+    UINT inherit = Inheritable ? ViewShare : ViewUnmap;
     NTSTATUS status = NtMapViewOfSection(Section, NtCurrentProcess(), &address, 0, 0,
                                          nullptr, (SIZE_T*) Size, inherit, 0, PAGE_READWRITE);
     if(status < 0)
