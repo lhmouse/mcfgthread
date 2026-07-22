@@ -721,7 +721,8 @@ __MCF_ALWAYS_INLINE
 int
 __MCF_wait_for_single_object(HANDLE Handle, const __MCF_winnt_timeout* Timeout)
   {
-    NTSTATUS status = NtWaitForSingleObject(Handle, false, (LARGE_INTEGER*) &(Timeout->li));
+    NTSTATUS status = NtWaitForSingleObject(Handle, false,
+                                            (LARGE_INTEGER*) &(Timeout->li));
     __MCF_ASSERT(status >= 0);
     return (status == STATUS_WAIT_0) ? 0 : -1;
   }
