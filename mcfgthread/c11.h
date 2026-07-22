@@ -28,8 +28,8 @@ __MCF_CXX(extern "C" {)
 #define ONCE_FLAG_INIT  __MCF_0_INIT
 #define TSS_DTOR_ITERATIONS  LONG_MAX  /* no limit  */
 
-/** Define <threads.h> types. These map to our APIs directly, except the mutex.  */
-
+/** Define <threads.h> types. These map to our APIs directly, except the mutex
+ * which is actually a recursive mutex.  */
 typedef struct __MCF_c11_mutex __MCF_c11_mutex;
 typedef struct __MCF_c11_thread_record __MCF_c11_thread_record;
 typedef int __MCF_c11_thread_fn(void* __arg);
