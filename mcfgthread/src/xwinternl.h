@@ -99,7 +99,7 @@ enum
 
 /** Copies a block of memory. The source and destination blocks may overlap.
  *
- * This function resembles to the standard C function `memmove()`.
+ * This function resembles the standard C function `memmove()`.
  *
  * While in wdm.h this is defined as a macro, a real function is exported from
  * NTDLL.DLL.
@@ -119,7 +119,7 @@ RtlMoveMemory(
 
 /** Fills a block of memory.
  *
- * This function resembles to the standard C function `memset()`.
+ * This function resembles the standard C function `memset()`.
  *
  * While in wdm.h this is defined as a macro, a real function is exported from
  * NTDLL.DLL.
@@ -139,7 +139,7 @@ RtlFillMemory(
 
 /** Fills a block of memory with zeroes.
  *
- * This function resembles to the BSD function `bzero()`.
+ * This function resembles the BSD function `bzero()`.
  *
  * While in wdm.h this is defined as a macro, a real function is exported from
  * NTDLL.DLL.
