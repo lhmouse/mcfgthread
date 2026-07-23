@@ -159,7 +159,7 @@ RtlZeroMemory(
  *
  * This function converts an `NTSTATUS` value to a Windows error code, suitable
  * for `SetLastError()`. The original `NTSTATUS` value is written to
- * `LastStatusValue` (offset 0xBF4/0x1250).
+ * `LastStatusValue` (offset 0xBF4/0x1250) in the TEB.
  *
  * This function is exported from NTDLL.DLL.
  *
