@@ -115,7 +115,7 @@ __MCF_runtime_failure(const char* where)
     HANDLE console = GetStdHandle(STD_ERROR_HANDLE);
     if((console != INVALID_HANDLE_VALUE) && (console != NULL)) {
       DWORD nwritten;
-      WriteConsoleW(console, text.Buffer, text.Length / sizeof(WCHAR), &nwritten, nullptr);
+      WriteConsoleW(console, text.Buffer, (DWORD) (sptr - text.Buffer), &nwritten, nullptr);
       (void) nwritten;
     }
 
