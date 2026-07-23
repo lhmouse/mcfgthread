@@ -128,6 +128,43 @@ jobs:
       - uses: actions/upload-artifact@v7
         with: { path: build_pkg, name: 'x86-32_mingw-w64_gcc' }
 
+  msys2-ucrt64-x86-64-v3:
+    name: MSYS2 native (GCC, mingw-w64 runtime, UCRT, x86-64-v3)
+    runs-on: windows-2022
+
+    defaults:
+      run: { shell: 'msys2 {0}' }
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: msys2/setup-msys2@v2
+        with: { msystem: UCRT64 }
+
+      - name: Install dependencies
+        run: >-
+             pacman -Sy ;
+             pacman -S --needed --noconfirm
+             mingw-w64-ucrt-x86_64-{headers,crt,gcc,meson}
+
+      - name: Configure
+        run: >-
+             meson setup -Ddebug=true -Doptimization=s build_ci
+             -Dc_args='-march=x86-64-v3' -Dcpp_args='-march=x86-64-v3'
+             --prefix $PWD/build_pkg
+
+      - name: Build
+        run: meson compile -Cbuild_ci
+
+      - name: Run tests
+        run: meson test -t2 -Cbuild_ci --print-errorlogs
+
+      - name: Install
+        run: meson install -Cbuild_ci --strip
+
+      - uses: actions/upload-artifact@v7
+        with: { path: build_pkg, name: 'x86-64-v3_mingw-w64_gcc' }
+
   #==========================================================================
   # Secondary builds
   #==========================================================================
