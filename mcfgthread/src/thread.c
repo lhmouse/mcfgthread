@@ -196,7 +196,8 @@ _MCF_thread_wait(const _MCF_thread* thrd_opt, const int64_t* timeout_opt)
      * not useful to pass a null thread pointer, as the operation will time out
      * or deadlock anyway.  */
     HANDLE handle = thrd_opt ? thrd_opt->__handle : NtCurrentThread();
-    return __MCF_wait_for_single_object(handle, &nt_timeout);
+    NTSTATUS status = NtWaitForSingleObject(handle, false, &(nt_timeout.li));
+    return (status != STATUS_WAIT_0) ? -1 : 0;
   }
 
 __MCF_DLLEXPORT
