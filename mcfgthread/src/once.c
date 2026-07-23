@@ -57,8 +57,10 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
 
     /* Try waiting.  */
     __MCF_check_wait_safety(&nt_timeout);
-    int err = __MCF_keyed_event_wait(once, &nt_timeout);
-    while(err != 0) {
+    NTSTATUS status = NtWaitForKeyedEvent(NULL, once, false, &(nt_timeout.li));
+    while(status != STATUS_WAIT_0) {
+      __MCF_ASSERT(status == STATUS_TIMEOUT);
+
       /* Tell another thread which is going to signal this flag that an old
        * waiter has left by decrementing the number of sleeping threads. But
        * see below...  */
@@ -82,7 +84,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
        * keyed event before us, so we set the timeout to zero. If we time out
        * once more, the third thread will have incremented the number of
        * sleeping threads and we can try decrementing it again.  */
-      err = __MCF_keyed_event_wait(once, __MCF_crt_timeout_0);
+      status = NtWaitForKeyedEvent(NULL, once, false, __MCF_NT_TIMEOUT_0);
     }
 
     /* We have got notified.  */

@@ -42,8 +42,10 @@ do_unlock_and_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt, intptr
 
     /* Try waiting.  */
     __MCF_check_wait_safety(&nt_timeout);
-    int err = __MCF_keyed_event_wait(cnd, &nt_timeout);
-    while(err != 0) {
+    NTSTATUS status = NtWaitForKeyedEvent(NULL, cnd, false, &(nt_timeout.li));
+    while(status != STATUS_WAIT_0) {
+      __MCF_ASSERT(status == STATUS_TIMEOUT);
+
       /* Tell another thread which is going to signal this condition variable
        * that an old waiter has left by decrementing the number of sleeping
        * threads. But see below...  */
@@ -66,7 +68,7 @@ do_unlock_and_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt, intptr
        * keyed event before us, so we set the timeout to zero. If we time out
        * once more, the third thread will have incremented the number of
        * sleeping threads and we can try decrementing it again.  */
-      err = __MCF_keyed_event_wait(cnd, __MCF_crt_timeout_0);
+      status = NtWaitForKeyedEvent(NULL, cnd, false, __MCF_NT_TIMEOUT_0);
     }
 
     /* We have got notified.  */

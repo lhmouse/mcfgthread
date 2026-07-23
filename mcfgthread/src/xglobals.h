@@ -265,8 +265,8 @@ __MCF_gthread_on_thread_exit(void);
  * section to `PAGE_READONLY`, so an attempt to modify these variables will
  * result in an access violation.  */
 extern __MCF_ALIGNED(8) __MCF_BR(GUID) const __MCF_crt_gthread_guid;
-extern __MCF_BR(__MCF_winnt_timeout) const __MCF_crt_timeout_0;
-extern __MCF_BR(__MCF_winnt_timeout) const __MCF_crt_timeout_1s;
+extern LARGE_INTEGER const __MCF_crt_timeout_0;
+extern LARGE_INTEGER const __MCF_crt_timeout_1s;
 
 extern SYSTEM_INFO __MCF_XGLOBALS_READONLY __MCF_crt_sysinfo;
 extern double __MCF_XGLOBALS_READONLY __MCF_crt_perf_freq_reciprocal;
@@ -302,6 +302,11 @@ extern typeof_SetThreadSelectedCpuSets*
 
 typedef LPVOID __stdcall typeof_TlsGetValue2(ULONG);
 extern typeof_TlsGetValue2* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue2;
+
+/** Define silly macros for constants for NT syscalls, which do not have proper
+ * `const` qualifiers.  */
+#define __MCF_NT_TIMEOUT_0    ((LARGE_INTEGER*) &__MCF_crt_timeout_0)
+#define __MCF_NT_TIMEOUT_1S   ((LARGE_INTEGER*) &__MCF_crt_timeout_1s)
 
 /** Declare the structure of global data in named shared memory.
  *
@@ -781,24 +786,4 @@ __MCF_sleep(const __MCF_winnt_timeout* Timeout)
   {
     NTSTATUS status = NtDelayExecution(false, (LARGE_INTEGER*) &(Timeout->li));
     __MCF_ASSERT(status >= 0);
-  }
-
-__MCF_ALWAYS_INLINE
-int
-__MCF_keyed_event_wait(const void* Key, const __MCF_winnt_timeout* Timeout)
-  {
-    NTSTATUS status = NtWaitForKeyedEvent(NULL, (PVOID) Key, false,
-                                          (LARGE_INTEGER*) &(Timeout->li));
-    __MCF_ASSERT(status >= 0);
-    return (status == STATUS_WAIT_0) ? 0 : -1;
-  }
-
-__MCF_ALWAYS_INLINE
-int
-__MCF_keyed_event_signal(const void* Key, const __MCF_winnt_timeout* Timeout)
-  {
-    NTSTATUS status = NtReleaseKeyedEvent(NULL, (PVOID) Key, false,
-                                          (LARGE_INTEGER*) &(Timeout->li));
-    __MCF_ASSERT(status >= 0);
-    return (status == STATUS_WAIT_0) ? 0 : -1;
   }

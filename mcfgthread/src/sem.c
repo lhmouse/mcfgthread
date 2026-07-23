@@ -47,8 +47,10 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
 
     /* Try waiting.  */
     __MCF_check_wait_safety(&nt_timeout);
-    int err = __MCF_keyed_event_wait(sem, &nt_timeout);
-    while(err != 0) {
+    NTSTATUS status = NtWaitForKeyedEvent(NULL, sem, false, &(nt_timeout.li));
+    while(status != STATUS_WAIT_0) {
+      __MCF_ASSERT(status == STATUS_TIMEOUT);
+
       /* Remove myself from the wait queue. But see below...  */
       _MCF_atomic_load_pptr_rlx(&old, sem);
       for(;;) {
@@ -68,7 +70,7 @@ _MCF_sem_wait(_MCF_sem* sem, const int64_t* timeout_opt)
        * keyed event before us, so we set the timeout to zero. If we time out
        * once more, the third thread will have decremented the number of
        * sleeping threads and we can try incrementing it again.  */
-      err = __MCF_keyed_event_wait(sem, __MCF_crt_timeout_0);
+      status = NtWaitForKeyedEvent(NULL, sem, false, __MCF_NT_TIMEOUT_0);
     }
 
     /* We have got notified.  */
