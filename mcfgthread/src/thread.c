@@ -312,7 +312,9 @@ _MCF_sleep_noninterruptible(const int64_t* timeout_opt)
   {
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
-    __MCF_sleep(&nt_timeout);
+
+    NTSTATUS status = NtDelayExecution(false, &(nt_timeout.li));
+    __MCF_ASSERT(status >= 0);
   }
 
 __MCF_DLLEXPORT
