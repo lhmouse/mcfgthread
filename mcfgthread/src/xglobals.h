@@ -646,7 +646,9 @@ __MCF_bit_scan_forward_32(uint32_t* index, uint32_t value)
     __asm__ ("clz %w0, %w1" : "=r"(*index) : "r"(rbits));
     found = value != 0;
 #else
-#  error unimplemented
+    unsigned long index32;
+    found = _BitScanForward(&index32, value);
+    *index = index32;
 #endif
     return found;
   }
@@ -669,7 +671,9 @@ __MCF_bit_scan_forward_ptr(uintptr_t* index, uintptr_t value)
     __asm__ ("clz %0, %1" : "=r"(*index) : "r"(rbits));
     found = value != 0;
 #else
-#  error unimplemented
+    unsigned long index32;
+    found = __MCF_64_32(_BitScanForward64, _BitScanForward) (&index32, value);
+    *index = index32;
 #endif
     return found;
   }
