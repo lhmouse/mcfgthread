@@ -592,11 +592,11 @@ __MCF_gthread_initialize_globals(void)
     __MCF_CHECK(__MCF_g);
 
     if(__MCF_g->self_size >= __MCF_G_SIZE_TOTAL) {
-      /* Reuse the existent region and close excess handles.  */
-      __MCF_ASSERT(__MCF_g->self_ptr);
-      void* new_base = __MCF_g;
-      __MCF_g = __MCF_g->self_ptr;
-      __MCF_unmap_view_of_section(new_base);
+      /* Reuse the existent view and close excess handles.  */
+      void* existing_g = __MCF_g->self_ptr;
+      __MCF_ASSERT(existing_g);
+      __MCF_unmap_view_of_section(__MCF_g);
+      __MCF_g = existing_g;
       __MCF_close_handle(gfile);
       return;
     }
