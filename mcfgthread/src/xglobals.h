@@ -729,14 +729,6 @@ __MCF_create_named_section(const OBJECT_ATTRIBUTES* Attributes, LONGLONG Maximum
   }
 
 __MCF_ALWAYS_INLINE
-void
-__MCF_close_handle(HANDLE Handle)
-  {
-    NTSTATUS status = NtClose(Handle);
-    __MCF_ASSERT(status >= 0);
-  }
-
-__MCF_ALWAYS_INLINE
 void*
 __MCF_map_view_of_section(HANDLE Section, size_t* Size)
   {

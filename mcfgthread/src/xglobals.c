@@ -597,7 +597,8 @@ __MCF_gthread_initialize_globals(void)
       __MCF_ASSERT(existing_g);
       __MCF_unmap_view_of_section(__MCF_g);
       __MCF_g = existing_g;
-      __MCF_close_handle(gfile);
+      NTSTATUS status = NtClose(gfile);
+      __MCF_ASSERT(status >= 0);
       return;
     }
 

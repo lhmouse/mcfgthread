@@ -164,7 +164,8 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
     /* Detach the thread structure. The thread-local object table and the exit
      * callback queue shall have been cleared upon termination of the associated
      * thread, so they are empty now.  */
-    __MCF_close_handle(thrd->__handle);
+    NTSTATUS status = NtClose(thrd->__handle);
+    __MCF_ASSERT(status >= 0);
     __MCF_ASSERT(thrd->__atexit_queue[0].__prev == nullptr);
     __MCF_ASSERT(thrd->__tls_table[0].__begin == nullptr);
 
