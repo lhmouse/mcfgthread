@@ -579,25 +579,32 @@ __MCF_gthread_initialize_globals(void)
     do_hex_encode(s_gname + 34, 16, do_make_cookie(pid), "GHJKLMNPQRSTUWXY");
     __MCF_ASSERT(s_gname[50] == 0);
 
-    HANDLE gfile = __MCF_create_named_section(
-            &(OBJECT_ATTRIBUTES){ .Length = sizeof(OBJECT_ATTRIBUTES),
-              .RootDirectory = __MCF_get_BaseNamedObject(),
-              .ObjectName = &(UNICODE_STRING) __MCF_NT_STRING_INIT(s_gname),
-              .Attributes = OBJ_OPENIF | OBJ_EXCLUSIVE },
-            __MCF_G_SIZE_TOTAL);
-    __MCF_CHECK(gfile);
+    OBJECT_ATTRIBUTES gattrs = { .Length = sizeof(gattrs),
+                .ObjectName = &(UNICODE_STRING) __MCF_NT_STRING_INIT(s_gname),
+                .Attributes = OBJ_OPENIF | OBJ_EXCLUSIVE };
+    NTSTATUS status = BaseGetNamedObjectDirectory(&(gattrs.RootDirectory));
+    __MCF_CHECK(__MCF_win32_ntstatus_p(status, gattrs.RootDirectory));
 
-    size_t gsize = 0;
-    __MCF_g = __MCF_map_view_of_section(gfile, &gsize);
-    __MCF_CHECK(__MCF_g);
+    HANDLE gfile = NULL;
+    status = NtCreateSection(&gfile, SECTION_ALL_ACCESS, &gattrs,
+                             &(LARGE_INTEGER){ .QuadPart = __MCF_G_SIZE_TOTAL },
+                             PAGE_READWRITE, SEC_COMMIT, NULL);
+    __MCF_CHECK(__MCF_win32_ntstatus_p(status, gfile));
+
+    SIZE_T gsize = 0;
+    __MCF_g = nullptr;
+    status = NtMapViewOfSection(gfile, NtCurrentProcess(), (void**) &__MCF_g, 0, 0,
+                                nullptr, &gsize, ViewUnmap, 0, PAGE_READWRITE);
+    __MCF_CHECK(__MCF_win32_ntstatus_p(status, __MCF_g));
 
     if(__MCF_g->self_size >= __MCF_G_SIZE_TOTAL) {
       /* Reuse the existent view and close excess handles.  */
       void* existing_g = __MCF_g->self_ptr;
       __MCF_ASSERT(existing_g);
-      __MCF_unmap_view_of_section(__MCF_g);
+      status = NtUnmapViewOfSection(NtCurrentProcess(), __MCF_g);
+      __MCF_ASSERT(status >= 0);
       __MCF_g = existing_g;
-      NTSTATUS status = NtClose(gfile);
+      status = NtClose(gfile);
       __MCF_ASSERT(status >= 0);
       return;
     }
