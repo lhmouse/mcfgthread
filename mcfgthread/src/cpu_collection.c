@@ -90,14 +90,14 @@ _MCF_cpu_collection_new(void)
         /* Each active logical processor is indicated by a bit in `proc_mask`
          * in the current process group. This ensures that CPU identifiers are
          * sorted.  */
-        DWORD bit_index;
-        __MCF_64_32(_BitScanForward64, _BitScanForward) (&bit_index, mask_reg);
+        uintptr_t bit_index;
+        __MCF_bit_scan_forward_ptr(&bit_index, mask_reg);
 
         /* Add CPU into the end. CPU identifiers start from 256 like CPU Set APIs.  */
         uint32_t k = coll->__size ++;
-        coll->__data[k].__id = 256 + bit_index;
+        coll->__data[k].__id = (uint32_t) (256 + bit_index);
         coll->__data[k].__group = proc_num.Group;
-        coll->__data[k].__core_idx = (BYTE) bit_index;
+        coll->__data[k].__core_idx = (uint8_t) bit_index;
 
         mask_reg = mask_reg & (mask_reg - 1);
       }
@@ -109,17 +109,15 @@ _MCF_cpu_collection_new(void)
            * structure represents a processor core, the `GroupCount` member is
            * always 1.' In this code path, a process can't straddle multiple
            * process groups, so only cores of the current group are returned.  */
-          if(info->Processor.GroupMask[0].Group == proc_num.Group) {
-            DWORD core_index;
-            __MCF_64_32(_BitScanForward64, _BitScanForward) (&core_index,
-                                                             info->Processor.GroupMask[0].Mask);
+          uintptr_t core_index;
+          __MCF_bit_scan_forward_ptr(&core_index, info->Processor.GroupMask[0].Mask);
 
+          if(info->Processor.GroupMask[0].Group == proc_num.Group)
             for(uint32_t k = 0;  k < coll->__size;  ++k)
               if(info->Processor.GroupMask[0].Mask & ((DWORD_PTR) 1 << (coll->__data[k].__id - 256))) {
-                coll->__data[k].__core_idx = (BYTE) core_index;
+                coll->__data[k].__core_idx = (uint8_t) core_index;
                 coll->__data[k].__effic_cls = info->Processor.EfficiencyClass;
               }
-          }
         }
 
         info = (SYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX*) ((char*) info + info->Size);

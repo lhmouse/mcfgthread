@@ -624,6 +624,48 @@ __MCF_mfree_nonnull(void* ptr)
   }
 
 __MCF_ALWAYS_INLINE
+bool
+__MCF_bit_scan_forward_32(uint32_t* index, uint32_t value)
+  {
+    bool found;
+#if defined __MCF_M_X86_ASM
+    __asm__ ("bsf %k0, %k2" : "=r"(*index), "=@ccnz"(found) : "rm"(value));
+#elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_CSSC
+    __asm__ ("ctz %w0, %w1" : "=r"(*index) : "r"(value));
+    found = value != 0;
+#elif defined __MCF_M_ARM64_ASM
+    uint32_t rbits;
+    __asm__ ("rbit %w0, %w1" : "=r"(rbits) : "r"(value));
+    __asm__ ("clz %w0, %w1" : "=r"(*index) : "r"(rbits));
+    found = value != 0;
+#else
+#  error unimplemented
+#endif
+    return found;
+  }
+
+__MCF_ALWAYS_INLINE
+bool
+__MCF_bit_scan_forward_ptr(uintptr_t* index, uintptr_t value)
+  {
+    bool found;
+#if defined __MCF_M_X86_ASM
+    __asm__ ("bsf %0, %2" : "=r"(*index), "=@ccnz"(found) : "rm"(value));
+#elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_CSSC
+    __asm__ ("ctz %0, %1" : "=r"(*index) : "r"(value));
+    found = value != 0;
+#elif defined __MCF_M_ARM64_ASM
+    uintptr_t rbits;
+    __asm__ ("rbit %0, %1" : "=r"(rbits) : "r"(value));
+    __asm__ ("clz %0, %1" : "=r"(*index) : "r"(rbits));
+    found = value != 0;
+#else
+#  error unimplemented
+#endif
+    return found;
+  }
+
+__MCF_ALWAYS_INLINE
 ULONGLONG
 __MCF_get_interrupt_time(void)
   {
