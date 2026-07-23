@@ -729,19 +729,6 @@ __MCF_create_named_section(const OBJECT_ATTRIBUTES* Attributes, LONGLONG Maximum
   }
 
 __MCF_ALWAYS_INLINE
-HANDLE
-__MCF_duplicate_handle(HANDLE SourceHandle)
-  {
-    HANDLE handle;
-    NTSTATUS status = NtDuplicateObject(NtCurrentProcess(), SourceHandle,
-                                        NtCurrentProcess(), &handle, 0, 0,
-                                        DUPLICATE_SAME_ACCESS);
-    if(status < 0)
-      return __MCF_win32_ntstatus_p(status, NULL);
-    return handle;
-  }
-
-__MCF_ALWAYS_INLINE
 void
 __MCF_close_handle(HANDLE Handle)
   {
