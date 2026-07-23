@@ -506,6 +506,13 @@ __MCF_gthread_initialize_globals(void)
     HeapSetInformation(__MCF_crt_heap, HeapEnableTerminationOnCorruption, nullptr, 0);
 #endif
 
+#if defined __MCF_M_X86_ASM && defined __BMI__
+    /* Crash if the CPU does not support BMI. This ensures that `tzcnt` will not
+     * be mistakenly executed as `bsf`.  */
+    uint32_t dummy;
+    __asm__ volatile ("andn %0, %0, %0" : "=r"(dummy) : : "cc");
+#endif
+
     /* Get handles to system DLLs, by calling `LoadLibraryEx()` with
      * `LOAD_LIBRARY_SEARCH_SYSTEM32` to prevent DLL hijacking. These DLLs are
      * pre-loaded and pinned on modern systems, so there's no need to call
