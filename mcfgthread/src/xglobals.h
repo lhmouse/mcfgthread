@@ -389,7 +389,7 @@ __MCF_mcopy(void* dst, const void* src, size_t size)
 #if defined __MCF_M_X86_ASM
     PVOID edi, esi, ecx;
     __asm__ volatile (
-      "rep movsb"
+      "\n rep movsb"
       : "=D"(edi), "=S"(esi), "=c"(ecx)
       : "0"(dst), "1"(src), "2"(size)
       : "memory"
@@ -397,9 +397,9 @@ __MCF_mcopy(void* dst, const void* src, size_t size)
 #elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_MOPS
     PVOID x0, x1, x2;
     __asm__ volatile (
-      "cpyfp [%0]!, [%1]!, %2!; "
-      "cpyfm [%0]!, [%1]!, %2!; "
-      "cpyfe [%0]!, [%1]!, %2!; "
+      "\n cpyfp [%0]!, [%1]!, %2!"
+      "\n cpyfm [%0]!, [%1]!, %2!"
+      "\n cpyfe [%0]!, [%1]!, %2!"
       : "=&r"(x0), "=&r"(x1), "=&r"(x2)
       : "0"(dst), "1"(src), "2"(size)
       : "memory"
@@ -421,9 +421,9 @@ __MCF_mcopy_backward(void* dst, const void* src, size_t size)
 #if defined __MCF_M_X86_ASM
     PVOID edi, esi, ecx;
     __asm__ volatile (
-      "std; "
-      "rep movsb; "
-      "cld; "
+      "\n std"
+      "\n rep movsb"
+      "\n cld"
       : "=D"(edi), "=S"(esi), "=c"(ecx)
       : "0"((char*) dst + size - 1), "1"((char*) src + size - 1), "2"(size)
       : "memory"
@@ -431,9 +431,9 @@ __MCF_mcopy_backward(void* dst, const void* src, size_t size)
 #elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_MOPS
     PVOID x0, x1, x2;
     __asm__ volatile (
-      "cpyp [%0]!, [%1]!, %2!; "
-      "cpym [%0]!, [%1]!, %2!; "
-      "cpye [%0]!, [%1]!, %2!; "
+      "\n cpyp [%0]!, [%1]!, %2!"
+      "\n cpym [%0]!, [%1]!, %2!"
+      "\n cpye [%0]!, [%1]!, %2!"
       : "=&r"(x0), "=&r"(x1), "=&r"(x2)
       : "0"(dst), "1"(src), "2"(size)
       : "memory"
@@ -454,7 +454,7 @@ __MCF_mfill(void* dst, int val, size_t size)
 #if defined __MCF_M_X86_ASM
     PVOID edi, ecx;
     __asm__ volatile (
-      "rep stosb"
+      "\n rep stosb"
       : "=D"(edi), "=c"(ecx)
       : "0"(dst), "1"(size), "a"(val)
       : "memory"
@@ -462,9 +462,9 @@ __MCF_mfill(void* dst, int val, size_t size)
 #elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_MOPS
     PVOID x0, x2;
     __asm__ volatile (
-      "setp [%0]!, %1!, %x4; "
-      "setm [%0]!, %1!, %x4; "
-      "sete [%0]!, %1!, %x4; "
+      "\n setp [%0]!, %1!, %x4"
+      "\n setm [%0]!, %1!, %x4"
+      "\n sete [%0]!, %1!, %x4"
       : "=&r"(x0), "=&r"(x2)
       : "0"(dst), "1"(size), "r"(val)
       : "memory"
@@ -485,7 +485,7 @@ __MCF_mzero(void* dst, size_t size)
 #if defined __MCF_M_X86_ASM
     PVOID edi, ecx;
     __asm__ volatile (
-      "rep stosb"
+      "\n rep stosb"
       : "=D"(edi), "=c"(ecx)
       : "0"(dst), "1"(size), "a"(0)
       : "memory"
@@ -493,9 +493,9 @@ __MCF_mzero(void* dst, size_t size)
 #elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_MOPS
     PVOID x0, x1;
     __asm__ volatile (
-      "setp [%0]!, %1!, xzr; "
-      "setm [%0]!, %1!, xzr; "
-      "sete [%0]!, %1!, xzr; "
+      "\n setp [%0]!, %1!, xzr"
+      "\n setm [%0]!, %1!, xzr"
+      "\n sete [%0]!, %1!, xzr"
       : "=&r"(x0), "=&r"(x1)
       : "0"(dst), "1"(size)
       : "memory"
@@ -529,11 +529,11 @@ __MCF_mcompare(const void* src, const void* cmp, size_t size)
 #if defined __MCF_M_X86_ASM
     PVOID esi, edi, ecx;
     __asm__ (
-      "xor %k0, %k0; "  /* set ZF and clear CF  */
-      "repz cmpsb; "    /* compare DS:[ESI] with ES:[EDI]  */
-      "setnz %b0; "     /* EAX = 0 if equal, 1 if less or greater  */
-      "sbb ecx, ecx; "  /* ECX = 0 if equal or greater, -1 if less  */
-      "or %k0, ecx; "
+      "\n xor %k0, %k0"  /* set ZF and clear CF  */
+      "\n repz cmpsb"    /* compare DS:[ESI] with ES:[EDI]  */
+      "\n setnz %b0"     /* EAX = 0 if equal, 1 if less or greater  */
+      "\n sbb ecx, ecx"  /* ECX = 0 if equal or greater, -1 if less  */
+      "\n or %k0, ecx"
       : "=q"(diff), "=S"(esi), "=D"(edi), "=c"(ecx)
       : "1"(src), "2"(cmp), "3"(size)
       : "memory", "cc"
@@ -555,10 +555,10 @@ __MCF_mequal(const void* src, const void* cmp, size_t size)
 #if defined __MCF_M_X86_ASM
     PVOID esi, edi, ecx;
     __asm__ (
-      ".ifeq %c7; "     /* length is NOT known non-zero? (`.ifeq` reads 'if not')  */
-      "cmp ecx, ecx; "  /* ensure ZF is set in case of length of zero  */
-      ".endif; "
-      "repz cmpsb; "    /* compare DS:[ESI] with ES:[EDI]  */
+      "\n .ifeq %c7"     /* length is NOT known non-zero? (`.ifeq` reads 'if not')  */
+      "\n cmp ecx, ecx"  /* ensure ZF is set in case of length of zero  */
+      "\n .endif"
+      "\n repz cmpsb"    /* compare DS:[ESI] with ES:[EDI]  */
       : "=@ccz"(eq), "=S"(esi), "=D"(edi), "=c"(ecx)
       : "1"(src), "2"(cmp), "3"(size),
         "i"(__builtin_constant_p(size != 0) ? (size != 0) : 0)
