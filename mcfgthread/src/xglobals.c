@@ -24,20 +24,19 @@ do_append_string(WCHAR** sp, const WCHAR* end_of_buffer, WCHAR c)
       *((*sp) ++) = c;
   }
 
-static
+static inline
 ULONG
-do_format_message(ULONG code, WCHAR* outptr, const WCHAR* end_of_buffer)
+do_format_message(WCHAR* outptr, const WCHAR* end_of_buffer, HMODULE dll, ULONG code)
   {
-    return FormatMessageW(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-                          nullptr, code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+    return FormatMessageW(FORMAT_MESSAGE_FROM_HMODULE | FORMAT_MESSAGE_IGNORE_INSERTS | 0xFF,
+                          dll, code, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
                           outptr, (ULONG) (end_of_buffer - outptr), nullptr);
   }
 
-__MCF_DLLEXPORT
+static
 void
-__MCF_runtime_failure(const char* where)
+do_notify_runtime_failure(const char* where, HMODULE msg_dll, ULONG msg_code)
   {
-    ULONG last_error = GetLastError();
     WCHAR buffer[1536];
     WCHAR* sptr = buffer;
     WCHAR* end_of_buffer = buffer + ARRAYSIZE(buffer);
@@ -52,7 +51,7 @@ __MCF_runtime_failure(const char* where)
      * {Application Error}
      * The exception %s (0x%08lx) occurred in the application at location 0x%08lx.  */
     WCHAR* lptr = end_of_buffer - 127;
-    ULONG outlen = do_format_message(574, lptr, end_of_buffer);
+    ULONG outlen = do_format_message(lptr, end_of_buffer, __MCF_crt_kernel32, 574);
     if((outlen != 0) && (*lptr == L'{')) {
       lptr ++;
 
@@ -87,7 +86,7 @@ __MCF_runtime_failure(const char* where)
      * request. You may choose OK to terminate the process, or Cancel to ignore
      * the error.  */
     lptr = end_of_buffer - 127;
-    outlen = do_format_message(590, lptr, end_of_buffer);
+    outlen = do_format_message(lptr, end_of_buffer, __MCF_crt_kernel32, 590);
     if((outlen != 0) && (*lptr == L'{')) {
       lptr ++;
 
@@ -104,7 +103,7 @@ __MCF_runtime_failure(const char* where)
       do_append_string(&sptr, end_of_buffer, L':');
       do_append_string(&sptr, end_of_buffer, L' ');
 
-      outlen = do_format_message(last_error, sptr, end_of_buffer);
+      outlen = do_format_message(sptr, end_of_buffer, msg_dll, msg_code);
       sptr += outlen;
 
       text.Length = (USHORT) ((UINT_PTR) sptr - (UINT_PTR) text.Buffer);
@@ -128,9 +127,28 @@ __MCF_runtime_failure(const char* where)
                      0b0011, /* parameters 0 and 1 are `UNICODE_STRING*` */
                      rhe_params, OptionOk, &rhe_resp);
     (void) rhe_resp;
+  }
 
-    /* Terminate the current process.  */
+__MCF_DLLEXPORT
+void
+__MCF_runtime_failure(const char* where)
+  {
+    do_notify_runtime_failure(where, __MCF_crt_kernel32, GetLastError());
+
     EXCEPTION_RECORD record = { .ExceptionCode = (ULONG) STATUS_FAIL_FAST_EXCEPTION,
+                                .ExceptionFlags = EXCEPTION_NONCONTINUABLE,
+                                .ExceptionAddress = __builtin_return_address(0) };
+    RaiseFailFastException(&record, nullptr, 0);
+    __builtin_trap();
+  }
+
+__MCF_DLLEXPORT
+void
+__MCF_runtime_failure_from_ntstatus(const char* where, NTSTATUS status)
+  {
+    do_notify_runtime_failure(where, __MCF_crt_ntdll, (ULONG) status);
+
+    EXCEPTION_RECORD record = { .ExceptionCode = (DWORD) status,
                                 .ExceptionFlags = EXCEPTION_NONCONTINUABLE,
                                 .ExceptionAddress = __builtin_return_address(0) };
     RaiseFailFastException(&record, nullptr, 0);

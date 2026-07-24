@@ -55,10 +55,15 @@
       .Buffer = (void*) ((s) + __MCF_STATIC_ASSERT_0(  \
          !__builtin_types_compatible_p(__typeof__(1+&*(s)), __typeof__(s))))  }
 
-/** This is similar to `__MCF_CHECK()` but it checks `NT_SUCCESS(status)`.  */
+/** This is similar to `__MCF_runtime_failure()` but takes an `NTSTATUS`.  */
+__MCF_XGLOBALS_IMPORT __MCF_NEVER_RETURN __MCF_FN_COLD
+void
+__MCF_runtime_failure_from_ntstatus(const char* where, NTSTATUS status);
+
+/** This is similar to `__MCF_CHECK()` but checks `NT_SUCCESS(status)`.  */
 #define __MCF_CHECK_NT(status)  \
     (((NTSTATUS) (status) >= 0) ? (void) 0  \
-      : (SetLastError(RtlNtStatusToDosError(status)), __MCF_runtime_failure(__MCF_EX __func__)))
+      : (__MCF_runtime_failure_from_ntstatus(__MCF_EX __func__, (status))))
 
 /** This function is used as the exception handler of a `noexcept` function.  */
 __MCF_XGLOBALS_IMPORT
