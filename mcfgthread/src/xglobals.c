@@ -44,7 +44,6 @@ do_notify_runtime_failure(const char* where, HMODULE msg_dll, ULONG msg_code)
     /* Get a piece of localized text for the caption of the message box.  */
     UNICODE_STRING caption;
     caption.Buffer = sptr;
-    caption.Length = 0;
     caption.MaximumLength = (USHORT) ((UINT_PTR) end_of_buffer - (UINT_PTR) sptr);
 
     /* #define ERROR_UNHANDLED_EXCEPTION   574L
@@ -57,14 +56,14 @@ do_notify_runtime_failure(const char* where, HMODULE msg_dll, ULONG msg_code)
 
       while((*lptr != 0) && (*lptr != L'}'))
         do_append_string(&sptr, end_of_buffer, *(lptr ++));
-
-      caption.Length = (USHORT) ((UINT_PTR) sptr - (UINT_PTR) caption.Buffer);
     }
+
+    /* Terminate the caption.  */
+    caption.Length = (USHORT) ((UINT_PTR) sptr - (UINT_PTR) caption.Buffer);
 
     /* Get a piece of localized text for the text of the message box.  */
     UNICODE_STRING text;
     text.Buffer = sptr;
-    text.Length = 0;
     text.MaximumLength = (USHORT) ((UINT_PTR) end_of_buffer - (UINT_PTR) sptr);
 
     /* Get the file name of the executable.  */
@@ -76,8 +75,6 @@ do_notify_runtime_failure(const char* where, HMODULE msg_dll, ULONG msg_code)
       do_append_string(&sptr, end_of_buffer, L'\n');
       do_append_string(&sptr, end_of_buffer, L'\r');
       do_append_string(&sptr, end_of_buffer, L'\n');
-
-      text.Length = (USHORT) ((UINT_PTR) sptr - (UINT_PTR) text.Buffer);
     }
 
     /* #define ERROR_DEBUG_ATTACH_FAILED   590L
@@ -102,12 +99,13 @@ do_notify_runtime_failure(const char* where, HMODULE msg_dll, ULONG msg_code)
 
       do_append_string(&sptr, end_of_buffer, L':');
       do_append_string(&sptr, end_of_buffer, L' ');
-
-      outlen = do_format_message(sptr, end_of_buffer, msg_dll, msg_code);
-      sptr += outlen;
-
-      text.Length = (USHORT) ((UINT_PTR) sptr - (UINT_PTR) text.Buffer);
     }
+
+    outlen = do_format_message(sptr, end_of_buffer, msg_dll, msg_code);
+    sptr += outlen;
+
+    /* Terminate the message text.  */
+    text.Length = (USHORT) ((UINT_PTR) sptr - (UINT_PTR) text.Buffer);
 
     /* If this process has a console, write the message directly into it.
      * Errors are ignored.  */
