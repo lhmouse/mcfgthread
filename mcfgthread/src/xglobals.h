@@ -55,6 +55,11 @@
       .Buffer = (void*) ((s) + __MCF_STATIC_ASSERT_0(  \
          !__builtin_types_compatible_p(__typeof__(1+&*(s)), __typeof__(s))))  }
 
+/** This is similar to `__MCF_CHECK()` but it checks `NT_SUCCESS(status)`.  */
+#define __MCF_CHECK_NT(status)  \
+    (((NTSTATUS) (status) >= 0) ? (void) 0  \
+      : (SetLastError(RtlNtStatusToDosError(status)), __MCF_runtime_failure(__MCF_EX __func__)))
+
 /** This function is used as the exception handler of a `noexcept` function.  */
 __MCF_XGLOBALS_IMPORT
 EXCEPTION_DISPOSITION
@@ -237,12 +242,6 @@ __MCF_win32_error_i(ULONG code, int val);
 __MCF_XGLOBALS_IMPORT __MCF_FN_COLD
 void*
 __MCF_win32_error_p(ULONG code, void* ptr);
-
-/** Sets the last error code to `RtlNtStatusToDosError(status)` and returns `ptr`.
- * This function should be the target of a tail call.  */
-__MCF_XGLOBALS_IMPORT __MCF_FN_COLD
-void*
-__MCF_win32_ntstatus_p(NTSTATUS status, void* ptr);
 
 /** Looks for a function in all loaded DLLs. If a function is found, a handle to
  * its DLL will be written to `*module` and the caller shall call `FreeLibrary()`

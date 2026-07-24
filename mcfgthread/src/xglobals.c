@@ -422,14 +422,6 @@ __MCF_win32_error_p(ULONG code, void* ptr)
   }
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
-void*
-__MCF_win32_ntstatus_p(NTSTATUS status, void* ptr)
-  {
-    SetLastError(RtlNtStatusToDosError(status));
-    return ptr;
-  }
-
-__MCF_DLLEXPORT __MCF_NEVER_INLINE
 FARPROC
 __MCF_get_function_from_loaded_dlls(HMODULE* module, const char* name)
   {
@@ -609,19 +601,22 @@ __MCF_gthread_initialize_globals(void)
                 .ObjectName = &(UNICODE_STRING) __MCF_NT_STRING_INIT(s_gname),
                 .Attributes = OBJ_OPENIF | OBJ_EXCLUSIVE };
     NTSTATUS status = BaseGetNamedObjectDirectory(&(gattrs.RootDirectory));
-    __MCF_CHECK(__MCF_win32_ntstatus_p(status, gattrs.RootDirectory));
+    __MCF_CHECK_NT(status);
+    __MCF_ASSERT(gattrs.RootDirectory);
 
     HANDLE gfile = NULL;
     status = NtCreateSection(&gfile, SECTION_ALL_ACCESS, &gattrs,
                              &(LARGE_INTEGER){ .QuadPart = __MCF_G_SIZE_TOTAL },
                              PAGE_READWRITE, SEC_COMMIT, NULL);
-    __MCF_CHECK(__MCF_win32_ntstatus_p(status, gfile));
+    __MCF_CHECK_NT(status);
+    __MCF_ASSERT(gfile);
 
     SIZE_T gsize = 0;
     __MCF_g = nullptr;
     status = NtMapViewOfSection(gfile, NtCurrentProcess(), (void**) &__MCF_g, 0, 0,
                                 nullptr, &gsize, ViewUnmap, 0, PAGE_READWRITE);
-    __MCF_CHECK(__MCF_win32_ntstatus_p(status, __MCF_g));
+    __MCF_CHECK_NT(status);
+    __MCF_ASSERT(__MCF_g);
 
     if(__MCF_g->self_size >= __MCF_G_SIZE_TOTAL) {
       /* Reuse the existent view and close excess handles.  */

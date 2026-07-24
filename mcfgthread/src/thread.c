@@ -138,7 +138,8 @@ __MCF_thread_attach_foreign(_MCF_thread* thrd)
     NTSTATUS status = NtDuplicateObject(NtCurrentProcess(), NtCurrentThread(),
                                         NtCurrentProcess(), &(thrd->__handle),
                                         0, 0, DUPLICATE_SAME_ACCESS);
-    __MCF_CHECK(__MCF_win32_ntstatus_p(status, thrd->__handle));
+    __MCF_CHECK_NT(status);
+    __MCF_ASSERT(thrd->__handle);
 
     /* Initialize the reference count to detached state.  */
     _MCF_atomic_store_32_rel(thrd->__nref, 1);
