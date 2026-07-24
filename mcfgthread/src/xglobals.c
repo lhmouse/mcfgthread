@@ -44,7 +44,7 @@ do_notify_runtime_failure(const char* where, HMODULE msg_dll, ULONG msg_code)
     /* Get a piece of localized text for the caption of the message box.  */
     UNICODE_STRING caption;
     caption.Buffer = sptr;
-    caption.MaximumLength = (USHORT) ((UINT_PTR) end_of_buffer - (UINT_PTR) sptr);
+    caption.MaximumLength = (USHORT) ((char*) end_of_buffer - (char*) sptr);
 
     /* #define ERROR_UNHANDLED_EXCEPTION   574L
      * {Application Error}
@@ -59,12 +59,12 @@ do_notify_runtime_failure(const char* where, HMODULE msg_dll, ULONG msg_code)
     }
 
     /* Terminate the caption.  */
-    caption.Length = (USHORT) ((UINT_PTR) sptr - (UINT_PTR) caption.Buffer);
+    caption.Length = (USHORT) ((char*) sptr - (char*) caption.Buffer);
 
     /* Get a piece of localized text for the text of the message box.  */
     UNICODE_STRING text;
     text.Buffer = sptr;
-    text.MaximumLength = (USHORT) ((UINT_PTR) end_of_buffer - (UINT_PTR) sptr);
+    text.MaximumLength = (USHORT) ((char*) end_of_buffer - (char*) sptr);
 
     /* Get the file name of the executable.  */
     outlen = GetModuleFileNameW(NULL, sptr, (ULONG) (end_of_buffer - sptr));
@@ -105,7 +105,7 @@ do_notify_runtime_failure(const char* where, HMODULE msg_dll, ULONG msg_code)
     sptr += outlen;
 
     /* Terminate the message text.  */
-    text.Length = (USHORT) ((UINT_PTR) sptr - (UINT_PTR) text.Buffer);
+    text.Length = (USHORT) ((char*) sptr - (char*) text.Buffer);
 
     /* If this process has a console, write the message directly into it.
      * Errors are ignored.  */
