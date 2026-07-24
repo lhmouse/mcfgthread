@@ -271,33 +271,19 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
     else if(rec->ExceptionCode == 0xE06D7363) {
       /* MSVC raises `0xE06D7363` instead. We will not allow the stack to be
        * unwound, so we must call `std::terminate()`. The CRT may have been
-       * linked statically, but that is to be handled in the fast-fail path.  */
-      HMODULE dlls[256];
-      DWORD dlls_cb;
-      if(K32EnumProcessModules(NtCurrentProcess(), dlls, sizeof(dlls), &dlls_cb))
-        for(uint32_t i = 0;  i != _MCF_minz(dlls_cb, sizeof(dlls)) / sizeof(HMODULE);  ++i) {
-          /* Lock the DLL, in case that another thread unloads it.  */
-          HMODULE dll;
-          if(!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (void*) dlls[i], &dll))
-            continue;
-
-          if(dll == dlls[i]) {
-            /* The handle is valid and has been locked in this thread, so look
-             * for `__std_terminate()`. This is actually a documented API; see
-             * <https://learn.microsoft.com/en-us/windows/win32/memory/stdterminate>.
-             * Due to possibility of DLL hijacking, the prototype is not declared
-             * `noreturn`.  */
-            FARPROC dll_fn = GetProcAddress(dlls[i], "__std_terminate");
-            if(dll_fn) {
-              typedef void typeof_std_terminate(void);
-              (* __MCF_CAST_PTR(typeof_std_terminate, dll_fn)) ();
-              __builtin_trap();
-            }
-          }
-
-          /* Unlock the DLL.  */
-          FreeLibrary(dll);
-        }
+       * linked statically, but that is to be handled in the fast-fail path.
+       * For the DLL, we look for `__std_terminate()` which is actually a
+       * documented API; see
+       * <https://learn.microsoft.com/en-us/windows/win32/memory/stdterminate>.
+       * Due to possibility of DLL hijacking, the prototype is not declared
+       * `noreturn`.  */
+      HMODULE dll;
+      FARPROC dll_fn = __MCF_get_function_from_loaded_dlls(&dll, "__std_terminate");
+      if(dll_fn) {
+        typedef void typeof_std_terminate(void);
+        (* __MCF_CAST_PTR(typeof_std_terminate, dll_fn)) ();
+        __builtin_trap();
+      }
     }
 
     /* The exception is unsolvable, so terminate the process.  */
@@ -441,6 +427,46 @@ __MCF_win32_ntstatus_p(NTSTATUS status, void* ptr)
   {
     SetLastError(RtlNtStatusToDosError(status));
     return ptr;
+  }
+
+__MCF_DLLEXPORT __MCF_NEVER_INLINE
+FARPROC
+__MCF_get_function_from_loaded_dlls(HMODULE* module, const char* name)
+  {
+    *module = NULL;
+
+    /* Get a snapshot of DLLs in the current process.  */
+    HMODULE* dlls = __builtin_alloca(64);
+    DWORD dlls_cb = 64;
+    if(!K32EnumProcessModules(NtCurrentProcess(), dlls, dlls_cb, &dlls_cb))
+      return nullptr;
+    else if(dlls_cb > 64) {
+      dlls = __builtin_alloca(dlls_cb);
+      if(!K32EnumProcessModules(NtCurrentProcess(), dlls, dlls_cb, &dlls_cb))
+        return nullptr;
+    }
+
+    HMODULE* end_of_dlls = (void*) ((char*) dlls + dlls_cb);
+    for(HMODULE* p = dlls;  p != end_of_dlls;  ++p) {
+      /* Lock the DLL, in case that another thread unloads it.  */
+      if(!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (void*) *p, module))
+        continue;
+
+      if(*module == *p) {
+        /* The handle is valid and has been locked in this thread, so look for
+         * the function.  */
+        FARPROC dll_fn = GetProcAddress(*module, name);
+        if(dll_fn)
+          return dll_fn;
+      }
+
+      /* Unlock the DLL.  */
+      FreeLibrary(*module);
+      *module = NULL;
+    }
+
+    /* Not found.  */
+    return nullptr;
   }
 
 static inline

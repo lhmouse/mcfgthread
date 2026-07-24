@@ -244,6 +244,14 @@ __MCF_XGLOBALS_IMPORT __MCF_FN_COLD
 void*
 __MCF_win32_ntstatus_p(NTSTATUS status, void* ptr);
 
+/** Looks for a function in all loaded DLLs. If a function is found, a handle to
+ * its DLL will be written to `*module` and the caller shall call `FreeLibrary()`
+ * when it's no longer needed. When there are multiple matching functions from
+ * multiple DLLs, it is unspecified which one will be returned.  */
+__MCF_XGLOBALS_IMPORT
+FARPROC
+__MCF_get_function_from_loaded_dlls(HMODULE* module, const char* name);
+
 /** Undocumented  */
 __MCF_XGLOBALS_IMPORT
 void
