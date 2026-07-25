@@ -17,7 +17,7 @@ void
 __MCF__Exit(int status)
   {
     TerminateProcess(NtCurrentProcess(), (ULONG) status);
-    __MCF_UNREACHABLE;
+    __builtin_trap();
   }
 
 __MCF_DLLEXPORT
