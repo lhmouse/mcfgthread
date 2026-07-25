@@ -5,6 +5,21 @@ implements the _gthread interface set_, which is used internally both by **GCC**
 to provide synchronization of initialization of local static objects, and by
 **libstdc++** to provide C++11 threading facilities.
 
+> [!TIP]
+> In order for `__cxa_atexit()` to conform to the Itanium C++ ABI, it is required
+>
+> 1. for a process to call `__cxa_finalize(NULL)` when exiting, and
+> 2. for a DLL to call `__cxa_finalize(&__dso_handle)` when it is unloaded
+>    dynamically with `FreeLibrary()`.
+>
+> This requires [hacking the CRT](patches/mingw-w64-10.0.patch). If you don't have
+> the modified CRT, you may still get standard compliance by
+>
+> 1. calling `__MCF_cxa_atexit(fflush, NULL, &__dso_handle)` in the beginning of,
+>    and calling `__MCF_exit()` in the end of, `main()` of your program, and
+> 2. calling `__cxa_finalize(&__dso_handle)` when `DLL_PROCESS_DETACH` is received
+>    by `DllMain()` of your DLL.
+
 > [!WARNING]
 > This project uses some undocumented NT system calls and is not guaranteed to
 > work on some Windows versions. The author gives no warranty for this project.
@@ -63,17 +78,6 @@ cd build_dir
 meson compile
 meson test
 ```
-
-> [!TIP]
-> In order for `__cxa_atexit()` (and the non-standard `__cxa_at_quick_exit()`) to
-> conform to the Itanium C++ ABI, it is required 1) for a process to call
-> `__cxa_finalize(NULL)` when exiting, and 2) for a DLL to call
-> `__cxa_finalize(&__dso_handle)` when it is unloaded dynamically. This requires
-> [hacking the CRT](https://github.com/lhmouse/MINGW-packages/tree/gcc-mcf/mingw-w64-crt).
-> If you don't have the modified CRT, you may still get standard compliance by
-> 1. calling `__MCF_exit()` instead of `exit()` from your program, and
-> 2. calling `__cxa_finalize(&__dso_handle)` followed by `fflush(NULL)` upon
->    receipt of `DLL_PROCESS_DETACH` in your `DllMain()`.
 
 #### Linux
 
