@@ -142,8 +142,9 @@ __MCF_DLLEXPORT
 void
 __MCF_runtime_failure(const char* where)
   {
-    do_notify_runtime_failure(where, __MCF_crt_kernel32, GetLastError());
-    do_fail_fast(STATUS_FAIL_FAST_EXCEPTION, __builtin_return_address(0));
+    ULONG code = GetLastError();
+    do_notify_runtime_failure(where, __MCF_crt_kernel32, code);
+    do_fail_fast((NTSTATUS) (0xC0070000 + code), __builtin_return_address(0));
   }
 
 __MCF_DLLEXPORT
