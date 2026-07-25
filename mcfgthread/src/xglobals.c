@@ -542,6 +542,7 @@ __MCF_gthread_initialize_globals(void)
      * be mistakenly executed as `bsf`.  */
     uint32_t dummy;
     __asm__ volatile ("andn %0, %0, %0" : "=r"(dummy) : : "cc");
+    __MCF_ASSERT(dummy == 0);
 #endif
 
     /* Get handles to system DLLs, by calling `LoadLibraryEx()` with
