@@ -68,7 +68,7 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
       if(!elem->__key_opt || (elem->__key_opt == key))
         return elem;
 
-    __MCF_UNREACHABLE;
+    __MCF_ASSERT(false);
   }
 
 __MCF_DLLEXPORT __MCF_FN_PURE
