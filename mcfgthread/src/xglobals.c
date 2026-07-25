@@ -127,17 +127,23 @@ do_notify_runtime_failure(const char* where, HMODULE msg_dll, ULONG msg_code)
     (void) rhe_resp;
   }
 
+static __MCF_NEVER_RETURN
+void
+do_fail_fast(NTSTATUS status, void* addr)
+  {
+    EXCEPTION_RECORD record = { .ExceptionCode = (ULONG) status,
+                                .ExceptionFlags = EXCEPTION_NONCONTINUABLE,
+                                .ExceptionAddress = addr };
+    RaiseFailFastException(&record, nullptr, 0);
+    __builtin_trap();
+  }
+
 __MCF_DLLEXPORT
 void
 __MCF_runtime_failure(const char* where)
   {
     do_notify_runtime_failure(where, __MCF_crt_kernel32, GetLastError());
-
-    EXCEPTION_RECORD record = { .ExceptionCode = (ULONG) STATUS_FAIL_FAST_EXCEPTION,
-                                .ExceptionFlags = EXCEPTION_NONCONTINUABLE,
-                                .ExceptionAddress = __builtin_return_address(0) };
-    RaiseFailFastException(&record, nullptr, 0);
-    __builtin_trap();
+    do_fail_fast(STATUS_FAIL_FAST_EXCEPTION, __builtin_return_address(0));
   }
 
 __MCF_DLLEXPORT
@@ -145,12 +151,7 @@ void
 __MCF_runtime_failure_from_ntstatus(const char* where, NTSTATUS status)
   {
     do_notify_runtime_failure(where, __MCF_crt_ntdll, (ULONG) status);
-
-    EXCEPTION_RECORD record = { .ExceptionCode = (DWORD) status,
-                                .ExceptionFlags = EXCEPTION_NONCONTINUABLE,
-                                .ExceptionAddress = __builtin_return_address(0) };
-    RaiseFailFastException(&record, nullptr, 0);
-    __builtin_trap();
+    do_fail_fast(status, __builtin_return_address(0));
   }
 
 __MCF_DLLEXPORT __MCF_FN_PURE
@@ -402,11 +403,7 @@ __MCF_check_wait_safety(const __MCF_winnt_timeout* to)
      * upon `DLL_PROCESS_DETACH`. Windows Vista+ terminates the process if such
      * a scenario is detected in `SRWLOCK` or `CRITICAL_SECTION` (but not in
      * `CONDITION_VARIABLE`), so do the same.  */
-    EXCEPTION_RECORD record = { .ExceptionCode = (ULONG) STATUS_THREAD_IS_TERMINATING,
-                                .ExceptionFlags = EXCEPTION_NONCONTINUABLE,
-                                .ExceptionAddress = __builtin_return_address(0) };
-    RaiseFailFastException(&record, nullptr, 0);
-    __builtin_trap();
+    do_fail_fast(STATUS_THREAD_IS_TERMINATING, __builtin_return_address(0));
   }
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
