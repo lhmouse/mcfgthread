@@ -18,7 +18,7 @@ main(void)
     int64_t timeout;
     int r;
 
-    _MCF_thread_set_priority(NULL, _MCF_thread_priority_above_normal);
+    _MCF_thread_set_priority(NULL, _MCF_thread_priority_realtime);
 
     now = _MCF_perf_counter();
     timeout = (int64_t) _MCF_hires_utc_now() + 1116;  /* absolute  */

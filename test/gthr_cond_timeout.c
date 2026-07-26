@@ -23,7 +23,7 @@ main(void)
     __gthread_time_t timeout;
     int r;
 
-    _MCF_thread_set_priority(NULL, _MCF_thread_priority_above_normal);
+    _MCF_thread_set_priority(NULL, _MCF_thread_priority_realtime);
 
     r = __gthread_mutex_trylock(&mutex);
     assert(r == 0);
