@@ -30,7 +30,7 @@ main(void)
     double now, delta;
     NS::cv_status r;
 
-    ::_MCF_thread_set_priority(nullptr, ::_MCF_thread_priority_above_normal);
+    ::_MCF_thread_set_priority(nullptr, ::_MCF_thread_priority_realtime);
     NS::unique_lock<NS::mutex> xlk(mutex);
 
     // Round the time up.
@@ -41,6 +41,7 @@ main(void)
     r = cond.wait_until(xlk, NS::chrono::system_clock::now() + NS::chrono::milliseconds(1116));  // relaxed
     assert(r == NS::cv_status::timeout);
     delta = ::_MCF_perf_counter() - now;
+    fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1100);
     assert(delta <= 1200);
 
