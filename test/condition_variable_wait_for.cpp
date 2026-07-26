@@ -27,7 +27,7 @@ main(void)
     double now, delta;
     NS::cv_status r;
 
-    ::_MCF_thread_set_priority(nullptr, ::_MCF_thread_priority_above_normal);
+    ::_MCF_thread_set_priority(nullptr, ::_MCF_thread_priority_realtime);
     NS::unique_lock<NS::mutex> xlk(mutex);
 
     now = ::_MCF_perf_counter();

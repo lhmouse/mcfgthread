@@ -15,7 +15,7 @@ main(void)
     struct timespec timeout, rem;
     int r;
 
-    _MCF_thread_set_priority(NULL, _MCF_thread_priority_above_normal);
+    _MCF_thread_set_priority(NULL, _MCF_thread_priority_realtime);
 
     now = _MCF_perf_counter();
     timeout.tv_sec = 1;  /* relative  */

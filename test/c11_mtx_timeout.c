@@ -19,7 +19,7 @@ main(void)
     struct timespec timeout;
     int r;
 
-    _MCF_thread_set_priority(NULL, _MCF_thread_priority_above_normal);
+    _MCF_thread_set_priority(NULL, _MCF_thread_priority_realtime);
 
     r = mtx_init(&mutex, mtx_timed);
     assert(r == thrd_success);

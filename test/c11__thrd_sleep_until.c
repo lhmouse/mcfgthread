@@ -16,7 +16,7 @@ main(void)
     struct timespec timeout;
     int r;
 
-    _MCF_thread_set_priority(NULL, _MCF_thread_priority_above_normal);
+    _MCF_thread_set_priority(NULL, _MCF_thread_priority_realtime);
 
     sleep_until = time(NULL) + 2;
     _MCF_sleep_noninterruptible(&(int64_t){ sleep_until * 1000LL - 20 });

@@ -26,7 +26,7 @@ main(void)
     double now, delta;
     bool r;
 
-    ::_MCF_thread_set_priority(nullptr, ::_MCF_thread_priority_above_normal);
+    ::_MCF_thread_set_priority(nullptr, ::_MCF_thread_priority_realtime);
 
     // Round the time up.
     int64_t sleep_until = (int64_t) ::time(nullptr) * 1000 + 2000;
