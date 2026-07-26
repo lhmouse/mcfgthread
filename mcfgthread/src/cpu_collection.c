@@ -165,6 +165,13 @@ do_find_cpu_opt(const _MCF_cpu_collection* coll, uint32_t id)
   {
     __MCF_ASSERT(coll);
 
+    /* If CPU identifiers are consecutive, this should usually hit.  */
+    if((id >= 256) && (id < 256 + coll->__size)) {
+      const __MCF_cpu_element* elem = coll->__data + (id - 256);
+      if(id == elem->__id)
+        return (void*) elem;
+    }
+
     /* The CPUs have been sorted by `_MCF_cpu_collection_new()`, so we can do a
      * binary search here.  */
     uint32_t bpos = 0;
