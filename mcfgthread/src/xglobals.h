@@ -662,6 +662,7 @@ __MCF_bit_scan_forward_32(uint32_t* index, uint32_t value)
     found = _BitScanForward(&index32, value);
     *index = index32;
 #endif
+    __MCF_ASSERT(found == (value != 0));
     return found;
   }
 
@@ -687,6 +688,7 @@ __MCF_bit_scan_forward_ptr(uintptr_t* index, uintptr_t value)
     found = __MCF_64_32(_BitScanForward64, _BitScanForward) (&index32, value);
     *index = index32;
 #endif
+    __MCF_ASSERT(found == (value != 0));
     return found;
   }
 
