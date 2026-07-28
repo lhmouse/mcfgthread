@@ -1177,7 +1177,7 @@ do_tls_callback(PVOID module, ULONG reason, PVOID reserved)
  * initialization shall happen as early as possible.  */
 extern const IMAGE_TLS_DIRECTORY _tls_used;
 static const void* const __MCF_crt_refptr__tls_used __MCF_CRT_RDATA = &_tls_used;
-const PIMAGE_TLS_CALLBACK __MCF_crt_xl_b __MCF_CRT_XL(B) = do_tls_callback;
+static const PIMAGE_TLS_CALLBACK __MCF_crt___xl_b __MCF_CRT_XL(B) = do_tls_callback;
 
 #if defined __MCF_M_X8632 && defined _MSC_VER
 /** Register SEH handlers. In the DLL we build a handler table by hand which works
