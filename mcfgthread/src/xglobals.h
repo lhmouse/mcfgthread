@@ -696,11 +696,10 @@ __MCF_ALWAYS_INLINE
 ULONGLONG
 __MCF_get_interrupt_time(void)
   {
-    /* At address `0x7FFE0000` (`MM_SHARED_USER_DATA_VA` in Windows SDK for
-     * assembly, same on all architectures) there's a read-only structure of
-     * type `KUSER_SHARED_DATA`. The `InterruptTime` field is at offset `8` on
-     * all architectures; see
-     * <https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-kuser_shared_data>.  */
+    /* This function matches the macro `KeQueryInterruptTime()` in wdm.h of WDK.
+     * The address of `KUSER_SHARED_DATA` in user mode is `0x7FFE0000` on all
+     * architectures, defined as `MM_SHARED_USER_DATA_VA` in ksamd64.inc,
+     * ksarm64.h, and ks386.inc.  */
     volatile char* shared_user_data = (char*) 0x7FFE0000;
 #if !defined __MCF_M_X8664_ASM
     __asm__ ("" : "+r"(shared_user_data));  /* workaround for optimizer bug  */
