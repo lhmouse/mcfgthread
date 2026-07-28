@@ -29,7 +29,7 @@ do_unlock_and_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt, intptr
       /* Allocate a count for the current thread. A condition variable is on
        * the slow path, so this always happens.  */
       new.__reserved_bits = 0;
-      new.__nsleep = (old.__nsleep + 1U) & (__MCF_UINTPTR_MAX >> 9);
+      new.__nsleep = (old.__nsleep + 1U) & (UINTPTR_MAX >> 9);
 
       if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cnd, &old, &new))
         break;
@@ -55,7 +55,7 @@ do_unlock_and_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt, intptr
           break;
 
         new.__reserved_bits = 0;
-        new.__nsleep = (old.__nsleep - 1U) & (__MCF_UINTPTR_MAX >> 9);
+        new.__nsleep = (old.__nsleep - 1U) & (UINTPTR_MAX >> 9);
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(cnd, &old, &new))
           return -1;
@@ -116,7 +116,7 @@ _MCF_cond_signal_some_slow(_MCF_cond* cnd, size_t limit)
 
       wake_num = _MCF_minz(old.__nsleep, limit);
       new.__reserved_bits = 0;
-      new.__nsleep = (old.__nsleep - wake_num) & (__MCF_UINTPTR_MAX >> 9);
+      new.__nsleep = (old.__nsleep - wake_num) & (UINTPTR_MAX >> 9);
 
       if(_MCF_atomic_cmpxchg_weak_pptr_rel(cnd, &old, &new))
         break;

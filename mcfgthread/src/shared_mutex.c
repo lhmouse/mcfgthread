@@ -50,7 +50,7 @@ do_lock_common(_MCF_shared_mutex* smtx, bool shared, const int64_t* timeout_opt)
       else {
         /* Allocate a sleeping count for the current thread.  */
         new.__nshare = old.__nshare;
-        new.__nsleep = (old.__nsleep + 1U) & (__MCF_UINTPTR_MAX >> 14);
+        new.__nsleep = (old.__nsleep + 1U) & (UINTPTR_MAX >> 14);
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smtx, &old, &new))
           break;
@@ -71,7 +71,7 @@ do_lock_common(_MCF_shared_mutex* smtx, bool shared, const int64_t* timeout_opt)
           break;
 
         new.__nshare = old.__nshare;
-        new.__nsleep = (old.__nsleep - 1U) & (__MCF_UINTPTR_MAX >> 14);
+        new.__nsleep = (old.__nsleep - 1U) & (UINTPTR_MAX >> 14);
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(smtx, &old, &new))
           return -1;
@@ -126,7 +126,7 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smtx)
       uintptr_t new_nshare = (old.__nshare - 1U) & (((uint32_t) old.__nshare - 0x3FFFU) >> 14);
       wake_num = old.__nsleep & ((new_nshare - 1U) >> 14);
       new.__nshare = new_nshare & 0x3FFFU;
-      new.__nsleep = (old.__nsleep - wake_num) & (__MCF_UINTPTR_MAX >> 14);
+      new.__nsleep = (old.__nsleep - wake_num) & (UINTPTR_MAX >> 14);
 
       if(_MCF_atomic_cmpxchg_weak_pptr_rel(smtx, &old, &new))
         break;

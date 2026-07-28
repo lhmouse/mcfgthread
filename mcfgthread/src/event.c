@@ -38,7 +38,7 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
         /* Allocate a sleeping count for the current thread.  */
         new.__value = old.__value;
         new.__reserved_bit = 0;
-        new.__nsleep = (old.__nsleep + 1U) & (__MCF_UINTPTR_MAX >> 9);
+        new.__nsleep = (old.__nsleep + 1U) & (UINTPTR_MAX >> 9);
 
         if(_MCF_atomic_cmpxchg_weak_pptr_arl(event, &old, &new))
           break;
@@ -60,7 +60,7 @@ _MCF_event_await_change_slow(_MCF_event* event, int undesired, const int64_t* ti
 
         new.__value = old.__value;
         new.__reserved_bit = 0;
-        new.__nsleep = (old.__nsleep - 1U) & (__MCF_UINTPTR_MAX >> 9);
+        new.__nsleep = (old.__nsleep - 1U) & (UINTPTR_MAX >> 9);
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(event, &old, &new))
           return -1;

@@ -95,7 +95,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
         new.__locked = 1;
         new.__sp_mask = old.__sp_mask;
         new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, +1) & 0x0FU;
-        new.__nsleep = (old.__nsleep + 1U) & (__MCF_UINTPTR_MAX >> 9);
+        new.__nsleep = (old.__nsleep + 1U) & (UINTPTR_MAX >> 9);
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(mtx, &old, &new))
           break;
@@ -178,7 +178,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
           new.__locked = 1;
           new.__sp_mask = (old.__sp_mask & (0x0FU - mask_to_restore)) & 0x0FU;
           new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, +1) & 0x0FU;
-          new.__nsleep = (old.__nsleep + 1U) & (__MCF_UINTPTR_MAX >> 9);
+          new.__nsleep = (old.__nsleep + 1U) & (UINTPTR_MAX >> 9);
 
           if(_MCF_atomic_cmpxchg_weak_pptr_rlx(mtx, &old, &new))
             break;
@@ -202,7 +202,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
         new.__locked = old.__locked;
         new.__sp_mask = old.__sp_mask;
         new.__sp_nfail = old.__sp_nfail;
-        new.__nsleep = (old.__nsleep - 1U) & (__MCF_UINTPTR_MAX >> 9);
+        new.__nsleep = (old.__nsleep - 1U) & (UINTPTR_MAX >> 9);
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(mtx, &old, &new))
           return -1;
@@ -241,7 +241,7 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mtx)
       new.__locked = 0;
       new.__sp_mask = (old.__sp_mask & (old.__sp_mask - 1U)) & 0x0FU;
       new.__sp_nfail = old.__sp_nfail;
-      new.__nsleep = (old.__nsleep - wake_one) & (__MCF_UINTPTR_MAX >> 9);
+      new.__nsleep = (old.__nsleep - wake_one) & (UINTPTR_MAX >> 9);
 
       if(_MCF_atomic_cmpxchg_weak_pptr_rel(mtx, &old, &new))
         break;

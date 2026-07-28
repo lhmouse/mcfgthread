@@ -49,7 +49,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         /* Allocate a sleeping count for the current thread.  */
         new.__ready = 0;
         new.__locked = 1;
-        new.__nsleep = (old.__nsleep + 1U) & (__MCF_UINTPTR_MAX >> 9);
+        new.__nsleep = (old.__nsleep + 1U) & (UINTPTR_MAX >> 9);
 
         if(_MCF_atomic_cmpxchg_weak_pptr_rlx(once, &old, &new))
           break;
@@ -71,7 +71,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
 
         new.__ready = old.__ready;
         new.__locked = old.__locked;
-        new.__nsleep = (old.__nsleep - 1U) & (__MCF_UINTPTR_MAX >> 9);
+        new.__nsleep = (old.__nsleep - 1U) & (UINTPTR_MAX >> 9);
 
         if(_MCF_atomic_cmpxchg_weak_pptr_acq(once, &old, &new))
           return (int) old.__ready - 1;
@@ -109,7 +109,7 @@ _MCF_once_abort(_MCF_once* once)
       wake_one = old.__nsleep != 0;
       new.__ready = old.__ready;
       new.__locked = 0;
-      new.__nsleep = (old.__nsleep - wake_one) & (__MCF_UINTPTR_MAX >> 9);
+      new.__nsleep = (old.__nsleep - wake_one) & (UINTPTR_MAX >> 9);
 
       if(_MCF_atomic_cmpxchg_weak_pptr_rel(once, &old, &new))
         break;
