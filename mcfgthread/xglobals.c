@@ -456,10 +456,8 @@ do_tls_callback(PVOID module, ULONG reason, LPVOID reserved)
 
 /* This requires the main executable be linked with 'tlssup.o'. Such
  * initialization shall happen as early as possible.  */
-#if defined _MSC_VER
-__pragma(comment(linker, "/include:" __MCF_USYM "_tls_used"))
-__pragma(section(".CRT$XLB", read))
-#endif
+extern const IMAGE_TLS_DIRECTORY _tls_used;
+static const void* const _tls_used_refptr __MCF_CRT_RDATA = &_tls_used;
 __attribute__((__section__(".CRT$XLB"), __used__))
 const PIMAGE_TLS_CALLBACK __MCF_crt_xl_b = do_tls_callback;
 
