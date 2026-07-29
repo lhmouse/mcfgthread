@@ -90,7 +90,7 @@ _MCF_cpu_collection_new(void)
         /* Each active logical processor is indicated by a bit in `proc_mask`
          * in the current process group. This ensures that CPU identifiers are
          * sorted.  */
-        uintptr_t bit_index;
+        size_t bit_index;
         __MCF_bit_scan_forward_ptr(&bit_index, mask_reg);
 
         /* Add CPU into the end. CPU identifiers start from 256 like CPU Set APIs.  */
@@ -109,7 +109,7 @@ _MCF_cpu_collection_new(void)
            * structure represents a processor core, the `GroupCount` member is
            * always 1.' In this code path, a process can't straddle multiple
            * process groups, so only cores of the current group are returned.  */
-          uintptr_t core_index;
+          size_t core_index;
           __MCF_bit_scan_forward_ptr(&core_index, info->Processor.GroupMask[0].Mask);
 
           if(info->Processor.GroupMask[0].Group == proc_num.Group)
