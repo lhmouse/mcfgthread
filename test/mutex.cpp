@@ -20,9 +20,9 @@ namespace NS = ::_MCF;
 
 constexpr std::size_t NTHREADS = 64U;
 static std::vector<NS::thread> threads(NTHREADS);
-static NS::mutex mutex;
-static ::_MCF_sem start = _MCF_SEM_INIT(0);
-static int resource = 0;
+static __MCF_ALIGNED(128) NS::mutex mutex;
+static __MCF_ALIGNED(128) ::_MCF_sem start = _MCF_SEM_INIT(0);
+static __MCF_ALIGNED(128) int resource = 0;
 
 static
 void

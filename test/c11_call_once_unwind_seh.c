@@ -12,9 +12,9 @@
 
 #define NTHREADS  64U
 static thrd_t threads[NTHREADS];
-static once_flag once = ONCE_FLAG_INIT;
-static _MCF_sem start = _MCF_SEM_INIT(0);
-static int resource = 0;
+static __MCF_ALIGNED(128) once_flag once = ONCE_FLAG_INIT;
+static __MCF_ALIGNED(128) _MCF_sem start = _MCF_SEM_INIT(0);
+static __MCF_ALIGNED(128) int resource = 0;
 
 static
 EXCEPTION_DISPOSITION

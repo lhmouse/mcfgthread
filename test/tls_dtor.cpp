@@ -29,8 +29,8 @@ static NS::thread_specific_ptr<int> tss_ptr(tls_destructor);
 
 constexpr std::size_t NTHREADS = 64U;
 static std::vector<NS::thread> threads(NTHREADS);
-static ::_MCF_sem start = _MCF_SEM_INIT(0);
-static int resource = 0;
+static __MCF_ALIGNED(128) ::_MCF_sem start = _MCF_SEM_INIT(0);
+static __MCF_ALIGNED(128) int resource = 0;
 
 static
 void

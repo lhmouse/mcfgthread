@@ -10,9 +10,9 @@
 
 #define NTHREADS  64U
 static thrd_t threads[NTHREADS];
-static mtx_t mutex;
-static _MCF_sem start = _MCF_SEM_INIT(0);
-static int resource = 0;
+static __MCF_ALIGNED(128) mtx_t mutex;
+static __MCF_ALIGNED(128) _MCF_sem start = _MCF_SEM_INIT(0);
+static __MCF_ALIGNED(128) int resource = 0;
 
 static
 int

@@ -16,11 +16,12 @@
 #define NTHREADS  16U
 static _MCF_thread* reader_threads[NTHREADS];
 static _MCF_thread* writer_threads[NTHREADS];
-static _MCF_shared_mutex mutex;
-static _MCF_sem start = _MCF_SEM_INIT(0);
+static __MCF_ALIGNED(128) _MCF_shared_mutex mutex;
+static __MCF_ALIGNED(128) _MCF_sem start = _MCF_SEM_INIT(0);
 
 #define NITER  10000U
-static int res1 = 0, res2 = 0;
+static __MCF_ALIGNED(128) int res1 = 0;
+static __MCF_ALIGNED(128) int res2 = 0;
 
 static
 void

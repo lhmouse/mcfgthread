@@ -11,12 +11,12 @@
 
 #define NTHREADS  64U
 static _MCF_thread* threads[NTHREADS];
-static _MCF_once once;
-static _MCF_sem start = _MCF_SEM_INIT(0);
-static int resource = 0;
+static __MCF_ALIGNED(128) _MCF_once once;
+static __MCF_ALIGNED(128) _MCF_sem start = _MCF_SEM_INIT(0);
+static __MCF_ALIGNED(128) int resource = 0;
 
-static int num_init = 0;   /* threads that performed initialization  */
-static int num_ready = 0;  /* threads that saw so but didn't do it  */
+static __MCF_ALIGNED(128) int num_init = 0;   /* threads that performed initialization  */
+static __MCF_ALIGNED(128) int num_ready = 0;  /* threads that saw so but didn't do it  */
 
 static
 void
