@@ -193,9 +193,10 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_once __old_v;
-    _MCF_atomic_load_pptr_acq(&__old_v, __once);
-    if(__old_v.__ready)
+    /* Use raw integers to allow better optimizations.  */
+    uintptr_t __old_bits;
+    _MCF_atomic_load_pptr_acq(&__old_bits, __once);
+    if(__old_bits & 1)
       return 0;
 #endif
     return _MCF_once_wait_slow(__once, __timeout_opt);
@@ -207,14 +208,15 @@ _MCF_once_consume_wait(_MCF_once* __once, void** __ref_ptr, const int64_t* __tim
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    _MCF_once __old_v;
-    _MCF_atomic_load_pptr_rlx(&__old_v, __once);
-    if(__old_v.__ready) {
-      _MCF_signal_fence_acq();
+    /* Use raw integers to allow better optimizations.  */
+    uintptr_t __old_bits;
+    _MCF_atomic_load_pptr_rlx(&__old_bits, __once);
+    if(__old_bits & 1) {
 #  if !defined __MCF_M_X86_ASM
       /* `__ready` is always `1` but this has to incur a load dependency.  */
-      *__ref_ptr = (char*) *__ref_ptr + ((uint32_t) __old_v.__ready - 1);
+      *__ref_ptr = (char*) *__ref_ptr + (__old_bits >> 1);
 #  endif
+      _MCF_signal_fence_acq();
       return 0;
     }
 #endif
