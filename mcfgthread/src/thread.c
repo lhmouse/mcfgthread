@@ -74,7 +74,7 @@ _MCF_thread_p_new(_MCF_thread** thrdp_opt, size_t stack_size, _MCF_thread_proced
     if(data_size != 0) {
       __MCF_ASSERT(MEMORY_ALLOCATION_ALIGNMENT <= __MCF_THREAD_DATA_ALIGNMENT);
       real_alignment = _MCF_maxz(__MCF_THREAD_DATA_ALIGNMENT, data_alignment);
-      size_request = size_need + real_alignment - MEMORY_ALLOCATION_ALIGNMENT;
+      size_request += real_alignment - MEMORY_ALLOCATION_ALIGNMENT;
       __MCF_ASSERT(size_need <= size_request);
     }
 
