@@ -100,6 +100,46 @@ int
 _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
+/** Attempts to lock a once-initialization flag with consume semantics.
+ *
+ * If this once-initialization flag is in the UNLOCKED state, this function
+ * changes it into the LOCKED state and returns 1. If it is in the LOCKED state
+ * because another thread has locked it, this function blocks until the other
+ * thread releases the lock, or returns -1 if the operation has timed out. If
+ * the once flag is already in the READY state, this function does nothing and
+ * returns 0 immediately.
+ *
+ * This function avoids an atomic load with acquire semantics in the fast path,
+ * but is more tricky and must be used with caution. In order to prevent any
+ * mis-optimization, the caller shall only access any protected data through
+ * the returned pointer, and never compare the returned pointer with anything
+ * else.
+ *
+ * The return value of this function has the same semantics with the
+ * `__cxa_guard_acquire()` function from the Itanium C++ ABI.
+ *
+ * This is an inline wrapper for `_MCF_once_wait_slow()`, which does nothing
+ * if the once-initialization flag is already in the READY state.
+ *
+ * @param `once` points to the once-initialization flag to lock.
+ * @param `ref_ptr` points to a pointer to the protected data that will be
+ *    accessed. Upon success, the function applies a load dependency to the
+ *    pointer without changing its value.
+ * @param `timeout_opt` points to the timeout value. If it is positive, it
+ *    denotes the expiration time point in the number of milliseconds since
+ *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
+ *    value of it denotes the number of milliseconds to wait. If it points to
+ *    zero, the function returns immediately without waiting. If it is null,
+ *    the function waits indefinitely.
+ * @returns 1 if the once-initialization flag has been successfully locked and
+ *    the caller should perform initialization, 0 if initialization has finished
+ *    and the caller should do nothing, or -1 if the operation has timed out.
+ * @since 2.5  */
+__MCF_ONCE_INLINE
+int
+_MCF_once_consume_wait(_MCF_once* __once, void** __ref_ptr, const int64_t* __timeout_opt)
+  __MCF_noexcept;
+
 /** Cancels once initialization.
  *
  * This function changes the once-initialization flag to the UNLOCKED state and
@@ -156,6 +196,27 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt)
     if(__old_v.__ready)
       return 0;
 #endif
+    return _MCF_once_wait_slow(__once, __timeout_opt);
+  }
+
+__MCF_ONCE_INLINE
+int
+_MCF_once_consume_wait(_MCF_once* __once, void** __ref_ptr, const int64_t* __timeout_opt)
+  __MCF_noexcept
+  {
+#if __MCF_EXPAND_INLINE_DEFINITIONS
+    _MCF_once __old_v;
+    _MCF_atomic_load_pptr_rlx(&__old_v, __once);
+    if(__old_v.__ready) {
+      _MCF_signal_fence_acq();
+#  if !defined __MCF_M_X86_ASM
+      /* `__ready` is always `1` but this has to incur a load dependency.  */
+      *__ref_ptr = (char*) *__ref_ptr + ((uint32_t) __old_v.__ready - 1);
+#  endif
+      return 0;
+    }
+#endif
+    (void) __ref_ptr;
     return _MCF_once_wait_slow(__once, __timeout_opt);
   }
 

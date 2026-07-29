@@ -118,7 +118,7 @@ test_src = [
   'test/atexit_terminate.cpp', 'test/at_quick_exit_terminate.cpp',
   'test/shared_mutex_rw_multi_fast.c', 'test/shared_mutex_rw_multi_slow.c',
   'test/tick_count.c', 'test/cpu_collection_selection.c', 'test/affinity_empty.c',
-  'test/affinity_loop.c', 'test/cpu_collection_new_legacy.c' ]
+  'test/affinity_loop.c', 'test/cpu_collection_new_legacy.c', 'test/once_consume_wait.c' ]
 
 #===========================================================
 # Global configuration
