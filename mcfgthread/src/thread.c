@@ -64,15 +64,15 @@ _MCF_thread_p_new(_MCF_thread** thrdp_opt, size_t stack_size, _MCF_thread_proced
     if(data_size > 0x8000000U - __MCF_THREAD_MAX_DATA_ALIGNMENT)
       return __MCF_win32_error_p(ERROR_ARITHMETIC_OVERFLOW, nullptr);
 
-    /* Calculate the number of bytes to allocate for the thread control structure
-     * and user-defined data. If the user-defined data should be over-aligned,
-     * over-allocate some, which will be given back later.  */
+    /* Calculate the number of bytes to allocate for a combination of the thread
+     * control structure and user-defined data.  */
     size_t size_need = sizeof(__MCF_thread_base) + data_size;
     size_t real_alignment = 0;
     size_t size_request = size_need;
 
     if(data_size != 0) {
-      __MCF_ASSERT(MEMORY_ALLOCATION_ALIGNMENT <= __MCF_THREAD_DATA_ALIGNMENT);
+      /* If the user-defined data should be over-aligned, over-allocate some,
+       * which will be given back later.  */
       real_alignment = _MCF_maxz(__MCF_THREAD_DATA_ALIGNMENT, data_alignment);
       size_request += real_alignment - MEMORY_ALLOCATION_ALIGNMENT;
       __MCF_ASSERT(size_need <= size_request);
