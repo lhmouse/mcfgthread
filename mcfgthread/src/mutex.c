@@ -25,8 +25,8 @@ do_spin_byte_ptr(const _MCF_mutex* mtx, uint32_t sp_mask)
     /* We use an `uint32_t` as a fixed-point ratio within [0,1). Hence
      * `offset_in_table = ratio / 2^32 * table_size = ratio / (2^32 / table_size)`,
      * where `2^32 / table_size` is a constant.  */
-    uint32_t base, index;
-    base = (uint32_t) ((uintptr_t) mtx / sizeof(void*)) * 0x9E3779B9U / table_size_reciprocal;
+    size_t base, index;
+    base = (uint32_t) ((uintptr_t) mtx / sizeof(void*) * 0x9E3779B9U) / table_size_reciprocal;
     __MCF_ASSERT(base < table_size);
     __MCF_bit_scan_forward_32(&index, sp_mask);
     __MCF_ASSERT(index < 4);

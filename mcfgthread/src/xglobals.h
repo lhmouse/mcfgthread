@@ -642,7 +642,7 @@ __MCF_mfree_nonnull(void* ptr)
 
 __MCF_ALWAYS_INLINE
 bool
-__MCF_bit_scan_forward_32(uint32_t* index, uint32_t value)
+__MCF_bit_scan_forward_32(size_t* index, uint32_t value)
   {
     bool found;
 #if defined __MCF_M_X86_ASM && defined __BMI__
@@ -668,7 +668,7 @@ __MCF_bit_scan_forward_32(uint32_t* index, uint32_t value)
 
 __MCF_ALWAYS_INLINE
 bool
-__MCF_bit_scan_forward_ptr(uintptr_t* index, uintptr_t value)
+__MCF_bit_scan_forward_ptr(size_t* index, uintptr_t value)
   {
     bool found;
 #if defined __MCF_M_X86_ASM && defined __BMI__
