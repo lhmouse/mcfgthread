@@ -112,8 +112,7 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt)
  * This function avoids an atomic load with acquire semantics in the fast path,
  * but is more tricky and must be used with caution. In order to prevent any
  * mis-optimization, the caller shall only access any protected data through
- * the returned pointer, and never compare the returned pointer with anything
- * else.
+ * the updated pointer, and never compare the pointer with anything else.
  *
  * The return value of this function has the same semantics with the
  * `__cxa_guard_acquire()` function from the Itanium C++ ABI.
@@ -124,7 +123,10 @@ _MCF_once_wait(_MCF_once* __once, const int64_t* __timeout_opt)
  * @param `once` points to the once-initialization flag to lock.
  * @param `ref_ptr` points to a pointer to the protected data that will be
  *    accessed. Upon success, the function applies a load dependency to the
- *    pointer without changing its value.
+ *    pointer without changing its value. The pointer shall only be used to
+ *    access data; COMPARING THE POINTER WITH ANYTHING IS EXTREMELY DANGEROUS
+ *    as it may trick the compiler to lose dependency information and cause
+ *    a race condition.
  * @param `timeout_opt` points to the timeout value. If it is positive, it
  *    denotes the expiration time point in the number of milliseconds since
  *    1970-01-01T00:00:00Z. If it points to a negative integer, the absolute
