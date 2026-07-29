@@ -15,6 +15,7 @@
 #include "shared_mutex.h"
 #include <chrono>  // duration, time_point
 #include <functional>  // mem_fn(), invoke()
+#include <exception>  // terminate()
 #include <system_error>  // system_error, errc, error_code
 #include <mutex>  // unique_lock, lock_guard
 #include <new>  // operator new()
