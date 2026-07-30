@@ -213,7 +213,7 @@ _MCF_once_consume_wait(_MCF_once* __once, void** __ref_ptr, const int64_t* __tim
     _MCF_atomic_load_pptr_rlx(&__old_bits, __once);
     if(__old_bits & 1) {
 #  if !defined __MCF_M_X86_ASM
-      /* `__ready` is always `1` but this has to incur a load dependency.  */
+      /* `__old_bits` is always `1` but this has to incur a load dependency.  */
       *__ref_ptr = (char*) *__ref_ptr + (__old_bits >> 1);
 #  endif
       _MCF_signal_fence_acq();
