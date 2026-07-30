@@ -183,7 +183,7 @@ _MCF_get_active_processor_mask(void)
     return __MCF_crt_sysinfo.dwActiveProcessorMask;
   }
 
-static __attribute__((__section__(".text$$safeseh$0000")))
+static
 EXCEPTION_DISPOSITION
 do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
 
@@ -242,7 +242,7 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
 
 #endif  /* non-x86-32 */
 
-static
+static __attribute__((__section__(".text$$safeseh$0000")))
 EXCEPTION_DISPOSITION
 do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
   {
