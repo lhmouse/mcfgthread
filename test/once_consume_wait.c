@@ -48,7 +48,7 @@ reader_proc(_MCF_thread* self)
         assert(err <= 0);
         if(err == 0) {
           // consume
-          assert(*refptr == 1);  // `assert(p->value == 1)` would fail on ARM64.
+          assert(p->value == 1);  //  fails on ARM64.
         }
       }
     }
