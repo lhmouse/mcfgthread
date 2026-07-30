@@ -24,7 +24,6 @@
 #if __MCF_CXX14(1+)0
 #include <shared_mutex>  // shared_lock
 #endif
-extern "C" void* __dso_handle;
 namespace _MCF {
 namespace _Noadl = ::_MCF;
 

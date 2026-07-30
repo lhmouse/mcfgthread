@@ -216,6 +216,18 @@ __MCF_runtime_failure(const char* __where)
 #  define __MCF_UNREACHABLE   (__MCF_runtime_failure(__MCF_EX __func__))
 #endif
 
+/* This specifies how to reference an optional symbol from user code. The symbol
+ * should be a tentative definition with neither `extern` nor an initializer.
+ * Clang does not support `common` in C++ mode. Old GNU Binutils had a bug that
+ * could corrupt `weak` symbols, so `common` is preferred where available.  */
+#if defined __clang__ && defined __cplusplus
+#  define __MCF_TENTATIVE   __attribute__((__weak__))
+#elif defined __GNUC__ || defined __clang__
+#  define __MCF_TENTATIVE   __attribute__((__common__))
+#else
+#  define __MCF_TENTATIVE   __declspec(selectany)
+#endif
+
 /** These are necessary when the header is compiled as C89 or C++98. The check
  * for `_LP64` is for Cygwin and MSYS2.  */
 #ifdef _LP64

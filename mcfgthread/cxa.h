@@ -16,6 +16,10 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_CXA_INLINE  __MCF_GNU_INLINE
 #endif
 
+/** This is the identifier of the current dynamic shared object (DSO). This has
+ * to be tentative as it isn't defined by Microsoft CRT, only by mingw-w64.  */
+__MCF_TENTATIVE void* __dso_handle;
+
 /** https://itanium-cxx-abi.github.io/cxx-abi/abi.html
  * 3.3.3 One-time Construction API
  * `__cxa_guard_acquire()`  */
