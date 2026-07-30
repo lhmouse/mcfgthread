@@ -155,24 +155,6 @@ RtlZeroMemory(
     _Out_writes_bytes_(Length) void* Destination,
     _In_ SIZE_T Length);
 
-/** Converts an `NTSTATUS` value to a Windows error code.
- *
- * This function converts an `NTSTATUS` value to a Windows error code, suitable
- * for `SetLastError()`. The original `NTSTATUS` value is written to
- * `LastStatusValue` (offset 0xBF4/0x1250) in the TEB.
- *
- * This function is exported from NTDLL.DLL.
- *
- * @param `Status` is the `NTSTATUS` value to convert.
- * @returns the corresponding Windows error code. If the `NTSTATUS` value has no
- *    corresponding Windows error code, `ERROR_MR_MID_NOT_FOUND` is returned.
- * @since All  */
-NTSYSAPI
-ULONG
-NTAPI
-RtlNtStatusToDosError(
-    _In_ NTSTATUS Status);
-
 /** Indicates whether the DLL loader of the current process is shutting down.
  *
  * This status is set by `ExitProcess()`. This function returns true when

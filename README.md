@@ -306,7 +306,6 @@ and unlocks the primitive mutex, releasing all threads that are waiting on it.
 |`RtlDllShutdownInProgress`                               |Windows XP       |[Windows API][ref:RtlDllShutdownInProgress]|
 |`RtlFillMemory`                                          |All              |[Windows Driver API][ref:RtlFillMemory] |
 |`RtlMoveMemory`                                          |All              |[Windows Driver API][ref:RtlMoveMemory] |
-|`RtlNtStatusToDosError`                                  |All              |[Windows Driver API][ref:RtlNtStatusToDosError] |
 |`RtlZeroMemory`                                          |All              |[Windows Driver API][ref:RtlZeroMemory] |
 
 [ref:NtClose]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-zwclose
@@ -318,5 +317,4 @@ and unlocks the primitive mutex, releasing all threads that are waiting on it.
 [ref:RtlDllShutdownInProgress]: https://learn.microsoft.com/en-us/windows/win32/devnotes/rtldllshutdowninprogress
 [ref:RtlFillMemory]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlfillmemory
 [ref:RtlMoveMemory]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlmovememory
-[ref:RtlNtStatusToDosError]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-rtlntstatustodoserror
 [ref:RtlZeroMemory]: https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-rtlzeromemory

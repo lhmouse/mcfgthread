@@ -20,5 +20,4 @@ EXPORTS
   RtlDllShutdownInProgress@0@
   RtlFillMemory@12@
   RtlMoveMemory@12@
-  RtlNtStatusToDosError@4@
   RtlZeroMemory@8@
