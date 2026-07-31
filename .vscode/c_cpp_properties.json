@@ -9,7 +9,8 @@
             "defines": [
                 "_DEBUG",
                 "_UNICODE",
-                "_WIN32_WINNT=0x0601"
+                "_WIN32_WINNT=0x0601",
+                "__MCF_IN_DLL"
             ],
             "windowsSdkVersion": "10.0.26100.0",
             "compilerPath": "C:/MSYS64/mingw32/bin/gcc.exe",
@@ -25,7 +26,8 @@
             "defines": [
                 "_DEBUG",
                 "_UNICODE",
-                "_WIN32_WINNT=0x0601"
+                "_WIN32_WINNT=0x0601",
+                "__MCF_IN_DLL"
             ],
             "windowsSdkVersion": "10.0.26100.0",
             "compilerPath": "C:/MSYS64/mingw64/bin/gcc.exe",
@@ -41,7 +43,8 @@
             "defines": [
                 "_DEBUG",
                 "_UNICODE",
-                "_WIN32_WINNT=0x0601"
+                "_WIN32_WINNT=0x0601",
+                "__MCF_IN_DLL"
             ],
             "windowsSdkVersion": "10.0.26100.0",
             "compilerPath": "C:/MSYS64/ucrt64/bin/gcc.exe",
@@ -57,7 +60,8 @@
             "defines": [
                 "_DEBUG",
                 "_UNICODE",
-                "_WIN32_WINNT=0x0601"
+                "_WIN32_WINNT=0x0601",
+                "__MCF_IN_DLL"
             ],
             "windowsSdkVersion": "10.0.26100.0",
             "compilerPath": "C:/MSYS64/clang64/bin/clang.exe",
@@ -73,7 +77,8 @@
             "defines": [
                 "_DEBUG",
                 "_UNICODE",
-                "_WIN32_WINNT=0x0A00"
+                "_WIN32_WINNT=0x0A00",
+                "__MCF_IN_DLL"
             ],
             "windowsSdkVersion": "10.0.26100.0",
             "compilerPath": "C:/MSYS64/clangarm64/bin/clang.exe",
