@@ -132,7 +132,7 @@ __MCF_CXX(extern "C" {)
 #if defined __GNUC__ || defined __clang__
 #  define __MCF_EX             __extension__
 #  define __MCF_GNU_INLINE      extern __inline__ __attribute__((__gnu_inline__))
-#  define __MCF_ALWAYS_INLINE   extern __inline__ __attribute__((__gnu_inline__, __always_inline__))
+#  define __MCF_ALWAYS_INLINE   __MCF_GNU_INLINE __attribute__((__always_inline__))
 #  define __MCF_NEVER_INLINE   __attribute__((__noinline__))
 #  define __MCF_NEVER_RETURN   __attribute__((__noreturn__))
 #  define __MCF_FN_CONST       __attribute__((__const__))
