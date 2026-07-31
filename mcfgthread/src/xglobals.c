@@ -242,7 +242,7 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
 
 #endif  /* non-x86-32 */
 
-static __attribute__((__section__(".text$$safeseh$0000")))
+static __attribute__((__section__(".text$$safeseh$0000"), __used__))
 EXCEPTION_DISPOSITION
 do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
   {
@@ -309,7 +309,7 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
     __builtin_trap();
   }
 
-__MCF_DLLEXPORT __attribute__((__section__(".text$$safeseh$0002")))
+__MCF_DLLEXPORT __attribute__((__section__(".text$$safeseh$0002"), __used__))
 EXCEPTION_DISPOSITION
 __MCF_seh_process_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
   {
@@ -319,7 +319,7 @@ __MCF_seh_process_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PV
     return __MCF_seh_top(rec, estab_frame, ctx, disp_ctx);
   }
 
-__MCF_DLLEXPORT __attribute__((__section__(".text$$safeseh$0003")))
+__MCF_DLLEXPORT __attribute__((__section__(".text$$safeseh$0003"), __used__))
 EXCEPTION_DISPOSITION
 __MCF_seh_thread_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
   {
@@ -925,6 +925,7 @@ __asm__ (
 "\n   .rva ___MCF_seh_top"
 "\n   .rva ___MCF_seh_process_top"
 "\n   .rva ___MCF_seh_thread_top"
+"\n .globl ___MCF_i386_se_handler_count"
 "\n .equiv ___MCF_i386_se_handler_count, (. - ___MCF_i386_se_handler_table) / 4"
 "\n .text"
 );
