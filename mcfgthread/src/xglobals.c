@@ -919,7 +919,7 @@ extern char __MCF_i386_se_handler_count[];
 __asm__ (
 "\n .section .rdata, \"dr\""
 "\n   .p2align 2"
-"\n   .globl ___MCF_i386_se_handler_table"
+"\n .globl ___MCF_i386_se_handler_table"
 "\n ___MCF_i386_se_handler_table:"
 "\n   .rva _do_call_once_seh_unwind"
 "\n   .rva ___MCF_seh_top"
@@ -938,7 +938,7 @@ extern const ULONG __MCF_arm64ec_chpe_metadata[];
 __asm__ (
 "\n .section .rdata, \"dr\""
 "\n   .p2align 2"
-"\n   .globl __MCF_arm64ec_chpe_metadata"
+"\n .globl __MCF_arm64ec_chpe_metadata"
 "\n __MCF_arm64ec_chpe_metadata:"
 "\n   .long 1"  /* Version */
 "\n   .rva __hybrid_code_map"
