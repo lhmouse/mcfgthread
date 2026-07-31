@@ -140,7 +140,6 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_FN_COLD       __attribute__((__cold__))
 #  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
 #  define __MCF_UNREACHABLE     (__builtin_unreachable())
-#  define __MCF_ALT_SYM(x, fn)   extern __typeof__(x) fn __asm__(__MCF_USYM #x)
 #  if defined __amd64__ && !defined __arm64ec__
 #    define __MCF_64_32(x, y)  x
 #    define __MCF_USYM  ""
@@ -175,7 +174,6 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_FN_COLD       /* unsupported */
 #  define __MCF_ALIGNED(x)    __declspec(align(x))
 #  define __MCF_UNREACHABLE     (__assume(0))
-#  define __MCF_ALT_SYM(x, fn)   __pragma(comment(linker, "/alternatename:" __MCF_USYM #fn "=" __MCF_USYM #x))
 #  if defined _M_X64 && !defined _M_ARM64EC
 #    define __MCF_64_32(x, y)  x
 #    define __MCF_USYM  ""
@@ -194,6 +192,18 @@ __MCF_CXX(extern "C" {)
 #      define __MCF_M_ARM64EC  1
 #    endif
 #  endif
+#endif
+
+/** Declares an alternative name `fn` with the same type as `x` such that if
+ * code uses `fn` it actually references `x`.  */
+#if defined __GNUC__ || defined __clang__
+#  define __MCF_ALT_SYM(x, fn)  \
+    extern __typeof__(x) fn  \
+      __asm__(__MCF_USYM #x)  /* no semicolon  */
+#else
+#  define __MCF_ALT_SYM(x, fn)  \
+    __pragma(comment(linker, "/alternatename:" __MCF_USYM #fn "=" __MCF_USYM #x))  \
+    extern __typeof__(x) fn  /* no semicolon  */
 #endif
 
 /** Displays an error message and terminates the current process abnormally.
