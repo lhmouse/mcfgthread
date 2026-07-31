@@ -542,7 +542,7 @@ __MCF_gthread_initialize_globals(void)
     /* Crash if the CPU does not support BMI. This ensures that `tzcnt` will not
      * be mistakenly executed as `bsf`.  */
     uint32_t dummy;
-    __asm__ volatile ("andn %0, %0, %0" : "=r"(dummy) : : "cc");
+    __asm__ volatile ("andn %k0, esp, esp" : "=r"(dummy) : : "cc");
     __MCF_ASSERT(dummy == 0);
 #endif
 
