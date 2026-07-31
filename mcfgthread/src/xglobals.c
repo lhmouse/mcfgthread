@@ -1070,12 +1070,50 @@ __asm__ (
 );
 #endif
 
+/* Implement the stack protector, aka. buffer security check in Microsoft
+ * terminology.  */
+#if defined _MSC_VER
+#  define __stack_chk_guard   __security_cookie
+#  define __stack_chk_fail    __report_gsfailure
+#endif
+
+#if !defined _MSC_VER || defined __MCF_M_X8632
+#  define __MCF_STACK_CHK_FAIL_PARAMETER   void
+#else
+#  define __MCF_STACK_CHK_FAIL_PARAMETER   uintptr_t _ __attribute__((__unused__))
+#endif
+
+#if defined __MCF_M_ARM64EC
+#  define __security_check_cookie   __security_check_cookie_arm64ec
+#endif
+
+__MCF_NEVER_RETURN void __stack_chk_fail(__MCF_STACK_CHK_FAIL_PARAMETER);
+void __fastcall __security_check_cookie(uintptr_t cookie);
+
 /** If the image subsystem version is set to 6.3+, Windows requires that the
  * security cookie shall exist and shall be initialized to a constant value
  * when the image is loaded. Otherwise the system will reject the image with
  * `STATUS_INVALID_IMAGE_FORMAT`.  */
-UINT_PTR __security_cookie = __MCF_64_32(0x2B992DDFA232, 0xBB40E64E);
+uintptr_t __stack_chk_guard = __MCF_64_32(0x2B992DDFA232, 0xBB40E64E);
 
+__attribute__((__used__, __no_stack_protector__))
+void
+__stack_chk_fail(__MCF_STACK_CHK_FAIL_PARAMETER)
+  {
+    do_fail_fast(STATUS_STACK_BUFFER_OVERRUN, __builtin_return_address(0));
+  }
+
+__attribute__((__used__, __no_stack_protector__))
+void
+__fastcall
+__security_check_cookie(uintptr_t cookie)
+  {
+    if(cookie != __stack_chk_guard)
+      do_fail_fast(STATUS_STACK_BUFFER_OVERRUN, __builtin_return_address(0));
+  }
+
+/** This is the load configuration for the DLL. It is essential for various
+ * security features.  */
 struct _IMAGE_LOAD_CONFIG_DIRECTORY_10_0_26100_7175
   {
     DWORD Size;
@@ -1136,7 +1174,7 @@ const _load_config_used __MCF_CRT_RDATA =
   {
     .Size = sizeof(_load_config_used),
     .DependentLoadFlags = LOAD_LIBRARY_SEARCH_SYSTEM32,
-    .SecurityCookie = (ULONG_PTR) &__security_cookie,
+    .SecurityCookie = (ULONG_PTR) &__stack_chk_guard,
 #if defined __MCF_M_X8632
     .SEHandlerTable = (ULONG_PTR) __MCF_i386_se_handler_table,
     .SEHandlerCount = (ULONG_PTR) __MCF_i386_se_handler_count,
