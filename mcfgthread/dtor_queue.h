@@ -39,8 +39,8 @@ struct __MCF_dtor_queue
 /** Appends an element to the end of a destructor queue.
  *
  * @param `queue` points to a queue where the element will be appended.
- * @param `elem` points to an element to be appended. `elem->__dtor` shall not
- *    be a null pointer.
+ * @param `elem` points to an element to append. `elem->__dtor` shall not be a
+ *    null pointer. The function appends a copy of `*elem`.
  * @returns 0 if the element has been pushed successfully, -1 in case of an
  *    invalid argument, or -2 if out of memory.
  * @since 1.0  */
