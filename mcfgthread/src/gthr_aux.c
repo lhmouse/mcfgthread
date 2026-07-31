@@ -157,7 +157,7 @@ _MCF_thread*
 __MCF_gthr_thread_create_v4(_MCF_thread** thrdp_opt, __MCF_gthr_thread_fn* proc, void* arg)
   {
     __MCF_gthr_thread_record record;
-    __builtin_memcpy(record.__magic_guid, __MCF_crt_gthread_guid, 16);
+    __builtin_memcpy(record.__magic_guid, &__MCF_crt_gthread_guid, 16);
     record.__proc = proc;
     record.__arg_or_result = arg;
     return _MCF_thread_p_new(thrdp_opt, 0, do_gthread_routine, 0, &record, sizeof(record));
@@ -176,7 +176,7 @@ __MCF_gthr_thread_join_v3(_MCF_thread* thrd, void** resp_opt)
 
       /* Get the exit code.  */
       __MCF_gthr_thread_record* rec = _MCF_thread_get_data(thrd);
-      if(rec && __MCF_mequal(rec->__magic_guid, __MCF_crt_gthread_guid, 16))
+      if(rec && __MCF_mequal(rec->__magic_guid, &__MCF_crt_gthread_guid, 16))
         *resp_opt = rec->__arg_or_result;
     }
 
@@ -190,7 +190,7 @@ __MCF_gthr_thread_exit_v3(void* result)
   {
     /* Set the exit code.  */
     __MCF_gthr_thread_record* rec = _MCF_thread_get_data(_MCF_thread_self());
-    if(rec && __MCF_mequal(rec->__magic_guid, __MCF_crt_gthread_guid, 16))
+    if(rec && __MCF_mequal(rec->__magic_guid, &__MCF_crt_gthread_guid, 16))
       rec->__arg_or_result = result;
 
     /* Terminate the current thread.  */

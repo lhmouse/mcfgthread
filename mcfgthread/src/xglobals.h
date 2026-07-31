@@ -276,9 +276,9 @@ __MCF_gthread_on_thread_exit(void);
  * successful initialization, the DLL changes the protection of its `.data`
  * section to `PAGE_READONLY`, so an attempt to modify these variables will
  * result in an access violation.  */
-extern __MCF_ALIGNED(8) __MCF_BR(GUID) const __MCF_crt_gthread_guid;
-extern LARGE_INTEGER const __MCF_crt_timeout_0;
-extern LARGE_INTEGER const __MCF_crt_timeout_1s;
+extern __MCF_ALIGNED(8) const GUID __MCF_crt_gthread_guid;
+extern const LARGE_INTEGER __MCF_crt_timeout_0;
+extern const LARGE_INTEGER __MCF_crt_timeout_1s;
 
 extern SYSTEM_INFO __MCF_XGLOBALS_READONLY __MCF_crt_sysinfo;
 extern double __MCF_XGLOBALS_READONLY __MCF_crt_perf_freq_reciprocal;
