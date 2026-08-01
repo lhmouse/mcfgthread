@@ -453,3 +453,33 @@ NtRaiseHardError(
     _In_opt_ ULONG_PTR* Parameters,
     _In_ HARDERROR_RESPONSE_OPTION ResponseOption,
     _Out_ HARDERROR_RESPONSE* Response);
+
+/** Gets the base addresses of all modules in a process.
+ *
+ * According to Microsoft documentation, if `PSAPI_VERSION` is defined to 2
+ * before including <psapi.h>, `EnumProcessModules` is defined as a macro for
+ * this function.
+ *
+ * This function is mainly for debuggers and is quite expensive, even when the
+ * target is the current process.
+ *
+ * This function is a public Windows API, exported from KERNEL32.DLL since
+ * Windows 7.
+ *
+ * @param `Process` specifies a handle to the target process.
+ * @param `Modules` points to an array of `HMODULE` which receives the base
+ *    addresses of all modules.
+ * @param `Size` specifies the size of the output array in bytes.
+ * @param `SizeNeeded` points to a variable which receives the number of bytes
+ *    that is required to store all modules. The caller should use this value
+ *    to check whether the result has been truncated.
+ * @returns non-zero if on success, or zero on failure.
+ * @since Windows 7  */
+WINBASEAPI
+BOOL
+WINAPI
+K32EnumProcessModules(
+    _In_ HANDLE Process,
+    _Out_writes_bytes_(Size) HMODULE* Modules,
+    _In_ DWORD Size,
+    _Out_ LPDWORD SizeNeeded);

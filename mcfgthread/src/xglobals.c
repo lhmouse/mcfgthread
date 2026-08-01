@@ -14,7 +14,6 @@
 #include "../exit.h"
 #include <ntstatus.h>
 #include <libloaderapi.h>
-#include <psapi.h>
 
 static inline
 void
