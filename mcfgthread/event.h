@@ -170,7 +170,7 @@ _MCF_event_get(const _MCF_event* __eventp)
   {
     _MCF_event __temp;
     _MCF_atomic_load_pptr_rlx(&__temp, __eventp);
-    return __temp.__value;
+    return (uint8_t) __temp.__value;
   }
 
 __MCF_EVENT_INLINE
