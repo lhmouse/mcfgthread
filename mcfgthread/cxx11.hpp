@@ -676,13 +676,13 @@ notify_all_at_thread_exit(condition_variable& __cnd, unique_lock<mutex> __lock)
     __MCF_ASSERT(__lock.mutex() != nullptr);
 
     if(::__MCF_cxa_thread_atexit(
-            __MCF_CAST_PTR(__MCF_cxa_dtor_cdecl, ::_MCF_cond_signal_all),
+            __MCF_CAST_PTR(::__MCF_cxa_dtor_cdecl, ::_MCF_cond_signal_all),
             __cnd.native_handle(), &::__dso_handle)
           != 0)
       __MCF_THROW_SYSTEM_ERROR(not_enough_memory, "__MCF_cxa_thread_atexit");
 
     if(::__MCF_cxa_thread_atexit(
-            __MCF_CAST_PTR(__MCF_cxa_dtor_cdecl, ::_MCF_mutex_unlock),
+            __MCF_CAST_PTR(::__MCF_cxa_dtor_cdecl, ::_MCF_mutex_unlock),
             __lock.mutex()->native_handle(), &::__dso_handle)
           != 0)
       __MCF_THROW_SYSTEM_ERROR(not_enough_memory, "__MCF_cxa_thread_atexit");
