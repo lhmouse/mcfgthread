@@ -14,7 +14,7 @@
 #include "teb.h"
 #include "tls.h"
 #include "cpu_collection.h"
-#ifdef __MCF_THREAD_DETAILS
+#ifdef __MCF_REVEAL_DETAILS
 #include "event.h"
 #endif
 
@@ -37,11 +37,11 @@ struct __MCF_thread_base
     __MCF_BR(__MCF_dtor_queue) __atexit_queue;  /* for `__cxa_thread_atexit()`  */
     __MCF_BR(__MCF_tls_table) __tls_table;  /* for `_MCF_tls_get()` and `_MCF_tls_set()`  */
 
-#ifdef __MCF_THREAD_DETAILS
+#ifdef __MCF_REVEAL_DETAILS
     union {
 #endif
       void* __libobjc_tls_data;  /* for GCC libobjc  */
-#ifdef __MCF_THREAD_DETAILS
+#ifdef __MCF_REVEAL_DETAILS
       __MCF_BR(_MCF_event) __init_done;
     };
 #endif

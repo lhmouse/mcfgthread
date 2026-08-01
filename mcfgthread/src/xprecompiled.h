@@ -24,6 +24,9 @@ __asm__ (".intel_syntax noprefix");
 #  define __MCF_DLLEXPORT
 #endif
 
+/* Reveal internal fields of structures.  */
+#define __MCF_REVEAL_DETAILS   1
+
 /** When inline functions are compiled as external definitions, the definitions
  * should be fully visible.  */
 #define __MCF_EXPAND_INLINE_DEFINITIONS   1

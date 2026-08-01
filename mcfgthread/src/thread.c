@@ -8,7 +8,6 @@
 #include "xprecompiled.h"
 #define __MCF_THREAD_IMPORT  __MCF_DLLEXPORT
 #define __MCF_THREAD_INLINE  __MCF_DLLEXPORT
-#define __MCF_THREAD_DETAILS  1
 #include "../thread.h"
 #include "xglobals.h"
 
