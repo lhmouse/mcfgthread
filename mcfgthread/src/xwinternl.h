@@ -457,7 +457,7 @@ NtRaiseHardError(
 /** Gets the base addresses of all modules in a process.
  *
  * According to Microsoft documentation, if `PSAPI_VERSION` is defined to 2
- * before including <psapi.h>, `EnumProcessModules` is defined as a macro for
+ * before <psapi.h> is included, `EnumProcessModules` is defined as a macro for
  * this function.
  *
  * This function is mainly for debuggers and is quite expensive, even when the
