@@ -29,6 +29,7 @@
  * `__STDC_VERSION__` and `__cplusplus`.  */
 #define __MCF_C(...)     __VA_ARGS__
 #define __MCF_CXX(...)
+#define __MCF_C_CXX(x, y)  x
 #define __MCF_noexcept
 #define __MCF_MAY_THROW
 #define __MCF_nullptr    __MCF_INTPTR_0
@@ -38,6 +39,8 @@
 #  define __MCF_CXX(...)   __VA_ARGS__
 #  undef __MCF_C
 #  define __MCF_C(...)
+#  undef __MCF_C_CXX
+#  define __MCF_C_CXX(x, y)  y
 #  undef __MCF_noexcept
 #  define __MCF_noexcept   throw()
 #  ifdef _MSC_VER
@@ -203,7 +206,7 @@ __MCF_CXX(extern "C" {)
 #else
 #  define __MCF_ALT_SYM(x, fn)  \
     __pragma(comment(linker, "/alternatename:" __MCF_USYM #fn "=" __MCF_USYM #x))  \
-    extern __typeof__(x) fn  /* no semicolon  */
+    extern __MCF_C_CXX(__typeof__, decltype) (x) fn  /* no semicolon  */
 #endif
 
 /** Displays an error message and terminates the current process abnormally.
