@@ -203,10 +203,12 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_ALT_SYM(x, fn)  \
     extern __typeof__(x) fn  \
       __asm__(__MCF_USYM #x)  /* no semicolon  */
+#  define __MCF_ALT_SYM_NOEXCEPT   __MCF_noexcept
 #else
 #  define __MCF_ALT_SYM(x, fn)  \
     __pragma(comment(linker, "/alternatename:" __MCF_USYM #fn "=" __MCF_USYM #x))  \
     extern __MCF_C_CXX(__typeof__, decltype) (x) fn  /* no semicolon  */
+#  define __MCF_ALT_SYM_NOEXCEPT   __MCF_CXX17(noexcept)
 #endif
 
 /** Displays an error message and terminates the current process abnormally.
