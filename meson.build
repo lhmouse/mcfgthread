@@ -130,7 +130,7 @@ dlltool = find_program('dlltool', required: true)
 
 add_project_arguments(
     '-D_WIN32_WINNT=0x0601', '-D__USE_MINGW_ANSI_STDIO', '-D_CRT_SECURE_NO_WARNINGS',
-    '-fno-omit-frame-pointer', '-momit-leaf-frame-pointer',
+    '-fstack-protector', '-fno-omit-frame-pointer', '-momit-leaf-frame-pointer',
     '-fmerge-all-constants', '-fstrict-aliasing', '-ffast-math', '-fdata-sections',
     '-ffunction-sections', '-funwind-tables',
     '-Werror=conversion', '-Werror=sign-compare', '-Werror=sign-conversion',
