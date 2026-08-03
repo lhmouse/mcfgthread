@@ -47,7 +47,7 @@ __MCF_gthr_objc_init_thread_system(void)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_init_thread_system, __gthread_objc_init_thread_system);
+__MCF_DECLARE_ALIAS(__gthread_objc_init_thread_system, __MCF_gthr_objc_init_thread_system);
 #  define __MCF_gthr_objc_init_thread_system  __gthread_objc_init_thread_system
 #endif
 
@@ -58,7 +58,7 @@ __MCF_gthr_objc_close_thread_system(void)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_close_thread_system, __gthread_objc_close_thread_system);
+__MCF_DECLARE_ALIAS(__gthread_objc_close_thread_system, __MCF_gthr_objc_close_thread_system);
 #  define __MCF_gthr_objc_close_thread_system  __gthread_objc_close_thread_system
 #endif
 
@@ -69,7 +69,7 @@ __MCF_gthr_objc_mutex_allocate(objc_mutex_t __objc_mtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_mutex_allocate, __gthread_objc_mutex_allocate);
+__MCF_DECLARE_ALIAS(__gthread_objc_mutex_allocate, __MCF_gthr_objc_mutex_allocate);
 #  define __MCF_gthr_objc_mutex_allocate  __gthread_objc_mutex_allocate
 #endif
 
@@ -80,7 +80,7 @@ __MCF_gthr_objc_mutex_deallocate(objc_mutex_t __objc_mtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_mutex_deallocate, __gthread_objc_mutex_deallocate);
+__MCF_DECLARE_ALIAS(__gthread_objc_mutex_deallocate, __MCF_gthr_objc_mutex_deallocate);
 #  define __MCF_gthr_objc_mutex_deallocate  __gthread_objc_mutex_deallocate
 #endif
 
@@ -91,7 +91,7 @@ __MCF_gthr_objc_mutex_lock(objc_mutex_t __objc_mtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_mutex_lock, __gthread_objc_mutex_lock);
+__MCF_DECLARE_ALIAS(__gthread_objc_mutex_lock, __MCF_gthr_objc_mutex_lock);
 #  define __MCF_gthr_objc_mutex_lock  __gthread_objc_mutex_lock
 #endif
 
@@ -102,7 +102,7 @@ __MCF_gthr_objc_mutex_trylock(objc_mutex_t __objc_mtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_mutex_trylock, __gthread_objc_mutex_trylock);
+__MCF_DECLARE_ALIAS(__gthread_objc_mutex_trylock, __MCF_gthr_objc_mutex_trylock);
 #  define __MCF_gthr_objc_mutex_trylock  __gthread_objc_mutex_trylock
 #endif
 
@@ -113,7 +113,7 @@ __MCF_gthr_objc_mutex_unlock(objc_mutex_t __objc_mtx)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_mutex_unlock, __gthread_objc_mutex_unlock);
+__MCF_DECLARE_ALIAS(__gthread_objc_mutex_unlock, __MCF_gthr_objc_mutex_unlock);
 #  define __MCF_gthr_objc_mutex_unlock  __gthread_objc_mutex_unlock
 #endif
 
@@ -124,7 +124,7 @@ __MCF_gthr_objc_condition_allocate(objc_condition_t __objc_cnd)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_condition_allocate, __gthread_objc_condition_allocate);
+__MCF_DECLARE_ALIAS(__gthread_objc_condition_allocate, __MCF_gthr_objc_condition_allocate);
 #  define __MCF_gthr_objc_condition_allocate  __gthread_objc_condition_allocate
 #endif
 
@@ -135,7 +135,7 @@ __MCF_gthr_objc_condition_deallocate(objc_condition_t __objc_cnd)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_condition_deallocate, __gthread_objc_condition_deallocate);
+__MCF_DECLARE_ALIAS(__gthread_objc_condition_deallocate, __MCF_gthr_objc_condition_deallocate);
 #  define __MCF_gthr_objc_condition_deallocate  __gthread_objc_condition_deallocate
 #endif
 
@@ -146,7 +146,7 @@ __MCF_gthr_objc_condition_wait(objc_condition_t __objc_cnd, objc_mutex_t __objc_
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_condition_wait, __gthread_objc_condition_wait);
+__MCF_DECLARE_ALIAS(__gthread_objc_condition_wait, __MCF_gthr_objc_condition_wait);
 #  define __MCF_gthr_objc_condition_wait  __gthread_objc_condition_wait
 #endif
 
@@ -157,7 +157,7 @@ __MCF_gthr_objc_condition_signal(objc_condition_t __objc_cnd)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_condition_signal, __gthread_objc_condition_signal);
+__MCF_DECLARE_ALIAS(__gthread_objc_condition_signal, __MCF_gthr_objc_condition_signal);
 #  define __MCF_gthr_objc_condition_signal  __gthread_objc_condition_signal
 #endif
 
@@ -168,7 +168,7 @@ __MCF_gthr_objc_condition_broadcast(objc_condition_t __objc_cnd)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_condition_broadcast, __gthread_objc_condition_broadcast);
+__MCF_DECLARE_ALIAS(__gthread_objc_condition_broadcast, __MCF_gthr_objc_condition_broadcast);
 #  define __MCF_gthr_objc_condition_broadcast  __gthread_objc_condition_broadcast
 #endif
 
@@ -180,7 +180,7 @@ __MCF_gthr_objc_thread_detach(__MCF_gthr_thread_fn* __proc, void* __arg)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_thread_detach, __gthread_objc_thread_detach);
+__MCF_DECLARE_ALIAS(__gthread_objc_thread_detach, __MCF_gthr_objc_thread_detach);
 #  define __MCF_gthr_objc_thread_detach  __gthread_objc_thread_detach
 #endif
 
@@ -191,7 +191,7 @@ __MCF_gthr_objc_thread_set_priority(int __priority)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_thread_set_priority, __gthread_objc_thread_set_priority);
+__MCF_DECLARE_ALIAS(__gthread_objc_thread_set_priority, __MCF_gthr_objc_thread_set_priority);
 #  define __MCF_gthr_objc_thread_set_priority  __gthread_objc_thread_set_priority
 #endif
 
@@ -202,7 +202,7 @@ __MCF_gthr_objc_thread_get_priority(void)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_thread_get_priority, __gthread_objc_thread_get_priority);
+__MCF_DECLARE_ALIAS(__gthread_objc_thread_get_priority, __MCF_gthr_objc_thread_get_priority);
 #  define __MCF_gthr_objc_thread_get_priority  __gthread_objc_thread_get_priority
 #endif
 
@@ -213,7 +213,7 @@ __MCF_gthr_objc_thread_yield(void)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_thread_yield, __gthread_objc_thread_yield);
+__MCF_DECLARE_ALIAS(__gthread_objc_thread_yield, __MCF_gthr_objc_thread_yield);
 #  define __MCF_gthr_objc_thread_yield  __gthread_objc_thread_yield
 #endif
 
@@ -224,7 +224,7 @@ __MCF_gthr_objc_thread_exit(void)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_thread_exit, __gthread_objc_thread_exit);
+__MCF_DECLARE_ALIAS(__gthread_objc_thread_exit, __MCF_gthr_objc_thread_exit);
 #  define __MCF_gthr_objc_thread_exit  __gthread_objc_thread_exit
 #endif
 
@@ -235,7 +235,7 @@ __MCF_gthr_objc_thread_id(void)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_thread_id, __gthread_objc_thread_id);
+__MCF_DECLARE_ALIAS(__gthread_objc_thread_id, __MCF_gthr_objc_thread_id);
 #  define __MCF_gthr_objc_thread_id  __gthread_objc_thread_id
 #endif
 
@@ -246,7 +246,7 @@ __MCF_gthr_objc_thread_get_data(void)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_thread_get_data, __gthread_objc_thread_get_data);
+__MCF_DECLARE_ALIAS(__gthread_objc_thread_get_data, __MCF_gthr_objc_thread_get_data);
 #  define __MCF_gthr_objc_thread_get_data  __gthread_objc_thread_get_data
 #endif
 
@@ -257,7 +257,7 @@ __MCF_gthr_objc_thread_set_data(void* __value)
   __MCF_noexcept;
 
 #ifndef __MCF_GTHR_LIBOBJC_NO_ALIASES
-__MCF_ALT_SYM(__MCF_gthr_objc_thread_set_data, __gthread_objc_thread_set_data);
+__MCF_DECLARE_ALIAS(__gthread_objc_thread_set_data, __MCF_gthr_objc_thread_set_data);
 #  define __MCF_gthr_objc_thread_set_data  __gthread_objc_thread_set_data
 #endif
 
@@ -270,7 +270,7 @@ __MCF_ALT_SYM(__MCF_gthr_objc_thread_set_data, __gthread_objc_thread_set_data);
 __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_init_thread_system(void)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     return 0;
   }
@@ -278,7 +278,7 @@ __MCF_gthr_objc_init_thread_system(void)
 __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_close_thread_system(void)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     return 0;
   }
@@ -286,7 +286,7 @@ __MCF_gthr_objc_close_thread_system(void)
 __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_mutex_allocate(objc_mutex_t __objc_mtx)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     _MCF_mutex* __mtx = __MCF_CAST_PTR(_MCF_mutex, &(__objc_mtx->backend));
     _MCF_mutex_init(__mtx);
@@ -296,7 +296,7 @@ __MCF_gthr_objc_mutex_allocate(objc_mutex_t __objc_mtx)
 __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_mutex_deallocate(objc_mutex_t __objc_mtx)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     /* libobjc calls this function only when the mutex is being held by
      * the current thread. Proceed anyway without any cleanup.  */
@@ -307,7 +307,7 @@ __MCF_gthr_objc_mutex_deallocate(objc_mutex_t __objc_mtx)
 __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_mutex_lock(objc_mutex_t __objc_mtx)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     _MCF_mutex* __mtx = __MCF_CAST_PTR(_MCF_mutex, &(__objc_mtx->backend));
     int __err = _MCF_mutex_lock(__mtx, __MCF_nullptr);
@@ -318,7 +318,7 @@ __MCF_gthr_objc_mutex_lock(objc_mutex_t __objc_mtx)
 __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_mutex_trylock(objc_mutex_t __objc_mtx)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     _MCF_mutex* __mtx = __MCF_CAST_PTR(_MCF_mutex, &(__objc_mtx->backend));
     int64_t __timeout = 0;
@@ -329,7 +329,7 @@ __MCF_gthr_objc_mutex_trylock(objc_mutex_t __objc_mtx)
 __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_mutex_unlock(objc_mutex_t __objc_mtx)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     _MCF_mutex* __mtx = __MCF_CAST_PTR(_MCF_mutex, &(__objc_mtx->backend));
     _MCF_mutex_unlock(__mtx);
@@ -339,7 +339,7 @@ __MCF_gthr_objc_mutex_unlock(objc_mutex_t __objc_mtx)
 __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_condition_allocate(objc_condition_t __objc_cnd)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     _MCF_cond* __cnd = __MCF_CAST_PTR(_MCF_cond, &(__objc_cnd->backend));
     _MCF_cond_init(__cnd);
@@ -349,7 +349,7 @@ __MCF_gthr_objc_condition_allocate(objc_condition_t __objc_cnd)
 __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_condition_deallocate(objc_condition_t __objc_cnd)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     (void) __objc_cnd;
     return 0;
@@ -358,7 +358,7 @@ __MCF_gthr_objc_condition_deallocate(objc_condition_t __objc_cnd)
 __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_condition_wait(objc_condition_t __objc_cnd, objc_mutex_t __objc_mtx)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     _MCF_cond* __cnd = __MCF_CAST_PTR(_MCF_cond, &(__objc_cnd->backend));
     _MCF_mutex* __mtx = __MCF_CAST_PTR(_MCF_mutex, &(__objc_mtx->backend));
@@ -370,7 +370,7 @@ __MCF_gthr_objc_condition_wait(objc_condition_t __objc_cnd, objc_mutex_t __objc_
 __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_condition_signal(objc_condition_t __objc_cnd)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     _MCF_cond* __cnd = __MCF_CAST_PTR(_MCF_cond, &(__objc_cnd->backend));
     _MCF_cond_signal(__cnd);
@@ -380,7 +380,7 @@ __MCF_gthr_objc_condition_signal(objc_condition_t __objc_cnd)
 __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_condition_broadcast(objc_condition_t __objc_cnd)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     _MCF_cond* __cnd = __MCF_CAST_PTR(_MCF_cond, &(__objc_cnd->backend));
     _MCF_cond_signal_all(__cnd);
@@ -390,7 +390,7 @@ __MCF_gthr_objc_condition_broadcast(objc_condition_t __objc_cnd)
 __MCF_GTHR_LIBOBJC_INLINE
 objc_thread_t
 __MCF_gthr_objc_thread_detach(__MCF_gthr_thread_fn* __proc, void* __arg)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     _MCF_thread* __thrd = __MCF_gthr_thread_create_v3(__proc, __arg);
     objc_thread_t __t = __thrd ? (objc_thread_t)(uintptr_t) _MCF_thread_get_tid(__thrd) : __MCF_nullptr;
@@ -401,7 +401,7 @@ __MCF_gthr_objc_thread_detach(__MCF_gthr_thread_fn* __proc, void* __arg)
 __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_thread_set_priority(int __priority)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     int __wprio = (__priority < 0) ? -2 : (__priority - 2);
     int __err = _MCF_thread_set_priority(__MCF_nullptr, (_MCF_thread_priority) __wprio);
@@ -411,7 +411,7 @@ __MCF_gthr_objc_thread_set_priority(int __priority)
 __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_thread_get_priority(void)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     int __wprio = (int) _MCF_thread_get_priority(__MCF_nullptr);
     int __priority = (__wprio < -2) ? 0 : (__wprio + 2);
@@ -421,7 +421,7 @@ __MCF_gthr_objc_thread_get_priority(void)
 __MCF_GTHR_LIBOBJC_INLINE
 void
 __MCF_gthr_objc_thread_yield(void)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     _MCF_yield();
   }
@@ -429,7 +429,7 @@ __MCF_gthr_objc_thread_yield(void)
 __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_thread_exit(void)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     _MCF_thread_exit();
   }
@@ -437,7 +437,7 @@ __MCF_gthr_objc_thread_exit(void)
 __MCF_GTHR_LIBOBJC_INLINE __MCF_FN_CONST
 objc_thread_t
 __MCF_gthr_objc_thread_id(void)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     return (objc_thread_t)(uintptr_t) _MCF_thread_self_tid();
   }
@@ -445,7 +445,7 @@ __MCF_gthr_objc_thread_id(void)
 __MCF_GTHR_LIBOBJC_INLINE __MCF_FN_PURE
 void*
 __MCF_gthr_objc_thread_get_data(void)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     return _MCF_thread_self()->__libobjc_tls_data;
   }
@@ -453,7 +453,7 @@ __MCF_gthr_objc_thread_get_data(void)
 __MCF_GTHR_LIBOBJC_INLINE
 int
 __MCF_gthr_objc_thread_set_data(void* __value)
-  __MCF_ALT_SYM_NOEXCEPT
+  __MCF_ALIAS_NOEXCEPT
   {
     _MCF_thread_self()->__libobjc_tls_data = __value;
     return 0;

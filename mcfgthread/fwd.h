@@ -197,22 +197,22 @@ __MCF_CXX(extern "C" {)
 #  endif
 #endif
 
-/** Declares an alternative name `fn` with the same type as `x` such that if
- * code uses `fn` it actually references `x`.  */
+/** Declares an alternative name `x` with the same type as `fn` such that if
+ * code uses `x` it actually references `fn`.  */
 #if defined __GNUC__ || defined __clang__
-#  define __MCF_ALT_SYM_NOEXCEPT   __MCF_noexcept
-#  define __MCF_ALT_SYM(x, fn)  \
-    extern __typeof__(x) fn  \
-      __asm__(__MCF_USYM #x)  /* no semicolon  */
+#  define __MCF_ALIAS_NOEXCEPT   __MCF_noexcept
+#  define __MCF_DECLARE_ALIAS(x, fn)  \
+    extern __typeof__(fn) x  \
+      __asm__(__MCF_USYM #fn)  /* no semicolon  */
 #else
 #  if defined __cpp_noexcept_function_type
-#    define __MCF_ALT_SYM_NOEXCEPT   noexcept
+#    define __MCF_ALIAS_NOEXCEPT   noexcept
 #  else
-#    define __MCF_ALT_SYM_NOEXCEPT   /* nothing  */
+#    define __MCF_ALIAS_NOEXCEPT   /* nothing  */
 #  endif
-#  define __MCF_ALT_SYM(x, fn)  \
-    __pragma(comment(linker, "/alternatename:" __MCF_USYM #fn "=" __MCF_USYM #x))  \
-    extern __MCF_C_CXX(__typeof__, decltype) (x) fn  /* no semicolon  */
+#  define __MCF_DECLARE_ALIAS(x, fn)  \
+    __pragma(comment(linker, "/alternatename:" __MCF_USYM #x "=" __MCF_USYM #fn))  \
+    extern __MCF_C_CXX(__typeof__, decltype) (fn) x  /* no semicolon  */
 #endif
 
 /** Displays an error message and terminates the current process abnormally.
