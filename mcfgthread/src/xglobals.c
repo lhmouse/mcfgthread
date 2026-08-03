@@ -722,6 +722,7 @@ __MCF_gthread_on_thread_exit(void)
     /* Poison this value.  */
     TlsSetValue(__MCF_G(tls_index), __MCF_BAD_PTR);
     _MCF_thread_drop_ref_nonnull(self);
+    _MCF_signal_fence_acq();
   }
 
 /** These are constants that have to be initialized at load time. The
