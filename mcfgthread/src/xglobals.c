@@ -137,7 +137,7 @@ do_fail_fast(NTSTATUS status, void* addr)
     __builtin_trap();
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_NEVER_INLINE
 void
 __MCF_runtime_failure(const char* where)
   {
@@ -146,7 +146,7 @@ __MCF_runtime_failure(const char* where)
     do_fail_fast((NTSTATUS) (0xC0070000 + code), __builtin_return_address(0));
   }
 
-__MCF_DLLEXPORT
+__MCF_DLLEXPORT __MCF_NEVER_INLINE
 void
 __MCF_runtime_failure_from_ntstatus(const char* where, NTSTATUS status)
   {
@@ -1095,14 +1095,14 @@ void __fastcall __security_check_cookie(uintptr_t cookie);
  * `STATUS_INVALID_IMAGE_FORMAT`.  */
 uintptr_t __stack_chk_guard = __MCF_64_32(0x2B992DDFA232, 0xBB40E64E);
 
-__attribute__((__used__, __no_stack_protector__))
+__MCF_NEVER_INLINE __attribute__((__used__, __no_stack_protector__))
 void
 __stack_chk_fail(__MCF_STACK_CHK_FAIL_PARAMETER)
   {
     do_fail_fast(STATUS_STACK_BUFFER_OVERRUN, __builtin_return_address(0));
   }
 
-__attribute__((__used__, __no_stack_protector__))
+__MCF_NEVER_INLINE __attribute__((__used__, __no_stack_protector__))
 void
 __fastcall
 __security_check_cookie(uintptr_t cookie)
