@@ -241,7 +241,7 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
 
 #endif  /* non-x86-32 */
 
-static __attribute__((__section__(".text$$safeseh$0000"), __used__))
+static __MCF_SECTION(".text$$safeseh$0000")
 EXCEPTION_DISPOSITION
 do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
   {
@@ -270,7 +270,7 @@ do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, 
     return ExceptionContinueSearch;
   }
 
-__MCF_DLLEXPORT __attribute__((__section__(".text$$safeseh$0001")))
+__MCF_DLLEXPORT __MCF_SECTION(".text$$safeseh$0001")
 EXCEPTION_DISPOSITION
 __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
   {
@@ -308,7 +308,7 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
     __builtin_trap();
   }
 
-__MCF_DLLEXPORT __attribute__((__section__(".text$$safeseh$0002"), __used__))
+__MCF_DLLEXPORT __MCF_SECTION(".text$$safeseh$0002")
 EXCEPTION_DISPOSITION
 __MCF_seh_process_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
   {
@@ -318,7 +318,7 @@ __MCF_seh_process_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PV
     return __MCF_seh_top(rec, estab_frame, ctx, disp_ctx);
   }
 
-__MCF_DLLEXPORT __attribute__((__section__(".text$$safeseh$0003"), __used__))
+__MCF_DLLEXPORT __MCF_SECTION(".text$$safeseh$0003")
 EXCEPTION_DISPOSITION
 __MCF_seh_thread_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
   {
@@ -905,7 +905,7 @@ __asm__ (
 
 #if defined _MSC_VER
 /** Microsoft LINK requires this for a reason.  */
-const int _fltused __MCF_CRT_RDATA = 0x9875;
+__MCF_SECTION(".rdata") const int _fltused = 0x9875;
 #endif
 
 #if defined __MCF_M_X8632
@@ -1170,7 +1170,7 @@ struct _IMAGE_LOAD_CONFIG_DIRECTORY_10_0_26100_7175
     ULONG_PTR GuardMemcpyFunctionPointer;
     ULONG_PTR UmaFunctionPointers;
   }
-const _load_config_used __MCF_CRT_RDATA =
+const _load_config_used __MCF_SECTION(".rdata") =
   {
     .Size = sizeof(_load_config_used),
     .DependentLoadFlags = LOAD_LIBRARY_SEARCH_SYSTEM32,
@@ -1213,20 +1213,20 @@ do_tls_callback(PVOID module, ULONG reason, PVOID reserved)
 /** This requires the main executable be linked with 'tlssup.o'. Such
  * initialization shall happen as early as possible.  */
 extern const IMAGE_TLS_DIRECTORY _tls_used;
-static const void* const __MCF_crt_refptr__tls_used __MCF_CRT_RDATA = &_tls_used;
-static const PIMAGE_TLS_CALLBACK __MCF_crt___xl_b __MCF_CRT_XL(B) = do_tls_callback;
+static __MCF_SECTION(".rdata") const void* const refptr__tls_used = &_tls_used;
+static __MCF_SECTION(".CRT$XLB") const PIMAGE_TLS_CALLBACK crt__xl_b = do_tls_callback;
 
 #if defined __CYGWIN__
 /** The Cygwin/MSYS2 runtime does not provide a TLS directory, so a local one has
  * to be defined. Although Cygwin/MSYS2 executables do not use native TLS, this
  * facility is fully functional and might be useful in the future.  */
 DWORD _tls_index = UINT32_MAX;
-__attribute__((__section__(".tls"))) PVOID _tls_start = nullptr;
-__attribute__((__section__(".tls$ZZZ"))) PVOID _tls_end = nullptr;
-__attribute__((__section__(".CRT$XLA"))) const PIMAGE_TLS_CALLBACK __xl_a = nullptr;
-__attribute__((__section__(".CRT$XLZ"))) const PIMAGE_TLS_CALLBACK __xl_z = nullptr;
+__MCF_SECTION(".tls") PVOID _tls_start = nullptr;
+__MCF_SECTION(".tls$ZZZ") PVOID _tls_end = nullptr;
+__MCF_SECTION(".CRT$XLA") const PIMAGE_TLS_CALLBACK __xl_a = nullptr;
+__MCF_SECTION(".CRT$XLZ") const PIMAGE_TLS_CALLBACK __xl_z = nullptr;
 
-const IMAGE_TLS_DIRECTORY _tls_used __MCF_CRT_RDATA =
+__MCF_SECTION(".rdata") const IMAGE_TLS_DIRECTORY _tls_used =
   {
     .AddressOfIndex = (ULONG_PTR) &_tls_index,
     .StartAddressOfRawData = (ULONG_PTR) &_tls_start,

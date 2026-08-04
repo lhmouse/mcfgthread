@@ -142,6 +142,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_FN_PURE       __attribute__((__pure__))
 #  define __MCF_FN_COLD       __attribute__((__cold__))
 #  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
+#  define __MCF_SECTION(x)     __attribute__((__section__(x), __used__))
 #  define __MCF_UNREACHABLE     (__builtin_unreachable())
 #  if defined __amd64__ && !defined __arm64ec__
 #    define __MCF_64_32(x, y)  x
@@ -176,6 +177,7 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_FN_PURE       __declspec(noalias)
 #  define __MCF_FN_COLD       /* unsupported */
 #  define __MCF_ALIGNED(x)    __declspec(align(x))
+#  define __MCF_SECTION(x)     __pragma(section(x, read)) __declspec(allocate(x))
 #  define __MCF_UNREACHABLE     (__assume(0))
 #  if defined _M_X64 && !defined _M_ARM64EC
 #    define __MCF_64_32(x, y)  x
