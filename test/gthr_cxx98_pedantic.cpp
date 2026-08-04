@@ -26,7 +26,7 @@ int main(void) { return 77;  }
 #include "../mcfgthread/tls.h"
 
 #if 0 __MCF_CXX11(+1) != 0
-#  warning Please compile this file as C89.
+#  warning Please compile this file as C++98.
 #endif
 
 int
