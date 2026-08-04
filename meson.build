@@ -292,18 +292,13 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
       version: '.'.join([ ver['abi_major'], ver['abi_minor'], '0' ]),
       install: true)
 
-if cc.has_define('__CYGWIN__')
-  warning('Static linking is not supported on Cygwin or MSYS2.')
-  lib_mcfgthread_a = lib_mcfgthread_dll
-else
-  lib_mcfgthread_a = static_library('mcfgthread',
-        c_pch: 'mcfgthread/src/xprecompiled.h',
-        implicit_include_directories: false,
-        include_directories: include_directories('.'),
-        sources: [ mcfgthread_src_min, mcfgthread_src_ex ],
-        kwargs: kwargs_lib,
-        install: true)
-endif
+lib_mcfgthread_a = static_library('mcfgthread',
+      c_pch: 'mcfgthread/src/xprecompiled.h',
+      implicit_include_directories: false,
+      include_directories: include_directories('.'),
+      sources: [ mcfgthread_src_min, mcfgthread_src_ex ],
+      kwargs: kwargs_lib,
+      install: true)
 
 import('pkgconfig').generate(lib_mcfgthread_dll,
       name: 'mcfgthread',

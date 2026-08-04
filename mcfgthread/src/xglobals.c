@@ -1187,10 +1187,6 @@ const _load_config_used __MCF_CRT_RDATA =
 #else  /* __MCF_IN_DLL  */
 
 /** When building the static library, invoke common routines from a TLS callback.  */
-#if defined __CYGWIN__
-#  error Static linking is not supported on Cygwin or MSYS2.
-#endif
-
 static
 void
 __stdcall
@@ -1219,6 +1215,25 @@ do_tls_callback(PVOID module, ULONG reason, PVOID reserved)
 extern const IMAGE_TLS_DIRECTORY _tls_used;
 static const void* const __MCF_crt_refptr__tls_used __MCF_CRT_RDATA = &_tls_used;
 static const PIMAGE_TLS_CALLBACK __MCF_crt___xl_b __MCF_CRT_XL(B) = do_tls_callback;
+
+#if defined __CYGWIN__
+/** The Cygwin/MSYS2 runtime does not provide a TLS directory, so a local one has
+ * to be defined. Although Cygwin/MSYS2 executables do not use native TLS, this
+ * facility is fully functional and might be useful in the future.  */
+DWORD _tls_index = UINT32_MAX;
+__attribute__((__section__(".tls"))) PVOID _tls_start = nullptr;
+__attribute__((__section__(".tls$ZZZ"))) PVOID _tls_end = nullptr;
+__attribute__((__section__(".CRT$XLA"))) const PIMAGE_TLS_CALLBACK __xl_a = nullptr;
+__attribute__((__section__(".CRT$XLZ"))) const PIMAGE_TLS_CALLBACK __xl_z = nullptr;
+
+const IMAGE_TLS_DIRECTORY _tls_used __MCF_CRT_RDATA =
+  {
+    .AddressOfIndex = (ULONG_PTR) &_tls_index,
+    .StartAddressOfRawData = (ULONG_PTR) &_tls_start,
+    .EndAddressOfRawData = (ULONG_PTR) &_tls_end,
+    .AddressOfCallBacks = (ULONG_PTR) (&__xl_a + 1),
+  };
+#endif
 
 #if defined __MCF_M_X8632 && defined _MSC_VER
 /** Register SEH handlers. In the DLL we build a handler table by hand which works
