@@ -214,7 +214,7 @@ _MCF_once_consume_wait(_MCF_once* __once, void** __ref_ptr, const int64_t* __tim
     if(__old_bits & 1) {
 #  if !defined __MCF_M_X86_ASM
       /* `__old_bits` is always `1` but this has to incur a load dependency.  */
-      *__ref_ptr = (char*) *__ref_ptr + (__old_bits >> 1);
+      *__ref_ptr = (void*) ((uintptr_t) *__ref_ptr - 1 + __old_bits);
 #  endif
       _MCF_signal_fence_acq();
       return 0;
