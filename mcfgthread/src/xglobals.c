@@ -765,11 +765,11 @@ __MCF_crt_xglobals* restrict __MCF_g = __MCF_BAD_PTR;
 #  define DllMainCRTStartup  _DllMainCRTStartup
 #endif
 
-int
+BOOL
 __stdcall
 DllMainCRTStartup(PVOID instance, ULONG reason, PVOID reserved);
 
-int
+BOOL
 __stdcall
 DllMainCRTStartup(PVOID instance, ULONG reason, PVOID reserved)
   {
@@ -781,14 +781,14 @@ DllMainCRTStartup(PVOID instance, ULONG reason, PVOID reserved)
       case DLL_PROCESS_ATTACH:
         __MCF_gthread_initialize_globals();
         VirtualProtect((void*) &__MCF_g, sizeof(__MCF_g), PAGE_READONLY, &(DWORD){ 0 } );
-        return 1;
+        return true;
 
       case DLL_THREAD_DETACH:
         __MCF_gthread_on_thread_exit();
-        return 1;
+        return true;
 
       default:
-        return 1;
+        return true;
       }
   }
 
