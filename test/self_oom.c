@@ -2,10 +2,6 @@
  * do whatever you like with this piece of code. Any warranty, explicit
  * or implicit, is disclaimed.  */
 
-#if defined __CYGWIN__
-int main(void) { return 77;  }
-#else  // __CYGWIN__
-
 #define WIN32_LEAN_AND_MEAN  1
 #include <windows.h>
 #define __MCF_XGLOBALS_IMPORT
@@ -58,5 +54,3 @@ main(void)
       fprintf(stderr, "main wait finished: %d\n", (int)k);
     }
   }
-
-#endif  // __CYGWIN__

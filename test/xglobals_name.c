@@ -2,10 +2,6 @@
  * do whatever you like with this piece of code. Any warranty, explicit
  * or implicit, is disclaimed.  */
 
-#if defined __CYGWIN__
-int main(void) { return 77;  }
-#else  // __CYGWIN__
-
 #define WIN32_LEAN_AND_MEAN  1
 #include <windows.h>
 #include <winternl.h>
@@ -70,5 +66,3 @@ main(void)
     assert(gmem);
     assert(*(void**) gmem == __MCF_g);
   }
-
-#endif  // __CYGWIN__

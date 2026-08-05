@@ -2,10 +2,6 @@
  * do whatever you like with this piece of code. Any warranty, explicit
  * or implicit, is disclaimed.  */
 
-#if defined __CYGWIN__
-int main(void) { return 77;  }
-#else  // __CYGWIN__
-
 #include "../mcfgthread/thread.h"
 #undef NDEBUG
 #include <assert.h>
@@ -15,12 +11,30 @@ int
 main(void)
   {
     // load dlls
-    wchar_t dll_name[128];
-    wsprintfW(dll_name, L".\\libmcfgthread-%d.dll", _MCF_ABI_VERSION_MAJOR);
-    HMODULE pdll = LoadLibraryW(dll_name);
+    static const char* const s_dll_prefixes[] =
+      {
+#if defined __CYGWIN__
+        "cyg",
+        "msys-",
+#else
+        "lib",
+        "",
+#endif
+        NULL
+      };
+
+    HMODULE pdll = NULL;
+    HMODULE mdll = NULL;
+
+    for(const char* const* ppfx = s_dll_prefixes;  *ppfx && !pdll && !mdll;  ppfx ++) {
+      wchar_t path[128];
+      wsprintfW(path, L"./%hsmcfgthread-%d.dll", *ppfx, _MCF_ABI_VERSION_MAJOR);
+      pdll = LoadLibraryW(path);
+      wsprintfW(path, L"./%hsmcfgthread-minimal-%d.dll", *ppfx, _MCF_ABI_VERSION_MAJOR);
+      mdll = LoadLibraryW(path);
+    }
+
     assert(pdll);
-    wsprintfW(dll_name, L".\\libmcfgthread-minimal-%d.dll", _MCF_ABI_VERSION_MAJOR);
-    HMODULE mdll = LoadLibraryW(dll_name);
     assert(mdll);
 
     // load functions from dll
@@ -59,5 +73,3 @@ main(void)
     assert(pdll_tls_get(key) == &dummy2);
     assert(mdll_tls_get(key) == &dummy2);
   }
-
-#endif  // __CYGWIN__
