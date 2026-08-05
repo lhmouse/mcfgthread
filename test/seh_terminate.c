@@ -31,7 +31,7 @@ test_unhandled(void)
 static
 DWORD
 __stdcall
-thread_proc(LPVOID param)
+thread_proc(PVOID param)
   {
     (void) param;
     test_unhandled();

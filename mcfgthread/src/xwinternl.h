@@ -482,4 +482,4 @@ K32EnumProcessModules(
     _In_ HANDLE Process,
     _Out_writes_bytes_(Size) HMODULE* Modules,
     _In_ DWORD Size,
-    _Out_ LPDWORD SizeNeeded);
+    _Out_ DWORD* SizeNeeded);

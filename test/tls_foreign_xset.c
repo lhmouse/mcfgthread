@@ -15,7 +15,7 @@ static int dso_1, dso_2;
 static
 DWORD
 __stdcall
-thread_proc(LPVOID param)
+thread_proc(PVOID param)
   {
     void* p;
     int r;

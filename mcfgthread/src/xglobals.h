@@ -308,7 +308,7 @@ typedef BOOL __stdcall typeof_SetThreadSelectedCpuSets(HANDLE, const ULONG*, ULO
 extern typeof_SetThreadSelectedCpuSets*
     __MCF_XGLOBALS_READONLY __MCF_crt_SetThreadSelectedCpuSets_opt;
 
-typedef LPVOID __stdcall typeof_TlsGetValue2(ULONG);
+typedef PVOID __stdcall typeof_TlsGetValue2(ULONG);
 extern typeof_TlsGetValue2* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue2;
 
 /** Define silly macros for constants for NT syscalls, which do not have proper

@@ -40,7 +40,7 @@ do_thread_startup(_MCF_thread* thrd)
 static
 ULONG
 __stdcall
-do_win32_thread_routine(LPVOID param)
+do_win32_thread_routine(PVOID param)
   {
     do_thread_startup(param);
     __MCF_gthread_on_thread_exit();

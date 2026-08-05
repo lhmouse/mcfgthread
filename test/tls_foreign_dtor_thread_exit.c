@@ -21,7 +21,7 @@ tls_dtor(void* ptr)
 static
 DWORD
 __stdcall
-thread_proc(LPVOID param)
+thread_proc(PVOID param)
   {
     _MCF_tls_key* key = _MCF_tls_key_new(tls_dtor);
     assert(key);

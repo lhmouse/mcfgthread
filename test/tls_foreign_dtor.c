@@ -26,7 +26,7 @@ tls_destructor(void* ptr)
 static
 DWORD
 __stdcall
-thread_proc(LPVOID param)
+thread_proc(PVOID param)
   {
     _MCF_sem_wait(&start, NULL);
 
