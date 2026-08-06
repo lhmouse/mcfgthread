@@ -6,6 +6,7 @@
  * to this file.  */
 
 #include <minwindef.h>
+#include <apisetcconv.h>
 #include <winnt.h>
 
 /** These are forward declarations.  */
