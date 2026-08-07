@@ -14,12 +14,14 @@
 
 __MCF_DLLEXPORT
 int
-__MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
+__MCF_dtor_queue_reserve_and_push(__MCF_dtor_queue* queue, uint32_t reservation,
+                                  const __MCF_dtor_element* elem)
   {
-    if(!elem || !elem->__dtor)
+    uint32_t capacity = ARRAYSIZE(queue->__data);
+    if((reservation < 1) || (reservation > capacity) || !elem || !elem->__dtor)
       return -1;
 
-    if(queue->__size == ARRAYSIZE(queue->__data)) {
+    if(reservation > capacity - queue->__size) {
       __MCF_dtor_queue* prev = __MCF_malloc_copy(queue, sizeof(__MCF_dtor_queue));
       if(!prev)
         return -2;
@@ -32,10 +34,17 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
 
     /* There is room in the current block, so append it there.  */
     uint32_t index = queue->__size;
-    __MCF_ASSERT(index < ARRAYSIZE(queue->__data));
+    __MCF_ASSERT(index < capacity);
     queue->__data[index] = *elem;
     queue->__size ++;
     return 0;
+  }
+
+__MCF_DLLEXPORT
+int
+__MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
+  {
+    return __MCF_dtor_queue_reserve_and_push(queue, 1, elem);
   }
 
 __MCF_DLLEXPORT
