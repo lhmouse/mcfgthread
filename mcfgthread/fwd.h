@@ -202,7 +202,7 @@ __MCF_CXX(extern "C" {)
 /** Indicates whether `noexcept` should be used on type aliases, and whether
  * it is preserved by `decltype`.  */
 #if defined __cpp_noexcept_function_type
-#  define __MCF_NOEXCEPT_ON_TYPEDEF   __MCF_noexcept
+#  define __MCF_NOEXCEPT_ON_TYPEDEF   noexcept
 #else
 #  define __MCF_NOEXCEPT_ON_TYPEDEF
 #endif
