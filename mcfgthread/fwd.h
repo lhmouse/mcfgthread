@@ -143,7 +143,6 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_FN_COLD       __attribute__((__cold__))
 #  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
 #  define __MCF_SECTION(x)     __attribute__((__section__(x), __used__))
-#  define __MCF_UNREACHABLE     (__builtin_unreachable())
 #  if defined __amd64__ && !defined __arm64ec__
 #    define __MCF_64_32(x, y)  x
 #    define __MCF_USYM  ""
@@ -178,7 +177,6 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_FN_COLD       /* unsupported */
 #  define __MCF_ALIGNED(x)    __declspec(align(x))
 #  define __MCF_SECTION(x)     __pragma(section(x, read)) __declspec(allocate(x))
-#  define __MCF_UNREACHABLE     (__assume(0))
 #  if defined _M_X64 && !defined _M_ARM64EC
 #    define __MCF_64_32(x, y)  x
 #    define __MCF_USYM  ""
@@ -236,9 +234,14 @@ __MCF_runtime_failure(const char* __where)
   __MCF_noexcept;
 
 /** For debug builds, just hard-fail.  */
-#ifdef __MCF_DEBUG
-#  undef __MCF_UNREACHABLE
+#if defined __MCF_DEBUG
 #  define __MCF_UNREACHABLE   (__MCF_runtime_failure(__MCF_EX __func__))
+#elif defined __GNUC__ || defined __clang__
+#  define __MCF_UNREACHABLE   (__builtin_unreachable())
+#elif defined _MSC_VER
+#  define __MCF_UNREACHABLE   (__assume(0))
+#else
+#  define __MCF_UNREACHABLE   ((void) 0)
 #endif
 
 /* This specifies how to reference an optional symbol from user code. The symbol
