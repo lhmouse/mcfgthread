@@ -77,7 +77,7 @@ class thread_specific_ptr;  // inspired by boost
 
 /** Declare prototypes for callback functions.  */
 template<typename... _Args> using _Vfn = void (_Args...);
-template<typename... _Args> using _Vfn_noexcept = void (_Args...) __MCF_NOEXCEPT_ON_TYPEDEF;
+template<typename... _Args> using _Vcfn = void (_Args...) __MCF_NOEXCEPT_ON_TYPEDEF;
 
 /** This is the maximum integer representable as a `double` exact.  */
 constexpr int64_t _Max_ms = 0x7FFFFFFFFFFFFC00;
@@ -268,7 +268,7 @@ call_once(once_flag& __flag, _Callable&& __callable, _Args&&... __args)
   {
     struct _Once_sentry
       {
-        _Vfn_noexcept<::_MCF_once*>* __deferred_fn;
+        _Vcfn<::_MCF_once*>* __deferred_fn;
         ::_MCF_once* __once;
         ~_Once_sentry() noexcept { (* this->__deferred_fn) (this->__once);  }
       };
@@ -724,7 +724,7 @@ class thread
 
         struct _Thread_sentry
           {
-            _Vfn_noexcept<::_MCF_thread*>* __deferred_fn;
+            _Vcfn<::_MCF_thread*>* __deferred_fn;
             ::_MCF_thread* __thr;
             ~_Thread_sentry() noexcept { (* this->__deferred_fn) (this->__thr);  }
           };
