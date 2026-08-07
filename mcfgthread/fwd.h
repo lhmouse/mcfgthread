@@ -199,6 +199,14 @@ __MCF_CXX(extern "C" {)
 #  endif
 #endif
 
+/** Indicates whether `noexcept` should be used on type aliases, and whether
+ * it is preserved by `decltype`.  */
+#if defined __cpp_noexcept_function_type
+#  define __MCF_NOEXCEPT_ON_TYPEDEF   __MCF_noexcept
+#else
+#  define __MCF_NOEXCEPT_ON_TYPEDEF
+#endif
+
 /** Declares an alternative name `x` with the same type as `fn` such that if
  * code uses `x` it actually references `fn`.  */
 #if defined __GNUC__ || defined __clang__
@@ -207,11 +215,7 @@ __MCF_CXX(extern "C" {)
     extern __typeof__(fn) x  \
       __asm__(__MCF_USYM #fn)  /* no semicolon  */
 #else
-#  if defined __cpp_noexcept_function_type
-#    define __MCF_ALIAS_NOEXCEPT   noexcept
-#  else
-#    define __MCF_ALIAS_NOEXCEPT   /* nothing  */
-#  endif
+#  define __MCF_ALIAS_NOEXCEPT   __MCF_NOEXCEPT_ON_TYPEDEF
 #  define __MCF_DECLARE_ALIAS(x, fn)  \
     __pragma(comment(linker, "/alternatename:" __MCF_USYM #x "=" __MCF_USYM #fn))  \
     extern __MCF_C_CXX(__typeof__, decltype) (fn) x  /* no semicolon  */

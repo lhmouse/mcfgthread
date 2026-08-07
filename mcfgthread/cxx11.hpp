@@ -76,17 +76,8 @@ class thread_specific_ptr;  // inspired by boost
 #define __MCF_SFINAE_DISABLE_IF(...)  typename ::std::enable_if<!(bool) (__VA_ARGS__)>::type* = nullptr
 
 /** Declare prototypes for callback functions.  */
-#if defined __cpp_noexcept_function_type
-#  define __MCF_NOEXCEPT_ON_TYPEDEF   noexcept
-#else
-#  define __MCF_NOEXCEPT_ON_TYPEDEF
-#endif
-
-template<typename... _Args>
-using _Vfn = void (_Args...);
-
-template<typename... _Args>
-using _Vfn_noexcept = void (_Args...) __MCF_NOEXCEPT_ON_TYPEDEF;
+template<typename... _Args> using _Vfn = void (_Args...);
+template<typename... _Args> using _Vfn_noexcept = void (_Args...) __MCF_NOEXCEPT_ON_TYPEDEF;
 
 /** This is the maximum integer representable as a `double` exact.  */
 constexpr int64_t _Max_ms = 0x7FFFFFFFFFFFFC00;
