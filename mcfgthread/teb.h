@@ -10,7 +10,7 @@
 
 #include "fwd.h"
 #if defined __MCF_M_ARM64_ASM
-register uintptr_t __MCF_arm64_x18 __asm__("x18");
+__MCF_EX register uintptr_t __MCF_arm64_x18 __asm__("x18");
 #elif defined _MSC_VER && !defined __clang__
 #include <intrin.h>
 #endif
