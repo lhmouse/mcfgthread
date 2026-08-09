@@ -119,7 +119,7 @@ test_src = [
   'test/shared_mutex_rw_multi_fast.c', 'test/shared_mutex_rw_multi_slow.c',
   'test/tick_count.c', 'test/cpu_collection_selection.c', 'test/affinity_empty.c',
   'test/affinity_loop.c', 'test/cpu_collection_new_legacy.c', 'test/once_consume_wait.c',
-  'test/dtor_queue_reservation.c' ]
+  'test/dtor_queue_reservation.c', 'test/gthr_rwlock_multi.c' ]
 
 #===========================================================
 # Global configuration

@@ -10,6 +10,7 @@
 
 #include "fwd.h"
 #include "gthr_aux.h"
+#include "shared_mutex.h"
 #include <errno.h>
 
 __MCF_CXX(extern "C" {)
@@ -33,6 +34,7 @@ typedef _MCF_once __gthread_once_t;
 typedef _MCF_cond __gthread_cond_t;
 typedef _MCF_mutex __gthread_mutex_t;
 typedef __MCF_gthr_rc_mutex __gthread_recursive_mutex_t;
+typedef _MCF_shared_mutex __gthread_rwlock_t;
 
 /** Define macros for static and dynamic initialization.  */
 #define __GTHREAD_ONCE_INIT   __MCF_0_INIT
@@ -42,6 +44,8 @@ typedef __MCF_gthr_rc_mutex __gthread_recursive_mutex_t;
 #define __GTHREAD_MUTEX_INIT_FUNCTION   __MCF_gthr_mutex_init
 #define __GTHREAD_RECURSIVE_MUTEX_INIT   __MCF_0_INIT
 #define __GTHREAD_RECURSIVE_MUTEX_INIT_FUNCTION   __MCF_gthr_recursive_mutex_init
+#define __GTHREAD_RWLOCK_INIT   __MCF_0_INIT
+#define __GTHREAD_RWLOCK_INIT_FUNCTION   __MCF_gthr_rwlock_init
 
 /** Informs the runtime that threading support is active.
  *
@@ -245,6 +249,111 @@ __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx)
 #ifndef __MCF_GTHR_NO_ALIASES
 __MCF_DECLARE_ALIAS(__gthread_recursive_mutex_unlock, __MCF_gthr_recursive_mutex_unlock);
 #  define __MCF_gthr_recursive_mutex_unlock  __gthread_recursive_mutex_unlock
+#endif
+
+/** Initializes a read-write lock, like `pthread_rwlock_init()`.  */
+__MCF_GTHR_IMPORT
+int
+__MCF_gthr_rwlock_init(__gthread_rwlock_t* __rwlock)
+  __MCF_noexcept;
+
+#ifndef __MCF_GTHR_NO_ALIASES
+__MCF_DECLARE_ALIAS(__gthread_rwlock_init, __MCF_gthr_rwlock_init);
+#  define __MCF_gthr_rwlock_init  __gthread_rwlock_init
+#endif
+
+/** Destroys a read-write lock. This function does nothing.  */
+__MCF_GTHR_IMPORT
+int
+__MCF_gthr_rwlock_destroy(__gthread_rwlock_t* __rwlock)
+  __MCF_noexcept;
+
+#ifndef __MCF_GTHR_NO_ALIASES
+__MCF_DECLARE_ALIAS(__gthread_rwlock_destroy, __MCF_gthr_rwlock_destroy);
+#  define __MCF_gthr_rwlock_destroy  __gthread_rwlock_destroy
+#endif
+
+/** Locks a read-write lock in read mode, like `pthread_rwlock_rdlock()`.  */
+__MCF_GTHR_IMPORT
+int
+__MCF_gthr_rwlock_rdlock(__gthread_rwlock_t* __rwlock)
+  __MCF_noexcept;
+
+#ifndef __MCF_GTHR_NO_ALIASES
+__MCF_DECLARE_ALIAS(__gthread_rwlock_rdlock, __MCF_gthr_rwlock_rdlock);
+#  define __MCF_gthr_rwlock_rdlock  __gthread_rwlock_rdlock
+#endif
+
+/** Tries locking a read-write lock in read mode without blocking, like
+ * `pthread_rwlock_tryrdlock()`.  */
+__MCF_GTHR_IMPORT
+int
+__MCF_gthr_rwlock_tryrdlock(__gthread_rwlock_t* __rwlock)
+  __MCF_noexcept;
+
+#ifndef __MCF_GTHR_NO_ALIASES
+__MCF_DECLARE_ALIAS(__gthread_rwlock_tryrdlock, __MCF_gthr_rwlock_tryrdlock);
+#  define __MCF_gthr_rwlock_tryrdlock  __gthread_rwlock_tryrdlock
+#endif
+
+/** Tries locking a read-write lock in read mode until a time point, like
+ * `pthread_rwlock_timedrdlock()`.  */
+__MCF_GTHR_IMPORT
+int
+__MCF_gthr_rwlock_timedrdlock(__gthread_rwlock_t* __rwlock,
+                              const __gthread_time_t* __abs_time)
+  __MCF_noexcept;
+
+#ifndef __MCF_GTHR_NO_ALIASES
+__MCF_DECLARE_ALIAS(__gthread_rwlock_timedrdlock, __MCF_gthr_rwlock_timedrdlock);
+#  define __MCF_gthr_rwlock_timedrdlock  __gthread_rwlock_timedrdlock
+#endif
+
+/** Locks a read-write lock in write mode, like `pthread_rwlock_wrlock()`.  */
+__MCF_GTHR_IMPORT
+int
+__MCF_gthr_rwlock_wrlock(__gthread_rwlock_t* __rwlock)
+  __MCF_noexcept;
+
+#ifndef __MCF_GTHR_NO_ALIASES
+__MCF_DECLARE_ALIAS(__gthread_rwlock_wrlock, __MCF_gthr_rwlock_wrlock);
+#  define __MCF_gthr_rwlock_wrlock  __gthread_rwlock_wrlock
+#endif
+
+/** Tries locking a read-write lock in write mode without blocking, like
+ * `pthread_rwlock_trywrlock()`.  */
+__MCF_GTHR_IMPORT
+int
+__MCF_gthr_rwlock_trywrlock(__gthread_rwlock_t* __rwlock)
+  __MCF_noexcept;
+
+#ifndef __MCF_GTHR_NO_ALIASES
+__MCF_DECLARE_ALIAS(__gthread_rwlock_trywrlock, __MCF_gthr_rwlock_trywrlock);
+#  define __MCF_gthr_rwlock_trywrlock  __gthread_rwlock_trywrlock
+#endif
+
+/** Tries locking a read-write lock in write mode until a time point, like
+ * `pthread_rwlock_timedwrlock()`.  */
+__MCF_GTHR_IMPORT
+int
+__MCF_gthr_rwlock_timedwrlock(__gthread_rwlock_t* __rwlock,
+                              const __gthread_time_t* __abs_time)
+  __MCF_noexcept;
+
+#ifndef __MCF_GTHR_NO_ALIASES
+__MCF_DECLARE_ALIAS(__gthread_rwlock_timedwrlock, __MCF_gthr_rwlock_timedwrlock);
+#  define __MCF_gthr_rwlock_timedwrlock  __gthread_rwlock_timedwrlock
+#endif
+
+/** Unlocks a read-write lock, like `pthread_rwlock_unlock()`.  */
+__MCF_GTHR_IMPORT
+int
+__MCF_gthr_rwlock_unlock(__gthread_rwlock_t* __rwlock)
+  __MCF_noexcept;
+
+#ifndef __MCF_GTHR_NO_ALIASES
+__MCF_DECLARE_ALIAS(__gthread_rwlock_unlock, __MCF_gthr_rwlock_unlock);
+#  define __MCF_gthr_rwlock_unlock  __gthread_rwlock_unlock
 #endif
 
 /** Initializes a condition variable, like `pthread_cond_init()`.
@@ -584,6 +693,95 @@ __MCF_gthr_recursive_mutex_unlock(__gthread_recursive_mutex_t* __rmtx)
   __MCF_ALIAS_NOEXCEPT
   {
     __MCF_gthr_rc_mutex_release(__rmtx);
+    return 0;
+  }
+
+__MCF_GTHR_INLINE
+int
+__MCF_gthr_rwlock_init(__gthread_rwlock_t* __rwlock)
+  __MCF_ALIAS_NOEXCEPT
+  {
+    _MCF_shared_mutex_init(__rwlock);
+    return 0;
+  }
+
+__MCF_GTHR_INLINE
+int
+__MCF_gthr_rwlock_destroy(__gthread_rwlock_t* __rwlock)
+  __MCF_ALIAS_NOEXCEPT
+  {
+    (void) __rwlock;
+    return 0;
+  }
+
+__MCF_GTHR_INLINE
+int
+__MCF_gthr_rwlock_rdlock(__gthread_rwlock_t* __rwlock)
+  __MCF_ALIAS_NOEXCEPT
+  {
+    int __err = _MCF_shared_mutex_lock_shared(__rwlock, __MCF_nullptr);
+    __MCF_ASSERT(__err == 0);
+    return 0;
+  }
+
+__MCF_GTHR_INLINE
+int
+__MCF_gthr_rwlock_tryrdlock(__gthread_rwlock_t* __rwlock)
+  __MCF_ALIAS_NOEXCEPT
+  {
+    int64_t __timeout = 0;
+    int __err = _MCF_shared_mutex_lock_shared(__rwlock, &__timeout);
+    return (__err != 0) ? EBUSY : 0;
+  }
+
+__MCF_GTHR_INLINE
+int
+__MCF_gthr_rwlock_timedrdlock(__gthread_rwlock_t* __rwlock,
+                              const __gthread_time_t* __abs_time)
+  __MCF_ALIAS_NOEXCEPT
+  {
+    int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
+    int __err = _MCF_shared_mutex_lock_shared(__rwlock, &__timeout);
+    return (__err != 0) ? ETIMEDOUT : 0;
+  }
+
+__MCF_GTHR_INLINE
+int
+__MCF_gthr_rwlock_wrlock(__gthread_rwlock_t* __rwlock)
+  __MCF_ALIAS_NOEXCEPT
+  {
+    int __err = _MCF_shared_mutex_lock_exclusive(__rwlock, __MCF_nullptr);
+    __MCF_ASSERT(__err == 0);
+    return 0;
+  }
+
+__MCF_GTHR_INLINE
+int
+__MCF_gthr_rwlock_trywrlock(__gthread_rwlock_t* __rwlock)
+  __MCF_ALIAS_NOEXCEPT
+  {
+    int64_t __timeout = 0;
+    int __err = _MCF_shared_mutex_lock_exclusive(__rwlock, &__timeout);
+    return (__err != 0) ? EBUSY : 0;
+  }
+
+__MCF_GTHR_INLINE
+int
+__MCF_gthr_rwlock_timedwrlock(__gthread_rwlock_t* __rwlock,
+                              const __gthread_time_t* __abs_time)
+  __MCF_ALIAS_NOEXCEPT
+  {
+    int64_t __timeout = __MCF_gthr_timeout_from_timespec(__abs_time);
+    int __err = _MCF_shared_mutex_lock_exclusive(__rwlock, &__timeout);
+    return (__err != 0) ? ETIMEDOUT : 0;
+  }
+
+__MCF_GTHR_INLINE
+int
+__MCF_gthr_rwlock_unlock(__gthread_rwlock_t* __rwlock)
+  __MCF_ALIAS_NOEXCEPT
+  {
+    _MCF_shared_mutex_unlock(__rwlock);
     return 0;
   }
 
