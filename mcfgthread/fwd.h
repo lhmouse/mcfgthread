@@ -24,6 +24,83 @@
 #  error 32-bit ARM target is not supported.
 #endif
 
+/** Define preprocessor utilities.  */
+#define __MCF_S_(...)     #__VA_ARGS__
+#define __MCF_S(...)       __MCF_S_(__VA_ARGS__)
+#define __MCF_C2_(x, y)     x##y
+#define __MCF_C2(x, y)       __MCF_C2_(x, y)
+#define __MCF_C3_(x, y, z)   x##y##z
+#define __MCF_C3(x, y, z)    __MCF_C3_(x, y, z)
+#define __MCF_0_INIT           { __MCF_C(0) }
+#define __MCF_SET_IF(x, ...)    ((void) ((x) && (*(x) = (__VA_ARGS__))))
+
+/** Define compiler-specific macros. In the case of Clang-CL, prefer GNU
+ * extensions to Microsoft ones.  */
+#if defined __GNUC__ || defined __clang__
+#  define __MCF_EX             __extension__
+#  define __MCF_GNU_INLINE      extern __inline__ __attribute__((__gnu_inline__))
+#  define __MCF_ALWAYS_INLINE   __MCF_GNU_INLINE __attribute__((__always_inline__))
+#  define __MCF_NEVER_INLINE   __attribute__((__noinline__))
+#  define __MCF_NEVER_RETURN   __attribute__((__noreturn__))
+#  define __MCF_FN_CONST       __attribute__((__const__))
+#  define __MCF_FN_PURE       __attribute__((__pure__))
+#  define __MCF_FN_COLD       __attribute__((__cold__))
+#  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
+#  define __MCF_SECTION(x)     __attribute__((__section__(x), __used__))
+#  if defined __amd64__ && !defined __arm64ec__
+#    define __MCF_64_32(x, y)  x
+#    define __MCF_USYM  ""
+#    define __MCF_M_X8664_ASM  1
+#    define __MCF_M_X86_ASM  1
+#    define __MCF_M_X8664  1
+#  elif defined __i386__
+#    define __MCF_64_32(x, y)  y
+#    define __MCF_USYM  "_"
+#    define __MCF_M_X8632_ASM  1
+#    define __MCF_M_X86_ASM  1
+#    define __MCF_M_X8632  1
+#  elif defined __aarch64__ || defined __arm64ec__
+#    define __MCF_64_32(x, y)  x
+#    define __MCF_USYM  ""
+#    define __MCF_M_ARM64_ASM  1
+#    if defined __aarch64__
+#      define __MCF_M_ARM64  1
+#    else
+#      define __MCF_M_X8664  1
+#      define __MCF_M_ARM64EC  1
+#    endif
+#  endif
+#else
+#  define __MCF_EX             /* unsupported */
+#  define __MCF_GNU_INLINE      __inline
+#  define __MCF_ALWAYS_INLINE   __forceinline
+#  define __MCF_NEVER_INLINE   __declspec(noinline)
+#  define __MCF_NEVER_RETURN   __declspec(noreturn)
+#  define __MCF_FN_CONST       __declspec(noalias)
+#  define __MCF_FN_PURE       __declspec(noalias)
+#  define __MCF_FN_COLD       /* unsupported */
+#  define __MCF_ALIGNED(x)    __declspec(align(x))
+#  define __MCF_SECTION(x)     __pragma(section(x, read)) __declspec(allocate(x))
+#  if defined _M_X64 && !defined _M_ARM64EC
+#    define __MCF_64_32(x, y)  x
+#    define __MCF_USYM  ""
+#    define __MCF_M_X8664  1
+#  elif defined _M_IX86
+#    define __MCF_64_32(x, y)  y
+#    define __MCF_USYM  "_"
+#    define __MCF_M_X8632  1
+#  elif defined _M_ARM64 || defined _M_ARM64EC
+#    define __MCF_64_32(x, y)  x
+#    define __MCF_USYM  ""
+#    if defined _M_ARM64
+#      define __MCF_M_ARM64  1
+#    else
+#      define __MCF_M_X8664  1
+#      define __MCF_M_ARM64EC  1
+#    endif
+#  endif
+#endif
+
 /** Define language-support macros. We start from C89 (which doesn't have an
  * identification macro) and then redefine these macros according to
  * `__STDC_VERSION__` and `__cplusplus`.  */
@@ -120,81 +197,18 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_XGLOBALS_READONLY   const
 #endif
 
-/** Define preprocessor utilities.  */
-#define __MCF_S_(...)     #__VA_ARGS__
-#define __MCF_S(...)       __MCF_S_(__VA_ARGS__)
-#define __MCF_C2_(x, y)     x##y
-#define __MCF_C2(x, y)       __MCF_C2_(x, y)
-#define __MCF_C3_(x, y, z)   x##y##z
-#define __MCF_C3(x, y, z)    __MCF_C3_(x, y, z)
-#define __MCF_0_INIT           { __MCF_C(0) }
-#define __MCF_SET_IF(x, ...)    ((void) ((x) && (*(x) = (__VA_ARGS__))))
+/** I can't find a better name for this macro. It controls whether the complete
+ * definitions of inline functions are compiled. If headers are included by user
+ * code and they are optimizing for size, most fast-path parts are opted out.
+ * Complete definitions are compiled when a user is optimizing for speed, or when
+ * it's inside mcfgthread itself regardless of optimization.  */
+#ifndef __MCF_EXPAND_INLINE_DEFINITIONS
+#  define __MCF_EXPAND_INLINE_DEFINITIONS   0
+#endif
 
-/** Define compiler-specific macros. In the case of Clang-CL, prefer GNU
- * extensions to Microsoft ones.  */
-#if defined __GNUC__ || defined __clang__
-#  define __MCF_EX             __extension__
-#  define __MCF_GNU_INLINE      extern __inline__ __attribute__((__gnu_inline__))
-#  define __MCF_ALWAYS_INLINE   __MCF_GNU_INLINE __attribute__((__always_inline__))
-#  define __MCF_NEVER_INLINE   __attribute__((__noinline__))
-#  define __MCF_NEVER_RETURN   __attribute__((__noreturn__))
-#  define __MCF_FN_CONST       __attribute__((__const__))
-#  define __MCF_FN_PURE       __attribute__((__pure__))
-#  define __MCF_FN_COLD       __attribute__((__cold__))
-#  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
-#  define __MCF_SECTION(x)     __attribute__((__section__(x), __used__))
-#  if defined __amd64__ && !defined __arm64ec__
-#    define __MCF_64_32(x, y)  x
-#    define __MCF_USYM  ""
-#    define __MCF_M_X8664_ASM  1
-#    define __MCF_M_X86_ASM  1
-#    define __MCF_M_X8664  1
-#  elif defined __i386__
-#    define __MCF_64_32(x, y)  y
-#    define __MCF_USYM  "_"
-#    define __MCF_M_X8632_ASM  1
-#    define __MCF_M_X86_ASM  1
-#    define __MCF_M_X8632  1
-#  elif defined __aarch64__ || defined __arm64ec__
-#    define __MCF_64_32(x, y)  x
-#    define __MCF_USYM  ""
-#    define __MCF_M_ARM64_ASM  1
-#    if defined __aarch64__
-#      define __MCF_M_ARM64  1
-#    else
-#      define __MCF_M_X8664  1
-#      define __MCF_M_ARM64EC  1
-#    endif
-#  endif
-#else
-#  define __MCF_EX             /* unsupported */
-#  define __MCF_GNU_INLINE      __inline
-#  define __MCF_ALWAYS_INLINE   __forceinline
-#  define __MCF_NEVER_INLINE   __declspec(noinline)
-#  define __MCF_NEVER_RETURN   __declspec(noreturn)
-#  define __MCF_FN_CONST       __declspec(noalias)
-#  define __MCF_FN_PURE       __declspec(noalias)
-#  define __MCF_FN_COLD       /* unsupported */
-#  define __MCF_ALIGNED(x)    __declspec(align(x))
-#  define __MCF_SECTION(x)     __pragma(section(x, read)) __declspec(allocate(x))
-#  if defined _M_X64 && !defined _M_ARM64EC
-#    define __MCF_64_32(x, y)  x
-#    define __MCF_USYM  ""
-#    define __MCF_M_X8664  1
-#  elif defined _M_IX86
-#    define __MCF_64_32(x, y)  y
-#    define __MCF_USYM  "_"
-#    define __MCF_M_X8632  1
-#  elif defined _M_ARM64 || defined _M_ARM64EC
-#    define __MCF_64_32(x, y)  x
-#    define __MCF_USYM  ""
-#    if defined _M_ARM64
-#      define __MCF_M_ARM64  1
-#    else
-#      define __MCF_M_X8664  1
-#      define __MCF_M_ARM64EC  1
-#    endif
-#  endif
+#if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
+#  undef __MCF_EXPAND_INLINE_DEFINITIONS
+#  define __MCF_EXPAND_INLINE_DEFINITIONS   1
 #endif
 
 /** Indicates whether `noexcept` should be used on type aliases, and whether
@@ -283,20 +297,6 @@ typedef unsigned __MCF_INTPTR_ uintptr_t;
 #define __MCF_INTPTR_MAX    __MCF_64_32(0x7FFFFFFFFFFFFFFFLL, 0x7FFFFFFF)
 #define __MCF_UINTPTR_0     __MCF_64_32(0ULL, 0U)
 #define __MCF_UINTPTR_MAX   __MCF_64_32(0xFFFFFFFFFFFFFFFFULL, 0xFFFFFFFFU)
-
-/** I can't find a better name for this macro. It controls whether the complete
- * definitions of inline functions are compiled. If headers are included by user
- * code and they are optimizing for size, most fast-path parts are opted out.
- * Complete definitions are compiled when a user is optimizing for speed, or when
- * it's inside mcfgthread itself regardless of optimization.  */
-#ifndef __MCF_EXPAND_INLINE_DEFINITIONS
-#  define __MCF_EXPAND_INLINE_DEFINITIONS   0
-#endif
-
-#if defined __OPTIMIZE__ && !defined __OPTIMIZE_SIZE__
-#  undef __MCF_EXPAND_INLINE_DEFINITIONS
-#  define __MCF_EXPAND_INLINE_DEFINITIONS   1
-#endif
 
 /** This defines a by-reference variable, in other words, an array of exactly one
  * element, which is always passed around as a pointer.  */
