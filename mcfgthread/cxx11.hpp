@@ -729,9 +729,9 @@ class thread
             ~_Thread_sentry() noexcept { (* this->__deferred_fn) (this->__thr);  }
           };
 
-        auto __thread_fn = [](::_MCF_thread* __thr)
+        auto __fn = [](::_MCF_thread* __thr)
           {
-            _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(__thr);
+            _My_data* const __my = static_cast<_My_data*>(::_MCF_thread_get_data(__thr));
 
             // Check whether `*_M_invoker` has been constructed. If its
             // constructor failed, this thread shall exit immediately.
@@ -747,7 +747,7 @@ class thread
 
         auto __sentry_cancel_thread = [](::_MCF_thread* __thr) noexcept
           {
-            _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(__thr);
+            _My_data* const __my = static_cast<_My_data*>(::_MCF_thread_get_data(__thr));
 
             // Cancel the thread.
             ::_MCF_event_set(__my->_M_ctor_status, _St_cancelled);
@@ -756,16 +756,14 @@ class thread
 
         auto __sentry_complete_thread = [](::_MCF_thread* __thr) noexcept
           {
-            _My_data* const __my = (_My_data*) ::_MCF_thread_get_data(__thr);
+            _My_data* const __my = static_cast<_My_data*>(::_MCF_thread_get_data(__thr));
 
             // Let the thread go.
             ::_MCF_event_set(__my->_M_ctor_status, _St_constructed);
           };
 
         // Create the thread. User-defined data are initialized to zeroes.
-        if(::_MCF_thread_p_new(&(this->_M_thr), 0, __thread_fn, alignof(_My_data),
-                               nullptr, sizeof(_My_data))
-            == nullptr)
+        if(!::_MCF_thread_p_new(&(this->_M_thr), 0, __fn, alignof(_My_data), nullptr, sizeof(_My_data)))
           __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_thread_p_new");
 
         // active
