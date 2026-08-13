@@ -126,7 +126,7 @@ do_notify_runtime_failure(const char* where, HMODULE msg_dll, ULONG msg_code)
     (void) rhe_resp;
   }
 
-static __MCF_NEVER_RETURN
+static __MCF_NEVER_RETURN __MCF_FN_COLD
 void
 do_fail_fast(NTSTATUS status, void* addr)
   {
