@@ -32,7 +32,7 @@ main(void)
 
       r = __MCF_dtor_queue_reserve_and_push(&queue, 5, &elem);
       assert(r == 0);
-      fprintf(stderr, "push: %td, size = %d\n", (intptr_t) elem.__dtor, queue.__size);
+      fprintf(stderr, "push: %d, size = %d\n", (int)(intptr_t) elem.__dtor, queue.__size);
       assert(queue.__size <= 59);
     }
   }
