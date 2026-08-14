@@ -40,7 +40,7 @@ _MCF_tls_key_drop_ref_nonnull(_MCF_tls_key* key)
     __MCF_mfree_nonnull(key);
   }
 
-static inline
+static inline __attribute__((__always_inline__))
 __MCF_tls_element*
 do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
   {
