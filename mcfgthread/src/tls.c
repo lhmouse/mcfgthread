@@ -57,6 +57,10 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
     __MCF_tls_element* origin = table->__begin + (ptrdiff_t) (dist * ratio >> 32);
     __MCF_ASSERT(origin < table->__end);
 
+    /* Expect an immediate hit.  */
+    if(__builtin_expect(origin->__key_opt == key, true))
+      return origin;
+
     /* Find an element using linear probing. If the key is not found, a
      * pointer to an empty element is returned.  */
     for(__MCF_tls_element* cur = origin;  cur != table->__end;  ++cur)
