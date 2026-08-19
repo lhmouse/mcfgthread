@@ -409,6 +409,7 @@ typedef void __fastcall __MCF_cxa_dtor_thiscall(void* __arg);
 typedef union __MCF_cxa_dtor_any __MCF_cxa_dtor_any_;
 __MCF_TRANSPARENT_UNION __MCF_cxa_dtor_any
   {
+    __MCF_CXX11(__MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, decltype(nullptr), __nullptr_x);)
     __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_cxa_dtor_cdecl*, __cdecl_ptr);
     __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_atexit_callback*, __cdecl_0_ptr);
 #  if defined __MCF_M_X8632
@@ -428,6 +429,7 @@ typedef __MCF_cxa_dtor_thiscall* __MCF_cxa_dtor_any_;
 typedef union __MCF_atexit_callback_any __MCF_atexit_callback_any_;
 __MCF_TRANSPARENT_UNION __MCF_atexit_callback_any
   {
+    __MCF_CXX11(__MCF_TRANSPARENT_UNION_F(__MCF_atexit_callback_any, decltype(nullptr), __nullptr_x);)
     __MCF_TRANSPARENT_UNION_F(__MCF_atexit_callback_any, __MCF_atexit_callback*, __cdecl_ptr);
 #  if defined __MCF_M_X8632
     __MCF_TRANSPARENT_UNION_F(__MCF_atexit_callback_any, __MCF_atexit_callback_stdcall*, __stdcall_ptr);
