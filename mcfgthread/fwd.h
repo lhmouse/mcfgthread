@@ -440,6 +440,23 @@ __MCF_TRANSPARENT_UNION __MCF_atexit_callback_any
 typedef __MCF_atexit_callback* __MCF_atexit_callback_any_;
 #endif
 
+#if defined __MCF_TRANSPARENT_UNION
+typedef union __MCF_tls_dtor_any __MCF_tls_dtor_any_;
+__MCF_TRANSPARENT_UNION __MCF_tls_dtor_any
+  {
+    __MCF_CXX11(__MCF_TRANSPARENT_UNION_F(__MCF_tls_dtor_any, decltype(nullptr), __nullptr_x);)
+    __MCF_TRANSPARENT_UNION_F(__MCF_tls_dtor_any, __MCF_cxa_dtor_cdecl*, __cdecl_ptr);
+#  if defined __MCF_M_X8632
+    __MCF_TRANSPARENT_UNION_F(__MCF_tls_dtor_any, __MCF_cxa_dtor_fastcall*, __fastcall_ptr);
+#    if defined __MCF_CXA_DTOR_DUAL_ABI
+    __MCF_TRANSPARENT_UNION_F(__MCF_tls_dtor_any, __MCF_cxa_dtor_thiscall*, __thiscall_ptr);
+#    endif
+#  endif
+  };
+#else
+typedef __MCF_tls_dtor_any_ __MCF_tls_dtor_any_;
+#endif
+
 /** Gets the last error code, like `GetLastError()`.
  *
  * @returns the last error code as an unsigned integer.

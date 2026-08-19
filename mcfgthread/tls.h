@@ -60,7 +60,7 @@ struct __MCF_tls_key
  * @since 1.0  */
 __MCF_TLS_IMPORT
 _MCF_tls_key*
-_MCF_tls_key_new(__MCF_cxa_dtor_any_ __dtor_opt)
+_MCF_tls_key_new(__MCF_tls_dtor_any_ __dtor_opt)
   __MCF_noexcept;
 
 /** Gets the reference count of a thread-local key.
