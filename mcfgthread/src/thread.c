@@ -243,7 +243,7 @@ do_thread_self_slow(void)
     return __MCF_thread_attach_foreign(self);
   }
 
-__MCF_DLLEXPORT __MCF_FN_CONST
+__MCF_DLLEXPORT __MCF_FN_CONST __attribute__((__hot__))
 _MCF_thread*
 _MCF_thread_self(void)
   {
