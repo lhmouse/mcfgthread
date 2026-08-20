@@ -720,6 +720,7 @@ class thread
           {
             __MCF_BR(_My_invoker) _M_invoker;
             __MCF_BR(::_MCF_event) _M_ctor_status;
+            char _M_end_of_data;  // unallocated; must be last member
           };
 
         struct _Thread_sentry
@@ -763,7 +764,8 @@ class thread
           };
 
         // Create the thread. User-defined data are initialized to zeroes.
-        if(!::_MCF_thread_p_new(&(this->_M_thr), 0, __fn, alignof(_My_data), nullptr, sizeof(_My_data)))
+        if(!::_MCF_thread_p_new(&(this->_M_thr), 0, __fn, alignof(_My_data), nullptr,
+                                __builtin_offsetof(_My_data, _M_end_of_data)))
           __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_thread_p_new");
 
         // active
