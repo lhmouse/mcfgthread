@@ -33,12 +33,12 @@
 #  define __MCF_atomic_thread_fence(o)        __atomic_thread_fence(o)
 #  define __MCF_atomic_signal_fence(o)        __atomic_signal_fence(o)
 #else
-#  if __MCF_CXX11(1+)0
-#    include <atomic>
-#    define __MCF_ATOMIC(...)                 ::std::atomic<__VA_ARGS__>
-#  else
+#  if 0 __MCF_CXX11(+1) == 0
 #    include <stdatomic.h>
 #    define __MCF_ATOMIC(...)                 _Atomic __VA_ARGS__
+#  else
+#    include <atomic>
+#    define __MCF_ATOMIC(...)                 ::std::atomic<__VA_ARGS__>
 #  endif
 #  define __MCF_memory_order_rlx              __MCF_CXX11(::std::)memory_order_relaxed
 #  define __MCF_memory_order_acq              __MCF_CXX11(::std::)memory_order_acquire
