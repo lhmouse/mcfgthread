@@ -21,7 +21,7 @@
 #include <new>  // operator new()
 #include <iosfwd>  // basic_ostream
 #include <type_traits>  // many
-#if __MCF_CXX14(1+)0
+#if 0 __MCF_CXX14(+1)
 #include <shared_mutex>  // shared_lock
 #endif
 namespace _MCF {
@@ -32,7 +32,7 @@ namespace _Noadl = ::_MCF;
 namespace chrono = ::std::chrono;
 using ::std::lock_guard;
 using ::std::unique_lock;
-#if __MCF_CXX14(1+)0
+#if 0 __MCF_CXX14(+1)
 using ::std::shared_lock;
 #endif
 #ifdef __cpp_lib_scoped_lock  // C++17
@@ -367,7 +367,7 @@ class shared_mutex
     using native_handle_type = ::_MCF_shared_mutex*;
     using lock_guard_type = lock_guard<shared_mutex>;  // extension
     using unique_lock_type = unique_lock<shared_mutex>;  // extension
-#if __MCF_CXX14(1+)0
+#if 0 __MCF_CXX14(+1)
     using shared_lock_type = shared_lock<shared_mutex>;  // extension
 #endif
 
