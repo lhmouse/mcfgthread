@@ -20,7 +20,7 @@ __MCF_CXX(extern "C" {)
 /** N1570 ISO/IEC 9899:201x
  * 7.26 Threads <threads.h>
  * 7.26.1 Introduction  */
-#if __MCF_C11(1+)0
+#if 0 __MCF_C23(+1) __MCF_CXX11(+1) == 0
 #  define thread_local  _Thread_local
 #endif
 
