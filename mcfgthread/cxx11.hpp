@@ -29,7 +29,6 @@ namespace _Noadl = ::_MCF;
 
 /** N3797 ISO/IEC 14882:201z
  * 30 Thread support library [thread]  */
-
 namespace chrono = ::std::chrono;
 using ::std::lock_guard;
 using ::std::unique_lock;
