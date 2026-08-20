@@ -40,20 +40,20 @@
 #    include <atomic>
 #    define __MCF_ATOMIC(...)                 ::std::atomic<__VA_ARGS__>
 #  endif
-#  define __MCF_memory_order_rlx              __MCF_CXX11(::std::)memory_order_relaxed
-#  define __MCF_memory_order_acq              __MCF_CXX11(::std::)memory_order_acquire
-#  define __MCF_memory_order_rel              __MCF_CXX11(::std::)memory_order_release
-#  define __MCF_memory_order_arl              __MCF_CXX11(::std::)memory_order_acq_rel
-#  define __MCF_memory_order_cst              __MCF_CXX11(::std::)memory_order_seq_cst
-#  define __MCF_atomic_load(p,o)              __MCF_CXX11(::std::)atomic_load_explicit(p,o)
-#  define __MCF_atomic_store(p,v,o)           __MCF_CXX11(::std::)atomic_store_explicit(p,v,o)
-#  define __MCF_atomic_xchg(p,v,o)            __MCF_CXX11(::std::)atomic_exchange_explicit(p,v,o)
-#  define __MCF_atomic_cmpxchg(p,c,v,o,f)     __MCF_CXX11(::std::)atomic_compare_exchange_strong_explicit(p,c,v,o,f)
-#  define __MCF_atomic_cmpxchg_w(p,c,v,o,f)   __MCF_CXX11(::std::)atomic_compare_exchange_weak_explicit(p,c,v,o,f)
-#  define __MCF_atomic_xadd(p,v,o)            __MCF_CXX11(::std::)atomic_fetch_add_explicit(p,v,o)
-#  define __MCF_atomic_xsub(p,v,o)            __MCF_CXX11(::std::)atomic_fetch_sub_explicit(p,v,o)
-#  define __MCF_atomic_thread_fence(o)        __MCF_CXX11(::std::)atomic_thread_fence(o)
-#  define __MCF_atomic_signal_fence(o)        __MCF_CXX11(::std::)atomic_signal_fence(o)
+#  define __MCF_memory_order_rlx              memory_order_relaxed
+#  define __MCF_memory_order_acq              memory_order_acquire
+#  define __MCF_memory_order_rel              memory_order_release
+#  define __MCF_memory_order_arl              memory_order_acq_rel
+#  define __MCF_memory_order_cst              memory_order_seq_cst
+#  define __MCF_atomic_load(p,o)              atomic_load_explicit(p,o)
+#  define __MCF_atomic_store(p,v,o)           atomic_store_explicit(p,v,o)
+#  define __MCF_atomic_xchg(p,v,o)            atomic_exchange_explicit(p,v,o)
+#  define __MCF_atomic_cmpxchg(p,c,v,o,f)     atomic_compare_exchange_strong_explicit(p,c,v,o,f)
+#  define __MCF_atomic_cmpxchg_w(p,c,v,o,f)   atomic_compare_exchange_weak_explicit(p,c,v,o,f)
+#  define __MCF_atomic_xadd(p,v,o)            atomic_fetch_add_explicit(p,v,o)
+#  define __MCF_atomic_xsub(p,v,o)            atomic_fetch_sub_explicit(p,v,o)
+#  define __MCF_atomic_thread_fence(o)        atomic_thread_fence(o)
+#  define __MCF_atomic_signal_fence(o)        atomic_signal_fence(o)
 #endif
 
 __MCF_CXX(extern "C" {)
