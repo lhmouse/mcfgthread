@@ -389,7 +389,7 @@ typedef void __fastcall __MCF_cxa_dtor_thiscall(void* __arg);
 #if defined __cplusplus
 #  define __MCF_TRANSPARENT_UNION   union
 #  define __MCF_TRANSPARENT_UNION_F(tag, type, x)  \
-    constexpr tag(type x##_) __MCF_noexcept : x(x##_) { }  \
+    constexpr tag(type x##_) noexcept : x(x##_) { }  \
     /* ^= constructor / field => */ type x  /* no semicolon  */
 #elif defined __GNUC__ || defined __clang__
 #  define __MCF_TRANSPARENT_UNION   union __attribute__((__transparent_union__))
