@@ -75,7 +75,7 @@ test_src = [
   'test/gthr_cond_consumers.c', 'test/gthr_cond_consumers_recursive.c',
   'test/gthr_tls_dtor.c', 'test/gthr_tls_set.c', 'test/gthr_tls_deleted_key.c',
   'test/gthr_tls_many.c', 'test/gthr_thread_return.c', 'test/gthr_equal.c',
-  'test/gthr_cxx98_pedantic.cpp', 'test/libcxx_inline_alias.c', 'test/libcxx_once.c',
+  'test/libcxx_inline_alias.c', 'test/libcxx_once.c',
   'test/libcxx_mutex_trylock.c', 'test/libcxx_mutex.c',
   'test/libcxx_mutex_nonrecursive.c', 'test/libcxx_rc_mutex_trylock.c',
   'test/libcxx_rc_mutex.c', 'test/libcxx_condvar_timeout.c',
@@ -331,13 +331,6 @@ foreach src : test_src
         '-std=c89', '-Wpedantic', '-Wno-variadic-macros',
         '-Wno-long-long', '-Werror=declaration-after-statement',
         cc.get_supported_arguments('-Wno-c99-extensions') ]
-  endif
-
-  if src in [ 'test/gthr_cxx98_pedantic.cpp' ]
-    test_cpp_args = [
-        '-std=c++98', '-Wpedantic', '-Wno-variadic-macros',
-        '-Wno-long-long', '-Wno-zero-as-null-pointer-constant',
-        cxx.get_supported_arguments('-Wno-c++11-extensions') ]
   endif
 
   if src in [ 'test/c11_c99_pedantic.c' ]

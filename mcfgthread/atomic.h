@@ -33,7 +33,7 @@
 #  define __MCF_atomic_thread_fence(o)        __atomic_thread_fence(o)
 #  define __MCF_atomic_signal_fence(o)        __atomic_signal_fence(o)
 #else
-#  if 0 __MCF_CXX11(+1) == 0
+#  if !defined __cplusplus
 #    include <stdatomic.h>
 #    define __MCF_ATOMIC(...)                 _Atomic __VA_ARGS__
 #  else

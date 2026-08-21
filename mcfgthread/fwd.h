@@ -111,27 +111,12 @@
 #define __MCF_MAY_THROW
 #define __MCF_nullptr    __MCF_INTPTR_0
 
-#if defined __cplusplus
-#  undef __MCF_CXX
-#  define __MCF_CXX(...)   __VA_ARGS__
-#  undef __MCF_C
-#  define __MCF_C(...)
-#  undef __MCF_C_CXX
-#  define __MCF_C_CXX(x, y)  y
-#  undef __MCF_noexcept
-#  define __MCF_noexcept   throw()
-#  ifdef _MSC_VER
-#    undef __MCF_MAY_THROW
-#    define __MCF_MAY_THROW   throw(...)
-#  endif
-#endif
-
 #define __MCF_C99(...)
 #define __MCF_C11(...)
 #define __MCF_C17(...)
 #define __MCF_C23(...)
 
-#define __MCF_CXX11(...)
+#define __MCF_CXX11(...)  /* deprecated in favor of `__MCF_CXX()` */
 #define __MCF_CXX14(...)
 #define __MCF_CXX17(...)
 #define __MCF_CXX20(...)
@@ -159,7 +144,13 @@
 #  define __MCF_nullptr   nullptr
 #endif
 
-#if defined __cplusplus && ((__cplusplus >= 201103L) || (defined _MSC_VER && !defined __clang__))
+#if defined __cplusplus
+#  undef __MCF_CXX
+#  define __MCF_CXX(...)   __VA_ARGS__
+#  undef __MCF_C
+#  define __MCF_C(...)
+#  undef __MCF_C_CXX
+#  define __MCF_C_CXX(x, y)  y
 #  undef __MCF_CXX11
 #  define __MCF_CXX11(...)   __VA_ARGS__
 #  undef __MCF_noexcept
@@ -398,7 +389,7 @@ typedef void __fastcall __MCF_cxa_dtor_thiscall(void* __arg);
 #if defined __cplusplus
 #  define __MCF_TRANSPARENT_UNION   union
 #  define __MCF_TRANSPARENT_UNION_F(tag, type, x)  \
-    __MCF_CXX11(constexpr) tag(type x##_) __MCF_noexcept : x(x##_) { }  \
+    constexpr tag(type x##_) __MCF_noexcept : x(x##_) { }  \
     /* ^= constructor / field => */ type x  /* no semicolon  */
 #elif defined __GNUC__ || defined __clang__
 #  define __MCF_TRANSPARENT_UNION   union __attribute__((__transparent_union__))
@@ -409,7 +400,7 @@ typedef void __fastcall __MCF_cxa_dtor_thiscall(void* __arg);
 typedef union __MCF_cxa_dtor_any __MCF_cxa_dtor_any_;
 __MCF_TRANSPARENT_UNION __MCF_cxa_dtor_any
   {
-    __MCF_CXX11(__MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, decltype(nullptr), __nullptr_x);)
+    __MCF_CXX(__MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, decltype(nullptr), __nullptr_x);)
     __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_cxa_dtor_cdecl*, __cdecl_ptr);
     __MCF_TRANSPARENT_UNION_F(__MCF_cxa_dtor_any, __MCF_atexit_callback*, __cdecl_0_ptr);
 #  if defined __MCF_M_X8632
@@ -429,7 +420,7 @@ typedef __MCF_cxa_dtor_thiscall* __MCF_cxa_dtor_any_;
 typedef union __MCF_atexit_callback_any __MCF_atexit_callback_any_;
 __MCF_TRANSPARENT_UNION __MCF_atexit_callback_any
   {
-    __MCF_CXX11(__MCF_TRANSPARENT_UNION_F(__MCF_atexit_callback_any, decltype(nullptr), __nullptr_x);)
+    __MCF_CXX(__MCF_TRANSPARENT_UNION_F(__MCF_atexit_callback_any, decltype(nullptr), __nullptr_x);)
     __MCF_TRANSPARENT_UNION_F(__MCF_atexit_callback_any, __MCF_atexit_callback*, __cdecl_ptr);
 #  if defined __MCF_M_X8632
     __MCF_TRANSPARENT_UNION_F(__MCF_atexit_callback_any, __MCF_atexit_callback_stdcall*, __stdcall_ptr);
@@ -444,7 +435,7 @@ typedef __MCF_atexit_callback* __MCF_atexit_callback_any_;
 typedef union __MCF_tls_dtor_any __MCF_tls_dtor_any_;
 __MCF_TRANSPARENT_UNION __MCF_tls_dtor_any
   {
-    __MCF_CXX11(__MCF_TRANSPARENT_UNION_F(__MCF_tls_dtor_any, decltype(nullptr), __nullptr_x);)
+    __MCF_CXX(__MCF_TRANSPARENT_UNION_F(__MCF_tls_dtor_any, decltype(nullptr), __nullptr_x);)
     __MCF_TRANSPARENT_UNION_F(__MCF_tls_dtor_any, __MCF_cxa_dtor_cdecl*, __cdecl_ptr);
 #  if defined __MCF_M_X8632
     __MCF_TRANSPARENT_UNION_F(__MCF_tls_dtor_any, __MCF_cxa_dtor_fastcall*, __fastcall_ptr);
@@ -538,7 +529,7 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* __once, __MCF_cxa_dtor_any_ __init
  * @param `y` is another value.
  * @returns the minimum value of `x` and `y`.
  * @since 1.0  */
-__MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
+__MCF_ALWAYS_INLINE __MCF_CXX(constexpr)
 size_t
 _MCF_minz(size_t __x, size_t __y)
   __MCF_noexcept
@@ -552,7 +543,7 @@ _MCF_minz(size_t __x, size_t __y)
  * @param `y` is another value.
  * @returns the maximum value of `x` and `y`.
  * @since 1.0  */
-__MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
+__MCF_ALWAYS_INLINE __MCF_CXX(constexpr)
 size_t
 _MCF_maxz(size_t __x, size_t __y)
   __MCF_noexcept
@@ -566,7 +557,7 @@ _MCF_maxz(size_t __x, size_t __y)
  * @param `y` is the subtrahend.
  * @returns `MAX(x, y) - y`.
  * @since 2.1  */
-__MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
+__MCF_ALWAYS_INLINE __MCF_CXX(constexpr)
 intptr_t
 _MCF_dim(intptr_t __x, intptr_t __y)
   __MCF_noexcept

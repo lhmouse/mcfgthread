@@ -58,7 +58,7 @@ struct __MCF_thread_base
 
 /** These thread priority values match Windows APIs and can be passed around as
  * such, but we define only what we find necessary at the moment.  */
-enum __MCF_thread_priority __MCF_CXX11(: int)
+enum __MCF_thread_priority __MCF_CXX(: int)
   {
     _MCF_thread_priority_idle           = -15,
     _MCF_thread_priority_low            =  -2,
@@ -235,7 +235,7 @@ _MCF_thread_drop_ref(_MCF_thread* __thrd_opt)
  * @param `thrd` shall point to a thread control structure.
  * @returns the identifier of the thread.
  * @since 1.0  */
-__MCF_THREAD_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
+__MCF_THREAD_INLINE __MCF_CXX(constexpr) __MCF_FN_PURE
 uint32_t
 _MCF_thread_get_tid(const _MCF_thread* __thrd)
   __MCF_noexcept;
@@ -247,7 +247,7 @@ _MCF_thread_get_tid(const _MCF_thread* __thrd)
  * @param `thrd` shall point to a thread control structure.
  * @returns the handle of the thread.
  * @since 1.0  */
-__MCF_THREAD_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
+__MCF_THREAD_INLINE __MCF_CXX(constexpr) __MCF_FN_PURE
 __MCF_HANDLE
 _MCF_thread_get_handle(const _MCF_thread* __thrd)
   __MCF_noexcept;
@@ -489,7 +489,7 @@ _MCF_thread_get_data(const _MCF_thread* __thrd)
 
 #ifdef __cplusplus
 extern "C++" inline __MCF_FN_PURE
-void*
+__MCF_CXX14(constexpr) void*
 _MCF_thread_get_data(_MCF_thread* __thrd)
   __MCF_noexcept
   {
@@ -524,7 +524,7 @@ _MCF_thread_drop_ref(_MCF_thread* __thrd_opt)
       _MCF_thread_drop_ref_nonnull(__thrd_opt);
   }
 
-__MCF_THREAD_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
+__MCF_THREAD_INLINE __MCF_CXX(constexpr) __MCF_FN_PURE
 uint32_t
 _MCF_thread_get_tid(const _MCF_thread* __thrd)
   __MCF_noexcept
@@ -532,7 +532,7 @@ _MCF_thread_get_tid(const _MCF_thread* __thrd)
     return (uint32_t) __thrd->__tid;
   }
 
-__MCF_THREAD_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
+__MCF_THREAD_INLINE __MCF_CXX(constexpr) __MCF_FN_PURE
 __MCF_HANDLE
 _MCF_thread_get_handle(const _MCF_thread* __thrd)
   __MCF_noexcept

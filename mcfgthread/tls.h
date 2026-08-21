@@ -148,7 +148,7 @@ _MCF_tls_key_delete(_MCF_tls_key* __key_opt)
  * @returns the destructor of the thread-local key, which may be null if none
  *    was specified when the key was created.
  * @since 1.4  */
-__MCF_TLS_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
+__MCF_TLS_INLINE __MCF_CXX(constexpr) __MCF_FN_PURE
 _MCF_tls_dtor*
 _MCF_tls_key_get_destructor(const _MCF_tls_key* __key)
   __MCF_noexcept;
@@ -237,7 +237,7 @@ _MCF_tls_key_delete(_MCF_tls_key* __key_opt)
       _MCF_tls_key_delete_nonnull(__key_opt);
   }
 
-__MCF_TLS_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
+__MCF_TLS_INLINE __MCF_CXX(constexpr) __MCF_FN_PURE
 _MCF_tls_dtor*
 _MCF_tls_key_get_destructor(const _MCF_tls_key* __key)
   __MCF_noexcept

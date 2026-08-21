@@ -24,7 +24,7 @@
 #endif
 
 /** Guarantee that `nullptr` is available for C.  */
-#if 0 __MCF_C23(+1) __MCF_CXX11(+1) == 0
+#if 0 __MCF_C23(+1) __MCF_CXX(+1) == 0
 #  define nullptr   ((void*) __MCF_INTPTR_0)
 #endif
 
