@@ -261,8 +261,8 @@ __MCF_runtime_failure(const char* __where)
 #  define __MCF_TENTATIVE   __declspec(selectany)
 #endif
 
-/** These are necessary when the header is compiled as C89 or C++98. The check
- * for `_LP64` is for Cygwin and MSYS2.  */
+/** These are necessary when the header is compiled as C89. The check for `_LP64`
+ * is for Cygwin and MSYS2.  */
 #ifdef _LP64
 #  define __MCF_INT64_    long
 #  define __MCF_INTPTR_   long
