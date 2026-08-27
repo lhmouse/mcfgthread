@@ -187,7 +187,9 @@ template<typename... _Args>
 constexpr
 void
 __v_invoke(_Args&&... __args)
-  { ::std::invoke(::std::forward<_Args>(__args)...);  }
+  {
+    ::std::invoke(::std::forward<_Args>(__args)...);
+  }
 
 #else  // __cpp_lib_invoke
 
@@ -195,22 +197,49 @@ template<class _Member, class _Class, typename... _Args>
 __MCF_CXX14(constexpr)
 void
 __v_invoke(_Member _Class::* __memp, _Args&&... __args)
-  { ::std::mem_fn(__memp) (::std::forward<_Args>(__args)...);  }
+  {
+    ::std::mem_fn(__memp) (::std::forward<_Args>(__args)...);
+  }
 
 template<class _Callable, typename... _Args>
 __MCF_CXX14(constexpr)
 void
 __v_invoke(_Callable&& __callable, _Args&&... __args)
-  { ::std::forward<_Callable>(__callable) (::std::forward<_Args>(__args)...);  }
+  {
+    ::std::forward<_Callable>(__callable) (::std::forward<_Args>(__args)...);
+  }
 
 #endif  // __cpp_lib_invoke
 
-/** Undocumented  */
+/** Emulate `DECAY_COPY` in `INVOKE` for C++11. [thread.decaycopy]
+ *
+ * At the moment, all results are discarded, so the expression always has a
+ * type of `void` for simplicity.  */
+#if defined __cpp_lib_integer_sequence
+
+template<size_t... _Ns, typename... _Ts>
+__MCF_CXX14(constexpr)
+void
+__v_do_invoke_decay_copy(::std::index_sequence<_Ns...>, ::std::tuple<_Ts...>& __t)
+  {
+    _Noadl::__v_invoke(::std::move(::std::get<_Ns>(__t))...);
+  }
+
+template<typename... _Ts>
+__MCF_CXX14(constexpr)
+void
+__v_invoke_decay_copy(::std::tuple<_Ts...>& __t)
+  {
+    _Noadl::__v_do_invoke_decay_copy(::std::make_index_sequence<sizeof...(_Ts)>(), __t);
+  }
+
+#else  // __cpp_lib_integer_sequence
+
 template<typename... _Ts, typename... _Args>
 __MCF_CXX14(constexpr)
 void
-__v_invoke_decay_copy(::std::integral_constant<size_t, 0>,
-                      ::std::tuple<_Ts...>& __t, _Args&&... __args)
+__v_do_invoke_decay_copy(::std::integral_constant<size_t, 0>, ::std::tuple<_Ts...>& __t,
+                         _Args&&... __args)
   {
     _Noadl::__v_invoke(::std::move(::std::get<0>(__t)), ::std::forward<_Args>(__args)...);
   }
@@ -218,13 +247,23 @@ __v_invoke_decay_copy(::std::integral_constant<size_t, 0>,
 template<size_t _Nargs, typename... _Ts, typename... _Args>
 __MCF_CXX14(constexpr)
 void
-__v_invoke_decay_copy(::std::integral_constant<size_t, _Nargs>,
-                      ::std::tuple<_Ts...>& __t, _Args&&... __args)
+__v_do_invoke_decay_copy(::std::integral_constant<size_t, _Nargs>, ::std::tuple<_Ts...>& __t,
+                         _Args&&... __args)
   {
-    _Noadl::__v_invoke_decay_copy(::std::integral_constant<size_t, _Nargs - 1>(), __t,
-                                  ::std::move(::std::get<_Nargs>(__t)),
-                                  ::std::forward<_Args>(__args)...);
+    _Noadl::__v_do_invoke_decay_copy(::std::integral_constant<size_t, _Nargs - 1>(), __t,
+                                     ::std::move(::std::get<_Nargs>(__t)),
+                                     ::std::forward<_Args>(__args)...);
   }
+
+template<typename... _Ts>
+__MCF_CXX14(constexpr)
+void
+__v_invoke_decay_copy(::std::tuple<_Ts...>& __t)
+  {
+    _Noadl::__v_do_invoke_decay_copy(::std::integral_constant<size_t, sizeof...(_Ts) - 1>(), __t);
+  }
+
+#endif  // __cpp_lib_integer_sequence
 
 /** Reference implementation for [thread.once.onceflag]
  *
@@ -706,8 +745,7 @@ class thread
 
             // Execute the user-defined procedure.
             __MCF_ASSERT(__st == _St_constructed);
-            _Noadl::__v_invoke_decay_copy(::std::integral_constant<size_t, sizeof...(_Args)>(),
-                                          reinterpret_cast<_My_tuple&>(__my->_M_tuple));
+            _Noadl::__v_invoke_decay_copy(reinterpret_cast<_My_tuple&>(__my->_M_tuple));
             reinterpret_cast<_My_tuple&>(__my->_M_tuple).~_My_tuple();
           };
 

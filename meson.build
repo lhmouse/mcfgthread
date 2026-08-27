@@ -112,7 +112,8 @@ test_src = [
   'test/recursive_timed_mutex_try_lock_for.cpp', 'test/thread_dtor_terminate.cpp',
   'test/thread_move_assign_terminate.cpp', 'test/thread_move_assign_joined.cpp',
   'test/thread_join_deadlock.cpp', 'test/thread_ctor_throw.cpp', 'test/thread_id.cpp',
-  'test/thread_decay_copy.cpp', 'test/this_thread_sleep_until.cpp',
+  'test/thread_decay_copy.cpp', 'test/thread_decay_copy_cxx11.cpp',
+  'test/this_thread_sleep_until.cpp',
   'test/this_thread_sleep_for.cpp', 'test/tls_dtor.cpp', 'test/tls_many.cpp',
   'test/gthr_call_once_unwind_seh.cpp', 'test/c11_call_once_unwind_seh.c',
   'test/atexit_terminate.cpp', 'test/at_quick_exit_terminate.cpp',
@@ -345,7 +346,7 @@ foreach src : test_src
     test_cpp_args = [ '-fno-rtti', '-fno-exceptions' ]
   endif
 
-  if src in [ 'test/cxx11_pedantic.cpp' ]
+  if src in [ 'test/cxx11_pedantic.cpp', 'test/thread_decay_copy_cxx11.cpp' ]
     test_cpp_args = [ '-std=c++11', '-Wpedantic' ]
   endif
 
