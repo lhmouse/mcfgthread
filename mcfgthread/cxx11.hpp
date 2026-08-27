@@ -217,10 +217,10 @@ __v_invoke(_Callable&& __callable, _Args&&... __args)
  * type of `void` for simplicity.  */
 #if defined __cpp_lib_integer_sequence
 
-template<size_t... _Ns, typename... _Ts>
+template<size_t... _Ns, typename _Tuple>
 __MCF_CXX14(constexpr)
 void
-__v_do_invoke_decay_copy(::std::index_sequence<_Ns...>, ::std::tuple<_Ts...>& __t)
+__do_v_invoke_decay_copy(::std::index_sequence<_Ns...>, _Tuple& __t)
   {
     _Noadl::__v_invoke(::std::move(::std::get<_Ns>(__t))...);
   }
@@ -230,27 +230,25 @@ __MCF_CXX14(constexpr)
 void
 __v_invoke_decay_copy(::std::tuple<_Ts...>& __t)
   {
-    _Noadl::__v_do_invoke_decay_copy(::std::make_index_sequence<sizeof...(_Ts)>(), __t);
+    _Noadl::__do_v_invoke_decay_copy(::std::make_index_sequence<sizeof...(_Ts)>(), __t);
   }
 
 #else  // __cpp_lib_integer_sequence
 
-template<typename... _Ts, typename... _Args>
+template<typename _Tuple, typename... _Args>
 __MCF_CXX14(constexpr)
 void
-__v_do_invoke_decay_copy(::std::integral_constant<size_t, 0>, ::std::tuple<_Ts...>& __t,
-                         _Args&&... __args)
+__do_v_invoke_decay_copy(::std::integral_constant<size_t, 0>, _Tuple& __t, _Args&&... __args)
   {
     _Noadl::__v_invoke(::std::move(::std::get<0>(__t)), ::std::forward<_Args>(__args)...);
   }
 
-template<size_t _Nargs, typename... _Ts, typename... _Args>
+template<size_t _Nargs, typename _Tuple, typename... _Args>
 __MCF_CXX14(constexpr)
 void
-__v_do_invoke_decay_copy(::std::integral_constant<size_t, _Nargs>, ::std::tuple<_Ts...>& __t,
-                         _Args&&... __args)
+__do_v_invoke_decay_copy(::std::integral_constant<size_t, _Nargs>, _Tuple& __t, _Args&&... __args)
   {
-    _Noadl::__v_do_invoke_decay_copy(::std::integral_constant<size_t, _Nargs - 1>(), __t,
+    _Noadl::__do_v_invoke_decay_copy(::std::integral_constant<size_t, _Nargs - 1>(), __t,
                                      ::std::move(::std::get<_Nargs>(__t)),
                                      ::std::forward<_Args>(__args)...);
   }
@@ -260,7 +258,7 @@ __MCF_CXX14(constexpr)
 void
 __v_invoke_decay_copy(::std::tuple<_Ts...>& __t)
   {
-    _Noadl::__v_do_invoke_decay_copy(::std::integral_constant<size_t, sizeof...(_Ts) - 1>(), __t);
+    _Noadl::__do_v_invoke_decay_copy(::std::integral_constant<size_t, sizeof...(_Ts) - 1>(), __t);
   }
 
 #endif  // __cpp_lib_integer_sequence
