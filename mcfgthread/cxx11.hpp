@@ -19,6 +19,7 @@
 #include <system_error>  // system_error, errc, error_code
 #include <mutex>  // unique_lock, lock_guard
 #include <new>  // operator new()
+#include <memory>  // unique_ptr
 #include <iosfwd>  // basic_ostream
 #include <type_traits>  // many
 #if 0 __MCF_CXX14(+1)
@@ -265,22 +266,15 @@ template<typename _Callable, typename... _Args>
 void
 call_once(once_flag& __flag, _Callable&& __callable, _Args&&... __args)
   {
-    struct _Once_sentry
-      {
-        _Vcfn<::_MCF_once*>* __deferred_fn;
-        ::_MCF_once* __once;
-        ~_Once_sentry() noexcept { (* this->__deferred_fn) (this->__once);  }
-      };
-
     int __err = ::_MCF_once_wait(__flag._M_once, nullptr);
     if(__err == 0)
       return;  // passive
 
     // active
     __MCF_ASSERT(__err == 1);
-    _Once_sentry __sentry = { ::_MCF_once_abort, __flag._M_once };
+    ::std::unique_ptr<::_MCF_once, _Vcfn<::_MCF_once*>*> __sentry(__flag._M_once, ::_MCF_once_abort);
     _Noadl::__v_invoke(::std::forward<_Callable>(__callable), ::std::forward<_Args>(__args)...);
-    __sentry.__deferred_fn = ::_MCF_once_release;
+    __sentry.get_deleter() = ::_MCF_once_release;
   }
 
 /** Reference implementation for [thread.mutex.class] and
@@ -722,13 +716,6 @@ class thread
             char _M_end_of_data;  // unallocated; must be last member
           };
 
-        struct _Thread_sentry
-          {
-            _Vcfn<::_MCF_thread*>* __deferred_fn;
-            ::_MCF_thread* __thr;
-            ~_Thread_sentry() noexcept { (* this->__deferred_fn) (this->__thr);  }
-          };
-
         auto __fn = [](::_MCF_thread* __thr)
           {
             _My_data* const __my = static_cast<_My_data*>(::_MCF_thread_get_data(__thr));
@@ -745,20 +732,16 @@ class thread
             __my->_M_invoker->~_My_invoker();
           };
 
-        auto __sentry_cancel_thread = [](::_MCF_thread* __thr) noexcept
+        auto __cancel_thread = [](::_MCF_thread* __thr) noexcept
           {
-            _My_data* const __my = static_cast<_My_data*>(::_MCF_thread_get_data(__thr));
-
-            // Cancel the thread.
+            _My_data* __my = static_cast<_My_data*>(::_MCF_thread_get_data(__thr));
             ::_MCF_event_set(__my->_M_ctor_status, _St_cancelled);
             ::_MCF_thread_drop_ref(__thr);
           };
 
-        auto __sentry_complete_thread = [](::_MCF_thread* __thr) noexcept
+        auto __complete_thread = [](::_MCF_thread* __thr) noexcept
           {
-            _My_data* const __my = static_cast<_My_data*>(::_MCF_thread_get_data(__thr));
-
-            // Let the thread go.
+            _My_data* __my = static_cast<_My_data*>(::_MCF_thread_get_data(__thr));
             ::_MCF_event_set(__my->_M_ctor_status, _St_constructed);
           };
 
@@ -768,9 +751,9 @@ class thread
           __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_thread_p_new");
 
         // active
-        _Thread_sentry __sentry = { __sentry_cancel_thread, this->_M_thr };
+        ::std::unique_ptr<::_MCF_thread, _Vcfn<::_MCF_thread*>*> __sentry(this->_M_thr, __cancel_thread);
         ::new(::_MCF_thread_get_data(this->_M_thr)) _My_invoker(__callable, __args...);
-        __sentry.__deferred_fn = __sentry_complete_thread;
+        __sentry.get_deleter() = __complete_thread;
       }
 
     thread(thread&& __other)
