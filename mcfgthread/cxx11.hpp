@@ -182,7 +182,7 @@ __wait_until(const chrono::time_point<_Clock, _Dur>& __abs_time, _Cond&& __cnd,
  * type of `void` for simplicity.  */
 #if defined __cpp_lib_invoke
 
-template<class... _Args>
+template<typename... _Args>
 constexpr
 void
 __v_invoke(_Args&&... __args)
@@ -190,13 +190,13 @@ __v_invoke(_Args&&... __args)
 
 #else  // __cpp_lib_invoke
 
-template<class _Member, class _Class, class... _Args>
+template<class _Member, class _Class, typename... _Args>
 __MCF_CXX14(constexpr)
 void
 __v_invoke(_Member _Class::* __memp, _Args&&... __args)
   { ::std::mem_fn(__memp) (::std::forward<_Args>(__args)...);  }
 
-template<class _Callable, class... _Args>
+template<class _Callable, typename... _Args>
 __MCF_CXX14(constexpr)
 void
 __v_invoke(_Callable&& __callable, _Args&&... __args)
