@@ -1221,8 +1221,8 @@ static __MCF_SECTION(".CRT$XLB") const PIMAGE_TLS_CALLBACK crt__xl_b = do_tls_ca
  * to be defined. Although Cygwin/MSYS2 executables do not use native TLS, this
  * facility is fully functional and might be useful in the future.  */
 DWORD _tls_index = UINT32_MAX;
-__MCF_SECTION(".tls") PVOID _tls_start = nullptr;
-__MCF_SECTION(".tls$ZZZ") PVOID _tls_end = nullptr;
+__MCF_SECTION(".tls") PCHAR _tls_start = nullptr;
+__MCF_SECTION(".tls$ZZZ") PCHAR _tls_end = nullptr;
 __MCF_SECTION(".CRT$XLA") const PIMAGE_TLS_CALLBACK __xl_a = nullptr;
 __MCF_SECTION(".CRT$XLZ") const PIMAGE_TLS_CALLBACK __xl_z = nullptr;
 
