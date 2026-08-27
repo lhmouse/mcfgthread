@@ -15,6 +15,7 @@
 #include "shared_mutex.h"
 #include <chrono>  // duration, time_point
 #include <functional>  // mem_fn(), invoke()
+#include <tuple>  // tuple
 #include <exception>  // terminate()
 #include <system_error>  // system_error, errc, error_code
 #include <mutex>  // unique_lock, lock_guard
@@ -204,48 +205,25 @@ __v_invoke(_Callable&& __callable, _Args&&... __args)
 
 #endif  // __cpp_lib_invoke
 
-/** ISO C++ requires that arguments for the constructor of `std::thread` be
- * passed as decay-copied rvalues. This is the object that saves copies of them
- * and invokes the target function accordingly.  */
-template<typename _Callable, typename... _Args>
-struct _Invoke_decay_copy;
-
-template<typename _Callable>
-struct _Invoke_decay_copy<_Callable>
+/** Undocumented  */
+template<typename... _Ts, typename... _Args>
+__MCF_CXX14(constexpr)
+void
+__v_invoke_decay_copy(::std::integral_constant<size_t, 0>,
+                      ::std::tuple<_Ts...>& __t, _Args&&... __args)
   {
-    typename ::std::decay<_Callable>::type _M_callable;
+    _Noadl::__v_invoke(::std::move(::std::get<0>(__t)), ::std::forward<_Args>(__args)...);
+  }
 
-    explicit _Invoke_decay_copy(_Callable& __callable)
-      : _M_callable(::std::forward<_Callable>(__callable))
-      {
-      }
-
-    template<typename... _Args>
-    void
-    __do_it(_Args&... __args)
-      {
-        _Noadl::__v_invoke(::std::move(this->_M_callable), ::std::move(__args)...);
-      }
-  };
-
-template<typename _Callable, typename _Mine, typename... _Others>
-struct _Invoke_decay_copy<_Callable, _Mine, _Others...>
+template<size_t _N, typename... _Ts, typename... _Args>
+__MCF_CXX14(constexpr)
+void
+__v_invoke_decay_copy(::std::integral_constant<size_t, _N>,
+                      ::std::tuple<_Ts...>& __t, _Args&&... __args)
   {
-    typename ::std::decay<_Mine>::type _M_mine;
-    _Invoke_decay_copy<_Callable, _Others...> _M_next;
-
-    explicit _Invoke_decay_copy(_Callable& __callable, _Mine& __mine, _Others&... __others)
-      : _M_mine(::std::forward<_Mine>(__mine)), _M_next(__callable, __others...)
-      {
-      }
-
-    template<typename... _Args>
-    void
-    __do_it(_Args&... __args)
-      {
-        this->_M_next.__do_it(__args..., this->_M_mine);
-      }
-  };
+    _Noadl::__v_invoke_decay_copy(::std::integral_constant<size_t, _N - 1>(), __t,
+                                  ::std::move(::std::get<_N>(__t)), ::std::forward<_Args>(__args)...);
+  }
 
 /** Reference implementation for [thread.once.onceflag]
  *
@@ -702,34 +680,34 @@ class thread
     thread& operator=(const thread&) = delete;
 
     template<typename _Callable, typename... _Args,
-    __MCF_SFINAE_DISABLE_IF(::std::is_same<typename ::std::decay<_Callable>::type,
-                            thread>::value)>
+    __MCF_SFINAE_DISABLE_IF(::std::is_same<typename ::std::decay<_Callable>::type, thread>::value)>
     explicit thread(_Callable&& __callable, _Args&&... __args)
       {
-        using _My_invoker = _Invoke_decay_copy<_Callable, _Args...>;
+        using _My_tuple = ::std::tuple<typename ::std::decay<_Callable>::type,
+                                       typename ::std::decay<_Args>::type...>;
+
         enum { _St_zero, _St_constructed, _St_cancelled };
 
         struct _My_data
           {
-            __MCF_BR(_My_invoker) _M_invoker;
+            __MCF_BR(char [sizeof(_My_tuple)]) _M_tuple;  // must be first member due to alignment
             __MCF_BR(::_MCF_event) _M_ctor_status;
-            char _M_end_of_data;  // unallocated; must be last member
           };
 
-        auto __fn = [](::_MCF_thread* __thr)
+        auto __thread_fn = [](::_MCF_thread* __thr)
           {
-            _My_data* const __my = static_cast<_My_data*>(::_MCF_thread_get_data(__thr));
-
-            // Check whether `*_M_invoker` has been constructed. If its
-            // constructor failed, this thread shall exit immediately.
+            // Check whether `_M_tuple` has been constructed. In case of a
+            // failure, this thread shall exit immediately.
+            _My_data* __my = static_cast<_My_data*>(::_MCF_thread_get_data(__thr));
             int __st = ::_MCF_event_await_change(__my->_M_ctor_status, _St_zero, nullptr);
             if(__st == _St_cancelled)
               return;
 
             // Execute the user-defined procedure.
             __MCF_ASSERT(__st == _St_constructed);
-            __my->_M_invoker->__do_it();
-            __my->_M_invoker->~_My_invoker();
+            _Noadl::__v_invoke_decay_copy(::std::integral_constant<size_t, sizeof...(_Args)>(),
+                                          reinterpret_cast<_My_tuple&>(__my->_M_tuple));
+            reinterpret_cast<_My_tuple&>(__my->_M_tuple).~_My_tuple();
           };
 
         auto __cancel_thread = [](::_MCF_thread* __thr) noexcept
@@ -746,13 +724,15 @@ class thread
           };
 
         // Create the thread. User-defined data are initialized to zeroes.
-        if(!::_MCF_thread_p_new(&(this->_M_thr), 0, __fn, alignof(_My_data), nullptr,
-                                __builtin_offsetof(_My_data, _M_end_of_data)))
+        ::_MCF_thread* __thr = ::_MCF_thread_p_new(&(this->_M_thr), 0, __thread_fn,
+                                                   alignof(_My_tuple), nullptr, sizeof(_My_data));
+        if(!__thr)
           __MCF_THROW_SYSTEM_ERROR(resource_unavailable_try_again, "_MCF_thread_p_new");
 
-        // active
-        ::std::unique_ptr<::_MCF_thread, _Vcfn<::_MCF_thread*>*> __sentry(this->_M_thr, __cancel_thread);
-        ::new(::_MCF_thread_get_data(this->_M_thr)) _My_invoker(__callable, __args...);
+        // Copy the function object with its arguments.
+        ::std::unique_ptr<::_MCF_thread, _Vcfn<::_MCF_thread*>*> __sentry(__thr, __cancel_thread);
+        ::new(::_MCF_thread_get_data(__thr)) _My_tuple(::std::forward<_Callable>(__callable),
+                                                       ::std::forward<_Args>(__args)...);
         __sentry.get_deleter() = __complete_thread;
       }
 
