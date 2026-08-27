@@ -215,14 +215,15 @@ __v_invoke_decay_copy(::std::integral_constant<size_t, 0>,
     _Noadl::__v_invoke(::std::move(::std::get<0>(__t)), ::std::forward<_Args>(__args)...);
   }
 
-template<size_t _N, typename... _Ts, typename... _Args>
+template<size_t _Nargs, typename... _Ts, typename... _Args>
 __MCF_CXX14(constexpr)
 void
-__v_invoke_decay_copy(::std::integral_constant<size_t, _N>,
+__v_invoke_decay_copy(::std::integral_constant<size_t, _Nargs>,
                       ::std::tuple<_Ts...>& __t, _Args&&... __args)
   {
-    _Noadl::__v_invoke_decay_copy(::std::integral_constant<size_t, _N - 1>(), __t,
-                                  ::std::move(::std::get<_N>(__t)), ::std::forward<_Args>(__args)...);
+    _Noadl::__v_invoke_decay_copy(::std::integral_constant<size_t, _Nargs - 1>(), __t,
+                                  ::std::move(::std::get<_Nargs>(__t)),
+                                  ::std::forward<_Args>(__args)...);
   }
 
 /** Reference implementation for [thread.once.onceflag]
