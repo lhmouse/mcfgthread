@@ -17,12 +17,12 @@
  * the standard library is used. Microsoft Visual Studio 2022 has experimental
  * support which seems to suffice.  */
 #if defined __GNUC__ || defined __clang__
-#  define __MCF_ATOMIC(...)                   volatile __VA_ARGS__
-#  define __MCF_memory_order_rlx              __ATOMIC_RELAXED
-#  define __MCF_memory_order_acq              __ATOMIC_ACQUIRE
-#  define __MCF_memory_order_rel              __ATOMIC_RELEASE
-#  define __MCF_memory_order_arl              __ATOMIC_ACQ_REL
-#  define __MCF_memory_order_cst              __ATOMIC_SEQ_CST
+#  define __MCF_ATOMIC(...)             volatile __VA_ARGS__
+#  define __MCF_memory_order_rlx        __ATOMIC_RELAXED
+#  define __MCF_memory_order_acq        __ATOMIC_ACQUIRE
+#  define __MCF_memory_order_rel        __ATOMIC_RELEASE
+#  define __MCF_memory_order_arl        __ATOMIC_ACQ_REL
+#  define __MCF_memory_order_cst        __ATOMIC_SEQ_CST
 #  define __MCF_atomic_load(p,o)              __atomic_load_n(p,o)
 #  define __MCF_atomic_store(p,v,o)           __atomic_store_n(p,v,o)
 #  define __MCF_atomic_xchg(p,v,o)            __atomic_exchange_n(p,v,o)
@@ -33,18 +33,13 @@
 #  define __MCF_atomic_thread_fence(o)        __atomic_thread_fence(o)
 #  define __MCF_atomic_signal_fence(o)        __atomic_signal_fence(o)
 #else
-#  if !defined __cplusplus
-#    include <stdatomic.h>
-#    define __MCF_ATOMIC(...)                 _Atomic __VA_ARGS__
-#  else
-#    include <atomic>
-#    define __MCF_ATOMIC(...)                 ::std::atomic<__VA_ARGS__>
-#  endif
-#  define __MCF_memory_order_rlx              memory_order_relaxed
-#  define __MCF_memory_order_acq              memory_order_acquire
-#  define __MCF_memory_order_rel              memory_order_release
-#  define __MCF_memory_order_arl              memory_order_acq_rel
-#  define __MCF_memory_order_cst              memory_order_seq_cst
+#  include __MCF_C_CXX(<stdatomic.h>, <atomic>)
+#  define __MCF_ATOMIC(...)            __MCF_C_CXX(_Atomic __VA_ARGS__, ::std::atomic<__VA_ARGS__>)
+#  define __MCF_memory_order_rlx       __MCF_CXX(::std::)memory_order_relaxed
+#  define __MCF_memory_order_acq       __MCF_CXX(::std::)memory_order_acquire
+#  define __MCF_memory_order_rel       __MCF_CXX(::std::)memory_order_release
+#  define __MCF_memory_order_arl       __MCF_CXX(::std::)memory_order_acq_rel
+#  define __MCF_memory_order_cst       __MCF_CXX(::std::)memory_order_seq_cst
 #  define __MCF_atomic_load(p,o)              atomic_load_explicit(p,o)
 #  define __MCF_atomic_store(p,v,o)           atomic_store_explicit(p,v,o)
 #  define __MCF_atomic_xchg(p,v,o)            atomic_exchange_explicit(p,v,o)
