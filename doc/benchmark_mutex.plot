@@ -18,8 +18,12 @@ set ylabel 'Nanoseconds per iteration (lower is better)'
 set logscale y
 set format y '%.0f'
 set grid ytics
+set macros
 
-plot "benchmark_result.txt" index 1 using 0:3:xticlabels(2) with linespoints title 'CRITICAL\_SECTION', \
-     "benchmark_result.txt" index 0 using 0:3:xticlabels(2) with linespoints title 'SRWLOCK', \
-     "benchmark_result.txt" index 2 using 0:3:xticlabels(2) with linespoints title 'WINPTHREAD', \
-     "benchmark_result.txt" index 3 using 0:3:xticlabels(2) with linespoints title 'MCFGTHREAD'
+STYLES = 'using 0:3:xticlabels(2) with linespoints'
+
+plot  \
+  'benchmark_result.txt' index 0 @STYLES title 'SRWLOCK', \
+  'benchmark_result.txt' index 1 @STYLES title 'CRITICAL\_SECTION', \
+  'benchmark_result.txt' index 2 @STYLES title 'WINPTHREAD', \
+  'benchmark_result.txt' index 3 @STYLES title 'MCFGTHREAD'
