@@ -776,8 +776,9 @@ class thread
     thread(thread&& __other)
       noexcept
       {
-        this->_M_thr = __other._M_thr;
+        ::_MCF_thread* __thr = __other._M_thr;
         __other._M_thr = nullptr;
+        this->_M_thr = __thr;
       }
 
     thread&
@@ -786,9 +787,9 @@ class thread
         if(this->_M_thr)
           ::std::terminate();
 
-        this->_M_thr = __other._M_thr;
+        ::_MCF_thread* __thr = __other._M_thr;
         __other._M_thr = nullptr;
-
+        this->_M_thr = __thr;
         return *this;
       }
 
