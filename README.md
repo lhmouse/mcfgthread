@@ -1,9 +1,8 @@
 # The MCF Gthread Library
 
-**MCF Gthread** is a threading support library for **Windows 7** and above that
-implements the _gthread interface set_, which is used internally both by **GCC**
-to provide synchronization of initialization of local static objects, and by
-**libstdc++** to provide C++11 threading facilities.
+**MCF Gthread** is a threading support library for **Windows 7** and above that implements the
+_gthread interface set_, which is used internally both by **GCC** to provide synchronization of
+initialization of local static objects, and by **libstdc++** to provide C++11 threading facilities.
 
 > [!TIP]
 > In order for `__cxa_atexit()` to conform to the Itanium C++ ABI, it is required
@@ -12,52 +11,46 @@ to provide synchronization of initialization of local static objects, and by
 > 2. for a DLL to call `__cxa_finalize(&__dso_handle)` when it is unloaded
 >    dynamically with `FreeLibrary()`.
 >
-> This requires [hacking the CRT](patches/mingw-w64-10.0.patch). If you don't have
-> the modified CRT, you may still get standard compliance by
+> This requires [hacking the CRT](patches/mingw-w64-10.0.patch). If you don't have the modified
+> CRT, you may still get standard compliance by
 >
-> 1. calling `__MCF_cxa_atexit(fflush, NULL, &__dso_handle)` in the beginning of,
->    and calling `__MCF_exit()` in the end of, `main()` of your program, and
-> 2. calling `__cxa_finalize(&__dso_handle)` when `DLL_PROCESS_DETACH` is received
->    by `DllMain()` of your DLL.
+> 1. calling `__MCF_cxa_atexit(fflush, NULL, &__dso_handle)` in the beginning of, and calling
+>    `__MCF_exit()` in the end of, `main()` of your program, and
+> 2. calling `__cxa_finalize(&__dso_handle)` when `DLL_PROCESS_DETACH` is received by `DllMain()`
+>    of your DLL.
 
 > [!WARNING]
-> This project uses some undocumented NT system calls and is not guaranteed to
-> work on some Windows versions. The author gives no warranty for this project.
-> Use it at your own risk.
+> This project uses some undocumented NT system calls and is not guaranteed to work on some Windows
+> versions. The author gives no warranty for this project. Use it at your own risk.
 
 ## Benchmark Results
 
-This is the result of [a benchmark program](doc/benchmark_mutex.c) on **Windows
-11 26H2** (build 26200.8737) on an **Intel i9-14900K** desktop processor (8
-P-cores + 16 E-cores, 32 threads):
+This is the result of [a benchmark program](doc/benchmark_mutex.c) on **Windows 11 26H2** (build
+26200.8737) on an **Intel i9-14900K** desktop processor (8 P-cores + 16 E-cores, 32 threads):
 
 ![benchmark_result_win11_26200_i9_14900k](doc/benchmark_result_win11_26200_i9_14900k.png)
 
-This is the result on **Windows 11 25H2** (build 26200.8655) on an **AMD Ryzen 9
-9950X3D** desktop processor (16 cores, 32 threads; special thanks to @fredyakumo
-for testing!):
+This is the result on **Windows 11 25H2** (build 26200.8655) on an **AMD Ryzen 9 9950X3D** desktop
+processor (16 cores, 32 threads; special thanks to @fredyakumo for testing!):
 
 ![benchmark_result_win11_26200_ryzen9_9950x3d](doc/benchmark_result_win11_26200_ryzen9_9950x3d.png)
 
-This is the result on **Windows 11 26H2** (build 26200.8737) on a **Qualcomm
-Snapdragon 8cx Gen 3** mobile processor (4 big cores + 4 little cores, no
-hyper-threading):
+This is the result on **Windows 11 26H2** (build 26200.8737) on a **Qualcomm Snapdragon 8cx Gen 3**
+mobile processor (4 big cores + 4 little cores, no hyper-threading):
 
 ![benchmark_result_win11_26200_snapdragon_8cxg3](doc/benchmark_result_win11_26200_snapdragon_8cxg3.png)
 
-This is the result on **Windows 11 24H2** (build 26100.4652) on an **AMD Ryzen 9
-7900X** desktop processor (12 cores, 24 threads; special thanks to @nmreadelf
-for testing!):
+This is the result on **Windows 11 24H2** (build 26100.4652) on an **AMD Ryzen 9 7900X** desktop
+processor (12 cores, 24 threads; special thanks to @nmreadelf for testing!):
 
 ![benchmark_result_win11_26100_ryzen9_7900x](doc/benchmark_result_win11_26100_ryzen9_7900x.png)
 
-This is the result on **Windows 7 SP1** on an **Intel i7-7700** desktop processor
-(4 cores, 8 threads):
+This is the result on **Windows 7 SP1** on an **Intel i7-7700** desktop processor (4 cores, 8 threads):
 
 ![benchmark_result_win7_sp1_i7_7700](doc/benchmark_result_win7_sp1_i7_7700.png)
 
-This is the result on **Wine 10.0** on **Linux Mint 23** (kernel 7.0 generic HWE)
-on an **Intel i7-1165G7** mobile processor (4 cores, 8 threads):
+This is the result on **Wine 10.0** on **Linux Mint 23** (kernel 7.0 generic HWE) on an
+**Intel i7-1165G7** mobile processor (4 cores, 8 threads):
 
 ![benchmark_result_wine10.0_linux_i7_1165g7](doc/benchmark_result_wine10.0_linux_i7_1165g7.png)
 
@@ -65,8 +58,8 @@ on an **Intel i7-1165G7** mobile processor (4 cores, 8 threads):
 
 #### MSYS2
 
-mcfgthread can be compiled natively in MSYS2. We take the UCRT64 shell as an
-example; others are similar. MSYS and CLANG64 shells are also supported.
+mcfgthread can be compiled natively in MSYS2. We take the UCRT64 shell as an example; others are
+similar. MSYS and CLANG64 shells are also supported.
 
 ```sh
 pacman -S --noconfirm  \
@@ -81,10 +74,10 @@ meson test
 
 #### Linux
 
-In [cross](cross), there are prefabricated Meson cross files for cross compilation.
-In order to run tests, Wine is required. Here are commands for cross-compiling on
-Debian, Ubuntu or Linux Mint; if you are using another Linux distribution, you will
-need to use some other package manager to install these dependencies.
+In [cross](cross), there are prefabricated Meson cross files for cross compilation. In order to
+run tests, Wine is required. Here are commands for cross-compiling on Debian, Ubuntu or Linux Mint;
+if you are using another Linux distribution, you will need to use some other package manager to
+install these dependencies.
 
 ```sh
 sudo apt-get install -y --no-install-recommends  \
@@ -100,9 +93,9 @@ meson test  # requires Wine
 
 #### Clang for MSVC
 
-It's not possible to build mcfgthread with MSVC. However, it's possible to compile
-mcfgthread with Clang to produce libraries that are compatible with MSVC, which
-can then be used in Visual Studio projects.
+It's not possible to build mcfgthread with MSVC. However, it's possible to compile mcfgthread with
+Clang to produce libraries that are compatible with MSVC, which can then be used in Visual Studio
+projects.
 
 LLVM can be installed with their Windows installers from
 <https://github.com/llvm/llvm-project/releases/>.
@@ -118,65 +111,58 @@ meson test
 
 #### The condition variable
 
-A condition variable is implemented as an atomic counter of threads that are
-currently waiting on it. Initially the counter is zero, which means no thread
-is waiting.
+A condition variable is implemented as an atomic counter of threads that are currently waiting on
+it. Initially the counter is zero, which means no thread is waiting.
 
-When a thread is about to start waiting on a condition variable, it increments
-the counter and suspends itself using the global keyed event, passing the
-address of the condition variable as the key. Another thread may read the
-counter to tell how many threads that it will have to wake up (note this has to
-be atomic), and release them from the global keyed event, also passing the
-address of the condition variable as the key.
+When a thread is about to start waiting on a condition variable, it increments the counter and
+suspends itself using the global keyed event, passing the address of the condition variable as the
+key. Another thread may read the counter to tell how many threads that it will have to wake up (note
+this has to be atomic), and release them from the global keyed event, also passing the address of
+the condition variable as the key.
 
 #### The primitive mutex
 
-A primitive mutex is just a condition variable with a boolean bit, which
-designates whether the mutex is LOCKED. A mutex is initialized to all-bit zeroes
-which means it is unlocked and no thread is waiting.
+A primitive mutex is just a condition variable with a boolean bit, which designates whether the
+mutex is LOCKED. A mutex is initialized to all-bit zeroes which means it is unlocked and no thread
+is waiting.
 
-When a thread wishes to lock a mutex, it checks whether the LOCKED bit is clear.
-If so, it sets the LOCKED bit and returns, having taken ownership of the mutex.
-If the LOCKED bit has been set by another thread, it goes to wait on the
-condition variable. If the thread wishes to unlock this mutex, it clears the
-LOCKED bit and wakes up at most one waiting thread on the condition variable, if
-any.
+When a thread wishes to lock a mutex, it checks whether the LOCKED bit is clear. If so, it sets
+the LOCKED bit and returns, having taken ownership of the mutex. If the LOCKED bit has been set by
+another thread, it goes to wait on the condition variable. If the thread wishes to unlock this
+mutex, it clears the LOCKED bit and wakes up at most one waiting thread on the condition variable,
+if any.
 
 #### The 'real' mutex
 
-In reality, critical sections are fairly small. If a thread fails to lock a
-mutex, it might be able to do so soon, and we don't want it to give up its time
-slice as a syscall is an overkill. Therefore, it is reasonable for a thread to
-perform some spinning (busy waiting), before it actually decides to sleep.
+In reality, critical sections are fairly small. If a thread fails to lock a mutex, it might be
+able to do so soon, and we don't want it to give up its time slice as a syscall is an overkill.
+Therefore, it is reasonable for a thread to perform some spinning (busy waiting), before it
+actually decides to sleep.
 
-This could however lead to severe problems in case of heavy contention. When
-there are hundreds of thread attempting to lock the same mutex, the system
-scheduler has no idea whether they are spinning or not. As it is likely that a
-lot of threads will eventually give up spinning and make a syscall to sleep, we
-are wasting a lot of CPU time and aggravating the situation.
+This could however lead to severe problems in case of heavy contention. When there are hundreds
+of thread attempting to lock the same mutex, the system scheduler has no idea whether they are
+spinning or not. As it is likely that a lot of threads will eventually give up spinning and make
+a syscall to sleep, we are wasting a lot of CPU time and aggravating the situation.
 
-This issue is ultimately solved by mcfgthread by encoding a spin failure counter
-in each mutex. If a thread gives up spinning because it couldn't lock the mutex
-within a given number of iterations, the spin failure counter is incremented. If
-a thread locks a mutex successfully while it is spinning, the spin failure
-counter is decremented. This counter provides a heuristic way to determine how
-heavily a mutex is seized. If there have been many spin failures, newcomers will
+This issue is ultimately solved by mcfgthread by encoding a spin failure counter in each mutex.
+If a thread gives up spinning because it couldn't lock the mutex within a given number of
+iterations, the spin failure counter is incremented. If a thread locks a mutex successfully while
+it is spinning, the spin failure counter is decremented. This counter provides a heuristic way to
+determine how heavily a mutex is seized. If there have been many spin failures, newcomers will
 not attempt to spin, but will make a syscall to sleep on the mutex directly.
 
 #### The once-initialization flag
 
-A once-initialization flag contains a READY byte (this is the first one according
-to Itanium ABI) which indicates whether initialization has completed. The other
-bytes are used as a primitive mutex.
+A once-initialization flag contains a READY byte (this is the first one according to Itanium ABI)
+which indicates whether initialization has completed. The other bytes are used as a primitive mutex.
 
-A thread that sees the READY byte set to non-zero knows initialization has been
-done, so it will return immediately. A thread that sees the READY byte set to
-zero will lock the bundled primitive mutex, and shall perform initialization
-thereafter. If initialization fails, it unlocks the primitive mutex without
-setting the READY byte, so the next thread that locks the primitive mutex will
-perform initialization. If initialization is successful, it sets the READY byte
-and unlocks the primitive mutex, releasing all threads that are waiting on it.
-(Do you remember that a primitive mutex actually contains a condition variable?)
+A thread that sees the READY byte set to non-zero knows initialization has been done, so it will
+return immediately. A thread that sees the READY byte set to zero will lock the bundled primitive
+mutex, and shall perform initialization thereafter. If initialization fails, it unlocks the primitive
+mutex without setting the READY byte, so the next thread that locks the primitive mutex will perform
+initialization. If initialization is successful, it sets the READY byte and unlocks the primitive
+mutex, releasing all threads that are waiting on it. (Do you remember that a primitive mutex actually
+contains a condition variable?)
 
 ## List of Imported Functions
 
