@@ -181,7 +181,7 @@ __MCF_thread_attach_foreign(_MCF_thread* __thrd)
  * @param `thrd` is a pointer to a thread control structure.
  * @returns a pointer to the user-defined data, or null if none exists.
  * @since 1.0  */
-__MCF_THREAD_INLINE __MCF_FN_PURE
+__MCF_THREAD_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
 __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd)
   __MCF_noexcept;
@@ -479,12 +479,12 @@ _MCF_thread_new(_MCF_thread_procedure* __proc, const void* __data_opt, size_t __
     return _MCF_thread_p_new(__MCF_nullptr, 0, __proc, 0, __data_opt, __data_size);
   }
 
-__MCF_THREAD_INLINE __MCF_FN_PURE
+__MCF_THREAD_INLINE __MCF_CXX11(constexpr) __MCF_FN_PURE
 __MCF_CXX(const) void*
 _MCF_thread_get_data(const _MCF_thread* __thrd)
   __MCF_noexcept
   {
-    return __builtin_assume_aligned(__thrd->__data_opt, __MCF_THREAD_DATA_ALIGNMENT);
+    return __thrd->__data_opt;
   }
 
 #ifdef __cplusplus
@@ -493,7 +493,7 @@ void*
 _MCF_thread_get_data(_MCF_thread* __thrd)
   __MCF_noexcept
   {
-    return __builtin_assume_aligned(__thrd->__data_opt, __MCF_THREAD_DATA_ALIGNMENT);
+    return __thrd->__data_opt;
   }
 #endif  /* __cplusplus  */
 
