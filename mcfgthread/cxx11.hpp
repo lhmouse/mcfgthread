@@ -220,17 +220,20 @@ __v_invoke(_Callable&& __callable, _Args&&... __args)
 template<size_t... _Ns, typename _Tuple>
 __MCF_CXX14(constexpr)
 void
-__do_v_invoke_decay_copy(::std::index_sequence<_Ns...>, _Tuple& __t)
+__do_v_invoke_tuple_v2(::std::index_sequence<_Ns...>, _Tuple&& __t)
   {
-    _Noadl::__v_invoke(::std::move(::std::get<_Ns>(__t))...);
+    _Noadl::__v_invoke(::std::get<_Ns>(::std::forward<_Tuple>(__t))...);
   }
 
-template<typename... _Ts>
+template<typename _Tuple>
 __MCF_CXX14(constexpr)
 void
-__v_invoke_decay_copy(::std::tuple<_Ts...>& __t)
+__v_invoke_tuple(_Tuple&& __t)
   {
-    _Noadl::__do_v_invoke_decay_copy(::std::make_index_sequence<sizeof...(_Ts)>(), __t);
+    _Noadl::__do_v_invoke_tuple_v2(
+              ::std::make_index_sequence<::std::tuple_size<
+                  typename ::std::remove_reference<_Tuple>::type>::value>(),
+              ::std::forward<_Tuple>(__t));
   }
 
 #else  // __cpp_lib_integer_sequence
@@ -238,27 +241,31 @@ __v_invoke_decay_copy(::std::tuple<_Ts...>& __t)
 template<typename _Tuple, typename... _Args>
 __MCF_CXX14(constexpr)
 void
-__do_v_invoke_decay_copy(::std::integral_constant<size_t, 0>, _Tuple& __t, _Args&&... __args)
+__do_v_invoke_tuple_v1(::std::integral_constant<size_t, 1>, _Tuple&& __t, _Args&&... __args)
   {
-    _Noadl::__v_invoke(::std::move(::std::get<0>(__t)), ::std::forward<_Args>(__args)...);
+    _Noadl::__v_invoke(::std::get<0>(::std::forward<_Tuple>(__t)),
+                       ::std::forward<_Args>(__args)...);
   }
 
-template<size_t _Nargs, typename _Tuple, typename... _Args>
+template<size_t _Index, typename _Tuple, typename... _Args>
 __MCF_CXX14(constexpr)
 void
-__do_v_invoke_decay_copy(::std::integral_constant<size_t, _Nargs>, _Tuple& __t, _Args&&... __args)
+__do_v_invoke_tuple_v1(::std::integral_constant<size_t, _Index>, _Tuple&& __t, _Args&&... __args)
   {
-    _Noadl::__do_v_invoke_decay_copy(::std::integral_constant<size_t, _Nargs - 1>(), __t,
-                                     ::std::move(::std::get<_Nargs>(__t)),
-                                     ::std::forward<_Args>(__args)...);
+    _Noadl::__do_v_invoke_tuple_v1(::std::integral_constant<size_t, _Index - 1>(),
+                                   ::std::forward<_Tuple>(__t),
+                                   ::std::get<_Index - 1>(::std::forward<_Tuple>(__t)),
+                                   ::std::forward<_Args>(__args)...);
   }
 
-template<typename... _Ts>
+template<typename _Tuple>
 __MCF_CXX14(constexpr)
 void
-__v_invoke_decay_copy(::std::tuple<_Ts...>& __t)
+__v_invoke_tuple(_Tuple&& __t)
   {
-    _Noadl::__do_v_invoke_decay_copy(::std::integral_constant<size_t, sizeof...(_Ts) - 1>(), __t);
+    _Noadl::__do_v_invoke_tuple_v1(
+              ::std::tuple_size<typename ::std::remove_reference<_Tuple>::type>(),
+              ::std::forward<_Tuple>(__t));
   }
 
 #endif  // __cpp_lib_integer_sequence
@@ -743,7 +750,7 @@ class thread
 
             // Execute the user-defined procedure.
             __MCF_ASSERT(__st == _St_constructed);
-            _Noadl::__v_invoke_decay_copy(reinterpret_cast<_My_tuple&>(__my->_M_tuple));
+            _Noadl::__v_invoke_tuple(reinterpret_cast<_My_tuple&&>(__my->_M_tuple));
             reinterpret_cast<_My_tuple&>(__my->_M_tuple).~_My_tuple();
           };
 
