@@ -460,7 +460,7 @@ __MCF_TRANSPARENT_UNION __MCF_tls_dtor_any
 #  endif
   };
 #else
-typedef __MCF_tls_dtor_any_ __MCF_tls_dtor_any_;
+typedef __MCF_cxa_dtor_cdecl* __MCF_tls_dtor_any_;
 #endif
 
 /** Gets the last error code, like `GetLastError()`.
