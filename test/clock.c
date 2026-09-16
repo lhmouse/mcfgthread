@@ -19,6 +19,8 @@ main(void)
     tzset();
 #endif
 
+    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
+
     SYSTEMTIME st;
     GetLocalTime(&st);
     struct tm tm;
