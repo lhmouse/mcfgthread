@@ -15,14 +15,14 @@ static char data[100];
 int
 main(void)
   {
-    HMODULE bcrypt = LoadLibraryW(L"bcrypt.dll");
+    HMODULE bcrypt = LoadLibraryExW(L"bcrypt.dll", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
     assert(bcrypt);
 
     typedef NTSTATUS __stdcall BCryptGenRandom_t(HANDLE, void*, ULONG, ULONG);
     BCryptGenRandom_t* pBCryptGenRandom = __MCF_CAST_PTR(BCryptGenRandom_t, GetProcAddress(bcrypt, "BCryptGenRandom"));
     assert(pBCryptGenRandom);
 
-    HMODULE ntdll = LoadLibraryW(L"ntdll.dll");
+    HMODULE ntdll = LoadLibraryExW(L"ntdll.dll", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
     assert(ntdll);
 
     typedef void* __cdecl memmove_t(void*, const void*, size_t);
