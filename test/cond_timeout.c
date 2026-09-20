@@ -5,6 +5,7 @@
 #include "../mcfgthread/cond.h"
 #include "../mcfgthread/clock.h"
 #include "../mcfgthread/thread.h"
+#include <windows.h>
 #undef NDEBUG
 #include <assert.h>
 #include <stdio.h>
@@ -19,19 +20,30 @@ main(void)
 
     _MCF_thread_set_priority(NULL, _MCF_thread_priority_realtime);
 
+    HMODULE winmm = LoadLibraryExW(L"WINMM.DLL", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
+    if(winmm) {
+      typedef UINT __stdcall timeBeginPeriod_t(UINT);
+      timeBeginPeriod_t* ptimeBeginPeriod = __MCF_CAST_PTR(timeBeginPeriod_t,
+            GetProcAddress(winmm, "timeBeginPeriod"));
+      if(ptimeBeginPeriod) {
+        /* Increase timer resolution.  */
+        ptimeBeginPeriod(1);
+      }
+    }
+
     now = _MCF_perf_counter();
     r = _MCF_cond_wait(&cond, NULL, NULL, 0, &(int64_t){ (int64_t) _MCF_hires_utc_now() + 1116 });  /* absolute  */
     assert(r == -1);
     delta = _MCF_perf_counter() - now;
     fprintf(stderr, "delta = %.6f\n", delta);
-    assert(delta >= 1100);
-    assert(delta <= 1200);
+    assert(delta >= 1111);
+    assert(delta <= 1166);
 
     now = _MCF_perf_counter();
     r = _MCF_cond_wait(&cond, NULL, NULL, 0, &(int64_t){ -1116 });  /* relative  */
     assert(r == -1);
     delta = _MCF_perf_counter() - now;
     fprintf(stderr, "delta = %.6f\n", delta);
-    assert(delta >= 1100);
-    assert(delta <= 1200);
+    assert(delta >= 1111);
+    assert(delta <= 1166);
   }
