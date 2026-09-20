@@ -18,6 +18,18 @@ main(void)
     __MCF_winnt_timeout to;
 
     _MCF_thread_set_priority(NULL, _MCF_thread_priority_realtime);
+
+    HMODULE winmm = LoadLibraryExW(L"WINMM.DLL", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
+    if(winmm) {
+      typedef UINT __stdcall timeBeginPeriod_t(UINT);
+      timeBeginPeriod_t* ptimeBeginPeriod = __MCF_CAST_PTR(timeBeginPeriod_t,
+            GetProcAddress(winmm, "timeBeginPeriod"));
+      if(ptimeBeginPeriod) {
+        /* Increase timer resolution.  */
+        ptimeBeginPeriod(1);
+      }
+    }
+
     now = _MCF_perf_counter();
 
     __MCF_initialize_winnt_timeout_v3(&to, &(int64_t){ -1116 });  /* relative  */
@@ -30,6 +42,6 @@ main(void)
 
     delta = _MCF_perf_counter() - now;
     fprintf(stderr, "delta = %.6f\n", delta);
-    assert(delta >= 1100);
-    assert(delta <= 1200);
+    assert(delta >= 1111);
+    assert(delta <= 1166);
   }

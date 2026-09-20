@@ -5,6 +5,7 @@
 #include "../mcfgthread/c11.h"
 #include "../mcfgthread/clock.h"
 #include "../mcfgthread/thread.h"
+#include <windows.h>
 #undef NDEBUG
 #include <assert.h>
 #include <stdio.h>
@@ -21,6 +22,17 @@ main(void)
     int r;
 
     _MCF_thread_set_priority(NULL, _MCF_thread_priority_realtime);
+
+    HMODULE winmm = LoadLibraryExW(L"WINMM.DLL", NULL, LOAD_LIBRARY_SEARCH_SYSTEM32);
+    if(winmm) {
+      typedef UINT __stdcall timeBeginPeriod_t(UINT);
+      timeBeginPeriod_t* ptimeBeginPeriod = __MCF_CAST_PTR(timeBeginPeriod_t,
+            GetProcAddress(winmm, "timeBeginPeriod"));
+      if(ptimeBeginPeriod) {
+        /* Increase timer resolution.  */
+        ptimeBeginPeriod(1);
+      }
+    }
 
     r = mtx_init(&mutex, mtx_timed);
     assert(r == thrd_success);
@@ -40,8 +52,8 @@ main(void)
     assert(r == thrd_timedout);
     delta = _MCF_perf_counter() - now;
     fprintf(stderr, "delta = %.6f\n", delta);
-    assert(delta >= 1100);
-    assert(delta <= 1200);
+    assert(delta >= 1111);
+    assert(delta <= 1166);
 
     r = mtx_trylock(&mutex);
     assert(r == thrd_error);
