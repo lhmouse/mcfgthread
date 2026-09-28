@@ -220,7 +220,7 @@ _MCF_once_consume_wait(_MCF_once* __once, void** __ref_ptr, const int64_t* __tim
       return 0;
     }
 #endif
-    (void) __ref_ptr;
+    (void) *__ref_ptr;
     return _MCF_once_wait_slow(__once, __timeout_opt);
   }
 
