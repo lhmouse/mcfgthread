@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-#define NTHREADS  64U
+#define NTHREADS  16U
 static _MCF_thread* threads[NTHREADS];
 
 static

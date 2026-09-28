@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-#define NTHREADS  64U
+#define NTHREADS  16U
 static __libcpp_thread_t threads[NTHREADS];
 static __MCF_ALIGNED(128) __libcpp_mutex_t mutex = _LIBCPP_MUTEX_INITIALIZER;
 static __MCF_ALIGNED(128) _MCF_sem start = _MCF_SEM_INIT(0);

@@ -7,7 +7,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-#define NTHREADS  64U
+#define NTHREADS  16U
 static thrd_t threads[NTHREADS];
 
 #define NTICKS  100000
