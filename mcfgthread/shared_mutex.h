@@ -187,7 +187,7 @@ _MCF_shared_mutex_init(_MCF_shared_mutex* __smtx)
   __MCF_noexcept
   {
     _MCF_shared_mutex __temp = __MCF_0_INIT;
-    _MCF_atomic_store_pptr_rlx(__smtx, &__temp);
+    *__smtx = __temp;
   }
 
 __MCF_SHARED_MUTEX_INLINE

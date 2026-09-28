@@ -130,7 +130,7 @@ _MCF_cond_init(_MCF_cond* __cnd)
   __MCF_noexcept
   {
     _MCF_cond __temp = __MCF_0_INIT;
-    _MCF_atomic_store_pptr_rlx(__cnd, &__temp);
+    *__cnd = __temp;
   }
 
 __MCF_COND_INLINE

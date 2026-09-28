@@ -135,7 +135,7 @@ _MCF_mutex_init(_MCF_mutex* __mtx)
   __MCF_noexcept
   {
     _MCF_mutex __temp = __MCF_0_INIT;
-    _MCF_atomic_store_pptr_rlx(__mtx, &__temp);
+    *__mtx = __temp;
   }
 
 __MCF_MUTEX_INLINE
