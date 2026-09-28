@@ -184,7 +184,7 @@ _MCF_once_init(_MCF_once* __once)
   __MCF_noexcept
   {
     _MCF_once __temp = __MCF_0_INIT;
-    _MCF_atomic_store_pptr_rlx(__once, &__temp);
+    *__once = __temp;
   }
 
 __MCF_ONCE_INLINE
