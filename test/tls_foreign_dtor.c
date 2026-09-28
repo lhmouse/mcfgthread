@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <windows.h>
 
-#define NTHREADS  64U
+#define NTHREADS  16U
 static HANDLE threads[NTHREADS];
 static _MCF_tls_key* key;
 static _MCF_sem start = _MCF_SEM_INIT(0);

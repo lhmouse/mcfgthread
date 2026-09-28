@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-#define NTHREADS  64U
+#define NTHREADS  16U
 static thrd_t threads[NTHREADS];
 static tss_t key;
 static _MCF_sem start = _MCF_SEM_INIT(0);

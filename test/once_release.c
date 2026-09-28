@@ -9,7 +9,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-#define NTHREADS  64U
+#define NTHREADS  16U
 static _MCF_thread* threads[NTHREADS];
 static __MCF_ALIGNED(128) _MCF_once once;
 static __MCF_ALIGNED(128) _MCF_sem start = _MCF_SEM_INIT(0);

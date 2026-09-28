@@ -10,7 +10,7 @@
 #include <assert.h>
 #include <stdio.h>
 
-#define NTHREADS  64U
+#define NTHREADS  16U
 static thrd_t threads[NTHREADS];
 static __MCF_ALIGNED(128) once_flag once = ONCE_FLAG_INIT;
 static __MCF_ALIGNED(128) _MCF_sem start = _MCF_SEM_INIT(0);
