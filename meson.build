@@ -115,7 +115,7 @@ test_src = [
   'test/thread_decay_copy.cpp', 'test/thread_decay_copy_cxx11.cpp',
   'test/this_thread_sleep_until.cpp',
   'test/this_thread_sleep_for.cpp', 'test/tls_dtor.cpp', 'test/tls_many.cpp',
-  'test/gthr_call_once_unwind_seh.cpp', 'test/c11_call_once_unwind_seh.c',
+  'test/gthr_call_once_unwind.cpp', 'test/c11_call_once_unwind_seh.c',
   'test/atexit_terminate.cpp', 'test/at_quick_exit_terminate.cpp',
   'test/shared_mutex_rw_multi_fast.c', 'test/shared_mutex_rw_multi_slow.c',
   'test/tick_count.c', 'test/cpu_collection_selection.c', 'test/affinity_empty.c',
