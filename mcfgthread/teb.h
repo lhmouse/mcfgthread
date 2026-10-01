@@ -29,16 +29,16 @@ __MCF_CXX(extern "C" {)
  * @since 2.4  */
 __MCF_TEB_INLINE __MCF_FN_PURE
 int8_t
-__MCF_teb_load_8(uint32_t __offset)
+__MCF_teb_load_8(uintptr_t __offset)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    return *(int8_t __seg_gs*) (__offset + 0ULL);
+    return *(int8_t __seg_gs*) __offset;
 #  else
     int8_t __value;
     __asm__ ("gs { movzbl %a1, %k0 | movzx %k0, BYTE PTR %a1 }"
-             : "=q"(__value) : "Ts"(__offset + 0ULL)
+             : "=q"(__value) : "Ts"(__offset)
              : "memory");
     return __value;
 #  endif
@@ -55,11 +55,13 @@ __MCF_teb_load_8(uint32_t __offset)
 #elif defined __MCF_M_ARM64_ASM
     return *(int8_t*) (__MCF_arm64_x18 + __offset);
 #elif defined __MCF_M_X8664
-    return (int8_t) __readgsbyte(__offset);
+    __MCF_ASSERT(__offset <= 0xFFFFFFFF);
+    return (int8_t) __readgsbyte((uint32_t) __offset);
 #elif defined __MCF_M_X8632
     return (int8_t) __readfsbyte(__offset);
 #elif defined __MCF_M_ARM64
-    return (int8_t) __readx18byte(__offset);
+    __MCF_ASSERT(__offset <= 0xFFFFFFFF);
+    return (int8_t) __readx18byte((uint32_t) __offset);
 #else
 #  error unimplemented
 #endif
@@ -74,15 +76,15 @@ __MCF_teb_load_8(uint32_t __offset)
  * @since 2.4  */
 __MCF_TEB_INLINE
 void
-__MCF_teb_store_8(uint32_t __offset, int8_t __value)
+__MCF_teb_store_8(uintptr_t __offset, int8_t __value)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    *(int8_t __seg_gs*) (__offset + 0ULL) = __value;
+    *(int8_t __seg_gs*) __offset = __value;
 #  else
     __asm__ volatile ("gs { movb %1, %a0 | mov BYTE PTR %a0, %1 }"
-                      : : "Ts"(__offset + 0ULL), "qi"(__value)
+                      : : "Ts"(__offset), "qi"(__value)
                       : "memory");
 #  endif
 #elif defined __MCF_M_X8632_ASM
@@ -96,11 +98,13 @@ __MCF_teb_store_8(uint32_t __offset, int8_t __value)
 #elif defined __MCF_M_ARM64_ASM
     *(int8_t*) (__MCF_arm64_x18 + __offset) = __value;
 #elif defined __MCF_M_X8664
-    __writegsbyte(__offset, (uint8_t) __value);
+    __MCF_ASSERT(__offset <= 0xFFFFFFFF);
+    __writegsbyte((uint32_t) __offset, (uint8_t) __value);
 #elif defined __MCF_M_X8632
     __writefsbyte(__offset, (uint8_t) __value);
 #elif defined __MCF_M_ARM64
-    __writex18byte(__offset, (uint8_t) __value);
+    __MCF_ASSERT(__offset <= 0xFFFFFFFF);
+    __writex18byte((uint32_t) __offset, (uint8_t) __value);
 #else
 #  error unimplemented
 #endif
@@ -114,16 +118,16 @@ __MCF_teb_store_8(uint32_t __offset, int8_t __value)
  * @since 2.4  */
 __MCF_TEB_INLINE __MCF_FN_PURE
 int16_t
-__MCF_teb_load_16(uint32_t __offset)
+__MCF_teb_load_16(uintptr_t __offset)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    return *(int16_t __seg_gs*) (__offset + 0ULL);
+    return *(int16_t __seg_gs*) __offset;
 #  else
     int16_t __value;
     __asm__ ("gs { movzwl %a1, %k0 | movzx %k0, WORD PTR %a1 }"
-             : "=r"(__value) : "Ts"(__offset + 0ULL)
+             : "=r"(__value) : "Ts"(__offset)
              : "memory");
     return __value;
 #  endif
@@ -140,11 +144,13 @@ __MCF_teb_load_16(uint32_t __offset)
 #elif defined __MCF_M_ARM64_ASM
     return *(int16_t*) (__MCF_arm64_x18 + __offset);
 #elif defined __MCF_M_X8664
-    return (int16_t) __readgsword(__offset);
+    __MCF_ASSERT(__offset <= 0xFFFFFFFF);
+    return (int16_t) __readgsword((uint32_t) __offset);
 #elif defined __MCF_M_X8632
     return (int16_t) __readfsword(__offset);
 #elif defined __MCF_M_ARM64
-    return (int16_t) __readx18word(__offset);
+    __MCF_ASSERT(__offset <= 0xFFFFFFFF);
+    return (int16_t) __readx18word((uint32_t) __offset);
 #else
 #  error unimplemented
 #endif
@@ -159,15 +165,15 @@ __MCF_teb_load_16(uint32_t __offset)
  * @since 2.4  */
 __MCF_TEB_INLINE
 void
-__MCF_teb_store_16(uint32_t __offset, int16_t __value)
+__MCF_teb_store_16(uintptr_t __offset, int16_t __value)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    *(int16_t __seg_gs*) (__offset + 0ULL) = __value;
+    *(int16_t __seg_gs*) __offset = __value;
 #  else
     __asm__ volatile ("gs { movw %1, %a0 | mov WORD PTR %a0, %1 }"
-                      : : "Ts"(__offset + 0ULL), "ri"(__value)
+                      : : "Ts"(__offset), "ri"(__value)
                       : "memory");
 #  endif
 #elif defined __MCF_M_X8632_ASM
@@ -181,11 +187,13 @@ __MCF_teb_store_16(uint32_t __offset, int16_t __value)
 #elif defined __MCF_M_ARM64_ASM
     *(int16_t*) (__MCF_arm64_x18 + __offset) = __value;
 #elif defined __MCF_M_X8664
-    __writegsword(__offset, (uint16_t) __value);
+    __MCF_ASSERT(__offset <= 0xFFFFFFFF);
+    __writegsword((uint32_t) __offset, (uint16_t) __value);
 #elif defined __MCF_M_X8632
     __writefsword(__offset, (uint16_t) __value);
 #elif defined __MCF_M_ARM64
-    __writex18word(__offset, (uint16_t) __value);
+    __MCF_ASSERT(__offset <= 0xFFFFFFFF);
+    __writex18word((uint32_t) __offset, (uint16_t) __value);
 #else
 #  error unimplemented
 #endif
@@ -199,16 +207,16 @@ __MCF_teb_store_16(uint32_t __offset, int16_t __value)
  * @since 2.4  */
 __MCF_TEB_INLINE __MCF_FN_PURE
 int32_t
-__MCF_teb_load_32(uint32_t __offset)
+__MCF_teb_load_32(uintptr_t __offset)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    return *(int32_t __seg_gs*) (__offset + 0ULL);
+    return *(int32_t __seg_gs*) __offset;
 #  else
     int32_t __value;
     __asm__ ("gs { movl %a1, %k0 | mov %k0, DWORD PTR %a1 }"
-             : "=r"(__value) : "Ts"(__offset + 0ULL)
+             : "=r"(__value) : "Ts"(__offset)
              : "memory");
     return __value;
 #  endif
@@ -225,11 +233,13 @@ __MCF_teb_load_32(uint32_t __offset)
 #elif defined __MCF_M_ARM64_ASM
     return *(int32_t*) (__MCF_arm64_x18 + __offset);
 #elif defined __MCF_M_X8664
-    return (int32_t) __readgsdword(__offset);
+    __MCF_ASSERT(__offset <= 0xFFFFFFFF);
+    return (int32_t) __readgsdword((uint32_t) __offset);
 #elif defined __MCF_M_X8632
     return (int32_t) __readfsdword(__offset);
 #elif defined __MCF_M_ARM64
-    return (int32_t) __readx18dword(__offset);
+    __MCF_ASSERT(__offset <= 0xFFFFFFFF);
+    return (int32_t) __readx18dword((uint32_t) __offset);
 #else
 #  error unimplemented
 #endif
@@ -244,15 +254,15 @@ __MCF_teb_load_32(uint32_t __offset)
  * @since 2.4  */
 __MCF_TEB_INLINE
 void
-__MCF_teb_store_32(uint32_t __offset, int32_t __value)
+__MCF_teb_store_32(uintptr_t __offset, int32_t __value)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    *(int32_t __seg_gs*) (__offset + 0ULL) = __value;
+    *(int32_t __seg_gs*) __offset = __value;
 #  else
     __asm__ volatile ("gs { movl %1, %a0 | mov DWORD PTR %a0, %1 }"
-                      : : "Ts"(__offset + 0ULL), "ri"(__value)
+                      : : "Ts"(__offset), "ri"(__value)
                       : "memory");
 #  endif
 #elif defined __MCF_M_X8632_ASM
@@ -266,11 +276,13 @@ __MCF_teb_store_32(uint32_t __offset, int32_t __value)
 #elif defined __MCF_M_ARM64_ASM
     *(int32_t*) (__MCF_arm64_x18 + __offset) = __value;
 #elif defined __MCF_M_X8664
-    __writegsdword(__offset, (uint32_t) __value);
+    __MCF_ASSERT(__offset <= 0xFFFFFFFF);
+    __writegsdword((uint32_t) __offset, (uint32_t) __value);
 #elif defined __MCF_M_X8632
     __writefsdword(__offset, (uint32_t) __value);
 #elif defined __MCF_M_ARM64
-    __writex18dword(__offset, (uint32_t) __value);
+    __MCF_ASSERT(__offset <= 0xFFFFFFFF);
+    __writex18dword((uint32_t) __offset, (uint32_t) __value);
 #else
 #  error unimplemented
 #endif
@@ -284,16 +296,16 @@ __MCF_teb_store_32(uint32_t __offset, int32_t __value)
  * @since 2.4  */
 __MCF_TEB_INLINE __MCF_FN_PURE
 intptr_t
-__MCF_teb_load_ptr(uint32_t __offset)
+__MCF_teb_load_ptr(uintptr_t __offset)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    return *(int64_t __seg_gs*) (__offset + 0ULL);
+    return *(int64_t __seg_gs*) __offset;
 #  else
     int64_t __value;
     __asm__ ("gs { movq %a1, %q0 | mov %q0, QWORD PTR %a1 }"
-             : "=r"(__value) : "Ts"(__offset + 0ULL)
+             : "=r"(__value) : "Ts"(__offset)
              : "memory");
     return __value;
 #  endif
@@ -310,11 +322,13 @@ __MCF_teb_load_ptr(uint32_t __offset)
 #elif defined __MCF_M_ARM64_ASM
     return *(int64_t*) (__MCF_arm64_x18 + __offset);
 #elif defined __MCF_M_X8664
-    return (int64_t) __readgsqword(__offset);
+    __MCF_ASSERT(__offset <= 0xFFFFFFFF);
+    return (int64_t) __readgsqword((uint32_t) __offset);
 #elif defined __MCF_M_X8632
     return (int32_t) __readfsdword(__offset);
 #elif defined __MCF_M_ARM64
-    return (int64_t) __readx18qword(__offset);
+    __MCF_ASSERT(__offset <= 0xFFFFFFFF);
+    return (int64_t) __readx18qword((uint32_t) __offset);
 #else
 #  error unimplemented
 #endif
@@ -329,15 +343,15 @@ __MCF_teb_load_ptr(uint32_t __offset)
  * @since 2.4  */
 __MCF_TEB_INLINE
 void
-__MCF_teb_store_ptr(uint32_t __offset, intptr_t __value)
+__MCF_teb_store_ptr(uintptr_t __offset, intptr_t __value)
   __MCF_noexcept
   {
 #if defined __MCF_M_X8664_ASM
 #  if defined __clang__
-    *(int64_t __seg_gs*) (__offset + 0ULL) = __value;
+    *(int64_t __seg_gs*) __offset = __value;
 #  else
     __asm__ volatile ("gs { movq %1, %a0 | mov QWORD PTR %a0, %1 }"
-                      : : "Ts"(__offset + 0ULL), "re"(__value)
+                      : : "Ts"(__offset), "re"(__value)
                       : "memory");
 #  endif
 #elif defined __MCF_M_X8632_ASM
@@ -351,11 +365,13 @@ __MCF_teb_store_ptr(uint32_t __offset, intptr_t __value)
 #elif defined __MCF_M_ARM64_ASM
     *(int64_t*) (__MCF_arm64_x18 + __offset) = __value;
 #elif defined __MCF_M_X8664
-    __writegsqword(__offset, (uint64_t) __value);
+    __MCF_ASSERT(__offset <= 0xFFFFFFFF);
+    __writegsqword((uint32_t) __offset, (uint64_t) __value);
 #elif defined __MCF_M_X8632
     __writefsdword(__offset, (uint32_t) __value);
 #elif defined __MCF_M_ARM64
-    __writex18qword(__offset, (uint64_t) __value);
+    __MCF_ASSERT(__offset <= 0xFFFFFFFF);
+    __writex18qword((uint32_t) __offset, (uint64_t) __value);
 #else
 #  error unimplemented
 #endif
