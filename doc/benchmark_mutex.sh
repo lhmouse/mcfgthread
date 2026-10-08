@@ -61,8 +61,8 @@ function do_benchmark()
   printf '\n\n' >> benchmark_result.txt
 }
 
-do_benchmark SRWLOCK
 do_benchmark CRITICAL_SECTION
+do_benchmark SRWLOCK
 do_benchmark WINPTHREAD
 do_benchmark MCFGTHREAD
 
