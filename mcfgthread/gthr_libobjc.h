@@ -393,9 +393,13 @@ __MCF_gthr_objc_thread_detach(__MCF_gthr_thread_fn* __proc, void* __arg)
   __MCF_ALIAS_NOEXCEPT
   {
     _MCF_thread* __thrd = __MCF_gthr_thread_create_v3(__proc, __arg);
-    objc_thread_t __t = __thrd ? (objc_thread_t)(uintptr_t) _MCF_thread_get_tid(__thrd) : __MCF_nullptr;
-    _MCF_thread_drop_ref(__thrd);
-    return __t;
+    if(!__thrd)
+      return __MCF_nullptr;
+    else {
+      objc_thread_t __t = (objc_thread_t)(uintptr_t) _MCF_thread_get_tid(__thrd);
+      _MCF_thread_drop_ref_nonnull(__thrd);
+      return __t;
+    }
   }
 
 __MCF_GTHR_LIBOBJC_INLINE
@@ -404,8 +408,7 @@ __MCF_gthr_objc_thread_set_priority(int __priority)
   __MCF_ALIAS_NOEXCEPT
   {
     int __wprio = (__priority < 0) ? -2 : (__priority - 2);
-    int __err = _MCF_thread_set_priority(__MCF_nullptr, (_MCF_thread_priority) __wprio);
-    return __err;
+    return _MCF_thread_set_priority(__MCF_nullptr, (_MCF_thread_priority) __wprio);
   }
 
 __MCF_GTHR_LIBOBJC_INLINE
@@ -414,8 +417,7 @@ __MCF_gthr_objc_thread_get_priority(void)
   __MCF_ALIAS_NOEXCEPT
   {
     int __wprio = (int) _MCF_thread_get_priority(__MCF_nullptr);
-    int __priority = (__wprio < -2) ? 0 : (__wprio + 2);
-    return __priority;
+    return (__wprio < -2) ? 0 : (__wprio + 2);
   }
 
 __MCF_GTHR_LIBOBJC_INLINE
