@@ -1213,7 +1213,7 @@ do_tls_callback(PVOID module, ULONG reason, PVOID reserved)
 /** This requires the main executable be linked with 'tlssup.o'. Such
  * initialization shall happen as early as possible.  */
 extern const IMAGE_TLS_DIRECTORY _tls_used;
-static __MCF_SECTION(".rdata") const void* const refptr__tls_used = &_tls_used;
+static __MCF_SECTION(".rdata") const LPCVOID refptr__tls_used = &_tls_used;
 static __MCF_SECTION(".CRT$XLB") const PIMAGE_TLS_CALLBACK crt__xl_b = do_tls_callback;
 
 #if defined __CYGWIN__
