@@ -203,8 +203,8 @@ jobs:
       - uses: actions/upload-artifact@v7
         with: { path: build_pkg, name: 'arm64_mingw-w64_clang' }
 
-  llvm-mingw-arm64-v81:
-    name: LLVM-MinGW native (Clang, mingw-w64 runtime, UCRT, ARM64-v8.1)
+  llvm-mingw-armv81:
+    name: LLVM-MinGW native (Clang, mingw-w64 runtime, UCRT, ARMv8.1)
     runs-on: windows-11-arm
 
     defaults:
@@ -240,7 +240,7 @@ jobs:
         run: meson install -Cbuild_ci --strip
 
       - uses: actions/upload-artifact@v7
-        with: { path: build_pkg, name: 'arm64-v8.1_mingw-w64_clang' }
+        with: { path: build_pkg, name: 'armv8.1_mingw-w64_clang' }
 
   #==========================================================================
   # Secondary builds
