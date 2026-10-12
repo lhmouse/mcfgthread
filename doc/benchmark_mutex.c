@@ -8,6 +8,7 @@
 #include <assert.h>
 #define WIN32_LEAN_AND_MEAN  1
 #include <windows.h>
+#include <timeapi.h>
 
 #if defined USE_SRWLOCK
 #  define my_mutex_name   "SRWLOCK"
@@ -85,6 +86,7 @@ main(void)
   {
     fprintf(stderr, "benchmarking %s, NTHR %d, NITER %d\n", my_mutex_name, NTHRD, NITER);
     SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
+    timeBeginPeriod(1);
 
     my_init(&mutex);
     start = CreateEventW(NULL, TRUE, FALSE, NULL);
