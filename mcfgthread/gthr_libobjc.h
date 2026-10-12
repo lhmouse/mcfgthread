@@ -20,6 +20,7 @@ __MCF_CXX(extern "C" {)
 #ifdef _LIBOBJC
 #  include <objc/thr.h>
 #else
+
 /** These are copied from <objc/thr.h> which seems a public header. These
  * types have not been updated for more than a decade, so might be stable
  * after all.  */
@@ -38,6 +39,7 @@ struct objc_condition
   {
     void* backend;
   };
+
 #endif
 
 /** Initialize the threads subsystem.  */
