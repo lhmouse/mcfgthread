@@ -48,7 +48,7 @@ int
 _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
   {
     __MCF_winnt_timeout nt_timeout = { 0 };
-    uint32_t sp_budget;
+    uint32_t sp_budget, sp_mask;
     _MCF_mutex old, new;
 
     /* Initialize the timeout value if a non-zero duration is specified. A
@@ -79,8 +79,9 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
         /* The mutex is locked, but a spare spinning slot is available, so
          * allocate a slot and try spinning.  */
         sp_budget = (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail) * 16;
+        sp_mask = (uint32_t) (old.__sp_mask ^ (old.__sp_mask | (old.__sp_mask + 1U)));
         new.__locked = 1;
-        new.__sp_mask = (old.__sp_mask | (old.__sp_mask + 1U)) & 0x0FU;
+        new.__sp_mask = (old.__sp_mask | sp_mask) & 0x0FU;
         new.__sp_nfail = old.__sp_nfail;
         new.__nsleep = old.__nsleep;
 
@@ -92,6 +93,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
          * mark this operation as a spinning failure and allocate a sleeping
          * count.  */
         sp_budget = 0;
+        sp_mask = 0;
         new.__locked = 1;
         new.__sp_mask = old.__sp_mask;
         new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, +1) & 0x0FU;
@@ -104,14 +106,12 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
     /* Check whether the current thread is allowed to spin. Only one bit in
      * `new.__sp_mask` may have been set.  */
     if(sp_budget != 0) {
-      uint32_t my_mask = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
-      __MCF_ASSERT(my_mask != 0);
-      uint32_t mask_to_restore = my_mask;
+      __MCF_ASSERT(sp_mask != 0);
 
       LARGE_INTEGER t1;
       QueryPerformanceCounter(&t1);
 
-      while(sp_budget != 0) {
+      while((sp_budget != 0) && (sp_mask != 0)) {
         sp_budget --;
 
         LARGE_INTEGER t0 = t1;
@@ -122,7 +122,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
 
         /* Wait for my turn. It's the simplest and fastest way to perform
          * just an atomic exchange, on both x86 and ARM.  */
-        if(_MCF_atomic_xchg_8_rlx(do_spin_byte_ptr(mtx, my_mask), 0) == 0)
+        if(_MCF_atomic_xchg_8_rlx(do_spin_byte_ptr(mtx, sp_mask), 0) == 0)
           continue;
 
         _MCF_atomic_load_pptr_rlx(&old, mtx);
@@ -140,21 +140,24 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
             if(_MCF_atomic_cmpxchg_weak_pptr_acq(mtx, &old, &new))
               return 0;
           }
-          else {
-            /* The mutex is stolen, so restore my mask and continue spinning.  */
+          else if(old.__sp_mask != 0x0FU) {
+            /* The mutex is stolen, but a spare spinning slot is available, so
+             * relocate to the new slot.  */
+            sp_mask = (uint32_t) (old.__sp_mask ^ (old.__sp_mask | (old.__sp_mask + 1U)));
             new.__locked = 1;
-            new.__sp_mask = (old.__sp_mask | my_mask) & 0x0FU;
+            new.__sp_mask = (old.__sp_mask | sp_mask) & 0x0FU;
             new.__sp_nfail = old.__sp_nfail;
             new.__nsleep = old.__nsleep;
 
             if(_MCF_atomic_cmpxchg_weak_pptr_rlx(mtx, &old, &new))
               break;
           }
-
-        /* We should restore the spinning mask only if it has been set by the
-         * current thread; the mask should not be restored if it has been
-         * re-allocated by another thread.  */
-        mask_to_restore = (uint32_t) (old.__sp_mask ^ new.__sp_mask);
+          else {
+            /* The mutex is stolen, and no spare spinning slot is available, so
+             * stop spinning.  */
+            sp_mask = 0;
+            break;
+          }
       }
 
       /* We have wasted some time, so return the spinning mask and allocate
@@ -167,7 +170,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
       for(;;)
         if(old.__locked == 0) {
           new.__locked = 1;
-          new.__sp_mask = (old.__sp_mask & (0x0FU - mask_to_restore)) & 0x0FU;
+          new.__sp_mask = (old.__sp_mask & (0x0FU ^ sp_mask)) & 0x0FU;
           new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, -1) & 0x0FU;
           new.__nsleep = old.__nsleep;
 
@@ -176,7 +179,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
         }
         else {
           new.__locked = 1;
-          new.__sp_mask = (old.__sp_mask & (0x0FU - mask_to_restore)) & 0x0FU;
+          new.__sp_mask = (old.__sp_mask & (0x0FU ^ sp_mask)) & 0x0FU;
           new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, +1) & 0x0FU;
           new.__nsleep = (old.__nsleep + 1U) & (UINTPTR_MAX >> 9);
 
