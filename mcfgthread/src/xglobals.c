@@ -530,6 +530,7 @@ __MCF_gthread_initialize_globals(void)
     LARGE_INTEGER pfreq;
     __MCF_CHECK(QueryPerformanceFrequency(&pfreq));
     __MCF_crt_perf_freq_reciprocal = 1000 / (double) pfreq.QuadPart;
+    __MCF_crt_mutex_spin_quantum = pfreq.LowPart / 1000000 + 1;  /* 1 us */
 
     __MCF_crt_heap = GetProcessHeap();
     __MCF_CHECK(__MCF_crt_heap);
@@ -737,6 +738,7 @@ HANDLE __MCF_crt_heap = __MCF_BAD_PTR;
 HMODULE __MCF_crt_ntdll = __MCF_BAD_PTR;
 HMODULE __MCF_crt_kernel32 = __MCF_BAD_PTR;
 HMODULE __MCF_crt_kernelbase = __MCF_BAD_PTR;
+uint32_t __MCF_crt_mutex_spin_quantum = 1;
 
 /** These point to optional imports.  */
 typeof_GetSystemTimePreciseAsFileTime* __MCF_crt_GetSystemTimePreciseAsFileTime = __MCF_BAD_PTR;

@@ -108,20 +108,20 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
     if(sp_budget != 0) {
       __MCF_ASSERT(sp_mask != 0);
 
-      LARGE_INTEGER t1;
-      QueryPerformanceCounter(&t1);
-
       while((sp_budget != 0) && (sp_mask != 0)) {
         sp_budget --;
 
-        LARGE_INTEGER t0 = t1;
-        while((int) (t1.LowPart - t0.LowPart) * __MCF_crt_perf_freq_reciprocal < 0.001) {
+        /* Wait for my turn.  */
+        LARGE_INTEGER t0, t1;
+        QueryPerformanceCounter(&t0);
+        t1.QuadPart = t0.QuadPart + __MCF_crt_mutex_spin_quantum;
+        while(t0.QuadPart < t1.QuadPart) {
           YieldProcessor();
-          QueryPerformanceCounter(&t1);
+          QueryPerformanceCounter(&t0);
         }
 
-        /* Wait for my turn. It's the simplest and fastest way to perform
-         * just an atomic exchange, on both x86 and ARM.  */
+        /* Check whether we have been notified. It's the simplest and fastest
+         * way to perform just an atomic exchange, on both x86 and ARM.  */
         if(_MCF_atomic_xchg_8_rlx(do_spin_byte_ptr(mtx, sp_mask), 0) == 0)
           continue;
 

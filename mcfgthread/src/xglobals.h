@@ -282,6 +282,7 @@ extern HANDLE __MCF_XGLOBALS_READONLY __MCF_crt_heap;
 extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_ntdll;
 extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_kernel32;
 extern HMODULE __MCF_XGLOBALS_READONLY __MCF_crt_kernelbase;
+extern uint32_t __MCF_XGLOBALS_READONLY __MCF_crt_mutex_spin_quantum;
 
 typedef void __stdcall typeof_GetSystemTimePreciseAsFileTime(FILETIME*);
 extern typeof_GetSystemTimePreciseAsFileTime*
