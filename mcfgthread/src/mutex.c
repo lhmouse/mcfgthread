@@ -79,7 +79,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
         /* The mutex is locked, but a spare spinning slot is available, so
          * allocate a slot and try spinning.  */
         sp_budget = (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail) * 16;
-        sp_mask = (uint32_t) ((0x0FU ^ old.__sp_mask) & (old.__sp_mask + 1U));
+        sp_mask = (uint32_t) ((UINT_MAX ^ old.__sp_mask) & (old.__sp_mask + 1U));
         new.__locked = 1;
         new.__sp_mask = (old.__sp_mask | sp_mask) & 0x0FU;
         new.__sp_nfail = old.__sp_nfail;
@@ -143,7 +143,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
           else if(old.__sp_mask != 0x0FU) {
             /* The mutex is stolen, but a spare spinning slot is available, so
              * relocate to the new slot.  */
-            sp_mask = (uint32_t) ((0x0FU ^ old.__sp_mask) & (old.__sp_mask + 1U));
+            sp_mask = (uint32_t) ((UINT_MAX ^ old.__sp_mask) & (old.__sp_mask + 1U));
             new.__locked = 1;
             new.__sp_mask = (old.__sp_mask | sp_mask) & 0x0FU;
             new.__sp_nfail = old.__sp_nfail;
@@ -170,7 +170,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
       for(;;)
         if(old.__locked == 0) {
           new.__locked = 1;
-          new.__sp_mask = (old.__sp_mask & (0x0FU ^ sp_mask)) & 0x0FU;
+          new.__sp_mask = (old.__sp_mask & (UINT_MAX ^ sp_mask)) & 0x0FU;
           new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, -1) & 0x0FU;
           new.__nsleep = old.__nsleep;
 
@@ -179,7 +179,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
         }
         else {
           new.__locked = 1;
-          new.__sp_mask = (old.__sp_mask & (0x0FU ^ sp_mask)) & 0x0FU;
+          new.__sp_mask = (old.__sp_mask & (UINT_MAX ^ sp_mask)) & 0x0FU;
           new.__sp_nfail = do_adjust_sp_nfail(old.__sp_nfail, +1) & 0x0FU;
           new.__nsleep = (old.__nsleep + 1U) & (UINTPTR_MAX >> 9);
 
