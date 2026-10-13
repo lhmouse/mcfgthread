@@ -18,16 +18,36 @@ enum
   };
 
 static __MCF_REALIGN_SP
-void
-do_thread_startup(_MCF_thread* thrd)
+ULONG
+__stdcall
+do_win32_thread_routine(void* param)
   {
     __MCF_USING_SEH_HANDLER(__MCF_seh_thread_top);
+    _MCF_thread* thrd = param;
     if(_MCF_event_await_change(thrd->__init_done, init_st_zero, nullptr) != init_st_success)
-      return;
+      return 0;
 
+    /* Ensure this structure is fresh.  */
+    thrd->__libobjc_tls_data = nullptr;
     __MCF_ASSERT(thrd->__tid != 0);
     __MCF_ASSERT(thrd->__handle != NULL);
-    thrd->__libobjc_tls_data = nullptr;
+    __MCF_ASSERT(thrd->__atexit_queue->__size == 0);
+    __MCF_ASSERT(thrd->__tls_table->__size_hint == 0);
+
+    _MCF_thread* foreign = __MCF_crt_TlsGetValue2(__MCF_G(tls_index));
+    if(foreign) {
+      /* User DLLs or TLS callbacks may have used thread-local variables, so migrate
+       * existing data.  */
+      __MCF_mcopy(thrd->__atexit_queue, foreign->__atexit_queue, sizeof(__MCF_dtor_queue));
+      __MCF_mzero(foreign->__atexit_queue, sizeof(__MCF_dtor_queue));
+      __MCF_mcopy(thrd->__tls_table, foreign->__tls_table, sizeof(__MCF_tls_table));
+      __MCF_mzero(foreign->__tls_table, sizeof(__MCF_tls_table));
+
+      _MCF_thread_drop_ref_nonnull(foreign);
+      foreign = __MCF_BAD_PTR;
+    }
+
+    /* For `tls_index` <= 63, this won't fail.  */
     __MCF_CHECK(TlsSetValue(__MCF_G(tls_index), thrd));
 
 #if defined __MCF_M_X86_ASM
@@ -35,15 +55,7 @@ do_thread_startup(_MCF_thread* thrd)
     __asm__ volatile ("fninit");
 #endif
     (* thrd->__proc) (thrd);
-  }
-
-static
-ULONG
-__stdcall
-do_win32_thread_routine(PVOID param)
-  {
-    do_thread_startup(param);
-    __MCF_gthread_on_thread_exit();
+    __MCF_gthread_on_thread_exit();  /* invalidates `thrd`  */
     return 0;
   }
 
