@@ -81,7 +81,7 @@ __MCF_tls_table_get(const __MCF_tls_table* table, const _MCF_tls_key* key)
     if(_MCF_atomic_load_b_rlx(key->__deleted))
       return nullptr;
 
-    if(table->__begin == table->__end)
+    if(!table->__begin)
       return nullptr;
 
     __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
@@ -102,7 +102,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
     if(_MCF_atomic_load_b_rlx(key->__deleted))
       return -1;
 
-    if(!value_opt && (table->__begin == table->__end)) {
+    if(!value_opt && !table->__begin) {
       /* The new value will be effectively unset. If the table is empty, there
        * can't be a value to unset, so report success anyway.  */
       return 0;
