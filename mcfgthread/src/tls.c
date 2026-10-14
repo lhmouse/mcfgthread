@@ -63,11 +63,11 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
 
     /* Find an element using linear probing. If the key is not found, a
      * pointer to an empty element is returned.  */
-    for(__MCF_tls_element* cur = origin;  cur != table->__end;  ++cur)
+    for(__MCF_tls_element* cur = origin;  cur != table->__end;  cur ++)
       if(!cur->__key_opt || (cur->__key_opt == key))
         return cur;
 
-    for(__MCF_tls_element* cur = table->__begin;  cur != origin;  ++cur)
+    for(__MCF_tls_element* cur = table->__begin;  cur != origin;  cur ++)
       if(!cur->__key_opt || (cur->__key_opt == key))
         return cur;
 
