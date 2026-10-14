@@ -170,7 +170,8 @@ __MCF_tls_table_get(const __MCF_tls_table* __table, const _MCF_tls_key* __key)
 
 /** Sets a value into a thread-local table.
  *
- * If the key has been marked deleted, the function fails.
+ * Upon success, the table holds a reference count of the key. If the key has
+ * been marked deleted, the function fails.
  *
  * @param `table` shall point to a thread-local table.
  * @param `key` shall point to a thread-local key.
