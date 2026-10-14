@@ -24,6 +24,14 @@ struct __MCF_tls_element
     void* __value_opt;
   };
 
+/** This structure defines an element with a hint for iterating.  */
+struct __MCF_tls_popped_element
+  {
+    _MCF_tls_key* __key;
+    void* __value;
+    size_t __hint;
+  };
+
 /** This structure implements a hash table of thread-local values.  */
 struct __MCF_tls_table
   {
@@ -185,6 +193,27 @@ __MCF_TLS_IMPORT
 int
 __MCF_tls_table_xset(__MCF_tls_table* __table, _MCF_tls_key* __key, void** __old_value_opt,
                      const void* __value_opt)
+  __MCF_noexcept;
+
+/** Pops an element from a thread-local table.
+ *
+ * This function looks for a non-null value with a non-deleted key in the table,
+ * and if one is found, copies it to `*out_elem_opt` and sets the value to null.
+ * The key in the popped element is a borrowed pointer and must not be deleted.
+ *
+ * If no element can be popped, the function releases all keys in the table and
+ * deallocates dynamic storage of the table.
+ *
+ * @param `out_elem_opt` points to a structure which will receive the popped
+ *    element. The caller does not have to initialize it. If the parameter is
+ *    null, no element is popped, and the storage is deallocated.
+ * @param `table` shall point to a thread-local table.
+ * @returns 0 if an element has been popped, or -1 if there's no more element
+ *    in the table.
+ * @since 2.6  */
+__MCF_TLS_IMPORT
+int
+__MCF_tls_table_pop(__MCF_tls_popped_element* __out_elem_opt, __MCF_tls_table* __table)
   __MCF_noexcept;
 
 /** Define inline functions after all declarations.

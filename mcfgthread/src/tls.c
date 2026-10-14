@@ -174,3 +174,54 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
     elem->__value_opt = (void*) value_opt;
     return 0;
   }
+
+static inline
+int
+do_pop_element(__MCF_tls_popped_element* out_elem, __MCF_tls_table* table, __MCF_tls_element* elem)
+  {
+    out_elem->__key = elem->__key_opt;
+    out_elem->__value = elem->__value_opt;
+    out_elem->__hint = (size_t) (elem - table->__begin) + 1;
+    elem->__value_opt = nullptr;
+    return 0;
+  }
+
+__MCF_DLLEXPORT
+int
+__MCF_tls_table_pop(__MCF_tls_popped_element* out_elem_opt, __MCF_tls_table* table)
+  {
+    if(!table->__begin)
+      return -1;
+
+    if(out_elem_opt) {
+      /* The hint should be the index of the next element to the last accessed
+       * one. For the first call, it's uninitialized, so sanitize the value.  */
+      __asm__ ("" : "+m"(out_elem_opt->__hint));
+      __MCF_tls_element* origin = table->__begin;
+      if(out_elem_opt->__hint < (size_t) (table->__end - table->__begin))
+        origin += out_elem_opt->__hint;
+
+      /* Look for a non-null value with a non-deleted key in the table, and if
+       * one is found, copy the key and value into `*out_elem_opt`, then reset
+       * it to null as required by POSIX. The key is borrowed and must not be
+       * deleted by the caller.  */
+      for(__MCF_tls_element* cur = origin;  cur != table->__end;  cur ++)
+        if(cur->__key_opt && !_MCF_atomic_load_b_rlx(cur->__key_opt->__deleted) && cur->__value_opt)
+          return do_pop_element(out_elem_opt, table, cur);
+
+      for(__MCF_tls_element* cur = table->__begin;  cur != origin;  cur ++)
+        if(cur->__key_opt && !_MCF_atomic_load_b_rlx(cur->__key_opt->__deleted) && cur->__value_opt)
+          return do_pop_element(out_elem_opt, table, cur);
+    }
+
+    /* No element can be popped, so deallocate the storage.  */
+    for(__MCF_tls_element* cur = table->__begin;  cur != table->__end;  cur ++)
+      if(cur->__key_opt)
+        _MCF_tls_key_drop_ref_nonnull(cur->__key_opt);
+
+    __MCF_mfree_nonnull(table->__begin);
+    table->__begin = nullptr;
+    table->__end = nullptr;
+    table->__size_hint = 0;
+    return -1;
+  }
