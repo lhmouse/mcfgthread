@@ -703,6 +703,7 @@ __MCF_gthread_on_thread_exit(void)
 
       while(tls_begin != tls_end) {
         tls_end --;
+
         _MCF_tls_key* tkey = tls_end->__key_opt;
         if(!tkey)
           continue;

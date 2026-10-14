@@ -132,6 +132,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
       /* Move elements into the new table.  */
       while(old_begin != old_end) {
         old_end --;
+
         _MCF_tls_key* tkey = old_end->__key_opt;
         if(!tkey)
           continue;
