@@ -354,6 +354,7 @@ typedef struct timespec __MCF_timespec;
 typedef struct __MCF_dtor_element __MCF_dtor_element;
 typedef struct __MCF_dtor_queue __MCF_dtor_queue;
 typedef struct __MCF_tls_element __MCF_tls_element;
+typedef struct __MCF_tls_popped_element __MCF_tls_popped_element;
 typedef struct __MCF_tls_table __MCF_tls_table;
 typedef struct __MCF_cpu_element __MCF_cpu_element;
 typedef struct __MCF_thread_base __MCF_thread_base;

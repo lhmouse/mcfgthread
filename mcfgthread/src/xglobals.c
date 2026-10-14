@@ -688,38 +688,14 @@ __MCF_gthread_on_thread_exit(void)
 
     /* Per-thread atexit callbacks may use TLS, so call them before
      * destructors of thread-local objects.  */
-    __MCF_dtor_element elem;
-    while(__MCF_dtor_queue_pop(&elem, self->__atexit_queue, nullptr) == 0)
-      __MCF_invoke_cxa_dtor(elem.__dtor, elem.__this);
+    __MCF_dtor_element atexit_elem;
+    while(__MCF_dtor_queue_pop(&atexit_elem, self->__atexit_queue, nullptr) == 0)
+      __MCF_invoke_cxa_dtor(atexit_elem.__dtor, atexit_elem.__this);
 
-    while(self->__tls_table->__begin) {
-      /* Call destructors of TLS keys. The TLS table may be modified by
-       * destructors, so swap it out first.  */
-      __MCF_tls_element* tls_begin = self->__tls_table->__begin;
-      __MCF_tls_element* tls_end = self->__tls_table->__end;
-
-      self->__tls_table->__begin = nullptr;
-      self->__tls_table->__end = nullptr;
-      self->__tls_table->__size_hint = 0;
-
-      while(tls_begin != tls_end) {
-        tls_end --;
-
-        _MCF_tls_key* tkey = tls_end->__key_opt;
-        if(!tkey)
-          continue;
-
-        /* POSIX requires that the destructor is called only when the key has
-         * not been deleted and the value is not a null pointer.  */
-        if(!_MCF_atomic_load_b_rlx(tkey->__deleted) && tkey->__dtor_opt && tls_end->__value_opt)
-          __MCF_invoke_cxa_dtor(tkey->__dtor_opt, tls_end->__value_opt);
-
-        _MCF_tls_key_drop_ref_nonnull(tkey);
-      }
-
-      /* Deallocate the table which should be empty now.  */
-      __MCF_mfree_nonnull(tls_begin);
-    }
+    __MCF_tls_popped_element tls_elem;
+    while(__MCF_tls_table_pop(&tls_elem, self->__tls_table) == 0)
+      if(tls_elem.__key->__dtor_opt)
+        __MCF_invoke_cxa_dtor(tls_elem.__key->__dtor_opt, tls_elem.__value);
 
     /* Poison this value.  */
     TlsSetValue(__MCF_G(tls_index), __MCF_BAD_PTR);
