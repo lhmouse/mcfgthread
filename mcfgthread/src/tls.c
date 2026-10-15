@@ -181,7 +181,7 @@ do_pop_element(__MCF_tls_popped_element* out_elem, __MCF_tls_table* table, __MCF
   {
     out_elem->__key = elem->__key_opt;
     out_elem->__value = elem->__value_opt;
-    out_elem->__hint = (size_t) (elem - table->__begin) + 1;
+    out_elem->__hint = (size_t) (elem - table->__begin);
     elem->__value_opt = nullptr;
     return 0;
   }
@@ -194,12 +194,12 @@ __MCF_tls_table_pop(__MCF_tls_popped_element* out_elem_opt, __MCF_tls_table* tab
       return -1;
 
     if(out_elem_opt) {
-      /* The hint should be the index of the next element to the last accessed
-       * one. For the first call, it's uninitialized, so sanitize the value.  */
+      /* The hint should be the index of the last accessed element. For the first
+       * call, it's uninitialized, so sanitize the value.  */
       __asm__ ("" : "+m"(out_elem_opt->__hint));
       __MCF_tls_element* origin = table->__begin;
       if(out_elem_opt->__hint < (size_t) (table->__end - table->__begin))
-        origin += out_elem_opt->__hint;
+        origin += out_elem_opt->__hint + 1;
 
       /* Look for a non-null value with a non-deleted key in the table, and if
        * one is found, copy the key and value into `*out_elem_opt`, then reset
