@@ -9,9 +9,11 @@ function (of a DLL). There are some major issues in this approach:
    mutex will never get unlocked. If a destructor of a static object or a
    callback that has been registered with `atexit()` attempts to acquire the
    exact mutex, deadlocks can occur.
+
 2. These callbacks are still invoked if the user calls `_Exit()` or
    `quick_exit()`, such as [in LLVM](https://reviews.llvm.org/D102944). As
    specified by the C++ standard, they shall not be called.
+
 3. Per-thread cleanup may be performed after destructors of static objects. The
    C++ standard does not allow this behavior.
 

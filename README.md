@@ -11,7 +11,7 @@ initialization of local static objects, and by **libstdc++** to provide C++11 th
 > 2. for a DLL to call `__cxa_finalize(&__dso_handle)` when it is unloaded
 >    dynamically with `FreeLibrary()`.
 >
-> This requires [hacking the CRT](patches/mingw-w64-10.0.patch). If you don't have the modified
+> This requires [hacking the CRT](patches/mingw-w64-15.0.patch). If you don't have the modified
 > CRT, you may still get standard compliance by
 >
 > 1. calling `__MCF_cxa_atexit(fflush, NULL, &__dso_handle)` in the beginning of, and calling
