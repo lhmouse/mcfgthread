@@ -53,7 +53,7 @@ __MCF_cxa_atexit(__MCF_cxa_dtor_any_ __dtor, void* __this, void* __dso)
 /** Standard C `atexit()`
  * This function is for programs and should not be called in libraries.  */
 __MCF_CXA_IMPORT
-__MCF_DEPRECATED("Call `__MCF_cxa_atexit(func, NULL, NULL)` instead.")
+__MCF_DEPRECATED("Call `__MCF_cxa_atexit(func, NULL, &__dso_handle)` instead.")
 int
 __MCF_atexit(__MCF_atexit_callback_any_ __func)
   __MCF_noexcept;
@@ -69,7 +69,7 @@ __MCF_cxa_at_quick_exit(__MCF_cxa_dtor_any_ __dtor, void* __this, void* __dso)
 /** Standard C `at_quick_exit()`
  * This function is for programs and should not be called in libraries.  */
 __MCF_CXA_IMPORT
-__MCF_DEPRECATED("Call `__MCF_cxa_at_quick_exit(func, NULL, NULL)` instead.")
+__MCF_DEPRECATED("Call `__MCF_cxa_at_quick_exit(func, NULL, &__dso_handle)` instead.")
 int
 __MCF_at_quick_exit(__MCF_atexit_callback_any_ __func)
   __MCF_noexcept;
@@ -85,7 +85,7 @@ __MCF_cxa_thread_atexit(__MCF_cxa_dtor_any_ __dtor, void* __this, void* __dso)
 /** Non-standard extension
  * This function is for programs and should not be called in libraries.  */
 __MCF_CXA_IMPORT
-__MCF_DEPRECATED("Call `__MCF_cxa_thread_atexit(func, NULL, NULL)` instead.")
+__MCF_DEPRECATED("Call `__MCF_cxa_thread_atexit(func, NULL, &__dso_handle)` instead.")
 int
 __MCF_thread_atexit(__MCF_atexit_callback_any_ __func)
   __MCF_noexcept;
