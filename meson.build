@@ -144,7 +144,7 @@ add_project_arguments(
     '-Wunused-const-variable',
     cc.get_supported_arguments(
       '-masm=intel', '-msse2', '-mfpmath=sse+387', '-mno-outline-atomics',
-      '-fno-ident', '-fms-runtime-lib=dll', '-fno-auto-import',
+      '-fno-ident', '-fms-runtime-lib=dll', '-mcmodel=small', '-fno-auto-import',
       '-Wno-unused-command-line-argument', '-Wsuggest-attribute=noreturn',
       '-Wno-dll-attribute-on-redeclaration', '-Wno-option-ignored'),
     language: [ 'c', 'cpp' ])
@@ -248,8 +248,7 @@ if meson.version().version_compare('>= 1.10.0')
   kwargs_lib += { 'build_subdir': 'lib' }
 endif
 
-lib_mcfgthread_dll_c_args = [ '-D__MCF_IN_DLL', '-ffreestanding',
-      cc.get_supported_arguments('-mcmodel=small') ]
+lib_mcfgthread_dll_c_args = [ '-D__MCF_IN_DLL', '-ffreestanding' ]
 
 if cc.get_linker_id() in [ 'link', 'lld-link' ]
   lib_mcfgthread_dll_link_args = [
