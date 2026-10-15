@@ -46,6 +46,7 @@
 #  define __MCF_FN_PURE       __attribute__((__pure__))
 #  define __MCF_FN_COLD       __attribute__((__cold__))
 #  define __MCF_ALIGNED(x)    __attribute__((__aligned__(x)))
+#  define __MCF_DEPRECATED(x)   __attribute__((__deprecated__(x)))
 #  define __MCF_SECTION(x)     __attribute__((__section__(x), __used__))
 #  if defined __amd64__ && !defined __arm64ec__
 #    define __MCF_64_32(x, y)  x
@@ -80,6 +81,7 @@
 #  define __MCF_FN_PURE       __declspec(noalias)
 #  define __MCF_FN_COLD       /* unsupported */
 #  define __MCF_ALIGNED(x)    __declspec(align(x))
+#  define __MCF_DEPRECATED(x)   __declspec(deprecated(x))
 #  define __MCF_SECTION(x)     __pragma(section(x, read)) __declspec(allocate(x))
 #  if defined _M_X64 && !defined _M_ARM64EC
 #    define __MCF_64_32(x, y)  x

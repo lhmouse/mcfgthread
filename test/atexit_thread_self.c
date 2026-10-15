@@ -30,7 +30,7 @@ main(void)
     assert(thr);
     fprintf(stderr, "main thread = %p, tid = %d\n", thr, thr->__tid);
 
-    __MCF_atexit(atexit_function);
+    __MCF_cxa_atexit(atexit_function, NULL, NULL);
     fprintf(stderr, "main exiting\n");
     __MCF_exit(0);
   }
