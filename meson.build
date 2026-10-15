@@ -144,7 +144,7 @@ add_project_arguments(
     '-Wunused-const-variable',
     cc.get_supported_arguments(
       '-masm=intel', '-msse2', '-mfpmath=sse+387', '-mno-outline-atomics',
-      '-fno-ident', '-fms-runtime-lib=dll', '-mcmodel=small', '-fno-auto-import',
+      '-fno-ident', '-fms-runtime-lib=dll', '-fno-auto-import',
       '-Wno-unused-command-line-argument', '-Wsuggest-attribute=noreturn',
       '-Wno-dll-attribute-on-redeclaration', '-Wno-option-ignored'),
     language: [ 'c', 'cpp' ])
@@ -260,6 +260,9 @@ else
         '-Wl,--dynamicbase', '-Wl,--nxcompat' ]
 endif
 
+dll_c_args = [ '-D__MCF_IN_DLL', '-ffreestanding',
+               cc.get_supported_arguments('-mcmodel=small') ]
+
 mcfgthread_version_o = import('windows').compile_resources(
       'mcfgthread/src/version.rc',
       depend_files: [ 'mcfgthread/version.h.in' ],
@@ -268,7 +271,7 @@ mcfgthread_version_o = import('windows').compile_resources(
 
 lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       c_pch: 'mcfgthread/src/xprecompiled.h',
-      c_args: [ '-ffreestanding', '-D__MCF_IN_DLL' ],
+      c_args: dll_c_args,
       implicit_include_directories: false,
       include_directories: include_directories('.'),
       override_options: { 'c_winlibs': [] },
@@ -282,7 +285,7 @@ lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
 
 lib_mcfgthread_dll = shared_library('mcfgthread',
       c_pch: 'mcfgthread/src/xprecompiled.h',
-      c_args: [ '-ffreestanding', '-D__MCF_IN_DLL' ],
+      c_args: dll_c_args,
       implicit_include_directories: false,
       include_directories: include_directories('.'),
       override_options: { 'c_winlibs': [] },
