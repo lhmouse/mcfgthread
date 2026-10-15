@@ -178,8 +178,8 @@ __MCF_tls_table_get(const __MCF_tls_table* __table, const _MCF_tls_key* __key)
 
 /** Sets a value into a thread-local table.
  *
- * Upon success, the table holds a reference count of the key. If the key has
- * been marked deleted, the function fails.
+ * After the function has set a non-null value successfully, the table owns a
+ * reference to the key. If the key has been marked deleted, the function fails.
  *
  * @param `table` shall point to a thread-local table.
  * @param `key` shall point to a thread-local key.
@@ -201,8 +201,8 @@ __MCF_tls_table_xset(__MCF_tls_table* __table, _MCF_tls_key* __key, void** __old
  * and if one is found, copies it to `*out_elem_opt` and sets the value to null.
  * The key in the popped element is a borrowed pointer and must not be deleted.
  *
- * If no element can be popped, the function releases all keys in the table and
- * deallocates dynamic storage of the table.
+ * If no element can be popped, the function releases all keys in the table,
+ * clears all values, and deallocates dynamic storage of the table.
  *
  * @param `out_elem_opt` points to a structure which will receive the popped
  *    element. The caller does not have to initialize it. If the parameter is
