@@ -248,6 +248,9 @@ if meson.version().version_compare('>= 1.10.0')
   kwargs_lib += { 'build_subdir': 'lib' }
 endif
 
+lib_mcfgthread_dll_c_args = [ '-D__MCF_IN_DLL', '-ffreestanding',
+      cc.get_supported_arguments('-mcmodel=small') ]
+
 if cc.get_linker_id() in [ 'link', 'lld-link' ]
   lib_mcfgthread_dll_link_args = [
         '-Wl,-opt:icf', '-Wl,-safeseh:no',
@@ -260,9 +263,6 @@ else
         '-Wl,--dynamicbase', '-Wl,--nxcompat' ]
 endif
 
-dll_c_args = [ '-D__MCF_IN_DLL', '-ffreestanding',
-               cc.get_supported_arguments('-mcmodel=small') ]
-
 mcfgthread_version_o = import('windows').compile_resources(
       'mcfgthread/src/version.rc',
       depend_files: [ 'mcfgthread/version.h.in' ],
@@ -271,7 +271,7 @@ mcfgthread_version_o = import('windows').compile_resources(
 
 lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       c_pch: 'mcfgthread/src/xprecompiled.h',
-      c_args: dll_c_args,
+      c_args: lib_mcfgthread_dll_c_args,
       implicit_include_directories: false,
       include_directories: include_directories('.'),
       override_options: { 'c_winlibs': [] },
@@ -285,7 +285,7 @@ lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
 
 lib_mcfgthread_dll = shared_library('mcfgthread',
       c_pch: 'mcfgthread/src/xprecompiled.h',
-      c_args: dll_c_args,
+      c_args: lib_mcfgthread_dll_c_args,
       implicit_include_directories: false,
       include_directories: include_directories('.'),
       override_options: { 'c_winlibs': [] },
