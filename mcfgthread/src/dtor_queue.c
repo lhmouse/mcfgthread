@@ -115,9 +115,7 @@ __MCF_DLLEXPORT
 int
 __MCF_dtor_queue_pop(__MCF_dtor_element* out_elem, __MCF_dtor_queue* queue, void* dso)
   {
-    __MCF_ASSERT(out_elem);
     size_t npopped = do_pop_element_common(out_elem, queue, dso);
-    __MCF_ASSERT(npopped <= 1);
     return (int) npopped - 1;
   }
 
