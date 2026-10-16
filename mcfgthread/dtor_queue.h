@@ -69,7 +69,7 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtor_element* __ele
 
 /** Pops the newest element that matches a DSO from a destructor queue.
  *
- * @param `elem` points to a structure which will receive the popped element.
+ * @param `out_elem` points to a structure which will receive the popped element.
  * @param `queue` points to a queue where an element will be popped.
  * @param `dso` is an optional DSO handle. If `dso` is null, then the newest
  *    element will be popped, regardless of its DSO handle; otherwise, only
@@ -79,7 +79,7 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* __queue, const __MCF_dtor_element* __ele
  * @since 1.0  */
 __MCF_DTOR_QUEUE_IMPORT
 int
-__MCF_dtor_queue_pop(__MCF_dtor_element* __elem, __MCF_dtor_queue* __queue, void* __dso)
+__MCF_dtor_queue_pop(__MCF_dtor_element* __out_elem, __MCF_dtor_queue* __queue, void* __dso)
   __MCF_noexcept;
 
 /** Removes all elements that match a DSO from a destructor queue.

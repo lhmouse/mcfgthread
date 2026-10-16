@@ -49,7 +49,7 @@ __MCF_dtor_queue_push(__MCF_dtor_queue* queue, const __MCF_dtor_element* elem)
 
 __MCF_DLLEXPORT
 int
-__MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* dso)
+__MCF_dtor_queue_pop(__MCF_dtor_element* out_elem, __MCF_dtor_queue* queue, void* dso)
   {
     /* Search for a matching element in the newest block.  */
     __MCF_dtor_queue* cur_q = queue;
@@ -66,7 +66,7 @@ __MCF_dtor_queue_pop(__MCF_dtor_element* elem, __MCF_dtor_queue* queue, void* ds
       /* If an element has been found, remove it.  */
       if(index != UINT32_MAX) {
         __MCF_dtor_element* cur_elem = cur_q->__data + index;
-        *elem = *cur_elem;
+        *out_elem = *cur_elem;
         cur_q->__size --;
         err = 0;
 
