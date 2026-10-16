@@ -39,7 +39,7 @@ main(void)
     min = 12345;
     total = 0;
     for(int k = 0;  k < 10;  ++k) {
-      sleep_until = time(NULL) + 2;
+      sleep_until = time(NULL) + 1;
       _MCF_sleep_noninterruptible(&(int64_t){ sleep_until * 1000LL - 20 });
       do { now = _MCF_perf_counter();
            timeout.tv_sec = time(NULL);
