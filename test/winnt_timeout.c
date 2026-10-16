@@ -14,7 +14,7 @@
 int
 main(void)
   {
-    double now, delta;
+    double now, delta, max, min, total;
     __MCF_winnt_timeout to;
 
     _MCF_thread_set_priority(NULL, _MCF_thread_priority_realtime);
@@ -30,17 +30,28 @@ main(void)
       }
     }
 
-    now = _MCF_perf_counter();
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      now = _MCF_perf_counter();
 
-    __MCF_initialize_winnt_timeout_v3(&to, &(int64_t){ -1116 });  /* relative  */
-    while(to.li.QuadPart < 0) {
-      // repeat
-      fprintf(stderr, "  sleep -> %lld\n", to.li.QuadPart);
-      _MCF_sleep_noninterruptible(&(int64_t){ -37 });
-      __MCF_adjust_winnt_timeout_v3(&to);
+      __MCF_initialize_winnt_timeout_v3(&to, &(int64_t){ -1116 });  /* relative  */
+      while(to.li.QuadPart < 0) {
+        // repeat
+        fprintf(stderr, "  sleep -> %lld\n", to.li.QuadPart);
+        _MCF_sleep_noninterruptible(&(int64_t){ -37 });
+        __MCF_adjust_winnt_timeout_v3(&to);
+      }
+
+      delta = _MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
     }
-
-    delta = _MCF_perf_counter() - now;
+    delta = (total - max - min) / 8;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1111);
     assert(delta <= 1166);

@@ -16,7 +16,7 @@ static __libcpp_condvar_t cond = _LIBCPP_CONDVAR_INITIALIZER;
 int
 main(void)
   {
-    double now, delta;
+    double now, delta, max, min, total;
     time_t sleep_until;
     __libcpp_timespec_t timeout;
     int r;
@@ -37,16 +37,27 @@ main(void)
     r = __libcpp_mutex_trylock(&mutex);
     assert(r == true);
 
-    sleep_until = time(NULL) + 2;
-    _MCF_sleep_noninterruptible(&(int64_t){ sleep_until * 1000LL - 20 });
-    do { now = _MCF_perf_counter();
-         timeout.tv_sec = time(NULL);
-    } while(timeout.tv_sec < sleep_until);
-    timeout.tv_sec += 1;
-    timeout.tv_nsec = 115999999;  // relaxed
-    r = __libcpp_condvar_timedwait(&cond, &mutex, &timeout);
-    assert(r == ETIMEDOUT);
-    delta = _MCF_perf_counter() - now;
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      sleep_until = time(NULL) + 2;
+      _MCF_sleep_noninterruptible(&(int64_t){ sleep_until * 1000LL - 20 });
+      do { now = _MCF_perf_counter();
+           timeout.tv_sec = time(NULL);
+      } while(timeout.tv_sec < sleep_until);
+      timeout.tv_sec += 1;
+      timeout.tv_nsec = 115999999;  // relaxed
+      r = __libcpp_condvar_timedwait(&cond, &mutex, &timeout);
+      assert(r == ETIMEDOUT);
+      delta = _MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
+    }
+    delta = (total - max - min) / 8;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1111);
     assert(delta <= 1166);

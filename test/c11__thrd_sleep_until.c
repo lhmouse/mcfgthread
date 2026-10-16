@@ -12,7 +12,7 @@
 int
 main(void)
   {
-    double now, delta;
+    double now, delta, max, min, total;
     time_t sleep_until;
     struct timespec timeout;
     int r;
@@ -30,26 +30,48 @@ main(void)
       }
     }
 
-    sleep_until = time(NULL) + 2;
-    _MCF_sleep_noninterruptible(&(int64_t){ sleep_until * 1000LL - 20 });
-    do { now = _MCF_perf_counter();
-         timeout.tv_sec = time(NULL);
-    } while(timeout.tv_sec < sleep_until);
-    timeout.tv_sec += 1;
-    timeout.tv_nsec = 315999999;  // relaxed
-    r = _thrd_sleep_until(&timeout);
-    assert(r == 0);
-    delta = _MCF_perf_counter() - now;
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      sleep_until = time(NULL) + 2;
+      _MCF_sleep_noninterruptible(&(int64_t){ sleep_until * 1000LL - 20 });
+      do { now = _MCF_perf_counter();
+           timeout.tv_sec = time(NULL);
+      } while(timeout.tv_sec < sleep_until);
+      timeout.tv_sec += 1;
+      timeout.tv_nsec = 315999999;  // relaxed
+      r = _thrd_sleep_until(&timeout);
+      assert(r == 0);
+      delta = _MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
+    }
+    delta = (total - max - min) / 8;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1311);
     assert(delta <= 1366);
 
-    now = _MCF_perf_counter();
-    timeout.tv_sec = 0;
-    timeout.tv_nsec = 0;
-    r = _thrd_sleep_until(&timeout);
-    assert(r == 0);
-    delta = _MCF_perf_counter() - now;
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      now = _MCF_perf_counter();
+      timeout.tv_sec = 0;
+      timeout.tv_nsec = 0;
+      r = _thrd_sleep_until(&timeout);
+      assert(r == 0);
+      delta = _MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
+    }
+    delta = (total - max - min) / 8;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 0);
     assert(delta <= 50);

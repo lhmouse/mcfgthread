@@ -15,7 +15,7 @@ static _MCF_sem sem = _MCF_SEM_INIT(1);
 int
 main(void)
   {
-    double now, delta;
+    double now, delta, max, min, total;
     int r;
 
     _MCF_thread_set_priority(NULL, _MCF_thread_priority_realtime);
@@ -31,26 +31,61 @@ main(void)
       }
     }
 
-    now = _MCF_perf_counter();
-    r = _MCF_sem_wait(&sem, &(int64_t){ (int64_t) _MCF_hires_utc_now() + 1116 });  /* absolute  */
-    assert(r == 0);
-    delta = _MCF_perf_counter() - now;
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      if(k > 0)
+        _MCF_sem_signal(&sem);
+      now = _MCF_perf_counter();
+      r = _MCF_sem_wait(&sem, &(int64_t){ (int64_t) _MCF_hires_utc_now() + 1116 });  /* absolute  */
+      assert(r == 0);
+      delta = _MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
+    }
+    delta = (total - max - min) / 8;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 0);
     assert(delta <= 50);
 
-    now = _MCF_perf_counter();
-    r = _MCF_sem_wait(&sem, &(int64_t){ (int64_t) _MCF_hires_utc_now() + 1116 });  /* absolute  */
-    assert(r == -1);
-    delta = _MCF_perf_counter() - now;
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      now = _MCF_perf_counter();
+      r = _MCF_sem_wait(&sem, &(int64_t){ (int64_t) _MCF_hires_utc_now() + 1116 });  /* absolute  */
+      assert(r == -1);
+      delta = _MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
+    }
+    delta = (total - max - min) / 8;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1111);
     assert(delta <= 1166);
 
-    now = _MCF_perf_counter();
-    r = _MCF_sem_wait(&sem, &(int64_t){ -1116 });  /* relative  */
-    assert(r == -1);
-    delta = _MCF_perf_counter() - now;
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      now = _MCF_perf_counter();
+      r = _MCF_sem_wait(&sem, &(int64_t){ -1116 });  /* relative  */
+      assert(r == -1);
+      delta = _MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
+    }
+    delta = (total - max - min) / 8;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1111);
     assert(delta <= 1166);

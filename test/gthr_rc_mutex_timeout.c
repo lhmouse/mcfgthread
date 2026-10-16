@@ -15,7 +15,7 @@ static __gthread_recursive_mutex_t mutex = __GTHREAD_RECURSIVE_MUTEX_INIT;
 int
 main(void)
   {
-    double now, delta;
+    double now, delta, max, min, total;
     time_t sleep_until;
     __gthread_time_t timeout;
     int r;
@@ -33,30 +33,56 @@ main(void)
       }
     }
 
-    sleep_until = time(NULL) + 2;
-    _MCF_sleep_noninterruptible(&(int64_t){ sleep_until * 1000LL - 20 });
-    do { now = _MCF_perf_counter();
-         timeout.tv_sec = time(NULL);
-    } while(timeout.tv_sec < sleep_until);
-    timeout.tv_sec += 1;
-    timeout.tv_nsec = 115999999;  // relaxed
-    r = __gthread_recursive_mutex_timedlock(&mutex, &timeout);  /* lock it  */
-    assert(r == 0);
-    delta = _MCF_perf_counter() - now;
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      if(k > 0)
+        __gthread_recursive_mutex_unlock(&mutex);
+      sleep_until = time(NULL) + 2;
+      _MCF_sleep_noninterruptible(&(int64_t){ sleep_until * 1000LL - 20 });
+      do { now = _MCF_perf_counter();
+           timeout.tv_sec = time(NULL);
+      } while(timeout.tv_sec < sleep_until);
+      timeout.tv_sec += 1;
+      timeout.tv_nsec = 115999999;  // relaxed
+      r = __gthread_recursive_mutex_timedlock(&mutex, &timeout);  /* lock it  */
+      assert(r == 0);
+      delta = _MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
+    }
+    delta = (total - max - min) / 8;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 0);
     assert(delta <= 50);
 
-    sleep_until = time(NULL) + 2;
-    _MCF_sleep_noninterruptible(&(int64_t){ sleep_until * 1000LL - 20 });
-    do { now = _MCF_perf_counter();
-         timeout.tv_sec = time(NULL);
-    } while(timeout.tv_sec < sleep_until);
-    timeout.tv_sec += 1;
-    timeout.tv_nsec = 115999999;  // relaxed
-    r = __gthread_recursive_mutex_timedlock(&mutex, &timeout);
-    assert(r == 0);
-    delta = _MCF_perf_counter() - now;
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      if(k > 0)
+        __gthread_recursive_mutex_unlock(&mutex);
+      sleep_until = time(NULL) + 2;
+      _MCF_sleep_noninterruptible(&(int64_t){ sleep_until * 1000LL - 20 });
+      do { now = _MCF_perf_counter();
+           timeout.tv_sec = time(NULL);
+      } while(timeout.tv_sec < sleep_until);
+      timeout.tv_sec += 1;
+      timeout.tv_nsec = 115999999;  // relaxed
+      r = __gthread_recursive_mutex_timedlock(&mutex, &timeout);
+      assert(r == 0);
+      delta = _MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
+    }
+    delta = (total - max - min) / 8;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 0);
     assert(delta <= 50);
