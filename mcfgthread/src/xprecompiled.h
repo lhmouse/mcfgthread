@@ -5,6 +5,7 @@
  * LICENSE.md as a whole. The GCC Runtime Library Exception applies
  * to this file.  */
 
+#undef _FORTIFY_SOURCE
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
