@@ -169,12 +169,12 @@ __MCF_XGLOBALS_IMPORT
 void
 __MCF_batch_release_common(const void* key, size_t count);
 
-/** Copies a block of memory forward, like `memcpy()`.  */
+/** Copies a block of memory forward, like `memmove()`.  */
 __MCF_XGLOBALS_INLINE
 void*
 __MCF_mcopy(void* dst, const void* src, size_t size);
 
-/** Copies a block of memory backward.  */
+/** Copies a block of memory backward, like `memmove()`.  */
 __MCF_XGLOBALS_INLINE
 void*
 __MCF_mcopy_backward(void* dst, const void* src, size_t size);
