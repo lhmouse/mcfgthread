@@ -221,8 +221,7 @@ __MCF_tls_table_pop(__MCF_tls_popped_element* out_elem_opt, __MCF_tls_table* tab
         _MCF_tls_key_drop_ref_nonnull(cur->__key_opt);
 
     __MCF_mfree_nonnull(table->__begin);
-    table->__begin = nullptr;
-    table->__end = nullptr;
+    table->__begin = table->__end = nullptr;
     table->__size_hint = 0;
     return -1;
   }
