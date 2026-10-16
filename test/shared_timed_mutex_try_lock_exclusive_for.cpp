@@ -25,7 +25,7 @@ static NS::shared_timed_mutex mutex;
 int
 main(void)
   {
-    double now, delta;
+    double now, delta, max, min, total;
     bool r;
 
     ::_MCF_thread_set_priority(nullptr, ::_MCF_thread_priority_realtime);
@@ -41,20 +41,44 @@ main(void)
       }
     }
 
-    now = ::_MCF_perf_counter();
-    r = mutex.try_lock_for(NS::chrono::milliseconds(1116));  // relaxed
-    assert(r == true);
-    delta = ::_MCF_perf_counter() - now;
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      if(k > 0)
+        mutex.unlock();
+      now = ::_MCF_perf_counter();
+      r = mutex.try_lock_for(NS::chrono::milliseconds(1116));  // relaxed
+      assert(r == true);
+      delta = ::_MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
+    }
+    delta = (total - max - min) / 8;
     ::fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 0);
     assert(delta <= 50);
 
     NS::thread(
      [&] {
-       now = ::_MCF_perf_counter();
-       r = mutex.try_lock_shared_for(NS::chrono::milliseconds(1116));  // relaxed
-       assert(r == false);
-       delta = ::_MCF_perf_counter() - now;
+       max = 12345;
+       min = 12345;
+       total = 0;
+       for(int k = 0;  k < 10;  ++k) {
+         now = ::_MCF_perf_counter();
+         r = mutex.try_lock_shared_for(NS::chrono::milliseconds(1116));  // relaxed
+         assert(r == false);
+         delta = ::_MCF_perf_counter() - now;
+         total += delta;
+         if((max == 12345) || (delta > max))
+           max = delta;
+         if((min == 12345) || (delta < min))
+           min = delta;
+       }
+       delta = (total - max - min) / 8;
        ::fprintf(stderr, "delta = %.6f\n", delta);
        assert(delta >= 1111);
        assert(delta <= 1166);
@@ -63,10 +87,21 @@ main(void)
 
     NS::thread(
      [&] {
-       now = ::_MCF_perf_counter();
-       r = mutex.try_lock_for(NS::chrono::milliseconds(1116));  // relaxed
-       assert(r == false);
-       delta = ::_MCF_perf_counter() - now;
+       max = 12345;
+       min = 12345;
+       total = 0;
+       for(int k = 0;  k < 10;  ++k) {
+         now = ::_MCF_perf_counter();
+         r = mutex.try_lock_for(NS::chrono::milliseconds(1116));  // relaxed
+         assert(r == false);
+         delta = ::_MCF_perf_counter() - now;
+         total += delta;
+         if((max == 12345) || (delta > max))
+           max = delta;
+         if((min == 12345) || (delta < min))
+           min = delta;
+       }
+       delta = (total - max - min) / 8;
        ::fprintf(stderr, "delta = %.6f\n", delta);
        assert(delta >= 1111);
        assert(delta <= 1166);

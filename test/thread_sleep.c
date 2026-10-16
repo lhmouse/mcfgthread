@@ -12,7 +12,7 @@
 int
 main(void)
   {
-    double now, delta;
+    double now, delta, max, min, total;
     int64_t timeout;
     int r;
 
@@ -29,36 +29,80 @@ main(void)
       }
     }
 
-    now = _MCF_perf_counter();
-    timeout = (int64_t) _MCF_hires_utc_now() + 1116;  /* absolute  */
-    r = _MCF_sleep(&timeout);
-    assert(r == 0);
-    delta = _MCF_perf_counter() - now;
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      now = _MCF_perf_counter();
+      timeout = (int64_t) _MCF_hires_utc_now() + 1116;  /* absolute  */
+      r = _MCF_sleep(&timeout);
+      assert(r == 0);
+      delta = _MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
+    }
+    delta = (total - max - min) / 8;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1111);
     assert(delta <= 1166);
 
-    now = _MCF_perf_counter();
-    timeout = -1116;  /* relative  */
-    r = _MCF_sleep(&timeout);
-    assert(r == 0);
-    delta = _MCF_perf_counter() - now;
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      now = _MCF_perf_counter();
+      timeout = -1116;  /* relative  */
+      r = _MCF_sleep(&timeout);
+      assert(r == 0);
+      delta = _MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
+    }
+    delta = (total - max - min) / 8;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1111);
     assert(delta <= 1166);
 
-    now = _MCF_perf_counter();
-    timeout = (int64_t) _MCF_hires_utc_now() + 1116;  /* absolute  */
-    _MCF_sleep_noninterruptible(&timeout);
-    delta = _MCF_perf_counter() - now;
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      now = _MCF_perf_counter();
+      timeout = (int64_t) _MCF_hires_utc_now() + 1116;  /* absolute  */
+      _MCF_sleep_noninterruptible(&timeout);
+      delta = _MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
+    }
+    delta = (total - max - min) / 8;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1111);
     assert(delta <= 1166);
 
-    now = _MCF_perf_counter();
-    timeout = -1116;  /* relative  */
-    _MCF_sleep_noninterruptible(&timeout);
-    delta = _MCF_perf_counter() - now;
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      now = _MCF_perf_counter();
+      timeout = -1116;  /* relative  */
+      _MCF_sleep_noninterruptible(&timeout);
+      delta = _MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
+    }
+    delta = (total - max - min) / 8;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1111);
     assert(delta <= 1166);

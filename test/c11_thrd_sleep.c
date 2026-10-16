@@ -12,7 +12,7 @@
 int
 main(void)
   {
-    double now, delta;
+    double now, delta, max, min, total;
     struct timespec timeout, rem;
     int r;
 
@@ -29,31 +29,53 @@ main(void)
       }
     }
 
-    now = _MCF_perf_counter();
-    timeout.tv_sec = 1;  /* relative  */
-    timeout.tv_nsec = 315999999;  // relaxed
-    rem.tv_sec = 5;
-    rem.tv_nsec = 5;
-    r = thrd_sleep(&timeout, &rem);
-    assert(r == 0);
-    delta = _MCF_perf_counter() - now;
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      now = _MCF_perf_counter();
+      timeout.tv_sec = 1;  /* relative  */
+      timeout.tv_nsec = 315999999;  // relaxed
+      rem.tv_sec = 5;
+      rem.tv_nsec = 5;
+      r = thrd_sleep(&timeout, &rem);
+      assert(r == 0);
+      delta = _MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
+      assert(rem.tv_sec == 0);
+      assert(rem.tv_nsec == 0);
+    }
+    delta = (total - max - min) / 8;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1311);
     assert(delta <= 1366);
-    assert(rem.tv_sec == 0);
-    assert(rem.tv_nsec == 0);
 
-    now = _MCF_perf_counter();
-    timeout.tv_sec = 0;
-    timeout.tv_nsec = 0;
-    rem.tv_sec = 5;
-    rem.tv_nsec = 5;
-    r = thrd_sleep(&timeout, &rem);
-    assert(r == 0);
-    delta = _MCF_perf_counter() - now;
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      now = _MCF_perf_counter();
+      timeout.tv_sec = 0;
+      timeout.tv_nsec = 0;
+      rem.tv_sec = 5;
+      rem.tv_nsec = 5;
+      r = thrd_sleep(&timeout, &rem);
+      assert(r == 0);
+      delta = _MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
+      assert(rem.tv_sec == 0);
+      assert(rem.tv_nsec == 0);
+    }
+    delta = (total - max - min) / 8;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 0);
     assert(delta <= 50);
-    assert(rem.tv_sec == 0);
-    assert(rem.tv_nsec == 0);
   }

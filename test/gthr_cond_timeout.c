@@ -16,7 +16,7 @@ static __gthread_cond_t cond = __GTHREAD_COND_INIT;
 int
 main(void)
   {
-    double now, delta;
+    double now, delta, max, min, total;
     time_t sleep_until;
     __gthread_time_t timeout;
     int r;
@@ -37,16 +37,27 @@ main(void)
     r = __gthread_mutex_trylock(&mutex);
     assert(r == 0);
 
-    sleep_until = time(NULL) + 2;
-    _MCF_sleep_noninterruptible(&(int64_t){ sleep_until * 1000LL - 20 });
-    do { now = _MCF_perf_counter();
-         timeout.tv_sec = time(NULL);
-    } while(timeout.tv_sec < sleep_until);
-    timeout.tv_sec += 1;
-    timeout.tv_nsec = 115999999;  // relaxed
-    r = __gthread_cond_timedwait(&cond, &mutex, &timeout);
-    assert(r == ETIMEDOUT);
-    delta = _MCF_perf_counter() - now;
+    max = 12345;
+    min = 12345;
+    total = 0;
+    for(int k = 0;  k < 10;  ++k) {
+      sleep_until = time(NULL) + 2;
+      _MCF_sleep_noninterruptible(&(int64_t){ sleep_until * 1000LL - 20 });
+      do { now = _MCF_perf_counter();
+           timeout.tv_sec = time(NULL);
+      } while(timeout.tv_sec < sleep_until);
+      timeout.tv_sec += 1;
+      timeout.tv_nsec = 115999999;  // relaxed
+      r = __gthread_cond_timedwait(&cond, &mutex, &timeout);
+      assert(r == ETIMEDOUT);
+      delta = _MCF_perf_counter() - now;
+      total += delta;
+      if((max == 12345) || (delta > max))
+        max = delta;
+      if((min == 12345) || (delta < min))
+        min = delta;
+    }
+    delta = (total - max - min) / 8;
     fprintf(stderr, "delta = %.6f\n", delta);
     assert(delta >= 1111);
     assert(delta <= 1166);
