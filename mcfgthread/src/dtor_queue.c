@@ -105,8 +105,8 @@ do_pop_element_common(__MCF_dtor_element* out_elem_opt, __MCF_dtor_queue* queue,
     }
 
     /* Return the number of elements that have been popped. When `out_elem_opt`
-     * is null and a matching element is found, this function returns early so
-     * here it can only return zero.  */
+     * is non-null and a matching element is found, this function returns early
+     * so here it can only return zero.  */
     __MCF_ASSERT(!out_elem_opt || (npopped == 0));
     return npopped;
   }
