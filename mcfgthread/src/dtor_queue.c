@@ -68,9 +68,10 @@ do_pop_element_common(__MCF_dtor_element* out_elem_opt, __MCF_dtor_queue* queue,
         npopped ++;
         cur_queue->__size --;
 
-        if(index != cur_queue->__size)
+        uint32_t count_to_move = cur_queue->__size - index;
+        if(count_to_move != 0)
           __MCF_mcopy(cur_queue->__data + index, cur_queue->__data + index + 1,
-                      (cur_queue->__size - index) * sizeof(__MCF_dtor_element));
+                      count_to_move * sizeof(__MCF_dtor_element));
 
         /* In this case, only one element can be popped.  */
         __MCF_ASSERT(npopped == 1);
