@@ -892,7 +892,7 @@ int
 __MCF_gthr_equal(__gthread_t __t1, __gthread_t __t2)
   __MCF_ALIAS_NOEXCEPT
   {
-    return __t1 == __t2;
+    return (__t1 && __t2) ? (__t1->__tid == __t2->__tid) : (__t1 == __t2);
   }
 
 __MCF_GTHR_INLINE
