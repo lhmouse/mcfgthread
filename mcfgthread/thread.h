@@ -314,8 +314,12 @@ _MCF_thread_set_priority(_MCF_thread* __thrd_opt, _MCF_thread_priority __priorit
 /** Gets a non-owning pointer to the control structure of the current thread.
  *
  * This function never returns a null pointer. If the calling thread was not
- * created by `_MCF_thread_p_new()`, a thread control structure with no user data
- * is allocated and returned.
+ * created by `_MCF_thread_p_new()`, a thread control structure with no user
+ * data is allocated and returned.
+ *
+ * Due to a technical limitation, in a DLL entry-point function or a TLS
+ * callback, this function may return a pointer to a temporary structure. User
+ * code should not store the pointer outside the thread procedure.
  *
  * @returns the control structure of the current thread.
  * @since 1.0  */
