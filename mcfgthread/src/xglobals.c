@@ -848,10 +848,13 @@ __asm__ (
 "\n .globl __alloca"
 "\n .def __alloca; .scl 2; .type 32; .endef"
 "\n __alloca:"
+"\n   test eax, eax"
+"\n   jz 21001f"
 "\n   call ___chkstk_ms"
 "\n   sub esp, eax"
 "\n   add esp, 4"
 "\n   push DWORD PTR [esp + eax - 4]"
+"\n 21001:"
 "\n   ret"
 /** This name is called by Clang for MSVC target.  */
 "\n .globl __chkstk"
