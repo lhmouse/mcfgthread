@@ -1091,8 +1091,13 @@ __asm__ (
 #  define __security_check_cookie   __security_check_cookie_arm64ec
 #endif
 
-__MCF_NEVER_RETURN void __stack_chk_fail(__MCF_STACK_CHK_FAIL_PARAMETER);
-void __fastcall __security_check_cookie(uintptr_t cookie);
+__MCF_NEVER_RETURN
+void
+__stack_chk_fail(__MCF_STACK_CHK_FAIL_PARAMETER);
+
+void
+__fastcall
+__security_check_cookie(uintptr_t cookie);
 
 /** If the image subsystem version is set to 6.3+, Windows requires that the
  * security cookie shall exist and shall be initialized to a constant value
