@@ -89,7 +89,7 @@ meson setup --cross-file cross/gcc.x86_64-w64-mingw32 build_dir
 cd build_dir
 meson compile
 wineserver -p60
-wine wineboot -u   # otherwise test may hang
+wine wineboot -u   # otherwise some tests may hang
 meson test
 ```
 
