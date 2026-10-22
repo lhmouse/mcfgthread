@@ -88,7 +88,8 @@ sudo apt-get install -y --no-install-recommends  \
 meson setup --cross-file cross/gcc.x86_64-w64-mingw32 build_dir
 cd build_dir
 meson compile
-meson test  # requires Wine
+wineserver -p10 && wine wineboot -u
+meson test
 ```
 
 #### Clang for MSVC
