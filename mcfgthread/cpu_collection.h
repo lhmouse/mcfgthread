@@ -434,7 +434,7 @@ _MCF_cpu_collection_set_all_selections(_MCF_cpu_collection* __coll, bool __selec
   __MCF_noexcept
   {
     uint32_t __index;
-    for(__index = 0;  __index < __coll->__size;  ++__index)
+    for(__index = 0;  __index < __coll->__size;  __index ++)
       __coll->__data[__index].__selected = __selected;
   }
 
