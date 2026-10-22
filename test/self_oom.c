@@ -32,11 +32,6 @@ thread_proc(void* arg)
 int
 main(void)
   {
-    // https://gitlab.winehq.org/wine/wine/-/wikis/Developer-FAQ#how-can-i-detect-wine
-    bool is_on_wine = GetProcAddress(__MCF_crt_ntdll, "wine_get_version") != NULL;
-    if(is_on_wine)
-      return 77;
-
     // replace global heap
     const uint32_t heap_capacity = 1048576;
     __MCF_crt_heap = HeapCreate(0, 0, heap_capacity);
