@@ -88,7 +88,8 @@ sudo apt-get install -y --no-install-recommends  \
 meson setup --cross-file cross/gcc.x86_64-w64-mingw32 build_dir
 cd build_dir
 meson compile
-wineserver -p10 && wine wineboot -u
+wineserver -p60
+wine wineboot -u   # otherwise test may hang
 meson test
 ```
 
