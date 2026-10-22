@@ -573,14 +573,15 @@ _MCF_maxz(size_t __x, size_t __y)
  *
  * @param `x` is the minuend.
  * @param `y` is the subtrahend.
- * @returns `MAX(x, y) - y`.
+ * @returns `MAX(x, y) - y`. Before version 2.6, the return value used to be a
+ *    signed integer and might overflow if the difference was too large.
  * @since 2.1  */
 __MCF_ALWAYS_INLINE __MCF_CXX11(constexpr)
-intptr_t
+uintptr_t
 _MCF_dim(intptr_t __x, intptr_t __y)
   __MCF_noexcept
   {
-    return (__x > __y) ? (__x - __y) : 0;
+    return (__x > __y) ? ((uintptr_t) __x - (uintptr_t) __y) : 0;
   }
 
 __MCF_CXX(})  /* extern "C"  */
