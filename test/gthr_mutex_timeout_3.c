@@ -42,8 +42,10 @@ main(void)
     for(int k = 0;  k < 10;  ++k) {
       sleep_until = time(NULL) + 1;
       _MCF_sleep_noninterruptible(&(int64_t){ sleep_until * 1000LL - 20 });
-      do { now = _MCF_perf_counter();
-           timeout.tv_sec = time(NULL);
+      do {
+        _MCF_yield();
+        now = _MCF_perf_counter();
+        timeout.tv_sec = time(NULL);
       } while(timeout.tv_sec < sleep_until);
       timeout.tv_sec += 1;
       timeout.tv_nsec = 115999999;  // relaxed
