@@ -318,9 +318,9 @@ __MCF_DLLEXPORT
 int
 _MCF_sleep(const int64_t* timeout_opt)
   {
-    return _MCF_cond_wait(__MCF_G(interrupt_cond), do_set_ctrl_c_handler,
-                          do_remove_ctrl_c_handler, 0, timeout_opt)
-           ^ -1;
+    int err = _MCF_cond_wait(__MCF_G(interrupt_cond), do_set_ctrl_c_handler,
+                             do_remove_ctrl_c_handler, 0, timeout_opt);
+    return err ^ -1;
   }
 
 __MCF_DLLEXPORT
