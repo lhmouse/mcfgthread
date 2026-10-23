@@ -5,10 +5,13 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdint.h>
+#undef NDEBUG
 #include <assert.h>
 #define WIN32_LEAN_AND_MEAN  1
 #include <windows.h>
 #include <timeapi.h>
+#include <pthread.h>
+#include <mcfgthread/mutex.h>
 
 #if defined USE_SRWLOCK
 #  define my_mutex_name   "SRWLOCK"
@@ -23,14 +26,12 @@
 #  define my_lock(m)      EnterCriticalSection(m)
 #  define my_unlock(m)    LeaveCriticalSection(m)
 #elif defined USE_WINPTHREAD
-#  include <pthread.h>
 #  define my_mutex_name   "WINPTHREAD"
 #  define my_mutex_t      pthread_mutex_t
 #  define my_init(m)      pthread_mutex_init(m, NULL)
 #  define my_lock(m)      pthread_mutex_lock(m)
 #  define my_unlock(m)    pthread_mutex_unlock(m)
 #elif defined USE_MCFGTHREAD
-#  include <mcfgthread/mutex.h>
 #  define my_mutex_name   "MCFGTHREAD"
 #  define my_mutex_t      _MCF_mutex
 #  define my_init(m)      _MCF_mutex_init(m)
@@ -111,4 +112,5 @@ main(void)
     printf("%s\t%d\t%.3f\n", my_mutex_name, NTHRD, result);
 
     fprintf(stderr, "result: %.3f ns / iteration\n", result);
+    _exit(0);
   }
