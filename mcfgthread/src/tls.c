@@ -203,9 +203,9 @@ __MCF_tls_table_pop(__MCF_tls_popped_element* out_elem_opt, __MCF_tls_table* tab
 
       /* Look for a non-null value with a non-deleted key in the table, and if
        * one is found, copy the key and value into `*out_elem_opt`, then reset
-       * it to null as required by POSIX. When the value is non-null, there must
-       * be a valid key; the inverse is not true. The key is borrowed and must
-       * not be deleted by the caller.  */
+       * it to null as required by POSIX. When the value is non-null, the key
+       * must also be non-null; the inverse is not true. The key is borrowed
+       * and must not be deleted by the caller.  */
       for(__MCF_tls_element* cur = origin;  cur != table->__end;  cur ++)
         if(cur->__value_opt && !_MCF_atomic_load_b_rlx(cur->__key_opt->__deleted))
           return do_pop_element(out_elem_opt, table, cur);
