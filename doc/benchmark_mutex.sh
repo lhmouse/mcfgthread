@@ -12,32 +12,41 @@
 ## AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT
 ## OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-if ! test -f ../doc/benchmark_mutex.c || ! test -f lib/libmcfgthread.a
+if ! test -f ../doc/benchmark_mutex.c || ! test -f build.ninja
 then
   echo 'Please run this script in a build directory.'
   exit 1
 fi
 
-if test -z ${CC}
+_libmcfgthread=$(find . -name 'libmcfgthread.a' -print -quit)
+if ! test -f "${_libmcfgthread}"
 then
-  if grep -Eoi '^(mingw|msys|cygwin)' /proc/version &>/dev/null
-  then
-    CC=gcc
-  else
-    CC=x86_64-w64-mingw32-gcc
-  fi
+  echo 'libmcfgthread.a is not found in this build directory.'
+  exit 1
 fi
 
+_cmd=$(sed -En '/^rule c_COMPILER$/,/^rule /{s/^ *command = (.+) \$ARGS.*/\1/p}' build.ninja)
+if test -z "${_cmd}"
+then
+  echo 'Rule c_COMPILER is not found in build.ninja.'
+  exit 1
+fi
+
+_cmd=${_cmd//'$ '/ }
+_cmd=${_cmd//'$:'/':'}
+_cmd=${_cmd//'$$'/'\$'}
+eval "_c_compiler=(${_cmd})"
+
 printf 'Using compiler:\n'
-${CC} --version
+"${_c_compiler[@]}" --version
 
 rm -f benchmark_result.txt
 
 function do_benchmark_nth()
 {
-  ${CC} -DUSE_$1 -DNTHRD=$2 -DNITER=$3 -I. -I.. -std=c99 -Wall -Wextra  \
-      ../doc/benchmark_mutex.c -pthread -lwinmm lib/libmcfgthread.a -lntdll  \
-      -static -O2 -fno-inline  \
+  "${_c_compiler[@]}" -DUSE_$1 -DNTHRD=$2 -DNITER=$3 -I. -I.. -std=c99 -Wall -Wextra  \
+      ../doc/benchmark_mutex.c -pthread -O2 -fno-inline  \
+      -static -lwinmm "${_libmcfgthread}" -lntdll  \
       -o bin/benchmark_mutex_$1_$2_$3.exe
 
   bin/benchmark_mutex_$1_$2_$3.exe >> benchmark_result.txt
@@ -45,6 +54,8 @@ function do_benchmark_nth()
 
 function do_benchmark()
 {
+  printf '* * *\n'
+
   do_benchmark_nth $1    1  20000000
   do_benchmark_nth $1    2  10000000
   do_benchmark_nth $1    4   5000000
