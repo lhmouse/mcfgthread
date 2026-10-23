@@ -164,7 +164,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
         return 0;
 
       /* Fill `key` into this element.  */
-      _MCF_atomic_xadd_32_arl(key->__nref, 1);
+      _MCF_atomic_xadd_32_rlx(key->__nref, 1);
       elem->__key_opt = key;
       table->__size_hint ++;
     }
