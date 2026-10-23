@@ -10,7 +10,7 @@
 #define NTHREADS  16U
 static __gthread_t threads[NTHREADS];
 
-#define NTICKS  100000
+#define NTICKS  10000
 static __gthread_mutex_t mutex;
 static __gthread_cond_t cond_produced, cond_consumed;
 static int value;

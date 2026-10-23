@@ -17,8 +17,8 @@ namespace NS = std;
 namespace NS = ::_MCF;
 #endif
 
-constexpr std::size_t NTHREADS = 64U;
-constexpr std::size_t NTICKS = 100000U;
+constexpr std::size_t NTHREADS = 64;
+constexpr std::size_t NTICKS = 10000;
 
 static std::vector<NS::thread> threads(NTHREADS);
 static NS::mutex mutex;

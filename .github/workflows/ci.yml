@@ -54,7 +54,7 @@ jobs:
         run: meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t2 -Cbuild_ci --print-errorlogs
+        run: meson test -Cbuild_ci --print-errorlogs
 
   msys2-ucrt64:
     name: MSYS2 native (GCC, mingw-w64 runtime, UCRT, x86-64)
@@ -84,7 +84,7 @@ jobs:
         run: meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t2 -Cbuild_ci --print-errorlogs
+        run: meson test -Cbuild_ci --print-errorlogs
 
       - name: Install
         run: meson install -Cbuild_ci --strip
@@ -120,7 +120,7 @@ jobs:
         run: meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t2 -Cbuild_ci --print-errorlogs
+        run: meson test -Cbuild_ci --print-errorlogs
 
       - name: Install
         run: meson install -Cbuild_ci --strip
@@ -157,7 +157,7 @@ jobs:
         run: meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t2 -Cbuild_ci --print-errorlogs
+        run: meson test -Cbuild_ci --print-errorlogs
 
       - name: Install
         run: meson install -Cbuild_ci --strip
@@ -195,7 +195,7 @@ jobs:
         run: meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t2 -Cbuild_ci --print-errorlogs
+        run: meson test -Cbuild_ci --print-errorlogs
 
       - name: Install
         run: meson install -Cbuild_ci --strip
@@ -234,7 +234,7 @@ jobs:
         run: meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t2 -Cbuild_ci --print-errorlogs
+        run: meson test -Cbuild_ci --print-errorlogs
 
       - name: Install
         run: meson install -Cbuild_ci --strip
@@ -274,7 +274,7 @@ jobs:
         run: meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t2 -Cbuild_ci --print-errorlogs
+        run: meson test -Cbuild_ci --print-errorlogs
 
       - name: Install
         run: meson install -Cbuild_ci --strip
@@ -310,7 +310,7 @@ jobs:
         run: meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t2 -Cbuild_ci --print-errorlogs
+        run: meson test -Cbuild_ci --print-errorlogs
 
   ubuntu-arm64:
     name: Ubuntu cross (Clang, mingw-w64 runtime, UCRT, ARM64)
@@ -349,7 +349,7 @@ jobs:
         run:  meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t20 -Cbuild_ci --print-errorlogs
+        run: meson test -Cbuild_ci --print-errorlogs
 
   llvm-mingw-i686:
     name: LLVM-MinGW native (Clang, mingw-w64 runtime, UCRT, x86-32)
@@ -381,7 +381,7 @@ jobs:
         run: meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t2 -Cbuild_ci --print-errorlogs
+        run: meson test -Cbuild_ci --print-errorlogs
 
       - name: Install
         run: meson install -Cbuild_ci --strip
@@ -419,7 +419,7 @@ jobs:
         run: meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t2 -Cbuild_ci --print-errorlogs
+        run: meson test -Cbuild_ci --print-errorlogs
 
       - name: Configure emulated x64
         run: >-
@@ -430,12 +430,12 @@ jobs:
         run: meson compile -Cbuild_x64
 
       - name: Run emulated x64 tests
-        run: meson test -t2 -Cbuild_x64 --print-errorlogs
+        run: meson test -Cbuild_x64 --print-errorlogs
 
       - name: Run emulated x64 tests, linking against ARM64EC
         run: >-
              copy build_ci/bin/*.dll build_x64/bin/ &&
-             meson test -t2 -Cbuild_x64 --no-rebuild --print-errorlogs
+             meson test -Cbuild_x64 --no-rebuild --print-errorlogs
 
       - name: Install
         run: meson install -Cbuild_ci --strip
@@ -467,7 +467,7 @@ jobs:
         run: meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t2 -Cbuild_ci --print-errorlogs
+        run: meson test -Cbuild_ci --print-errorlogs
 
       - name: Install
         run: meson install -Cbuild_ci --strip
@@ -499,7 +499,7 @@ jobs:
         run: meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t2 -Cbuild_ci --print-errorlogs
+        run: meson test -Cbuild_ci --print-errorlogs
 
       - name: Install
         run: meson install -Cbuild_ci --strip
@@ -531,7 +531,7 @@ jobs:
         run: meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t2 -Cbuild_ci --print-errorlogs
+        run: meson test -Cbuild_ci --print-errorlogs
 
       - name: Install
         run: meson install -Cbuild_ci --strip
@@ -563,7 +563,7 @@ jobs:
         run: meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t2 -Cbuild_ci --print-errorlogs
+        run: meson test -Cbuild_ci --print-errorlogs
 
       - name: Configure emulated x64
         run: >-
@@ -574,12 +574,12 @@ jobs:
         run: meson compile -Cbuild_x64
 
       - name: Run emulated x64 tests
-        run: meson test -t2 -Cbuild_x64 --print-errorlogs
+        run: meson test -Cbuild_x64 --print-errorlogs
 
       - name: Run emulated x64 tests, linking against ARM64EC
         run: >-
              copy build_ci/bin/*.dll build_x64/bin/ &&
-             meson test -t2 -Cbuild_x64 --no-rebuild --print-errorlogs
+             meson test -Cbuild_x64 --no-rebuild --print-errorlogs
 
       - name: Install
         run: meson install -Cbuild_ci --strip
@@ -619,4 +619,4 @@ jobs:
         run: meson compile -Cbuild_ci
 
       - name: Run tests
-        run: meson test -t2 -Cbuild_ci --print-errorlogs
+        run: meson test -Cbuild_ci --print-errorlogs
