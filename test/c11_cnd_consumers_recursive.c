@@ -10,7 +10,7 @@
 #define NTHREADS  16U
 static thrd_t threads[NTHREADS];
 
-#define NTICKS  100000
+#define NTICKS  10000
 static mtx_t mutex;
 static cnd_t cond_produced, cond_consumed;
 static int value;

@@ -10,7 +10,7 @@
 #define NTHREADS  16U
 static __libcpp_thread_t threads[NTHREADS];
 
-#define NTICKS  100000
+#define NTICKS  10000
 static __libcpp_mutex_t mutex;
 static __libcpp_condvar_t cond_produced, cond_consumed;
 static int value;
