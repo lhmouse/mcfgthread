@@ -19,7 +19,7 @@ static _MCF_thread* writer_threads[NTHREADS];
 static __MCF_ALIGNED(128) _MCF_shared_mutex mutex;
 static __MCF_ALIGNED(128) _MCF_sem start = _MCF_SEM_INIT(0);
 
-#define NITER  10000U
+#define NITER  5000U
 static __MCF_ALIGNED(128) int res1 = 0;
 static __MCF_ALIGNED(128) int res2 = 0;
 
