@@ -87,7 +87,7 @@ do_notify_runtime_failure(const char* where, HMODULE msg_dll, ULONG msg_code)
       lptr ++;
 
       while((*lptr != 0) && (*lptr != L'}'))
-        if((*lptr == L'D') && __MCF_mequal(lptr, L"DebugActiveProcess", 18 * sizeof(WCHAR))) {
+        if(__MCF_mequal(lptr, L"DebugActiveProcess", 18 * sizeof(WCHAR))) {
           lptr += 18;
           do_append_string(&sptr, end_of_buffer, L'`');
           for(const char* pwh = where;  *pwh;  ++pwh)
