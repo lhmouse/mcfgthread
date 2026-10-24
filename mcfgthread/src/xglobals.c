@@ -606,11 +606,10 @@ __MCF_gthread_initialize_globals(void)
      * so locking is not necessary. Unlike `CreateFileMappingW()`, the handle
      * and view shall not be inherited by child processes.  */
     static WCHAR s_gname[] = L"Local\\__MCF_crt_xglobals_*?pid???_#?cookie????????";
-    const uint32_t pid = (uint32_t) __MCF_pid();
     __MCF_ASSERT(s_gname[25] == L'*');
-    do_hex_encode(s_gname + 25, 8, pid, "0123456789ABCDEF");
+    do_hex_encode(s_gname + 25, 8, (uint32_t) __MCF_pid(), "0123456789ABCDEF");
     __MCF_ASSERT(s_gname[34] == L'#');
-    do_hex_encode(s_gname + 34, 16, do_make_cookie(pid), "GHJKLMNPQRSTUWXY");
+    do_hex_encode(s_gname + 34, 16, do_make_cookie((uint32_t) __MCF_pid()), "GHJKLMNPQRSTUWXY");
     __MCF_ASSERT(s_gname[50] == 0);
 
     OBJECT_ATTRIBUTES gattrs = { .Length = sizeof(gattrs),
