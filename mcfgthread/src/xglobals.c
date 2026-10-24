@@ -90,8 +90,9 @@ do_notify_runtime_failure(const char* where, HMODULE msg_dll, ULONG msg_code)
         if(__MCF_mequal(lptr, L"DebugActiveProcess", 18 * sizeof(WCHAR))) {
           lptr += 18;
           do_append_string(&sptr, end_of_buffer, L'`');
-          for(const char* pwh = where;  *pwh;  ++pwh)
-            do_append_string(&sptr, end_of_buffer, (unsigned char) *pwh);
+          const char* pwh = where;
+          while(*pwh != 0)
+            do_append_string(&sptr, end_of_buffer, (unsigned char) *(pwh ++));
           do_append_string(&sptr, end_of_buffer, L'`');
         } else
           do_append_string(&sptr, end_of_buffer, *(lptr ++));
