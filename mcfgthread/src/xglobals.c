@@ -435,7 +435,7 @@ __MCF_win32_error_p(ULONG code, void* ptr)
     return ptr;
   }
 
-__MCF_DLLEXPORT __MCF_NEVER_INLINE
+__MCF_DLLEXPORT __MCF_NEVER_INLINE __MCF_FN_COLD
 FARPROC
 __MCF_get_function_from_loaded_dlls(HMODULE* module, const char* name)
   {
