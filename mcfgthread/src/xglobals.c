@@ -32,7 +32,7 @@ do_format_message(WCHAR* outptr, const WCHAR* end_of_buffer, HMODULE dll, ULONG 
                           outptr, (ULONG) (end_of_buffer - outptr), nullptr);
   }
 
-static
+static __MCF_FN_COLD
 void
 do_notify_runtime_failure(const char* where, HMODULE msg_dll, ULONG msg_code)
   {
