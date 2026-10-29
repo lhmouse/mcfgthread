@@ -820,6 +820,7 @@ __asm__ (
 "\n   test edx, DWORD PTR [ecx + eax - 4096]"
 "\n   sub eax, 4096"
 "\n   ja 20001b"
+"\n   test edx, DWORD PTR [ecx]"
 "\n 20002:"
 "\n   pop ecx"
 "\n   pop eax"
@@ -862,6 +863,7 @@ __asm__ (
 "\n   test edx, DWORD PTR [rcx + rax - 4096]"
 "\n   sub rax, 4096"
 "\n   ja 20001b"
+"\n   test edx, DWORD PTR [rcx]"
 "\n 20002:"
 "\n   mov rcx, QWORD PTR [rsp]"
 "\n   mov rax, QWORD PTR [rsp + 8]"
@@ -889,6 +891,7 @@ __asm__ (
 "\n   subs x17, x17, 4096 / 4"
 "\n   ldr wzr, [x16, x17, lsl 2]"
 "\n   b.hi 20001b"
+"\n   ldr wzr, [x16]"
 "\n 20002:"
 "\n   ret"
 #  if defined __MCF_M_ARM64EC
