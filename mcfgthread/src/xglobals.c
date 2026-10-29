@@ -875,31 +875,22 @@ __asm__ (
 #elif defined __MCF_M_ARM64_ASM
 /** This function probes the stack without adjusting SP. No registers other
  * than X16, X17 and NZCV shall be clobbered. The size of allocation is passed
- * via X15 in number of quad words.  */
+ * via X15 in number of quad words. This is a leaf function that requires no
+ * unwinding data.  */
 "\n .globl __chkstk"
 "\n .def __chkstk; .scl 2; .type 32; .endef"
 "\n __chkstk:"
-"\n .seh_proc __chkstk"
-"\n   stp x15, x16, [sp, -16]!"
-"\n .seh_stackalloc 16"
-"\n .seh_endprologue"
-"\n   lsl x15, x15, 2"
-"\n   add x16, sp, 16"
-"\n   sub x16, x16, x15, lsl 2"
+"\n   sub x16, sp, x15, lsl 4"
 "\n   ldr x17, [x18, 16]"  /* Teb->StackLimit */
 "\n   cmp x16, x17"
 "\n   b.hs 20002f"
+"\n   lsl x17, x15, 2"
 "\n 20001:"
-"\n   subs x15, x15, 4096 / 4"
-"\n   ldr wzr, [x16, x15, lsl 2]"
+"\n   subs x17, x17, 4096 / 4"
+"\n   ldr wzr, [x16, x17, lsl 2]"
 "\n   b.hi 20001b"
 "\n 20002:"
-"\n .seh_startepilogue"
-"\n   ldp x15, x16, [sp], 16"
-"\n .seh_stackalloc 16"
-"\n .seh_endepilogue"
 "\n   ret"
-"\n .seh_endproc"
 #  if defined __MCF_M_ARM64EC
 /** This name is used for ARM64EC.  */
 "\n .globl \"#__chkstk_arm64ec\""
