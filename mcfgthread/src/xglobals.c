@@ -812,12 +812,15 @@ __asm__ (
 "\n ___chkstk_ms:"
 "\n   push eax"
 "\n   push ecx"
-"\n   lea ecx, [esp + 12 - 4096]"
+"\n   lea ecx, [esp + 12]"
 "\n   sub ecx, eax"
+"\n   cmp ecx, DWORD PTR fs:[8]"  /* Teb->StackLimit */
+"\n   jae 20002f"
 "\n 20001:"
-"\n   test edx, DWORD PTR [ecx + eax]"
+"\n   test edx, DWORD PTR [ecx + eax - 4096]"
 "\n   sub eax, 4096"
 "\n   ja 20001b"
+"\n 20002:"
 "\n   pop ecx"
 "\n   pop eax"
 "\n   ret"
@@ -851,12 +854,15 @@ __asm__ (
 "\n .seh_endprologue"
 "\n   mov QWORD PTR [rsp], rcx"
 "\n   mov QWORD PTR [rsp + 8], rax"
-"\n   lea rcx, [rsp + 24 - 4096]"
+"\n   lea rcx, [rsp + 24]"
 "\n   sub rcx, rax"
+"\n   cmp rcx, QWORD PTR gs:[16]"  /* Teb->StackLimit */
+"\n   jae 20002f"
 "\n 20001:"
-"\n   test edx, DWORD PTR [rcx + rax]"
+"\n   test edx, DWORD PTR [rcx + rax - 4096]"
 "\n   sub rax, 4096"
 "\n   ja 20001b"
+"\n 20002:"
 "\n   mov rcx, QWORD PTR [rsp]"
 "\n   mov rax, QWORD PTR [rsp + 8]"
 "\n   add rsp, 16"
@@ -867,9 +873,9 @@ __asm__ (
 "\n .def __chkstk; .scl 2; .type 32; .endef"
 "\n .equiv __chkstk, ___chkstk_ms"
 #elif defined __MCF_M_ARM64_ASM
-/** This function probes the stack without adjusting SP. No registers shall
- * be clobbered. The size of allocation is passed via X15 in number of quad
- * words.  */
+/** This function probes the stack without adjusting SP. No registers other
+ * than X16, X17 and NZCV shall be clobbered. The size of allocation is passed
+ * via X15 in number of quad words.  */
 "\n .globl __chkstk"
 "\n .def __chkstk; .scl 2; .type 32; .endef"
 "\n __chkstk:"
@@ -878,12 +884,16 @@ __asm__ (
 "\n .seh_stackalloc 16"
 "\n .seh_endprologue"
 "\n   lsl x15, x15, 2"
-"\n   add x16, sp, 16 - 4096"
+"\n   add x16, sp, 16"
 "\n   sub x16, x16, x15, lsl 2"
+"\n   ldr x17, [x18, 16]"  /* Teb->StackLimit */
+"\n   cmp x16, x17"
+"\n   b.hs 20002f"
 "\n 20001:"
-"\n   ldr wzr, [x16, x15, lsl 2]"
 "\n   subs x15, x15, 4096 / 4"
+"\n   ldr wzr, [x16, x15, lsl 2]"
 "\n   b.hi 20001b"
+"\n 20002:"
 "\n .seh_startepilogue"
 "\n   ldp x15, x16, [sp], 16"
 "\n .seh_stackalloc 16"
