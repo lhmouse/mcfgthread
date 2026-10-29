@@ -840,21 +840,28 @@ __asm__ (
 "\n .equiv __chkstk, __alloca"
 #elif defined __MCF_M_X8664_ASM
 /** This function probes the stack without adjusting RSP. No registers shall
- * be clobbered. The size of allocation is passed via RAX in number of bytes.  */
+ * be clobbered. The size of allocation is passed via RAX in number of bytes.
+ * Inside the function, RSP might not be aligned to a 16-byte boundary.  */
 "\n .globl ___chkstk_ms"
 "\n .def ___chkstk_ms; .scl 2; .type 32; .endef"
 "\n ___chkstk_ms:"
-"\n   push rax"
-"\n   push rcx"
+"\n .seh_proc ___chkstk_ms"
+"\n   sub rsp, 16"
+"\n .seh_stackalloc 16"
+"\n .seh_endprologue"
+"\n   mov QWORD PTR [rsp], rcx"
+"\n   mov QWORD PTR [rsp + 8], rax"
 "\n   lea rcx, [rsp + 24 - 4096]"
 "\n   sub rcx, rax"
 "\n 20001:"
 "\n   test edx, DWORD PTR [rcx + rax]"
 "\n   sub rax, 4096"
 "\n   ja 20001b"
-"\n   pop rcx"
-"\n   pop rax"
+"\n   mov rcx, QWORD PTR [rsp]"
+"\n   mov rax, QWORD PTR [rsp + 8]"
+"\n   add rsp, 16"
 "\n   ret"
+"\n .seh_endproc"
 /** This name is called by Clang for MSVC target.  */
 "\n .globl __chkstk"
 "\n .def __chkstk; .scl 2; .type 32; .endef"
@@ -866,7 +873,10 @@ __asm__ (
 "\n .globl __chkstk"
 "\n .def __chkstk; .scl 2; .type 32; .endef"
 "\n __chkstk:"
+"\n .seh_proc __chkstk"
 "\n   stp x15, x16, [sp, -16]!"
+"\n .seh_stackalloc 16"
+"\n .seh_endprologue"
 "\n   lsl x15, x15, 2"
 "\n   add x16, sp, 16 - 4096"
 "\n   sub x16, x16, x15, lsl 2"
@@ -874,8 +884,12 @@ __asm__ (
 "\n   ldr wzr, [x16, x15, lsl 2]"
 "\n   subs x15, x15, 4096 / 4"
 "\n   b.hi 20001b"
+"\n .seh_startepilogue"
 "\n   ldp x15, x16, [sp], 16"
+"\n .seh_stackalloc 16"
+"\n .seh_endepilogue"
 "\n   ret"
+"\n .seh_endproc"
 #  if defined __MCF_M_ARM64EC
 /** This name is used for ARM64EC.  */
 "\n .globl \"#__chkstk_arm64ec\""
