@@ -845,29 +845,30 @@ __asm__ (
 #elif defined __MCF_M_X8664_ASM
 /** This function probes the stack without adjusting RSP. No registers shall
  * be clobbered. The size of allocation is passed via RAX in number of bytes.
- * Inside the function, RSP might not be aligned to a 16-byte boundary.  */
+ * This function has a custom calling convention; RSP may be unaligned before
+ * the call, and arguments have no home slots.  */
 "\n .globl ___chkstk_ms"
 "\n .def ___chkstk_ms; .scl 2; .type 32; .endef"
 "\n ___chkstk_ms:"
 "\n .seh_proc ___chkstk_ms"
-"\n   sub rsp, 16"
-"\n .seh_stackalloc 16"
+"\n   push rsi"
+"\n .seh_pushreg rsi"
+"\n   push rdi"
+"\n .seh_pushreg rdi"
 "\n .seh_endprologue"
-"\n   mov QWORD PTR [rsp], rcx"
-"\n   mov QWORD PTR [rsp + 8], rax"
-"\n   lea rcx, [rsp + 24]"
-"\n   sub rcx, rax"
-"\n   cmp rcx, QWORD PTR gs:[16]"  /* Teb->StackLimit */
+"\n   lea rsi, [rsp + 24]"
+"\n   sub rsi, rax"
+"\n   cmp rsi, QWORD PTR gs:[16]"  /* Teb->StackLimit */
 "\n   jae 20002f"
+"\n   mov rdi, rax"
 "\n 20001:"
-"\n   test edx, DWORD PTR [rcx + rax - 4096]"
-"\n   sub rax, 4096"
+"\n   test edx, DWORD PTR [rsi + rdi - 4096]"
+"\n   sub rdi, 4096"
 "\n   ja 20001b"
-"\n   test edx, DWORD PTR [rcx]"
+"\n   test edx, DWORD PTR [rsi]"
 "\n 20002:"
-"\n   mov rcx, QWORD PTR [rsp]"
-"\n   mov rax, QWORD PTR [rsp + 8]"
-"\n   add rsp, 16"
+"\n   pop rdi"
+"\n   pop rsi"
 "\n   ret"
 "\n .seh_endproc"
 /** This name is called by Clang for MSVC target.  */
