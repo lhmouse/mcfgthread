@@ -113,18 +113,16 @@ do_notify_runtime_failure(const char* where, HMODULE msg_dll, ULONG msg_code)
     if((console != INVALID_HANDLE_VALUE) && (console != NULL)) {
       DWORD nwritten;
       WriteConsoleW(console, text.Buffer, (DWORD) (sptr - text.Buffer), &nwritten, nullptr);
-      (void) nwritten;
     }
 
     /* If we are in a DLL entry-point function or a TLS callback, it is not safe
      * to call `MessageBoxW()` from USER32.DLL, so request CSRSS.EXE to display
      * the message box for us.  */
-    HARDERROR_RESPONSE rhe_resp = 0;
+    HARDERROR_RESPONSE rhe_resp;
     ULONG_PTR rhe_params[4] = { (ULONG_PTR) &text, (ULONG_PTR) &caption, MB_OK | MB_ICONSTOP, 0 };
     NtRaiseHardError(STATUS_SERVICE_NOTIFICATION, ARRAYSIZE(rhe_params),
                      0b0011, /* parameters 0 and 1 are `UNICODE_STRING*` */
                      rhe_params, OptionOk, &rhe_resp);
-    (void) rhe_resp;
   }
 
 static __MCF_NEVER_RETURN __MCF_FN_COLD
