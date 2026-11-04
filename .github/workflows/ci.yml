@@ -242,6 +242,45 @@ jobs:
       - uses: actions/upload-artifact@v7
         with: { path: build_pkg, name: 'armv8.1_mingw-w64_clang' }
 
+  llvm-mingw-armv88:
+    name: LLVM-MinGW native (Clang, mingw-w64 runtime, UCRT, ARMv8.8)
+    runs-on: windows-11-arm
+
+    defaults:
+      run: { shell: pwsh }
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install dependencies
+        run: >-
+             pip3 install --break-system-packages meson unzip
+
+      - name: Download LLVM MinGW
+        run: >-
+             curl.exe -LO "https://github.com/mstorsjo/llvm-mingw/releases/download/20260602/llvm-mingw-20260602-ucrt-aarch64.zip" &&
+             unzip llvm-mingw-20260602-ucrt-aarch64.zip &&
+             cvpa llvm-mingw-20260602-ucrt-aarch64/bin | tee -a "${env:GITHUB_PATH}"
+
+      - name: Configure
+        run: >-
+             meson setup -Ddebug=true -Doptimization=s build_ci
+             -Dc_args='-march=armv8.8-a' -Dcpp_args='-march=armv8.8-a'
+             --prefix $PWD/build_pkg
+             --native-file cross/llvm.aarch64-w64-mingw32
+
+      - name: Build
+        run: meson compile -Cbuild_ci
+
+      - name: Run tests
+        run: meson test -t2 -Cbuild_ci --print-errorlogs
+
+      - name: Install
+        run: meson install -Cbuild_ci --strip
+
+      - uses: actions/upload-artifact@v7
+        with: { path: build_pkg, name: 'armv8.8_mingw-w64_clang' }
+
   #==========================================================================
   # Secondary builds
   #==========================================================================
