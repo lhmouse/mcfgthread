@@ -113,6 +113,7 @@ do_notify_runtime_failure(const char* where, HMODULE msg_dll, ULONG msg_code)
     if((console != INVALID_HANDLE_VALUE) && (console != NULL)) {
       DWORD nwritten;
       WriteConsoleW(console, text.Buffer, (DWORD) (sptr - text.Buffer), &nwritten, nullptr);
+      WriteConsoleW(console, L"\r\n", 2, &nwritten, nullptr);
     }
 
     /* If we are in a DLL entry-point function or a TLS callback, it is not safe
