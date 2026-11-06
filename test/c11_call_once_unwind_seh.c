@@ -9,6 +9,7 @@
 #undef NDEBUG
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define NTHREADS  16U
 static thrd_t threads[NTHREADS];

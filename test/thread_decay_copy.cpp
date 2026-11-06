@@ -7,6 +7,7 @@
 #undef NDEBUG
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #ifdef TEST_STD
 #  include <thread>
