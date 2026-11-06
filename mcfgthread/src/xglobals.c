@@ -357,7 +357,7 @@ __MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* to, const int64_t* ms_opt
 
       to->li.QuadPart = *ms_opt * 10000;
       __MCF_ASSERT(to->li.QuadPart < 0);
-      QueryUnbiasedInterruptTime(&(to->since));
+      __MCF_crt_QueryUnbiasedInterruptTimePrecise(&(to->since));
     }
     else
       to->li.QuadPart = 0;
@@ -374,7 +374,7 @@ __MCF_adjust_winnt_timeout_v3(__MCF_winnt_timeout* to)
     /* Add the number of 100 nanoseconds that have elapsed so far, to the
      * timeout which is negative, using saturation arithmetic.  */
     ULONGLONG old_since = to->since;
-    QueryUnbiasedInterruptTime(&(to->since));
+    __MCF_crt_QueryUnbiasedInterruptTimePrecise(&(to->since));
     to->li.QuadPart += (LONGLONG) (to->since - old_since);
     to->li.QuadPart &= to->li.QuadPart >> 63;
   }
