@@ -184,7 +184,7 @@ _MCF_get_active_processor_mask(void)
 
 __MCF_DLLEXPORT
 void
-_MCF_get_process_cpu_time(_MCF_cpu_time* tp)
+_MCF_get_cpu_time(_MCF_cpu_time* tp)
   {
     ULONGLONG creation_time, exit_time, kernel_time, user_time;
     BOOL succ = GetProcessTimes(NtCurrentProcess(), (FILETIME*) &creation_time,

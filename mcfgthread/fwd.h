@@ -529,7 +529,8 @@ struct __MCF_cpu_time
     double __user_time;
   };
 
-/** Gets the accumulative time of execution of the current process.
+/** Gets the accumulative time of execution of the current process, including
+ * all active and terminated threads.
  *
  * This value corresponds to `clock_gettime(CLOCK_PROCESS_CPUTIME_ID, ...)` on
  * Linux, which is the sum of both the kernel time and user time.
@@ -539,7 +540,7 @@ struct __MCF_cpu_time
  * @since 2.6  */
 __MCF_XGLOBALS_IMPORT
 void
-_MCF_get_process_cpu_time(_MCF_cpu_time* __tp)
+_MCF_get_cpu_time(_MCF_cpu_time* __tp)
   __MCF_noexcept;
 
 /** Calls `__init_proc(__arg)` exactly once.
