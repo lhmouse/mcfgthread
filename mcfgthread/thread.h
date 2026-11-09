@@ -473,7 +473,7 @@ _MCF_thread_set_affinity(_MCF_thread* __thrd_opt, const _MCF_cpu_collection* __c
  * @since 2.6  */
 __MCF_THREAD_IMPORT
 int
-_MCF_get_thread_cpu_time(const _MCF_thread* __thrd_opt, _MCF_cpu_time* __tp)
+_MCF_thread_get_cpu_time(const _MCF_thread* __thrd_opt, _MCF_cpu_time* __tp)
   __MCF_noexcept;
 
 /** Define inline functions after all declarations.

@@ -415,7 +415,7 @@ _MCF_thread_set_affinity(_MCF_thread* thrd_opt, const _MCF_cpu_collection* coll)
 
 __MCF_DLLEXPORT
 int
-_MCF_get_thread_cpu_time(const _MCF_thread* thrd_opt, _MCF_cpu_time* tp)
+_MCF_thread_get_cpu_time(const _MCF_thread* thrd_opt, _MCF_cpu_time* tp)
   {
     HANDLE handle = thrd_opt ? thrd_opt->__handle : NtCurrentThread();
     ULONGLONG creation_time, exit_time, kernel_time, user_time;
