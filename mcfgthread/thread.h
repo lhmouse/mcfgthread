@@ -435,8 +435,8 @@ _MCF_tls_set(_MCF_tls_key* __key, const void* __value_opt)
  * @param `thrd_opt` points to the thread to get the affinity of. If it is null,
  *    the affinity of the current thread is returned.
  * @param `coll` points to a CPU collection where to set CPU selections.
- * @returns 0 upon success, -1 in case of an invalid argument, or -2 in case of
- *    a system error which can be obtained via `_MCF_get_win32_error()`.
+ * @returns 0 upon success, or -2 in case of a system error which can be
+ *    obtained via `_MCF_get_win32_error()`.
  * @since 2.5  */
 __MCF_THREAD_IMPORT
 int

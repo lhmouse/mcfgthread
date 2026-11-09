@@ -338,11 +338,8 @@ __MCF_DLLEXPORT
 int
 _MCF_thread_get_affinity(const _MCF_thread* thrd_opt, _MCF_cpu_collection* coll)
   {
-    if(!coll)
-      return -1;
-
-    _MCF_cpu_collection_set_all_selections(coll, false);
     HANDLE handle = thrd_opt ? thrd_opt->__handle : NtCurrentThread();
+    _MCF_cpu_collection_set_all_selections(coll, false);
 
     if(__MCF_crt_GetThreadSelectedCpuSets_opt) {
       /* Use CPU Set APIs if they are available. These work reliably in a 32-bit
@@ -381,9 +378,6 @@ __MCF_DLLEXPORT
 int
 _MCF_thread_set_affinity(_MCF_thread* thrd_opt, const _MCF_cpu_collection* coll)
   {
-    if(!coll)
-      return -1;
-
     HANDLE handle = thrd_opt ? thrd_opt->__handle : NtCurrentThread();
 
     if(__MCF_crt_SetThreadSelectedCpuSets_opt) {
