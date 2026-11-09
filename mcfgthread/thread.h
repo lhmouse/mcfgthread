@@ -460,6 +460,22 @@ int
 _MCF_thread_set_affinity(_MCF_thread* __thrd_opt, const _MCF_cpu_collection* __coll)
   __MCF_noexcept;
 
+/** Gets the accumulative time of execution of a thread.
+ *
+ * This value corresponds to `clock_gettime(CLOCK_THREAD_CPUTIME_ID, ...)` on
+ * Linux, which is the sum of both the kernel time and user time.
+ *
+ * @param `thrd_opt` points to the thread to get the accumulative CPU time of.
+ *    If it is null, the time of the current thread is returned.
+ * @param `tp` points to an object of type `_MCF_cpu_time`.
+ * @returns 0 upon success, or -2 in case of a system error which can be
+ *    obtained via `_MCF_get_win32_error()`.
+ * @since 2.6  */
+__MCF_THREAD_IMPORT
+int
+_MCF_get_thread_cpu_time(const _MCF_thread* __thrd_opt, _MCF_cpu_time* __tp)
+  __MCF_noexcept;
+
 /** Define inline functions after all declarations.
  *
  * We would like to keep them away from declarations for conciseness, which also

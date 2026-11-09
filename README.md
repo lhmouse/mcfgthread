@@ -196,6 +196,7 @@ contains a condition variable?)
 |`GetThreadGroupAffinity`                                 |Windows 7        |[Windows API][ref:GetThreadGroupAffinity] |
 |`GetThreadPriority`                                      |All              |[Windows API][ref:GetThreadPriority] |
 |`GetThreadSelectedCpuSets` <sub>optional</sub>           |Windows 10       |[Windows API][ref:GetThreadSelectedCpuSets] |
+|`GetThreadTimes`                                         |Windows NT 3.5   |[Windows API][ref:GetThreadTimes] |
 |`HeapAlloc`                                              |All              |[Windows API][ref:HeapAlloc] |
 |`HeapFree`                                               |All              |[Windows API][ref:HeapFree] |
 |`HeapReAlloc`                                            |All              |[Windows API][ref:HeapReAlloc] |
@@ -244,6 +245,7 @@ contains a condition variable?)
 [ref:GetThreadGroupAffinity]: https://learn.microsoft.com/en-us/windows/win32/api/processtopologyapi/nf-processtopologyapi-getthreadgroupaffinity
 [ref:GetThreadPriority]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadpriority
 [ref:GetThreadSelectedCpuSets]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadselectedcpusets
+[ref:GetThreadTimes]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadtimes
 [ref:HeapAlloc]: https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapalloc
 [ref:HeapFree]: https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapfree
 [ref:HeapReAlloc]: https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heaprealloc

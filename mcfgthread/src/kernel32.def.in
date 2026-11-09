@@ -28,6 +28,7 @@ EXPORTS
   GetSystemTimeAsFileTime@4@
   GetThreadGroupAffinity@8@
   GetThreadPriority@4@
+  GetThreadTimes@20@
   HeapAlloc@12@
   HeapFree@12@
   HeapReAlloc@16@

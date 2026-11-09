@@ -412,3 +412,21 @@ _MCF_thread_set_affinity(_MCF_thread* thrd_opt, const _MCF_cpu_collection* coll)
 
     return 0;
   }
+
+__MCF_DLLEXPORT
+int
+_MCF_get_thread_cpu_time(const _MCF_thread* thrd_opt, _MCF_cpu_time* tp)
+  {
+    HANDLE handle = thrd_opt ? thrd_opt->__handle : NtCurrentThread();
+    ULONGLONG creation_time, exit_time, kernel_time, user_time;
+    BOOL succ = GetThreadTimes(handle, (FILETIME*) &creation_time,
+                               (FILETIME*) &exit_time, (FILETIME*) &kernel_time,
+                               (FILETIME*) &user_time);
+    if(!succ)
+      return __MCF_FORWARD_WIN32_ERROR(-2);
+
+    /* Convert NT time values to milliseconds.  */
+    tp->__kernel_time = (double)(int64_t) kernel_time * 0.0001;
+    tp->__user_time = (double)(int64_t) user_time * 0.0001;
+    return 0;
+  }
