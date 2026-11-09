@@ -182,6 +182,21 @@ _MCF_get_active_processor_mask(void)
     return __MCF_crt_sysinfo.dwActiveProcessorMask;
   }
 
+__MCF_DLLEXPORT
+void
+_MCF_get_process_cpu_time(_MCF_cpu_time* tp)
+  {
+    ULONGLONG creation_time, exit_time, kernel_time, user_time;
+    BOOL succ = GetProcessTimes(NtCurrentProcess(), (FILETIME*) &creation_time,
+                                (FILETIME*) &exit_time, (FILETIME*) &kernel_time,
+                                (FILETIME*) &user_time);
+    __MCF_ASSERT(succ != 0);
+
+    /* Convert NT time values to milliseconds.  */
+    tp->__kernel_time = (double)(int64_t) kernel_time * 0.0001;
+    tp->__user_time = (double)(int64_t) user_time * 0.0001;
+  }
+
 static
 EXCEPTION_DISPOSITION
 do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);

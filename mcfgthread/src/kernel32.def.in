@@ -22,6 +22,7 @@ EXPORTS
   GetProcAddress@8@
   GetProcessAffinityMask@12@
   GetProcessHeap@0@
+  GetProcessTimes@20@
   GetStdHandle@4@
   GetSystemInfo@4@
   GetSystemTimeAsFileTime@4@

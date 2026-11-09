@@ -187,6 +187,7 @@ contains a condition variable?)
 |`GetProcAddress`                                         |All              |[Windows API][ref:GetProcAddress] |
 |`GetProcessAffinityMask`                                 |Windows NT 3.5   |[Windows API][ref:GetProcessAffinityMask] |
 |`GetProcessHeap`                                         |All              |[Windows API][ref:GetProcessHeap] |
+|`GetProcessTimes`                                        |Windows NT 3.5   |[Windows API][ref:GetProcessTimes] |
 |`GetStdHandle`                                           |All              |[Windows API][ref:GetStdHandle] |
 |`GetSystemCpuSetInformation` <sub>optional</sub>         |Windows 10       |[Windows API][ref:GetSystemCpuSetInformation] |
 |`GetSystemInfo`                                          |All              |[Windows API][ref:GetSystemInfo] |
@@ -234,6 +235,7 @@ contains a condition variable?)
 [ref:GetProcAddress]: https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress
 [ref:GetProcessAffinityMask]: https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getprocessaffinitymask
 [ref:GetProcessHeap]: https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-getprocessheap
+[ref:GetProcessTimes]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocesstimes
 [ref:GetStdHandle]: https://learn.microsoft.com/en-us/windows/console/getstdhandle
 [ref:GetSystemCpuSetInformation]: https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getsystemcpusetinformation
 [ref:GetSystemInfo]: https://learn.microsoft.com/en-us/windows/win32/api/sysinfoapi/nf-sysinfoapi-getsysteminfo

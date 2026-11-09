@@ -371,6 +371,7 @@ typedef struct __MCF_thread_base _MCF_thread;
 typedef int _MCF_thread_priority;
 typedef struct __MCF_tls_key _MCF_tls_key;
 typedef struct __MCF_cpu_collection _MCF_cpu_collection;
+typedef struct __MCF_cpu_time _MCF_cpu_time;
 
 /** See `_MCF_cond_wait()` for details about these callbacks.  */
 typedef intptr_t _MCF_cond_unlock_callback(intptr_t __lock_arg);
@@ -518,6 +519,27 @@ _MCF_get_processor_count(void)
 __MCF_XGLOBALS_IMPORT __MCF_FN_CONST
 uintptr_t
 _MCF_get_active_processor_mask(void)
+  __MCF_noexcept;
+
+/** This structure represents the accumulative time of execution of a process or
+ * thread. Time values are represented in milliseconds.  */
+struct __MCF_cpu_time
+  {
+    double __kernel_time;
+    double __user_time;
+  };
+
+/** Gets the accumulative time of execution of the current process.
+ *
+ * This value corresponds to `clock_gettime(CLOCK_PROCESS_CPUTIME_ID, ...)` on
+ * Linux, which is the sum of both the kernel time and user time.
+ *
+ * @param `tp` points to an object of type `_MCF_cpu_time`.
+ * @returns nothing.
+ * @since 2.6  */
+__MCF_XGLOBALS_IMPORT
+void
+_MCF_get_process_cpu_time(_MCF_cpu_time* __tp)
   __MCF_noexcept;
 
 /** Calls `__init_proc(__arg)` exactly once.
