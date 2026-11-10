@@ -23,12 +23,12 @@ _MCF_cpu_collection_new(void)
        * process on a 64-bit system.  */
       SYSTEM_CPU_SET_INFORMATION* info = __builtin_alloca(1024);
       DWORD info_cb = 1024;
-      if(!__MCF_crt_GetSystemCpuSetInformation_opt(info, info_cb, &info_cb, NULL, 0)) {
+      if(!(*(__MCF_crt_GetSystemCpuSetInformation_opt))(info, info_cb, &info_cb, NULL, 0)) {
         if(GetLastError() != ERROR_INSUFFICIENT_BUFFER)
           return __MCF_FORWARD_WIN32_ERROR(nullptr);
 
         info = __builtin_alloca(info_cb);
-        if(!__MCF_crt_GetSystemCpuSetInformation_opt(info, info_cb, &info_cb, NULL, 0))
+        if(!(*(__MCF_crt_GetSystemCpuSetInformation_opt))(info, info_cb, &info_cb, NULL, 0))
           return __MCF_FORWARD_WIN32_ERROR(nullptr);
       }
 

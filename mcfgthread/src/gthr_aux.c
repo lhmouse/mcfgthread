@@ -141,7 +141,7 @@ do_gthread_routine(_MCF_thread* thrd)
     __MCF_gthr_thread_record* rec = _MCF_thread_get_data(thrd);
     void* arg = rec->__arg_or_result;
     rec->__arg_or_result = __MCF_GTHR_CANCELLED;
-    void* result = (* rec->__proc) (arg);
+    void* result = (*(rec->__proc))(arg);
     rec->__arg_or_result = result;
   }
 

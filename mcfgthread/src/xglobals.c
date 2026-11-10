@@ -313,7 +313,7 @@ __MCF_seh_top(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp
       FARPROC dll_fn = __MCF_get_function_from_loaded_dlls(&dll, "__std_terminate");
       if(dll_fn) {
         typedef void typeof_std_terminate(void);
-        (* __MCF_CAST_PTR(typeof_std_terminate, dll_fn)) ();
+        (*(__MCF_CAST_PTR(typeof_std_terminate, dll_fn)))();
         __builtin_trap();
       }
     }
@@ -373,7 +373,7 @@ __MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* to, const int64_t* ms_opt
 
       to->li.QuadPart = *ms_opt * 10000;
       __MCF_ASSERT(to->li.QuadPart < 0);
-      __MCF_crt_QueryUnbiasedInterruptTimePrecise(&(to->since));
+      (*(__MCF_crt_QueryUnbiasedInterruptTimePrecise))(&(to->since));
     }
     else
       to->li.QuadPart = 0;
@@ -390,7 +390,7 @@ __MCF_adjust_winnt_timeout_v3(__MCF_winnt_timeout* to)
     /* Add the number of 100 nanoseconds that have elapsed so far, to the
      * timeout which is negative, using saturation arithmetic.  */
     ULONGLONG old_since = to->since;
-    __MCF_crt_QueryUnbiasedInterruptTimePrecise(&(to->since));
+    (*(__MCF_crt_QueryUnbiasedInterruptTimePrecise))(&(to->since));
     to->li.QuadPart += (LONGLONG) (to->since - old_since);
     to->li.QuadPart &= to->li.QuadPart >> 63;
   }
@@ -689,7 +689,7 @@ void
 __MCF_gthread_on_thread_exit(void)
   {
     __MCF_USING_SEH_HANDLER(__MCF_seh_top);
-    _MCF_thread* self = __MCF_crt_TlsGetValue2(__MCF_G(tls_index));
+    _MCF_thread* self = (*(__MCF_crt_TlsGetValue2))(__MCF_G(tls_index));
     if(!self)
       return;
 

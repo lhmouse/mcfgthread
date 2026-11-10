@@ -38,7 +38,7 @@ do_unlock_and_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt, intptr
     /* Now, unlock the associated mutex. If another thread attempts to signal
      * this one, it shall block.  */
     if(unlock_opt)
-      *unlocked = (* unlock_opt) (lock_arg);
+      *unlocked = (*(unlock_opt))(lock_arg);
 
     /* Try waiting.  */
     __MCF_check_wait_safety(&nt_timeout);
@@ -92,7 +92,7 @@ _MCF_cond_wait(_MCF_cond* cnd, _MCF_cond_unlock_callback* unlock_opt,
      * circumstances, a user may pass a null `relock_opt` and do relocking
      * themself.  */
     if(unlock_opt && relock_opt)
-      (* relock_opt) (lock_arg, unlocked);
+      (*(relock_opt))(lock_arg, unlocked);
 
     /* Forward the error code to caller.  */
     return err;

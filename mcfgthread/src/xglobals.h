@@ -111,7 +111,7 @@ __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
     register int eax __asm__("eax"), edx __asm__("edx");
     __asm__ ("" : "=r"(eax), "=r"(edx));
     typedef __attribute__((__regparm__(3))) void Xfn(int, int, void*, void*);
-    (* __MCF_CAST_PTR(Xfn, dtor.__cdecl_ptr)) (eax, edx, arg, arg);
+    (*(__MCF_CAST_PTR(Xfn, dtor.__cdecl_ptr)))(eax, edx, arg, arg);
   }
 
 #else  /* !defined __MCF_M_X8632 */
@@ -131,7 +131,7 @@ __MCF_ALWAYS_INLINE
 void
 __MCF_invoke_cxa_dtor(__MCF_cxa_dtor_any_ dtor, void* arg)
   {
-    (* dtor.__cdecl_ptr) (arg);
+    (*(dtor.__cdecl_ptr))(arg);
   }
 
 #endif  /* !defined __MCF_M_X8632 */

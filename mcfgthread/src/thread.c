@@ -34,7 +34,7 @@ do_win32_thread_routine(void* param)
     __MCF_ASSERT(thrd->__atexit_queue->__size == 0);
     __MCF_ASSERT(thrd->__tls_table->__size_hint == 0);
 
-    _MCF_thread* foreign = __MCF_crt_TlsGetValue2(__MCF_G(tls_index));
+    _MCF_thread* foreign = (*(__MCF_crt_TlsGetValue2))(__MCF_G(tls_index));
     if(foreign) {
       /* User DLLs or TLS callbacks may have used thread-local variables, so migrate
        * existing data.  */
@@ -55,7 +55,7 @@ do_win32_thread_routine(void* param)
     /* Set x87 precision to 64-bit mantissa (GNU `long double` format).  */
     __asm__ volatile ("fninit");
 #endif
-    (* thrd->__proc) (thrd);
+    (*(thrd->__proc))(thrd);
     __MCF_gthread_on_thread_exit();  /* invalidates `thrd`  */
     return 0;
   }
@@ -237,7 +237,7 @@ static __MCF_NEVER_INLINE
 _MCF_thread*
 do_thread_self_slow(void)
   {
-    _MCF_thread* self = __MCF_crt_TlsGetValue2(__MCF_G(tls_index));
+    _MCF_thread* self = (*(__MCF_crt_TlsGetValue2))(__MCF_G(tls_index));
     if(self)
       return self;
 
@@ -346,7 +346,7 @@ _MCF_thread_get_affinity(const _MCF_thread* thrd_opt, _MCF_cpu_collection* coll)
        * process on a 64-bit system.  */
       DWORD* ids = __builtin_alloca(_MCF_cpu_collection_get_size(coll) * sizeof(DWORD));
       DWORD nids = _MCF_cpu_collection_get_size(coll);
-      if(!__MCF_crt_GetThreadSelectedCpuSets_opt(handle, ids, nids, &nids))
+      if(!(*(__MCF_crt_GetThreadSelectedCpuSets_opt))(handle, ids, nids, &nids))
         return __MCF_FORWARD_WIN32_ERROR(-2);
 
       /* Select all CPUs in [ids, ids + nids]. If `nids` is zero, it indicates
@@ -392,7 +392,7 @@ _MCF_thread_set_affinity(_MCF_thread* thrd_opt, const _MCF_cpu_collection* coll)
       if(nids == 0)
         return -1;
 
-      if(!__MCF_crt_SetThreadSelectedCpuSets_opt(handle, ids, nids))
+      if(!(*(__MCF_crt_SetThreadSelectedCpuSets_opt))(handle, ids, nids))
         return __MCF_FORWARD_WIN32_ERROR(-2);
     }
     else {

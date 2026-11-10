@@ -49,7 +49,7 @@ _MCF_hires_utc_now(void)
      * seconds from 1601-01-01T00:00:00Z (the NT epoch) to 1970-01-01T00:00:00Z
      * (the Unix Epoch).  */
     ULONGLONG ull;
-    __MCF_crt_GetSystemTimePreciseAsFileTime((FILETIME*) &ull);
+    (*(__MCF_crt_GetSystemTimePreciseAsFileTime))((FILETIME*) &ull);
     return ((double)(int64_t) ull - 116444736000000000) * 0.0001;
   }
 
@@ -67,7 +67,7 @@ double
 _MCF_hires_steady_now(void)
   {
     ULONGLONG ull;
-    __MCF_crt_QueryUnbiasedInterruptTimePrecise(&ull);
+    (*(__MCF_crt_QueryUnbiasedInterruptTimePrecise))(&ull);
     return (double)(int64_t) ull * 0.0001;
   }
 
@@ -85,7 +85,7 @@ double
 _MCF_hires_tick_count(void)
   {
     ULONGLONG ull;
-    __MCF_crt_QueryInterruptTimePrecise(&ull);
+    (*(__MCF_crt_QueryInterruptTimePrecise))(&ull);
     return (double)(int64_t) ull * 0.0001;
   }
 
