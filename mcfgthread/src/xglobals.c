@@ -422,18 +422,6 @@ __MCF_check_wait_safety(const __MCF_winnt_timeout* to)
   }
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
-void
-__MCF_batch_release_common(const void* key, size_t count)
-  {
-    size_t remaining = count;
-    while(remaining != 0)
-      if(NtReleaseKeyedEvent(NULL, (PVOID) key, false, __MCF_NT_TIMEOUT_1S) == 0)
-        remaining --;
-      else if(RtlDllShutdownInProgress())
-        break;
-  }
-
-__MCF_DLLEXPORT __MCF_NEVER_INLINE
 int
 __MCF_win32_error_i(ULONG code, int val)
   {

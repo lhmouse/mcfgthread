@@ -165,7 +165,7 @@ __MCF_XGLOBALS_IMPORT
 void
 __MCF_check_wait_safety(const __MCF_winnt_timeout* to);
 
-__MCF_XGLOBALS_IMPORT
+__MCF_XGLOBALS_INLINE
 void
 __MCF_batch_release_common(const void* key, size_t count);
 
@@ -387,6 +387,18 @@ __MCF_STATIC_ASSERT(__MCF_G_SIZE(reserved_4_must_be_null) == __MCF_64_32(8432, 5
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
+__MCF_XGLOBALS_INLINE
+void
+__MCF_batch_release_common(const void* key, size_t count)
+  {
+    size_t remaining = count;
+    while(remaining != 0)
+      if(NtReleaseKeyedEvent(NULL, (PVOID) key, false, __MCF_NT_TIMEOUT_1S) == 0)
+        remaining --;
+      else if(RtlDllShutdownInProgress())
+        break;
+  }
+
 __MCF_XGLOBALS_INLINE
 void*
 __MCF_mcopy(void* dst, const void* src, size_t size)
