@@ -26,7 +26,7 @@ initialization of local static objects, and by **libstdc++** to provide C++11 th
 ## Benchmark Results
 
 This is the result of [a benchmark program](doc/benchmark_mutex.c) on **Windows 11 26H2** (build
-26300.9550) on an **Intel i9-14900K** desktop processor (8 P-cores + 16 E-cores, 32 threads):
+26300.9818) on an **Intel i9-14900K** desktop processor (8 P-cores + 16 E-cores, 32 threads):
 
 ![benchmark_result_win11_26300_i9_14900k](doc/benchmark_result_win11_26300_i9_14900k.png)
 
