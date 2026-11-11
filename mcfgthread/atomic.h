@@ -28,8 +28,8 @@
 #  define __MCF_atomic_xchg(p,v,o)            __atomic_exchange_n(p,v,o)
 #  define __MCF_atomic_cmpxchg(p,c,v,o,f)     __atomic_compare_exchange_n(p,c,v,0,o,f)
 #  define __MCF_atomic_cmpxchg_w(p,c,v,o,f)   __atomic_compare_exchange_n(p,c,v,1,o,f)
-#  define __MCF_atomic_xadd(p,v,o)            __atomic_fetch_add(p,v,o)
-#  define __MCF_atomic_xsub(p,v,o)            __atomic_fetch_sub(p,v,o)
+#  define __MCF_atomic_fetch_add(p,v,o)       __atomic_fetch_add(p,v,o)
+#  define __MCF_atomic_fetch_sub(p,v,o)       __atomic_fetch_sub(p,v,o)
 #  define __MCF_atomic_thread_fence(o)        __atomic_thread_fence(o)
 #  define __MCF_atomic_signal_fence(o)        __atomic_signal_fence(o)
 #else
@@ -45,8 +45,8 @@
 #  define __MCF_atomic_xchg(p,v,o)            atomic_exchange_explicit(p,v,o)
 #  define __MCF_atomic_cmpxchg(p,c,v,o,f)     atomic_compare_exchange_strong_explicit(p,c,v,o,f)
 #  define __MCF_atomic_cmpxchg_w(p,c,v,o,f)   atomic_compare_exchange_weak_explicit(p,c,v,o,f)
-#  define __MCF_atomic_xadd(p,v,o)            atomic_fetch_add_explicit(p,v,o)
-#  define __MCF_atomic_xsub(p,v,o)            atomic_fetch_sub_explicit(p,v,o)
+#  define __MCF_atomic_fetch_add(p,v,o)       atomic_fetch_add_explicit(p,v,o)
+#  define __MCF_atomic_fetch_sub(p,v,o)       atomic_fetch_sub_explicit(p,v,o)
 #  define __MCF_atomic_thread_fence(o)        atomic_thread_fence(o)
 #  define __MCF_atomic_signal_fence(o)        atomic_signal_fence(o)
 #endif
@@ -455,7 +455,7 @@ INTEGER
 __MCF_C3(_MCF_atomic_xadd_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
   __MCF_noexcept
   {
-    return __MCF_atomic_xadd(E_ATOMICIFY(__mem), __val, E_ORDER);
+    return __MCF_atomic_fetch_add(E_ATOMICIFY(__mem), __val, E_ORDER);
   }
 
 /** Subtracts `val` from the value of an atomic integer.
@@ -469,7 +469,7 @@ INTEGER
 __MCF_C3(_MCF_atomic_xsub_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
   __MCF_noexcept
   {
-    return __MCF_atomic_xsub(E_ATOMICIFY(__mem), __val, E_ORDER);
+    return __MCF_atomic_fetch_sub(E_ATOMICIFY(__mem), __val, E_ORDER);
   }
 
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 20003
