@@ -51,8 +51,8 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
     __MCF_ASSERT(dist != 0);
     __MCF_ASSERT(table->__size_hint <= dist / 2);
 
-    /* Make a fixed-point value in the interval [0,1), and then multiply
-     * `dist` by it to get an index in the middle.  */
+    /* Make a fixed-point value in the interval [0,1), and then multiply `dist`
+     * by it to get an index in the middle.  */
     uint32_t ratio = (uint32_t) ((uintptr_t) key / sizeof(void*)) * 0x9E3779B9U;
     __MCF_tls_element* origin = table->__begin + (ptrdiff_t) (dist * ratio >> 32);
     __MCF_ASSERT(origin < table->__end);
@@ -61,8 +61,8 @@ do_linear_probe_nonempty(const __MCF_tls_table* table, const _MCF_tls_key* key)
     if(__builtin_expect(origin->__key_opt == key, true))
       return origin;
 
-    /* Find an element using linear probing. If the key is not found, a
-     * pointer to an empty element is returned.  */
+    /* Find an element using linear probing. If the key is not found, a pointer
+     * to an empty element is returned.  */
     for(__MCF_tls_element* cur = origin;  cur != table->__end;  cur ++)
       if(!cur->__key_opt || (cur->__key_opt == key))
         return cur;
@@ -158,8 +158,8 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
 
     __MCF_tls_element* elem = do_linear_probe_nonempty(table, key);
     if(!elem->__key_opt) {
-      /* If `key` is not found and a null pointer is to be set, don't
-       * actually set it; report success.  */
+      /* If `key` is not found and a null pointer is to be set, don't actually
+       * set it; report success.  */
       if(!value_opt)
         return 0;
 
@@ -194,8 +194,8 @@ __MCF_tls_table_pop(__MCF_tls_popped_element* out_elem_opt, __MCF_tls_table* tab
       return -1;
 
     if(out_elem_opt) {
-      /* The hint should be the index of the last accessed element. For the first
-       * call, it's uninitialized, so sanitize the value.  */
+      /* The hint should be the index of the last accessed element. For the
+       * first call, it's uninitialized, so sanitize the value.  */
       __asm__ ("" : "+m"(out_elem_opt->__hint));
       __MCF_tls_element* origin = table->__begin;
       if(out_elem_opt->__hint < (size_t) (table->__end - table->__begin))
