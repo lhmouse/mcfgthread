@@ -30,6 +30,9 @@
 #  define __MCF_atomic_cmpxchg_w(p,c,v,o,f)   __atomic_compare_exchange_n(p,c,v,1,o,f)
 #  define __MCF_atomic_fetch_add(p,v,o)       __atomic_fetch_add(p,v,o)
 #  define __MCF_atomic_fetch_sub(p,v,o)       __atomic_fetch_sub(p,v,o)
+#  define __MCF_atomic_fetch_and(p,v,o)       __atomic_fetch_and(p,v,o)
+#  define __MCF_atomic_fetch_or(p,v,o)        __atomic_fetch_or(p,v,o)
+#  define __MCF_atomic_fetch_xor(p,v,o)       __atomic_fetch_xor(p,v,o)
 #  define __MCF_atomic_thread_fence(o)        __atomic_thread_fence(o)
 #  define __MCF_atomic_signal_fence(o)        __atomic_signal_fence(o)
 #else
@@ -47,6 +50,9 @@
 #  define __MCF_atomic_cmpxchg_w(p,c,v,o,f)   atomic_compare_exchange_weak_explicit(p,c,v,o,f)
 #  define __MCF_atomic_fetch_add(p,v,o)       atomic_fetch_add_explicit(p,v,o)
 #  define __MCF_atomic_fetch_sub(p,v,o)       atomic_fetch_sub_explicit(p,v,o)
+#  define __MCF_atomic_fetch_and(p,v,o)       atomic_fetch_and_explicit(p,v,o)
+#  define __MCF_atomic_fetch_or(p,v,o)        atomic_fetch_or_explicit(p,v,o)
+#  define __MCF_atomic_fetch_xor(p,v,o)       atomic_fetch_xor_explicit(p,v,o)
 #  define __MCF_atomic_thread_fence(o)        atomic_thread_fence(o)
 #  define __MCF_atomic_signal_fence(o)        atomic_signal_fence(o)
 #endif
@@ -470,6 +476,82 @@ __MCF_C3(_MCF_atomic_xsub_,WIDTH,ORDER)(volatile void* __mem, INTEGER __val)
   __MCF_noexcept
   {
     return __MCF_atomic_fetch_sub(E_ATOMICIFY(__mem), __val, E_ORDER);
+  }
+
+/** Loads a bit of an atomic integer.
+ *
+ * @param `mem` shall point to an atomic integer of the specified width.
+ * @param `index` is the bit index to load. If the index is out of range, the
+ *    behavior is undefined.
+ * @returns the value of the specified bit.
+ * @since 2.6  */
+__MCF_ATOMIC_INLINE
+bool
+__MCF_C3(_MCF_atomic_bt_,WIDTH,ORDER)(const volatile void* __mem, size_t __index)
+  __MCF_noexcept
+  {
+    INTEGER __old_value, __mask;
+    __MCF_ASSERT(__index < sizeof(INTEGER) * 8);
+    __mask = (INTEGER) (1ULL << __index);
+    __old_value = __MCF_atomic_load(E_ATOMICIFY(__mem), E_ORDER_A);
+    return (__old_value & __mask) != 0;
+  }
+
+/** Sets a bit of an atomic integer.
+ *
+ * @param `mem` shall point to an atomic integer of the specified width.
+ * @param `index` is the bit index to set. If the index is out of range, the
+ *    behavior is undefined.
+ * @returns the previous value of the specified bit.
+ * @since 2.6  */
+__MCF_ATOMIC_INLINE
+bool
+__MCF_C3(_MCF_atomic_bts_,WIDTH,ORDER)(volatile void* __mem, size_t __index)
+  __MCF_noexcept
+  {
+    INTEGER __old_value, __mask;
+    __MCF_ASSERT(__index < sizeof(INTEGER) * 8);
+    __mask = (INTEGER) (1ULL << __index);
+    __old_value = __MCF_atomic_fetch_or(E_ATOMICIFY(__mem), __mask, E_ORDER);
+    return (__old_value & __mask) != 0;
+  }
+
+/** Resets (clears) a bit of an atomic integer.
+ *
+ * @param `mem` shall point to an atomic integer of the specified width.
+ * @param `index` is the bit index to reset. If the index is out of range, the
+ *    behavior is undefined.
+ * @returns the previous value of the specified bit.
+ * @since 2.6  */
+__MCF_ATOMIC_INLINE
+bool
+__MCF_C3(_MCF_atomic_btr_,WIDTH,ORDER)(volatile void* __mem, size_t __index)
+  __MCF_noexcept
+  {
+    INTEGER __old_value, __mask;
+    __MCF_ASSERT(__index < sizeof(INTEGER) * 8);
+    __mask = (INTEGER) (1ULL << __index);
+    __old_value = __MCF_atomic_fetch_and(E_ATOMICIFY(__mem), (INTEGER) ~__mask, E_ORDER);
+    return (__old_value & __mask) != 0;
+  }
+
+/** Complements (flips) a bit of an atomic integer.
+ *
+ * @param `mem` shall point to an atomic integer of the specified width.
+ * @param `index` is the bit index to complement. If the index is out of range,
+ *    the behavior is undefined.
+ * @returns the previous value of the specified bit.
+ * @since 2.6  */
+__MCF_ATOMIC_INLINE
+bool
+__MCF_C3(_MCF_atomic_btc_,WIDTH,ORDER)(volatile void* __mem, size_t __index)
+  __MCF_noexcept
+  {
+    INTEGER __old_value, __mask;
+    __MCF_ASSERT(__index < sizeof(INTEGER) * 8);
+    __mask = (INTEGER) (1ULL << __index);
+    __old_value = __MCF_atomic_fetch_xor(E_ATOMICIFY(__mem), __mask, E_ORDER);
+    return (__old_value & __mask) != 0;
   }
 
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 20003
