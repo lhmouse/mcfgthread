@@ -257,7 +257,7 @@ __MCF_CXX(extern "C" {)
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
 INTEGER
-__MCF_C3(_MCF_atomic_load_,WIDTH,ORDER) (const volatile void* __mem)
+__MCF_C3(_MCF_atomic_load_,WIDTH,ORDER)(const volatile void* __mem)
   __MCF_noexcept
   {
     return __MCF_atomic_load(E_ATOMICIFY(__mem), E_ORDER_A);
@@ -272,7 +272,7 @@ __MCF_C3(_MCF_atomic_load_,WIDTH,ORDER) (const volatile void* __mem)
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
 void
-__MCF_C3(_MCF_atomic_load_p,WIDTH,ORDER) (void* __res, const volatile void* __mem)
+__MCF_C3(_MCF_atomic_load_p,WIDTH,ORDER)(void* __res, const volatile void* __mem)
   __MCF_noexcept
   {
     INTEGER __rval = __MCF_atomic_load(E_ATOMICIFY(__mem), E_ORDER_A);
@@ -287,7 +287,7 @@ __MCF_C3(_MCF_atomic_load_p,WIDTH,ORDER) (void* __res, const volatile void* __me
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
 void
-__MCF_C3(_MCF_atomic_store_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
+__MCF_C3(_MCF_atomic_store_,WIDTH,ORDER)(volatile void* __mem, INTEGER __val)
   __MCF_noexcept
   {
     __MCF_atomic_store(E_ATOMICIFY(__mem), __val, E_ORDER_R);
@@ -302,7 +302,7 @@ __MCF_C3(_MCF_atomic_store_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
 void
-__MCF_C3(_MCF_atomic_store_p,WIDTH,ORDER) (volatile void* __mem, const void* __src)
+__MCF_C3(_MCF_atomic_store_p,WIDTH,ORDER)(volatile void* __mem, const void* __src)
   __MCF_noexcept
   {
     INTEGER __val = *(const INTEGER*) __src;
@@ -317,7 +317,7 @@ __MCF_C3(_MCF_atomic_store_p,WIDTH,ORDER) (volatile void* __mem, const void* __s
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
 INTEGER
-__MCF_C3(_MCF_atomic_xchg_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
+__MCF_C3(_MCF_atomic_xchg_,WIDTH,ORDER)(volatile void* __mem, INTEGER __val)
   __MCF_noexcept
   {
     return __MCF_atomic_xchg(E_ATOMICIFY(__mem), __val, E_ORDER);
@@ -334,7 +334,7 @@ __MCF_C3(_MCF_atomic_xchg_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
 void
-__MCF_C3(_MCF_atomic_xchg_p,WIDTH,ORDER) (void* __res, volatile void* __mem, const void* __src)
+__MCF_C3(_MCF_atomic_xchg_p,WIDTH,ORDER)(void* __res, volatile void* __mem, const void* __src)
   __MCF_noexcept
   {
     INTEGER __val = *(const INTEGER*) __src;
@@ -359,7 +359,7 @@ __MCF_C3(_MCF_atomic_xchg_p,WIDTH,ORDER) (void* __res, volatile void* __mem, con
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
 bool
-__MCF_C3(_MCF_atomic_cmpxchg_,WIDTH,ORDER) (volatile void* __mem, INTEGER* __cmp, INTEGER __val)
+__MCF_C3(_MCF_atomic_cmpxchg_,WIDTH,ORDER)(volatile void* __mem, INTEGER* __cmp, INTEGER __val)
   __MCF_noexcept
   {
     return __MCF_atomic_cmpxchg(E_ATOMICIFY(__mem), __cmp, __val, E_ORDER, E_ORDER_A);
@@ -383,7 +383,7 @@ __MCF_C3(_MCF_atomic_cmpxchg_,WIDTH,ORDER) (volatile void* __mem, INTEGER* __cmp
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
 bool
-__MCF_C3(_MCF_atomic_cmpxchg_p,WIDTH,ORDER) (volatile void* __mem, void* __cmp, const void* __src)
+__MCF_C3(_MCF_atomic_cmpxchg_p,WIDTH,ORDER)(volatile void* __mem, void* __cmp, const void* __src)
   __MCF_noexcept
   {
     INTEGER __cval = *(const INTEGER*) __cmp;
@@ -409,7 +409,7 @@ __MCF_C3(_MCF_atomic_cmpxchg_p,WIDTH,ORDER) (volatile void* __mem, void* __cmp, 
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
 bool
-__MCF_C3(_MCF_atomic_cmpxchg_weak_,WIDTH,ORDER) (volatile void* __mem, INTEGER* __cmp, INTEGER __val)
+__MCF_C3(_MCF_atomic_cmpxchg_weak_,WIDTH,ORDER)(volatile void* __mem, INTEGER* __cmp, INTEGER __val)
   __MCF_noexcept
   {
     return __MCF_atomic_cmpxchg_w(E_ATOMICIFY(__mem), __cmp, __val, E_ORDER, E_ORDER_A);
@@ -432,7 +432,7 @@ __MCF_C3(_MCF_atomic_cmpxchg_weak_,WIDTH,ORDER) (volatile void* __mem, INTEGER* 
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
 bool
-__MCF_C3(_MCF_atomic_cmpxchg_weak_p,WIDTH,ORDER) (volatile void* __mem, void* __cmp, const void* __src)
+__MCF_C3(_MCF_atomic_cmpxchg_weak_p,WIDTH,ORDER)(volatile void* __mem, void* __cmp, const void* __src)
   __MCF_noexcept
   {
     INTEGER __cval = *(const INTEGER*) __cmp;
@@ -452,7 +452,7 @@ __MCF_C3(_MCF_atomic_cmpxchg_weak_p,WIDTH,ORDER) (volatile void* __mem, void* __
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
 INTEGER
-__MCF_C3(_MCF_atomic_xadd_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
+__MCF_C3(_MCF_atomic_xadd_,WIDTH,ORDER)(volatile void* __mem, INTEGER __val)
   __MCF_noexcept
   {
     return __MCF_atomic_fetch_add(E_ATOMICIFY(__mem), __val, E_ORDER);
@@ -466,7 +466,7 @@ __MCF_C3(_MCF_atomic_xadd_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
 INTEGER
-__MCF_C3(_MCF_atomic_xsub_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
+__MCF_C3(_MCF_atomic_xsub_,WIDTH,ORDER)(volatile void* __mem, INTEGER __val)
   __MCF_noexcept
   {
     return __MCF_atomic_fetch_sub(E_ATOMICIFY(__mem), __val, E_ORDER);
@@ -481,7 +481,7 @@ __MCF_C3(_MCF_atomic_xsub_,WIDTH,ORDER) (volatile void* __mem, INTEGER __val)
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
 void
-__MCF_C2(_MCF_thread_fence,ORDER) (void)
+__MCF_C2(_MCF_thread_fence,ORDER)(void)
   __MCF_noexcept
   {
     __MCF_atomic_thread_fence(E_ORDER);
@@ -494,7 +494,7 @@ __MCF_C2(_MCF_thread_fence,ORDER) (void)
  * @since 1.0  */
 __MCF_ATOMIC_INLINE
 void
-__MCF_C2(_MCF_signal_fence,ORDER) (void)
+__MCF_C2(_MCF_signal_fence,ORDER)(void)
   __MCF_noexcept
   {
     __MCF_atomic_signal_fence(E_ORDER);
