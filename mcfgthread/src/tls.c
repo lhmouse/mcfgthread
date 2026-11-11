@@ -177,11 +177,11 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
 
 static inline
 int
-do_pop_element(__MCF_tls_popped_element* out_elem, __MCF_tls_table* table, __MCF_tls_element* elem)
+do_pop_element(__MCF_tls_popped_element* out, __MCF_tls_table* table, __MCF_tls_element* elem)
   {
-    out_elem->__key = elem->__key_opt;
-    out_elem->__value = elem->__value_opt;
-    out_elem->__hint = (size_t) (elem - table->__begin);
+    out->__key = elem->__key_opt;
+    out->__value = elem->__value_opt;
+    out->__hint = (size_t) (elem - table->__begin);
     elem->__value_opt = nullptr;
     return 0;
   }
