@@ -34,17 +34,17 @@ main(void)
     min = 12345;
     total = 0;
     for(int k = 0;  k < 10;  ++k) {
-      now = _MCF_perf_counter();
-
       __MCF_initialize_winnt_timeout_v3(&to, &(int64_t){ -1116 });  /* relative  */
+
+      now = _MCF_perf_counter();
       while(to.li.QuadPart < 0) {
         // repeat
         fprintf(stderr, "  sleep -> %lld\n", to.li.QuadPart);
         _MCF_sleep_noninterruptible(&(int64_t){ -37 });
         __MCF_adjust_winnt_timeout_v3(&to);
       }
-
       delta = _MCF_perf_counter() - now;
+
       total += delta;
       if((max == 12345) || (delta > max))
         max = delta;
