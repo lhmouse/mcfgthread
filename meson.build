@@ -275,7 +275,8 @@ if meson.version().version_compare('>= 1.10.0')
   kwargs_lib += { 'build_subdir': 'lib' }
 endif
 
-lib_mcfgthread_dll_c_args = [ '-D__MCF_IN_DLL', '-ffreestanding',
+lib_mcfgthread_dll_c_args = [
+      '-D__MCF_IN_DLL', '-ffreestanding',
       cc.get_supported_arguments('-mcmodel=small') ]
 
 if cc.get_linker_id() in [ 'link', 'lld-link' ]
