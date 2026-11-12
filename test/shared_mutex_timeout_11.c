@@ -38,10 +38,12 @@ main(void)
     min = 12345;
     total = 0;
     for(int k = 0;  k < 10;  ++k) {
+
       now = _MCF_perf_counter();
       r = _MCF_shared_mutex_lock_shared(&mutex, &(int64_t){ -1116 });  /* relative  */
       assert(r == -1);
       delta = _MCF_perf_counter() - now;
+
       total += delta;
       if((max == 12345) || (delta > max))
         max = delta;

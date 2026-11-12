@@ -33,12 +33,14 @@ main(void)
     min = 12345;
     total = 0;
     for(int k = 0;  k < 10;  ++k) {
+
       now = _MCF_perf_counter();
       timeout.tv_sec = 0;
       timeout.tv_nsec = 0;
       r = _thrd_sleep_until(&timeout);
       assert(r == 0);
       delta = _MCF_perf_counter() - now;
+
       total += delta;
       if((max == 12345) || (delta > max))
         max = delta;

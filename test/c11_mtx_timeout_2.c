@@ -36,16 +36,19 @@ main(void)
     r = mtx_init(&mutex, mtx_timed);
     assert(r == thrd_success);
 
+    r = mtx_lock(&mutex);
+    assert(r == thrd_success);
+
     max = 12345;
     min = 12345;
     total = 0;
     for(int k = 0;  k < 10;  ++k) {
-      if(k > 0)
-        mtx_unlock(&mutex);
+      mtx_unlock(&mutex);
       sleep_until = time(NULL) + 1;
       _MCF_sleep_noninterruptible(&(int64_t){ sleep_until * 1000LL - 20 });
       do {
         _MCF_yield();
+
         now = _MCF_perf_counter();
         timeout.tv_sec = time(NULL);
       } while(timeout.tv_sec < sleep_until);
@@ -54,6 +57,7 @@ main(void)
       r = mtx_timedlock(&mutex, &timeout);  /* lock it  */
       assert(r == thrd_success);
       delta = _MCF_perf_counter() - now;
+
       total += delta;
       if((max == 12345) || (delta > max))
         max = delta;

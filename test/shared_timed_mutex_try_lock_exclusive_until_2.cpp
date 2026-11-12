@@ -45,16 +45,19 @@ main(void)
     int64_t sleep_until = (int64_t) ::time(nullptr) * 1000 + 2000;
     ::_MCF_sleep_noninterruptible(&sleep_until);
 
+    mutex.lock();
+
     max = 12345;
     min = 12345;
     total = 0;
     for(int k = 0;  k < 10;  ++k) {
-      if(k > 0)
-        mutex.unlock();
+      mutex.unlock();
+
       now = ::_MCF_perf_counter();
       r = mutex.try_lock_until(NS::chrono::system_clock::now() + NS::chrono::milliseconds(1116));  // relaxed
       assert(r == true);
       delta = ::_MCF_perf_counter() - now;
+
       total += delta;
       if((max == 12345) || (delta > max))
         max = delta;

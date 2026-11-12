@@ -49,10 +49,12 @@ main(void)
        min = 12345;
        total = 0;
        for(int k = 0;  k < 10;  ++k) {
+
          now = ::_MCF_perf_counter();
          r = mutex.try_lock_for(NS::chrono::milliseconds(1116));  // relaxed
          assert(r == false);
          delta = ::_MCF_perf_counter() - now;
+
          total += delta;
          if((max == 12345) || (delta > max))
            max = delta;

@@ -49,6 +49,7 @@ main(void)
       _MCF_sleep_noninterruptible(&(int64_t){ sleep_until * 1000LL - 20 });
       do {
         _MCF_yield();
+
         now = _MCF_perf_counter();
         timeout.tv_sec = time(NULL);
       } while(timeout.tv_sec < sleep_until);
@@ -57,6 +58,7 @@ main(void)
       r = cnd_timedwait(&cond, &mutex, &timeout);
       assert(r == thrd_timedout);
       delta = _MCF_perf_counter() - now;
+
       total += delta;
       if((max == 12345) || (delta > max))
         max = delta;

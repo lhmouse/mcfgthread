@@ -35,11 +35,13 @@ main(void)
     min = 12345;
     total = 0;
     for(int k = 0;  k < 10;  ++k) {
+
       now = _MCF_perf_counter();
       r = _MCF_event_await_change(&event, 42,
           &(int64_t){ (int64_t) _MCF_hires_utc_now() + 1116 });  /* absolute  */
       assert(r == -1);
       delta = _MCF_perf_counter() - now;
+
       total += delta;
       if((max == 12345) || (delta > max))
         max = delta;

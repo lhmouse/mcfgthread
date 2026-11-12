@@ -41,16 +41,19 @@ main(void)
       }
     }
 
+    mutex.lock_shared();
+
     max = 12345;
     min = 12345;
     total = 0;
     for(int k = 0;  k < 10;  ++k) {
-      if(k > 0)
-        mutex.unlock_shared();
+      mutex.unlock_shared();
+
       now = ::_MCF_perf_counter();
       r = mutex.try_lock_shared_for(NS::chrono::milliseconds(1116));  // relaxed
       assert(r == true);
       delta = ::_MCF_perf_counter() - now;
+
       total += delta;
       if((max == 12345) || (delta > max))
         max = delta;
