@@ -12,7 +12,6 @@
 #include "../dtor_queue.h"
 #include "xwinternl.h"
 #include <heapapi.h>
-#include <winerror.h>
 #include <sysinfoapi.h>
 
 #if __BYTE_ORDER__ != __ORDER_LITTLE_ENDIAN__
