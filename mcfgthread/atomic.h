@@ -65,6 +65,7 @@ __MCF_CXX(extern "C" {)
 
 #pragma push_macro("WIDTH")
 #pragma push_macro("INTEGER")
+#pragma push_macro("UINTEGER")
 #pragma push_macro("ORDER")
 #pragma push_macro("ORDER_A")
 #pragma push_macro("ORDER_R")
@@ -75,6 +76,7 @@ __MCF_CXX(extern "C" {)
 
 #undef WIDTH
 #undef INTEGER
+#undef UINTEGER
 #undef ORDER
 #undef ORDER_A
 #undef ORDER_R
@@ -159,15 +161,18 @@ __MCF_CXX(extern "C" {)
 
 #  define WIDTH   b
 #  define INTEGER  bool
+#  define UINTEGER  bool
 #  undef __MCFGTHREAD_ATOMIC_
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20001
 #  include __FILE__
 #  undef WIDTH
 #  undef INTEGER
+#  undef UINTEGER
 
 #  define WIDTH   8
 #  define INTEGER  int8_t
+#  define UINTEGER  uint8_t
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20001
 #  undef __MCFGTHREAD_ATOMIC_
@@ -178,9 +183,11 @@ __MCF_CXX(extern "C" {)
 #  include __FILE__
 #  undef WIDTH
 #  undef INTEGER
+#  undef UINTEGER
 
 #  define WIDTH   16
 #  define INTEGER  int16_t
+#  define UINTEGER  uint16_t
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20001
 #  undef __MCFGTHREAD_ATOMIC_
@@ -191,9 +198,11 @@ __MCF_CXX(extern "C" {)
 #  include __FILE__
 #  undef WIDTH
 #  undef INTEGER
+#  undef UINTEGER
 
 #  define WIDTH   32
 #  define INTEGER  int32_t
+#  define UINTEGER  uint32_t
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20001
 #  undef __MCFGTHREAD_ATOMIC_
@@ -204,9 +213,11 @@ __MCF_CXX(extern "C" {)
 #  include __FILE__
 #  undef WIDTH
 #  undef INTEGER
+#  undef UINTEGER
 
 #  define WIDTH   64
 #  define INTEGER  int64_t
+#  define UINTEGER  uint64_t
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20001
 #  undef __MCFGTHREAD_ATOMIC_
@@ -217,9 +228,11 @@ __MCF_CXX(extern "C" {)
 #  include __FILE__
 #  undef WIDTH
 #  undef INTEGER
+#  undef UINTEGER
 
 #  define WIDTH   ptr
 #  define INTEGER  intptr_t
+#  define UINTEGER  uintptr_t
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20001
 #  undef __MCFGTHREAD_ATOMIC_
@@ -230,9 +243,11 @@ __MCF_CXX(extern "C" {)
 #  include __FILE__
 #  undef WIDTH
 #  undef INTEGER
+#  undef UINTEGER
 
 #  define WIDTH   z
 #  define INTEGER  size_t
+#  define UINTEGER  size_t
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20001
 #  undef __MCFGTHREAD_ATOMIC_
@@ -243,6 +258,7 @@ __MCF_CXX(extern "C" {)
 #  include __FILE__
 #  undef WIDTH
 #  undef INTEGER
+#  undef UINTEGER
 
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20003
@@ -492,7 +508,7 @@ __MCF_C3(_MCF_atomic_bt_,WIDTH,ORDER)(const volatile void* __mem, size_t __index
   {
     INTEGER __old_value, __mask;
     __MCF_ASSERT(__index < sizeof(INTEGER) * 8);
-    __mask = (INTEGER) (1ULL << __index);
+    __mask = (INTEGER) ((UINTEGER) 1 << __index);
     __old_value = __MCF_atomic_load(E_ATOMICIFY(__mem), E_ORDER_A);
     return (__old_value & __mask) != 0;
   }
@@ -511,7 +527,7 @@ __MCF_C3(_MCF_atomic_bts_,WIDTH,ORDER)(volatile void* __mem, size_t __index)
   {
     INTEGER __old_value, __mask;
     __MCF_ASSERT(__index < sizeof(INTEGER) * 8);
-    __mask = (INTEGER) (1ULL << __index);
+    __mask = (INTEGER) ((UINTEGER) 1 << __index);
     __old_value = __MCF_atomic_fetch_or(E_ATOMICIFY(__mem), __mask, E_ORDER);
     return (__old_value & __mask) != 0;
   }
@@ -530,7 +546,7 @@ __MCF_C3(_MCF_atomic_btr_,WIDTH,ORDER)(volatile void* __mem, size_t __index)
   {
     INTEGER __old_value, __mask;
     __MCF_ASSERT(__index < sizeof(INTEGER) * 8);
-    __mask = (INTEGER) (1ULL << __index);
+    __mask = (INTEGER) ((UINTEGER) 1 << __index);
     __old_value = __MCF_atomic_fetch_and(E_ATOMICIFY(__mem), (INTEGER) ~__mask, E_ORDER);
     return (__old_value & __mask) != 0;
   }
@@ -549,7 +565,7 @@ __MCF_C3(_MCF_atomic_btc_,WIDTH,ORDER)(volatile void* __mem, size_t __index)
   {
     INTEGER __old_value, __mask;
     __MCF_ASSERT(__index < sizeof(INTEGER) * 8);
-    __mask = (INTEGER) (1ULL << __index);
+    __mask = (INTEGER) ((UINTEGER) 1 << __index);
     __old_value = __MCF_atomic_fetch_xor(E_ATOMICIFY(__mem), __mask, E_ORDER);
     return (__old_value & __mask) != 0;
   }
@@ -586,6 +602,7 @@ __MCF_C2(_MCF_signal_fence,ORDER)(void)
 
 #pragma pop_macro("WIDTH")
 #pragma pop_macro("INTEGER")
+#pragma pop_macro("UINTEGER")
 #pragma pop_macro("ORDER")
 #pragma pop_macro("ORDER_A")
 #pragma pop_macro("ORDER_R")
