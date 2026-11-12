@@ -35,10 +35,10 @@ processor (16 cores, 32 threads; special thanks to @fredyakumo for testing!):
 
 ![benchmark_result_win11_26200_ryzen9_9950x3d](doc/benchmark_result_win11_26200_ryzen9_9950x3d.png)
 
-This is the result on **Windows 11 26H2** (build 26200.8737) on a **Qualcomm Snapdragon 8cx Gen 3**
+This is the result on **Windows 11 26H2** (build 26300.9974) on a **Qualcomm Snapdragon 8cx Gen 3**
 mobile processor (4 big cores + 4 little cores, no hyper-threading):
 
-![benchmark_result_win11_26200_snapdragon_8cxg3](doc/benchmark_result_win11_26200_snapdragon_8cxg3.png)
+![benchmark_result_win11_26300_snapdragon_8cxg3](doc/benchmark_result_win11_26300_snapdragon_8cxg3.png)
 
 This is the result on **Windows 11 24H2** (build 26100.4652) on an **AMD Ryzen 9 7900X** desktop
 processor (12 cores, 24 threads; special thanks to @nmreadelf for testing!):
