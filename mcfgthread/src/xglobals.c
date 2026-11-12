@@ -914,22 +914,24 @@ __MCF_SECTION(".rdata") const int _fltused = 0x9875;
 #if defined __MCF_M_X8632
 /** On x86-32, the load config directory contains the address and size of the
  * exception handler table. Exception handlers that are not in this table
- * will be rejected by the system. `__safe_se_handler_table` points to a
+ * will be rejected by the system. `__MCF_safe_se_handler_table` points to a
  * sorted (!) array of RVAs of valid handlers, and the value of (not the value
- * it points to) `__safe_se_handler_count` is the number of handlers.  */
-extern const DWORD __safe_se_handler_table;
-extern BYTE __safe_se_handler_count;
+ * it points to) `__MCF_safe_se_handler_count` is the number of handlers. Here
+ * we build the handler table ourselves under different names to prevent
+ * collisions with what the linker might provide.  */
+extern const DWORD __MCF_safe_se_handler_table;
+extern BYTE __MCF_safe_se_handler_count;
 __asm__ (
 "\n .section .rdata, \"dr\""
 "\n   .p2align 2"
-"\n .globl ___safe_se_handler_table"
-"\n ___safe_se_handler_table:"
+"\n .globl ___MCF_safe_se_handler_table"
+"\n ___MCF_safe_se_handler_table:"
 "\n   .rva _do_call_once_seh_unwind"
 "\n   .rva ___MCF_seh_top"
 "\n   .rva ___MCF_seh_process_top"
 "\n   .rva ___MCF_seh_thread_top"
-"\n .globl ___safe_se_handler_count"
-"\n .equiv ___safe_se_handler_count, (. - ___safe_se_handler_table) / 4"
+"\n .globl ___MCF_safe_se_handler_count"
+"\n .equiv ___MCF_safe_se_handler_count, (. - ___MCF_safe_se_handler_table) / 4"
 "\n .text"
 );
 #endif
@@ -1158,8 +1160,8 @@ const _load_config_used __MCF_SECTION(".rdata") =
     .DependentLoadFlags = LOAD_LIBRARY_SEARCH_SYSTEM32,
     .SecurityCookie = (ULONG_PTR) &__stack_chk_guard,
 #if defined __MCF_M_X8632
-    .SEHandlerTable = (ULONG_PTR) &__safe_se_handler_table,
-    .SEHandlerCount = (ULONG_PTR) &__safe_se_handler_count,
+    .SEHandlerTable = (ULONG_PTR) &__MCF_safe_se_handler_table,
+    .SEHandlerCount = (ULONG_PTR) &__MCF_safe_se_handler_count,
 #endif
 #if defined __MCF_M_ARM64EC
     .CHPEMetadataPointer = (ULONG_PTR) &__chpe_metadata,
