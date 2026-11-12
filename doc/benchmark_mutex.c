@@ -5,7 +5,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdint.h>
-#undef NDEBUG
+#include <stdalign.h>
 #include <assert.h>
 #define WIN32_LEAN_AND_MEAN  1
 #include <windows.h>
@@ -41,27 +41,44 @@
 #  error No mutex type has been selected.
 #endif
 
-#if !defined NTHRD && !defined NITER
+#if !defined NTHRD
 #  define NTHRD  16
-#  define NITER  1000000
 #endif
 
+#if !defined MS_PER_THRD
+#  define MS_PER_THRD  2000
+#endif
+
+struct thread_record
+  {
+    alignas(64) HANDLE handle;
+    int64_t t0, t1, niter;
+  };
+
 HANDLE start;
-HANDLE threads[NTHRD];
+struct thread_record records[NTHRD];
+
 my_mutex_t mutex;
 volatile double dst = 1.2345;
 volatile double src = 5.4321;
-LARGE_INTEGER t0, t1, tf;
 
 static
 DWORD
 __stdcall
 thread_proc(void* arg)
   {
-    (void) arg;
     WaitForSingleObject(start, INFINITE);
 
-    for(intptr_t k = 0;  k < NITER;  ++k) {
+    // calibrate
+    const size_t k = (size_t) arg;
+    records[k].t1 = GetTickCount64();
+
+    do {
+      SwitchToThread();
+      records[k].t0 = GetTickCount64();
+    } while(records[k].t1 == records[k].t0);
+
+    do {
       my_lock(&mutex);
       double temp = src;
       src = temp * 1.001;
@@ -76,7 +93,11 @@ thread_proc(void* arg)
       my_unlock(&mutex);
 
       SwitchToThread();
-    }
+
+      records[k].t1 = GetTickCount64();
+      records[k].niter ++;
+    } while((records[k].t1 - records[k].t0 < MS_PER_THRD)
+            || (records[k].niter < 1000));
 
     //fprintf(stderr, "thread %d quitting\n", (int) GetCurrentThreadId());
     return 0;
@@ -85,7 +106,7 @@ thread_proc(void* arg)
 int
 main(void)
   {
-    fprintf(stderr, "benchmarking %s, NTHR %d, NITER %d\n", my_mutex_name, NTHRD, NITER);
+    fprintf(stderr, "benchmarking %s, NTHR %d\n", my_mutex_name, NTHRD);
     SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
     timeBeginPeriod(1);
 
@@ -94,23 +115,27 @@ main(void)
     assert(start);
 
     for(intptr_t k = 0;  k < NTHRD;  ++k) {
-      threads[k] = CreateThread(NULL, 0, thread_proc, NULL, 0, NULL);
-      assert(threads[k]);
+      records[k].handle = CreateThread(NULL, 0, thread_proc, (void*) k, 0, NULL);
+      assert(records[k].handle);
+      SetThreadPriority(records[k].handle, THREAD_PRIORITY_TIME_CRITICAL);
     }
 
-    QueryPerformanceCounter(&t0);
     SetEvent(start);
 
+    double total_ns = 0;
+    double total_niter = 0;
+
     for(intptr_t k = 0;  k < NTHRD;  ++k) {
-      WaitForSingleObject(threads[k], INFINITE);
-      CloseHandle(threads[k]);
+      WaitForSingleObject(records[k].handle, INFINITE);
+      CloseHandle(records[k].handle);
+      total_ns += (records[k].t1 - records[k].t0) * 1.0e6;
+      total_niter += records[k].niter;
     }
 
-    QueryPerformanceCounter(&t1);
-    QueryPerformanceFrequency(&tf);
-    double result = (double) (t1.QuadPart - t0.QuadPart) * 1.0e9 / tf.QuadPart / NITER;
-    printf("%s\t%d\t%.3f\n", my_mutex_name, NTHRD, result);
+    double ns_per_iteration = total_ns / total_niter;
+    fprintf(stderr, "=> %.3f ns / iteration\n", ns_per_iteration);
 
-    fprintf(stderr, "result: %.3f ns / iteration\n", result);
+    printf("%s\t%d\t%.3f\n", my_mutex_name, NTHRD, ns_per_iteration);
+    fflush(NULL);
     _exit(0);
   }

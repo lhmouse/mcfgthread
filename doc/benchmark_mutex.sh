@@ -44,30 +44,30 @@ rm -f benchmark_result.txt
 
 function do_benchmark_nth()
 {
-  "${_c_compiler[@]}" -DUSE_$1 -DNTHRD=$2 -DNITER=$3 -I. -I.. -std=c99 -Wall -Wextra  \
+  "${_c_compiler[@]}" -DUSE_$1 -DNTHRD=$2 -I. -I.. -std=c11 -Wall -Wextra  \
       ../doc/benchmark_mutex.c -pthread -O2 -fno-inline  \
       -static -lwinmm "${_libmcfgthread}" -lntdll  \
-      -o bin/benchmark_mutex_$1_$2_$3.exe
+      -o bin/benchmark_mutex_$1_$2.exe
 
-  bin/benchmark_mutex_$1_$2_$3.exe >> benchmark_result.txt
+  bin/benchmark_mutex_$1_$2.exe >> benchmark_result.txt
 }
 
 function do_benchmark()
 {
   printf '* * *\n'
 
-  do_benchmark_nth $1    1  20000000
-  do_benchmark_nth $1    2  10000000
-  do_benchmark_nth $1    4   5000000
-  do_benchmark_nth $1    8   2000000
-  do_benchmark_nth $1   12   1000000
-  do_benchmark_nth $1   16    800000
-  do_benchmark_nth $1   24    300000
-  do_benchmark_nth $1   32    300000
-  do_benchmark_nth $1   48    200000
-  do_benchmark_nth $1   64    150000
-  do_benchmark_nth $1   96    100000
-  do_benchmark_nth $1  128     70000
+  do_benchmark_nth $1    1
+  do_benchmark_nth $1    2
+  do_benchmark_nth $1    4
+  do_benchmark_nth $1    8
+  do_benchmark_nth $1   12
+  do_benchmark_nth $1   16
+  do_benchmark_nth $1   24
+  do_benchmark_nth $1   32
+  do_benchmark_nth $1   48
+  do_benchmark_nth $1   64
+  do_benchmark_nth $1   96
+  do_benchmark_nth $1  128
 
   printf '\n\n' >> benchmark_result.txt
 }
