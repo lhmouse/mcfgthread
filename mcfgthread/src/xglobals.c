@@ -533,7 +533,7 @@ __MCF_gthread_initialize_globals(void)
     LARGE_INTEGER pfreq;
     __MCF_CHECK(QueryPerformanceFrequency(&pfreq));
     __MCF_crt_perf_freq_reciprocal = 1000 / (double) pfreq.QuadPart;
-    __MCF_crt_mutex_spin_quantum = pfreq.LowPart / 1000000 + 1;  /* 1 us */
+    __MCF_crt_mutex_spin_quantum = pfreq.LowPart / 262144 + 1;  /* 4 us */
 
     __MCF_crt_heap = GetProcessHeap();
     __MCF_CHECK(__MCF_crt_heap);

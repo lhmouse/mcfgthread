@@ -78,7 +78,7 @@ _MCF_mutex_lock_slow(_MCF_mutex* mtx, const int64_t* timeout_opt)
       else if((old.__sp_mask != 0x0FU) && (old.__sp_nfail < __MCF_MUTEX_SP_NFAIL_THRESHOLD)) {
         /* The mutex is locked, but a spare spinning slot is available, so
          * allocate a slot and try spinning.  */
-        sp_budget = (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail) * 16;
+        sp_budget = (__MCF_MUTEX_SP_NFAIL_THRESHOLD - old.__sp_nfail) * 12;
         sp_mask = (uint32_t) ((UINT_MAX ^ old.__sp_mask) & (old.__sp_mask + 1U));
         new.__locked = 1;
         new.__sp_mask = (old.__sp_mask | sp_mask) & 0x0FU;
