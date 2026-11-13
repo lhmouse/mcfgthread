@@ -110,7 +110,7 @@ main(void)
       assert(mutex.__owner[0] == __MCF_tid());
     }
 
-    /* Inform end of input  */
+    /* Signal end of input  */
     value = -1;
     fprintf(stderr, "main set end of input\n");
 

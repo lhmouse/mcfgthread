@@ -203,8 +203,8 @@ __MCF_XGLOBALS_INLINE __attribute__((__malloc__, __alloc_size__(1)))
 void*
 __MCF_malloc_0(size_t size);
 
-/** Sets the size a block of memory in place, like `truncate()` on files. If the
- * existent block should be extended, vacuum bytes are filled with zeroes.  */
+/** Sets the size of a block of memory in place, like `truncate()` on files. If
+ * the existent block should be extended, vacuum bytes are filled with zeroes.  */
 __MCF_XGLOBALS_INLINE __attribute__((__alloc_size__(2)))
 void*
 __MCF_mresize_0(void* ptr, size_t size);
@@ -576,7 +576,7 @@ __MCF_mequal(const void* src, const void* cmp, size_t size)
     PVOID esi, edi, ecx;
     __asm__ (
       "\n .ifeq %c7"     /* length is NOT known non-zero? (`.ifeq` reads 'if not')  */
-      "\n cmp ecx, ecx"  /* ensure ZF is set in case of length of zero  */
+      "\n cmp ecx, ecx"  /* ensure ZF is set in case the length is zero  */
       "\n .endif"
       "\n repz cmpsb"    /* compare DS:[ESI] with ES:[EDI]  */
       : "=@ccz"(eq), "=S"(esi), "=D"(edi), "=c"(ecx)

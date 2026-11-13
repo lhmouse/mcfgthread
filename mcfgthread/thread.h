@@ -53,7 +53,7 @@ struct __MCF_thread_base
 
 /** This is the maximum alignment of user-defined data that is supported by
  * `_MCF_thread_new_aligned()`. It is defined here for illustration purposes
- * only and you should not make assumption about it.  */
+ * only and you should not make assumptions about it.  */
 #define __MCF_THREAD_MAX_DATA_ALIGNMENT   0x200000U
 
 /** These thread priority values match Windows APIs and can be passed around as
@@ -301,7 +301,7 @@ _MCF_thread_get_priority(const _MCF_thread* __thrd_opt)
  * @param `thrd_opt` points to the thread to set the priority of. If it is null,
  *    the priority of the current thread is changed.
  * @param `priority` is the new priority of the thread. It may be an arbitrary
- *    integer within -15 and +15, but specifying an `_MCF_thread_priority_*`
+ *    integer between -15 and +15, but specifying an `_MCF_thread_priority_*`
  *    constant is recommended.
  * @returns 0 upon success, -1 in case of an invalid argument, or -2 in case of
  *    a system error which can be obtained via `_MCF_get_win32_error()`.

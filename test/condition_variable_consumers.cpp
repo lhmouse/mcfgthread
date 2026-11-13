@@ -76,7 +76,7 @@ main(void)
 
     cond_consumed.wait(xlk, []{ return value == 0;  });
 
-    // Inform end of input
+    // Signal end of input
     value = -1;
     ::fprintf(stderr, "main set end of input\n");
 

@@ -118,7 +118,7 @@ it. Initially the counter is zero, which means no thread is waiting.
 
 When a thread is about to start waiting on a condition variable, it increments the counter and
 suspends itself using the global keyed event, passing the address of the condition variable as the
-key. Another thread may read the counter to tell how many threads that it will have to wake up (note
+key. Another thread may read the counter to tell how many threads it will have to wake up (note
 this has to be atomic), and release them from the global keyed event, also passing the address of
 the condition variable as the key.
 
@@ -142,7 +142,7 @@ Therefore, it is reasonable for a thread to perform some spinning (busy waiting)
 actually decides to sleep.
 
 This could however lead to severe problems in case of heavy contention. When there are hundreds
-of thread attempting to lock the same mutex, the system scheduler has no idea whether they are
+of threads attempting to lock the same mutex, the system scheduler has no idea whether they are
 spinning or not. As it is likely that a lot of threads will eventually give up spinning and make
 a syscall to sleep, we are wasting a lot of CPU time and aggravating the situation.
 

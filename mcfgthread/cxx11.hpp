@@ -80,7 +80,7 @@ class thread_specific_ptr;  // inspired by boost
 template<typename... _Args> using _Vfn = void (_Args...);
 template<typename... _Args> using _Vcfn = void (_Args...) __MCF_NOEXCEPT_ON_TYPEDEF;
 
-/** This is the maximum integer representable as a `double` exact.  */
+/** This is the maximum integer that is exactly representable as a `double`.  */
 constexpr int64_t _Max_ms = 0x7FFFFFFFFFFFFC00;
 
 /** Converts a `chrono::duration` to the number of milliseconds, represented
@@ -601,7 +601,7 @@ class condition_variable
     wait(unique_lock_type& __lock)
       noexcept  // strengthened
       {
-        __MCF_ASSERT(__lock.owns_lock());  // must owning a mutex
+        __MCF_ASSERT(__lock.owns_lock());  // must own a mutex
         __MCF_ASSERT(__lock.mutex() != nullptr);
 
         unique_lock_type __temp_lock;
@@ -624,7 +624,7 @@ class condition_variable
     cv_status
     wait_until(unique_lock_type& __lock, const chrono::time_point<_Clock, _Dur>& __abs_time)
       {
-        __MCF_ASSERT(__lock.owns_lock());  // must owning a mutex
+        __MCF_ASSERT(__lock.owns_lock());  // must own a mutex
         __MCF_ASSERT(__lock.mutex() != nullptr);
 
         unique_lock_type __temp_lock;
@@ -651,7 +651,7 @@ class condition_variable
     cv_status
     wait_for(unique_lock_type& __lock, const chrono::duration<_Rep, _Period>& __rel_time)
       {
-        __MCF_ASSERT(__lock.owns_lock());  // must owning a mutex
+        __MCF_ASSERT(__lock.owns_lock());  // must own a mutex
         __MCF_ASSERT(__lock.mutex() != nullptr);
 
         unique_lock_type __temp_lock;
@@ -679,7 +679,7 @@ inline
 void
 notify_all_at_thread_exit(condition_variable& __cnd, unique_lock<mutex> __lock)
   {
-    __MCF_ASSERT(__lock.owns_lock());  // must owning a mutex
+    __MCF_ASSERT(__lock.owns_lock());  // must own a mutex
     __MCF_ASSERT(__lock.mutex() != nullptr);
 
     ::__MCF_dtor_queue* __queue = ::_MCF_thread_self()->__atexit_queue;

@@ -20,7 +20,7 @@ function (of a DLL). There are some major issues in this approach:
 GCC uses `atexit()` to register destructors for static objects. Therefore,
 the CRT has to be modified to forward such calls to `__MCF_cxa_atexit()`,
 passing the address of the module-specific `__dso_handle` as their third
-arguments. The modified CRT also forwards calls to `exit()`, `_Exit()`,
+argument. The modified CRT also forwards calls to `exit()`, `_Exit()`,
 `_exit()` and `quick_exit()` to standard-conforming ones in mcfgthread, which
 eventually calls `TerminateProcess()` instead of `ExitProcess()`, to address
 such issues. Per-thread and process cleanup is performed by `__cxa_finalize()`,

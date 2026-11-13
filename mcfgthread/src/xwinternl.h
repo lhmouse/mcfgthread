@@ -61,7 +61,7 @@ enum _HARDERROR_RESPONSE_OPTION
 enum _HARDERROR_RESPONSE
   {
     ResponseReturnToCaller  =  0,  /* LPC communication error */
-    ResponseNotHandled      =  1,  /* preset value in case of invalid argument */
+    ResponseNotHandled      =  1,  /* preset value in case of an invalid argument */
     ResponseAbort           =  2,  /* `IDABORT` */
     ResponseCancel          =  3,  /* `IDCANCEL` */
     ResponseIgnore          =  4,  /* `IDIGNORE` */
@@ -127,7 +127,7 @@ RtlMoveMemory(
  *
  * @param `Destination` points to the destination block.
  * @param `Length` is the number of bytes to fill.
- * @param `Fill` is the value to set. Only the lowest bytes is significant.
+ * @param `Fill` is the value to set. Only the lowest byte is significant.
  * @returns nothing.
  * @since All  */
 NTSYSAPI
@@ -268,7 +268,7 @@ NtCreateSection(
     _In_ ULONG AllocationAttributes,
     _In_opt_ HANDLE FileHandle);
 
-/** Maps a named file mapping object into virtual address space of a process.
+/** Maps a named file mapping object into the virtual address space of a process.
  *
  * This function implements `MapViewOfFile()`.
  *
@@ -311,7 +311,7 @@ NtMapViewOfSection(
     _In_ ULONG AllocationType,
     _In_ ULONG Win32Protect);
 
-/** Unmaps a mapped view from virtual address space of a process.
+/** Unmaps a mapped view from the virtual address space of a process.
  *
  * This function implements `UnmapViewOfFile()`.
  *
@@ -474,7 +474,7 @@ NtRaiseHardError(
  * @param `SizeNeeded` points to a variable which receives the number of bytes
  *    that is required to store all modules. The caller should use this value
  *    to check whether the result has been truncated.
- * @returns non-zero if on success, or zero on failure.
+ * @returns non-zero on success, or zero on failure.
  * @since Windows 7  */
 WINBASEAPI
 BOOL

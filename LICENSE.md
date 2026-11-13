@@ -1,24 +1,24 @@
 > [!TIP]
 > _\[This section is informative.\]_
 >
-> Initially, MCF Gthread was licensed under the GNU General Public License
-> (LGPL). There was a technical limitation that prevented MCF Gthread from
-> being linked as a static library, so LGPL was considered 'sufficient for
-> good use'.
+> Initially, MCF Gthread was licensed under the GNU Lesser General Public
+> License (LGPL). There was a technical limitation that prevented MCF
+> Gthread from being linked as a static library, so LGPL was considered
+> 'sufficient for good use'.
 >
-> The limitation about static linking has gone since a while ago. Now the
-> restriction of LGPL is causing a negative impact. It is time to make a
-> reassessment on what license we should use.
+> The limitation on static linking was lifted a while ago. Now the LGPL's
+> restrictions are causing a negative impact. It is time to reassess what
+> license we should use.
 >
 > We acknowledge that it may not be appropriate to enforce the exact same
-> understanding of freedom about software on GNU's aspect.
+> understanding of software freedom from GNU's perspective.
 >
 > As a consequence, we bring the GCC Runtime Library Exception to grant
-> you the freedom to not be subject to LGPL under some circumstances. If
-> you have received a copy of MCF Gthread without this exception, you are
-> allowed to apply it yourself.
+> you the freedom not to be subject to the LGPL under some circumstances.
+> If you have received a copy of MCF Gthread without this exception, you
+> are allowed to apply it yourself.
 >
-> The overall effect is that, if you link your code against MCF Gthread,
+> The overall effect is that if you link your code against MCF Gthread,
 > either as a static library or a shared library which is produced by a
 > purely GPL-compatible compiler or a purely non-GPL-compatible compiler,
 > then you may convey the result under any terms at your disposal, without
@@ -46,7 +46,7 @@ License for more details.
 Under Section 7 of GPL version 3:
 
   1. You are allowed to revoke this license from a file whose name ends
-     with _.h_ or _.hpp_, such that it enters the Public Domain.
+     with _.h_ or _.hpp_, so that it enters the Public Domain.
 
   2. You are granted additional permissions described in the GCC Runtime
      Library Exception, version 3.1, as published by the Free Software

@@ -22,7 +22,7 @@ do_spin_byte_ptr(const _MCF_mutex* mtx, uint32_t sp_mask)
     static const uint32_t table_size = sizeof(__MCF_G(mutex_spin_field));
     static const uint32_t table_size_reciprocal = 0x100000000U / table_size;
 
-    /* We use an `uint32_t` as a fixed-point ratio within [0,1). Hence
+    /* We use a `uint32_t` as a fixed-point ratio within [0,1). Hence
      * `offset_in_table = ratio / 2^32 * table_size = ratio / (2^32 / table_size)`,
      * where `2^32 / table_size` is a constant.  */
     size_t base, index;
@@ -234,7 +234,7 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mtx)
     _MCF_mutex old, new;
 
     /* Clear the `__locked` field and release at most one thread, if any.
-     * The right most bit one of the spinning mask is also cleared to enable
+     * The rightmost bit of the spinning mask is also cleared to enable
      * further threads to spin.  */
     _MCF_atomic_load_pptr_rlx(&old, mtx);
     for(;;) {

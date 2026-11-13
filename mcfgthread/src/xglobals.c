@@ -239,7 +239,7 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
 #if defined __MCF_M_X8664_ASM
         "rsi"  /* x86-64 */
 #elif defined __MCF_M_ARM64_ASM
-        "x25"  /* ARM64 or ARM64EC; must be same with x86-64 on ARM64EC */
+        "x25"  /* ARM64 or ARM64EC; must be the same as x86-64 on ARM64EC */
 #else
 #  error unimplemented
 #endif
@@ -358,7 +358,7 @@ __MCF_initialize_winnt_timeout_v3(__MCF_winnt_timeout* to, const int64_t* ms_opt
     if(*ms_opt > 0) {
       /* If `*ms_opt` is positive, it denotes the number of milliseconds since
        * 1970-01-01T00:00:00Z, and has to be converted into the number of 100
-       * nanoseconds since the 1601-01-01T00:00:00Z.  */
+       * nanoseconds since 1601-01-01T00:00:00Z.  */
       if(*ms_opt > 910692730085477)
         return;
 
@@ -387,8 +387,8 @@ __MCF_adjust_winnt_timeout_v3(__MCF_winnt_timeout* to)
     if(to->li.QuadPart >= 0)
       return;
 
-    /* Add the number of 100 nanoseconds that have elapsed so far, to the
-     * timeout which is negative, using saturation arithmetic.  */
+    /* Add the number of 100 nanoseconds that have elapsed so far to the
+     * negative timeout, using saturation arithmetic.  */
     ULONGLONG old_since = to->since;
     (*(__MCF_crt_QueryUnbiasedInterruptTimePrecise))(&(to->since));
     to->li.QuadPart += (LONGLONG) (to->since - old_since);
@@ -456,7 +456,7 @@ __MCF_get_function_from_loaded_dlls(HMODULE* module, const char* name)
 
     HMODULE* end_of_dlls = (void*) ((char*) dlls + dlls_cb);
     for(HMODULE* p = dlls;  p != end_of_dlls;  ++p) {
-      /* Lock the DLL, in case that another thread unloads it.  */
+      /* Lock the DLL, in case another thread unloads it.  */
       if(!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, (void*) *p, module))
         continue;
 
@@ -808,7 +808,7 @@ __asm__ (
 "\n   .p2align 2"
 #if defined __MCF_M_X8632_ASM
 /** This function probes the stack without adjusting ESP or clobbering any
- * registers. The size of allocation is passed via EAX in number of bytes.  */
+ * registers. The size of allocation is passed via EAX as a number of bytes.  */
 "\n .globl ___chkstk_ms"
 "\n .def ___chkstk_ms; .scl 2; .type 32; .endef"
 "\n ___chkstk_ms:"
@@ -828,7 +828,7 @@ __asm__ (
 "\n   pop eax"
 "\n   ret"
 /** This function probes the stack and adjusts ESP. No registers shall be
- * clobbered. The size of allocation is passed via EAX in number of bytes.  */
+ * clobbered. The size of allocation is passed via EAX as a number of bytes.  */
 "\n .globl __alloca"
 "\n .def __alloca; .scl 2; .type 32; .endef"
 "\n __alloca:"
@@ -846,7 +846,7 @@ __asm__ (
 "\n .equiv __chkstk, __alloca"
 #elif defined __MCF_M_X8664_ASM
 /** This function probes the stack without adjusting RSP. No registers shall
- * be clobbered. The size of allocation is passed via RAX in number of bytes.
+ * be clobbered. The size of allocation is passed via RAX as a number of bytes.
  * This function has a custom calling convention; RSP may be unaligned before
  * the call, and arguments have no home slots.  */
 "\n .globl ___chkstk_ms"
@@ -880,7 +880,7 @@ __asm__ (
 #elif defined __MCF_M_ARM64_ASM
 /** This function probes the stack without adjusting SP. No registers other
  * than X16, X17 and NZCV shall be clobbered. The size of allocation is passed
- * via X15 in number of quad words. This is a leaf function that requires no
+ * via X15 as a number of quad words. This is a leaf function that requires no
  * unwinding data.  */
 "\n .globl __chkstk"
 "\n .def __chkstk; .scl 2; .type 32; .endef"
@@ -1049,8 +1049,8 @@ __asm__ (
 );
 #endif
 
-/* Implement the stack protector, aka. buffer security check in Microsoft
- * terminology.  */
+/* Implement the stack protector, also known as the buffer security check in
+ * Microsoft terminology.  */
 #if defined _MSC_VER
 #  define __stack_chk_guard   __security_cookie
 #  define __stack_chk_fail    __report_gsfailure

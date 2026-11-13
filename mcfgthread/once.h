@@ -31,7 +31,7 @@ struct __MCF_once
  * Static ones should be initialized with `{0}`, like other structs.
  *
  * A once-initialization flag can be in any of the three states: UNLOCKED,
- * LOCKED and READY. An once-initialization flag is initialized to UNLOCKED.
+ * LOCKED and READY. A once-initialization flag is initialized to UNLOCKED.
  *
  * @param `once` points to the once-initialization flag to initialize.
  * @returns nothing.

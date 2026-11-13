@@ -33,7 +33,7 @@ reader_thread_proc(_MCF_thread* self)
       int r = _MCF_shared_mutex_lock_shared(&mutex, NULL);
       assert(r == 0);
 
-      /* Check resources are equal.  */
+      /* Check whether the resources are equal.  */
       int t1 = res1;
       SwitchToThread();
       assert(t1 == res2);

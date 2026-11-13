@@ -109,7 +109,7 @@ __MCF_tls_table_xset(__MCF_tls_table* table, _MCF_tls_key* key, void** old_value
     }
 
     if(value_opt && (table->__size_hint >= (size_t) (table->__end - table->__begin) / 2)) {
-      /* Allocate a larger table in case that a new value is to be inserted.
+      /* Allocate a larger table in case a new value is to be inserted.
        * First, recalculate the number of active keys.  */
       size_t capacity = 17;
       __MCF_tls_element* elem;

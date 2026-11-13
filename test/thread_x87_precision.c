@@ -25,7 +25,7 @@ thread_proc(_MCF_thread* self)
 int
 main(void)
   {
-    // Check we are running on a real x86 machine, not emulated on ARM64.
+    // Check that we are running on a real x86 machine, not emulated on ARM64.
     if(sizeof(long double) == sizeof(double))
       return 77;
 

@@ -92,7 +92,7 @@ main(void)
       assert(mutex.__locked);
     }
 
-    /* Inform end of input  */
+    /* Signal end of input  */
     value = -1;
     fprintf(stderr, "main set end of input\n");
 

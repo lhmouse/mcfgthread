@@ -86,7 +86,7 @@ int
 _MCF_sem_wait(_MCF_sem* __sem, const int64_t* __timeout_opt)
   __MCF_noexcept;
 
-/** Increases the value of a semaphore and wake up some threads.
+/** Increases the value of a semaphore and wakes up some threads.
  *
  * @param `sem` points to the semaphore.
  * @param `value_add` is the value to add to the semaphore, which shall not be

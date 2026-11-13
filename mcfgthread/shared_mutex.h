@@ -146,8 +146,8 @@ _MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smtx, const int64_t* __tim
 /** Unlocks a shared mutex.
  *
  * If the shared mutex has not been locked in either shared or exclusive mode,
- * the behavior is undefined. This function may be called by a different thread
- * from which it locked the same shared mutex.
+ * the behavior is undefined. This function may be called by a thread other than
+ * the one that locked the same shared mutex.
  *
  * @param `smtx` points to the shared mutex to unlock.
  * @returns nothing.
@@ -160,8 +160,8 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* __smtx)
 /** Unlocks a shared mutex.
  *
  * If the shared mutex has not been locked in either shared or exclusive mode,
- * the behavior is undefined. This function may be called by a different thread
- * from which it locked the same shared mutex.
+ * the behavior is undefined. This function may be called by a thread other than
+ * the one that locked the same shared mutex.
  *
  * This is an inline wrapper for `_MCF_shared_mutex_unlock_slow()`, which is
  * optimized when there's little to no contention, for example, when there's only
@@ -196,7 +196,7 @@ _MCF_shared_mutex_lock_shared(_MCF_shared_mutex* __smtx, const int64_t* __timeou
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    /* Use raw integers to work around issues about missed optimizations.
+    /* Use raw integers to work around issues with missed optimizations.
      * See <https://github.com/lhmouse/mcfgthread/issues/320>.  */
     uintptr_t __old_bits, __new_bits;
     _MCF_atomic_load_pptr_rlx(&__old_bits, __smtx);
@@ -215,7 +215,7 @@ _MCF_shared_mutex_lock_exclusive(_MCF_shared_mutex* __smtx, const int64_t* __tim
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    /* Use raw integers to work around issues about missed optimizations.
+    /* Use raw integers to work around issues with missed optimizations.
      * See <https://github.com/lhmouse/mcfgthread/issues/320>.  */
     uintptr_t __old_bits, __new_bits;
     _MCF_atomic_load_pptr_rlx(&__old_bits, __smtx);
@@ -234,7 +234,7 @@ _MCF_shared_mutex_unlock(_MCF_shared_mutex* __smtx)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    /* Use raw integers to work around issues about missed optimizations.
+    /* Use raw integers to work around issues with missed optimizations.
      * See <https://github.com/lhmouse/mcfgthread/issues/320>.  */
     uintptr_t __old_bits, __new_bits;
     _MCF_atomic_load_pptr_rlx(&__old_bits, __smtx);

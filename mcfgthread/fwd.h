@@ -326,8 +326,8 @@ template<typename _Tp> struct __MCF_make_br { typedef _Tp __type[1]; };
 
 /** These are static assertions. The argument shall be a constant expression.
  * If the argument yields zero, these macros effect a compiler error; otherwise,
- * `__MCF_STATIC_ASSERT_1()` expands to a constant expressions that yields one,
- * `__MCF_STATIC_ASSERT_0()` expands to a constant expressions that yields zero,
+ * `__MCF_STATIC_ASSERT_1()` expands to a constant expression that yields one,
+ * `__MCF_STATIC_ASSERT_0()` expands to a constant expression that yields zero,
  * and `__MCF_STATIC_ASSERT()` expands to a declaration.  */
 #if defined __cplusplus
 extern "C++" {
@@ -546,7 +546,7 @@ _MCF_get_cpu_time(_MCF_cpu_time* __tp)
 /** Calls `__init_proc(__arg)` exactly once.
  *
  * If an exception is thrown, this function calls `_MCF_once_abort(once)` and
- * rethrow the exception; otherwise, it calls `_MCF_once_release(once)` and
+ * rethrows the exception; otherwise, it calls `_MCF_once_release(once)` and
  * returns.
  *
  * This function requires exceptions be implemented with structured exception

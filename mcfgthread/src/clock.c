@@ -32,7 +32,7 @@ int64_t
 _MCF_utc_now(void)
   {
     /* `ULONGLONG` has a more strict alignment requirement than `FILETIME`,
-     * so the cast should be safe. `116444736000000000` is number of 1/100
+     * so the cast should be safe. `116444736000000000` is the number of 1/100
      * seconds from 1601-01-01T00:00:00Z (the NT epoch) to 1970-01-01T00:00:00Z
      * (the Unix Epoch).  */
     ULONGLONG ull;
@@ -45,7 +45,7 @@ double
 _MCF_hires_utc_now(void)
   {
     /* `ULONGLONG` has a more strict alignment requirement than `FILETIME`,
-     * so the cast should be safe. `116444736000000000` is number of 1/100
+     * so the cast should be safe. `116444736000000000` is the number of 1/100
      * seconds from 1601-01-01T00:00:00Z (the NT epoch) to 1970-01-01T00:00:00Z
      * (the Unix Epoch).  */
     ULONGLONG ull;

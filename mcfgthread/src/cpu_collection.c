@@ -93,7 +93,7 @@ _MCF_cpu_collection_new(void)
         size_t bit_index;
         __MCF_bit_scan_forward_ptr(&bit_index, mask_reg);
 
-        /* Add CPU into the end. CPU identifiers start from 256 like CPU Set APIs.  */
+        /* Add the CPU at the end. CPU identifiers start from 256 like CPU Set APIs.  */
         uint32_t k = coll->__size ++;
         coll->__data[k].__id = (uint32_t) (256 + bit_index);
         coll->__data[k].__group = proc_num.Group;

@@ -29,7 +29,7 @@ reader_thread_proc(void* param)
       int r = __gthread_rwlock_rdlock(&mutex);
       assert(r == 0);
 
-      /* Check resources are equal.  */
+      /* Check whether the resources are equal.  */
       int t1 = res1;
       __gthread_yield();
       assert(t1 == res2);

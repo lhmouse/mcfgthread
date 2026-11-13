@@ -96,7 +96,7 @@ _MCF_mutex_lock(_MCF_mutex* __mtx, const int64_t* __timeout_opt)
 /** Unlocks a mutex.
  *
  * If the mutex has not been locked, the behavior is undefined. This function
- * may be called by a different thread from which locked the same mutex.
+ * may be called by a thread other than the one that locked the same mutex.
  *
  * @param `mtx` points to the mutex to unlock.
  * @returns nothing.
@@ -109,7 +109,7 @@ _MCF_mutex_unlock_slow(_MCF_mutex* __mtx)
 /** Unlocks a mutex.
  *
  * If the mutex has not been locked, the behavior is undefined. This function
- * may be called by a different thread from which locked the same mutex.
+ * may be called by a thread other than the one that locked the same mutex.
  *
  * This is an inline wrapper for `_MCF_mutex_unlock_slow()`, which is optimized
  * when there's little to no contention, for example, when there's only one
@@ -144,7 +144,7 @@ _MCF_mutex_lock(_MCF_mutex* __mtx, const int64_t* __timeout_opt)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    /* Use raw integers to work around issues about missed optimizations.
+    /* Use raw integers to work around issues with missed optimizations.
      * See <https://github.com/lhmouse/mcfgthread/issues/320>.  */
     uintptr_t __old_bits, __new_bits;
     _MCF_atomic_load_pptr_rlx(&__old_bits, __mtx);
@@ -163,7 +163,7 @@ _MCF_mutex_unlock(_MCF_mutex* __mtx)
   __MCF_noexcept
   {
 #if __MCF_EXPAND_INLINE_DEFINITIONS
-    /* Use raw integers to work around issues about missed optimizations.
+    /* Use raw integers to work around issues with missed optimizations.
      * See <https://github.com/lhmouse/mcfgthread/issues/320>.  */
     uintptr_t __old_bits, __new_bits;
     _MCF_atomic_load_pptr_rlx(&__old_bits, __mtx);

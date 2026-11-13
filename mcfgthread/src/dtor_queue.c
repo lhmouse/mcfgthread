@@ -91,7 +91,7 @@ do_pop_element_common(__MCF_dtor_element* out_elem_opt, __MCF_dtor_queue* queue,
     }
 
     /* The current queue has been exhausted. If it is empty now, it should be
-     * deallocated. If there are more than one blocks, go to the previous one.  */
+     * deallocated. If there is more than one block, go to the previous one.  */
     __MCF_dtor_queue* prev = cur_queue->__prev;
     if(prev) {
       if(cur_queue->__size != 0)

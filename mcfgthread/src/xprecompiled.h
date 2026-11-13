@@ -18,7 +18,7 @@ __asm__ (".intel_syntax noprefix");
 #endif
 
 /** Define internal build options, and additionally, work around many problems
- * about Clang-CL and the MSVC standard library.  */
+ * with Clang-CL and the MSVC standard library.  */
 #ifdef __MCF_IN_DLL
 #  define __MCF_DLLEXPORT  __declspec(dllexport)
 #else

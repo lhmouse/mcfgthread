@@ -3,7 +3,7 @@
 ### Synopsis
 
 The `_MCF_mutex` type in MCF Gthread is a one-pointer-size structure with fields
-like follows:
+as follows:
 
 ```c
 typedef struct __MCF_mutex _MCF_mutex;
@@ -35,10 +35,10 @@ of the mutex as the key, so it can be woken up later. These are straightforward.
 The most interesting and complex part is _Action 2_. If a thread has set a bit of
 `__sp_mask`, it gains a chance to perform some busy-waiting.
 
-### The Problems about Busy-waiting
+### The Problems with Busy-waiting
 
 A naive way of busy-waiting is to read and test the `__locked` bit repeatedly in
-a loop. This is not incorrect, but it can increase pressure of the CPU bus a lot,
+a loop. This is not incorrect, but it can increase pressure on the CPU bus a lot,
 if there are a lot of threads running.
 
 This can be addressed by allocating a separate flag byte for each spinning thread,
@@ -46,7 +46,7 @@ so the same location is not shared between CPU cores. An example is the [K42 loc
 algorithm](https://locklessinc.com/articles/locks/), and **is also what Microsoft
 has adopted in their `SRWLOCK`s**.
 
-The fundamental problem about a linked list of waiters is that, it has to be
+The fundamental problem with a linked list of waiters is that it has to be
 _reliable_. Because a thread that attempts to unlock a mutex must notify a next
 waiter, it has to access this linked list. If a waiter could time out and remove
 a node from the linked list, the notifier could access deallocated memory which

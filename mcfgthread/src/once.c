@@ -31,7 +31,7 @@ _MCF_once_wait_slow(_MCF_once* once, const int64_t* timeout_opt)
         return 0;
       }
       else if(old.__locked == 0) {
-        /* Initialization has not started and this thread is the first comer,
+        /* Initialization has not started and this thread is the first to arrive,
          * so lock the flag and let the caller do initialization.  */
         new.__ready = 0;
         new.__locked = 1;

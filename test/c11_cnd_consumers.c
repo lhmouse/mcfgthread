@@ -102,7 +102,7 @@ main(void)
       assert(mutex.__rc_mtx[0].__depth == 1);
     }
 
-    /* Inform end of input  */
+    /* Signal end of input  */
     value = -1;
     fprintf(stderr, "main set end of input\n");
 
