@@ -652,52 +652,75 @@ __MCF_ALWAYS_INLINE
 bool
 __MCF_bit_scan_forward_32(size_t* index, uint32_t value)
   {
+#if defined __MCF_M_X86_ASM
+    /* When BMI is enabled, we have checked that the CPU really supports BMI in
+     * the entry-point routine, so use `tzcnt` safely without checking whether
+     * it has been misexecuted as `rep bsf`. When BMI isn't enabled, use `bsf`
+     * as a fallback, but it has dependencies on both the input and the output,
+     * so force them to be tied to the same register.  */
     bool found;
-#if defined __MCF_M_X86_ASM && defined __BMI__
+#  if defined __BMI__
     __asm__ ("tzcnt %k0, %k2" : "=r"(*index), "=@ccnc"(found) : "rm"(value));
-#elif defined __MCF_M_X86_ASM
+#  else
     __asm__ ("bsf %k0, %k0" : "=r"(*index), "=@ccnz"(found) : "0"(value));
-#elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_CSSC
-    __asm__ ("ctz %w0, %w1" : "=r"(*index) : "r"(value));
-    found = value != 0;
+#  endif
+    return found;
 #elif defined __MCF_M_ARM64_ASM
+    /* These don't set flags, so calculate the return value separately, but it
+     * can be optimized out if unused.  */
+#  if defined __ARM_FEATURE_CSSC
+    __asm__ ("ctz %w0, %w1" : "=r"(*index) : "r"(value));
+#  else
     uint32_t rbits;
     __asm__ ("rbit %w0, %w1" : "=r"(rbits) : "r"(value));
     __asm__ ("clz %w0, %w1" : "=r"(*index) : "r"(rbits));
-    found = value != 0;
+#  endif
+    return value != 0;
 #else
+    /* For MSVC, use the compiler's intrinsic function.  */
     ULONG index32;
-    found = _BitScanForward(&index32, value);
+    bool found = _BitScanForward(&index32, value);
     *index = index32;
-#endif
-    __MCF_ASSERT(found == (value != 0));
     return found;
+#endif
   }
 
 __MCF_ALWAYS_INLINE
 bool
 __MCF_bit_scan_forward_ptr(size_t* index, uintptr_t value)
   {
+#if defined __MCF_M_X86_ASM
+    /* When BMI is enabled, we have checked that the CPU really supports BMI in
+     * the entry-point routine, so use `tzcnt` safely without checking whether
+     * it has been misexecuted as `rep bsf`. When BMI isn't enabled, use `bsf`
+     * as a fallback, but it has dependencies on both the input and the output,
+     * so force them to be tied to the same register.  */
     bool found;
-#if defined __MCF_M_X86_ASM && defined __BMI__
+#  if defined __BMI__
     __asm__ ("tzcnt %0, %2" : "=r"(*index), "=@ccnc"(found) : "rm"(value));
-#elif defined __MCF_M_X86_ASM
+#  else
     __asm__ ("bsf %0, %0" : "=r"(*index), "=@ccnz"(found) : "0"(value));
-#elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_CSSC
-    __asm__ ("ctz %0, %1" : "=r"(*index) : "r"(value));
-    found = value != 0;
+#  endif
+    return found;
 #elif defined __MCF_M_ARM64_ASM
+    /* These don't set flags, so calculate the return value separately, but it
+     * can be optimized out if unused.  */
+#  if defined __ARM_FEATURE_CSSC
+    __asm__ ("ctz %0, %1" : "=r"(*index) : "r"(value));
+#  else
     uintptr_t rbits;
     __asm__ ("rbit %0, %1" : "=r"(rbits) : "r"(value));
     __asm__ ("clz %0, %1" : "=r"(*index) : "r"(rbits));
-    found = value != 0;
+#  endif
+    return value != 0;
 #else
+    /* For MSVC, use the compiler's intrinsic function, and zero-extend the
+     * index as necessary.  */
     ULONG index32;
-    found = __MCF_64_32(_BitScanForward64, _BitScanForward) (&index32, value);
+    bool found = __MCF_64_32(_BitScanForward64, _BitScanForward)(&index32, value);
     *index = index32;
-#endif
-    __MCF_ASSERT(found == (value != 0));
     return found;
+#endif
   }
 
 __MCF_ALWAYS_INLINE
