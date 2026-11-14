@@ -172,7 +172,11 @@ __MCF_CXX(extern "C" {)
 
 #  define WIDTH   8
 #  define INTEGER  int8_t
-#  define UINTEGER  uint8_t
+#  ifdef __BITINT_MAXWIDTH__
+#    define UINTEGER  unsigned _BitInt(8)
+#  else
+#    define UINTEGER  uint8_t
+#  endif
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20001
 #  undef __MCFGTHREAD_ATOMIC_
@@ -187,7 +191,11 @@ __MCF_CXX(extern "C" {)
 
 #  define WIDTH   16
 #  define INTEGER  int16_t
-#  define UINTEGER  uint16_t
+#  ifdef __BITINT_MAXWIDTH__
+#    define UINTEGER  unsigned _BitInt(16)
+#  else
+#    define UINTEGER  uint16_t
+#  endif
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20001
 #  undef __MCFGTHREAD_ATOMIC_
@@ -508,7 +516,7 @@ __MCF_C3(_MCF_atomic_bt_,WIDTH,ORDER)(const volatile void* __mem, size_t __index
   {
     INTEGER __old_value, __mask;
     __MCF_ASSERT(__index < sizeof(INTEGER) * 8);
-    __mask = (INTEGER) ((UINTEGER) 1 << __index);
+    __mask = __MCF_EX (INTEGER) ((UINTEGER) 1 << __index);
     __old_value = __MCF_atomic_load(E_ATOMICIFY(__mem), E_ORDER_A);
     return (__old_value & __mask) != 0;
   }
@@ -527,7 +535,7 @@ __MCF_C3(_MCF_atomic_bts_,WIDTH,ORDER)(volatile void* __mem, size_t __index)
   {
     INTEGER __old_value, __mask;
     __MCF_ASSERT(__index < sizeof(INTEGER) * 8);
-    __mask = (INTEGER) ((UINTEGER) 1 << __index);
+    __mask = __MCF_EX (INTEGER) ((UINTEGER) 1 << __index);
     __old_value = __MCF_atomic_fetch_or(E_ATOMICIFY(__mem), __mask, E_ORDER);
     return (__old_value & __mask) != 0;
   }
@@ -546,7 +554,7 @@ __MCF_C3(_MCF_atomic_btr_,WIDTH,ORDER)(volatile void* __mem, size_t __index)
   {
     INTEGER __old_value, __mask;
     __MCF_ASSERT(__index < sizeof(INTEGER) * 8);
-    __mask = (INTEGER) ((UINTEGER) 1 << __index);
+    __mask = __MCF_EX (INTEGER) ((UINTEGER) 1 << __index);
     __old_value = __MCF_atomic_fetch_and(E_ATOMICIFY(__mem), (INTEGER) ~__mask, E_ORDER);
     return (__old_value & __mask) != 0;
   }
@@ -565,7 +573,7 @@ __MCF_C3(_MCF_atomic_btc_,WIDTH,ORDER)(volatile void* __mem, size_t __index)
   {
     INTEGER __old_value, __mask;
     __MCF_ASSERT(__index < sizeof(INTEGER) * 8);
-    __mask = (INTEGER) ((UINTEGER) 1 << __index);
+    __mask = __MCF_EX (INTEGER) ((UINTEGER) 1 << __index);
     __old_value = __MCF_atomic_fetch_xor(E_ATOMICIFY(__mem), __mask, E_ORDER);
     return (__old_value & __mask) != 0;
   }
