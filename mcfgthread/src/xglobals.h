@@ -656,7 +656,7 @@ __MCF_bit_scan_forward_32(size_t* index, uint32_t value)
 #if defined __MCF_M_X86_ASM && defined __BMI__
     __asm__ ("tzcnt %k0, %k2" : "=r"(*index), "=@ccnc"(found) : "rm"(value));
 #elif defined __MCF_M_X86_ASM
-    __asm__ ("bsf %k0, %k2" : "=r"(*index), "=@ccnz"(found) : "rm"(value));
+    __asm__ ("bsf %k0, %k0" : "=r"(*index), "=@ccnz"(found) : "0"(value));
 #elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_CSSC
     __asm__ ("ctz %w0, %w1" : "=r"(*index) : "r"(value));
     found = value != 0;
@@ -682,7 +682,7 @@ __MCF_bit_scan_forward_ptr(size_t* index, uintptr_t value)
 #if defined __MCF_M_X86_ASM && defined __BMI__
     __asm__ ("tzcnt %0, %2" : "=r"(*index), "=@ccnc"(found) : "rm"(value));
 #elif defined __MCF_M_X86_ASM
-    __asm__ ("bsf %0, %2" : "=r"(*index), "=@ccnz"(found) : "rm"(value));
+    __asm__ ("bsf %0, %0" : "=r"(*index), "=@ccnz"(found) : "0"(value));
 #elif defined __MCF_M_ARM64_ASM && defined __ARM_FEATURE_CSSC
     __asm__ ("ctz %0, %1" : "=r"(*index) : "r"(value));
     found = value != 0;
