@@ -55,12 +55,15 @@ struct thread_record
     int64_t t0, t1, niter;
   };
 
+struct shared_state
+  {
+    my_mutex_t mutex[1];
+    uint64_t lcg;
+  };
+
 HANDLE start;
 struct thread_record records[NTHRD];
-
-my_mutex_t mutex;
-volatile double dst = 1.2345;
-volatile double src = 5.4321;
+struct shared_state st;
 
 static
 DWORD
@@ -79,20 +82,17 @@ thread_proc(void* arg)
     } while(records[k].t1 == records[k].t0);
 
     do {
-      my_lock(&mutex);
-      double temp = src;
-      src = temp * 1.001;
-      if(src >= 1.0e300)
-        src = 1.0e-300;
-      my_unlock(&mutex);
+      my_lock(st.mutex);
+      for(intptr_t k = 0;  k < 50;  ++k) {
+        // This is the implementation of `drand48()` of GNU libc.
+        st.lcg *= 0x5DEECE66D;
+        st.lcg += 0xB;
+        st.lcg &= 0xFFFFFFFFFFFF;
+        __asm__ volatile ("" : "+m"(st.lcg));
+      }
+      my_unlock(st.mutex);
 
-      temp = log(temp);
-
-      my_lock(&mutex);
-      dst = src;
-      my_unlock(&mutex);
-
-      SwitchToThread();
+      YieldProcessor();
 
       records[k].t1 = GetTickCount64();
       records[k].niter ++;
@@ -110,9 +110,9 @@ main(void)
     SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
     timeBeginPeriod(1);
 
-    my_init(&mutex);
     start = CreateEventW(NULL, TRUE, FALSE, NULL);
     assert(start);
+    my_init(st.mutex);
 
     for(intptr_t k = 0;  k < NTHRD;  ++k) {
       records[k].handle = CreateThread(NULL, 0, thread_proc, (void*) k, 0, NULL);
