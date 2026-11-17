@@ -43,10 +43,10 @@ do_win32_thread_routine(void* param)
       /* User DLLs or TLS callbacks may have used thread-local variables, so migrate
        * existing data.  */
       __MCF_ASSERT(foreign->__tid == thrd->__tid);
-      __MCF_mcopy(thrd->__atexit_queue, foreign->__atexit_queue, sizeof(__MCF_dtor_queue));
-      __MCF_mzero(foreign->__atexit_queue, sizeof(__MCF_dtor_queue));
-      __MCF_mcopy(thrd->__tls_table, foreign->__tls_table, sizeof(__MCF_tls_table));
-      __MCF_mzero(foreign->__tls_table, sizeof(__MCF_tls_table));
+
+      size_t nbytes_to_move = sizeof(__MCF_thread_base) - offsetof(_MCF_thread, __atexit_queue);
+      __MCF_mcopy(thrd->__atexit_queue, foreign->__atexit_queue, nbytes_to_move);
+      __MCF_mzero(foreign->__atexit_queue, nbytes_to_move);
 
       _MCF_thread_drop_ref_nonnull(foreign);
       foreign = __MCF_BAD_PTR;
