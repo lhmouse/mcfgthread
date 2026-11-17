@@ -38,8 +38,8 @@ do_win32_thread_routine(void* param)
 
     _MCF_thread* foreign = (*(__MCF_crt_TlsGetValue2))(__MCF_G(tls_index));
     if(foreign) {
-      /* User DLLs or TLS callbacks may have used thread-local variables, so migrate
-       * existing data.  */
+      /* User DLLs or TLS callbacks may have used thread-local variables, so
+       * migrate existing data.  */
       __MCF_ASSERT(foreign->__tid == thrd->__tid);
 
       size_t nbytes_to_move = sizeof(__MCF_thread_base) - offsetof(_MCF_thread, __atexit_queue);
