@@ -13,8 +13,8 @@
 
 enum
   {
-    init_st_zero     = 0,
-    init_st_success  = 1,
+    init_st_not_running     = -1,
+    init_st_thread_waiting  = -2,
   };
 
 static __MCF_REALIGN_SP
@@ -24,12 +24,16 @@ do_win32_thread_routine(void* param)
   {
     __MCF_USING_SEH_HANDLER(__MCF_seh_thread_top);
     _MCF_thread* thrd = param;
-    if(_MCF_event_await_change(thrd->__init_done, init_st_zero, nullptr) != init_st_success)
-      return 0;
+
+    /* Wait for notification from the creator.  */
+    int32_t init_st = init_st_not_running;
+    if(_MCF_atomic_cmpxchg_32_acq(&(thrd->__tid), &init_st, init_st_thread_waiting)) {
+      NTSTATUS status = NtWaitForKeyedEvent(NULL, thrd, false, NULL);
+      __MCF_ASSERT(status == STATUS_WAIT_0);
+    }
 
     /* Ensure this structure is fresh.  */
-    thrd->__libobjc_tls_data = nullptr;
-    __MCF_ASSERT(thrd->__tid != 0);
+    __MCF_ASSERT(thrd->__tid > 0);
     __MCF_ASSERT(thrd->__handle != NULL);
     __MCF_ASSERT(thrd->__atexit_queue->__size == 0);
     __MCF_ASSERT(thrd->__tls_table->__size_hint == 0);
@@ -96,6 +100,7 @@ _MCF_thread_p_new(_MCF_thread** thrdp_opt, size_t stack_size, _MCF_thread_proced
       return __MCF_win32_error_p(ERROR_NOT_ENOUGH_MEMORY, nullptr);
 
     _MCF_atomic_store_32_rlx(thrd->__nref, 2);
+    thrd->__tid = init_st_not_running;
     thrd->__proc = proc;
 
     if(data_size != 0) {
@@ -121,19 +126,27 @@ _MCF_thread_p_new(_MCF_thread** thrdp_opt, size_t stack_size, _MCF_thread_proced
         __MCF_mcopy(thrd->__data_opt, data_opt, data_size);
     }
 
+    DWORD tid;
     thrd->__handle = CreateThread(nullptr, stack_size, do_win32_thread_routine, thrd,
-                                  STACK_SIZE_PARAM_IS_A_RESERVATION, (DWORD*) &(thrd->__tid));
+                                  STACK_SIZE_PARAM_IS_A_RESERVATION, &tid);
     if(!thrd->__handle) {
       __MCF_mfree_nonnull(thrd);
       return __MCF_FORWARD_WIN32_ERROR(nullptr);
     }
 
-    /* Now `__tid` and `__handle` have been initialized, pass the structure back
-     * to the caller. The new thread is still waiting on `__init_done`.  */
+    /* Now store the pointer to memory to ensure the new thread sees it. The
+     * new thread must still be waiting.  */
     __MCF_SET_IF(thrdp_opt, thrd);
 
     /* Let the new thread go.  */
-    _MCF_event_set(thrd->__init_done, init_st_success);
+    int32_t init_st = _MCF_atomic_xchg_32_rel(&(thrd->__tid), (int32_t) tid);
+    if(init_st == init_st_thread_waiting) {
+      NTSTATUS status = NtReleaseKeyedEvent(NULL, thrd, false, nullptr);
+      __MCF_ASSERT(status == STATUS_WAIT_0);
+    }
+
+    /* The thread ID is now in place.  */
+    __MCF_ASSERT(thrd->__tid == (int32_t) tid);
     return thrd;
   }
 
