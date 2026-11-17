@@ -343,9 +343,9 @@ template<> struct __MCF_static_assert_helper<true> { static const int __one = 1;
 #define __MCF_STATIC_ASSERT_0(...)   (__MCF_STATIC_ASSERT_1(__VA_ARGS__) - 1)
 #define __MCF_STATIC_ASSERT(...)    extern int __MCF_static_assert_true[__MCF_STATIC_ASSERT_1(__VA_ARGS__)]
 
-/** These are runtime assertions. `__MCF_ASSERT()` is only active in debug
- * builds, and in release builds it can provide a hint for optimization.
- * `__MCF_CHECK()` is always active.  */
+/** These are runtime assertions. Unlike standard `assert()`, the argument is
+ * always evaluated. In release builds, `__MCF_ASSERT()` can provide a hint for
+ * optimization, while `__MCF_CHECK()` is always active.  */
 #define __MCF_ASSERT(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_UNREACHABLE)
 #define __MCF_CHECK(...)    ((__VA_ARGS__) ? (void) 0 : __MCF_runtime_failure(__MCF_EX __func__))
 
