@@ -209,13 +209,13 @@ do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, 
     if(rec->ExceptionFlags & EXCEPTION_UNWINDING)
       _MCF_once_abort((_MCF_once*) (
 #if defined __MCF_M_X8632
-            ((const intptr_t*) estab_frame)[2]
+          ((const intptr_t*) estab_frame)[2]
 #else
-            ((const DISPATCHER_CONTEXT*) disp_ctx)->ContextRecord->
+          ((const DISPATCHER_CONTEXT*) disp_ctx)->ContextRecord->
 #  if defined __MCF_M_X8664
-              Rsi  /* x86-64 or ARM64EC */
+            Rsi  /* x86-64 or ARM64EC */
 #  elif defined __MCF_M_ARM64
-              X25  /* ARM64 */
+            X25  /* ARM64 */
 #  else
 #    error unimplemented
 #  endif
