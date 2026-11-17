@@ -629,19 +629,10 @@ __MCF_gthread_initialize_globals(void)
                                       nullptr, &gsize, ViewUnmap, 0, PAGE_READWRITE));
     __MCF_ASSERT(__MCF_g);
 
-    if(__MCF_g->self_size >= __MCF_G_SIZE_TOTAL) {
-      /* Reuse the existent view and close excess handles.  */
-      void* existing_g = __MCF_g->self_ptr;
-      __MCF_ASSERT(existing_g);
-      __MCF_CHECK_NT(NtUnmapViewOfSection(NtCurrentProcess(), __MCF_g));
-      __MCF_g = existing_g;
-      __MCF_CHECK_NT(NtClose(gfile));
-      return;
-    }
-
     if(__MCF_g->self_size == 0) {
-      /* Initialize the new region. This is the only section where no other
-       * threads may be running, so an atomic operation is unnecessary.  */
+      /* Initialize the new region. This is the primary view, where the loader
+       * lock prevents other threads from arriving here, so an atomic operation
+       * is unnecessary.  */
       __MCF_ASSERT(gsize >= __MCF_G_SIZE(interrupt_cond));
       __MCF_g->self_ptr = __MCF_g;
       __MCF_g->self_size = __MCF_G_SIZE(interrupt_cond);
@@ -655,13 +646,22 @@ __MCF_gthread_initialize_globals(void)
       __MCF_thread_attach_foreign(__MCF_g->main_thread);
       _MCF_atomic_store_32_rlx(__MCF_g->main_thread[0].__nref, 2);
     }
-
-    if((__MCF_g->self_size < __MCF_G_SIZE_TOTAL) && (gsize >= __MCF_G_SIZE_TOTAL)) {
-      /* Extend global storage. The remaining fields that are not initialized
-       * explicitly are implicit zeroes. Other threads may be reading the shared
-       * size, so it must be updated with an atomic operation.  */
-      _MCF_atomic_store_32_rel(&(__MCF_g->self_size), __MCF_G_SIZE_TOTAL);
+    else {
+      /* This isn't the primary view, so point `__MCF_g` to the primary view and
+       * close the excess handle.  */
+      void* primary = __MCF_g->self_ptr;
+      __MCF_ASSERT(primary);
+      __MCF_CHECK_NT(NtUnmapViewOfSection(NtCurrentProcess(), __MCF_g));
+      __MCF_g = primary;
+      __MCF_CHECK_NT(NtClose(gfile));
+      gfile = NULL;
     }
+
+    /* Extend global storage. The remaining fields that are not initialized
+     * explicitly are implicit zeroes. Other threads may be reading the shared
+     * size, so it must be updated with an atomic operation.  */
+    if((__MCF_g->self_size < __MCF_G_SIZE_TOTAL) && (gsize >= __MCF_G_SIZE_TOTAL))
+      _MCF_atomic_store_32_rel(&(__MCF_g->self_size), __MCF_G_SIZE_TOTAL);
   }
 
 __MCF_DLLEXPORT __MCF_REALIGN_SP
