@@ -709,7 +709,6 @@ __MCF_gthread_on_thread_exit(void)
  * initializers prevent them from being placed into the `.bss` section.  */
 const GUID __MCF_crt_gthread_guid = __MCF_GUID(9FB2D15C,C5F2,4AE7,868D,2769591B8E92);
 const LARGE_INTEGER __MCF_crt_timeout_0 = { .QuadPart = 0 };
-const LARGE_INTEGER __MCF_crt_timeout_1s = { .QuadPart = -10000000 };
 
 SYSTEM_INFO __MCF_crt_sysinfo = { .dwPageSize = 1 };
 double __MCF_crt_perf_freq_reciprocal = -1;

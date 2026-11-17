@@ -132,6 +132,10 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smtx)
         break;
     }
 
-    /* Wake up these threads.  */
-    __MCF_batch_release_common(smtx, wake_num);
+    /* Notify sleeping threads, if any.  */
+    if((wake_num != 0) && !RtlDllShutdownInProgress())
+      for(size_t i = 0;  i != wake_num;  i++) {
+        NTSTATUS status = NtReleaseKeyedEvent(NULL, smtx, false, nullptr);
+        __MCF_ASSERT(status == STATUS_WAIT_0);
+      }
   }

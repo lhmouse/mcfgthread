@@ -116,7 +116,10 @@ _MCF_once_abort(_MCF_once* once)
     }
 
     /* Wake up a thread, if any.  */
-    __MCF_batch_release_common(once, wake_one);
+    if(wake_one && !RtlDllShutdownInProgress()) {
+      NTSTATUS status = NtReleaseKeyedEvent(NULL, once, false, nullptr);
+      __MCF_ASSERT(status == STATUS_WAIT_0);
+    }
   }
 
 __MCF_DLLEXPORT __MCF_NEVER_INLINE
@@ -138,5 +141,9 @@ _MCF_once_release(_MCF_once* once)
     wake_num = old.__nsleep;
 
     /* Wake up all threads.  */
-    __MCF_batch_release_common(once, wake_num);
+    if((wake_num != 0) && !RtlDllShutdownInProgress())
+      for(size_t i = 0;  i != wake_num;  i++) {
+        NTSTATUS status = NtReleaseKeyedEvent(NULL, once, false, nullptr);
+        __MCF_ASSERT(status == STATUS_WAIT_0);
+      }
   }

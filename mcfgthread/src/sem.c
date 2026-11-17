@@ -104,6 +104,11 @@ _MCF_sem_signal_some(_MCF_sem* sem, intptr_t value_add)
     }
 
     /* Wake up these threads.  */
-    __MCF_batch_release_common(sem, wake_num);
+    if((wake_num != 0) && !RtlDllShutdownInProgress())
+      for(size_t i = 0;  i != wake_num;  i++) {
+        NTSTATUS status = NtReleaseKeyedEvent(NULL, sem, false, nullptr);
+        __MCF_ASSERT(status == STATUS_WAIT_0);
+      }
+
     return 0;
   }

@@ -106,6 +106,11 @@ _MCF_event_set_slow(_MCF_event* event, int value)
     }
 
     /* Wake up these threads.  */
-    __MCF_batch_release_common(event, wake_num);
+    if((wake_num != 0) && !RtlDllShutdownInProgress())
+      for(size_t i = 0;  i != wake_num;  i++) {
+        NTSTATUS status = NtReleaseKeyedEvent(NULL, event, false, nullptr);
+        __MCF_ASSERT(status == STATUS_WAIT_0);
+      }
+
     return 0;
   }

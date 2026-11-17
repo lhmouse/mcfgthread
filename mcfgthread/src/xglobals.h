@@ -164,10 +164,6 @@ __MCF_XGLOBALS_IMPORT
 void
 __MCF_check_wait_safety(const __MCF_winnt_timeout* to);
 
-__MCF_XGLOBALS_INLINE
-void
-__MCF_batch_release_common(const void* key, size_t count);
-
 /** Copies a block of memory forward, like `memmove()`.  */
 __MCF_XGLOBALS_INLINE
 void*
@@ -273,7 +269,6 @@ __MCF_gthread_on_thread_exit(void);
  * result in an access violation.  */
 extern __MCF_ALIGNED(8) const GUID __MCF_crt_gthread_guid;
 extern const LARGE_INTEGER __MCF_crt_timeout_0;
-extern const LARGE_INTEGER __MCF_crt_timeout_1s;
 
 extern SYSTEM_INFO __MCF_XGLOBALS_READONLY __MCF_crt_sysinfo;
 extern double __MCF_XGLOBALS_READONLY __MCF_crt_perf_freq_reciprocal;
@@ -314,7 +309,6 @@ extern typeof_TlsGetValue2* __MCF_XGLOBALS_READONLY __MCF_crt_TlsGetValue2;
 /** Define silly macros for constants for NT syscalls, which do not have proper
  * `const` qualifiers.  */
 #define __MCF_NT_TIMEOUT_0    ((LARGE_INTEGER*) &__MCF_crt_timeout_0)
-#define __MCF_NT_TIMEOUT_1S   ((LARGE_INTEGER*) &__MCF_crt_timeout_1s)
 
 /** Declare the structure of global data in named shared memory.
  *
@@ -386,18 +380,6 @@ __MCF_STATIC_ASSERT(__MCF_G_SIZE(reserved_4_must_be_null) == __MCF_64_32(8432, 5
  * matches the disposition of non-inline functions. Note that however, unlike C++
  * inline functions, they have to have consistent inline specifiers throughout
  * this file.  */
-__MCF_XGLOBALS_INLINE
-void
-__MCF_batch_release_common(const void* key, size_t count)
-  {
-    size_t remaining = count;
-    while(remaining != 0)
-      if(NtReleaseKeyedEvent(NULL, (PVOID) key, false, __MCF_NT_TIMEOUT_1S) == 0)
-        remaining --;
-      else if(RtlDllShutdownInProgress())
-        break;
-  }
-
 __MCF_XGLOBALS_INLINE
 void*
 __MCF_mcopy(void* dst, const void* src, size_t size)
