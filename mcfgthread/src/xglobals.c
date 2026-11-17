@@ -197,9 +197,34 @@ _MCF_get_cpu_time(_MCF_cpu_time* tp)
     tp->__user_time = (double)(int64_t) user_time * 0.0001;
   }
 
-static
+static __MCF_SECTION(".text$$safeseh$0000")
 EXCEPTION_DISPOSITION
-do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
+do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
+  {
+    (void) estab_frame;
+    (void) ctx;
+    (void) disp_ctx;
+
+    /* If the stack is being unwound, reset the once flag.  */
+    if(rec->ExceptionFlags & EXCEPTION_UNWINDING)
+      _MCF_once_abort((_MCF_once*) (
+#if defined __MCF_M_X8632
+            ((const intptr_t*) estab_frame)[2]
+#else
+            ((const DISPATCHER_CONTEXT*) disp_ctx)->ContextRecord->
+#  if defined __MCF_M_X8664
+              Rsi  /* x86-64 or ARM64EC */
+#  elif defined __MCF_M_ARM64
+              X25  /* ARM64 */
+#  else
+#    error unimplemented
+#  endif
+#endif
+        ));
+
+    /* Continue unwinding.  */
+    return ExceptionContinueSearch;
+  }
 
 __MCF_DLLEXPORT __MCF_REALIGN_SP
 void
@@ -238,35 +263,6 @@ __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_pro
         saved_once
 #endif
       );
-  }
-
-static __MCF_SECTION(".text$$safeseh$0000")
-EXCEPTION_DISPOSITION
-do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx)
-  {
-    (void) estab_frame;
-    (void) ctx;
-    (void) disp_ctx;
-
-    /* If the stack is being unwound, reset the once flag.  */
-    if(rec->ExceptionFlags & EXCEPTION_UNWINDING)
-      _MCF_once_abort((_MCF_once*) (
-#if defined __MCF_M_X8632
-            ((const intptr_t*) estab_frame)[2]
-#else
-            ((const DISPATCHER_CONTEXT*) disp_ctx)->ContextRecord->
-#  if defined __MCF_M_X8664
-              Rsi  /* x86-64 or ARM64EC */
-#  elif defined __MCF_M_ARM64
-              X25  /* ARM64 */
-#  else
-#    error unimplemented
-#  endif
-#endif
-        ));
-
-    /* Continue unwinding.  */
-    return ExceptionContinueSearch;
   }
 
 __MCF_DLLEXPORT __MCF_SECTION(".text$$safeseh$0001")
