@@ -33,6 +33,7 @@ jobs:
       - name: Configure
         run: >-
              meson setup --buildtype=release build_ci
+             -Dc_args='-march=x86-64-v3' -Dcpp_args='-march=x86-64-v3'
 
       - name: Build
         run: meson compile -Cbuild_ci
@@ -72,6 +73,7 @@ jobs:
       - name: Configure
         run: >-
              meson setup --buildtype=release build_ci
+             -Dc_args='-march=x86-64-v3' -Dcpp_args='-march=x86-64-v3'
              --cross-file cross/gcc.x86_64-w64-mingw32
 
       - name: Build
@@ -110,6 +112,7 @@ jobs:
       - name: Configure
         run: >-
              meson setup --buildtype=release build_ci
+             -Dc_args='-march=armv8.1-a' -Dcpp_args='-march=armv8.1-a'
 
       - name: Build
         run: meson compile -Cbuild_ci
@@ -155,6 +158,7 @@ jobs:
       - name: Configure
         run: >-
              meson setup --buildtype=release build_ci
+             -Dc_args='-march=armv8.1-a' -Dcpp_args='-march=armv8.1-a'
              --cross-file cross/llvm.aarch64-w64-mingw32
 
       - name: Build
