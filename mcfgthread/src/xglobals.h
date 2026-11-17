@@ -631,8 +631,7 @@ __MCF_mfree_nonnull(void* ptr)
     __MCF_ASSERT(size != (size_t) -1);
     __MCF_mfill(ptr, 0xFE, size);
 #endif
-    int succ = HeapFree(__MCF_crt_heap, 0, ptr);
-    __MCF_ASSERT(succ);
+    __MCF_ASSERT(HeapFree(__MCF_crt_heap, 0, ptr));
   }
 
 __MCF_ALWAYS_INLINE

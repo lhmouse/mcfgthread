@@ -177,8 +177,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
     /* Detach the thread structure. The thread-local object table and the exit
      * callback queue shall have been cleared upon termination of the associated
      * thread, so they are empty now.  */
-    NTSTATUS status = NtClose(thrd->__handle);
-    __MCF_ASSERT(status >= 0);
+    __MCF_ASSERT(NtClose(thrd->__handle) >= 0);
     __MCF_ASSERT(thrd->__atexit_queue[0].__prev == nullptr);
     __MCF_ASSERT(thrd->__tls_table[0].__begin == nullptr);
 
@@ -330,8 +329,7 @@ _MCF_sleep_noninterruptible(const int64_t* timeout_opt)
     __MCF_winnt_timeout nt_timeout;
     __MCF_initialize_winnt_timeout_v3(&nt_timeout, timeout_opt);
 
-    NTSTATUS status = NtDelayExecution(false, &(nt_timeout.li));
-    __MCF_ASSERT(status >= 0);
+    __MCF_ASSERT(NtDelayExecution(false, &(nt_timeout.li)) == STATUS_WAIT_0);
   }
 
 __MCF_DLLEXPORT
