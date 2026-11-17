@@ -134,8 +134,6 @@ _MCF_shared_mutex_unlock_slow(_MCF_shared_mutex* smtx)
 
     /* Notify sleeping threads, if any.  */
     if((wake_num != 0) && !RtlDllShutdownInProgress())
-      for(size_t i = 0;  i != wake_num;  i++) {
-        NTSTATUS status = NtReleaseKeyedEvent(NULL, smtx, false, nullptr);
-        __MCF_ASSERT(status == STATUS_WAIT_0);
-      }
+      for(size_t i = 0;  i != wake_num;  i++)
+        __MCF_ASSERT(NtReleaseKeyedEvent(NULL, smtx, false, nullptr) == STATUS_WAIT_0);
   }

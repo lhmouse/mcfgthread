@@ -257,8 +257,6 @@ _MCF_mutex_unlock_slow(_MCF_mutex* mtx)
       _MCF_atomic_store_8_rlx(do_spin_byte_ptr(mtx, old.__sp_mask), 1);
 
     /* Notify a sleeping thread, if any.  */
-    if(wake_one && !RtlDllShutdownInProgress()) {
-      NTSTATUS status = NtReleaseKeyedEvent(NULL, mtx, false, nullptr);
-      __MCF_ASSERT(status == STATUS_WAIT_0);
-    }
+    if(wake_one && !RtlDllShutdownInProgress())
+      __MCF_ASSERT(NtReleaseKeyedEvent(NULL, mtx, false, nullptr) == STATUS_WAIT_0);
   }

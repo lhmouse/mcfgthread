@@ -27,10 +27,8 @@ do_win32_thread_routine(void* param)
 
     /* Wait for notification from the creator.  */
     int32_t init_st = init_st_not_running;
-    if(_MCF_atomic_cmpxchg_32_acq(&(thrd->__tid), &init_st, init_st_thread_waiting)) {
-      NTSTATUS status = NtWaitForKeyedEvent(NULL, thrd, false, NULL);
-      __MCF_ASSERT(status == STATUS_WAIT_0);
-    }
+    if(_MCF_atomic_cmpxchg_32_acq(&(thrd->__tid), &init_st, init_st_thread_waiting))
+      __MCF_ASSERT(NtWaitForKeyedEvent(NULL, thrd, false, nullptr) == STATUS_WAIT_0);
 
     /* Ensure this structure is fresh.  */
     __MCF_ASSERT(thrd->__tid > 0);
@@ -140,10 +138,8 @@ _MCF_thread_p_new(_MCF_thread** thrdp_opt, size_t stack_size, _MCF_thread_proced
 
     /* Let the new thread go.  */
     int32_t init_st = _MCF_atomic_xchg_32_rel(&(thrd->__tid), (int32_t) tid);
-    if(init_st == init_st_thread_waiting) {
-      NTSTATUS status = NtReleaseKeyedEvent(NULL, thrd, false, nullptr);
-      __MCF_ASSERT(status == STATUS_WAIT_0);
-    }
+    if(init_st == init_st_thread_waiting)
+      __MCF_ASSERT(NtReleaseKeyedEvent(NULL, thrd, false, nullptr) == STATUS_WAIT_0);
 
     /* The thread ID is now in place.  */
     __MCF_ASSERT(thrd->__tid == (int32_t) tid);

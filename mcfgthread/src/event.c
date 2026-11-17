@@ -107,10 +107,8 @@ _MCF_event_set_slow(_MCF_event* event, int value)
 
     /* Wake up these threads.  */
     if((wake_num != 0) && !RtlDllShutdownInProgress())
-      for(size_t i = 0;  i != wake_num;  i++) {
-        NTSTATUS status = NtReleaseKeyedEvent(NULL, event, false, nullptr);
-        __MCF_ASSERT(status == STATUS_WAIT_0);
-      }
+      for(size_t i = 0;  i != wake_num;  i++)
+        __MCF_ASSERT(NtReleaseKeyedEvent(NULL, event, false, nullptr) == STATUS_WAIT_0);
 
     return 0;
   }
