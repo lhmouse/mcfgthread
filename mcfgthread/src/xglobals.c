@@ -201,60 +201,44 @@ static
 EXCEPTION_DISPOSITION
 do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, PVOID disp_ctx);
 
-#if defined __MCF_M_X8632
-
-struct gthr_call_once_seh_record
-  {
-    intptr_t Next;
-    intptr_t Handler;
-    _MCF_once* once;
-  };
-
 __MCF_DLLEXPORT __MCF_REALIGN_SP
 void
 __MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_proc, void* arg)
   {
     /* Set up an exception handler.  */
-    const struct gthr_call_once_seh_record
-      seh_record __attribute__((__cleanup__(__MCF_i386_seh_cleanup)))
-        = { __MCF_teb_load_ptr(0), (intptr_t) do_call_once_seh_unwind, once };
+#if defined __MCF_M_X8632
+    const intptr_t seh_record[]
+      __attribute__((__cleanup__(__MCF_i386_seh_cleanup)))
+      = { __MCF_teb_load_ptr(0), (intptr_t) do_call_once_seh_unwind,
+          [2] = (intptr_t) once };
     __MCF_teb_store_ptr(0, (intptr_t) &seh_record);
+#else
+    __asm__ (".seh_handler %c0, @except, @unwind" : : "i"(do_call_once_seh_unwind));
+    register _MCF_once* saved_once __asm__(
+#  if defined __MCF_M_X8664_ASM
+        "rsi"  /* x86-64 */
+#  elif defined __MCF_M_ARM64_ASM
+        "x25"  /* ARM64 or ARM64EC; must be the same as x86-64 on ARM64EC */
+#  else
+#    error unimplemented
+#  endif
+      );
+    saved_once = once;
+    __asm__ volatile ("" : : "r"(saved_once));
+#endif
 
     /* Do initialization. This is the normal path.  */
     __MCF_invoke_cxa_dtor(init_proc, arg);
 
     /* Disarm the once flag.  */
-    _MCF_once_release(seh_record.once);
-  }
-
-#else  /* non-x86-32 */
-
-__MCF_DLLEXPORT __MCF_REALIGN_SP
-void
-__MCF_gthr_call_once_seh_take_over(_MCF_once* once, __MCF_cxa_dtor_any_ init_proc, void* arg)
-  {
-    /* Set up an exception handler.  */
-    __asm__ (".seh_handler %c0, @except, @unwind" : : "i"(do_call_once_seh_unwind));
-    register _MCF_once* saved_once __asm__(
-#if defined __MCF_M_X8664_ASM
-        "rsi"  /* x86-64 */
-#elif defined __MCF_M_ARM64_ASM
-        "x25"  /* ARM64 or ARM64EC; must be the same as x86-64 on ARM64EC */
+    _MCF_once_release(
+#if defined __MCF_M_X8632
+        (_MCF_once*) seh_record[2]
 #else
-#  error unimplemented
+        saved_once
 #endif
       );
-    saved_once = once;
-    __asm__ volatile ("" : : "r"(saved_once));
-
-    /* Do initialization. This is the normal path.  */
-    __MCF_invoke_cxa_dtor(init_proc, arg);
-
-    /* Disarm the once flag with a tail call.  */
-    _MCF_once_release(saved_once);
   }
-
-#endif  /* non-x86-32 */
 
 static __MCF_SECTION(".text$$safeseh$0000")
 EXCEPTION_DISPOSITION
@@ -266,20 +250,20 @@ do_call_once_seh_unwind(EXCEPTION_RECORD* rec, PVOID estab_frame, CONTEXT* ctx, 
 
     /* If the stack is being unwound, reset the once flag.  */
     if(rec->ExceptionFlags & EXCEPTION_UNWINDING)
-      _MCF_once_abort(
+      _MCF_once_abort((_MCF_once*) (
 #if defined __MCF_M_X8632
-        ((const struct gthr_call_once_seh_record*) estab_frame)->once
+            ((const intptr_t*) estab_frame)[2]
 #else
-        (_MCF_once*) ((const DISPATCHER_CONTEXT*) disp_ctx)->ContextRecord->
+            ((const DISPATCHER_CONTEXT*) disp_ctx)->ContextRecord->
 #  if defined __MCF_M_X8664
-          Rsi  /* x86-64 or ARM64EC */
+              Rsi  /* x86-64 or ARM64EC */
 #  elif defined __MCF_M_ARM64
-          X25  /* ARM64 */
+              X25  /* ARM64 */
 #  else
 #    error unimplemented
 #  endif
 #endif
-        );
+        ));
 
     /* Continue unwinding.  */
     return ExceptionContinueSearch;
