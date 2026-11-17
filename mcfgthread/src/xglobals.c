@@ -614,33 +614,28 @@ __MCF_gthread_initialize_globals(void)
     OBJECT_ATTRIBUTES gattrs = { .Length = sizeof(gattrs),
                                  .ObjectName = &(UNICODE_STRING) __MCF_NT_STRING_INIT(s_gname),
                                  .Attributes = OBJ_OPENIF | OBJ_EXCLUSIVE };
-    NTSTATUS status = BaseGetNamedObjectDirectory(&(gattrs.RootDirectory));
-    __MCF_CHECK_NT(status);
+    __MCF_CHECK_NT(BaseGetNamedObjectDirectory(&(gattrs.RootDirectory)));
     __MCF_ASSERT(gattrs.RootDirectory);
 
     HANDLE gfile = NULL;
-    status = NtCreateSection(&gfile, SECTION_ALL_ACCESS, &gattrs,
-                             &(LARGE_INTEGER){ .QuadPart = __MCF_G_SIZE_TOTAL },
-                             PAGE_READWRITE, SEC_COMMIT, NULL);
-    __MCF_CHECK_NT(status);
+    __MCF_CHECK_NT(NtCreateSection(&gfile, SECTION_ALL_ACCESS, &gattrs,
+                                   &(LARGE_INTEGER){ .QuadPart = __MCF_G_SIZE_TOTAL },
+                                   PAGE_READWRITE, SEC_COMMIT, NULL));
     __MCF_ASSERT(gfile);
 
     SIZE_T gsize = 0;
     __MCF_g = nullptr;
-    status = NtMapViewOfSection(gfile, NtCurrentProcess(), (void**) &__MCF_g, 0, 0,
-                                nullptr, &gsize, ViewUnmap, 0, PAGE_READWRITE);
-    __MCF_CHECK_NT(status);
+    __MCF_CHECK_NT(NtMapViewOfSection(gfile, NtCurrentProcess(), (void**) &__MCF_g, 0, 0,
+                                      nullptr, &gsize, ViewUnmap, 0, PAGE_READWRITE));
     __MCF_ASSERT(__MCF_g);
 
     if(__MCF_g->self_size >= __MCF_G_SIZE_TOTAL) {
       /* Reuse the existent view and close excess handles.  */
       void* existing_g = __MCF_g->self_ptr;
       __MCF_ASSERT(existing_g);
-      status = NtUnmapViewOfSection(NtCurrentProcess(), __MCF_g);
-      __MCF_ASSERT(status >= 0);
+      __MCF_CHECK_NT(NtUnmapViewOfSection(NtCurrentProcess(), __MCF_g));
       __MCF_g = existing_g;
-      status = NtClose(gfile);
-      __MCF_ASSERT(status >= 0);
+      __MCF_CHECK_NT(NtClose(gfile));
       return;
     }
 

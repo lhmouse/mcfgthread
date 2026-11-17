@@ -55,10 +55,17 @@ __MCF_XGLOBALS_IMPORT __MCF_NEVER_RETURN __MCF_FN_COLD
 void
 __MCF_runtime_failure_from_ntstatus(const char* where, NTSTATUS status);
 
+__MCF_ALWAYS_INLINE
+void
+__MCF_check_ntstatus(const char* where, NTSTATUS status)
+  {
+    if(status >= 0)  /* NT_SUCCESS(status) */
+      return;
+    __MCF_runtime_failure_from_ntstatus(where, status);
+  }
+
 /** This is similar to `__MCF_CHECK()` but checks `NT_SUCCESS(status)`.  */
-#define __MCF_CHECK_NT(status)  \
-    (((NTSTATUS) (status) >= 0) ? (void) 0  \
-      : (__MCF_runtime_failure_from_ntstatus(__MCF_EX __func__, (status))))
+#define __MCF_CHECK_NT(status)  (__MCF_check_ntstatus(__MCF_EX __func__, (status)))
 
 /** This function is used as the exception handler of a `noexcept` function.  */
 __MCF_XGLOBALS_IMPORT

@@ -147,10 +147,9 @@ __MCF_thread_attach_foreign(_MCF_thread* thrd)
 
     /* Initialize thread identity fields.  */
     thrd->__tid = __MCF_tid();
-    NTSTATUS status = NtDuplicateObject(NtCurrentProcess(), NtCurrentThread(),
-                                        NtCurrentProcess(), &(thrd->__handle),
-                                        0, 0, DUPLICATE_SAME_ACCESS);
-    __MCF_CHECK_NT(status);
+    __MCF_CHECK_NT(NtDuplicateObject(NtCurrentProcess(), NtCurrentThread(),
+                                     NtCurrentProcess(), &(thrd->__handle),
+                                     0, 0, DUPLICATE_SAME_ACCESS));
     __MCF_ASSERT(thrd->__handle);
 
     /* Initialize the reference count to detached state.  */
@@ -177,7 +176,7 @@ _MCF_thread_drop_ref_nonnull(_MCF_thread* thrd)
     /* Detach the thread structure. The thread-local object table and the exit
      * callback queue shall have been cleared upon termination of the associated
      * thread, so they are empty now.  */
-    __MCF_ASSERT(NtClose(thrd->__handle) >= 0);
+    __MCF_CHECK_NT(NtClose(thrd->__handle));
     __MCF_ASSERT(thrd->__atexit_queue[0].__prev == nullptr);
     __MCF_ASSERT(thrd->__tls_table[0].__begin == nullptr);
 
