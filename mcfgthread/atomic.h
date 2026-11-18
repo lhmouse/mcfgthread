@@ -63,9 +63,18 @@ __MCF_CXX(extern "C" {)
 #  define __MCF_ATOMIC_INLINE  __MCF_ALWAYS_INLINE
 #endif
 
+/* This should be a fixed-width unsigned integer type that is immune to evil
+ * integer promotion which might confuse the optimizer.  */
+#ifdef __BITINT_MAXWIDTH__
+#  define __MCF_ATOMIC_UBITINT(n)   unsigned _BitInt(n)
+#else
+#  define __MCF_ATOMIC_UBITINT(n)   uint##n##_t
+#endif
+
 #pragma push_macro("WIDTH")
 #pragma push_macro("INTEGER")
 #pragma push_macro("UINTEGER")
+#pragma push_macro("UBITINT")
 #pragma push_macro("ORDER")
 #pragma push_macro("ORDER_A")
 #pragma push_macro("ORDER_R")
@@ -77,6 +86,7 @@ __MCF_CXX(extern "C" {)
 #undef WIDTH
 #undef INTEGER
 #undef UINTEGER
+#undef UBITINT
 #undef ORDER
 #undef ORDER_A
 #undef ORDER_R
@@ -162,6 +172,7 @@ __MCF_CXX(extern "C" {)
 #  define WIDTH   b
 #  define INTEGER  bool
 #  define UINTEGER  bool
+#  define UBITINT  bool
 #  undef __MCFGTHREAD_ATOMIC_
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20001
@@ -169,14 +180,12 @@ __MCF_CXX(extern "C" {)
 #  undef WIDTH
 #  undef INTEGER
 #  undef UINTEGER
+#  undef UBITINT
 
 #  define WIDTH   8
 #  define INTEGER  int8_t
-#  ifdef __BITINT_MAXWIDTH__
-#    define UINTEGER  unsigned _BitInt(8)
-#  else
-#    define UINTEGER  uint8_t
-#  endif
+#  define UINTEGER  uint8_t
+#  define UBITINT  __MCF_ATOMIC_UBITINT(8)
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20001
 #  undef __MCFGTHREAD_ATOMIC_
@@ -188,14 +197,12 @@ __MCF_CXX(extern "C" {)
 #  undef WIDTH
 #  undef INTEGER
 #  undef UINTEGER
+#  undef UBITINT
 
 #  define WIDTH   16
 #  define INTEGER  int16_t
-#  ifdef __BITINT_MAXWIDTH__
-#    define UINTEGER  unsigned _BitInt(16)
-#  else
-#    define UINTEGER  uint16_t
-#  endif
+#  define UINTEGER  uint16_t
+#  define UBITINT  __MCF_ATOMIC_UBITINT(16)
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20001
 #  undef __MCFGTHREAD_ATOMIC_
@@ -207,10 +214,12 @@ __MCF_CXX(extern "C" {)
 #  undef WIDTH
 #  undef INTEGER
 #  undef UINTEGER
+#  undef UBITINT
 
 #  define WIDTH   32
 #  define INTEGER  int32_t
 #  define UINTEGER  uint32_t
+#  define UBITINT  uint32_t
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20001
 #  undef __MCFGTHREAD_ATOMIC_
@@ -222,10 +231,12 @@ __MCF_CXX(extern "C" {)
 #  undef WIDTH
 #  undef INTEGER
 #  undef UINTEGER
+#  undef UBITINT
 
 #  define WIDTH   64
 #  define INTEGER  int64_t
 #  define UINTEGER  uint64_t
+#  define UBITINT  uint64_t
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20001
 #  undef __MCFGTHREAD_ATOMIC_
@@ -237,10 +248,12 @@ __MCF_CXX(extern "C" {)
 #  undef WIDTH
 #  undef INTEGER
 #  undef UINTEGER
+#  undef UBITINT
 
 #  define WIDTH   ptr
 #  define INTEGER  intptr_t
 #  define UINTEGER  uintptr_t
+#  define UBITINT  uintptr_t
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20001
 #  undef __MCFGTHREAD_ATOMIC_
@@ -252,10 +265,12 @@ __MCF_CXX(extern "C" {)
 #  undef WIDTH
 #  undef INTEGER
 #  undef UINTEGER
+#  undef UBITINT
 
 #  define WIDTH   z
 #  define INTEGER  size_t
 #  define UINTEGER  size_t
+#  define UBITINT  size_t
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20001
 #  undef __MCFGTHREAD_ATOMIC_
@@ -267,6 +282,7 @@ __MCF_CXX(extern "C" {)
 #  undef WIDTH
 #  undef INTEGER
 #  undef UINTEGER
+#  undef UBITINT
 
 #  undef __MCF_ATOMIC_GENERATOR_STATE_
 #  define __MCF_ATOMIC_GENERATOR_STATE_   20003
@@ -514,11 +530,12 @@ bool
 __MCF_C3(_MCF_atomic_bt_,WIDTH,ORDER)(const volatile void* __mem, size_t __index)
   __MCF_noexcept
   {
-    INTEGER __old_value, __mask;
-    __MCF_ASSERT(__index < sizeof(INTEGER) * 8);
-    __mask = __MCF_EX (INTEGER) ((UINTEGER) 1 << __index);
-    __old_value = __MCF_atomic_load(E_ATOMICIFY(__mem), E_ORDER_A);
-    return (__old_value & __mask) != 0;
+    UINTEGER __old;
+    __MCF_EX UBITINT __m;
+    __MCF_ASSERT(__index < sizeof(UINTEGER) * 8);
+    __m = __MCF_EX (UBITINT) ((UBITINT) 1 << __index);
+    __old = (UINTEGER) __MCF_atomic_load(E_ATOMICIFY(__mem), E_ORDER_A);
+    return (__old & __m) != 0;
   }
 
 /** Sets a bit of an atomic integer.
@@ -533,11 +550,12 @@ bool
 __MCF_C3(_MCF_atomic_bts_,WIDTH,ORDER)(volatile void* __mem, size_t __index)
   __MCF_noexcept
   {
-    INTEGER __old_value, __mask;
-    __MCF_ASSERT(__index < sizeof(INTEGER) * 8);
-    __mask = __MCF_EX (INTEGER) ((UINTEGER) 1 << __index);
-    __old_value = __MCF_atomic_fetch_or(E_ATOMICIFY(__mem), __mask, E_ORDER);
-    return (__old_value & __mask) != 0;
+    UINTEGER __old;
+    __MCF_EX UBITINT __m;
+    __MCF_ASSERT(__index < sizeof(UINTEGER) * 8);
+    __m = __MCF_EX (UBITINT) ((UBITINT) 1 << __index);
+    __old = (UINTEGER) __MCF_atomic_fetch_or(E_ATOMICIFY(__mem), (INTEGER) __m, E_ORDER);
+    return (__old & __m) != 0;
   }
 
 /** Resets (clears) a bit of an atomic integer.
@@ -552,11 +570,12 @@ bool
 __MCF_C3(_MCF_atomic_btr_,WIDTH,ORDER)(volatile void* __mem, size_t __index)
   __MCF_noexcept
   {
-    INTEGER __old_value, __mask;
-    __MCF_ASSERT(__index < sizeof(INTEGER) * 8);
-    __mask = __MCF_EX (INTEGER) ((UINTEGER) 1 << __index);
-    __old_value = __MCF_atomic_fetch_and(E_ATOMICIFY(__mem), (INTEGER) ~__mask, E_ORDER);
-    return (__old_value & __mask) != 0;
+    UINTEGER __old;
+    __MCF_EX UBITINT __m;
+    __MCF_ASSERT(__index < sizeof(UINTEGER) * 8);
+    __m = __MCF_EX (UBITINT) ((UBITINT) 1 << __index);
+    __old = (UINTEGER) __MCF_atomic_fetch_and(E_ATOMICIFY(__mem), (INTEGER) ~__m, E_ORDER);
+    return (__old & __m) != 0;
   }
 
 /** Complements (flips) a bit of an atomic integer.
@@ -571,11 +590,12 @@ bool
 __MCF_C3(_MCF_atomic_btc_,WIDTH,ORDER)(volatile void* __mem, size_t __index)
   __MCF_noexcept
   {
-    INTEGER __old_value, __mask;
-    __MCF_ASSERT(__index < sizeof(INTEGER) * 8);
-    __mask = __MCF_EX (INTEGER) ((UINTEGER) 1 << __index);
-    __old_value = __MCF_atomic_fetch_xor(E_ATOMICIFY(__mem), __mask, E_ORDER);
-    return (__old_value & __mask) != 0;
+    UINTEGER __old;
+    __MCF_EX UBITINT __m;
+    __MCF_ASSERT(__index < sizeof(UINTEGER) * 8);
+    __m = __MCF_EX (UBITINT) ((UBITINT) 1 << __index);
+    __old = (UINTEGER) __MCF_atomic_fetch_xor(E_ATOMICIFY(__mem), (INTEGER) __m, E_ORDER);
+    return (__old & __m) != 0;
   }
 
 #elif __MCF_ATOMIC_GENERATOR_STATE_ == 20003
@@ -611,6 +631,7 @@ __MCF_C2(_MCF_signal_fence,ORDER)(void)
 #pragma pop_macro("WIDTH")
 #pragma pop_macro("INTEGER")
 #pragma pop_macro("UINTEGER")
+#pragma pop_macro("UBITINT")
 #pragma pop_macro("ORDER")
 #pragma pop_macro("ORDER_A")
 #pragma pop_macro("ORDER_R")
