@@ -595,7 +595,9 @@ __MCF_gthread_initialize_globals(void)
     __MCF_ASSERT(s_gname[50] == 0);
 
     OBJECT_ATTRIBUTES gattrs = { .Length = sizeof(gattrs),
-                                 .ObjectName = &(UNICODE_STRING) __MCF_NT_STRING_INIT(s_gname),
+                                 .ObjectName = &(UNICODE_STRING){
+                                   .Length = sizeof(s_gname) - sizeof(WCHAR),
+                                   .MaximumLength = sizeof(s_gname), .Buffer = s_gname },
                                  .Attributes = OBJ_OPENIF | OBJ_EXCLUSIVE };
     __MCF_CHECK_NT(BaseGetNamedObjectDirectory(&(gattrs.RootDirectory)));
     __MCF_ASSERT(gattrs.RootDirectory);

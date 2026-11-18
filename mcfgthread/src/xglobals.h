@@ -42,14 +42,6 @@
  * the `.bss` section.  */
 #define __MCF_BAD_PTR  ((void*) -127)
 
-/** Define a macro that is identical to `RTL_CONSTANT_STRING()` as we are not
- * willing to include <ntdef.h> here.  */
-#define __MCF_NT_STRING_INIT(s)  \
-    { .Length = sizeof(s) - sizeof(*(s)),  \
-      .MaximumLength = sizeof(s),  \
-      .Buffer = (void*) ((s) + __MCF_STATIC_ASSERT_0(  \
-         !__builtin_types_compatible_p(__typeof__(1+&*(s)), __typeof__(s))))  }
-
 /** This is similar to `__MCF_runtime_failure()` but takes an `NTSTATUS`.  */
 __MCF_XGLOBALS_IMPORT __MCF_NEVER_RETURN __MCF_FN_COLD
 void
