@@ -599,6 +599,7 @@ __MCF_gthread_initialize_globals(void)
                                    .Length = sizeof(s_gname) - sizeof(WCHAR),
                                    .MaximumLength = sizeof(s_gname), .Buffer = s_gname },
                                  .Attributes = OBJ_OPENIF | OBJ_EXCLUSIVE };
+
     __MCF_CHECK_NT(BaseGetNamedObjectDirectory(&(gattrs.RootDirectory)));
     __MCF_ASSERT(gattrs.RootDirectory);
 
