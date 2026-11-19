@@ -287,6 +287,7 @@ if cc.get_linker_id() in [ 'link', 'lld-link' ]
 else
   lib_mcfgthread_dll_link_args = [
         '-Wl,--exclude-all-symbols', '-Wl,--disable-auto-import',
+        '-Wl,--disable-no-seh',
         '-Wl,--subsystem,windows:6.1', '-nostdlib',
         '-Wl,--dynamicbase', '-Wl,--nxcompat' ]
 endif
