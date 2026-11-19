@@ -281,15 +281,14 @@ lib_mcfgthread_dll_c_args = [
 
 if cc.get_linker_id() in [ 'link', 'lld-link' ]
   lib_mcfgthread_dll_link_args = [
-        '-Wl,-opt:icf', '-Wl,-safeseh:no',
-        '-Xlinker', '-subsystem:windows,6.1', '-Wl,-nodefaultlib',
-        '-Wl,-dynamicbase', '-Wl,-nxcompat' ]
+        '-Wl,-opt:icf',
+        '-Wl,-safeseh:no', '-Wl,-nodefaultlib', '-Wl,-dynamicbase',
+        '-Wl,-nxcompat', '-Xlinker', '-subsystem:windows,6.1' ]
 else
   lib_mcfgthread_dll_link_args = [
         '-Wl,--exclude-all-symbols', '-Wl,--disable-auto-import',
-        '-Wl,--disable-no-seh',
-        '-Wl,--subsystem,windows:6.1', '-nostdlib',
-        '-Wl,--dynamicbase', '-Wl,--nxcompat' ]
+        '-Wl,--disable-no-seh', '-nostdlib', '-Wl,--dynamicbase',
+        '-Wl,--nxcompat', '-Wl,--subsystem,windows:6.1' ]
 endif
 
 mcfgthread_version_o = import('windows').compile_resources(
