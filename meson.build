@@ -215,14 +215,13 @@ ver = { 'abi_major': meson.project_version().split('.')[0],
         'abi_minor': meson.project_version().split('.')[1],
         'abi_string': meson.project_version() }
 
-install_headers(configure_file(output: 'version.h',
-                               input: 'mcfgthread/version.h.in',
-                               configuration: ver,
-                               install: false),
-                subdir: 'mcfgthread')
+version_h = configure_file(output: 'version.h',
+                           input: 'mcfgthread/version.h.in',
+                           configuration: ver,
+                           install: false)
 
-install_headers(mcfgthread_include,
-                preserve_path: true)
+install_headers(version_h, subdir: 'mcfgthread')
+install_headers(mcfgthread_include, preserve_path: true)
 
 #===========================================================
 # Rules for 'lib/libmcfgthread'
@@ -230,7 +229,6 @@ install_headers(mcfgthread_include,
 
 stdcall_suffixes_max = 256
 stdcall_suffixes = { }
-
 if cc.has_define('__i386__') or cc.has_define('_M_IX86')
   foreach i : range(0, stdcall_suffixes_max + 4, 4)
     stdcall_suffixes += { i.to_string(): '@' + i.to_string() }
@@ -241,51 +239,47 @@ else
   endforeach
 endif
 
-dep_kernel32 = declare_dependency(
-      link_with: custom_target('kernel32',
-          command: [ dlltool, '-k', '-l', '@OUTPUT@', '-d', '@INPUT@' ],
-          output: 'libkernel32.a',
-          install: false,
-          input: configure_file(configuration: stdcall_suffixes,
-                                output: 'kernel32.def',
-                                install: false,
-                                input: 'mcfgthread/src/kernel32.def.in')))
+libkernel32_a_min = custom_target('kernel32',
+      command: [ dlltool, '-k', '-l', '@OUTPUT@', '-d', '@INPUT@' ],
+      output: 'libkernel32.a',
+      install: false,
+      input: configure_file(configuration: stdcall_suffixes,
+                            output: 'kernel32.def',
+                            install: false,
+                            input: 'mcfgthread/src/kernel32.def.in'))
 
-dep_ntdll = declare_dependency(
-      link_with: custom_target('ntdll',
-          command: [ dlltool, '-k', '-l', '@OUTPUT@', '-d', '@INPUT@' ],
-          output: 'libntdll.a',
-          install: false,
-          input: configure_file(configuration: stdcall_suffixes,
-                                output: 'ntdll.def',
-                                install: false,
-                                input: 'mcfgthread/src/ntdll.def.in')))
+libntdll_a_min = custom_target('ntdll',
+      command: [ dlltool, '-k', '-l', '@OUTPUT@', '-d', '@INPUT@' ],
+      output: 'libntdll.a',
+      install: false,
+      input: configure_file(configuration: stdcall_suffixes,
+                            output: 'ntdll.def',
+                            install: false,
+                            input: 'mcfgthread/src/ntdll.def.in'))
 
 kwargs_exe = { }
 kwargs_dll = { }
 kwargs_lib = { }
-
 if meson.version().version_compare('>= 1.12.0')
   kwargs_dll += { 'win_subsystem': 'windows,6.1' }
 endif
-
 if meson.version().version_compare('>= 1.10.0')
   kwargs_exe += { 'build_subdir': 'bin' }
   kwargs_dll += { 'build_subdir': 'bin' }
   kwargs_lib += { 'build_subdir': 'lib' }
 endif
 
-lib_mcfgthread_dll_c_args = [
+libmcfgthread_dll_c_args = [
       '-D__MCF_IN_DLL', '-ffreestanding',
       cc.get_supported_arguments('-mcmodel=small') ]
 
 if cc.get_linker_id() in [ 'link', 'lld-link' ]
-  lib_mcfgthread_dll_link_args = [
+  libmcfgthread_dll_link_args = [
         '-Wl,-opt:icf=3',
         '-Wl,-safeseh:no', '-Wl,-nodefaultlib', '-Wl,-dynamicbase',
         '-Wl,-nxcompat', '-Xlinker', '-subsystem:windows,6.1' ]
 else
-  lib_mcfgthread_dll_link_args = [
+  libmcfgthread_dll_link_args = [
         '-Wl,--exclude-all-symbols', '-Wl,--disable-auto-import',
         '-Wl,--disable-no-seh', '-nostdlib', '-Wl,--dynamicbase',
         '-Wl,--nxcompat', '-Wl,--subsystem,windows:6.1' ]
@@ -297,46 +291,46 @@ mcfgthread_version_o = import('windows').compile_resources(
       include_directories: include_directories('.'),
       args: [ '-c65001' ])
 
-lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
+libmcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       c_pch: 'mcfgthread/src/xprecompiled.h',
-      c_args: lib_mcfgthread_dll_c_args,
+      c_args: libmcfgthread_dll_c_args,
       implicit_include_directories: false,
       include_directories: include_directories('.'),
+      sources: [ version_h, mcfgthread_src_min, mcfgthread_version_o ],
       override_options: { 'c_winlibs': [] },
-      link_args: lib_mcfgthread_dll_link_args,
-      sources: [ mcfgthread_src_min, mcfgthread_version_o ],
-      dependencies: [ dep_kernel32, dep_ntdll ],
+      link_args: libmcfgthread_dll_link_args,
+      link_with: [ libkernel32_a_min, libntdll_a_min ],
       name_prefix: cc.has_define('__CYGWIN__') ? [] : 'lib',
       kwargs: kwargs_dll,
       soversion: ver['abi_major'],
       version: '.'.join([ ver['abi_major'], ver['abi_minor'], '0' ]),
       install: true)
 
-lib_mcfgthread_dll = shared_library('mcfgthread',
+libmcfgthread_dll = shared_library('mcfgthread',
       c_pch: 'mcfgthread/src/xprecompiled.h',
-      c_args: lib_mcfgthread_dll_c_args,
+      c_args: libmcfgthread_dll_c_args,
       implicit_include_directories: false,
       include_directories: include_directories('.'),
+      objects: libmcfgthread_minimal_dll.extract_objects(mcfgthread_src_min),
       override_options: { 'c_winlibs': [] },
-      link_args: lib_mcfgthread_dll_link_args,
-      objects: lib_mcfgthread_minimal_dll.extract_objects(mcfgthread_src_min),
-      sources: [ mcfgthread_src_ex, mcfgthread_version_o ],
-      dependencies: [ dep_kernel32, dep_ntdll ],
+      link_args: libmcfgthread_dll_link_args,
+      sources: [ version_h, mcfgthread_src_ex, mcfgthread_version_o ],
+      link_with: [ libkernel32_a_min, libntdll_a_min ],
       name_prefix: cc.has_define('__CYGWIN__') ? [] : 'lib',
       kwargs: kwargs_dll,
       soversion: ver['abi_major'],
       version: '.'.join([ ver['abi_major'], ver['abi_minor'], '0' ]),
       install: true)
 
-lib_mcfgthread_a = static_library('mcfgthread',
+libmcfgthread_a = static_library('mcfgthread',
       c_pch: 'mcfgthread/src/xprecompiled.h',
       implicit_include_directories: false,
       include_directories: include_directories('.'),
-      sources: [ mcfgthread_src_min, mcfgthread_src_ex ],
+      sources: [ version_h, mcfgthread_src_min, mcfgthread_src_ex ],
       kwargs: kwargs_lib,
       install: true)
 
-import('pkgconfig').generate(lib_mcfgthread_dll,
+import('pkgconfig').generate(libmcfgthread_dll,
       name: 'mcfgthread',
       url: 'https://github.com/lhmouse/mcfgthread',
       description: 'Cornerstone library for C++11 threading on mingw-w64',
@@ -350,15 +344,15 @@ foreach src : test_src
   test_c_args = []
   test_cpp_args = []
   test_link_args = []
-  test_link_with = lib_mcfgthread_dll
+  test_link_with = [ libmcfgthread_dll ]
 
   if src in [ 'test/self_oom.c', 'test/xglobals_name.c', 'test/tls_dtor_static.c',
               'test/mix.c', 'test/cpu_collection_new_legacy.c' ]
-    test_link_with = lib_mcfgthread_a
+    test_link_with = [ libmcfgthread_a, libntdll_a_min ]
   endif
 
   if src in [ 'test/memory.c' ]
-    test_link_with = lib_mcfgthread_minimal_dll
+    test_link_with = [ libmcfgthread_minimal_dll ]
   endif
 
   if src in [ 'test/gthr_c89_pedantic.c' ]
@@ -408,9 +402,8 @@ foreach src : test_src
                         cpp_args: test_cpp_args,
                         implicit_include_directories: false,
                         include_directories: include_directories('.'),
-                        link_args: test_link_args,
                         sources: [ src ],
-                        dependencies: [ dep_ntdll ],
+                        link_args: test_link_args,
                         link_with: test_link_with,
                         kwargs: kwargs_exe,
                         build_by_default: false,
