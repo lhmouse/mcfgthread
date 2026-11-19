@@ -281,7 +281,7 @@ lib_mcfgthread_dll_c_args = [
 
 if cc.get_linker_id() in [ 'link', 'lld-link' ]
   lib_mcfgthread_dll_link_args = [
-        '-Wl,-opt:icf',
+        '-Wl,-opt:icf=3',
         '-Wl,-safeseh:no', '-Wl,-nodefaultlib', '-Wl,-dynamicbase',
         '-Wl,-nxcompat', '-Xlinker', '-subsystem:windows,6.1' ]
 else
