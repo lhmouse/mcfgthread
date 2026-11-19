@@ -265,6 +265,10 @@ kwargs_exe = { }
 kwargs_dll = { }
 kwargs_lib = { }
 
+if meson.version().version_compare('>= 1.12.0')
+  kwargs_dll += { 'win_subsystem': 'windows,6.1' }
+endif
+
 if meson.version().version_compare('>= 1.10.0')
   kwargs_exe += { 'build_subdir': 'bin' }
   kwargs_dll += { 'build_subdir': 'bin' }
@@ -278,11 +282,13 @@ lib_mcfgthread_dll_c_args = [
 if cc.get_linker_id() in [ 'link', 'lld-link' ]
   lib_mcfgthread_dll_link_args = [
         '-Wl,-opt:icf=3',
-        '-Wl,-safeseh:no', '-Wl,-nodefaultlib', '-Wl,-dynamicbase', '-Wl,-nxcompat' ]
+        '-Wl,-safeseh:no', '-Wl,-nodefaultlib', '-Wl,-dynamicbase',
+        '-Wl,-nxcompat', '-Xlinker', '-subsystem:windows,6.1' ]
 else
   lib_mcfgthread_dll_link_args = [
         '-Wl,--exclude-all-symbols', '-Wl,--disable-auto-import',
-        '-Wl,--disable-no-seh', '-nostdlib', '-Wl,--dynamicbase', '-Wl,--nxcompat' ]
+        '-Wl,--disable-no-seh', '-nostdlib', '-Wl,--dynamicbase',
+        '-Wl,--nxcompat', '-Wl,--subsystem,windows:6.1' ]
 endif
 
 mcfgthread_version_o = import('windows').compile_resources(
@@ -298,7 +304,6 @@ lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       include_directories: include_directories('.'),
       override_options: { 'c_winlibs': [] },
       link_args: lib_mcfgthread_dll_link_args,
-      win_subsystem: 'windows,6.1',
       sources: [ mcfgthread_src_min, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
       name_prefix: cc.has_define('__CYGWIN__') ? [] : 'lib',
@@ -314,7 +319,6 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
       include_directories: include_directories('.'),
       override_options: { 'c_winlibs': [] },
       link_args: lib_mcfgthread_dll_link_args,
-      win_subsystem: 'windows,6.1',
       objects: lib_mcfgthread_minimal_dll.extract_objects(mcfgthread_src_min),
       sources: [ mcfgthread_src_ex, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
