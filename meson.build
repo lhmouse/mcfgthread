@@ -265,10 +265,6 @@ kwargs_exe = { }
 kwargs_dll = { }
 kwargs_lib = { }
 
-if not cc.has_define('__CYGWIN__')
-  kwargs_dll += { 'name_prefix': 'lib' }
-endif
-
 if meson.version().version_compare('>= 1.10.0')
   kwargs_exe += { 'build_subdir': 'bin' }
   kwargs_dll += { 'build_subdir': 'bin' }
@@ -305,6 +301,7 @@ lib_mcfgthread_minimal_dll = shared_library('mcfgthread-minimal',
       win_subsystem: 'windows,6.1',
       sources: [ mcfgthread_src_min, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
+      name_prefix: cc.has_define('__CYGWIN__') ? [] : 'lib',
       kwargs: kwargs_dll,
       soversion: ver['abi_major'],
       version: '.'.join([ ver['abi_major'], ver['abi_minor'], '0' ]),
@@ -321,6 +318,7 @@ lib_mcfgthread_dll = shared_library('mcfgthread',
       objects: lib_mcfgthread_minimal_dll.extract_objects(mcfgthread_src_min),
       sources: [ mcfgthread_src_ex, mcfgthread_version_o ],
       dependencies: [ dep_kernel32, dep_ntdll ],
+      name_prefix: cc.has_define('__CYGWIN__') ? [] : 'lib',
       kwargs: kwargs_dll,
       soversion: ver['abi_major'],
       version: '.'.join([ ver['abi_major'], ver['abi_minor'], '0' ]),
