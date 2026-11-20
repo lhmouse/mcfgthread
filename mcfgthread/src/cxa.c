@@ -44,8 +44,8 @@ int
 __MCF_cxa_atexit(__MCF_cxa_dtor_any_ dtor, void* this, void* dso)
   {
     /* Push the element to the global queue.  */
-    _MCF_mutex_lock_slow(__MCF_G(exit_mtx), nullptr);
     __MCF_dtor_element elem = { dtor.__cdecl_ptr, this, dso };
+    _MCF_mutex_lock_slow(__MCF_G(exit_mtx), nullptr);
     int err = __MCF_dtor_queue_push(__MCF_G(exit_queue), &elem);
     _MCF_mutex_unlock_slow(__MCF_G(exit_mtx));
     return err;
@@ -63,8 +63,8 @@ int
 __MCF_cxa_at_quick_exit(__MCF_cxa_dtor_any_ dtor, void* this, void* dso)
   {
     /* Push the element to the global queue.  */
-    _MCF_mutex_lock_slow(__MCF_G(quick_exit_mtx), nullptr);
     __MCF_dtor_element elem = { dtor.__cdecl_ptr, this, dso };
+    _MCF_mutex_lock_slow(__MCF_G(quick_exit_mtx), nullptr);
     int err = __MCF_dtor_queue_push(__MCF_G(quick_exit_queue), &elem);
     _MCF_mutex_unlock_slow(__MCF_G(quick_exit_mtx));
     return err;
@@ -81,11 +81,9 @@ __MCF_DLLEXPORT
 int
 __MCF_cxa_thread_atexit(__MCF_cxa_dtor_any_ dtor, void* this, void* dso)
   {
-    /* Push the element to the thread-specific queue.  */
-    _MCF_thread* self = _MCF_thread_self();
+    /* Push the element to the thread-specific queue. No locking is necessary.  */
     __MCF_dtor_element elem = { dtor.__cdecl_ptr, this, dso };
-    int err = __MCF_dtor_queue_push(self->__atexit_queue, &elem);
-    return err;
+    return __MCF_dtor_queue_push(_MCF_thread_self()->__atexit_queue, &elem);
   }
 
 __MCF_DLLEXPORT
