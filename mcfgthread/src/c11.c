@@ -26,7 +26,7 @@ __MCF_c11_thrd_sleep(const __MCF_timespec* dur, __MCF_timespec* rem_opt)
 
     /* Clamp the timestamp.  */
     end_time = __builtin_fmax(end_time, 0);
-    end_time = __builtin_fmin(end_time, 0x1p63 - 0x1p10);
+    end_time = __builtin_fmin(end_time, 0x7FFFFFFFFFFFFC00);
 
     if(rem_opt)
       *rem_opt = (__MCF_timespec){ 0 };
@@ -62,7 +62,7 @@ __MCF_c11__thrd_sleep_until(const __MCF_timespec* ts)
 
     /* Clamp the timestamp.  */
     end_time = __builtin_fmax(end_time, 0);
-    end_time = __builtin_fmin(end_time, 0x1p63 - 0x1p10);
+    end_time = __builtin_fmin(end_time, 0x7FFFFFFFFFFFFC00);
 
     int64_t timeout = (int64_t) end_time;
     int err = _MCF_sleep(&timeout);

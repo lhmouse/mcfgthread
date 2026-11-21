@@ -21,7 +21,7 @@ __MCF_gthr_timeout_from_timespec(const __MCF_timespec* abs_time)
 
     /* Clamp the timestamp.  */
     value = __builtin_fmax(value, 0);
-    value = __builtin_fmin(value, 0x1p63 - 0x1p10);
+    value = __builtin_fmin(value, 0x7FFFFFFFFFFFFC00);
     return (int64_t) value;
   }
 

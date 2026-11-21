@@ -18,6 +18,6 @@ __MCF_libcxx_thread_sleep_for_ns_count(int64_t ns)
     double ms = 0.9999999;
     ms += (double) ns * 0.000001;
     ms = __builtin_fmax(ms, 0);
-    ms = __builtin_fmin(ms, 0x1p63 - 0x1p10);
+    ms = __builtin_fmin(ms, 0x7FFFFFFFFFFFFC00);
     _MCF_sleep_noninterruptible(&(int64_t){ (int64_t) -ms });
   }
